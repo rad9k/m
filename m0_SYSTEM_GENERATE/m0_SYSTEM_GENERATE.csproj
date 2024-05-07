@@ -128,6 +128,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="_RES\Instrument\MFB522\MFB522_PitchSet.txt" />
+    <Content Include="_RES\UXTemplate\from_m0.txt" />
     <Content Include="_RES\UXTemplate\ZeroUML.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

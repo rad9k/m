@@ -1,0 +1,33 @@
+"Templates"
+	import @System\Meta\ZeroTypes\UX direct meta
+	<@UXTemplate :: "ZeroUML">
+		<@$Is :: @UXTemplate>
+		<@UXTemplate :: "Object">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:{$Is:Class}}">
+			<@MetaVertexTestQuery :: "{$Is: Class}">
+			<@ItemClass :: @RectangleItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+				<@RectangleItem\ShowMeta :: "False">
+				<@RectangleItem\VisualiserClass :: @System\Meta\Visualiser\List>
+				<@RectangleItem\VisualiserVertex :: "">
+					<@HasFilter\FilterQuery :: "{$Is:Attribute}:">
+					<@System\Meta\Visualiser\Table\ShowHeader :: "False">
+			<@UXDecoratorTemplate :: "Association instance">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:{$Is:Class}\Association:">
+				<@ToDiagramItemTestQuery :: "UXTemplate:Object">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\IsDashed :: "True">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+			<@UXDecoratorTemplate :: "Aggregation instance">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:{$Is:Class}\Aggregation:">
+				<@ToDiagramItemTestQuery :: "UXTemplate:Object">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\IsDashed :: "True">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Diamond>
+
