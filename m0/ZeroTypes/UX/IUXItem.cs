@@ -58,7 +58,7 @@ namespace m0.ZeroTypes.UX
 
         void AddToSelectedEdges();
 
-        Point GetLineAnchorLocation(IUXItem toItem, int toItemDiagramLinesCount, int toItemDiagramLinesNumber, bool isSelfStart);
+        Point GetLineAnchorLocation(IUXItem toItem, bool useToPoint, Point toPoint, int toItemDiagramLinesCount, int toItemDiagramLinesNumber, bool isSelfStart);
 
         void UpdateDiagramLines();
 

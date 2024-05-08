@@ -613,9 +613,9 @@ namespace m0.ZeroTypes.UX
 
             foreach (ILineDecoratorBase l in sameToItemLines)
             {
-                Point start = GetLineAnchorLocation(toItem, allCnt, cnt, toItem == this);
+                Point start = GetLineAnchorLocation(toItem, false, new Point(), allCnt, cnt, toItem == this);
 
-                Point end = toItem.GetLineAnchorLocation(this, allCnt, cnt, false);
+                Point end = toItem.GetLineAnchorLocation(this, false, new Point(), allCnt, cnt, false);
 
                 if (toItem == this)
                     l.SetPosition(start.X, start.Y, end.X, end.Y, true, Canvas.GetLeft(this) + this.ActualWidth + 25 * (allCnt - cnt), Canvas.GetTop(this) - 25 * ((allCnt - cnt)));
@@ -627,9 +627,9 @@ namespace m0.ZeroTypes.UX
 
             foreach (ILineDecoratorBase l in sameFromItemLinesTo)
             {
-                Point end = GetLineAnchorLocation(toItem, allCnt, cnt, false);
+                Point end = GetLineAnchorLocation(toItem, false, new Point(), allCnt, cnt, false);
 
-                Point start = toItem.GetLineAnchorLocation(this, allCnt, cnt, false);
+                Point start = toItem.GetLineAnchorLocation(this, false, new Point(), allCnt, cnt, false);
 
                 if (toItem != this)
                     l.SetPosition(start.X, start.Y, end.X, end.Y, false, 0, 0);
@@ -1018,7 +1018,7 @@ namespace m0.ZeroTypes.UX
             return IsInParentHierarchy(toItem.ParentItem);
         }
 
-        public virtual Point GetLineAnchorLocation(IUXItem _toItem, int toItemDiagramLinesCount, int toItemDiagramLineNumber, bool isSelfStart)
+        public virtual Point GetLineAnchorLocation(IUXItem _toItem, bool useToPoint, Point toPoint, int toItemDiagramLinesCount, int toItemDiagramLineNumber, bool isSelfStart)
         {
             if (!(_toItem is FrameworkElement))
                 return new Point();
@@ -1042,7 +1042,7 @@ namespace m0.ZeroTypes.UX
 
             Point pTo = new Point();
 
-            if (toItem != null)
+            if (!useToPoint && toItem != null)
             {
                 if (IsInParentHierarchy(_toItem))
                 {
@@ -1056,7 +1056,9 @@ namespace m0.ZeroTypes.UX
                 }
             }
             else
-                pTo = new Point();
+                pTo = toPoint;
+
+
 
             double tX = thisLeftTop.X + this.ActualWidth / 2;
             double tY = thisLeftTop.Y + this.ActualHeight / 2;

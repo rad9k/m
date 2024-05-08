@@ -485,7 +485,7 @@ namespace m0
                 //Do{$MinCardinality:0,$MaxCardinality:1}
                 ",Variable{$MinCardinality:0,$MaxCardinality:-1},Type{$$NoSequentialExecution:,$MinCardinality:0,$MaxCardinality:-1}}" +
                 ",StackFrameCreatorWithInputOutput{Output{$$NoSequentialExecution:,$MinCardinality:0,$MaxCardinality:1},InputParameter{$$NoSequentialExecution:,$MinCardinality:0,$MaxCardinality:-1}}" +
-                ",Function{$$NoSequentialExecution:},Section" +
+                ",Function{$$NoSequentialExecution:},Block{HasName}" +
                 ",While{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}}" +
                 ",ForEach{Variable{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},Set{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}}" +
                 ",If{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}},Test{Expression{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}},Case{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}},Fallback" +
@@ -785,13 +785,13 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "NextOut"));
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"Section").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"Block").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "NextOut"));
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"Section").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"Block").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "Action"));
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"Section").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"Block").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "StackFrameCreator"));
 
@@ -1020,7 +1020,7 @@ namespace m0
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "SetLeftVertexesToFirstRightVertexValue"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphIncludingLinksAsIsInLeftVertex"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Section"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Block"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Function"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "If"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Test"));
@@ -2420,7 +2420,27 @@ namespace m0
 
             o_methodCall_any_param.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
                 Empty);
-                
+
+            // block 
+            //
+            // block (?<name>))
+
+            IVertex o_block = k.AddVertex(keyword, "block (?<name>)");
+
+            IVertex o_block_base = o_block.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Block"), "(?<name>)");
+
+            o_block_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Block"));
+            o_block_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Block\HasName"));
+
+            // block 
+            //
+            // block
+
+            IVertex o_block_no_name = k.AddVertex(keyword, "block");
+
+            IVertex o_block_no_name_base = o_block_no_name.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Block"), "");
+
+            o_block_no_name_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Block"));
         }
 
         private static void AddDoubleOperator(IVertex k, IVertex smu, IVertex smb, IVertex keyword, IVertex any, string text, string _is)

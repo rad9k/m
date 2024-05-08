@@ -145,7 +145,7 @@ namespace m0.ZeroTypes.UX
             base.Unhighlight();
         }
 
-        public override Point GetLineAnchorLocation(IUXItem _toItem, int toItemDiagramLinesCount, int toItemDiagramLineNumber, bool isSelfStart)        
+        public override Point GetLineAnchorLocation(IUXItem _toItem, bool useToPoint, Point toPoint, int toItemDiagramLinesCount, int toItemDiagramLineNumber, bool isSelfStart)        
         {
             if (!(_toItem is FrameworkElement))
                 return new Point();
@@ -175,13 +175,13 @@ namespace m0.ZeroTypes.UX
 
             Line2D secondLine, firstLineSelf;
 
-            if (toItem != null)
+            if (!useToPoint && toItem != null)
             {
                 pTo.X = toItemLeftTop.X + toItem.ActualWidth / 2;
                 pTo.Y = toItemLeftTop.Y + toItem.ActualHeight / 2;
             }
             else
-                pTo = new Point();
+                pTo = toPoint;
 
             double tX = thisLeftTop.X + this.ActualWidth / 2;
             double tY = thisLeftTop.Y + this.ActualHeight / 2;

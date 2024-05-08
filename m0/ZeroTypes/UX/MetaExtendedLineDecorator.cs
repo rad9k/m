@@ -46,7 +46,7 @@ namespace m0.ZeroTypes.UX
             {
                 Point p = new Point(FromX + ((ToX - FromX) / 2), FromY + ((ToY - FromY) / 2));
                 pc.Add(p);
-                pc.Add(MetaDiagramItem.GetLineAnchorLocation(this, 1, 1, false));                    
+                pc.Add(MetaDiagramItem.GetLineAnchorLocation(this, true, p, 1, 1, false));                    
 
                 MetaLine.Points = pc;
             }
@@ -60,7 +60,7 @@ namespace m0.ZeroTypes.UX
 
             Point p = new Point(FromX + ((ToX - FromX) / 2), FromY + ((ToY - FromY) / 2));
             pc.Add(p);
-            pc.Add(MetaDiagramItem.GetLineAnchorLocation(this, 1, 1, false));
+            pc.Add(MetaDiagramItem.GetLineAnchorLocation(this, true, p, 1, 1, false));
 
             MetaLine.Points = pc;
         }

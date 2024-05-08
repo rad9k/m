@@ -1748,9 +1748,9 @@ namespace m0.ZeroCode
         {
             IVertex v = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(_graphBaseEdge.To);
 
-            // BaseEdge = new EasyEdge(null, null, v);            
+            BaseEdge = new EasyEdge(null, null, v);            
 
-            BaseEdge = _graphBaseEdge;
+            // BaseEdge = _graphBaseEdge;
         }
 
         public string Process(IEdge _graphBaseEdge)
