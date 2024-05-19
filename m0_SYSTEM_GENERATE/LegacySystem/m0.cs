@@ -791,9 +791,9 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"Block").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "Action"));
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"Block").AddEdge(
+           /* LegacySystem.Graph.EasyVertex.Get(smu, false, @"Block").AddEdge( // this probably not want
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
-                LegacySystem.Graph.EasyVertex.Get(smu, false, "StackFrameCreator"));
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "StackFrameCreator"));*/
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"While").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
