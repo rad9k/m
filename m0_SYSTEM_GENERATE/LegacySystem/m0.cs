@@ -485,7 +485,7 @@ namespace m0
                 //Do{$MinCardinality:0,$MaxCardinality:1}
                 ",Variable{$MinCardinality:0,$MaxCardinality:-1},Type{$$NoSequentialExecution:,$MinCardinality:0,$MaxCardinality:-1}}" +
                 ",StackFrameCreatorWithInputOutput{Output{$$NoSequentialExecution:,$MinCardinality:0,$MaxCardinality:1},InputParameter{$$NoSequentialExecution:,$MinCardinality:0,$MaxCardinality:-1}}" +
-                ",Function{$$NoSequentialExecution:},Block{HasName}" +
+                ",Function{$$NoSequentialExecution:},Block{HasName}"+                 
                 ",While{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}}" +
                 ",ForEach{Variable{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},Set{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}}" +
                 ",If{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}},Test{Expression{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}},Case{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}},Fallback" +
@@ -497,6 +497,10 @@ namespace m0
             // Link
 
             AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "Link"), "Link");
+
+            // Block
+
+            AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "Block"), "Block");
 
             // query
 
@@ -2427,10 +2431,10 @@ namespace m0
 
             IVertex o_block = k.AddVertex(keyword, "block (?<name>)");
 
-            IVertex o_block_base = o_block.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Block"), "(?<name>)");
+            IVertex o_block_base = o_block.AddVertex(any, "(?<name>)");
 
             o_block_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Block"));
-            o_block_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Block\HasName"));
+            o_block_base.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Block\HasName"));
 
             // block 
             //
@@ -2438,7 +2442,7 @@ namespace m0
 
             IVertex o_block_no_name = k.AddVertex(keyword, "block");
 
-            IVertex o_block_no_name_base = o_block_no_name.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Block"), "");
+            IVertex o_block_no_name_base = o_block_no_name.AddVertex(any, "");
 
             o_block_no_name_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Block"));
         }
