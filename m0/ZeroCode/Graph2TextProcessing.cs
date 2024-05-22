@@ -652,7 +652,9 @@ namespace m0.ZeroCode
 
             foreach (IEdge e in km.MatchedEdges)
                 if (e.From == firstEdge.From)
-                    if (GraphUtil.GetValueAndCompareStrings(e.Meta, meta) || meta == "(?<ANY>)")
+                    if (GraphUtil.GetValueAndCompareStrings(e.Meta, meta) 
+                        || meta == "(?<ANY>)"
+                        || meta == "'(?<ANY>)'")
                         return e;
 
             return null;

@@ -1876,6 +1876,13 @@ namespace m0.ZeroUML.Instructions
             return CreateStack();
         }
 
+        public static INoInEdgeInOutVertexVertex Block(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        {
+            isStackFrameReturn = false;
+
+            return SequenciallyExecuteIntructionsWithNewStackAndIsStackFrameReturnSupport(exe, inputStack, instructionVertex, out isStackFrameReturn);
+        }
+
         public static INoInEdgeInOutVertexVertex If(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;

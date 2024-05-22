@@ -1,54 +1,45 @@
 "Templates"
 	import @System\Meta\ZeroTypes\UX direct meta
+	import @System\Data\UX\Colors direct meta
 	<@UXTemplate :: "ZeroUML">
-		<@$Is :: @$Empty>
-		<@UXTemplate :: "Vertex RectangleItem CODE">
+		<@$Is :: @UXTemplate>
+		<@UXTemplate :: "Edge">
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "">
 			<@ItemClass :: @RectangleItem>
 			<@InstanceCreation :: @InstanceCreationEnum\Direct>
 			<@ItemVertex :: "">
-				<@RectangleItem\ShowMeta :: "False">
-				<@RectangleItem\VisualiserClass :: @System\Meta\Visualiser\Code>
-				<@RectangleItem\VisualiserVertex :: "">
-					<@UXItem\Scale :: "50">
-		<@UXTemplate :: "Vertex RectangleItem TREE">
+				<@$Inherits :: @ZeroUML\BaseGeneric>
+				<@RectangleItem\ShowMeta :: "True">
+			<@UXDecoratorTemplate :: "Edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @MetaExtendedLineDecorator>
+				<@DecoratorVertex :: "">
+		<@UXTemplate :: "Edge2">
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "">
 			<@ItemClass :: @RectangleItem>
 			<@InstanceCreation :: @InstanceCreationEnum\Direct>
 			<@ItemVertex :: "">
-				<@RectangleItem\ShowMeta :: "False">
-				<@RectangleItem\VisualiserClass :: @System\Meta\Visualiser\Tree>
-				<@RectangleItem\VisualiserVertex :: "">
-					<@UXItem\Scale :: "50">
-		<@UXTemplate :: "Vertex RectangleItem GRAPH">
+				<@$Inherits :: @ZeroUML\BaseGeneric>
+				<@RectangleItem\ShowMeta :: "True">
+		<@UXTemplate :: "Block">
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "">
 			<@ItemClass :: @RectangleItem>
 			<@InstanceCreation :: @InstanceCreationEnum\Direct>
 			<@ItemVertex :: "">
-				<@RectangleItem\ShowMeta :: "False">
-				<@RectangleItem\VisualiserClass :: @System\Meta\Visualiser\Graph>
-				<@RectangleItem\VisualiserVertex :: "">
-					<@UXItem\Scale :: "50">
-		<@UXTemplate :: "Vertex RectangleItem LIST">
-			<@$Is :: @UXTemplate>
-			<@DirectVertexTestQuery :: "">
-			<@ItemClass :: @RectangleItem>
-			<@InstanceCreation :: @InstanceCreationEnum\Direct>
-			<@ItemVertex :: "">
-				<@RectangleItem\ShowMeta :: "False">
-				<@RectangleItem\VisualiserClass :: @System\Meta\Visualiser\List>
-				<@RectangleItem\VisualiserVertex :: "">
-					<@UXItem\Scale :: "50">
-		<@UXTemplate :: "Vertex RectangleItem FORM">
-			<@$Is :: @UXTemplate>
-			<@DirectVertexTestQuery :: "">
-			<@ItemClass :: @RectangleItem>
-			<@InstanceCreation :: @InstanceCreationEnum\Direct>
-			<@ItemVertex :: "">
-				<@RectangleItem\ShowMeta :: "False">
-				<@RectangleItem\VisualiserClass :: @System\Meta\Visualiser\Form>
-				<@RectangleItem\VisualiserVertex :: "">
-					<@UXItem\Scale :: "50">
+				<@$Inherits :: @ZeroUML\BaseGeneric>
+				<@RectangleItem\ShowMeta :: "True">
+			<@UXDecoratorTemplate :: "Edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @MetaExtendedLineDecorator>
+				<@DecoratorVertex :: "">
+		<@String :: "BaseGeneric">
+			<@UXItem\BackgroundColor :: @VeryVeryLightRed>
+		<@String :: "BaseAction">
+			<@UXItem\BackgroundColor :: @VeryVeryLightVioletBlue>
