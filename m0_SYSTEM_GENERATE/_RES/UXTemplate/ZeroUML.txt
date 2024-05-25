@@ -9,37 +9,31 @@
 			<@ItemClass :: @RectangleItem>
 			<@InstanceCreation :: @InstanceCreationEnum\Direct>
 			<@ItemVertex :: "">
-				<@$Inherits :: @ZeroUML\BaseGeneric>
+				<@$Inherits :: @ZeroUML\BaseGenericItemVertex>
 				<@RectangleItem\ShowMeta :: "True">
 			<@UXDecoratorTemplate :: "Edge">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "">
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @MetaExtendedLineDecorator>
-				<@DecoratorVertex :: "">
-		<@UXTemplate :: "Edge2">
-			<@$Is :: @UXTemplate>
-			<@DirectVertexTestQuery :: "">
-			<@ItemClass :: @RectangleItem>
-			<@InstanceCreation :: @InstanceCreationEnum\Direct>
-			<@ItemVertex :: "">
-				<@$Inherits :: @ZeroUML\BaseGeneric>
-				<@RectangleItem\ShowMeta :: "True">
+				<@DecoratorVertex :: "">		
 		<@UXTemplate :: "Block">
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "">
 			<@ItemClass :: @RectangleItem>
 			<@InstanceCreation :: @InstanceCreationEnum\Direct>
 			<@ItemVertex :: "">
-				<@$Inherits :: @ZeroUML\BaseGeneric>
-				<@RectangleItem\ShowMeta :: "True">
+				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
+				<@RectangleItem\ShowMeta :: "False">
+			<@$Inherits :: @ZeroUML\BaseActionDecorators>
+		<"BaseGenericItemVertex">
+			<@UXItem\BackgroundColor :: @VeryVeryLightRed>
+		<"BaseActionItemVertex">
+			<@UXItem\BackgroundColor :: @VeryVeryLightVioletBlue>
+		<"BaseActionDecorators">
 			<@UXDecoratorTemplate :: "Edge">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "">
 				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @MetaExtendedLineDecorator>
+				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
-		<@String :: "BaseGeneric">
-			<@UXItem\BackgroundColor :: @VeryVeryLightRed>
-		<@String :: "BaseAction">
-			<@UXItem\BackgroundColor :: @VeryVeryLightVioletBlue>

@@ -333,18 +333,18 @@ namespace m0.ZeroCode
         // Z-version
         public static bool TryStringMatch(zstring s, int pos, zstring toMatch)
         {
-           /* TryStringMatch_params p = new TryStringMatch_params(s, pos, toMatch);
+            /* TryStringMatch_params p = new TryStringMatch_params(s, pos, toMatch);
 
-            int h = p.GetHashCode();
+             int h = p.GetHashCode();
 
-            if (smdict.TryStringMatch.ContainsKey(h))
-            {
-                TryStringMatch_match++;
-                return smdict.TryStringMatch[h];
-            }
-            else
-                TryStringMatch_nomatch++;
-           */
+             if (smdict.TryStringMatch.ContainsKey(h))
+             {
+                 TryStringMatch_match++;
+                 return smdict.TryStringMatch[h];
+             }
+             else
+                 TryStringMatch_nomatch++;
+            */
             int toMatchLength = toMatch.Length;
 
             if (s.Length < pos + toMatchLength)
@@ -356,11 +356,11 @@ namespace m0.ZeroCode
             for (int x = 0; x < toMatchLength; x++)
                 if (s[pos + x] != toMatch[x])
                 {
-                //    smdict.TryStringMatch.Add(h, false);
+                    //    smdict.TryStringMatch.Add(h, false);
                     return false;
                 }
 
-           // smdict.TryStringMatch.Add(h, true);
+            // smdict.TryStringMatch.Add(h, true);
             return true;
         }
 
@@ -576,7 +576,7 @@ namespace m0.ZeroCode
             int h = p.GetHashCode();
 
             if (smdict.GetNextCharacterPartFromKeyword_startingFromNonParameter.ContainsKey(h))
-                return smdict.GetNextCharacterPartFromKeyword_startingFromNonParameter[h];   
+                return smdict.GetNextCharacterPartFromKeyword_startingFromNonParameter[h];
 
             for (int x = startFrom; x < keyword.Length; x++)
             {
@@ -607,7 +607,7 @@ namespace m0.ZeroCode
         }
 
         // STANDARD versions
-        
+
         public static bool TryStringMatch(string s, int pos, string toMatch)
         {
             int toMatchLength = toMatch.Length;
@@ -620,7 +620,7 @@ namespace m0.ZeroCode
                     return false;
 
             return true;
-        }             
+        }
 
         /////        
 
@@ -756,7 +756,7 @@ namespace m0.ZeroCode
 
         public static int TrimLeft(string s, int pos)
         {
-            while (s[pos] == ' ')
+            while (s[pos] == ' ' || s[pos] == '\t')
                 pos--;
 
             return pos;
