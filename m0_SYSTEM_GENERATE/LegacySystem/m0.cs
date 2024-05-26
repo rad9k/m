@@ -16,10 +16,11 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Xml.Linq;
-
+using System.Runtime.InteropServices;
 
 namespace m0
 {
+
     public class LegacySystem_MinusZero : IStoreUniverse, IDisposable
     {
         public static LegacySystem_MinusZero Instance = new LegacySystem_MinusZero();
@@ -6452,8 +6453,10 @@ namespace m0
             CreateSystemDataUXZeroUMLTemplate(); // <<<<<<<<<<<<<<<<<<<
 
             //CreateSystemDataUXZeroUMLTemplate_Parent();
-
+             
             //CreateSystemDataUXZeroUMLTemplate_MSX();
+
+            //_CreateSystemDataUXZeroUMLTemplate();
 
 
             AddIsAttribute("Attribute");
@@ -6468,7 +6471,7 @@ namespace m0
 
             CheckAndCorrecIsClass();
 
-            IsInitialized = true;
+            IsInitialized = true;            
         }
 
         public void Initialize()

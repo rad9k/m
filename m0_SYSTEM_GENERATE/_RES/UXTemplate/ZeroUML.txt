@@ -19,12 +19,15 @@
 				<@DecoratorVertex :: "">		
 		<@UXTemplate :: "Block">
 			<@$Is :: @UXTemplate>
-			<@DirectVertexTestQuery :: "">
+			<@DirectVertexTestQuery :: "{{$Is:Block}}">
 			<@ItemClass :: @RectangleItem>
 			<@InstanceCreation :: @InstanceCreationEnum\Direct>
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
 				<@RectangleItem\ShowMeta :: "False">
+				<@RectangleItem\VisualiserClass :: @System\Meta\Visualiser\Code>
+				<@RectangleItem\VisualiserVertex :: "">
+					<@UXItem\Scale :: "50">
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 		<"BaseGenericItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryLightRed>

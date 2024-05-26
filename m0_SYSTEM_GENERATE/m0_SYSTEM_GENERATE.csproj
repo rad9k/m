@@ -132,4 +132,7 @@
     <Content Include="_RES\UXTemplate\ZeroUML.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>c:\Users\r\Source\Repos\m\m0_SYSTEM_GENERATE\bin\Debug\x.bat</PostBuildEvent>
+  </PropertyGroup>
 </Project>

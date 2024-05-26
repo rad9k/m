@@ -76,14 +76,14 @@ namespace m0_SYSTEM_GENERATE
             CreateExamples.CreateTestData();            
 
             IVertex root = LegacySystem_MinusZero.Instance.Root;
-            IVertex System = root.Get(false, "System");
+            IVertex SystemVertex = root.Get(false, "System");
             IVertex User = root.Get(false, "User");
 
             IVertex examples = root.Get(false, "examples");
 
             print("* saving System to \"system.m0j\"");
             
-            IVertex system = GeneralUtil.CreateM0JAndMoveEdgesIntoIt(@"system.m0j", System, 1);
+            IVertex system = GeneralUtil.CreateM0JAndMoveEdgesIntoIt(@"system.m0j", SystemVertex, 1);
 
             LegacySystem_MinusZero.Instance.AddFastAccessVertexes(); // after save need to update
 
@@ -164,7 +164,9 @@ namespace m0_SYSTEM_GENERATE
 
             print("");
 
-            print("execution succesfull finish");            
+            print("execution succesfull finish");
+
+            System.Diagnostics.Process.Start("c:\\Users\\r\\Source\\Repos\\m\\m0_SYSTEM_GENERATE\\bin\\Debug\\x.bat");
         }
     }
 }
