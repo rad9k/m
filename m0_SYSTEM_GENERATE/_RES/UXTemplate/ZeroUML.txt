@@ -3,6 +3,36 @@
 	import @System\Data\UX\Colors direct meta
 	<@UXTemplate :: "ZeroUML">
 		<@$Is :: @UXTemplate>
+		<@UXTemplate :: "Vertex RectangleItem CODE">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@ItemClass :: @RectangleItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+				<@RectangleItem\ShowMeta :: "False">
+				<@RectangleItem\VisualiserClass :: @System\Meta\Visualiser\Code>
+				<@RectangleItem\VisualiserVertex :: "">
+					<@UXItem\Scale :: "50">
+		<@UXTemplate :: "Vertex RectangleItem TREE">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@ItemClass :: @RectangleItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+				<@RectangleItem\ShowMeta :: "False">
+				<@RectangleItem\VisualiserClass :: @System\Meta\Visualiser\Tree>
+				<@RectangleItem\VisualiserVertex :: "">
+					<@UXItem\Scale :: "50">
+		<@UXTemplate :: "Vertex RectangleItem LIST">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@ItemClass :: @RectangleItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+				<@RectangleItem\ShowMeta :: "False">
+				<@RectangleItem\VisualiserClass :: @System\Meta\Visualiser\List>
+				<@RectangleItem\VisualiserVertex :: "">
+					<@System\Meta\Visualiser\List\ShowMeta :: "True">
 		<@UXTemplate :: "Edge">
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "">
