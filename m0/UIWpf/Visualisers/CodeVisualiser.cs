@@ -71,7 +71,7 @@ namespace m0.UIWpf.Visualisers
                 new List<string> { @"", @"BaseEdge:\To:" },
                 "AtomVisualiserFull",
                 baseEdgeVertex,
-                UpdateBaseEdgeCallSchemeEnum.OmmitFirst);
+                UpdateBaseEdgeCallSchemeEnum.OmmitSecond);
 
             CodeControl = new CodeControl(Vertex, false, false, true);
 

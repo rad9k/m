@@ -1660,7 +1660,7 @@ namespace m0.UIWpf.UX
 
             OldParentItem.Canvas.Children.Remove((UIElement)item);
 
-            NewParentItem.MoveExistingItemAsSubItem(item);
+            NewParentItem.MoveExistingItemAsThisItemsSubItem(item);
             
             NewParentItem.Canvas.Children.Add((UIElement)item);
 
@@ -2684,7 +2684,7 @@ namespace m0.UIWpf.UX
             return null;
         }
 
-        public void MoveExistingItemAsSubItem(IItem item)
+        public void MoveExistingItemAsThisItemsSubItem(IItem item)
         {
             item.Edge.From.DeleteEdge(item.Edge);
 

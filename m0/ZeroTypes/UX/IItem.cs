@@ -25,7 +25,11 @@ namespace m0.ZeroTypes.UX
 
         IItem AddItem(IVertex typeVertex);
 
-        void MoveExistingItemAsSubItem(IItem item);
+        IList<IItem> VolatileItems { get; }
+
+        IItem AddVolatileItem(IVertex typeVertex);
+
+        void MoveExistingItemAsThisItemsSubItem(IItem item);
 
         void RemoveItem(IItem item);
     }

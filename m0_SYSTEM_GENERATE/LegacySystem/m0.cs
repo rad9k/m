@@ -2845,7 +2845,7 @@ namespace m0
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(smz, sm, "{UX{"
                 +"Class:Color{Attribute:Red{MinValue:0,MaxValue:255,$DefaultValue:0,$MinCardinality:1,$MaxCardinality:1},Attribute:Green{MinValue:0,MaxValue:255,$DefaultValue:0,$MinCardinality:1,$MaxCardinality:1},Attribute:Blue{MinValue:0,MaxValue:255,$DefaultValue:0,$MinCardinality:1,$MaxCardinality:1},Attribute:Opacity{MinValue:0,MaxValue:255,$MinCardinality:0,$MaxCardinality:1}}"
                 +",Class:HasColor{Attribute:Color{$MinCardinality:0,$MaxCardinality:1}}"
-                + ",Class:Item{Aggregation:Item{$MinCardinality:0,$MaxCardinality:-1}}"
+                + ",Class:Item{Aggregation:Item{$MinCardinality:0,$MaxCardinality:-1},Aggregation:VolatileItem{$MinCardinality:0,$MaxCardinality:-1}}"
                 + ",Class:UXItem{Attribute:Scale{$MinCardinality:1,$MaxCardinality:1,$DisplayLarger:,$DefaultValue:100},Attribute:DesignMode{$MinCardinality:0,$MaxCardinality:1},Attribute:Size{$MinCardinality:0,$MaxCardinality:1},Attribute:Position{$MinCardinality:0,$MaxCardinality:1},Attribute:Layout{$MinCardinality:0,$MaxCardinality:1},Attribute:BackgroundColor{$MinCardinality:0,$MaxCardinality:1},Attribute:ForegroundColor{$MinCardinality:0,$MaxCardinality:1},Attribute:BorderColor{$MinCardinality:0,$MaxCardinality:1},Attribute:BorderSize{MinValue:0,MaxValue:10,$MinCardinality:0,$MaxCardinality:1},Attribute:Gap{$MinCardinality:0,$MaxCardinality:1},Aggregation:Decorator{$MinCardinality:0,$MaxCardinality:-1},Association:UXTemplate{$MinCardinality:0,$MaxCardinality:1}}"
                 + ",Class:UXContainer{Attribute:IsExpanded{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:CollapsedSize{$MinCardinality:0,$MaxCardinality:1},Attribute:ExpandedSize{$MinCardinality:0,$MaxCardinality:1},Association:NewItemUXTemplate{$MinCardinality:0,$MaxCardinality:1}}"
                 + ",Class:Size{Attribute:Width,Attribute:Height}"
@@ -2887,11 +2887,15 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\UX\Item"));
 
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"UX\Item\VolatileItem").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\UX\Item"));
+
             // UXItem
 
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"UX\UXItem").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\UX\Item"));
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\UX\Item"));            
 
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"UX\UXItem\Scale").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$EdgeTarget"),

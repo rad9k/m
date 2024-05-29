@@ -1559,7 +1559,7 @@ namespace m0.ZeroTypes.UX
             return null;
         }
 
-        public void MoveExistingItemAsSubItem(IItem item)
+        public void MoveExistingItemAsThisItemsSubItem(IItem item)
         {
             item.Edge.From.DeleteEdge(item.Edge);
 

@@ -15,6 +15,7 @@ namespace m0.ZeroTypes.UX
 
         static IVertex BaseEdge_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge");
         static IVertex Item_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Item\Item");
+        static IVertex VolatileItem_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Item\VolatileItem");
         static IVertex UXItem_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem");
         static IVertex UXAggregator_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator");
         static IVertex Edge_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\Edge");
@@ -129,7 +130,50 @@ namespace m0.ZeroTypes.UX
             return null;
         }
 
-        public void MoveExistingItemAsSubItem(IItem item)
+        public IList<IItem> VolatileItems
+        {
+            get
+            {
+                IList<IEdge> list = GraphUtil.GetQueryOut(Vertex, "VolatileItem", null);
+
+                IList<IItem> ret = new List<IItem>();
+
+                foreach (IEdge e in list)
+                {
+                    ITypedEdge _i = TypedEdge.Get(e);
+
+                    if (_i != null && _i is IItem)
+                    {
+                        IItem i = (Item)_i;
+
+                        i.ParentItem = this;
+                        ret.Add(i);
+                    }
+                }
+
+                return ret;
+            }
+        }
+
+        public IItem AddVolatileItem(IVertex typeVertex)
+        {
+            IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, VolatileItem_meta);
+
+            ITypedEdge _i = TypedEdge.Get(newEdge);
+
+            if (_i != null && _i is IItem)
+            {
+                IItem item = (IItem)_i;
+
+                item.ParentItem = this;
+
+                return item;
+            }
+
+            return null;
+        }
+
+        public void MoveExistingItemAsThisItemsSubItem(IItem item)
         {
             item.Edge.From.DeleteEdge(item.Edge);
 
