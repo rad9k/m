@@ -1938,7 +1938,7 @@ namespace m0.UIWpf.UX
                 if (dndVertex.Count() > 1)
                     isSet = true;
 
-                if(isSet)
+                if (isSet)
                     User.Process.UX.NonAtomProcess.StartNonAtomProcess();                
 
                 ////////////////////////////////////////

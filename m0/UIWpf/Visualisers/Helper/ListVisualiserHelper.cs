@@ -205,7 +205,9 @@ namespace m0.UIWpf.Visualisers.Helper
             }
         }
 
-        protected override void dndPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        // Should be corrected as uncommeted makes dnd from tree to UXContainer not working
+
+        /*private override void dndPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             dndStartPoint = e.GetPosition(VisualiserAsFrameworkElement);
             hasButtonBeenDown = true;
@@ -213,7 +215,7 @@ namespace m0.UIWpf.Visualisers.Helper
             CopySelectedVerticesToTemp();
 
             MinusZero.Instance.IsGUIDragging = false;
-        }
+        }*/
 
         protected override void dndPreviewMouseMove(object sender, MouseEventArgs e)
         {
@@ -271,7 +273,9 @@ namespace m0.UIWpf.Visualisers.Helper
             }
         }
 
-        protected override void dndDrop(object sender, DragEventArgs e)
+        // Should be corrected as uncommeted makes dnd from tree to UXContainer not working
+
+        /*private override void dndDrop(object sender, DragEventArgs e)
         {
             IVertex v = Visualiser.GetEdgeByPoint(e.GetPosition(VisualiserAsFrameworkElement));
 
@@ -283,5 +287,10 @@ namespace m0.UIWpf.Visualisers.Helper
 
             e.Handled = true;
         }
+
+        private override void dndMouseEnter(object sender, MouseEventArgs e)
+        {
+            hasButtonBeenDown = false;
+        }*/
     }
 }
