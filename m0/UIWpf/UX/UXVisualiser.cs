@@ -153,7 +153,7 @@ namespace m0.UIWpf.UX
             this.Child = Canvas;
         }
 
-        public UXVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
+        public UXVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser , bool isVolatile)
         {
             if (VisualisersList.GetVisualiser(baseEdgeVertex.Get(false, "To:")) != null)
             {
@@ -171,7 +171,7 @@ namespace m0.UIWpf.UX
             this.BorderBrush = (Brush)FindResource("0LightGrayBrush");
 
             new ListVisualiserHelper(parentVisualiser,
-                false,
+                isVolatile,
                 MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\UX"),
                 this,
                 "UXV",

@@ -65,6 +65,8 @@ namespace m0.UIWpf.Visualisers
         {            
             parentVisualiser = _parentVisualiser;
 
+            isVolatile = _isVolatile;
+
             ThisDataGrid = new System.Windows.Controls.DataGrid();
 
             this.Children.Add(ThisDataGrid);

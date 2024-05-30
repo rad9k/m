@@ -302,6 +302,7 @@ namespace m0.UIWpf.Visualisers
 
         TabFoldingStrategy foldingStrategy;
         FoldingManager foldingManager;
+        DispatcherTimer foldingUpdateTimer;
 
         public void UpdateEditView()
         {
@@ -325,10 +326,38 @@ namespace m0.UIWpf.Visualisers
             double fontSize = ((double)GraphUtil.GetDoubleValue(Vertex.Get(false, "FontSize:")));
 
             editor.FontSize = fontSize;
+
+            //
+
+            bool showFolding = GraphUtil.GetBooleanValueOrFalse(GraphUtil.GetQueryOutFirst(Vertex, "ShowFolding", null));
+
+            if (showFolding)
+            {
+                if (foldingManager == null)
+                    foldingManager = FoldingManager.Install(editor.TextArea);
+
+                foldingStrategy = new TabFoldingStrategy();
+                foldingStrategy.UpdateFoldings(foldingManager, editor.Document);
+
+                if (foldingUpdateTimer == null)
+                    foldingUpdateTimer = new DispatcherTimer();
+                foldingUpdateTimer.Interval = TimeSpan.FromSeconds(2);
+                foldingUpdateTimer.Tick += delegate { UpdateFoldings(); };
+                foldingUpdateTimer.Start();
+            }
+            else
+            {      
+                if(foldingManager != null)
+                    foldingManager.Clear();
+                
+                if (foldingUpdateTimer != null)
+                    foldingUpdateTimer.Stop();
+            }
+
         }
 
         void EditSetup()
-        {
+        {            
             editor.FontFamily = new FontFamily("Consolas");
             editor.FontWeight = FontWeight.FromOpenTypeWeight(1);
 
@@ -336,19 +365,7 @@ namespace m0.UIWpf.Visualisers
 
             editor.LineNumbersForeground = new SolidColorBrush(Colors.LightGray);
 
-            bool showFolding = GraphUtil.GetBooleanValueOrFalse(GraphUtil.GetQueryOutFirst(Vertex, "ShowFolding", null));
-
-            if (showFolding) {
-                foldingManager = FoldingManager.Install(editor.TextArea);
-                foldingStrategy = new TabFoldingStrategy();
-                foldingStrategy.UpdateFoldings(foldingManager, editor.Document);
-
-                DispatcherTimer foldingUpdateTimer = new DispatcherTimer();
-                foldingUpdateTimer.Interval = TimeSpan.FromSeconds(2);
-                foldingUpdateTimer.Tick += delegate { UpdateFoldings(); };
-                foldingUpdateTimer.Start();
-            }
-
+           
             IHighlightingDefinition customHighlighting;
             using (Stream s = typeof(m0.MinusZero).Assembly.GetManifestResourceStream("m0.ZeroCodeHighlighting.xshd"))
             {

@@ -40,7 +40,7 @@ namespace m0.UIWpf.Visualisers
         static string[] _MetaTriggeringUpdateVertex = new string[] { };
         public string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
-        static string[] _MetaTriggeringUpdateView = new string[] {"ShowWhiteSpace", "ShowLineNumbers", "HighlightedLine", "FontSize" };
+        static string[] _MetaTriggeringUpdateView = new string[] {"ShowWhiteSpace", "ShowLineNumbers", "HighlightedLine", "FontSize", "ShowFolding" };
         public string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
         public void UpdateView() { CodeControl.UpdateEditView(); }
