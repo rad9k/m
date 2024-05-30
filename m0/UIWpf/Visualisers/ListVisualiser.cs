@@ -59,7 +59,9 @@ namespace m0.UIWpf.Visualisers
         public IEdge Edge { get; set; }
         // TypedEdge END
 
-        public ListVisualiser(IVertex baseEdgeVertex, IVertex _parentVisualiser)
+        protected bool isVolatile;
+
+        public ListVisualiser(IVertex baseEdgeVertex, IVertex _parentVisualiser, bool _isVolatile)
         {            
             parentVisualiser = _parentVisualiser;
 
@@ -99,7 +101,7 @@ namespace m0.UIWpf.Visualisers
         protected virtual void PlatformClassInitialize(IVertex baseEdgeVertex)
         {
             new ListVisualiserHelper(parentVisualiser,
-             false,
+             isVolatile,
              MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\List"),
              this, 
              "ListVisualiser", 

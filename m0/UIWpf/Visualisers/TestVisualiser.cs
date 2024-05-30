@@ -37,12 +37,12 @@ namespace m0.UIWpf.Visualisers
         public IEdge Edge { get; set; }
         // TypedEdge END
 
-        public TestVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
+        public TestVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile)
         {
             this.AcceptsReturn = true;
 
             new AtomVisualiserHelper(parentVisualiser,
-                false,
+                isVolatile,
                 MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Test"), 
                 this, 
                 "TestVisualiser", 

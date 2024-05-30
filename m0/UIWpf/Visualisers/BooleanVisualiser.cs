@@ -24,10 +24,10 @@ namespace m0.UIWpf.Visualisers
 
         bool IsNull { get; set; }
 
-        public BooleanVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
+        public BooleanVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile)
         {
             new AtomVisualiserHelper(parentVisualiser,
-                false,
+                isVolatile,
                 MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Boolean"),
                 this, 
                 "BooleanVisualiser", 

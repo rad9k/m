@@ -32,20 +32,24 @@ namespace m0.ZeroTypes
                 return CreatePlatformObject(Vertex, baseEdge, null);
             }
 
-            public static IPlatformClass CreatePlatformObject(IVertex Vertex, IEdge baseEdge, IVertex _parentVisualiser)
+            public static IPlatformClass CreatePlatformObject(IVertex Vertex, IEdge baseEdge, IVertex _parentVisualiser) {
+                return CreatePlatformObject(Vertex, baseEdge, _parentVisualiser, false);
+            }
+
+            public static IPlatformClass CreatePlatformObject(IVertex Vertex, IEdge baseEdge, IVertex _parentVisualiser, bool isVolatile)
             {
                 if (baseEdge == null)
-                    return CreatePlatformObject(Vertex, null as IVertex, _parentVisualiser);
+                    return CreatePlatformObject(Vertex, null as IVertex, _parentVisualiser, isVolatile);
                 else
-                    return CreatePlatformObject(Vertex, EdgeHelper.CreateTempEdgeVertex(baseEdge), _parentVisualiser);
+                    return CreatePlatformObject(Vertex, EdgeHelper.CreateTempEdgeVertex(baseEdge), _parentVisualiser, isVolatile);
             }
 
             public static IPlatformClass CreatePlatformObject(IVertex Vertex, IVertex baseEdgeVertex)
             {
-                return CreatePlatformObject(Vertex, baseEdgeVertex, null);
+                return CreatePlatformObject(Vertex, baseEdgeVertex, null, false);
             }
 
-            public static IPlatformClass CreatePlatformObject(IVertex Vertex, IVertex baseEdgeVertex, IVertex _parentVisualiser)
+            public static IPlatformClass CreatePlatformObject(IVertex Vertex, IVertex baseEdgeVertex, IVertex _parentVisualiser, bool isVolatile)
             {
                 IPlatformClass pc;
 
@@ -53,13 +57,13 @@ namespace m0.ZeroTypes
                 {
                     String classname = (string)Vertex.Get(false, "$PlatformClassName:").Value;
 
-                    pc = (IPlatformClass)Activator.CreateInstance(Type.GetType(classname), new object[] { baseEdgeVertex, _parentVisualiser });
+                    pc = (IPlatformClass)Activator.CreateInstance(Type.GetType(classname), new object[] { baseEdgeVertex, _parentVisualiser, isVolatile });
                 }
                 else
                 {
                     String classname = (string)Vertex.Get(false, @"$Is:\$PlatformClassName:").Value;
 
-                    pc = (IPlatformClass)Activator.CreateInstance(Type.GetType(classname), new object[] { baseEdgeVertex, _parentVisualiser });
+                    pc = (IPlatformClass)Activator.CreateInstance(Type.GetType(classname), new object[] { baseEdgeVertex, _parentVisualiser, isVolatile });
 
                     pc.Vertex = Vertex;
                 }

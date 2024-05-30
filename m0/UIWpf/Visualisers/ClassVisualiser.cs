@@ -35,13 +35,13 @@ namespace m0.UIWpf.Visualisers
         public IEdge Edge { get; set; }
         // TypedEdge END
 
-        public ClassVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
+        public ClassVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile)
         {
            this.Padding = new Thickness(2);
 
            new AtomVisualiserHelper(
                parentVisualiser,
-               false,
+               isVolatile,
                MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Class"), 
                this, 
                "ClassVisualiser", 

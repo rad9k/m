@@ -26,7 +26,7 @@ namespace m0.UIWpf.Visualisers
 
         // TypedEdge START
 
-        public FloatVisualiser(IEdge _edge) : base(null, null)
+        public FloatVisualiser(IEdge _edge) : base(null, null, false)
         {
             Edge = _edge;
 
@@ -35,7 +35,7 @@ namespace m0.UIWpf.Visualisers
 
         public IEdge Edge { get; set; }
         // TypedEdge END
-        public FloatVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser) : base(baseEdgeVertex, parentVisualiser)
+        public FloatVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile) : base(baseEdgeVertex, parentVisualiser, isVolatile)
         {
 
         }

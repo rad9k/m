@@ -34,12 +34,12 @@ namespace m0.UIWpf.Visualisers
         public IEdge Edge { get; set; }
         // TypedEdge END
 
-        public EdgeVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
+        public EdgeVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile)
         {
             this.Background = (Brush)FindResource("0LightGrayBrush");
 
             new AtomVisualiserHelper(parentVisualiser,
-                false,
+                isVolatile,
                 MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Edge"), 
                 this, 
                 "EdgeVisualiser", 

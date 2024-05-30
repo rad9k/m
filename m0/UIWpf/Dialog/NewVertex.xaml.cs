@@ -47,7 +47,7 @@ namespace m0.UIWpf.Dialog
                                     null,
                                     MinusZero.Instance.Empty));
 
-            Schema = new EdgeVisualiser(schemaBaseEdgeVertex, null);
+            Schema = new EdgeVisualiser(schemaBaseEdgeVertex, null, false);
 
             Schema_Border.Child = Schema;
 

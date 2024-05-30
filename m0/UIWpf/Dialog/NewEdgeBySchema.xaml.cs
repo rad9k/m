@@ -42,7 +42,7 @@ namespace m0.UIWpf.Dialog
 
             NewButton.Content = "New " + MetaVertex.Value + " Edge";
 
-            To = new EdgeVisualiser(null, null);
+            To = new EdgeVisualiser(null, null, false);
             To_Border.Child = To;
         }
 

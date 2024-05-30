@@ -34,10 +34,10 @@ namespace m0.UIWpf.Visualisers
         public IEdge Edge { get; set; }
         // TypedEdge END
 
-        public StringViewVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
+        public StringViewVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile)
         {
             new AtomVisualiserHelper(parentVisualiser,
-                false,
+                isVolatile,
                 MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\StringView"), 
                 this, 
                 "StringViewVisualiser", 

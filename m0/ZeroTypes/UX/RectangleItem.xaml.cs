@@ -53,7 +53,7 @@ namespace m0.ZeroTypes.UX
                     ((IDisposable)ContentVisualiser).Dispose();
                 }
 
-                ContentVisualiser = PlatformClass.CreatePlatformObject(VisualiserClass, BaseEdge, this.Vertex);
+                ContentVisualiser = PlatformClass.CreatePlatformObject(VisualiserClass, BaseEdge, this.Vertex, true);
 
                 Grid.SetRow((UIElement)ContentVisualiser, 2);
                 

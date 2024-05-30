@@ -26,7 +26,7 @@ namespace m0.UIWpf.Visualisers
 
         // TypedEdge START
 
-        public DecimalVisualiser(IEdge _edge) : base(null, null)
+        public DecimalVisualiser(IEdge _edge) : base(null, null, false)
         {
             Edge = _edge;
 
@@ -36,7 +36,7 @@ namespace m0.UIWpf.Visualisers
         public IEdge Edge { get; set; }
         // TypedEdge END
 
-        public DecimalVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser) : base(baseEdgeVertex, parentVisualiser)
+        public DecimalVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile) : base(baseEdgeVertex, parentVisualiser, isVolatile)
         {
 
         }

@@ -34,11 +34,11 @@ namespace m0.UIWpf.Visualisers
         public IEdge Edge { get; set; }
         // TypedEdge END
 
-        public EnumVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
+        public EnumVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile)
         {            
             new AtomVisualiserHelper(
                parentVisualiser,
-               false,
+               isVolatile,
                MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Enum"),
                this,
                "EnumVisualiser",

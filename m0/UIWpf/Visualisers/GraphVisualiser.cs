@@ -228,14 +228,14 @@ namespace m0.UIWpf.Visualisers
         // TypedEdge END
 
 
-        public GraphVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
+        public GraphVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile)
         {
             DisplayedVerticesUIElements = new Dictionary<IVertex, SimpleVisualiserWrapper>();
 
             this.Background = (Brush)FindResource("0BackgroundBrush");
 
             new ListVisualiserHelper(parentVisualiser,
-              false,
+              isVolatile,
               MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Graph"),
               this, 
               "GraphVisualiser", 
@@ -364,7 +364,7 @@ namespace m0.UIWpf.Visualisers
             {
                 IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, null, v);
 
-                StringViewVisualiser s = new StringViewVisualiser(baseEdgeVertex, null);
+                StringViewVisualiser s = new StringViewVisualiser(baseEdgeVertex, null, false);
 
                 //GraphUtil.ReplaceEdge(s.Vertex.Get(false, "BaseEdge:"), "To", v);
 

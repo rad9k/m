@@ -47,7 +47,7 @@ namespace m0.UIWpf.Visualisers
         public IEdge Edge { get; set; }
         // TypedEdge END
 
-        public TableVisualiser(IVertex baseEdgeVertex, IVertex _parentVisualiser) : base(baseEdgeVertex, _parentVisualiser)
+        public TableVisualiser(IVertex baseEdgeVertex, IVertex _parentVisualiser, bool isVolatile) : base(baseEdgeVertex, _parentVisualiser, isVolatile)
         {
             parentVisualiser = _parentVisualiser;
         }

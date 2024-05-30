@@ -70,16 +70,16 @@ namespace m0.UIWpf.Dialog
                     Interaction.BeginInteractionWithGraph();
                     ////////////////////////////////////////
 
-                    InputStackEdgeControl = new EdgeVisualiser(inputStackEdgeVertex, null);
+                    InputStackEdgeControl = new EdgeVisualiser(inputStackEdgeVertex, null, false);
                     InputStackEdgeControl_Border.Child = InputStackEdgeControl;
 
-                    OutputStackEdgeControl = new EdgeVisualiser(null, null);
+                    OutputStackEdgeControl = new EdgeVisualiser(null, null, false);
                     OutputStackEdgeControl_Border.Child = OutputStackEdgeControl;
 
-                    InputStackContentControl = new TreeVisualiser(null, null);
+                    InputStackContentControl = new TreeVisualiser(null, null, false);
                     InputStackContentControl_Border.Child = InputStackContentControl;
 
-                    OutputStackContentControl = new TreeVisualiser(null, null);
+                    OutputStackContentControl = new TreeVisualiser(null, null, false);
                     OutputStackContentControl_Border.Child = OutputStackContentControl;
 
                     ////////////////////////////////////////

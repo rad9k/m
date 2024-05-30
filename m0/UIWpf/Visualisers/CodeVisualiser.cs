@@ -58,11 +58,7 @@ namespace m0.UIWpf.Visualisers
         }
 
         public IEdge Edge { get; set; }
-        // TypedEdge END
-
-        public CodeVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser) : this(baseEdgeVertex, parentVisualiser, false)
-        {
-        }
+        // TypedEdge END        
 
         public CodeVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile)
         {

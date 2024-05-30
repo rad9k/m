@@ -45,10 +45,10 @@ namespace m0.UIWpf.Visualisers
         TextBox TextBox;
         MySlider Slider;
 
-        public NumberVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
+        public NumberVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile)
         {
             new AtomVisualiserHelper(parentVisualiser,
-                false,
+                isVolatile,
                 visualiserMetaVertex,
                 this,
                 visualiserName,

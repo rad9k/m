@@ -52,7 +52,7 @@ namespace m0.UIWpf.Dialog
 
             IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, null, baseVertex);
 
-            FormVisualiser = new FormVisualiser(baseEdgeVertex, null);
+            FormVisualiser = new FormVisualiser(baseEdgeVertex, null, false);
 
             Wrap.SetContent(FormVisualiser);
 

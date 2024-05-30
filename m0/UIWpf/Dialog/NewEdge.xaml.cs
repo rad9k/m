@@ -53,7 +53,7 @@ namespace m0.UIWpf.Dialog
                                                 null,
                                                 MinusZero.Instance.Empty));
 
-            Meta = new EdgeVisualiser(metaBaseEdgeVertex, null);
+            Meta = new EdgeVisualiser(metaBaseEdgeVertex, null, false);
 
             Meta_Border.Child = Meta;
 
@@ -70,7 +70,7 @@ namespace m0.UIWpf.Dialog
                                                 null,
                                                 MinusZero.Instance.Empty));
 
-            To = new EdgeVisualiser(toBaseEdgeVertex, null);
+            To = new EdgeVisualiser(toBaseEdgeVertex, null, false);
 
             To_Border.Child = To;
 

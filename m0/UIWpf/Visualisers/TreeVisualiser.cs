@@ -301,7 +301,7 @@ namespace m0.UIWpf.Visualisers
 
         protected bool TurnOffSelectedVerticesUpdate = false;
 
-        public TreeVisualiser() : this(null, null) { }
+        public TreeVisualiser() : this(null, null, false) { }
 
 
         static string[] _MetaTriggeringUpdateVertex = new string[] {  };
@@ -324,7 +324,7 @@ namespace m0.UIWpf.Visualisers
         public IEdge Edge { get; set; }
         // TypedEdge END
 
-        public TreeVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
+        public TreeVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile)
         {
             MinusZero mz = MinusZero.Instance;
 
@@ -342,7 +342,7 @@ namespace m0.UIWpf.Visualisers
             if (mz != null && mz.IsInitialized)
             {
                 new ListVisualiserHelper(parentVisualiser,
-                    false,
+                    isVolatile,
                     MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Tree"),
                     this,
                     "TreeVisualiser",

@@ -104,7 +104,6 @@ namespace m0.UIWpf.Visualisers
         public IEdge Edge { get; set; }
         // TypedEdge END
 
-        public FormVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser) : this(baseEdgeVertex, parentVisualiser, false) { }
         public FormVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile)
         {
             new ListVisualiserHelper(parentVisualiser,
@@ -671,7 +670,7 @@ namespace m0.UIWpf.Visualisers
             {
                 IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, null, Vertex.Get(false, @"BaseEdge:\To:"));
 
-                TableVisualiser tableVisualiser = new TableVisualiser(baseEdgeVertex, Vertex);
+                TableVisualiser tableVisualiser = new TableVisualiser(baseEdgeVertex, Vertex, false);
 
                 if (ExpertMode)
                     GraphUtil.SetVertexValue(tableVisualiser.Vertex, MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Table\ExpertMode"), "True");               
@@ -695,7 +694,7 @@ namespace m0.UIWpf.Visualisers
                 {
                     IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(Vertex.GetAll(false, @"BaseEdge:\To:").FirstOrDefault());
 
-                    StringVisualiser sv = new StringVisualiser(baseEdgeVertex, this.Vertex);
+                    StringVisualiser sv = new StringVisualiser(baseEdgeVertex, this.Vertex, false);
 
                     //Edge.ReplaceEdgeVertexEdges(sv.Vertex.Get(false, "BaseEdge:"), Vertex.GetAll(false, @"BaseEdge:\To:").FirstOrDefault());
 
