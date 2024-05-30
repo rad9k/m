@@ -89,19 +89,19 @@ namespace m0.ZeroTypes.UX
             return new Edge(baseEdgeEdge);
         }
 
-        public IList<IItem> Items
+        public IList<ITypedEdge> Items
         {
             get
             {
                 IList<IEdge> list = GraphUtil.GetQueryOut(Vertex, "Item", null);
 
-                IList<IItem> ret = new List<IItem>();
+                IList<ITypedEdge> ret = new List<ITypedEdge>();
 
                 foreach (IEdge e in list)
                 {
                     ITypedEdge _i = TypedEdge.Get(e);
 
-                    if(_i != null && _i is IItem)
+                    if(_i != null && _i is ITypedEdge)
                     {
                         IItem i = (Item)_i;
 
@@ -120,7 +120,7 @@ namespace m0.ZeroTypes.UX
 
             ITypedEdge _i = TypedEdge.Get(newEdge);
             
-            if (_i != null && _i is IItem)
+            if (_i != null && _i is ITypedEdge)
             {
                 IItem item = (IItem)_i;
 
@@ -132,7 +132,7 @@ namespace m0.ZeroTypes.UX
             return null;
         }
 
-        public IList<IItem> VolatileItems
+        public IList<ITypedEdge> VolatileItems
         {
             get
             {
@@ -144,7 +144,7 @@ namespace m0.ZeroTypes.UX
                 {
                     ITypedEdge _i = TypedEdge.Get(e);
 
-                    if (_i != null && _i is IItem)
+                    if (_i != null && _i is ITypedEdge)
                     {
                         IItem i = (Item)_i;
 
@@ -163,7 +163,7 @@ namespace m0.ZeroTypes.UX
 
             ITypedEdge _i = TypedEdge.Get(newEdge);
 
-            if (_i != null && _i is IItem)
+            if (_i != null && _i is ITypedEdge)
             {
                 IItem item = (IItem)_i;
 

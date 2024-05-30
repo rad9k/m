@@ -21,11 +21,11 @@ namespace m0.ZeroTypes.UX
 
         Edge BaseEdgeCreate();
 
-        IList<IItem> Items { get; }
+        IList<ITypedEdge> Items { get; }
 
         IItem AddItem(IVertex typeVertex);
 
-        IList<IItem> VolatileItems { get; }
+        IList<ITypedEdge> VolatileItems { get; }
 
         IItem AddVolatileItem(IVertex typeVertex);
 
