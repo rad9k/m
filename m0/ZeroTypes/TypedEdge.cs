@@ -128,6 +128,8 @@ namespace m0.ZeroTypes
         {
             if (IsDisposed == false)
             {
+                IsDisposed = true;
+
                 RemoveFromDictionary(this);
             }
         }

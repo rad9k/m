@@ -138,9 +138,17 @@ namespace m0.ZeroTypes.UX
             {
                 IsDisposed = true;
 
-                foreach (IUXItem e in Items)
+                foreach (IItem e in Items)
                     if (e is IDisposable)
                         ((IDisposable)e).Dispose();
+
+                foreach (IItem e in VolatileItems)
+                {
+                    Vertex.DeleteEdge(e.Edge);
+
+                    if (e is IDisposable)
+                        ((IDisposable)e).Dispose();
+                }
 
                 foreach (IUXItem e in Decorators)
                     if (e is IDisposable)
@@ -342,9 +350,11 @@ namespace m0.ZeroTypes.UX
 
         static public IUXItem GetUXItem(IItem parent, IItem i)
         {
-
             if (GraphUtil.ExistQueryOut(i.Vertex, "$Is", "Wrap"))
+            {
+                throw new Exception("no wrap in Item!");
                 return null;
+            }
 
             if (parent is IUXContainer)
             {
@@ -355,7 +365,7 @@ namespace m0.ZeroTypes.UX
             {
                 if (i is IUXDecorator)
                 {
-                    throw new Exception("kto mnie wolal?");
+                    throw new Exception("decorator as item"); // ?
                     return (IUXItem)i;
                 }
             }
@@ -1442,6 +1452,7 @@ namespace m0.ZeroTypes.UX
 
         static IVertex BaseEdge_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge");
         static IVertex Item_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Item\Item");
+        static IVertex VolatileItem_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Item\VolatileItem");
         static IVertex UXItem_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXItem");
         static IVertex UXAggregator_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXAggregator");
         static IVertex Edge_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\Edge");
@@ -1552,6 +1563,49 @@ namespace m0.ZeroTypes.UX
 
                 if (item is IUXItem)
                     ((IUXItem)item).NestingLevel = NestingLevel + 1;
+
+                return item;
+            }
+
+            return null;
+        }
+
+        public IList<IItem> VolatileItems
+        {
+            get
+            {
+                IList<IEdge> list = GraphUtil.GetQueryOut(Vertex, "VolatileItem", null);
+
+                IList<IItem> ret = new List<IItem>();
+
+                foreach (IEdge e in list)
+                {
+                    ITypedEdge _i = TypedEdge.Get(e);
+
+                    if (_i != null && _i is IItem)
+                    {
+                        IItem i = (Item)_i;
+
+                        i.ParentItem = this;
+                        ret.Add(i);
+                    }
+                }
+
+                return ret;
+            }
+        }
+
+        public IItem AddVolatileItem(IVertex typeVertex)
+        {
+            IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, VolatileItem_meta);
+
+            ITypedEdge _i = TypedEdge.Get(newEdge);
+
+            if (_i != null && _i is IItem)
+            {
+                IItem item = (IItem)_i;
+
+                item.ParentItem = this;
 
                 return item;
             }

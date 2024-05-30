@@ -1,11 +1,13 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.Graph.ExecutionFlow;
 using m0.ZeroCode.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace m0.ZeroTypes.UX
 {
@@ -188,5 +190,28 @@ namespace m0.ZeroTypes.UX
             Vertex.DeleteEdge(item.Edge);
         }
 
+        //
+
+        public virtual void Dispose()
+        {
+            if (!IsDisposed)
+            {
+                IsDisposed = true;
+
+                foreach (IItem e in Items)
+                    if (e is IDisposable)
+                        ((IDisposable)e).Dispose();
+
+                foreach (IItem e in VolatileItems)
+                {
+                    Vertex.DeleteEdge(e.Edge);
+
+                    if (e is IDisposable)
+                        ((IDisposable)e).Dispose();
+                }
+
+                TypedEdge.RemoveFromDictionary(this);
+            }
+        }
     }
 }
