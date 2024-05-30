@@ -30,12 +30,14 @@ namespace m0.UIWpf.Visualisers.Helper
 
         public ListVisualiserHelper(
             IVertex parentVisualiser,
+            bool isVolatile,
             IVertex _visualiserMetaVertex,
             IVisualiser _visualiser,
             string _visualiserName,
             FrameworkElement _visualiserAsFrameworkElement,
             IVertex baseEdgeVertex)
             : this(parentVisualiser,
+                  isVolatile,
                   _visualiserMetaVertex,
                   _visualiser,
                   _visualiserName,
@@ -52,6 +54,7 @@ namespace m0.UIWpf.Visualisers.Helper
 
         public ListVisualiserHelper(
             IVertex parentVisualiser,
+            bool isVolatile,
             IVertex visualiserMetaVertex,
             IVisualiser _visualiser,
             string _visualiserName,
@@ -64,6 +67,7 @@ namespace m0.UIWpf.Visualisers.Helper
             )
             :this(
                   parentVisualiser,
+                  isVolatile,
                   visualiserMetaVertex,
                   _visualiser,
                   _visualiserName,
@@ -79,6 +83,7 @@ namespace m0.UIWpf.Visualisers.Helper
 
             public ListVisualiserHelper(
                 IVertex parentVisualiser,
+                bool isVolatile,
                 IVertex visualiserMetaVertex,
                 IVisualiser _visualiser,
                 string _visualiserName,
@@ -91,6 +96,7 @@ namespace m0.UIWpf.Visualisers.Helper
                 bool _visualiserAsBaseEdge
             )
             : base(parentVisualiser,
+                  isVolatile,
                   visualiserMetaVertex,
                   _visualiser,
                   _visualiserName,
@@ -199,7 +205,7 @@ namespace m0.UIWpf.Visualisers.Helper
             }
         }
 
-        private void dndPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        protected override void dndPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             dndStartPoint = e.GetPosition(VisualiserAsFrameworkElement);
             hasButtonBeenDown = true;
@@ -265,7 +271,7 @@ namespace m0.UIWpf.Visualisers.Helper
             }
         }
 
-        private void dndDrop(object sender, DragEventArgs e)
+        protected override void dndDrop(object sender, DragEventArgs e)
         {
             IVertex v = Visualiser.GetEdgeByPoint(e.GetPosition(VisualiserAsFrameworkElement));
 
@@ -276,11 +282,6 @@ namespace m0.UIWpf.Visualisers.Helper
                 Dnd.DoDrop(null, v.Get(false, "To:"), e);
 
             e.Handled = true;
-        }
-
-        private void dndMouseEnter(object sender, MouseEventArgs e)
-        {
-            hasButtonBeenDown = false;
         }
     }
 }

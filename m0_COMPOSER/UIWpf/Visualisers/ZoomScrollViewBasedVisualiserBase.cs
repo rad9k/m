@@ -241,6 +241,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (mz != null && mz.IsInitialized)
             {
                 new ListVisualiserHelper(parentVisualiser,
+                    false,
                     VisualiserMetaVertex,
                     this,
                     VisualiserName,

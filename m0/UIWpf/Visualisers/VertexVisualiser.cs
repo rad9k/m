@@ -57,6 +57,7 @@ namespace m0.UIWpf.Visualisers
             ButtonSetUp();
 
             new AtomVisualiserHelper(parentVisualiser,
+                false,
                 MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Vertex"),
                 this,
                 "VertexVisualiser",

@@ -27,6 +27,7 @@ namespace m0.UIWpf.Visualisers
         public BooleanVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {
             new AtomVisualiserHelper(parentVisualiser,
+                false,
                 MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Boolean"),
                 this, 
                 "BooleanVisualiser", 

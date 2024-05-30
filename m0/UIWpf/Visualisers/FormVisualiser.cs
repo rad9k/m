@@ -104,9 +104,11 @@ namespace m0.UIWpf.Visualisers
         public IEdge Edge { get; set; }
         // TypedEdge END
 
-        public FormVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
+        public FormVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser) : this(baseEdgeVertex, parentVisualiser, false) { }
+        public FormVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile)
         {
             new ListVisualiserHelper(parentVisualiser,
+                isVolatile,
                 MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Form"),
                 this, 
                 "FormVisualiser", 

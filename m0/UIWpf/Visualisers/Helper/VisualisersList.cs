@@ -18,8 +18,11 @@ namespace m0.UIWpf.Visualisers.Helper
     {
         static Dictionary<IVertex, VisualiserData> Visualisers = new Dictionary<IVertex, VisualiserData>();
 
-        public static bool x = false;
-        public static void AddVisualiser(IVisualiser visualiser, IVertex parentVisualiserVertex, bool AddVertex)
+        static IVertex UserCurrentUserSessionVisualisers_vertex = MinusZero.Instance.root.Get(false, @"User\CurrentUser:\Session:\Visualisers:");
+        static IVertex SystemMetaZeroTypexUXItem_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Item");
+        static IVertex SystemMetaZeroTypexUXVolatileItem_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Item\VolatileItem");
+
+        public static void AddVisualiser(IVisualiser visualiser, IVertex parentVisualiserVertex, bool AddVertex, bool isVolatile)
         {
             MinusZero mz = MinusZero.Instance;
 
@@ -28,20 +31,16 @@ namespace m0.UIWpf.Visualisers.Helper
             if (AddVertex)
             {
                 if (parentVisualiserVertex == null)
-                    visualiserVertexEdge = mz.Root.Get(false, @"User\CurrentUser:\Session:\Visualisers:").
-                            AddEdge(mz.Root.Get(false, @"System\Meta\ZeroTypes\UX\Item"), visualiser.Vertex);
+                    visualiserVertexEdge = UserCurrentUserSessionVisualisers_vertex.
+                            AddEdge(SystemMetaZeroTypexUXItem_meta, visualiser.Vertex);
                 else
                 {
-                   // if (x)
-                       // visualiserVertexEdge = mz.Root.Get(false, @"User\CurrentUser:\Session:\Visualisers:").
-                       //     AddEdge(mz.Root.Get(false, @"System\Meta\ZeroTypes\UX\Item"), visualiser.Vertex);
-                   
-                    //visualiserVertexEdge = parentVisualiserVertex.
-                      //             AddEdge(mz.Root.Get(false, @"System\Meta\Base\$Empty"), visualiser.Vertex);
-                    //else
+                    if (isVolatile)
                         visualiserVertexEdge = parentVisualiserVertex.
-                               AddEdge(mz.Root.Get(false, @"System\Meta\ZeroTypes\UX\Item\Item"), visualiser.Vertex);
-
+                               AddEdge(SystemMetaZeroTypexUXVolatileItem_meta, visualiser.Vertex);
+                    else
+                        visualiserVertexEdge = parentVisualiserVertex.
+                               AddEdge(SystemMetaZeroTypexUXItem_meta, visualiser.Vertex);
                 }
             }
 

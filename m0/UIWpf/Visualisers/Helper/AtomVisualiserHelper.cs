@@ -17,7 +17,6 @@ using m0.UIWpf.Commands;
 using m0.Graph.ExecutionFlow;
 using m0.User.Process.UX;
 using m0.UIWpf.UX;
-using m0.UIWpf.UX.Generic;
 using m0.ZeroTypes.UX;
 using m0.ZeroCode.Helpers;
 
@@ -65,12 +64,14 @@ namespace m0.UIWpf.Visualisers.Helper
 
         public AtomVisualiserHelper(
             IVertex parentVisualiser,
+            bool isVolatile,
             IVertex _visualiserMetaVertex,
             IVisualiser _visualiser,
             string _visualiserName,
             FrameworkElement _visualiserAsFrameworkElement,
             IVertex baseEdgeVertex)
             : this(parentVisualiser,
+                  isVolatile,
                  _visualiserMetaVertex,
                  _visualiser,
                  _visualiserName,
@@ -88,6 +89,7 @@ namespace m0.UIWpf.Visualisers.Helper
 
         public AtomVisualiserHelper(
             IVertex parentVisualiser,
+            bool isVolatile,
             IVertex _visualiserMetaVertex,
             IVisualiser _visualiser,
             string _visualiserName,
@@ -98,6 +100,7 @@ namespace m0.UIWpf.Visualisers.Helper
             IVertex baseEdgeVertex,
             UpdateBaseEdgeCallSchemeEnum _updateBaseEdgeCallSchema):
             this(parentVisualiser,
+                isVolatile,
                  _visualiserMetaVertex,
                  _visualiser,
                  _visualiserName,
@@ -115,6 +118,7 @@ namespace m0.UIWpf.Visualisers.Helper
 
         public AtomVisualiserHelper(
             IVertex parentVisualiser,
+            bool isVolatile,
             IVertex visualiserMetaVertex, 
             IVisualiser _visualiser, 
             string _visualiserName, 
@@ -166,11 +170,9 @@ namespace m0.UIWpf.Visualisers.Helper
                     else
                         vVertex = baseEdgeVertex;
 
-                    InitUX();
-
                     Visualiser.Vertex = vVertex;
 
-                    VisualisersList.AddVisualiser(Visualiser, parentVisualiser, false);
+                    VisualisersList.AddVisualiser(Visualiser, parentVisualiser, false, isVolatile);
                 }
                 else
                 {
@@ -190,7 +192,7 @@ namespace m0.UIWpf.Visualisers.Helper
 
                     Visualiser.Vertex.Value = VisualiserName;
 
-                    VisualisersList.AddVisualiser(Visualiser, parentVisualiser, true);
+                    VisualisersList.AddVisualiser(Visualiser, parentVisualiser, true, isVolatile);
                 }               
 
                 VisualiserAsFrameworkElement.Loaded += new RoutedEventHandler(Visualiser.OnLoad);
@@ -355,77 +357,5 @@ namespace m0.UIWpf.Visualisers.Helper
             hasButtonBeenDown = false;
         }
 
-        // UX
-
-        public static bool IsUXSubItem(IVertex v)
-        {
-            if (!GraphUtil.ExistQueryOut(v, "$Is", "Wrap"))
-                return true;
-
-            return false;
-        }
-
-        public void InitUX() // to delete
-        {
-            if (!(Visualiser is IUX))
-                return;
-
-            IUX iux = (IUX)Visualiser;
-
-            IEdge e = EdgeHelper.CreateIEdgeFromEdgeVertex(baseEdgeVertex);
-
-            if (e == null || e.To == null)
-                return;
-
-            IVertex visualiserVertex = e.To;
-
-            bool isUXItem = false;
-            bool isUXAggregator = false;
-
-            if (InstructionHelpers.CheckIfIsOrInherits(visualiserVertex, "UXItem"))
-                isUXItem = true;
-
-            if (InstructionHelpers.CheckIfIsOrInherits(visualiserVertex, "UXAggregator"))
-            {
-                isUXItem = false;
-                isUXAggregator = true;
-            }
-
-            if (isUXItem)
-                iux.UXItem = (UXItem)TypedEdge.Get(e, typeof(UXItem));
-
-            if (isUXAggregator)
-            {
-                iux.IUXAggregator = (UXContainer)TypedEdge.Get(e, typeof(UXContainer));
-                iux.UXItem = (UXItem)iux.IUXAggregator;
-            }
-        }
-
-        public void UpdateControl(FrameworkElement c, UXItem ui)
-        {
-            if (ui.Position != null)
-            {
-                Canvas.SetLeft(c, ui.Position.X);
-                Canvas.SetTop(c, ui.Position.Y);
-            }
-
-            if (ui.Size != null)
-            {
-                c.Width = ui.Size.Width;
-                c.Height = ui.Size.Height;
-            }
-        }
-
-        public void UpdateBorderAndBackgound(Border b, IUXItem ui)
-        {
-            if (ui.BorderColor != null)
-                b.BorderBrush = new SolidColorBrush(ui.BorderColor.GetColor());
-
-            if (ui.BorderSize != 0)
-                b.BorderThickness = new Thickness(ui.BorderSize);
-
-            if (ui.BackgroundColor != null)
-                b.Background = new SolidColorBrush(ui.BackgroundColor.GetColor());
-        }
     }
 }

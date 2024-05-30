@@ -42,6 +42,7 @@ namespace m0.UIWpf.Visualisers
             this.AcceptsReturn = true;
 
             new AtomVisualiserHelper(parentVisualiser,
+                false,
                 MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Test"), 
                 this, 
                 "TestVisualiser", 

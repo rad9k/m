@@ -171,7 +171,8 @@ namespace m0.UIWpf.UX
             this.BorderBrush = (Brush)FindResource("0LightGrayBrush");
 
             new ListVisualiserHelper(parentVisualiser,
-                MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\UXV"),
+                false,
+                MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\UX"),
                 this,
                 "UXV",
                 this,

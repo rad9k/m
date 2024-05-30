@@ -41,6 +41,7 @@ namespace m0.UIWpf.Visualisers
 
            new AtomVisualiserHelper(
                parentVisualiser,
+               false,
                MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Class"), 
                this, 
                "ClassVisualiser", 

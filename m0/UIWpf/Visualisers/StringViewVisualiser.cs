@@ -37,6 +37,7 @@ namespace m0.UIWpf.Visualisers
         public StringViewVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {
             new AtomVisualiserHelper(parentVisualiser,
+                false,
                 MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\StringView"), 
                 this, 
                 "StringViewVisualiser", 

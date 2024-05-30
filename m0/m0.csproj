@@ -167,12 +167,9 @@
     </Compile>
     <Compile Include="ZeroTypes\UX\IItem.cs" />
     <Compile Include="ZeroTypes\UX\ILineDecoratorBase.cs" />
-    <Compile Include="UIWpf\UX\Generic\IUX.cs" />
     <Compile Include="UIWpf\UX\NewUXItem.xaml.cs">
       <DependentUpon>NewUXItem.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UIWpf\UX\Generic\UXTestVisualiser.cs" />
-    <Compile Include="UIWpf\UX\Generic\UXVisualiser.cs" />
     <Compile Include="Util\MathUtil.cs" />
     <Compile Include="Store\FileSystem\AbstractFileSystemVertex.cs" />
     <Compile Include="UIWpf\Commands\ExtraCommandHook.cs" />

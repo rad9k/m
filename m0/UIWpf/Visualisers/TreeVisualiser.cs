@@ -342,6 +342,7 @@ namespace m0.UIWpf.Visualisers
             if (mz != null && mz.IsInitialized)
             {
                 new ListVisualiserHelper(parentVisualiser,
+                    false,
                     MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Tree"),
                     this,
                     "TreeVisualiser",

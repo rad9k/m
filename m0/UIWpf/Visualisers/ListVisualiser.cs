@@ -99,6 +99,7 @@ namespace m0.UIWpf.Visualisers
         protected virtual void PlatformClassInitialize(IVertex baseEdgeVertex)
         {
             new ListVisualiserHelper(parentVisualiser,
+             false,
              MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\List"),
              this, 
              "ListVisualiser", 

@@ -38,6 +38,7 @@ namespace m0.UIWpf.Visualisers
         public DebugVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {            
             new AtomVisualiserHelper(parentVisualiser,
+                false,
                 MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Debug"), 
                 this, 
                 "DebugVisualiser", 

@@ -235,6 +235,7 @@ namespace m0.UIWpf.Visualisers
             this.Background = (Brush)FindResource("0BackgroundBrush");
 
             new ListVisualiserHelper(parentVisualiser,
+              false,
               MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Graph"),
               this, 
               "GraphVisualiser", 

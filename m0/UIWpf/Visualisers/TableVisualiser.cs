@@ -55,6 +55,7 @@ namespace m0.UIWpf.Visualisers
         protected override void PlatformClassInitialize(IVertex baseEdgeVertex)
         {
             new ListVisualiserHelper(parentVisualiser,
+                         false,
                          MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Table"),
                          this,
                          "TableVisualiser",

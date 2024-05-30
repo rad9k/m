@@ -159,7 +159,7 @@ namespace m0.UIWpf
                 }
             }
 
-            Visualiser_Top = new WrapVisualiser(baseEdgeVertex, 0.6, platformClassObject.Vertex);
+            Visualiser_Top = new WrapVisualiser(baseEdgeVertex, 0.6, platformClassObject.Vertex, true);
 
             Content_Top.Content = Visualiser_Top;
 
@@ -238,7 +238,7 @@ namespace m0.UIWpf
         {
             if (Visualiser_Down == null)
             {               
-                Visualiser_Down = new CodeVisualiser(baseEdge, platformClassObject.Vertex);
+                Visualiser_Down = new CodeVisualiser(baseEdge, platformClassObject.Vertex, true);
 
                 Visualiser_Down.CodeControl.ShowScrollBar = false;
 
@@ -266,7 +266,7 @@ namespace m0.UIWpf
             {                
                 if (CODE_ON_RIGHT)
                 {
-                    Visualiser_Right = new CodeVisualiser(baseEdge, platformClassObject.Vertex);
+                    Visualiser_Right = new CodeVisualiser(baseEdge, platformClassObject.Vertex, true);
 
                     ((CodeVisualiser)Visualiser_Right).CodeControl.ShowScrollBar = false;
 
@@ -288,7 +288,7 @@ namespace m0.UIWpf
                     Interaction.BeginInteractionWithGraph();
                     ////////////////////////////////////////
                     
-                    Visualiser_Right = new FormVisualiser(baseEdge, platformClassObject.Vertex);
+                    Visualiser_Right = new FormVisualiser(baseEdge, platformClassObject.Vertex, true);
 
                     GraphUtil.SetVertexValue(Visualiser_Right.Vertex, metaAlignLeft_meta, "False");
                     GraphUtil.SetVertexValue(Visualiser_Right.Vertex, scale_meta, 80);

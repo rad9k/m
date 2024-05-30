@@ -43,7 +43,7 @@ namespace m0.UIWpf.Visualisers
 
         public string[] MetaTriggeringUpdateView { get; }
 
-        public WrapVisualiser(IVertex baseEdgeVertex, IVertex parentVertex) : this(baseEdgeVertex, 1.0, parentVertex) { }
+        public WrapVisualiser(IVertex baseEdgeVertex, IVertex parentVertex) : this(baseEdgeVertex, 1.0, parentVertex, false) { }
 
         // TypedEdge START
         public WrapVisualiser(IEdge _edge)
@@ -56,7 +56,7 @@ namespace m0.UIWpf.Visualisers
         public IEdge Edge { get; set; }
         // TypedEdge END
 
-        public WrapVisualiser(IVertex baseEdgeVertex, double _scale, IVertex parentVertex)
+        public WrapVisualiser(IVertex baseEdgeVertex, double _scale, IVertex parentVertex, bool isVolatile)
         {
             Scale = _scale;
 
@@ -67,6 +67,7 @@ namespace m0.UIWpf.Visualisers
             this.Orientation = Orientation.Horizontal;            
 
             new ListVisualiserHelper(parentVertex,
+                isVolatile,
                 MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Wrap"),
                 this, 
                 "WrapVisualiser", 

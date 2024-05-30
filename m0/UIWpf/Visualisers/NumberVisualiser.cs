@@ -48,6 +48,7 @@ namespace m0.UIWpf.Visualisers
         public NumberVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {
             new AtomVisualiserHelper(parentVisualiser,
+                false,
                 visualiserMetaVertex,
                 this,
                 visualiserName,

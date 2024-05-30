@@ -39,6 +39,7 @@ namespace m0.UIWpf.Visualisers
             this.Background = (Brush)FindResource("0LightGrayBrush");
 
             new AtomVisualiserHelper(parentVisualiser,
+                false,
                 MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Edge"), 
                 this, 
                 "EdgeVisualiser", 
