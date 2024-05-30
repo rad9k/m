@@ -20,6 +20,7 @@ using Xceed.Wpf.AvalonDock.Layout;
 using m0.User.Process.UX;
 using m0.UIWpf.Visualisers.Helper;
 using m0.UIWpf.Controls;
+using m0.ZeroTypes.UX;
 
 namespace m0.UIWpf
 {
@@ -53,6 +54,17 @@ namespace m0.UIWpf
             this.PreviewMouseWheel += PlatformClassSimpleWrapper_PreviewMouseWheel;
 
             SetContentPresenters();
+
+
+            this.Unloaded += PlatformClassSimpleWrapper_Unloaded;
+        }
+
+        private void PlatformClassSimpleWrapper_Unloaded(object sender, RoutedEventArgs e)
+        {
+            foreach(IEdge e in )
+
+
+            Visualiser_Top.Edge.From.DeleteEdge(Visualiser_Top.Edge);
         }
 
         private void PlatformClassSimpleWrapper_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
@@ -520,5 +532,6 @@ namespace m0.UIWpf
         }
 
         // RIGHT END
+
     }
 }
