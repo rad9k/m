@@ -667,11 +667,18 @@ namespace m0.UIWpf.Visualisers
             }
         }
 
+
+        bool isDisposed = false;
         public void Dispose()
         {
-            VisualiserHelper.Dispose();
+            if (!isDisposed)
+            {
+                isDisposed = true;
 
-            DisposeTreeViewItems(this.Items);              
+                VisualiserHelper.Dispose();
+
+                DisposeTreeViewItems(this.Items);
+            }
         }
 
         private IVertex vertexByLocationToReturn;

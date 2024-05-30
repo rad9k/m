@@ -118,7 +118,18 @@ namespace m0.ZeroTypes
                 if (toCreateType == null)
                     return null;
 
-                return (ITypedEdge)Activator.CreateInstance(toCreateType, edge);
+                // as all of the m0.UIWpf.Visualisers.* are not created with Edges (constructor used is Vertex based),
+                // we can not use those objects as fully working ItypedEdges, so that is why we will need to create a separate
+                // object for those
+                if (!toCreateType.GetInterfaces().Contains(typeof(IItem))) 
+                    toCreateType = typeof(Edge);
+
+                object obj = Activator.CreateInstance(toCreateType, edge);
+
+                if (obj is ITypedEdge)
+                    return (ITypedEdge)obj;
+
+                return null;
             }
         }
 

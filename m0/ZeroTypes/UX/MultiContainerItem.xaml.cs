@@ -106,7 +106,7 @@ namespace m0.ZeroTypes.UX
         {            
             int cnt = 0;            
 
-            foreach (IItem _i in Items)
+            foreach (ITypedEdge _i in Items)
             {
                 IUXItem i = UXItem.GetUXItem(this, _i);
 
@@ -309,7 +309,7 @@ namespace m0.ZeroTypes.UX
 
         public void ItemVisualUpdate_Items()
         {
-            foreach (IItem _i in Items)
+            foreach (ITypedEdge _i in Items)
             {
                 IUXItem i = UXItem.GetUXItem(this, _i);
 
@@ -336,7 +336,7 @@ namespace m0.ZeroTypes.UX
 
             //
 
-            foreach (IItem _i in Items)
+            foreach (ITypedEdge _i in Items)
             {
                 IUXItem i = UXItem.GetUXItem(this, _i);
 
@@ -357,7 +357,7 @@ namespace m0.ZeroTypes.UX
 
             //
 
-            foreach (IItem _i in Items)
+            foreach (ITypedEdge _i in Items)
             {
                 IUXItem i = UXItem.GetUXItem(this, _i);
 
@@ -382,7 +382,7 @@ namespace m0.ZeroTypes.UX
 
             //
 
-            foreach (IItem _i in Items)
+            foreach (ITypedEdge _i in Items)
             {
                 IUXItem i = UXItem.GetUXItem(this, _i);
 
@@ -405,7 +405,7 @@ namespace m0.ZeroTypes.UX
 
         void UpdateOrAddSubItemAchors(bool doUpdate)
         {
-            foreach (IItem _i in Items)
+            foreach (ITypedEdge _i in Items)
             {
                 IUXItem i = UXItem.GetUXItem(this, _i);
 

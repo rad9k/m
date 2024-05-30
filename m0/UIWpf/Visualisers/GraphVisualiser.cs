@@ -820,9 +820,15 @@ namespace m0.UIWpf.Visualisers
             set { VisualiserHelper.SetVertex(value); }
         }
 
+        bool isDisposed = false;
         public void Dispose()
         {
-            VisualiserHelper.Dispose();
+            if (!isDisposed)
+            {
+                isDisposed = true;
+
+                VisualiserHelper.Dispose();
+            }
         }
 
 

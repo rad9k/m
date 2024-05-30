@@ -443,14 +443,13 @@ namespace m0.UIWpf.UX
             if (item is IUXMultiContainerSubItem)
             {
                 IUXMultiContainerSubItem item_multiContainerSubItem = (IUXMultiContainerSubItem)item;
-                foreach (IItem _i in item.Items)
+                foreach (ITypedEdge _i in item.Items)
                 {
                     IUXItem i = UXItem.GetUXItem(this, _i);
 
                     if (i == null)
                         continue;
-
-                    //HostItem(host, i, newItemCreation);
+                    
                     HostItem(item_multiContainerSubItem, i, newItemCreation);
                 }
 
@@ -493,7 +492,7 @@ namespace m0.UIWpf.UX
                 if (container.Canvas != null)
                     container.Canvas.Children.Clear();
 
-                foreach (IItem _i in container.Items)
+                foreach (ITypedEdge _i in container.Items)
                 {
                     IUXItem i = UXItem.GetUXItem(this, _i);
 
@@ -564,7 +563,7 @@ namespace m0.UIWpf.UX
         {
             List<MetaToPair> metatopairs = new List<MetaToPair>();
 
-           foreach(IItem _item in Items_all)
+           foreach(ITypedEdge _item in Items_all)
                {
                    IUXItem item = UXItem.GetUXItem(this, _item);
 
@@ -686,7 +685,7 @@ namespace m0.UIWpf.UX
 
             UnselectAllSelectedEdges_NoSelectedVerticesUpdated();
 
-            foreach(IItem _i in Items_all)                
+            foreach(ITypedEdge _i in Items_all)                
                 {
                     IUXItem i = UXItem.GetUXItem(this, _i);
 
@@ -743,7 +742,7 @@ namespace m0.UIWpf.UX
 
                 //
 
-                foreach (IItem _i in Items)
+                foreach (ITypedEdge _i in Items)
                 {
                     IUXItem i = UXItem.GetUXItem(this, _i);
 
@@ -1243,7 +1242,7 @@ namespace m0.UIWpf.UX
             ILineDecoratorBase bestLine = null;
             IUXItem bestLine_FromItem = null;
 
-            foreach (IItem _i in Items_all)
+            foreach (ITypedEdge _i in Items_all)
                 {
                     IUXItem i = UXItem.GetUXItem(this, _i);
 
@@ -1437,7 +1436,7 @@ namespace m0.UIWpf.UX
 
         protected void UnselectAll()
         {            
-            foreach (IItem _i in Items_all)
+            foreach (ITypedEdge _i in Items_all)
             {
                 IUXItem i = UXItem.GetUXItem(this, _i);
 
@@ -1524,17 +1523,11 @@ namespace m0.UIWpf.UX
 
                     GraphChangeTrigger.RemoveListener(VisualiserHelper.graphChangeListenerEdge);
 
-                    foreach (IItem _i in Items)
-                    {
-                        IUXItem i = UXItem.GetUXItem(this, _i);
+                    foreach (ITypedEdge e in Items)
+                        if (e is IDisposable)
+                            ((IDisposable)e).Dispose();
 
-                        if (i == null)
-                            continue;
-
-                        i.Dispose(); // that will iterate i.Items and will do Dispose for each of them
-                    }
-
-                    foreach (IItem e in VolatileItems)
+                    foreach (ITypedEdge e in VolatileItems)
                     {
                         Vertex.DeleteEdge(e.Edge);
 
@@ -1555,7 +1548,7 @@ namespace m0.UIWpf.UX
 
             int highestNestingLevel = -1;
 
-            foreach (IItem _i in Items_all)
+            foreach (ITypedEdge _i in Items_all)
             {
                 IUXItem i = UXItem.GetUXItem(this, _i);
 
@@ -1587,7 +1580,7 @@ namespace m0.UIWpf.UX
 
             int highestNestingLevel = -1;
 
-            foreach (IItem _i in Items_all)
+            foreach (ITypedEdge _i in Items_all)
             {
                 IUXItem i = UXItem.GetUXItem(this, _i);
 
@@ -1981,7 +1974,7 @@ namespace m0.UIWpf.UX
         }
 
         private IUXItem AddDiagramItem_Base(IUXContainer host, Point p, UXTemplate UXTemplate){
-            IItem _i = host.AddItem(UXTemplate.ItemClass);
+            ITypedEdge _i = host.AddItem(UXTemplate.ItemClass);
 
             if (!(_i is IUXItem))
                 return null;
@@ -2049,7 +2042,7 @@ namespace m0.UIWpf.UX
 
         public void CheckAndUpdateDiagramLines()
         {        
-            foreach(IItem _i in Items_all)
+            foreach(ITypedEdge _i in Items_all)
             {
                 IUXItem item = UXItem.GetUXItem(this, _i);
 
@@ -2649,41 +2642,41 @@ namespace m0.UIWpf.UX
             return new Edge(baseEdgeEdge);
         }
 
-        public IList<IItem> Items
+        public IList<ITypedEdge> Items
         {
             get
             {
                 IList<IEdge> list = GraphUtil.GetQueryOut(Vertex, "Item", null);
 
-                IList<IItem> ret = new List<IItem>();
+                IList<ITypedEdge> ret = new List<ITypedEdge>();
 
                 foreach (IEdge e in list)
                 {
-                    ITypedEdge _i = TypedEdge.Get(e);
+                    ITypedEdge item = TypedEdge.Get(e);
 
-                    if (_i != null && _i is IUXItem)
+                    if (item != null)
                     {
-                        IItem i = (IItem)_i;
-                        i.ParentItem = this;
-                        ret.Add(i);
-                    }                        
+                        if (item is IItem)
+                            ((IItem)item).ParentItem = this;
+
+                        ret.Add(item);
+                    }
                 }
 
                 return ret;
             }
-        }        
+        }
 
-        public IItem AddItem(IVertex typeVertex)
+        public ITypedEdge AddItem(IVertex typeVertex)
         {
             IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Item_meta);
 
-            ITypedEdge i = TypedEdge.Get(newEdge);
+            ITypedEdge item = TypedEdge.Get(newEdge);
 
-            if (i != null && i is IItem)
+            if (item != null)
             {
-                IItem item = (IItem)i;
-
-                item.ParentItem = this;
+                if (item is IItem)
+                    ((IItem)item).ParentItem = this;
 
                 if (item is IUXItem)
                     ((IUXItem)item).NestingLevel = NestingLevel + 1;
@@ -2694,24 +2687,24 @@ namespace m0.UIWpf.UX
             return null;
         }
 
-        public IList<IItem> VolatileItems
+        public IList<ITypedEdge> VolatileItems
         {
             get
             {
                 IList<IEdge> list = GraphUtil.GetQueryOut(Vertex, "VolatileItem", null);
 
-                IList<IItem> ret = new List<IItem>();
+                IList<ITypedEdge> ret = new List<ITypedEdge>();
 
                 foreach (IEdge e in list)
                 {
-                    ITypedEdge _i = TypedEdge.Get(e);
+                    ITypedEdge item = TypedEdge.Get(e);
 
-                    if (_i != null && _i is IItem)
+                    if (item != null)
                     {
-                        IItem i = (Item)_i;
+                        if (item is IItem)
+                            ((IItem)item).ParentItem = this;
 
-                        i.ParentItem = this;
-                        ret.Add(i);
+                        ret.Add(item);
                     }
                 }
 
@@ -2719,17 +2712,19 @@ namespace m0.UIWpf.UX
             }
         }
 
-        public IItem AddVolatileItem(IVertex typeVertex)
+        public ITypedEdge AddVolatileItem(IVertex typeVertex)
         {
             IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, VolatileItem_meta);
 
-            ITypedEdge _i = TypedEdge.Get(newEdge);
+            ITypedEdge item = TypedEdge.Get(newEdge);
 
-            if (_i != null && _i is IItem)
+            if (item != null)
             {
-                IItem item = (IItem)_i;
+                if (item is IItem)
+                    ((IItem)item).ParentItem = this;
 
-                item.ParentItem = this;
+                if (item is IUXItem)
+                    ((IUXItem)item).NestingLevel = NestingLevel + 1;
 
                 return item;
             }

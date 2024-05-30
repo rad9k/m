@@ -99,14 +99,14 @@ namespace m0.ZeroTypes.UX
 
                 foreach (IEdge e in list)
                 {
-                    ITypedEdge _i = TypedEdge.Get(e);
+                    ITypedEdge item = TypedEdge.Get(e);
 
-                    if(_i != null && _i is ITypedEdge)
+                    if(item != null)
                     {
-                        IItem i = (Item)_i;
-
-                        i.ParentItem = this;
-                        ret.Add(i);
+                        if (item is IItem)
+                            ((IItem)item).ParentItem = this;
+                        
+                        ret.Add(item);
                     }
                 }
 
@@ -114,17 +114,16 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        public IItem AddItem(IVertex typeVertex)
+        public ITypedEdge AddItem(IVertex typeVertex)
         {
             IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, Item_meta);
 
-            ITypedEdge _i = TypedEdge.Get(newEdge);
+            ITypedEdge item = TypedEdge.Get(newEdge);
             
-            if (_i != null && _i is ITypedEdge)
+            if (item != null)
             {
-                IItem item = (IItem)_i;
-
-                item.ParentItem = this;
+                if (item is IItem)
+                    ((IItem)item).ParentItem = this;
 
                 return item;
             }
@@ -138,18 +137,18 @@ namespace m0.ZeroTypes.UX
             {
                 IList<IEdge> list = GraphUtil.GetQueryOut(Vertex, "VolatileItem", null);
 
-                IList<IItem> ret = new List<IItem>();
+                IList<ITypedEdge> ret = new List<ITypedEdge>();
 
                 foreach (IEdge e in list)
                 {
-                    ITypedEdge _i = TypedEdge.Get(e);
+                    ITypedEdge item = TypedEdge.Get(e);
 
-                    if (_i != null && _i is ITypedEdge)
+                    if (item != null)
                     {
-                        IItem i = (Item)_i;
+                        if (item is IItem)
+                            ((IItem)item).ParentItem = this;
 
-                        i.ParentItem = this;
-                        ret.Add(i);
+                        ret.Add(item);
                     }
                 }
 
@@ -157,23 +156,24 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        public IItem AddVolatileItem(IVertex typeVertex)
+        public ITypedEdge AddVolatileItem(IVertex typeVertex)
         {
             IEdge newEdge = VertexOperations.AddInstanceAndReturnEdge(Vertex, typeVertex, VolatileItem_meta);
 
-            ITypedEdge _i = TypedEdge.Get(newEdge);
+            ITypedEdge item = TypedEdge.Get(newEdge);
 
-            if (_i != null && _i is ITypedEdge)
+            if (item != null)
             {
-                IItem item = (IItem)_i;
-
-                item.ParentItem = this;
+                if (item is IItem)
+                    ((IItem)item).ParentItem = this;
 
                 return item;
             }
 
             return null;
         }
+
+
 
         public void MoveExistingItemAsThisItemsSubItem(IItem item)
         {
@@ -198,11 +198,11 @@ namespace m0.ZeroTypes.UX
             {
                 IsDisposed = true;
 
-                foreach (IItem e in Items)
+                foreach (ITypedEdge e in Items)
                     if (e is IDisposable)
                         ((IDisposable)e).Dispose();
 
-                foreach (IItem e in VolatileItems)
+                foreach (ITypedEdge e in VolatileItems)
                 {
                     Vertex.DeleteEdge(e.Edge);
 

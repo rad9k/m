@@ -302,11 +302,17 @@ namespace m0.UIWpf.Visualisers
                     if (e.To.Get(false, "$Hide:") == null)
                         PreFillFormAnalyseEdge(e.To, false);
         }
-       
+
+        bool isDisposed = false;
         public void Dispose()
-        {         
-            VisualiserHelper.Dispose();
-        }        
+        {
+            if (!isDisposed)
+            {
+                isDisposed = true;
+
+                VisualiserHelper.Dispose();
+            }
+        }
 
         IVertex BaseVertexEdge = null;
         

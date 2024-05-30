@@ -23,11 +23,11 @@ namespace m0.ZeroTypes.UX
 
         IList<ITypedEdge> Items { get; }
 
-        IItem AddItem(IVertex typeVertex);
+        ITypedEdge AddItem(IVertex typeVertex);
 
         IList<ITypedEdge> VolatileItems { get; }
 
-        IItem AddVolatileItem(IVertex typeVertex);
+        ITypedEdge AddVolatileItem(IVertex typeVertex);
 
         void MoveExistingItemAsThisItemsSubItem(IItem item);
 
