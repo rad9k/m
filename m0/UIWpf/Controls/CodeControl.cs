@@ -235,7 +235,9 @@ namespace m0.UIWpf.Visualisers
                     if (generated != null)
                         editor.Text = generated;
 
-                    editor.Background = (Brush)FindResource("0BackgroundBrush");
+                    //editor.Background = (Brush)FindResource("0BackgroundBrush");
+
+                    editor.Background = null;
                 }
                 else
                 {
@@ -357,7 +359,12 @@ namespace m0.UIWpf.Visualisers
         }
 
         void EditSetup()
-        {            
+        {
+            editor.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+            editor.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+
+            editor.Background = new SolidColorBrush(Colors.Green);
+
             editor.FontFamily = new FontFamily("Consolas");
             editor.FontWeight = FontWeight.FromOpenTypeWeight(1);
 
@@ -460,7 +467,9 @@ namespace m0.UIWpf.Visualisers
             {
                 editor.Text = generated;
 
-                editor.Background = (Brush)FindResource("0BackgroundBrush");
+                //editor.Background = (Brush)FindResource("0BackgroundBrush");
+
+                editor.Background = null;
             });
 
             
