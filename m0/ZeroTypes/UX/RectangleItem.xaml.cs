@@ -18,6 +18,7 @@ using m0.ZeroTypes;
 using m0.Util;
 using System.Xml.Linq;
 using m0.User.Process.UX;
+using m0.UIWpf.Visualisers;
 
 namespace m0.ZeroTypes.UX
 {
@@ -43,6 +44,15 @@ namespace m0.ZeroTypes.UX
             InitializeComponent();
         }
 
+        protected void VisualiserHack()
+        {
+            if (ContentVisualiser is CodeVisualiser)
+            {
+                ((CodeVisualiser)ContentVisualiser).UpdateView();
+                ((CodeVisualiser)ContentVisualiser).ScaleChange();
+            }
+        }
+
         public override void VertexSetedUp()
         {
             if (VisualiserClass != null)        
@@ -55,17 +65,23 @@ namespace m0.ZeroTypes.UX
 
                 ContentVisualiser = PlatformClass.CreatePlatformObject(VisualiserClass, BaseEdge, this.Vertex, true);
 
-                Grid.SetRow((UIElement)ContentVisualiser, 2);
-                
-                TheGrid.Children.Add((UIElement)ContentVisualiser);
+                if (ContentVisualiser != null)
+                {
+                    Grid.SetRow((UIElement)ContentVisualiser, 2);
+
+                    TheGrid.Children.Add((UIElement)ContentVisualiser);
+
+                    OwningVisualiser.AddEdgesFromDefintion(ContentVisualiser.Vertex, VisualiserVertex);
+
+                    VisualiserHack();
+                }
             }
             else
             {
                 ContentVisualiser = null;
             }
                     
-            if (VisualiserVertex != null && ContentVisualiser != null)
-                OwningVisualiser.AddEdgesFromDefintion(ContentVisualiser.Vertex, VisualiserVertex);
+
 
             base.VertexSetedUp();
         }

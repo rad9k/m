@@ -54,17 +54,6 @@ namespace m0.UIWpf
             this.PreviewMouseWheel += PlatformClassSimpleWrapper_PreviewMouseWheel;
 
             SetContentPresenters();
-
-
-           // this.Unloaded += PlatformClassSimpleWrapper_Unloaded;
-        }
-
-        private void PlatformClassSimpleWrapper_Unloaded(object sender, RoutedEventArgs e)
-        {
-          //  foreach(IEdge e in )
-
-
-          //  Visualiser_Top.Edge.From.DeleteEdge(Visualiser_Top.Edge);
         }
 
         private void PlatformClassSimpleWrapper_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
