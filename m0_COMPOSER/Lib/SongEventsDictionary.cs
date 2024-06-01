@@ -70,7 +70,7 @@ namespace m0_COMPOSER.Lib
                         canPlay = false;
                 }
 
-                if (noteOutputVeretx != null && canPlay && InstructionHelpers.CheckIfIsOrInherits(noteOutputVeretx, "NoteOutput"))
+                if (noteOutputVeretx != null && canPlay && InstructionHelpers.CheckIfIsOrInherits_WRONG(noteOutputVeretx, "NoteOutput"))
                     outputDictionary.Add(noteOutputVeretx);
                 else
                     outputDictionary.Add(null);

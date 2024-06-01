@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace m0.ZeroCode.Helpers
 {
@@ -59,7 +60,32 @@ namespace m0.ZeroCode.Helpers
             return false;
         }
 
-        public static bool CheckIfInherits(IVertex v, string i)
+        // PROPER BEG
+
+        baseVertex
+    allIs = get $Is:
+
+	forall e in allIs
+		if e.To == test
+			return true
+
+	foreach e in allIs
+		if CheckIfIherits(e.to, test)
+			return true
+
+
+CheckIfInherits(IVertex baseVertex, string test)
+	foreach e in get $Inherits
+		if e.To == test
+			return true
+		if CheckIfIngerits(e.To, test)
+			return true
+
+        // PROPER END
+
+        // WRONG BEG
+
+        public static bool CheckIfInherits_WRONG(IVertex v, string i) // need to recursively check $Inheritence
         {
             IVertex iv = GraphUtil.GetQueryOutFirst(v, "$Inherits", (object)i);
 
@@ -69,9 +95,9 @@ namespace m0.ZeroCode.Helpers
             return false;
         }
 
-        public static bool CheckIfIsOrInherits(IVertex baseVertex, string value) 
-            // $Inherits target can have $Inherits also. This is not checked here, so basically IS WRONG
-            // BUT as this seems to be working, I leave it for now XXX
+        public static bool CheckIfIsOrInherits_WRONG(IVertex baseVertex, string value) // need to recursively check $Inheritence
+                                                                                       // $Inherits target can have $Inherits also. This is not checked here, so basically IS WRONG
+                                                                                       // BUT as this seems to be working IN SOME PLACES, I leave it for now XXX
         {
             IList<IEdge> allIs = InstructionHelpers.GetAllIs(baseVertex);
 
@@ -84,33 +110,35 @@ namespace m0.ZeroCode.Helpers
                     if (GraphUtil.GetValueAndCompareStrings(ee.To, value))
                         return true;*/
 
-            return CheckIfIsInherits(baseVertex, value);            
+            return CheckIfIsInherits_WRONG(baseVertex, value);            
         }
 
-        public static bool CheckIfIsInherits(IVertex baseVertex, string value)
+        public static bool CheckIfIsInherits_WRONG(IVertex baseVertex, string value) // need to recursively check $Inheritence
         // $Inherits target can have $Inherits also. This is not checked here, so basically IS WRONG
-        // BUT as this seems to be working, I leave it for now XXX
+        // BUT as this seems to be working IN SOME PLACES, I leave it for now XXX
         {
             IList<IEdge> allIs = InstructionHelpers.GetAllIs(baseVertex);            
 
             foreach (IEdge e in allIs)                
-                if(GraphUtil.GetQueryOutCount(e.To, "$Inherits", value)>0)                
+                if(GraphUtil.GetQueryOutCount(e.To, "$Inherits", value) > 0)                
                     return true;
 
             return false;
         }
 
-        public static bool CheckIfIsAtomType(IVertex is_v)
+        public static bool CheckIfIsAtomType_WRONG(IVertex is_v) // need to recursively check $Inheritence
         {
             if (is_v == null)
                 return true;
 
-            return CheckIfIsOrInherits(is_v, "AtomType");
+            return CheckIfIsOrInherits_WRONG(is_v, "AtomType");
         }
+
+        // WRONG END
 
         public static void CopyVertex(IEdge edgeToCopy, IVertex copyTo)
         {
-            if (CheckIfIsAtomType(edgeToCopy.To))
+            if (CheckIfIsAtomType_WRONG(edgeToCopy.To))
                 copyTo.AddVertex(edgeToCopy.Meta, edgeToCopy.To.Value);            
             else            
                 GraphUtil.DeepCopy(edgeToCopy, copyTo);

@@ -486,7 +486,7 @@ namespace m0
                 //Do{$MinCardinality:0,$MaxCardinality:1}
                 ",Variable{$MinCardinality:0,$MaxCardinality:-1},Type{$$NoSequentialExecution:,$MinCardinality:0,$MaxCardinality:-1}}" +
                 ",StackFrameCreatorWithInputOutput{Output{$$NoSequentialExecution:,$MinCardinality:0,$MaxCardinality:1},InputParameter{$$NoSequentialExecution:,$MinCardinality:0,$MaxCardinality:-1}}" +
-                ",Function{$$NoSequentialExecution:},Block{H"+                 
+                ",Function{$$NoSequentialExecution:},Block,NamedBlock"+                 
                 ",While{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}}" +
                 ",ForEach{Variable{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},Set{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}}" +
                 ",If{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}},Test{Expression{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}},Case{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}},Fallback" +
@@ -502,6 +502,7 @@ namespace m0
             // Block
 
             AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "Block"), "Block");
+            AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "NamedBlock"), "Block");
 
             // query
 
@@ -796,9 +797,13 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"Block").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "Action"));
-           /* LegacySystem.Graph.EasyVertex.Get(smu, false, @"Block").AddEdge( // this probably not want
+            /* LegacySystem.Graph.EasyVertex.Get(smu, false, @"Block").AddEdge( // this probably not want
+                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
+                 LegacySystem.Graph.EasyVertex.Get(smu, false, "StackFrameCreator"));*/
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"NamedBlock").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
-                LegacySystem.Graph.EasyVertex.Get(smu, false, "StackFrameCreator"));*/
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "Block"));            
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"While").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
@@ -1026,6 +1031,7 @@ namespace m0
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphIncludingLinksAsIsInLeftVertex"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Block"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "NamedBlock"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Function"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "If"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Test"));
@@ -2426,16 +2432,15 @@ namespace m0
             o_methodCall_any_param.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
                 Empty);
 
-            // block 
+            // namedblock 
             //
-            // block (?<name>))
+            // namedblock (?<name>))
 
-            IVertex o_block = k.AddVertex(keyword, "block (?<name>)");
+            IVertex o_block = k.AddVertex(keyword, "namedblock (?<name>)");
 
             IVertex o_block_base = o_block.AddVertex(any, "(?<name>)");
 
-            o_block_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Block"));
-            o_block_base.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Block\HasName"));
+            o_block_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"NamedBlock"));            
 
             // block 
             //
@@ -3473,7 +3478,7 @@ namespace m0
                 "Class:RhombusItem{Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1}}," +
                 "Class:CodeItem{Attribute:HideHeader{$MinCardinality:0,$MaxCardinality:1},Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:FontSize{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:15,MinValue:1,MaxValue:40,$DisplayLarger:},Attribute:ShowWhiteSpace{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowLineNumbers{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowFolding{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:HighlightedLine{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowScrollBars{$MinCardinality:0,$MaxCardinality:1},Attribute:FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}," +
                 "Class:RectangleItem{Attribute:HideHeader{$MinCardinality:0,$MaxCardinality:1},Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:RoundEdgeSize{MinValue:0,MaxValue:200,$MinCardinality:0,$MaxCardinality:1},Association:VisualiserClass{$MinCardinality:0,$MaxCardinality:1},Attribute:VisualiserVertex{$MinCardinality:0,$MaxCardinality:1}}," +
-                "Class:LineDecorator{Association:StartAnchor{$MinCardinality:0,$MaxCardinality:1},Association:EndAnchor{$MinCardinality:0,$MaxCardinality:1},Attribute:IsDashed{$MinCardinality:0,$MaxCardinality:1}}," +
+                "Class:LineDecorator{Association:StartAnchor{$MinCardinality:0,$MaxCardinality:1},Association:EndAnchor{$MinCardinality:0,$MaxCardinality:1},Attribute:IsDashed{$MinCardinality:0,$MaxCardinality:1},Attribute:HideLabel{$MinCardinality:0,$MaxCardinality:1}}," +
                 "Enum:LineEndEnum{EnumValue:Straight,EnumValue:Arrow,EnumValue:Triangle,EnumValue:FilledTriangle,EnumValue:Diamond,EnumValue:FilledDiamond}," +
                 "Class:MetaExtendedLineDecorator{Association:StartAnchor{$MinCardinality:0,$MaxCardinality:1},Association:EndAnchor{$MinCardinality:0,$MaxCardinality:1},Attribute:IsDashed{$MinCardinality:0,$MaxCardinality:1}}," +
                 "Class:ContainerItem{Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:RoundEdgeSize{MinValue:0,MaxValue:200,$MinCardinality:0,$MaxCardinality:1}}," +
@@ -3610,6 +3615,9 @@ namespace m0
             // smzu.Get(false, @"LineDecorator\EndAnchor").AddEdge(sm.Get(false, @"?$Section"), lookSection);
 
             smzu.Get(false, @"LineDecorator\IsDashed").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"?Boolean"));
+            //smzu.Get(false, @"LineDecorator\IsDashed").AddEdge(sm.Get(false, @"?$Section"), lookSection);
+
+            smzu.Get(false, @"LineDecorator\HideLabel").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"?Boolean"));
             //smzu.Get(false, @"LineDecorator\IsDashed").AddEdge(sm.Get(false, @"?$Section"), lookSection);
 
             // MetaExtendedLineDecorator
@@ -5661,6 +5669,9 @@ namespace m0
 
             foreach (var de in baseColors)
                 ColorHelper.AddColor(Colors, "VeryVeryLight"+de.Key, ScaleUp(de.Value[0], 0.8), ScaleUp(de.Value[1], 0.8), ScaleUp(de.Value[2], 0.8), 255);
+
+            foreach (var de in baseColors)
+                ColorHelper.AddColor(Colors, "VeryVeryVeryLight" + de.Key, ScaleUp(de.Value[0], 0.92), ScaleUp(de.Value[1], 0.92), ScaleUp(de.Value[2], 0.92), 255);
 
         }
 

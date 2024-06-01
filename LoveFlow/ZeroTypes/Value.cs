@@ -26,13 +26,13 @@ namespace LovFlov.ZeroTypes
                 if (e == null)
                     return null;
 
-                if (InstructionHelpers.CheckIfIsOrInherits(e.To, "ParameterDefinition"))
+                if (InstructionHelpers.CheckIfIsOrInherits_WRONG(e.To, "ParameterDefinition"))
                 {
                     return (ValueDefinition)TypedEdge.Get(e, typeof(ParameterDefinition));
                 }
                 else
                 {
-                    if (InstructionHelpers.CheckIfIsOrInherits(e.To, "AddressDefinition"))
+                    if (InstructionHelpers.CheckIfIsOrInherits_WRONG(e.To, "AddressDefinition"))
                     {
                         return (ValueDefinition)TypedEdge.Get(e, typeof(AddressDefinition));
                     }

@@ -23,7 +23,7 @@ namespace m0.ZeroUML.Instructions
 
             foreach (IEdge child in children)
             {
-                if (!InstructionHelpers.CheckIfInherits(child.Meta, "Selector"))
+                if (!InstructionHelpers.CheckIfInherits_WRONG(child.Meta, "Selector"))
                     continue;
 
                 bool shouldAdd = false;

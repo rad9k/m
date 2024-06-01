@@ -300,7 +300,7 @@ namespace m0.Graph.ExecutionFlow
         {
             bool dummy;
 
-            if (InstructionHelpers.CheckIfIsInherits(baseVertex, "Executable"))
+            if (InstructionHelpers.CheckIfIsInherits_WRONG(baseVertex, "Executable"))
             {
                 if(InstructionHelpers.CheckIfIs(baseVertex, "DotNetStaticMethod"))
                     return CallableEndPointDictionary_INIEIOV_ZCE.CallEndPoint(exe, baseVertex);

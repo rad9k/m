@@ -328,7 +328,7 @@ namespace m0.ZeroUML.Instructions
             IVertex leftExpression = GetLeft(instructionVertex);
             IVertex rightExpression = GetRight(instructionVertex);
 
-            bool leftPropagateToStackExpression = CheckIfIsInherits(leftExpression, "PropagateToStackExpression");
+            bool leftPropagateToStackExpression = CheckIfIsInherits_WRONG(leftExpression, "PropagateToStackExpression");
 
             if (leftExpression == null || rightExpression == null)
                 return exe.Stack;
@@ -2294,7 +2294,7 @@ namespace m0.ZeroUML.Instructions
             if(methodBody==null) // not found
                 return CreateStack();
 
-            if (methodBody!=null && !CheckIfIsOrInherits(methodBody, "Method")) // not a method
+            if (methodBody!=null && !CheckIfIsOrInherits_WRONG(methodBody, "Method")) // not a method
                 return CreateStack();
 
             IList<IEdge> inputParameters = GraphUtil.GetQueryOut(methodBody, "InputParameter", null);
@@ -2346,7 +2346,7 @@ namespace m0.ZeroUML.Instructions
             INoInEdgeInOutVertexVertex localStack = CreateStack();
 
             foreach(IEdge e in expressionExecution)            
-                if(CheckIfIsOrInherits(e.To,"Class"))
+                if(CheckIfIsOrInherits_WRONG(e.To,"Class"))
                     ZeroUMLInstructionHelpers.AddInstance(localStack, e.To);
                         
             return localStack;

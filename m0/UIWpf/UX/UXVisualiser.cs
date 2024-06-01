@@ -1878,13 +1878,12 @@ namespace m0.UIWpf.UX
 
             if (eToEdgeTarget != null
                 && eToEdgeTarget != "Vertex" // Vertices do not have $Is:Vertex     
-                && !InstructionHelpers.CheckIfIsOrInherits(toEdge.To, eToEdgeTarget))
+                && !InstructionHelpers.CheckIfIsOrInherits_WRONG(toEdge.To, eToEdgeTarget))
                 canAdd = false;
 
             if (tem.CreateEdgeOnly
                 && eToVertexTarget != null
-                && !InstructionHelpers.CheckIfIsOrInherits(toEdge.To, eToVertexTarget)
-                )
+                && !InstructionHelpers.CheckIfIsOrInherits_WRONG(toEdge.To, eToVertexTarget))
                 canAdd = false;
 
             return canAdd;

@@ -260,7 +260,7 @@ namespace m0.ZeroTypes
 
                 IVertex MinCardinality = GraphUtil.GetQueryOutFirst(child.To, "$MinCardinality", null);
 
-                if (InstructionHelpers.CheckIfInherits(childMetaVertex, "Selector"))
+                if (InstructionHelpers.CheckIfInherits_WRONG(childMetaVertex, "Selector"))
                 {
                     if (MinCardinality != null)
                     {

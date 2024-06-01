@@ -92,6 +92,9 @@ namespace m0.ZeroTypes.UX
                  || IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:\To:")))
                 VertexUpdated();
 
+            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "HideLabel"))
+                UpdateLabelVisibility();
+
             return exe.Stack;
         }
 
@@ -109,6 +112,14 @@ namespace m0.ZeroTypes.UX
                 Line.StrokeDashArray = new DoubleCollection(new double[] { 5, 3 });
             else
                 Line.StrokeDashArray = null;
+        }
+
+        protected virtual void UpdateLabelVisibility()
+        {
+            if (HideLabel)
+                OwningVisualiser.Canvas.Children.Remove(Label);
+            else
+                OwningVisualiser.Canvas.Children.Add(Label);
         }
 
         protected virtual void UpdateLineEnds()
@@ -291,7 +302,9 @@ namespace m0.ZeroTypes.UX
         {
             OwningVisualiser.Canvas.Children.Add(LineEndings);
             OwningVisualiser.Canvas.Children.Add(Line);
-            OwningVisualiser.Canvas.Children.Add(Label);
+
+            if (!HideLabel)
+                OwningVisualiser.Canvas.Children.Add(Label);
 
             VertexSetedUp(); 
         }
@@ -382,7 +395,8 @@ namespace m0.ZeroTypes.UX
 
         static IVertex StartAnchor_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LineDecorator\StartAnchor");
         static IVertex EndAnchor_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LineDecorator\EndAnchor");
-        static IVertex IsDashed_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LineDecorator\IsDashed");        
+        static IVertex IsDashed_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LineDecorator\IsDashed");
+        static IVertex HideLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LineDecorator\HideLabel");
 
         public LineEndEnum StartAnchor
         {
@@ -434,5 +448,26 @@ namespace m0.ZeroTypes.UX
             }
         }
 
+        public bool HideLabel
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "HideLabel", null);
+
+                if (val == null)
+                    return false;
+
+                return GraphUtil.GetBooleanValueOrFalse(val);
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "HideLabel", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(HideLabel_meta, value);
+                else
+                    val.Value = value;
+            }
+        }
     }
 }
