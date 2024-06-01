@@ -80,7 +80,7 @@ namespace m0.ZeroCode.Helpers
 
         public static bool CheckIfInherits(IVertex baseVertex, string test)
         {
-            foreach (IEdge e in GraphUtil.GetQueryOutFirst(baseVertex, "$Inherits", null)) {
+            foreach (IEdge e in GraphUtil.GetQueryOut(baseVertex, "$Inherits", null)) {
                 if (GraphUtil.GetValueAndCompareStrings(e.To, test))
                     return true;
 
