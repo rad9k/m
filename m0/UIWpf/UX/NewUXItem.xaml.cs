@@ -123,7 +123,7 @@ namespace m0.UIWpf.UX
                          ItemsList.AddEdge(null, d.To);        
            }
            else
-           {               
+            {               
                IVertex InstanceAndDirect = visualiser.NewItemUXTemplate.Vertex.GetAll(false, @"{InstanceCreation:InstanceAndDirect}");
 
                foreach (IEdge d in InstanceAndDirect)

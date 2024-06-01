@@ -12,7 +12,8 @@
 				<@RectangleItem\ShowMeta :: "False">
 				<@RectangleItem\VisualiserClass :: @System\Meta\Visualiser\Code>
 				<@RectangleItem\VisualiserVertex :: "">
-					<@UXItem\Scale :: "50">
+					<@System\Meta\Visualiser\Code\Scale :: "50">
+					<@System\Meta\Visualiser\Code\ShowFolding :: "False">
 		<@UXTemplate :: "Vertex RectangleItem TREE">
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "">
@@ -49,7 +50,7 @@
 				<@DecoratorVertex :: "">		
 		<@UXTemplate :: "Block">
 			<@$Is :: @UXTemplate>
-			<@DirectVertexTestQuery :: "{{$Is:Block}}">
+			<@DirectVertexTestQuery :: "{$Is:Block}">
 			<@ItemClass :: @RectangleItem>
 			<@InstanceCreation :: @InstanceCreationEnum\Direct>
 			<@ItemVertex :: "">
