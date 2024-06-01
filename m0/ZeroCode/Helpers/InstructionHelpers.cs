@@ -4,6 +4,7 @@ using m0.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -62,25 +63,34 @@ namespace m0.ZeroCode.Helpers
 
         // PROPER BEG
 
-        baseVertex
-    allIs = get $Is:
+        public static bool CheckIfIsOrInherits(IVertex baseVertex, string test)
+        {
+            IList<IEdge> allIs = InstructionHelpers.GetAllIs(baseVertex);
 
-	forall e in allIs
-		if e.To == test
-			return true
+            foreach (IEdge e in allIs)
+                if (GraphUtil.GetValueAndCompareStrings(e.To, test))
+                    return true;
 
-	foreach e in allIs
-		if CheckIfIherits(e.to, test)
-			return true
+            foreach (IEdge e in allIs)
+                if (CheckIfInherits(e.To, test))
+                    return true;
 
+            return false;
+        }
 
-CheckIfInherits(IVertex baseVertex, string test)
-	foreach e in get $Inherits
-		if e.To == test
-			return true
-		if CheckIfIngerits(e.To, test)
-			return true
+        public static bool CheckIfInherits(IVertex baseVertex, string test)
+        {
+            foreach (IEdge e in GraphUtil.GetQueryOutFirst(baseVertex, "$Inherits", null)) {
+                if (GraphUtil.GetValueAndCompareStrings(e.To, test))
+                    return true;
 
+                if (CheckIfInherits(e.To, test))
+                    return true;
+            }
+
+            return false;
+        }
+        
         // PROPER END
 
         // WRONG BEG
