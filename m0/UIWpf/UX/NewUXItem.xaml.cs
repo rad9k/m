@@ -83,6 +83,9 @@ namespace m0.UIWpf.UX
 
         private bool testVertex(IVertex toTest, string query)
         {
+            if (query == null)
+                return false;
+
             IVertex temp = MinusZero.Instance.CreateTempVertex();
 
             IEdge e = temp.AddEdge(null, toTest);
@@ -112,14 +115,14 @@ namespace m0.UIWpf.UX
              
                foreach(IEdge d in Instance)
                     //if (BaseEdge.Get(false, "To:").Get(false, (string)GraphUtil.GetValue(d.To.Get(false, "MetaVertexTestQuery:"))) != null)
-                    if(testVertex(BaseEdge.Get(false, "To:"),(string)GraphUtil.GetValue(d.To.Get(false, "MetaVertexTestQuery:"))))
+                    if (testVertex(BaseEdge.Get(false, "To:"),(string)GraphUtil.GetValue(d.To.Get(false, "MetaVertexTestQuery:"))))
                          ItemsList.AddEdge(null, d.To);
 
                 IVertex InstanceAndDirect = visualiser.NewItemUXTemplate.Vertex.GetAll(false, @"{InstanceCreation:InstanceAndDirect}");
 
                 foreach (IEdge d in InstanceAndDirect) 
                      //if (BaseEdge.Get(false, "To:").Get(false, (string)GraphUtil.GetValue(d.To.Get(false, "MetaVertexTestQuery:"))) != null)
-                     if(testVertex(BaseEdge.Get(false, "To:"),(string)GraphUtil.GetValue(d.To.Get(false, "MetaVertexTestQuery:"))))
+                     if (testVertex(BaseEdge.Get(false, "To:"),(string)GraphUtil.GetValue(d.To.Get(false, "MetaVertexTestQuery:"))))
                          ItemsList.AddEdge(null, d.To);        
            }
            else

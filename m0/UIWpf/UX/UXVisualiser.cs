@@ -424,7 +424,7 @@ namespace m0.UIWpf.UX
             if (definitionEdges == null)
                 return;
 
-            foreach (IEdge e in definitionEdges)
+            foreach (IEdge e in definitionEdges.OutEdgesRaw)
                 if(!(GraphUtil.ExistQueryOut(e.Meta, "$NoCopy", null) || GraphUtil.ExistQueryOut(e.To, "$NoCopy", null)))
                 {
                     if(VertexOperations.IsAtomicVertex(e.To))
