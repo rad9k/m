@@ -286,22 +286,18 @@ namespace m0
 
         public void ShowException(IVertex exception)
         {
-            m0.UIWpf.Dialog.InfoWindow i = new UIWpf.Dialog.InfoWindow();
+            m0.UIWpf.Dialog.ExceptionInfoWindow i = new UIWpf.Dialog.ExceptionInfoWindow();
 
             i.Owner = this;
 
-            string toShow = "";
-
             if (exception.Get(false, "Type:") != null)
-                toShow += "type: "+exception.Get(false, "Type:")+"\n\n";
+                i.Type = exception.Get(false, "Type:").Value.ToString();
 
             if (exception.Get(false, "Where:")!=null)
-                toShow += "where: "+exception.Get(false, "Where:") + "\n\n";
+                i.Where = exception.Get(false, "Where:").Value.ToString();
 
             if (exception.Get(false, "What:") != null)
-                toShow += "what: "+exception.Get(false, "What:");
-
-            i.Text = toShow;
+                i.What = exception.Get(false, "What:").Value.ToString();            
 
             i.ShowDialog();
         }

@@ -151,6 +151,9 @@
     <Compile Include="UIWpf\Controls\IHasScrollViewer.cs" />
     <Compile Include="UIWpf\Controls\IMouseWheelHandler.cs" />
     <Compile Include="UIWpf\Controls\MultiplyConverter.cs" />
+    <Compile Include="UIWpf\Dialog\ExceptionInfoWindow.xaml.cs">
+      <DependentUpon>ExceptionInfoWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UIWpf\UX\UXVisualiser.cs" />
     <Compile Include="UIWpf\Visualisers\INoDownVisualiser.cs" />
     <Compile Include="Util\ZString.cs" />
@@ -466,6 +469,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UIWpf\Controls\AnimatedHideArea_VerticalRight.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UIWpf\Dialog\ExceptionInfoWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

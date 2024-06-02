@@ -1,0 +1,11 @@
+﻿<Window x:Class="m0.UIWpf.Dialog.ExceptionInfoWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="info" Height="341.954" Width="510.3" WindowStartupLocation="CenterOwner" Background="{StaticResource 0VeryLightHighlightBrush}" Foreground="{StaticResource 0ForegroundBrush}" WindowStyle="ToolWindow">
+    <Grid>
+        <StackPanel x:Name="content"  Margin="10,10,9,68" Orientation="Vertical"/>
+        <Button Content="OK" HorizontalAlignment="Right" Height="33" Margin="0,0,10,9.8" VerticalAlignment="Bottom" Width="107" Click="Button_Click"/>
+        
+
+    </Grid>
+</Window>
