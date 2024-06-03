@@ -55,7 +55,7 @@ namespace m0.ZeroTypes.UX
 
         public override void VertexSetedUp()
         {
-         /*   if (VisualiserClass != null)        
+            if (VisualiserClass != null)        
             {
                 if (ContentVisualiser != null && ContentVisualiser is IDisposable)
                 {
@@ -79,9 +79,8 @@ namespace m0.ZeroTypes.UX
             else
             {
                 ContentVisualiser = null;
-            }*/
+            }
                     
-
 
             base.VertexSetedUp();
         }
