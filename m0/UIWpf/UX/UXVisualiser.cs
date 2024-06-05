@@ -105,8 +105,6 @@ namespace m0.UIWpf.UX
         public IUXItem HighlightedItem;
 
 
-        public bool IsPaiting = false;
-
         bool IsFirstPainted = false;
 
         static string[] _MetaTriggeringUpdateVertex = new string[] { "Width", "Height" };
@@ -723,9 +721,7 @@ namespace m0.UIWpf.UX
         public void PaintDiagram()
         {
             if (ActualHeight != 0 || IsFirstPainted)
-            {                       
-                IsPaiting = true;                
-
+            {                               
                 Canvas.Children.Clear();
 
                 Width = Size.Width ;
@@ -767,8 +763,6 @@ namespace m0.UIWpf.UX
                 SelectWrappersForSelectedVertices();
 
                 IsFirstPainted = true;
-
-                IsPaiting = false;
 
                 
                 CheckAndUpdateDiagramLines();
@@ -1731,39 +1725,41 @@ namespace m0.UIWpf.UX
                 {
                     IUXItem clickedItem = GetItemByPoint(p);
 
-                    IEdge ve = VertexOperations.AddInstanceAndReturnEdge(
-                        clickedItem.BaseEdge.To
-                        //BaseEdge.To
-                        //Vertex.Get(false, "CreationPool:")
-                        , ndi.BaseEdge.Get(false, "To:"));
-                    IVertex v = ve.To;
+                      IEdge ve = VertexOperations.AddInstanceAndReturnEdge(
+                          clickedItem.BaseEdge.To
+                          //BaseEdge.To
+                          //Vertex.Get(false, "CreationPool:")
+                          , ndi.BaseEdge.Get(false, "To:"));
 
-                    v.Value = ndi.InstanceValue;
+                      IVertex newVertex = ve.To;
+                    //IVertex newVertex = MinusZero.Instance.root.Get(false, @"System\Data\UX\Templates\ZeroUML");
 
-                    if (ndi.UXTemplate.ForceShowEditForm)
-                        MinusZero.Instance.DefaultUserInteraction.Edit(ve.To, WpfUtil.GetMousePositionDnd(e));
-         
-                    AddDiagramItem(p,
-                                   ndi.UXTemplate,
-                                   ndi.BaseEdge.Get(false, "To:"), v);
-                }
-                else
-                {
-                    bool ThereIsDiagramItemOfThisClassAndThisBaseEdgeTo = false;
-                    bool ThereIsDiagramItemOfThisBaseEdgeTo = false;
+                      newVertex.Value = ndi.InstanceValue;
 
-                    IVertex DiagramItemOfThisDiagramItemDefinition = Vertex.GetAll(false, @"Item:{UXTemplate:" + ndi.UXTemplate.Vertex.Value + "}");
+                      if (ndi.UXTemplate.ForceShowEditForm)
+                          MinusZero.Instance.DefaultUserInteraction.Edit(newVertex, WpfUtil.GetMousePositionDnd(e));
 
-                    foreach (IEdge ee in DiagramItemOfThisDiagramItemDefinition)
-                        if (ee.To.Get(false, @"BaseEdge:\To:") == ndi.BaseEdge.Get(false, "To:"))
-                            ThereIsDiagramItemOfThisClassAndThisBaseEdgeTo = true;
+                      AddDiagramItem(p,
+                                     ndi.UXTemplate,
+                                     ndi.BaseEdge.Get(false, "To:"), newVertex);
+                  }
+                  else
+                  {
+                      bool ThereIsDiagramItemOfThisClassAndThisBaseEdgeTo = false;
+                      bool ThereIsDiagramItemOfThisBaseEdgeTo = false;
 
-                    if(GetItemsDictionaryByBaseEdgeTo().ContainsKey(ndi.BaseEdge.Get(false, "To:")))
-                    foreach (IUXItem b in GetItemsDictionaryByBaseEdgeTo()[ndi.BaseEdge.Get(false, "To:")])
-                        ThereIsDiagramItemOfThisBaseEdgeTo = true;
+                      IVertex DiagramItemOfThisDiagramItemDefinition = Vertex.GetAll(false, @"Item:{UXTemplate:" + ndi.UXTemplate.Vertex.Value + "}");
 
-                    /*if (b.Vertex.Get(false, @"BaseEdge:\To:") == ndi.BaseEdge.Get(false, "To:"))
-                        ThereIsDiagramItemOfThisBaseEdgeTo = true;*/
+                      foreach (IEdge ee in DiagramItemOfThisDiagramItemDefinition)
+                          if (ee.To.Get(false, @"BaseEdge:\To:") == ndi.BaseEdge.Get(false, "To:"))
+                              ThereIsDiagramItemOfThisClassAndThisBaseEdgeTo = true;
+
+                      if(GetItemsDictionaryByBaseEdgeTo().ContainsKey(ndi.BaseEdge.Get(false, "To:")))
+                      foreach (IUXItem b in GetItemsDictionaryByBaseEdgeTo()[ndi.BaseEdge.Get(false, "To:")])
+                          ThereIsDiagramItemOfThisBaseEdgeTo = true;
+
+                      /*if (b.Vertex.Get(false, @"BaseEdge:\To:") == ndi.BaseEdge.Get(false, "To:"))
+                          ThereIsDiagramItemOfThisBaseEdgeTo = true;*/
 
                     if (ThereIsDiagramItemOfThisClassAndThisBaseEdgeTo == false)
                     {

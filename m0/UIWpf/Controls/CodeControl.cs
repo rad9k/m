@@ -411,7 +411,7 @@ namespace m0.UIWpf.Visualisers
 
             if (bv != null /*&& bv.Value != null && ((String)bv.Value)!="$Empty"*/)
             {
-                ExecuteGenerate();
+                //ExecuteGenerate();
                 
                 if (isFirstParse)
                 {
