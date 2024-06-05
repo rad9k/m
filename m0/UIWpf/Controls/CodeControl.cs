@@ -176,7 +176,7 @@ namespace m0.UIWpf.Visualisers
 
             watch = System.Diagnostics.Stopwatch.StartNew();
 
-            Thread thread = new Thread(_ExecuteParse);
+            Thread thread = new Thread(ExecuteParse_SeparateThread);
             thread.IsBackground = true;
             thread.Start();
         }
@@ -184,8 +184,11 @@ namespace m0.UIWpf.Visualisers
         Stopwatch watch;
 
 
-        private void _ExecuteParse()
+        private void ExecuteParse_SeparateThread()
         {
+            if (Vertex.DisposedState != DisposeStateEnum.Live)
+                return;
+
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
@@ -226,7 +229,7 @@ namespace m0.UIWpf.Visualisers
             string generated = null;
 
             if (errorList.OutEdges.Count == 0 && GenerateAfterParse)
-                generated = _ExecuteGenerate_Internal();
+                generated = ExecuteGenerate_SeparateThread();
 
             m0Main.Instance.Dispatcher.Invoke(() =>
             {
@@ -411,7 +414,7 @@ namespace m0.UIWpf.Visualisers
 
             if (bv != null /*&& bv.Value != null && ((String)bv.Value)!="$Empty"*/)
             {
-                //ExecuteGenerate();
+                ExecuteGenerate();
                 
                 if (isFirstParse)
                 {
@@ -436,8 +439,11 @@ namespace m0.UIWpf.Visualisers
             thread.Start();
         }
 
-        private string _ExecuteGenerate_Internal()
+        private string ExecuteGenerate_SeparateThread()
         {
+            if (Vertex.DisposedState != DisposeStateEnum.Live)
+                return "";
+
             EdgeBase ee = new EdgeBase(Vertex.Get(false, @"BaseEdge:\From:"), Vertex.Get(false, @"BaseEdge:\Meta:"), Vertex.Get(false, @"BaseEdge:\To:"));
 
             IVertex ftl = GraphUtil.GetQueryOutFirst(Vertex, "FormalTextLanguage", null);
@@ -460,7 +466,7 @@ namespace m0.UIWpf.Visualisers
             });
 
             
-            string generated = _ExecuteGenerate_Internal();
+            string generated = ExecuteGenerate_SeparateThread();
 
 
             m0Main.Instance.Dispatcher.Invoke(() =>

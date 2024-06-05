@@ -44,11 +44,17 @@ namespace m0.ZeroCode
 
         public string Generate(IEdge graphBaseEdge)
         {
+            //Graph2TextProcessing ZeroCodeGraph2StringProcessing_Instance = new Graph2TextProcessing(MinusZero.Instance.DefaultFormalTextLanguage);
+
             return ZeroCodeGraph2StringProcessing_Instance.Process(graphBaseEdge);
         }
 
         public string Generate(IVertex formalTextLanguage, IEdge graphBaseEdge)
         {
+            //Graph2TextProcessing instance = new Graph2TextProcessing(formalTextLanguage);
+
+            //return instance.Process(graphBaseEdge);
+
             Graph2TextProcessing instance;
 
             if (ZeroCodeGraph2StringProcessing_InstanceDictionary.ContainsKey(formalTextLanguage))
