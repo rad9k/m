@@ -34,6 +34,8 @@ namespace m0.UIWpf.Visualisers
 {
     public class CodeControl : Border
     {
+        static object lockObject = new object();
+
         public bool GenerateAfterParse = true;
 
         public bool BaseEdgeInsteadBaseVertex;
@@ -186,90 +188,93 @@ namespace m0.UIWpf.Visualisers
 
         private void ExecuteParse_SeparateThread()
         {
-            if (Vertex.DisposedState != DisposeStateEnum.Live)
-                return;
-
-            ////////////////////////////////////////
-            Interaction.BeginInteractionWithGraph();
-            ////////////////////////////////////////
-            
-            TextMemory.Add(editor_Text);            
-
-            IVertex BaseEdgeToVertex = Vertex.Get(false, @"BaseEdge:\To:");
-
-            IVertex ftl = GraphUtil.GetQueryOutFirst(Vertex, "FormalTextLanguage", null);
-
-            //
-
-            m0Main.Instance.Dispatcher.Invoke(() =>
+            lock (lockObject)
             {
-                editor.Background = (Brush)FindResource("0ProcessingBrush");
-            });
+                if (Vertex.DisposedState != DisposeStateEnum.Live)
+                    return;
 
-            //
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
 
-            IVertex errorList;
+                TextMemory.Add(editor_Text);
 
-            if (ftl == null)
-                errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(BaseEdgeToVertex, editor_Text);
-            else
-                errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(ftl, BaseEdgeToVertex, editor_Text);
+                IVertex BaseEdgeToVertex = Vertex.Get(false, @"BaseEdge:\To:");
 
-            //
+                IVertex ftl = GraphUtil.GetQueryOutFirst(Vertex, "FormalTextLanguage", null);
 
-            watch.Stop();
-            var elapsedMs = watch.ElapsedMilliseconds;
+                //
 
-            MinusZero.Instance.Log(0, "parse", elapsedMs.ToString());
-
-            //
-
-            int errorLine = -1;
-
-            string generated = null;
-
-            if (errorList.OutEdges.Count == 0 && GenerateAfterParse)
-                generated = ExecuteGenerate_SeparateThread();
-
-            m0Main.Instance.Dispatcher.Invoke(() =>
-            {
-                if (errorList.OutEdges.Count == 0)
+                m0Main.Instance.Dispatcher.Invoke(() =>
                 {
-                    if (generated != null)
-                        editor.Text = generated;
+                    editor.Background = (Brush)FindResource("0ProcessingBrush");
+                });
 
-                    //editor.Background = (Brush)FindResource("0BackgroundBrush");
+                //
 
-                    editor.Background = null;
-                }
+                IVertex errorList;
+
+                if (ftl == null)
+                    errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(BaseEdgeToVertex, editor_Text);
                 else
+                    errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(ftl, BaseEdgeToVertex, editor_Text);
+
+                //
+
+                watch.Stop();
+                var elapsedMs = watch.ElapsedMilliseconds;
+
+                MinusZero.Instance.Log(0, "parse", elapsedMs.ToString());
+
+                //
+
+                int errorLine = -1;
+
+                string generated = null;
+
+                if (errorList.OutEdges.Count == 0 && GenerateAfterParse)
+                    generated = ExecuteGenerate_SeparateThread_internal();
+
+                m0Main.Instance.Dispatcher.Invoke(() =>
                 {
-                    editor.Background = (Brush)FindResource("0LightErrorBrush");
+                    if (errorList.OutEdges.Count == 0)
+                    {
+                        if (generated != null)
+                            editor.Text = generated;
 
-                    errorLine = GraphUtil.GetIntegerValueOr0(errorList.OutEdges[0].To.Get(false, "Where:"));
-                }
-            });
+                        //editor.Background = (Brush)FindResource("0BackgroundBrush");
 
-            //
+                        editor.Background = null;
+                    }
+                    else
+                    {
+                        editor.Background = (Brush)FindResource("0LightErrorBrush");
 
-            int currentTextMemory = TextMemory.Count;
+                        errorLine = GraphUtil.GetIntegerValueOr0(errorList.OutEdges[0].To.Get(false, "Where:"));
+                    }
+                });
 
-            TextMemoryMax = currentTextMemory;
-            TextMemoryCurrent = currentTextMemory;
+                //
 
-            m0Main.Instance.Dispatcher.Invoke(() =>
-            {
-                doNotParse = true;
-                
-                ////////////////////////////////////////
-                Interaction.EndInteractionWithGraph();
-                ////////////////////////////////////////
-                
-                doNotParse = false;
-                
-                if (errorLine != -1)
-                    editor.TextArea.Caret.Line = errorLine + 1;
-            });
+                int currentTextMemory = TextMemory.Count;
+
+                TextMemoryMax = currentTextMemory;
+                TextMemoryCurrent = currentTextMemory;
+
+                m0Main.Instance.Dispatcher.Invoke(() =>
+                {
+                    doNotParse = true;
+
+                    ////////////////////////////////////////
+                    Interaction.EndInteractionWithGraph();
+                    ////////////////////////////////////////
+
+                    doNotParse = false;
+
+                    if (errorLine != -1)
+                        editor.TextArea.Caret.Line = errorLine + 1;
+                });
+            }
         }
 
         private void ReferenceTextMemoryLeft()
@@ -434,31 +439,34 @@ namespace m0.UIWpf.Visualisers
 
         void ExecuteGenerate()
         {
-            Thread thread = new Thread(_ExecuteGenerate);
+            Thread thread = new Thread(ExecuteGenerate_SeparateThread);
             thread.IsBackground = true;
             thread.Start();
         }
 
-        private string ExecuteGenerate_SeparateThread()
+        private string ExecuteGenerate_SeparateThread_internal()
         {
-            if (Vertex.DisposedState != DisposeStateEnum.Live)
-                return "";
+            lock (lockObject)
+            {
+                if (Vertex.DisposedState != DisposeStateEnum.Live)
+                    return "";
 
-            EdgeBase ee = new EdgeBase(Vertex.Get(false, @"BaseEdge:\From:"), Vertex.Get(false, @"BaseEdge:\Meta:"), Vertex.Get(false, @"BaseEdge:\To:"));
+                EdgeBase ee = new EdgeBase(Vertex.Get(false, @"BaseEdge:\From:"), Vertex.Get(false, @"BaseEdge:\Meta:"), Vertex.Get(false, @"BaseEdge:\To:"));
 
-            IVertex ftl = GraphUtil.GetQueryOutFirst(Vertex, "FormalTextLanguage", null);
+                IVertex ftl = GraphUtil.GetQueryOutFirst(Vertex, "FormalTextLanguage", null);
 
-            string generated;
+                string generated;
 
-            if (ftl == null)
-                generated = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ee);
-            else
-                generated = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ftl, ee);
+                if (ftl == null)
+                    generated = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ee);
+                else
+                    generated = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ftl, ee);
 
-            return generated;
+                return generated;
+            }
         }
 
-        private void _ExecuteGenerate()
+        private void ExecuteGenerate_SeparateThread()
         {
             m0Main.Instance.Dispatcher.Invoke(() =>
             {
@@ -466,7 +474,7 @@ namespace m0.UIWpf.Visualisers
             });
 
             
-            string generated = ExecuteGenerate_SeparateThread();
+            string generated = ExecuteGenerate_SeparateThread_internal();
 
 
             m0Main.Instance.Dispatcher.Invoke(() =>
