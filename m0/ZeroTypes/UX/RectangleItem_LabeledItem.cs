@@ -11,17 +11,66 @@ using System.Windows;
 
 namespace m0.ZeroTypes.UX
 {
-    public class LabeledItem : UXItem
+    public class RectangleItem_LabeledItem : UXItem
     {
         // UNDER
 
+        static IVertex RoundEdgeSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\RoundEdgeSize");
+        static IVertex HideHeader_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\HideHeader");
+
         static IVertex ConstantLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\ConstantLabel");
-        static IVertex LabelQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\LabelQuery");        
+        static IVertex LabelQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\LabelQuery");
         static IVertex UseCodeLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\UseCodeLabel");
         static IVertex ShowMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\ShowMeta");
         static IVertex HideLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\HideLabel");
 
-        public LabeledItem(IEdge edge) : base(edge) { }
+        public RectangleItem_LabeledItem(IEdge edge) : base(edge) { }
+
+        public int RoundEdgeSize
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "RoundEdgeSize", null);
+
+                if (val == null)
+                    return 0;
+
+                return GraphUtil.GetIntegerValueOr0(val);
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "RoundEdgeSize", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(RoundEdgeSize_meta, value);
+                else
+                    val.Value = value;
+            }
+        }
+
+        public bool HideHeader
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "HideHeader", null);
+
+                if (val == null)
+                    return false;
+
+                return GraphUtil.GetBooleanValueOrFalse(val);
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "HideHeader", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(HideHeader_meta, value);
+                else
+                    val.Value = value;
+            }
+        }
+
+        //
 
         public string ConstantLabel
         {
@@ -132,6 +181,7 @@ namespace m0.ZeroTypes.UX
                     val.Value = value;
             }
         }
+
 
     }
 }

@@ -24,10 +24,10 @@ namespace m0.ZeroTypes.UX
     /// <summary>
     /// Interaction logic for DiagramRectangleItem.xaml
     /// </summary>
-    public partial class ImageItem : UXItem
+    public partial class ImageItem : RectangleItem_LabeledItem
     {
         static string[] _SubVertexesTriggeringItemVisualUpdate = new string[] {
-            "RoundEdgeSize", "ShowMeta", "ShowLabel", "BorderSize"};
+            "RoundEdgeSize", "HideHeader", "ConstantLabel", "LabelQuery", "ShowMeta", "UseCodeLabel", "ShowMeta", "HideLabel", "BorderSize"};
         public override string[] SubVertexesTriggeringItemVisualUpdate { get { return _SubVertexesTriggeringItemVisualUpdate; } }
 
         public ImageItem() : base(new ZeroTypes.Edge(null))
@@ -174,8 +174,6 @@ namespace m0.ZeroTypes.UX
         
         // UNDER        
 
-        static IVertex ShowMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\ImageItem\ShowMeta");
-        static IVertex HideLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\ImageItem\HideLabel");
         static IVertex Filename_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\ImageItem\Filename");
 
         public string Filename
@@ -200,48 +198,5 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        public bool HideLabel
-        {
-            get
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "HideLabel", null);
-
-                if (val == null)
-                    return false;
-
-                return GraphUtil.GetBooleanValueOrFalse(val);
-            }
-            set
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "HideLabel", null);
-
-                if (val == null)
-                    val = Vertex.AddVertex(HideLabel_meta, value);
-                else
-                    val.Value = value;
-            }
-        }
-    
-        public bool ShowMeta
-        {
-            get
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ShowMeta", null);
-
-                if (val == null)
-                    return false;
-
-                return GraphUtil.GetBooleanValueOrFalse(val);
-            }
-            set
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ShowMeta", null);
-
-                if (val == null)
-                    val = Vertex.AddVertex(ShowMeta_meta, value);
-                else
-                    val.Value = value;
-            }
-        }
     }
 }

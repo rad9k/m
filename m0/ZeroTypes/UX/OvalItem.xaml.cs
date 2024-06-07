@@ -26,10 +26,10 @@ namespace m0.ZeroTypes.UX
     /// <summary>
     /// Interaction logic for DiagramRectangleItem.xaml
     /// </summary>
-    public partial class OvalItem : UXItem
+    public partial class OvalItem : LabeledItem
     {
         static string[] _SubVertexesTriggeringItemVisualUpdate = new string[] {
-            "RoundEdgeSize", "ShowMeta",  "BorderSize"};
+            "RoundEdgeSize", "ConstantLabel", "LabelQuery", "ShowMeta", "UseCodeLabel", "ShowMeta", "HideLabel",  "BorderSize"};
         public override string[] SubVertexesTriggeringItemVisualUpdate { get { return _SubVertexesTriggeringItemVisualUpdate; } }
 
         //

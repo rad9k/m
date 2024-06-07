@@ -162,6 +162,7 @@
     <Compile Include="ZeroTypes\UX\IUXMultiContainerSubItem.cs" />
     <Compile Include="ZeroTypes\UX\IUXDecorator.cs" />
     <Compile Include="ZeroTypes\UX\LabeledItem.cs" />
+    <Compile Include="ZeroTypes\UX\RectangleItem_LabeledItem.cs" />
     <Compile Include="ZeroTypes\UX\RectangleItem.cs" />
     <Compile Include="ZeroTypes\UX\MultiContainerSubItem.xaml.cs">
       <DependentUpon>MultiContainerSubItem.xaml</DependentUpon>

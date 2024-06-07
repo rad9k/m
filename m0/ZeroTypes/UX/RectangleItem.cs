@@ -49,7 +49,7 @@ namespace m0.ZeroTypes.UX
                 IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "HideHeader", null);
 
                 if (val == null)
-                    return 0;
+                    return false;
 
                 return GraphUtil.GetBooleanValueOrFalse(val);
             }
