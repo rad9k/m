@@ -27,7 +27,7 @@ namespace m0.ZeroTypes.UX
     public partial class ImageItem : UXItem
     {
         static string[] _SubVertexesTriggeringItemVisualUpdate = new string[] {
-            "RoundEdgeSize", "ShowMeta", "ShowName", "BorderSize"};
+            "RoundEdgeSize", "ShowMeta", "ShowLabel", "BorderSize"};
         public override string[] SubVertexesTriggeringItemVisualUpdate { get { return _SubVertexesTriggeringItemVisualUpdate; } }
 
         public ImageItem() : base(new ZeroTypes.Edge(null))
@@ -57,7 +57,7 @@ namespace m0.ZeroTypes.UX
 
             base.ItemVisualUpdate();
 
-            if (ShowName)
+            if (!HideLabel)
             {
                 if (ShowMeta)
                 {
@@ -175,7 +175,7 @@ namespace m0.ZeroTypes.UX
         // UNDER        
 
         static IVertex ShowMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\ImageItem\ShowMeta");
-        static IVertex ShowName_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\ImageItem\ShowName");
+        static IVertex HideLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\ImageItem\HideLabel");
         static IVertex Filename_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\ImageItem\Filename");
 
         public string Filename
@@ -200,11 +200,11 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        public bool ShowName
+        public bool HideLabel
         {
             get
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ShowName", null);
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "HideLabel", null);
 
                 if (val == null)
                     return false;
@@ -213,10 +213,10 @@ namespace m0.ZeroTypes.UX
             }
             set
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ShowName", null);
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "HideLabel", null);
 
                 if (val == null)
-                    val = Vertex.AddVertex(ShowName_meta, value);
+                    val = Vertex.AddVertex(HideLabel_meta, value);
                 else
                     val.Value = value;
             }

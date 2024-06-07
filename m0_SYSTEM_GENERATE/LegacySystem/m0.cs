@@ -3473,17 +3473,18 @@ namespace m0
                 "Enum:InstanceCreationEnum{EnumValue:Instance,EnumValue:InstanceAndDirect,EnumValue:Direct}," +
                 "Class:LineDecoratorBase{Attribute:LineWidth{MinValue:1,MaxValue:10,$MinCardinality:0,$MaxCardinality:1},Association:ToItem{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:UXDecoratorTemplate{Attribute:EdgeTestQuery{$MinCardinality:1,$MaxCardinality:1},Attribute:ToDiagramItemTestQuery{$MinCardinality:0,$MaxCardinality:1},Attribute:CreateEdgeOnly{$MinCardinality:0,$MaxCardinality:1},Attribute:ForceShowEditForm{$MinCardinality:0,$MaxCardinality:1},Association:DecoratorClass{$MinCardinality:0,$MaxCardinality:1},Attribute:DecoratorVertex{$MinCardinality:0,$MaxCardinality:1}}," +
-                "Class:ImageItem{Attribute:Filename{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowName{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1}}," +
-                "Class:OvalItem{Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1}}," +
-                "Class:RhombusItem{Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1}}," +
-                "Class:CodeItem{Attribute:HideHeader{$MinCardinality:0,$MaxCardinality:1},Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:FontSize{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:15,MinValue:1,MaxValue:40,$DisplayLarger:},Attribute:ShowWhiteSpace{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowLineNumbers{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowFolding{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:HighlightedLine{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowScrollBars{$MinCardinality:0,$MaxCardinality:1},Attribute:FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}," +
-                "Class:RectangleItem{Attribute:HideHeader{$MinCardinality:0,$MaxCardinality:1},Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:RoundEdgeSize{MinValue:0,MaxValue:200,$MinCardinality:0,$MaxCardinality:1},Association:VisualiserClass{$MinCardinality:0,$MaxCardinality:1},Attribute:VisualiserVertex{$MinCardinality:0,$MaxCardinality:1}}," +
+                "Class:LabeledItem{Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:HideLabel{$MinCardinality:0,$MaxCardinality:1},Attribute:LabelQuery{$MinCardinality:0,$MaxCardinality:1},Attribute:UseCodeLabel{$MinCardinality:0,$MaxCardinality:1}}," +
+                "Class:ImageItem{Attribute:Filename{$MinCardinality:1,$MaxCardinality:1}}," +
+                "Class:OvalItem{}," +
+                "Class:RhombusItem{}," +
+                "Class:CodeItem{Attribute:HideHeader{$MinCardinality:0,$MaxCardinality:1},Attribute:FontSize{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:15,MinValue:1,MaxValue:40,$DisplayLarger:},Attribute:ShowWhiteSpace{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowLineNumbers{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowFolding{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:HighlightedLine{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowScrollBars{$MinCardinality:0,$MaxCardinality:1},Attribute:FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}," +
+                "Class:RectangleItem{Attribute:HideHeader{$MinCardinality:0,$MaxCardinality:1},Attribute:RoundEdgeSize{MinValue:0,MaxValue:200,$MinCardinality:0,$MaxCardinality:1},Association:VisualiserClass{$MinCardinality:0,$MaxCardinality:1},Attribute:VisualiserVertex{$MinCardinality:0,$MaxCardinality:1}}," +
                 "Class:LineDecorator{Association:StartAnchor{$MinCardinality:0,$MaxCardinality:1},Association:EndAnchor{$MinCardinality:0,$MaxCardinality:1},Attribute:IsDashed{$MinCardinality:0,$MaxCardinality:1},Attribute:HideLabel{$MinCardinality:0,$MaxCardinality:1}}," +
                 "Enum:LineEndEnum{EnumValue:Straight,EnumValue:Arrow,EnumValue:Triangle,EnumValue:FilledTriangle,EnumValue:Diamond,EnumValue:FilledDiamond}," +
                 "Class:MetaExtendedLineDecorator{Association:StartAnchor{$MinCardinality:0,$MaxCardinality:1},Association:EndAnchor{$MinCardinality:0,$MaxCardinality:1},Attribute:IsDashed{$MinCardinality:0,$MaxCardinality:1}}," +
-                "Class:ContainerItem{Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:RoundEdgeSize{MinValue:0,MaxValue:200,$MinCardinality:0,$MaxCardinality:1}}," +
+                "Class:ContainerItem{Attribute:RoundEdgeSize{MinValue:0,MaxValue:200,$MinCardinality:0,$MaxCardinality:1}}," +
                 "Enum:OrientationEnum{EnumValue:Horizontal,EnumValue:Vertical},"+
-                "Class:MultiContainerItem{Attribute:Orientation{$MinCardinality:0,$MaxCardinality:1},Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:RoundEdgeSize{MinValue:0,MaxValue:200,$MinCardinality:0,$MaxCardinality:1}}," +
+                "Class:MultiContainerItem{Attribute:Orientation{$MinCardinality:0,$MaxCardinality:1},Attribute:RoundEdgeSize{MinValue:0,MaxValue:200,$MinCardinality:0,$MaxCardinality:1}}," +
                 "Class:MultiContainerSubItem" +
                 "}");
 
@@ -3536,37 +3537,40 @@ namespace m0
             smzu.Get(false, @"UXDecoratorTemplate\DecoratorClass").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroUML\Class"));
             smzu.Get(false, @"UXDecoratorTemplate\DecoratorVertex").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Vertex"));
 
+            // LabeledItem
+
+            smzu.Get(false, @"LabeledItem").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
+            smzu.Get(false, @"LabeledItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"UXItem"));
+            smzu.Get(false, @"LabeledItem\LabelQuery").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
+            smzu.Get(false, @"LabeledItem\UseCodeLabel").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
+            smzu.Get(false, @"LabeledItem\ShowMeta").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
+            smzu.Get(false, @"LabeledItem\HideLabel").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
+
             // ImageItem
 
             smzu.Get(false, @"ImageItem").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
-            smzu.Get(false, @"ImageItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"UXItem"));
+            smzu.Get(false, @"ImageItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"LabeledItem"));
             smzu.Get(false, @"ImageItem").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.ImageItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             smzu.Get(false, @"ImageItem\Filename").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
-            smzu.Get(false, @"ImageItem\ShowMeta").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
-            smzu.Get(false, @"ImageItem\ShowName").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
 
             // OvalItem
 
             smzu.Get(false, @"OvalItem").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
-            smzu.Get(false, @"OvalItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"UXItem"));
+            smzu.Get(false, @"OvalItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"LabeledItem"));
             smzu.Get(false, @"OvalItem").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.OvalItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            smzu.Get(false, @"OvalItem\ShowMeta").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
 
             // RhombusItem
 
             smzu.Get(false, @"RhombusItem").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
-            smzu.Get(false, @"RhombusItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"UXItem"));
+            smzu.Get(false, @"RhombusItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"LabeledItem"));
             smzu.Get(false, @"RhombusItem").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.RhombusItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            smzu.Get(false, @"RhombusItem\ShowMeta").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
 
             // CodeItem
 
             smzu.Get(false, @"CodeItem").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
-            smzu.Get(false, @"CodeItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"UXItem"));
+            smzu.Get(false, @"CodeItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"LabeledItem"));
             smzu.Get(false, @"CodeItem").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.CodeItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
 
-            smzu.Get(false, @"CodeItem\ShowMeta").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
-            //smzu.Get(false, @"CodeItem\ShowMeta").AddEdge(sm.Get(false, @"?$Section"), lookSection);
 
             smzu.Get(false, @"CodeItem\HideHeader").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             //smzu.Get(false, @"CodeItem\ShowHeader").AddEdge(sm.Get(false, @"?$Section"), lookSection);
@@ -3583,7 +3587,7 @@ namespace m0
             // RectangleItem
 
             smzu.Get(false, @"RectangleItem").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
-            smzu.Get(false, @"RectangleItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"UXItem"));
+            smzu.Get(false, @"RectangleItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"LabeledItem"));
             smzu.Get(false, @"RectangleItem").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.RectangleItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
 
             smzu.Get(false, @"RectangleItem\VisualiserClass").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroUML\Class"));
@@ -3594,9 +3598,6 @@ namespace m0
 
             smzu.Get(false, @"RectangleItem\RoundEdgeSize").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Integer"));
             //smzu.Get(false, @"RectangleItem\RoundEdgeSize").AddEdge(sm.Get(false, @"?$Section"), lookSection);
-
-            smzu.Get(false, @"RectangleItem\ShowMeta").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
-            //smzu.Get(false, @"RectangleItem\ShowMeta").AddEdge(sm.Get(false, @"?$Section"), lookSection);
 
             smzu.Get(false, @"RectangleItem\HideHeader").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             //smzu.Get(false, @"RectangleItem\ShowHeader").AddEdge(sm.Get(false, @"?$Section"), lookSection);
@@ -3637,27 +3638,25 @@ namespace m0
 
             smzu.Get(false, @"ContainerItem").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
             smzu.Get(false, @"ContainerItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"UXContainer"));
+            smzu.Get(false, @"ContainerItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"LabeledItem"));
             smzu.Get(false, @"ContainerItem").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.ContainerItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             
             smzu.Get(false, @"ContainerItem\RoundEdgeSize").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Integer"));
             //smzu.Get(false, @"ContainerItem\RoundEdgeSize").AddEdge(sm.Get(false, @"?$Section"), lookSection);
 
-            smzu.Get(false, @"ContainerItem\ShowMeta").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
-            //smzu.Get(false, @"ContainerItem\ShowMeta").AddEdge(sm.Get(false, @"?$Section"), lookSection);
 
             // MultiContainerItem
 
             smzu.Get(false, @"MultiContainerItem").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
             smzu.Get(false, @"MultiContainerItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"UXContainer"));
+            smzu.Get(false, @"MultiContainerItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"LabeledItem"));
             smzu.Get(false, @"MultiContainerItem").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.MultiContainerItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
 
             smzu.Get(false, @"MultiContainerItem\RoundEdgeSize").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Integer"));
             //smzu.Get(false, @"ContainerItem\RoundEdgeSize").AddEdge(sm.Get(false, @"?$Section"), lookSection);
 
-            smzu.Get(false, @"MultiContainerItem\ShowMeta").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
-            //smzu.Get(false, @"ContainerItem\ShowMeta").AddEdge(sm.Get(false, @"?$Section"), lookSection);
-
             smzu.Get(false, @"MultiContainerItem\Orientation").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\UX\OrientationEnum"));
+
 
             // MultiContainerSubItem
 
