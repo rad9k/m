@@ -25,7 +25,7 @@ namespace m0.ZeroTypes.UX
     /// <summary>
     /// Interaction logic for DiagramRectangleItem.xaml
     /// </summary>
-    public partial class RectangleItem : UXItem
+    public partial class RectangleVisualiserItem : UXItem
     {
         static string[] _SubVertexesTriggeringItemVisualUpdate = new string[] {
             "RoundEdgeSize", "ShowMeta", "HideHeader", "BorderSize"};
@@ -35,12 +35,12 @@ namespace m0.ZeroTypes.UX
 
         IPlatformClass ContentVisualiser;
 
-        public RectangleItem() : base(new ZeroTypes.Edge(null))
+        public RectangleVisualiserItem() : base(new ZeroTypes.Edge(null))
         {
             InitializeComponent();
         }
 
-        public RectangleItem(IEdge edge) : base(edge) {
+        public RectangleVisualiserItem(IEdge edge) : base(edge) {
             InitializeComponent();
         }
 

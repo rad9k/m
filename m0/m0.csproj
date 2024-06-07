@@ -364,8 +364,8 @@
     <Compile Include="ZeroTypes\UX\RhombusItem.xaml.cs">
       <DependentUpon>RhombusItem.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ZeroTypes\UX\RectangleItem.xaml.cs">
-      <DependentUpon>RectangleItem.xaml</DependentUpon>
+    <Compile Include="ZeroTypes\UX\RectangleVisualiserItem.xaml.cs">
+      <DependentUpon>RectangleVisualiserItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="ZeroTypes\UX\InstanceCreationEnum.cs" />
     <Compile Include="ZeroTypes\UX\LineDecoratorBase.cs" />
@@ -584,7 +584,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ZeroTypes\UX\RectangleItem.xaml">
+    <Page Include="ZeroTypes\UX\RectangleVisualiserItem.xaml">
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
