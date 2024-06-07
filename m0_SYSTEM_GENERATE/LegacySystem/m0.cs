@@ -3580,13 +3580,10 @@ namespace m0
             // CodeItem
 
             smzu.Get(false, @"CodeItem").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
-            smzu.Get(false, @"CodeItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"LabeledItem"));
+            smzu.Get(false, @"CodeItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"RectangleItem"));
             smzu.Get(false, @"CodeItem").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.CodeItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
 
-
-            smzu.Get(false, @"CodeItem\HideHeader").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
-            //smzu.Get(false, @"CodeItem\ShowHeader").AddEdge(sm.Get(false, @"?$Section"), lookSection);
-
+            
             smzu.Get(false, @"CodeItem\FontSize").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Float"));
             smzu.Get(false, @"CodeItem\ShowWhiteSpace").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             smzu.Get(false, @"CodeItem\ShowLineNumbers").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
@@ -3646,21 +3643,14 @@ namespace m0
             smzu.Get(false, @"ContainerItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"UXContainer"));
             smzu.Get(false, @"ContainerItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"LabeledItem"));
             smzu.Get(false, @"ContainerItem").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.ContainerItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            
-            smzu.Get(false, @"ContainerItem\RoundEdgeSize").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Integer"));
-            //smzu.Get(false, @"ContainerItem\RoundEdgeSize").AddEdge(sm.Get(false, @"?$Section"), lookSection);
-
+                        
 
             // MultiContainerItem
 
             smzu.Get(false, @"MultiContainerItem").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
             smzu.Get(false, @"MultiContainerItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"UXContainer"));
             smzu.Get(false, @"MultiContainerItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"LabeledItem"));
-            smzu.Get(false, @"MultiContainerItem").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.MultiContainerItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-
-            smzu.Get(false, @"MultiContainerItem\RoundEdgeSize").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Integer"));
-            //smzu.Get(false, @"ContainerItem\RoundEdgeSize").AddEdge(sm.Get(false, @"?$Section"), lookSection);
-
+            smzu.Get(false, @"MultiContainerItem").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.MultiContainerItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");            
             smzu.Get(false, @"MultiContainerItem\Orientation").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\UX\OrientationEnum"));
 
 
