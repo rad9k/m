@@ -42,9 +42,7 @@ namespace m0.UIWpf.Visualisers
 
         public IVertex Vertex;
 
-        public bool NoVertexForTextMemory = false;
-
-        bool _ShowScrollBar = true;
+        public bool NoVertexForTextMemory = false;        
 
         //
 
@@ -52,30 +50,7 @@ namespace m0.UIWpf.Visualisers
 
         bool doNotParse = false;
 
-        public bool ShowScrollBar
-        {
-            get
-            {
-                return _ShowScrollBar;
-            }
-            set
-            {
-                _ShowScrollBar = value;
-
-                if (_ShowScrollBar)
-                {
-                    editor.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
-
-                    editor.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
-                }
-                else
-                {
-                    editor.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
-
-                    editor.HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden;
-                }
-            }
-        }
+        
 
         //
 
@@ -85,15 +60,13 @@ namespace m0.UIWpf.Visualisers
 
         public void UnselectAllSelectedEdges() { }
 
-        public CodeControl(IVertex _Vertex, bool _NoVertexForTextMemory, bool _BaseEdgeInsteadBaseVertex, bool _ShowScrollBar)
+        public CodeControl(IVertex _Vertex, bool _NoVertexForTextMemory, bool _BaseEdgeInsteadBaseVertex)
         {
             Vertex = _Vertex;
 
             NoVertexForTextMemory = _NoVertexForTextMemory;
 
-            BaseEdgeInsteadBaseVertex = _BaseEdgeInsteadBaseVertex;
-
-            ShowScrollBar = _ShowScrollBar;
+            BaseEdgeInsteadBaseVertex = _BaseEdgeInsteadBaseVertex;            
 
             //
 

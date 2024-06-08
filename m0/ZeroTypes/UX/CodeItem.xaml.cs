@@ -25,7 +25,7 @@ namespace m0.ZeroTypes.UX
     /// <summary>
     /// Interaction logic for DiagramRectangleItem.xaml
     /// </summary>
-    public partial class CodeItem : UXItem
+    public partial class CodeItem : RectangleItem_LabeledItem
     {
         CodeControl codeControl;
 
@@ -53,10 +53,8 @@ namespace m0.ZeroTypes.UX
             if (codeControl != null)
                 TheGrid.Children.Remove((UIElement)ContentVisualiser);
 
-            if (ShowScrollBars)
-                codeControl = new CodeControl(Vertex, true, true, true);
-            else
-                codeControl = new CodeControl(Vertex, true, true, false);
+            
+            codeControl = new CodeControl(Vertex, true, true);            
 
             Grid.SetRow(codeControl, 2);
 
