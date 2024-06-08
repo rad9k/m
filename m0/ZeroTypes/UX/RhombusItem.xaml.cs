@@ -368,29 +368,6 @@ namespace m0.ZeroTypes.UX
         }
 
         // UNDER        
-
-        static IVertex ShowMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RhombusItem\ShowMeta");
-
-        public bool ShowMeta
-        {
-            get
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ShowMeta", null);
-
-                if (val == null)
-                    return false;
-
-                return GraphUtil.GetBooleanValueOrFalse(val);
-            }
-            set
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ShowMeta", null);
-
-                if (val == null)
-                    val = Vertex.AddVertex(ShowMeta_meta, value);
-                else
-                    val.Value = value;
-            }
-        }
+   
     }
 }
