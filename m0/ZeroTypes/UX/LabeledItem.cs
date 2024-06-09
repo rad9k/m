@@ -18,8 +18,10 @@ namespace m0.ZeroTypes.UX
         static IVertex ConstantLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\ConstantLabel");
         static IVertex LabelQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\LabelQuery");        
         static IVertex UseCodeLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\UseCodeLabel");
+        static IVertex FormalTextLanguage_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\FormalTextLanguage");
         static IVertex ShowMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\ShowMeta");
         static IVertex HideLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\HideLabel");
+        
 
         public LabeledItem(IEdge edge) : base(edge) { }
 
@@ -130,6 +132,18 @@ namespace m0.ZeroTypes.UX
                     val = Vertex.AddVertex(HideLabel_meta, value);
                 else
                     val.Value = value;
+            }
+        }
+
+        public IVertex FormalTextLanguage
+        {
+            get
+            {
+                return GraphUtil.GetQueryOutFirst(Vertex, "FormalTextLanguage", null);                
+            }
+            set
+            {
+                GraphUtil.CreateOrReplaceEdge(Vertex, FormalTextLanguage_meta, value);
             }
         }
 

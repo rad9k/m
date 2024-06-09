@@ -32,7 +32,7 @@ namespace m0.ZeroTypes.UX
         //
 
         static string[] _SubVertexesTriggeringItemVisualUpdate = new string[] {
-            "RoundEdgeSize", "ShowMeta", "HideHeader", "BorderSize"};
+            "RoundEdgeSize", "HideHeader", "ConstantLabel", "LabelQuery", "ShowMeta", "UseCodeLabel", "FormalTextLanguage", "ShowMeta", "HideLabel", "BorderSize"};
         public override string[] SubVertexesTriggeringItemVisualUpdate { get { return _SubVertexesTriggeringItemVisualUpdate; } }
 
         //
@@ -213,75 +213,5 @@ namespace m0.ZeroTypes.UX
         
         // UNDER        
 
-        static IVertex ShowMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\CodeItem\ShowMeta");
-        static IVertex ShowScrollBars_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\CodeItem\ShowScrollBars");
-        static IVertex HideHeader_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\CodeItem\HideHeader");
-        
-        
-        public bool ShowMeta
-        {
-            get
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ShowMeta", null);
-
-                if (val == null)
-                    return false;
-
-                return GraphUtil.GetBooleanValueOrFalse(val);
-            }
-            set
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ShowMeta", null);
-
-                if (val == null)
-                    val = Vertex.AddVertex(ShowMeta_meta, value);
-                else
-                    val.Value = value;
-            }
-        }
-
-        public bool ShowScrollBars
-        {
-            get
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ShowScrollBars", null);
-
-                if (val == null)
-                    return false;
-
-                return GraphUtil.GetBooleanValueOrFalse(val);
-            }
-            set
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ShowScrollBars", null);
-
-                if (val == null)
-                    val = Vertex.AddVertex(ShowScrollBars_meta, value);
-                else
-                    val.Value = value;
-            }
-        }
-
-        public bool HideHeader
-        {
-            get
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "HideHeader", null);
-
-                if (val == null)
-                    return false;
-
-                return GraphUtil.GetBooleanValueOrFalse(val);
-            }
-            set
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "HideHeader", null);
-
-                if (val == null)
-                    val = Vertex.AddVertex(HideHeader_meta, value);
-                else
-                    val.Value = value;
-            }
-        }
     }
 }

@@ -3472,7 +3472,7 @@ namespace m0
                 "Enum:InstanceCreationEnum{EnumValue:Instance,EnumValue:InstanceAndDirect,EnumValue:Direct}," +
                 "Class:LineDecoratorBase{Attribute:LineWidth{MinValue:1,MaxValue:10,$MinCardinality:0,$MaxCardinality:1},Association:ToItem{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:UXDecoratorTemplate{Attribute:EdgeTestQuery{$MinCardinality:1,$MaxCardinality:1},Attribute:ToDiagramItemTestQuery{$MinCardinality:0,$MaxCardinality:1},Attribute:CreateEdgeOnly{$MinCardinality:0,$MaxCardinality:1},Attribute:ForceShowEditForm{$MinCardinality:0,$MaxCardinality:1},Association:DecoratorClass{$MinCardinality:0,$MaxCardinality:1},Attribute:DecoratorVertex{$MinCardinality:0,$MaxCardinality:1}}," +
-                "Class:LabeledItem{Attribute:ConstantLabel{$MinCardinality:0,$MaxCardinality:1},Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:HideLabel{$MinCardinality:0,$MaxCardinality:1},Attribute:LabelQuery{$MinCardinality:0,$MaxCardinality:1},Attribute:UseCodeLabel{$MinCardinality:0,$MaxCardinality:1}}," +
+                "Class:LabeledItem{Attribute:ConstantLabel{$MinCardinality:0,$MaxCardinality:1},Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:HideLabel{$MinCardinality:0,$MaxCardinality:1},Attribute:LabelQuery{$MinCardinality:0,$MaxCardinality:1},Attribute:UseCodeLabel{$MinCardinality:0,$MaxCardinality:1}},Attribute:FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}," +
                 "Class:RectangleItem{Attribute:HideHeader{$MinCardinality:0,$MaxCardinality:1},Attribute:RoundEdgeSize{MinValue:0,MaxValue:200,$MinCardinality:0,$MaxCardinality:1}}," +
                 "Class:ImageItem{Attribute:Filename{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:OvalItem{}," +
@@ -3545,8 +3545,9 @@ namespace m0
             smzu.Get(false, @"LabeledItem\ConstantLabel").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
             smzu.Get(false, @"LabeledItem\LabelQuery").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
             smzu.Get(false, @"LabeledItem\UseCodeLabel").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
+            smzu.Get(false, @"LabeledItem\FormalTextLanguage").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\VertexType"));
             smzu.Get(false, @"LabeledItem\ShowMeta").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
-            smzu.Get(false, @"LabeledItem\HideLabel").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
+            smzu.Get(false, @"LabeledItem\HideLabel").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));            
 
 
             // RectangleItem
@@ -3589,16 +3590,7 @@ namespace m0
             smzu.Get(false, @"CodeItem").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
             smzu.Get(false, @"CodeItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"RectangleItem"));
             smzu.Get(false, @"CodeItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"LabeledItem"));
-            smzu.Get(false, @"CodeItem").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.CodeItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-
-            
-            smzu.Get(false, @"CodeItem\FontSize").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Float"));
-            smzu.Get(false, @"CodeItem\ShowWhiteSpace").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
-            smzu.Get(false, @"CodeItem\ShowLineNumbers").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
-            smzu.Get(false, @"CodeItem\HighlightedLine").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
-            smzu.Get(false, @"CodeItem\ShowFolding").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
-            smzu.Get(false, @"CodeItem\ShowScrollBars").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\VertexType"));
-            smzu.Get(false, @"CodeItem\FormalTextLanguage").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\VertexType"));            
+            smzu.Get(false, @"CodeItem").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.CodeItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");                        
 
 
             // RectangleVisualiserItem

@@ -239,9 +239,7 @@ namespace m0.UIWpf
         {
             if (Visualiser_Down == null)
             {               
-                Visualiser_Down = new CodeVisualiser(baseEdge, platformClassObject.Vertex, true);
-
-                Visualiser_Down.CodeControl.ShowScrollBar = false;
+                Visualiser_Down = new CodeVisualiser(baseEdge, platformClassObject.Vertex, true);                
 
                 ////////////////////////////////////////
                 Interaction.BeginInteractionWithGraph();
@@ -267,9 +265,7 @@ namespace m0.UIWpf
             {                
                 if (CODE_ON_RIGHT)
                 {
-                    Visualiser_Right = new CodeVisualiser(baseEdge, platformClassObject.Vertex, true);
-
-                    ((CodeVisualiser)Visualiser_Right).CodeControl.ShowScrollBar = false;
+                    Visualiser_Right = new CodeVisualiser(baseEdge, platformClassObject.Vertex, true);                    
 
                     ////////////////////////////////////////
                     Interaction.BeginInteractionWithGraph();
