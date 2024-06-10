@@ -1726,13 +1726,10 @@ namespace m0.UIWpf.UX
                     IUXItem clickedItem = GetItemByPoint(p);
 
                       IEdge ve = VertexOperations.AddInstanceAndReturnEdge(
-                          clickedItem.BaseEdge.To
-                          //BaseEdge.To
-                          //Vertex.Get(false, "CreationPool:")
+                          clickedItem.BaseEdge.To                      
                           , ndi.BaseEdge.Get(false, "To:"));
 
                       IVertex newVertex = ve.To;
-                    //IVertex newVertex = MinusZero.Instance.root.Get(false, @"System\Data\UX\Templates\ZeroUML");
 
                       newVertex.Value = ndi.InstanceValue;
 
@@ -2052,7 +2049,7 @@ namespace m0.UIWpf.UX
         {
             Dictionary<IVertex, List<IUXItem>> idbbet = GetItemsDictionaryByBaseEdgeTo();
 
-            if(idbbet.ContainsKey(e.To))
+            if (idbbet.ContainsKey(e.To))
                 foreach (IUXItem i in idbbet[e.To])
                     if (e == i.ContainerEdge)
                         return true;
@@ -2088,7 +2085,7 @@ namespace m0.UIWpf.UX
 
                 bool needAdding = true;
 
-                if(item.GetDiagramLinesBaseEdgeToDictionary().ContainsKey(e.To))
+                if (item.GetDiagramLinesBaseEdgeToDictionary().ContainsKey(e.To))
                 foreach (ILineDecoratorBase l in item.GetDiagramLinesBaseEdgeToDictionary()[e.To])
                     {
                         IVertex l_BaseEdge = GraphUtil.GetQueryOutFirst(l.Vertex, "BaseEdge", null);
