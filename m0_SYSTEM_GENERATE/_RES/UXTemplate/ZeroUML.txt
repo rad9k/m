@@ -6,11 +6,25 @@
 		<@UXTemplate :: "Edge">
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "">
-			<@ItemClass :: @RectangleItem>
+			<@ItemClass :: @RectangleVisualiserItem>
 			<@InstanceCreation :: @InstanceCreationEnum\Direct>
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\BaseGenericItemVertex>
-				<@RectangleItem\ShowMeta :: "True">
+				<@LabeledItem\ShowMeta :: "True">
+			<@UXDecoratorTemplate :: "Edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @MetaExtendedLineDecorator>
+				<@DecoratorVertex :: "">
+		<@UXTemplate :: "Ovel Edge">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@ItemClass :: @OvalItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\BaseGenericItemVertex>
+				<@LabeledItem\ShowMeta :: "True">
 			<@UXDecoratorTemplate :: "Edge">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "">
@@ -25,20 +39,20 @@
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
-				<@RectangleItem\ShowMeta :: "False">
-				<@RectangleItem\VisualiserClass :: @System\Meta\Visualiser\Code>
-				<@RectangleItem\VisualiserVertex :: "">					
+				<@LabeledItem\ShowMeta :: "False">
+				<@RectangleVisualiserItem\VisualiserClass :: @System\Meta\Visualiser\Code>
+				<@RectangleVisualiserItem\VisualiserVertex :: "">					
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 		<@UXTemplate :: "NamedBlock">
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:NamedBlock}">
-			<@ItemClass :: @RectangleItem>
+			<@ItemClass :: @RectangleVisualiserItem>
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
-				<@RectangleItem\ShowMeta :: "False">
-				<@RectangleItem\VisualiserClass :: @System\Meta\Visualiser\Code>
-				<@RectangleItem\VisualiserVertex :: "">					
+				<@LabeledItem\ShowMeta :: "False">
+				<@RectangleVisualiserItem\VisualiserClass :: @System\Meta\Visualiser\Code>
+				<@RectangleVisualiserItem\VisualiserVertex :: "">					
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 		<"BaseGenericItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightRed>
