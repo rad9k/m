@@ -25,10 +25,10 @@ namespace m0.ZeroTypes.UX
     /// <summary>
     /// Interaction logic for DiagramRectangleItem.xaml
     /// </summary>
-    public partial class RectangleVisualiserItem : UXItem
+    public partial class RectangleVisualiserItem : RectangleItem_LabeledItem
     {
         static string[] _SubVertexesTriggeringItemVisualUpdate = new string[] {
-            "RoundEdgeSize", "ShowMeta", "HideHeader", "BorderSize"};
+            "RoundEdgeSize", "HideHeader", "ConstantLabel", "LabelQuery", "ShowMeta", "UseCodeLabel", "FormalTextLanguage", "ShowMeta", "HideLabel", "BorderSize"};
         public override string[] SubVertexesTriggeringItemVisualUpdate { get { return _SubVertexesTriggeringItemVisualUpdate; } }
 
         //
@@ -263,77 +263,8 @@ namespace m0.ZeroTypes.UX
         
         // UNDER        
 
-        static IVertex ShowMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\ShowMeta");
-        static IVertex HideHeader_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\HideHeader");
-        static IVertex RoundEdgeSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\RoundEdgeSize");
         static IVertex VisualiserClass_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\VisualiserClass");
         static IVertex VisualiserVertex_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\VisualiserVertex");
-
-        public bool ShowMeta
-        {
-            get
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ShowMeta", null);
-
-                if (val == null)
-                    return false;
-
-                return GraphUtil.GetBooleanValueOrFalse(val);
-            }
-            set
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ShowMeta", null);
-
-                if (val == null)
-                    val = Vertex.AddVertex(ShowMeta_meta, value);
-                else
-                    val.Value = value;
-            }
-        }
-
-        public bool HideHeader
-        {
-            get
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "HideHeader", null);
-
-                if (val == null)
-                    return false;
-
-                return GraphUtil.GetBooleanValueOrFalse(val);
-            }
-            set
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "HideHeader", null);
-
-                if (val == null)
-                    val = Vertex.AddVertex(HideHeader_meta, value);
-                else
-                    val.Value = value;
-            }
-        }
-
-        public double RoundEdgeSize
-        {
-            get
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "RoundEdgeSize", null);
-
-                if (val == null)
-                    return 0;
-
-                return GraphUtil.GetDoubleValueOr0(val);
-            }
-            set
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "RoundEdgeSize", null);
-
-                if (val == null)
-                    val = Vertex.AddVertex(RoundEdgeSize_meta, value);
-                else
-                    val.Value = value;
-            }
-        }
 
         public IVertex VisualiserClass
         {

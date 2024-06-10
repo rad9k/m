@@ -22,7 +22,7 @@ namespace m0.ZeroTypes.UX
     /// <summary>
     /// Interaction logic for DiagramRectangleItem.xaml
     /// </summary>
-    public partial class ContainerItem : UXContainer
+    public partial class ContainerItem : UXContainer_RectangleItem_LabeledItem
     {
         static string[] _SubVertexesTriggeringItemVisualUpdate = new string[] {
             "RoundEdgeSize", "ShowMeta",  "BorderSize"};

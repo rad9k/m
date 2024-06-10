@@ -3653,7 +3653,8 @@ namespace m0
             smzu.Get(false, @"MultiContainerItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"UXContainer"));
             smzu.Get(false, @"MultiContainerItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"RectangleItem"));
             smzu.Get(false, @"MultiContainerItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"LabeledItem"));
-            smzu.Get(false, @"MultiContainerItem").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.MultiContainerItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");            
+            smzu.Get(false, @"MultiContainerItem").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.MultiContainerItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");          
+            
             smzu.Get(false, @"MultiContainerItem\Orientation").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\UX\OrientationEnum"));
 
 

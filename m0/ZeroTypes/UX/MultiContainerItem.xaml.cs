@@ -24,7 +24,7 @@ namespace m0.ZeroTypes.UX
     /// <summary>
     /// Interaction logic for DiagramRectangleItem.xaml
     /// </summary>
-    public partial class MultiContainerItem : UXContainer, IUXMultiContainerItem
+    public partial class MultiContainerItem : UXContainer_RectangleItem_LabeledItem, IUXMultiContainerItem
     {
         static string[] _SubVertexesTriggeringItemVisualUpdate = new string[] {
             "RoundEdgeSize", "ShowMeta",  "BorderSize"};
@@ -467,53 +467,7 @@ namespace m0.ZeroTypes.UX
         
         // UNDER        
 
-        static IVertex ShowMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\MultiContainerItem\ShowMeta");
-        static IVertex RoundEdgeSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\MultiContainerItem\RoundEdgeSize");
         static IVertex Orientation_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\MultiContainerItem\Orientation");
-
-        public bool ShowMeta
-        {
-            get
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ShowMeta", null);
-
-                if (val == null)
-                    return false;
-
-                return GraphUtil.GetBooleanValueOrFalse(val);
-            }
-            set
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ShowMeta", null);
-
-                if (val == null)
-                    val = Vertex.AddVertex(ShowMeta_meta, value);
-                else
-                    val.Value = value;
-            }
-        }
-
-        public double RoundEdgeSize
-        {
-            get
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "RoundEdgeSize", null);
-
-                if (val == null)
-                    return 0;
-
-                return GraphUtil.GetDoubleValueOr0(val);
-            }
-            set
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "RoundEdgeSize", null);
-
-                if (val == null)
-                    val = Vertex.AddVertex(RoundEdgeSize_meta, value);
-                else
-                    val.Value = value;
-            }
-        }
 
         public OrientationEnum Orientation
         {
