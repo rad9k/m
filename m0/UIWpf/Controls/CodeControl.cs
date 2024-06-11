@@ -30,7 +30,7 @@ using System.Threading;
 using m0.UIWpf.Dialog;
 using System.Diagnostics;
 
-namespace m0.UIWpf.Visualisers
+namespace m0.UIWpf.Controls
 {
     public class CodeControl : Border
     {

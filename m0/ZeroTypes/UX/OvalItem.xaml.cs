@@ -34,6 +34,8 @@ namespace m0.ZeroTypes.UX
 
         //
 
+        FrameworkElement LabelControl;
+
         public OvalItem() : base(new ZeroTypes.Edge(null))
         {
             InitializeComponent();
@@ -48,7 +50,11 @@ namespace m0.ZeroTypes.UX
         {
             base.ItemVisualUpdate();
 
-            if (ShowMeta)
+            LabelControl = GetLabelControl();
+
+            LabelContainer.Child = LabelControl;
+
+         /*   if (ShowMeta)
             {
                 IEdge baseEdge = BaseEdge;
                 IVertex baseEdgeTo = baseEdge.To;
@@ -80,7 +86,7 @@ namespace m0.ZeroTypes.UX
                 else
                     this.Title.Text = "Ø";
             }
-
+         */
             if (BorderSize != 0)
                 this.Elipse.StrokeThickness = BorderSize;
 
@@ -98,7 +104,9 @@ namespace m0.ZeroTypes.UX
 
             this.Elipse.Fill = backgroundBrush;
 
-            this.Title.Foreground = foregroundBrush;
+            //this.Title.Foreground = foregroundBrush;
+            GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", foregroundBrush);
+
             this.Foreground = foregroundBrush;            
 
             this.Elipse.Stroke = borderBrush;
@@ -111,12 +119,15 @@ namespace m0.ZeroTypes.UX
             this.Elipse.Stroke = (Brush)FindResource("0SelectionBrush");
 
 
-            this.Title.Foreground = (Brush)FindResource("0BackgroundBrush");
+            //this.Title.Foreground = (Brush)FindResource("0BackgroundBrush");
+            GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", (Brush)FindResource("0BackgroundBrush"));
+
             this.Foreground = (Brush)FindResource("0BackgroundBrush");
 
             this.Elipse.Fill = (Brush)FindResource("0SelectionBrush");
 
-            this.Title.Cursor = Cursors.ScrollAll;
+            //this.Title.Cursor = Cursors.ScrollAll;
+            GeneralUtil.SetPropertyIfPresent(LabelControl, "Cursor", Cursors.ScrollAll);
         }
 
         public override void Unselect()
@@ -125,7 +136,8 @@ namespace m0.ZeroTypes.UX
 
             SetBaselineColors();
 
-            this.Title.Cursor = Cursors.Arrow;
+            //this.Title.Cursor = Cursors.Arrow;
+            GeneralUtil.SetPropertyIfPresent(LabelControl, "Cursor", Cursors.Arrow);
         }
 
         public override void Highlight()
@@ -138,7 +150,8 @@ namespace m0.ZeroTypes.UX
 
             this.Elipse.Fill = (Brush)FindResource("0HighlightBrush");
 
-            this.Title.Foreground = (Brush)FindResource("0HighlightForegroundBrush");
+            //this.Title.Foreground = (Brush)FindResource("0HighlightForegroundBrush");
+            GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", (Brush)FindResource("0HighlightForegroundBrush"));
         }
 
         public override void Unhighlight()
@@ -190,10 +203,10 @@ namespace m0.ZeroTypes.UX
             if (testX == 0) testX = 0.001;
             if (testY == 0) testY = 0.001;
 
-            double ovalX = thisLeftTop.X + this.Width / 2;
-            double ovalY = thisLeftTop.Y + this.Height / 2;
-            double ovalR2 = this.Width / 2;
-            double ovalR1 = this.Height / 2;
+            double ovalX = thisLeftTop.X + this.ActualWidth / 2;
+            double ovalY = thisLeftTop.Y + this.ActualHeight / 2;
+            double ovalR2 = this.ActualWidth / 2;
+            double ovalR1 = this.ActualHeight / 2;
 
             Oval o = new Oval(ovalX, ovalY, ovalR1, ovalR2);
 

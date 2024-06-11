@@ -8,23 +8,55 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace m0.ZeroTypes.UX
 {
     public class RectangleItem_LabeledItem : UXItem
     {
-        // UNDER
-
-        static IVertex RoundEdgeSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\RoundEdgeSize");
-        static IVertex HideHeader_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\HideHeader");
-
-        static IVertex ConstantLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\ConstantLabel");
-        static IVertex LabelQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\LabelQuery");
-        static IVertex UseCodeLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\UseCodeLabel");
-        static IVertex ShowMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\ShowMeta");
-        static IVertex HideLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\HideLabel");
-
         public RectangleItem_LabeledItem(IEdge edge) : base(edge) { }
+
+        // CODE for RectangleItem
+
+
+        // CODE for LabeledItem
+
+        public string GetLabel()
+        {
+            return BaseEdgeTo.Value.ToString();
+        }
+
+        public FrameworkElement GetLabelControl(){
+            if (UseCodeLabel)
+                return GetLabelControl_Code();
+            else
+                return GetLabelControl_TextBlock();
+        }
+
+        public FrameworkElement GetLabelControl_Code()
+        {
+            return null;
+        }
+
+        public FrameworkElement GetLabelControl_TextBlock()
+        {
+            TextBlock textBlock = null;
+
+            textBlock.HorizontalAlignment = HorizontalAlignment.Center;
+            textBlock.VerticalAlignment = VerticalAlignment.Center;
+            textBlock.TextWrapping = TextWrapping.Wrap;
+            textBlock.TextTrimming = TextTrimming.CharacterEllipsis;
+
+            textBlock.Text = GetLabel();
+
+            return textBlock;
+        }
+
+
+            // UNDER for RectangleItem
+
+            static IVertex RoundEdgeSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\RoundEdgeSize");
+        static IVertex HideHeader_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\HideHeader");
 
         public int RoundEdgeSize
         {
@@ -70,7 +102,13 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        //
+        // UNDER for LabeledItem
+
+        static IVertex ConstantLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\ConstantLabel");
+        static IVertex LabelQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\LabelQuery");
+        static IVertex UseCodeLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\UseCodeLabel");
+        static IVertex ShowMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\ShowMeta");
+        static IVertex HideLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\HideLabel");
 
         public string ConstantLabel
         {

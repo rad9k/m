@@ -18,7 +18,7 @@ using m0.ZeroTypes;
 using m0.Util;
 using System.Xml.Linq;
 using m0.User.Process.UX;
-using m0.UIWpf.Visualisers;
+using m0.UIWpf.Controls;
 
 namespace m0.ZeroTypes.UX
 {

@@ -599,8 +599,8 @@ namespace m0.UIWpf.UX
                            found.LineDecoratorNumber++;
                    }
 
-                   foreach(MetaToPair pair in metatopairs){ // delete DiagramLines for edges that been deleted
-                       if(pair.LineDecoratorNumber > pair.EdgesNumber)
+                   foreach (MetaToPair pair in metatopairs) { // delete DiagramLines for edges that been deleted
+                       if (pair.LineDecoratorNumber > pair.EdgesNumber)
                             foreach (IUXItem decorator in item.Decorators)
                             {
                                 Edge decorator_BaseEdge = decorator.BaseEdge;
@@ -2122,18 +2122,16 @@ namespace m0.UIWpf.UX
         {
             List<IUXItem> r = new List<IUXItem>();
 
-            if(GetItemsDictionaryByBaseEdgeTo().ContainsKey(toEdge.To))
-            foreach (IUXItem i in GetItemsDictionaryByBaseEdgeTo()[toEdge.To])
-                r.Add(i);
-
-            IVertex toEdgeToEdgeTarget = GraphUtil.GetQueryOutFirst(toEdge.To, "$EdgeTarget", null);
-
-            if (GraphUtil.ExistQueryOut(toEdge.Meta, "$VertexTarget", null) && toEdgeToEdgeTarget != null)
-
-            if (toEdge.Meta.Get(false, "$VertexTarget:") != null && toEdge.To.Get(false, "$EdgeTarget:")!=null)
-                if (GetItemsDictionaryByBaseEdgeTo().ContainsKey(toEdgeToEdgeTarget))
-                foreach (IUXItem i in GetItemsDictionaryByBaseEdgeTo()[toEdgeToEdgeTarget])
+            if (GetItemsDictionaryByBaseEdgeTo().ContainsKey(toEdge.To))
+                foreach (IUXItem i in GetItemsDictionaryByBaseEdgeTo()[toEdge.To])
                     r.Add(i);
+
+          /*  IVertex toEdgeToEdgeTarget = GraphUtil.GetQueryOutFirst(toEdge.To, "$EdgeTarget", null);
+
+            if (GraphUtil.ExistQueryOut(toEdge.Meta, "$VertexTarget", null) && toEdgeToEdgeTarget != null) // toEdgeToEdgeTarget is instance of GraphUtil.GetQueryOut(toEdge.Meta, "$VertexTarget", null)  ??
+                if (GetItemsDictionaryByBaseEdgeTo().ContainsKey(toEdgeToEdgeTarget))
+                    foreach (IUXItem i in GetItemsDictionaryByBaseEdgeTo()[toEdgeToEdgeTarget])
+                        r.Add(i);*/
             
             return r;
         }

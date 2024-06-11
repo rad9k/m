@@ -8,11 +8,108 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using m0.UIWpf.Controls;
 
 namespace m0.ZeroTypes.UX
 {
     public class LabeledItem : UXItem
     {
+        // CODE for LabeledItem
+
+        public string GetLabel()
+        {
+            StringBuilder label = new StringBuilder();
+
+            string constantLabel = ConstantLabel;
+
+            if (constantLabel != null)
+            {
+                label.Append(constantLabel);
+                label.Append(" | ");
+            }
+
+            IEdge edge = BaseEdge;
+
+            string labelQuery = LabelQuery;
+
+            if (labelQuery != null)
+            {
+                edge = edge.To.GetAll(false, labelQuery).FirstOrDefault();
+
+                if (edge == null)
+                    return "[empty query result]";
+            }
+
+            if (ShowMeta && edge.Meta.Value.ToString() != "$Empty")
+            {
+                label.Append(edge.Meta.Value.ToString());
+                label.Append(" :: ");
+            }
+
+            label.Append(edge.To.Value.ToString());
+
+            return label.ToString();
+        }
+
+        public FrameworkElement GetLabelControl()
+        {
+            if (UseCodeLabel)
+                return GetLabelControl_Code();
+            else
+                return GetLabelControl_TextBlock();
+        }
+
+        public FrameworkElement GetLabelControl_Code()
+        {
+            IEdge edge = BaseEdge;
+
+            string labelQuery = LabelQuery;
+
+            if (labelQuery != null)
+            {
+                edge = edge.To.GetAll(false, labelQuery).FirstOrDefault();
+
+                if (edge == null)
+                {
+                    TextBlock textBlock = getTextBlock();
+                    textBlock.Text = "[empty query result]";
+                    return textBlock;
+                }
+            }
+
+
+            //CodeControl code = new CodeControl();
+
+
+            return null;
+        }
+
+        private TextBlock getTextBlock()
+        {
+            TextBlock textBlock = new TextBlock();
+
+            textBlock.HorizontalAlignment = HorizontalAlignment.Center;
+            textBlock.VerticalAlignment = VerticalAlignment.Center;
+            textBlock.TextWrapping = TextWrapping.Wrap;
+            textBlock.TextTrimming = TextTrimming.CharacterEllipsis;
+
+            return textBlock;
+        }
+
+        public FrameworkElement GetLabelControl_TextBlock()
+        {
+            TextBlock textBlock = getTextBlock();
+
+            if (HideLabel)
+                textBlock.Text = "";
+            else
+                textBlock.Text = GetLabel();
+
+            return textBlock;
+        }
+
+
         // UNDER
 
         static IVertex ConstantLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\ConstantLabel");
