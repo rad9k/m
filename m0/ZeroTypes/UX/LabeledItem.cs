@@ -79,10 +79,11 @@ namespace m0.ZeroTypes.UX
             }
 
 
-            //CodeControl code = new CodeControl();
+            CodeControl codeControl = new CodeControl(Vertex, true);
+            
 
 
-            return null;
+            return codeControl;
         }
 
         private TextBlock getTextBlock()

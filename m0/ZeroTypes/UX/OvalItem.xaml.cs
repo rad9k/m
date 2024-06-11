@@ -20,6 +20,7 @@ using System.Xml.Linq;
 using m0.User.Process.UX;
 using m0.UIWpf.Visualisers.Diagram;
 using m0.UIWpf;
+using m0.UIWpf.Controls;
 
 namespace m0.ZeroTypes.UX
 {
@@ -52,41 +53,47 @@ namespace m0.ZeroTypes.UX
 
             LabelControl = GetLabelControl();
 
+            LabelControl.VerticalAlignment = VerticalAlignment.Center;
+            LabelControl.HorizontalAlignment = HorizontalAlignment.Center;
+
             LabelContainer.Child = LabelControl;
 
-         /*   if (ShowMeta)
-            {
-                IEdge baseEdge = BaseEdge;
-                IVertex baseEdgeTo = baseEdge.To;
-                IVertex baseEdgeMeta = baseEdge.Meta;
+            if(LabelControl is CodeControl)
+                ((CodeControl)LabelControl).UpdateVertex();
 
-                string meta_text, to_text;
+            /*   if (ShowMeta)
+               {
+                   IEdge baseEdge = BaseEdge;
+                   IVertex baseEdgeTo = baseEdge.To;
+                   IVertex baseEdgeMeta = baseEdge.Meta;
 
-                if (baseEdgeMeta != null)
-                    meta_text = baseEdgeMeta.Value.ToString();
-                else
-                    meta_text = "Ø";
+                   string meta_text, to_text;
 
-                if (baseEdgeTo != null)
-                    to_text = baseEdgeTo.Value.ToString();
-                else
-                    to_text = "Ø";
+                   if (baseEdgeMeta != null)
+                       meta_text = baseEdgeMeta.Value.ToString();
+                   else
+                       meta_text = "Ø";
 
-                if (meta_text != "$Empty" && meta_text != "")
-                    this.Title.Text = meta_text + " : " + to_text;
-                else
-                    this.Title.Text = to_text;
-            }
-            else
-            {
-                IVertex baseEdgeTo = BaseEdgeTo;
+                   if (baseEdgeTo != null)
+                       to_text = baseEdgeTo.Value.ToString();
+                   else
+                       to_text = "Ø";
 
-                if (baseEdgeTo != null)
-                    this.Title.Text = baseEdgeTo.Value.ToString();
-                else
-                    this.Title.Text = "Ø";
-            }
-         */
+                   if (meta_text != "$Empty" && meta_text != "")
+                       this.Title.Text = meta_text + " : " + to_text;
+                   else
+                       this.Title.Text = to_text;
+               }
+               else
+               {
+                   IVertex baseEdgeTo = BaseEdgeTo;
+
+                   if (baseEdgeTo != null)
+                       this.Title.Text = baseEdgeTo.Value.ToString();
+                   else
+                       this.Title.Text = "Ø";
+               }
+            */
             if (BorderSize != 0)
                 this.Elipse.StrokeThickness = BorderSize;
 

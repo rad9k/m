@@ -53,8 +53,8 @@ namespace m0.ZeroTypes.UX
             if (codeControl != null)
                 TheGrid.Children.Remove((UIElement)ContentVisualiser);
 
-            
-            codeControl = new CodeControl(Vertex, true, true);            
+
+            codeControl = new CodeControl(Vertex, true);
 
             Grid.SetRow(codeControl, 2);
 

@@ -36,9 +36,7 @@ namespace m0.UIWpf.Controls
     {
         static object lockObject = new object();
 
-        public bool GenerateAfterParse = true;
-
-        public bool BaseEdgeInsteadBaseVertex;
+        public bool GenerateAfterParse = true;        
 
         public IVertex Vertex;
 
@@ -60,13 +58,11 @@ namespace m0.UIWpf.Controls
 
         public void UnselectAllSelectedEdges() { }
 
-        public CodeControl(IVertex _Vertex, bool _NoVertexForTextMemory, bool _BaseEdgeInsteadBaseVertex)
+        public CodeControl(IVertex _Vertex, bool _NoVertexForTextMemory)
         {
             Vertex = _Vertex;
 
-            NoVertexForTextMemory = _NoVertexForTextMemory;
-
-            BaseEdgeInsteadBaseVertex = _BaseEdgeInsteadBaseVertex;            
+            NoVertexForTextMemory = _NoVertexForTextMemory;            
 
             //
 
@@ -149,15 +145,10 @@ namespace m0.UIWpf.Controls
         {
             editor_Text = editor.Text;
 
-            watch = System.Diagnostics.Stopwatch.StartNew();
-
             Thread thread = new Thread(ExecuteParse_SeparateThread);
             thread.IsBackground = true;
             thread.Start();
         }
-
-        Stopwatch watch;
-
 
         private void ExecuteParse_SeparateThread()
         {
@@ -191,13 +182,6 @@ namespace m0.UIWpf.Controls
                     errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(BaseEdgeToVertex, editor_Text);
                 else
                     errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(ftl, BaseEdgeToVertex, editor_Text);
-
-                //
-
-                watch.Stop();
-                var elapsedMs = watch.ElapsedMilliseconds;
-
-                MinusZero.Instance.Log(0, "parse", elapsedMs.ToString());
 
                 //
 
@@ -306,9 +290,12 @@ namespace m0.UIWpf.Controls
 
             //
 
-            double fontSize = ((double)GraphUtil.GetDoubleValue(Vertex.Get(false, "FontSize:")));
+            double? fontSize = GraphUtil.GetDoubleValue(Vertex.Get(false, "FontSize:"));
 
-            editor.FontSize = fontSize;
+            if (fontSize == null)
+                editor.FontSize = 15;
+            else
+                editor.FontSize = (double)fontSize;
 
             //
 

@@ -9,7 +9,7 @@
     
         <Grid>
             <Ellipse x:Name="Elipse" Stretch="Fill" Margin="0" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" StrokeThickness="1"/>
-            <Border x:Name="LabelContainer" />
+            <Border x:Name="LabelContainer" BorderThickness="10"/>
         </Grid>
 
 </my:LabeledItem>
