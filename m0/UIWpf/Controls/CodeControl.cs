@@ -142,7 +142,7 @@ namespace m0.UIWpf.Controls
         string editor_Text;
 
         private void ExecuteParse()
-        {
+        {            
             editor_Text = editor.Text;
 
             Thread thread = new Thread(ExecuteParse_SeparateThread);
@@ -370,31 +370,36 @@ namespace m0.UIWpf.Controls
 
         bool isFirstParse = true;
 
+        //static object lockObject2 = new object();
+
         public void UpdateVertex()
         {
-            if (doNotParse)
-                return;
-
-            IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
-
-            if (bv != null /*&& bv.Value != null && ((String)bv.Value)!="$Empty"*/)
+            //lock (lockObject2)
             {
-                ExecuteGenerate();
-                
-                if (isFirstParse)
+                if (doNotParse)
+                    return;
+
+                IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
+
+                if (bv != null /*&& bv.Value != null && ((String)bv.Value)!="$Empty"*/)
                 {
-                    TextMemory.Add(editor.Text);
+                    ExecuteGenerate();
 
-                    int currentTextMemory = TextMemory.Count;
+                    if (isFirstParse)
+                    {
+                        TextMemory.Add(editor.Text);
 
-                    TextMemoryMax = currentTextMemory;
-                    TextMemoryCurrent = currentTextMemory;
+                        int currentTextMemory = TextMemory.Count;
 
-                    isFirstParse = false;
+                        TextMemoryMax = currentTextMemory;
+                        TextMemoryCurrent = currentTextMemory;
+
+                        isFirstParse = false;
+                    }
                 }
+                else
+                    editor.Text = "Ø";
             }
-            else
-                editor.Text = "Ø";
         }
 
         void ExecuteGenerate()

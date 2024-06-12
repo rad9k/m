@@ -205,7 +205,7 @@ namespace m0.UIWpf.Visualisers.Helper
                     VisualiserAsFrameworkElement.AllowDrop = true;
 
                     VisualiserAsFrameworkElement.MouseEnter += dndMouseEnter;
-                }else
+                } else
                     VisualiserAsFrameworkElement.AllowDrop = false;
             }
 

@@ -393,29 +393,34 @@ namespace m0.Graph.ExecutionFlow
             }
         }
 
+        //static object lockObject = new object();
+
         public void Commit(IExecution exe)
         {
-            if (state != TransactionStateEnum.Started)
-                throw new Exception("Transaction Commit while transaction not started.");
-
-            state = TransactionStateEnum.Commiting;
-
-            CommitAtoms();
-
-            PrepareAndSendGrahChangeEvents_Loop(exe);
-
-            if (state == TransactionStateEnum.Commiting)
+            //lock (lockObject)
             {
-                Commit_SecondStage();
+                if (state != TransactionStateEnum.Started)
+                    throw new Exception("Transaction Commit while transaction not started.");
 
-                state = TransactionStateEnum.Commited;
+                state = TransactionStateEnum.Commiting;
 
-                return;
-            }
+                CommitAtoms();
 
-            if(state == TransactionStateEnum.Rolledback)
-            {
-                return;
+                PrepareAndSendGrahChangeEvents_Loop(exe);
+
+                if (state == TransactionStateEnum.Commiting)
+                {
+                    Commit_SecondStage();
+
+                    state = TransactionStateEnum.Commited;
+
+                    return;
+                }
+
+                if (state == TransactionStateEnum.Rolledback)
+                {
+                    return;
+                }
             }
         }
 
