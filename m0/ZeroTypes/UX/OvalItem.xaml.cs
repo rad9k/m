@@ -30,7 +30,7 @@ namespace m0.ZeroTypes.UX
     public partial class OvalItem : LabeledItem
     {
         static string[] _SubVertexesTriggeringItemVisualUpdate = new string[] {
-            "ConstantLabel", "LabelQuery", "ShowMeta", "UseCodeLabel", "FormalTextLanguage", "ShowMeta", "HideLabel",  "BorderSize"};
+            "ConstantLabel", "LabelQuery", "ShowMeta", "UseCodeLabel", "FontSize", "FormalTextLanguage", "ShowMeta", "HideLabel",  "BorderSize"};
         public override string[] SubVertexesTriggeringItemVisualUpdate { get { return _SubVertexesTriggeringItemVisualUpdate; } }
 
         //

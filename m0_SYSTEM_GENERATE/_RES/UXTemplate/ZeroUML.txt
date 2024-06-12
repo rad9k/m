@@ -31,11 +31,51 @@
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @MetaExtendedLineDecorator>
 				<@DecoratorVertex :: "">
+		<@UXTemplate :: "Rhombus Edge">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@ItemClass :: @RhombusItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\BaseGenericItemVertex>
+				<@LabeledItem\ShowMeta :: "True">
+			<@UXDecoratorTemplate :: "Edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @MetaExtendedLineDecorator>
+				<@DecoratorVertex :: "">
+		<@UXTemplate :: "Code Edge">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@ItemClass :: @CodeItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\BaseGenericItemVertex>
+				<@LabeledItem\ShowMeta :: "True">
+			<@UXDecoratorTemplate :: "Edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @MetaExtendedLineDecorator>
+				<@DecoratorVertex :: "">
+		<@UXTemplate :: "RectangleVisualiserItemEdge">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@MetaVertexTestQuery :: "">
+			<@ItemClass :: @RectangleVisualiserItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
+				<@LabeledItem\ShowMeta :: "False">
+				<@RectangleVisualiserItem\VisualiserClass :: @System\Meta\Visualiser\Code>
+				<@RectangleVisualiserItem\VisualiserVertex :: "">					
+			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 		<@UXTemplate :: "Block">
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:Block}">
 			<@MetaVertexTestQuery :: "Block">
-			<@ItemClass :: @RectangleItem>
+			<@ItemClass :: @RectangleVisualiserItem>
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\BaseActionItemVertex>

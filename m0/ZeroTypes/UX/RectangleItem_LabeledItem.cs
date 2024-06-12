@@ -42,6 +42,8 @@ namespace m0.ZeroTypes.UX
             Brush foregroundBrush = GetForegroundBrush();
 
             GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", foregroundBrush);
+
+            GeneralUtil.SetPropertyIfPresent(LabelControl, "Background", null);
         }
 
         public override void Select()
@@ -66,7 +68,18 @@ namespace m0.ZeroTypes.UX
         {
             base.Highlight();
 
-            GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", (Brush)FindResource("0HighlightForegroundBrush"));
+            Brush backgroundBrush = GetBackgroundBrush();
+
+            Brush foregroundBrush = GetForegroundBrush();
+
+            if (UseCodeLabel)
+            {
+                GeneralUtil.SetPropertyIfPresent(LabelControl, "Background", backgroundBrush);
+
+                GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", foregroundBrush);
+            }
+            else
+                GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", (Brush)FindResource("0HighlightForegroundBrush"));
         }
 
         public string GetLabel()

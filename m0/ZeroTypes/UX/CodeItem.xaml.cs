@@ -32,7 +32,7 @@ namespace m0.ZeroTypes.UX
         //
 
         static string[] _SubVertexesTriggeringItemVisualUpdate = new string[] {
-            "RoundEdgeSize", "HideHeader", "ConstantLabel", "LabelQuery", "ShowMeta", "UseCodeLabel", "FormalTextLanguage", "ShowMeta", "HideLabel", "BorderSize"};
+            "RoundEdgeSize", "HideHeader", "ConstantLabel", "LabelQuery", "ShowMeta", "UseCodeLabel", "FontSize", "FormalTextLanguage", "ShowMeta", "HideLabel", "BorderSize"};
         public override string[] SubVertexesTriggeringItemVisualUpdate { get { return _SubVertexesTriggeringItemVisualUpdate; } }
 
         //
@@ -146,6 +146,10 @@ namespace m0.ZeroTypes.UX
 
         public override void Highlight()
         {
+            Brush backgroundBrush = GetBackgroundBrush();
+
+            Brush foregroundBrush = GetForegroundBrush();
+
             base.Highlight();
 
             this.InternalFrame.Background = (Brush)FindResource("0HighlightBrush");
@@ -157,8 +161,8 @@ namespace m0.ZeroTypes.UX
 
             if (codeControl != null) // not always works, but can
             {
-                GeneralUtil.SetPropertyIfPresent(codeControl, "Foreground", (Brush)FindResource("0HighlightForegroundBrush"));
-                GeneralUtil.SetPropertyIfPresent(codeControl, "Background", (Brush)FindResource("0HighlightBrush"));
+                GeneralUtil.SetPropertyIfPresent(codeControl, "Foreground", foregroundBrush);
+                GeneralUtil.SetPropertyIfPresent(codeControl, "Background", backgroundBrush);
             }
         }     
     }
