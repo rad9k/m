@@ -20,6 +20,7 @@ using System.Xml.Linq;
 using m0.User.Process.UX;
 using m0.UIWpf.Visualisers.Diagram;
 using m0.UIWpf;
+using m0.UIWpf.Controls;
 
 namespace m0.ZeroTypes.UX
 {
@@ -33,6 +34,7 @@ namespace m0.ZeroTypes.UX
         public override string[] SubVertexesTriggeringItemVisualUpdate { get { return _SubVertexesTriggeringItemVisualUpdate; } }
 
         //
+
         public RhombusItem() : base(new ZeroTypes.Edge(null))
         {
             InitializeComponent();
@@ -47,38 +49,7 @@ namespace m0.ZeroTypes.UX
         {
             base.ItemVisualUpdate();
 
-            if (ShowMeta)
-            {
-                IEdge baseEdge = BaseEdge;
-                IVertex baseEdgeTo = baseEdge.To;
-                IVertex baseEdgeMeta = baseEdge.Meta;
-
-                string meta_text, to_text;
-
-                if (baseEdgeMeta != null)
-                    meta_text = baseEdgeMeta.Value.ToString();
-                else
-                    meta_text = "Ø";
-
-                if (baseEdgeTo != null)
-                    to_text = baseEdgeTo.Value.ToString();
-                else
-                    to_text = "Ø";
-
-                if (meta_text != "$Empty" && meta_text != "")
-                    this.Title.Text = meta_text + " : " + to_text;
-                else
-                    this.Title.Text = to_text;
-            }
-            else
-            {
-                IVertex baseEdgeTo = BaseEdgeTo;
-
-                if (baseEdgeTo != null)
-                    this.Title.Text = baseEdgeTo.Value.ToString();
-                else
-                    this.Title.Text = "Ø";
-            }
+            LabelContainer.Child = LabelControl;
 
             if (BorderSize != 0)
                 this.Rhombus.StrokeThickness = BorderSize;
@@ -86,8 +57,10 @@ namespace m0.ZeroTypes.UX
             SetBaselineColors();
         }
 
-        void SetBaselineColors()
+        protected override void SetBaselineColors()
         {
+            base.SetBaselineColors();
+
             Brush backgroundBrush = GetBackgroundBrush();
 
             Brush foregroundBrush = GetForegroundBrush();
@@ -97,7 +70,6 @@ namespace m0.ZeroTypes.UX
 
             this.Rhombus.Fill = backgroundBrush;
 
-            this.Title.Foreground = foregroundBrush;
             this.Foreground = foregroundBrush;
 
             this.Rhombus.Stroke = borderBrush;
@@ -109,22 +81,9 @@ namespace m0.ZeroTypes.UX
 
             this.Rhombus.Stroke = (Brush)FindResource("0SelectionBrush");
 
-
-            this.Title.Foreground = (Brush)FindResource("0BackgroundBrush");
             this.Foreground = (Brush)FindResource("0BackgroundBrush");
 
             this.Rhombus.Fill = (Brush)FindResource("0SelectionBrush");
-
-            this.Title.Cursor = Cursors.ScrollAll;
-        }
-
-        public override void Unselect()
-        {
-            base.Unselect();
-
-            SetBaselineColors();
-
-            this.Title.Cursor = Cursors.Arrow;
         }
 
         public override void Highlight()
@@ -136,13 +95,6 @@ namespace m0.ZeroTypes.UX
             this.Foreground = (Brush)FindResource("0HighlightForegroundBrush");
 
             this.Rhombus.Fill = (Brush)FindResource("0HighlightBrush");
-
-            this.Title.Foreground = (Brush)FindResource("0HighlightForegroundBrush");
-        }
-
-        public override void Unhighlight()
-        {
-            base.Unhighlight();
         }
 
         public override Point GetLineAnchorLocation(IUXItem _toItem, bool useToPoint, Point toPoint, int toItemDiagramLinesCount, int toItemDiagramLineNumber, bool isSelfStart)        

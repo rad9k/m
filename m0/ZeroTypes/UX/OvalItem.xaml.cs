@@ -35,8 +35,6 @@ namespace m0.ZeroTypes.UX
 
         //
 
-        FrameworkElement LabelControl;
-
         public OvalItem() : base(new ZeroTypes.Edge(null))
         {
             InitializeComponent();
@@ -51,57 +49,18 @@ namespace m0.ZeroTypes.UX
         {
             base.ItemVisualUpdate();
 
-            LabelControl = GetLabelControl();
-
-            LabelControl.VerticalAlignment = VerticalAlignment.Center;
-            LabelControl.HorizontalAlignment = HorizontalAlignment.Center;
-
             LabelContainer.Child = LabelControl;
 
-            if(LabelControl is CodeControl)
-                ((CodeControl)LabelControl).UpdateVertex();
-
-            /*   if (ShowMeta)
-               {
-                   IEdge baseEdge = BaseEdge;
-                   IVertex baseEdgeTo = baseEdge.To;
-                   IVertex baseEdgeMeta = baseEdge.Meta;
-
-                   string meta_text, to_text;
-
-                   if (baseEdgeMeta != null)
-                       meta_text = baseEdgeMeta.Value.ToString();
-                   else
-                       meta_text = "Ø";
-
-                   if (baseEdgeTo != null)
-                       to_text = baseEdgeTo.Value.ToString();
-                   else
-                       to_text = "Ø";
-
-                   if (meta_text != "$Empty" && meta_text != "")
-                       this.Title.Text = meta_text + " : " + to_text;
-                   else
-                       this.Title.Text = to_text;
-               }
-               else
-               {
-                   IVertex baseEdgeTo = BaseEdgeTo;
-
-                   if (baseEdgeTo != null)
-                       this.Title.Text = baseEdgeTo.Value.ToString();
-                   else
-                       this.Title.Text = "Ø";
-               }
-            */
             if (BorderSize != 0)
                 this.Elipse.StrokeThickness = BorderSize;
 
             SetBaselineColors();
         }
 
-        void SetBaselineColors()
+        protected override void SetBaselineColors()
         {
+            base.SetBaselineColors();
+
             Brush backgroundBrush = GetBackgroundBrush();
 
             Brush foregroundBrush = GetForegroundBrush();
@@ -110,9 +69,6 @@ namespace m0.ZeroTypes.UX
 
 
             this.Elipse.Fill = backgroundBrush;
-
-            //this.Title.Foreground = foregroundBrush;
-            GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", foregroundBrush);
 
             this.Foreground = foregroundBrush;            
 
@@ -125,26 +81,9 @@ namespace m0.ZeroTypes.UX
             
             this.Elipse.Stroke = (Brush)FindResource("0SelectionBrush");
 
-
-            //this.Title.Foreground = (Brush)FindResource("0BackgroundBrush");
-            GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", (Brush)FindResource("0BackgroundBrush"));
-
             this.Foreground = (Brush)FindResource("0BackgroundBrush");
 
             this.Elipse.Fill = (Brush)FindResource("0SelectionBrush");
-
-            //this.Title.Cursor = Cursors.ScrollAll;
-            GeneralUtil.SetPropertyIfPresent(LabelControl, "Cursor", Cursors.ScrollAll);
-        }
-
-        public override void Unselect()
-        {
-            base.Unselect();
-
-            SetBaselineColors();
-
-            //this.Title.Cursor = Cursors.Arrow;
-            GeneralUtil.SetPropertyIfPresent(LabelControl, "Cursor", Cursors.Arrow);
         }
 
         public override void Highlight()
@@ -156,14 +95,6 @@ namespace m0.ZeroTypes.UX
             this.Foreground = (Brush)FindResource("0HighlightForegroundBrush");
 
             this.Elipse.Fill = (Brush)FindResource("0HighlightBrush");
-
-            //this.Title.Foreground = (Brush)FindResource("0HighlightForegroundBrush");
-            GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", (Brush)FindResource("0HighlightForegroundBrush"));
-        }
-
-        public override void Unhighlight()
-        {
-            base.Unhighlight();
         }
 
         public override Point GetLineAnchorLocation(IUXItem _toItem, bool useToPoint, Point toPoint, int toItemDiagramLinesCount, int toItemDiagramLineNumber, bool isSelfStart)
@@ -316,9 +247,5 @@ namespace m0.ZeroTypes.UX
 
             return p;
         }
-
-        // UNDER        
-
-       
     }
 }

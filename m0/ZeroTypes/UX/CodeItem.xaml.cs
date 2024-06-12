@@ -53,7 +53,6 @@ namespace m0.ZeroTypes.UX
             if (codeControl != null)
                 TheGrid.Children.Remove((UIElement)ContentVisualiser);
 
-
             codeControl = new CodeControl(Vertex, true);
 
             Grid.SetRow(codeControl, 2);
@@ -65,45 +64,16 @@ namespace m0.ZeroTypes.UX
         
         public override void ItemVisualUpdate()
         {
-            if (codeControl != null)
-                codeControl.UpdateVertex();
+            base.ItemVisualUpdate();
+
+            LabelContainer.Child = LabelControl;
 
             //
 
-            base.ItemVisualUpdate();
+            if (codeControl != null)
+                codeControl.UpdateVertex();
 
-            if (ShowMeta)
-            {
-                IEdge baseEdge = BaseEdge;
-                IVertex baseEdgeTo = baseEdge.To;
-                IVertex baseEdgeMeta = baseEdge.Meta;
-
-                string meta_text, to_text;
-
-                if (baseEdgeMeta != null)
-                    meta_text = baseEdgeMeta.Value.ToString();
-                else
-                    meta_text = "Ø";
-
-                if (baseEdgeTo != null)
-                    to_text = baseEdgeTo.Value.ToString();
-                else
-                    to_text = "Ø";
-
-                if (meta_text != "$Empty" && meta_text != "")
-                    this.Title.Text = meta_text + " : " + to_text;
-                else
-                    this.Title.Text = to_text;
-            }            
-            else
-            {
-                IVertex baseEdgeTo = BaseEdgeTo;
-
-                if (baseEdgeTo != null)
-                    this.Title.Text = baseEdgeTo.Value.ToString();
-                else
-                    this.Title.Text = "Ø";
-            }
+            //         
             
             double BorderSize_nonZero = BorderSize; ;
 
@@ -128,8 +98,10 @@ namespace m0.ZeroTypes.UX
             SetBaselineColors();
         }
 
-        void SetBaselineColors()
+        protected override void SetBaselineColors()
         {
+            base.SetBaselineColors();
+
             Brush backgroundBrush = GetBackgroundBrush();
 
             Brush foregroundBrush = GetForegroundBrush();
@@ -139,17 +111,16 @@ namespace m0.ZeroTypes.UX
 
             this.Frame.Background = backgroundBrush;
 
-            this.Title.Foreground = foregroundBrush;
             this.Foreground = foregroundBrush;
 
             this.InternalFrame.Background = borderBrush;
 
             this.Frame.BorderBrush = borderBrush;
 
-            if (ContentVisualiser != null) // not always works, but can
+            if (codeControl != null) // not always works, but can
             {
-                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Foreground", foregroundBrush);
-                GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Background", backgroundBrush);
+                GeneralUtil.SetPropertyIfPresent(codeControl, "Foreground", foregroundBrush);
+                GeneralUtil.SetPropertyIfPresent(codeControl, "Background", backgroundBrush);
             }
         }
 
@@ -160,13 +131,9 @@ namespace m0.ZeroTypes.UX
             this.InternalFrame.Background = (Brush)FindResource("0SelectionBrush");
             this.Frame.BorderBrush = (Brush)FindResource("0SelectionBrush");
 
-
-            this.Title.Foreground = (Brush)FindResource("0BackgroundBrush");
             this.Foreground = (Brush)FindResource("0BackgroundBrush");
 
             this.Frame.Background = (Brush)FindResource("0SelectionBrush");
-
-            this.Title.Cursor = Cursors.ScrollAll;
 
             //
 
@@ -175,15 +142,6 @@ namespace m0.ZeroTypes.UX
                 GeneralUtil.SetPropertyIfPresent(codeControl, "Foreground", (Brush)FindResource("0ForegroundBrush"));
                 GeneralUtil.SetPropertyIfPresent(codeControl, "Background", (Brush)FindResource("0BackgroundBrush"));
             }
-        }
-
-        public override void Unselect()
-        {
-            base.Unselect();
-
-            SetBaselineColors();
-
-            this.Title.Cursor = Cursors.Arrow;
         }
 
         public override void Highlight()
@@ -196,22 +154,12 @@ namespace m0.ZeroTypes.UX
             this.Foreground = (Brush)FindResource("0HighlightForegroundBrush"); 
            
             this.Frame.Background = (Brush)FindResource("0HighlightBrush");
-            
-            this.Title.Foreground = (Brush)FindResource("0HighlightForegroundBrush");
 
             if (codeControl != null) // not always works, but can
             {
                 GeneralUtil.SetPropertyIfPresent(codeControl, "Foreground", (Brush)FindResource("0ForegroundBrush"));
                 GeneralUtil.SetPropertyIfPresent(codeControl, "Background", (Brush)FindResource("0BackgroundBrush"));
             }
-        }
-
-        public override void Unhighlight()
-        {
-            base.Unhighlight();
-        }
-        
-        // UNDER        
-
+        }     
     }
 }

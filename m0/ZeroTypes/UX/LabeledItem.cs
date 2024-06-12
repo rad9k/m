@@ -10,12 +10,59 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using m0.UIWpf.Controls;
+using m0.Util;
+using System.Windows.Media;
+using System.Windows.Input;
 
 namespace m0.ZeroTypes.UX
 {
     public class LabeledItem : UXItem
     {
         // CODE for LabeledItem
+
+        protected FrameworkElement LabelControl;
+
+        public override void ItemVisualUpdate()
+        {
+            base.ItemVisualUpdate();
+
+            LabelControl = GetLabelControl();
+
+            if (LabelControl is CodeControl)
+                ((CodeControl)LabelControl).UpdateVertex();
+        }
+
+        protected virtual void SetBaselineColors()
+        {
+            Brush foregroundBrush = GetForegroundBrush();
+
+            GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", foregroundBrush);
+        }
+
+        public override void Select()
+        {
+            base.Select();
+
+            GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", (Brush)FindResource("0BackgroundBrush"));
+
+            GeneralUtil.SetPropertyIfPresent(LabelControl, "Cursor", Cursors.ScrollAll);
+        }
+
+        public override void Unselect()
+        {
+            base.Unselect();
+
+            SetBaselineColors();
+
+            GeneralUtil.SetPropertyIfPresent(LabelControl, "Cursor", Cursors.Arrow);
+        }
+
+        public override void Highlight()
+        {
+            base.Highlight();
+
+            GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", (Brush)FindResource("0HighlightForegroundBrush"));
+        }
 
         public string GetLabel()
         {
@@ -43,21 +90,35 @@ namespace m0.ZeroTypes.UX
 
             if (ShowMeta && edge.Meta.Value.ToString() != "$Empty")
             {
-                label.Append(edge.Meta.Value.ToString());
+                if (edge.Meta.Value == null)
+                    label.Append("Ø");
+                else
+                    label.Append(edge.Meta.Value.ToString());
+
                 label.Append(" :: ");
             }
 
-            label.Append(edge.To.Value.ToString());
+            if (edge.To.Value == null)
+                label.Append("Ø");
+            else
+                label.Append(edge.To.Value.ToString());
 
             return label.ToString();
         }
 
         public FrameworkElement GetLabelControl()
         {
+            FrameworkElement labelControl;
+
             if (UseCodeLabel)
-                return GetLabelControl_Code();
+                labelControl = GetLabelControl_Code();
             else
-                return GetLabelControl_TextBlock();
+                labelControl = GetLabelControl_TextBlock();
+
+            labelControl.VerticalAlignment = VerticalAlignment.Center;
+            labelControl.HorizontalAlignment = HorizontalAlignment.Center;
+
+            return labelControl;
         }
 
         public FrameworkElement GetLabelControl_Code()
@@ -81,8 +142,6 @@ namespace m0.ZeroTypes.UX
 
             CodeControl codeControl = new CodeControl(Vertex, true);
             
-
-
             return codeControl;
         }
 

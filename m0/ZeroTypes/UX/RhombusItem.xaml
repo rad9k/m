@@ -9,7 +9,7 @@
 
     <Grid>
         <Path x:Name="Rhombus" Data="M50,0L100,50 50,100 0,50z"  Stretch="Fill" Margin="0" HorizontalAlignment="Left"  VerticalAlignment="Top"/>
-        <TextBlock x:Name="Title" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" TextTrimming="CharacterEllipsis"/>
+        <Border x:Name="LabelContainer" BorderThickness="10"/>
     </Grid>
 
 
