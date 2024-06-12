@@ -139,8 +139,8 @@ namespace m0.ZeroTypes.UX
 
             if (codeControl != null) // not always works, but can
             {
-                GeneralUtil.SetPropertyIfPresent(codeControl, "Foreground", (Brush)FindResource("0ForegroundBrush"));
-                GeneralUtil.SetPropertyIfPresent(codeControl, "Background", (Brush)FindResource("0BackgroundBrush"));
+                GeneralUtil.SetPropertyIfPresent(codeControl, "Foreground", (Brush)FindResource("0BackgroundBrush"));
+                GeneralUtil.SetPropertyIfPresent(codeControl, "Background", (Brush)FindResource("0ForegroundBrush")); 
             }
         }
 
@@ -157,8 +157,8 @@ namespace m0.ZeroTypes.UX
 
             if (codeControl != null) // not always works, but can
             {
-                GeneralUtil.SetPropertyIfPresent(codeControl, "Foreground", (Brush)FindResource("0ForegroundBrush"));
-                GeneralUtil.SetPropertyIfPresent(codeControl, "Background", (Brush)FindResource("0BackgroundBrush"));
+                GeneralUtil.SetPropertyIfPresent(codeControl, "Foreground", (Brush)FindResource("0HighlightForegroundBrush"));
+                GeneralUtil.SetPropertyIfPresent(codeControl, "Background", (Brush)FindResource("0HighlightBrush"));
             }
         }     
     }

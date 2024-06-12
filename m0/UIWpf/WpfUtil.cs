@@ -404,7 +404,7 @@ namespace m0.UIWpf
         }
 
         public static void SetWindowPosition(Window control, Point position)
-        { 
+        {
             if (position!=null)
             {
                 double screenWidth = 0;
@@ -418,7 +418,7 @@ namespace m0.UIWpf
                             screenHeight = s.WorkingArea.Height;
                         }
 
-                if(screenWidth == 0)
+                if (screenWidth == 0)
                 {
                     System.Windows.Forms.Screen lastScreen = System.Windows.Forms.Screen.AllScreens[System.Windows.Forms.Screen.AllScreens.Length - 1];
 
@@ -434,7 +434,10 @@ namespace m0.UIWpf
                 if (position.Y + control.ActualHeight > screenHeight)
                     control.Top = screenHeight - control.ActualHeight - 75; // 50 is for taskbar that used to be on the bottom
                 else
-                    control.Top = position.Y;
+                    control.Top = position.Y;// - 150;
+
+               // if (control.Top < 0)
+                //    control.Top = 0;
             }
         }
 

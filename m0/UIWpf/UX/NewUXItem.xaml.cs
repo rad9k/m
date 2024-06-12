@@ -30,7 +30,7 @@ namespace m0.UIWpf.UX
 
         void OnLoad(object sender, RoutedEventArgs e)
         {
-            WpfUtil.SetWindowPosition(this, _mousePosition);
+            WpfUtil.SetWindowPosition(this, _mousePosition); 
         }
 
         IUXVisualiser visualiser;
