@@ -271,7 +271,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return exe.Stack;
         }
 
-        public override void UpdateVertex()
+        public override void BaseEdgeToUpdated()
         {
             IVertex bas = Vertex.Get(false, @"BaseEdge:\To:");
 

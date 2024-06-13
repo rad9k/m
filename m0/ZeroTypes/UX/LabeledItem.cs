@@ -22,9 +22,9 @@ namespace m0.ZeroTypes.UX
 
         protected FrameworkElement LabelControl;
 
-        public override void ItemVisualUpdate()
+        public override void ViewAttributesUpdated()
         {
-            base.ItemVisualUpdate();
+            base.ViewAttributesUpdated();
 
             LabelControl = GetLabelControl();
 

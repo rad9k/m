@@ -164,7 +164,7 @@ namespace m0.UIWpf.Visualisers
             ////////////////////////////////////////
         }
 
-        public void UpdateVertex()
+        public void BaseEdgeToUpdated()
         {
             IVertex mv = Vertex.Get(false, @"BaseEdge:\Meta:");
             IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");

@@ -205,8 +205,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         //
 
-        public virtual void UpdateView() {
-            UpdateVertex();
+        public virtual void ViewAttributesUpdated() {
+            BaseEdgeToUpdated();
         }
 
         public void ScaleChange() { }
@@ -2606,7 +2606,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             CurrentSnapToGridValue = 1.0/16;
         }        
 
-        public virtual void UpdateVertex()
+        public virtual void BaseEdgeToUpdated()
         {
             IVertex bas = Vertex.Get(false, @"BaseEdge:\To:");
 
@@ -2639,7 +2639,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected virtual void EdgeDisposed(IEdge edge)
         {
-            UpdateVertex();
+            BaseEdgeToUpdated();
 
             WasThereEdgeAddedRemovedDisposed = true;
         }

@@ -15,7 +15,7 @@ namespace m0.UIWpf.Visualisers.Helper
 
         void OnLoad(object sender, RoutedEventArgs e);
 
-        void UpdateVertex();
+        void BaseEdgeToUpdated();
 
         void ScaleChange();
     }

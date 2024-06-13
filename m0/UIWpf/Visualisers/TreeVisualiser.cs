@@ -310,7 +310,7 @@ namespace m0.UIWpf.Visualisers
         static string[] _MetaTriggeringUpdateView = new string[] { };
         public string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
-        public void UpdateView() { }
+        public void ViewAttributesUpdated() { }
 
         // TypedEdge START
 
@@ -364,7 +364,7 @@ namespace m0.UIWpf.Visualisers
             VisualiserHelper.AddContextMenu();
         }
 
-        public void UpdateVertex()
+        public void BaseEdgeToUpdated()
         {
             ClearAllItems();
 
@@ -398,7 +398,7 @@ namespace m0.UIWpf.Visualisers
                 SelectedVerticesUpdated();
 
             if(IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:"))){
-                UpdateVertex();
+                BaseEdgeToUpdated();
                 return exe.Stack;
             }
 
@@ -430,7 +430,7 @@ namespace m0.UIWpf.Visualisers
 
         private void EdgeDisposed(IEdge edge)
         {
-            UpdateVertex();
+            BaseEdgeToUpdated();
         }
 
         public void SelectedVerticesUpdated()

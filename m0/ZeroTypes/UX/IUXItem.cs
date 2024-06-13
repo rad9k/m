@@ -42,7 +42,9 @@ namespace m0.ZeroTypes.UX
 
         void RemoveDiagramLine(ILineDecoratorBase line);
 
-        void ItemVisualUpdate();
+        void BaseEdgeToUpdated();
+
+        void ViewAttributesUpdated();
 
         void Select();
 

@@ -37,7 +37,7 @@ namespace m0.UIWpf.Visualisers
 
         public void ScaleChange() { }
 
-        public void UpdateView() { }
+        public void ViewAttributesUpdated() { }
 
         public string[] MetaTriggeringUpdateVertex { get; }
 
@@ -86,7 +86,7 @@ namespace m0.UIWpf.Visualisers
             if (ExecutionFlowHelper.AllEventChildVisualiser(exe.Stack))
                 return exe.Stack;
 
-            UpdateVertex();
+            BaseEdgeToUpdated();
 
             return exe.Stack;
         }
@@ -125,7 +125,7 @@ namespace m0.UIWpf.Visualisers
             Children.Add(p);
         }
 
-        public void UpdateVertex()
+        public void BaseEdgeToUpdated()
         {
             IVertex baseEdgeTo = Vertex.Get(false, @"BaseEdge:\To:");
 

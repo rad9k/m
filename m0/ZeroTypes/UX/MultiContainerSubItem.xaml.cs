@@ -92,7 +92,7 @@ namespace m0.ZeroTypes.UX
                 return (Brush)FindResource("0ForegroundBrush");
         }
 
-        public void ItemVisualUpdate()
+        public void ViewAttributesUpdated()
         {            
             Label.Text = UXTemplate.Name;
 

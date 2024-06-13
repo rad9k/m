@@ -45,7 +45,7 @@ namespace m0
 
           //  LovFlov.LovFlov.Execute();
 
-            m0Main.mainTree.UpdateVertex();
+            m0Main.mainTree.BaseEdgeToUpdated();
 
             //ExtraRun8();
 

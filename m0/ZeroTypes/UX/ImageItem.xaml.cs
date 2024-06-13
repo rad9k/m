@@ -41,7 +41,7 @@ namespace m0.ZeroTypes.UX
 
         bool shouldTryToLoad = true;
         
-        public override void ItemVisualUpdate()
+        public override void ViewAttributesUpdated()
         {
             if(shouldTryToLoad)
                 try
@@ -55,7 +55,7 @@ namespace m0.ZeroTypes.UX
                     shouldTryToLoad = false;
                 }
 
-            base.ItemVisualUpdate();
+            base.ViewAttributesUpdated();
 
             if (!HideLabel)
             {

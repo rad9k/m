@@ -113,9 +113,7 @@ namespace m0.UIWpf.UX
         static string[] _MetaTriggeringUpdateView = new string[] { };
         public virtual string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
-        public virtual void UpdateView() { }
-
-        public virtual void UpdateVertex() { PaintDiagram(); }
+        public virtual void BaseEdgeToUpdated() { PaintDiagram(); }
 
         //
 
@@ -713,7 +711,7 @@ namespace m0.UIWpf.UX
             //////////////////////////////////////// 
         }
 
-        public void ItemVisualUpdate()        
+        public virtual void ViewAttributesUpdated()        
         {
             PaintDiagram();
         }

@@ -154,7 +154,7 @@ namespace m0.UIWpf.Visualisers.Helper
             if (BaseEdgeToEventTriggeringUpdateVertex && (
                 IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:"))
                 || IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:\To:"))))
-                listVisualiser.UpdateVertex();
+                listVisualiser.BaseEdgeToUpdated();
             else
             {
                 bool needToUpdateBaseEdge = false;
@@ -164,7 +164,7 @@ namespace m0.UIWpf.Visualisers.Helper
                         needToUpdateBaseEdge = true;
 
                 if (needToUpdateBaseEdge)
-                    listVisualiser.UpdateVertex();
+                    listVisualiser.BaseEdgeToUpdated();
 
                 bool needToUpdateView = false;
 
@@ -173,7 +173,7 @@ namespace m0.UIWpf.Visualisers.Helper
                         needToUpdateView = true;
 
                 if (needToUpdateView)
-                    listVisualiser.UpdateView();
+                    listVisualiser.ViewAttributesUpdated();
             }
 
             return exe.Stack;

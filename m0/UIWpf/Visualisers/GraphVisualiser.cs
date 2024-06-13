@@ -213,7 +213,7 @@ namespace m0.UIWpf.Visualisers
         static string[] _MetaTriggeringUpdateView = new string[] { };
         public string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
-        public void UpdateView() { }
+        public void ViewAttributesUpdated() { }
 
         // TypedEdge START
 
@@ -618,7 +618,7 @@ namespace m0.UIWpf.Visualisers
             Vertex.Get(false, "ShowOutEdges:").Value = "True";
         }        
 
-        public void UpdateVertex(){
+        public void BaseEdgeToUpdated(){
             IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
 
             if (bv != null)

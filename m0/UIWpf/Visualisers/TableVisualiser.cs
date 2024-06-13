@@ -33,7 +33,7 @@ namespace m0.UIWpf.Visualisers
         static string[] _MetaTriggeringUpdateView = new string[] {"IsAllVisualisersEdit", "ShowHeader", "GridStyle", "AlternatingRows" };
         public override string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
-        public override void UpdateView() { ResetView(); }
+        public override void ViewAttributesUpdated() { ResetView(); }
 
         // TypedEdge START
 
@@ -205,7 +205,7 @@ namespace m0.UIWpf.Visualisers
 
         IVertex ToShowEdgesMeta;
 
-        public override void UpdateVertex(){
+        public override void BaseEdgeToUpdated(){
             IVertex bas = Vertex.Get(false, @"BaseEdge:\To:");
 
             if (Vertex.Get(false, @"ToShowEdgesMeta:\Meta:") == null) // check if we are in the middle of ToShowEdgesMeta sub Vertices switching

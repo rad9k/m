@@ -88,7 +88,7 @@ namespace m0.UIWpf.Visualisers
         static string[] _MetaTriggeringUpdateView = new string[] { };
         public string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
-        public void UpdateView() { }
+        public void ViewAttributesUpdated() { }
 
         public void UnselectAllSelectedEdges() { }
 
@@ -316,7 +316,7 @@ namespace m0.UIWpf.Visualisers
         IVertex BaseVertexEdge = null;
         
 
-        public void UpdateVertex()
+        public void BaseEdgeToUpdated()
         {
            // Content = new Button();
             VisualiserHelper.ForceVertexChangeOff = true;

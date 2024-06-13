@@ -24,7 +24,7 @@ namespace m0.ZeroTypes.UX
     }
 
     public class UXItem : UserControl, IUXItem, IPlatformClass
-    {
+    {        
         public virtual string[] SubVertexesTriggeringItemVisualUpdate { get; }
 
         //
@@ -127,7 +127,7 @@ namespace m0.ZeroTypes.UX
                 "UXItem",
                 VertexChange);
 
-            ItemVisualUpdate();
+            ViewAttributesUpdated();
         } // to be called after Vertex is setted up
 
         public bool IsDisposed = false;
@@ -460,7 +460,7 @@ namespace m0.ZeroTypes.UX
                         trigger = true;
 
                 if (trigger)
-                    ItemVisualUpdate();
+                    ViewAttributesUpdated();
             }
 
             //
@@ -468,7 +468,7 @@ namespace m0.ZeroTypes.UX
             IVertex baseEdgeTo = BaseEdgeTo;
 
             if (IsVertexChange(exe.Stack, baseEdgeTo))
-                ItemVisualUpdate();
+                ViewAttributesUpdated();
 
             foreach (IVertex edgeVertex in GetEdgesRemovedFrom(exe.Stack, baseEdgeTo))
             {
@@ -499,10 +499,10 @@ namespace m0.ZeroTypes.UX
                 || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "Green")
                 || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "Blue")
                 || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "Opacity"))
-                ItemVisualUpdate();
+                ViewAttributesUpdated();
 
             if (IsEdgeAddedTo(exe.Stack, Vertex))
-                ItemVisualUpdate();
+                ViewAttributesUpdated();
 
             return exe.Stack;
         }
@@ -571,7 +571,9 @@ namespace m0.ZeroTypes.UX
             DiagramToAsMetaLines.Add(line);
         }
 
-        public virtual void ItemVisualUpdate()
+        public virtual void BaseEdgeToUpdated() { }
+
+        public virtual void ViewAttributesUpdated()
         {
             Size size = Size;
 

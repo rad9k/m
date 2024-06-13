@@ -45,9 +45,9 @@ namespace m0.ZeroTypes.UX
             InitializeComponent();
         }
 
-        public override void ItemVisualUpdate()
+        public override void ViewAttributesUpdated()
         {
-            base.ItemVisualUpdate();
+            base.ViewAttributesUpdated();
 
             LabelContainer.Child = LabelControl;
 

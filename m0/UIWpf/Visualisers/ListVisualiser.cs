@@ -43,7 +43,7 @@ namespace m0.UIWpf.Visualisers
         static string[] _MetaTriggeringUpdateView = new string[] { "IsMetaRightAlign", "IsAllVisualisersEdit", "ShowMeta", "GridStyle", "FilterQuery" };
         public virtual string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
-        public virtual void UpdateView() { ResetView(); }
+        public virtual void ViewAttributesUpdated() { ResetView(); }
 
         protected IVertex parentVisualiser;
 
@@ -315,7 +315,7 @@ namespace m0.UIWpf.Visualisers
 
         protected virtual void AddFooter() { }       
 
-        public virtual void UpdateVertex(){            
+        public virtual void BaseEdgeToUpdated(){            
             IVertex _bas = Vertex.Get(false, @"BaseEdge:\To:");
 
             IEnumerable ItemsSourceValue = null;

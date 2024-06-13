@@ -370,7 +370,7 @@ namespace m0.UIWpf.Visualisers
 
         bool ValueChangeing = false;
 
-        public void UpdateVertex()
+        public void BaseEdgeToUpdated()
         {
             IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
             IVertex bmv = Vertex.Get(false, @"BaseEdge:\Meta:");

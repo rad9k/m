@@ -43,7 +43,7 @@ namespace m0.UIWpf.Visualisers
         static string[] _MetaTriggeringUpdateView = new string[] {"ShowWhiteSpace", "ShowLineNumbers", "HighlightedLine", "FontSize", "ShowFolding" };
         public string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
-        public void UpdateView() { CodeControl.UpdateEditView(); }
+        public void ViewAttributesUpdated() { CodeControl.UpdateEditView(); }
 
         public void UnselectAllSelectedEdges() { }
 
@@ -78,14 +78,14 @@ namespace m0.UIWpf.Visualisers
 
             this.Child = CodeControl;
 
-            UpdateVertex();
+            BaseEdgeToUpdated();
         }
 
         public void OnLoad(object sender, RoutedEventArgs e) { }
 
         public void SelectedVerticesUpdated() { }
 
-        public void UpdateVertex()
+        public void BaseEdgeToUpdated()
         {
             if (CodeControl != null)
                 CodeControl.UpdateVertex();

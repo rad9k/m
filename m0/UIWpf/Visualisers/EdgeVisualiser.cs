@@ -65,7 +65,7 @@ namespace m0.UIWpf.Visualisers
 
         public void ScaleChange() { }
 
-        public void UpdateVertex()
+        public void BaseEdgeToUpdated()
         {
             IVertex bv = Vertex.Get(false, @"BaseEdge:\To:\To:");
 
@@ -156,7 +156,7 @@ namespace m0.UIWpf.Visualisers
         {
             Dnd.DoDropForEdgeVisualiser(this, Vertex.Get(false, @"BaseEdge:"), e);
 
-            UpdateVertex();
+            BaseEdgeToUpdated();
         }
 
         private void dndMouseEnter(object sender, MouseEventArgs e)

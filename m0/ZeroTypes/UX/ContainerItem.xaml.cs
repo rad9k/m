@@ -52,9 +52,9 @@ namespace m0.ZeroTypes.UX
             base.VertexSetedUp();
         }
 
-        public override void ItemVisualUpdate()
+        public override void ViewAttributesUpdated()
         {
-            base.ItemVisualUpdate();
+            base.ViewAttributesUpdated();
 
             if (ShowMeta)
             {

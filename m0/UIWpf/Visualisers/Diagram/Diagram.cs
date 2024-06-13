@@ -93,9 +93,9 @@ namespace m0.UIWpf.Visualisers.Diagram
         static string[] _MetaTriggeringUpdateView = new string[] { };
         public virtual string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
-        public virtual void UpdateView() { }
+        public virtual void ViewAttributesUpdated() { }
 
-        public virtual void UpdateVertex() { PaintDiagram(); }
+        public virtual void BaseEdgeToUpdated() { PaintDiagram(); }
 
         public Diagram(IVertex baseEdgeVertex, IVertex parentVisualiser)
         {

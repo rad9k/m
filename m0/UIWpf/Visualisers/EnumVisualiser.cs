@@ -107,7 +107,7 @@ namespace m0.UIWpf.Visualisers
             base.OnSelectionChanged(_e);
         }
 
-        public void UpdateVertex()
+        public void BaseEdgeToUpdated()
         {
             IVertex bev = Vertex.Get(false, "BaseEdge:");
 

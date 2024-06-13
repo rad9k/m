@@ -60,7 +60,7 @@ namespace m0.UIWpf.Visualisers
 
         public void ScaleChange() { }
 
-        public void UpdateVertex()
+        public void BaseEdgeToUpdated()
         {
             IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
 

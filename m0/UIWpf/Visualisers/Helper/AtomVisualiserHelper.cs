@@ -230,7 +230,7 @@ namespace m0.UIWpf.Visualisers.Helper
                 return exe.Stack;
             }
           
-            Visualiser.UpdateVertex();          
+            Visualiser.BaseEdgeToUpdated();          
 
             return exe.Stack;
         }        
@@ -250,7 +250,7 @@ namespace m0.UIWpf.Visualisers.Helper
             graphChangeListenerEdge = ExecutionFlowHelper.AddListener_DotNetDelegate(graphChangeTriggerEdge.To, VertexChange, VisualiserName);            
 
             if(updateBaseEdgeCallSchema != UpdateBaseEdgeCallSchemeEnum.OmmitFirst)
-                Visualiser.UpdateVertex();
+                Visualiser.BaseEdgeToUpdated();
         }
 
         public bool IsDisposed = false;

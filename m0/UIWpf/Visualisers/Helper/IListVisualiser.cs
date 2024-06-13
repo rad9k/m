@@ -13,7 +13,7 @@ namespace m0.UIWpf.Visualisers.Helper
 
         void SelectedVerticesUpdated();
 
-        void UpdateView();
+        void ViewAttributesUpdated();
 
         string[] MetaTriggeringUpdateVertex { get; }
 
