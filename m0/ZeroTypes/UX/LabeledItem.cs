@@ -22,14 +22,22 @@ namespace m0.ZeroTypes.UX
 
         protected FrameworkElement LabelControl;
 
-        public override void ViewAttributesUpdated()
+        public override void BaseEdgeToUpdated()
         {
-            base.ViewAttributesUpdated();
+            base.BaseEdgeToUpdated();
 
             LabelControl = GetLabelControl();
 
             if (LabelControl is CodeControl)
-                ((CodeControl)LabelControl).UpdateVertex();
+                ((CodeControl)LabelControl).BaseEdgeToUpdated();
+        }
+
+        public override void ViewAttributesUpdated()
+        {
+            base.ViewAttributesUpdated();
+
+            if (LabelControl is CodeControl)
+                ((CodeControl)LabelControl).ViewAttributesUpdated();
         }
 
         protected virtual void SetBaselineColors()

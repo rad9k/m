@@ -54,7 +54,7 @@ namespace m0.UIWpf.Controls
 
         IList<string> TextMemory;
 
-        public void UpdateView() { UpdateEditView(); }
+        public void UpdateView() { ViewAttributesUpdated(); }
 
         public void UnselectAllSelectedEdges() { }
 
@@ -72,7 +72,7 @@ namespace m0.UIWpf.Controls
 
             EditSetup();
 
-            UpdateEditView();
+            ViewAttributesUpdated();
 
             this.PreviewKeyDown += CodeVisualiser_KeyDown;
 
@@ -271,7 +271,7 @@ namespace m0.UIWpf.Controls
         FoldingManager foldingManager;
         DispatcherTimer foldingUpdateTimer;
 
-        public void UpdateEditView()
+        public void ViewAttributesUpdated()
         {
             if(GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, @"ShowWhiteSpace:"),"True"))
                 editor.Options.ShowTabs = true;
@@ -372,7 +372,7 @@ namespace m0.UIWpf.Controls
 
         //static object lockObject2 = new object();
 
-        public void UpdateVertex()
+        public void BaseEdgeToUpdated()
         {
             //lock (lockObject2)
             {

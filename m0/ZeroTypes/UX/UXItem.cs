@@ -127,7 +127,7 @@ namespace m0.ZeroTypes.UX
                 "UXItem",
                 VertexChange);
 
-            ViewAttributesUpdated();
+            BaseEdgeToUpdated();
         } // to be called after Vertex is setted up
 
         public bool IsDisposed = false;
@@ -468,7 +468,7 @@ namespace m0.ZeroTypes.UX
             IVertex baseEdgeTo = BaseEdgeTo;
 
             if (IsVertexChange(exe.Stack, baseEdgeTo))
-                ViewAttributesUpdated();
+                BaseEdgeToUpdated();
 
             foreach (IVertex edgeVertex in GetEdgesRemovedFrom(exe.Stack, baseEdgeTo))
             {

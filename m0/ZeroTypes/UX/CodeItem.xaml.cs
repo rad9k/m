@@ -50,28 +50,34 @@ namespace m0.ZeroTypes.UX
 
         public override void VertexSetedUp()
         {
-            if (codeControl != null)
-                TheGrid.Children.Remove((UIElement)ContentVisualiser);
+            base.VertexSetedUp();
 
-            codeControl = new CodeControl(Vertex, true);
+            LabelContainer.Child = LabelControl;
 
             Grid.SetRow(codeControl, 2);
 
             TheGrid.Children.Add(codeControl);
-
-            base.VertexSetedUp();
         }
-        
+
+        public override void BaseEdgeToUpdated()
+        {
+            base.BaseEdgeToUpdated();
+
+            if (codeControl != null)
+                TheGrid.Children.Remove((UIElement)ContentVisualiser);
+
+            codeControl = new CodeControl(Vertex, true);
+            codeControl.BaseEdgeToUpdated();
+        }
+
         public override void ViewAttributesUpdated()
         {
             base.ViewAttributesUpdated();
 
-            LabelContainer.Child = LabelControl;
-
             //
 
             if (codeControl != null)
-                codeControl.UpdateVertex();
+                codeControl.ViewAttributesUpdated();
 
             //         
             
