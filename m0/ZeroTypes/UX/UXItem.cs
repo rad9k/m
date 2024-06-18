@@ -128,6 +128,8 @@ namespace m0.ZeroTypes.UX
                 VertexChange);
 
             BaseEdgeToUpdated();
+
+            ViewAttributesUpdated();
         } // to be called after Vertex is setted up
 
         public bool IsDisposed = false;
