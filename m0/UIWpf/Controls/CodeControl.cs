@@ -370,36 +370,32 @@ namespace m0.UIWpf.Controls
 
         bool isFirstParse = true;
 
-        //static object lockObject2 = new object();
 
         public void BaseEdgeToUpdated()
         {
-            //lock (lockObject2)
+            if (doNotParse)
+                return;
+
+            IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
+
+            if (bv != null /*&& bv.Value != null && ((String)bv.Value)!="$Empty"*/)
             {
-                if (doNotParse)
-                    return;
+                ExecuteGenerate();
 
-                IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
-
-                if (bv != null /*&& bv.Value != null && ((String)bv.Value)!="$Empty"*/)
+                if (isFirstParse)
                 {
-                    ExecuteGenerate();
+                    TextMemory.Add(editor.Text);
 
-                    if (isFirstParse)
-                    {
-                        TextMemory.Add(editor.Text);
+                    int currentTextMemory = TextMemory.Count;
 
-                        int currentTextMemory = TextMemory.Count;
+                    TextMemoryMax = currentTextMemory;
+                    TextMemoryCurrent = currentTextMemory;
 
-                        TextMemoryMax = currentTextMemory;
-                        TextMemoryCurrent = currentTextMemory;
-
-                        isFirstParse = false;
-                    }
+                    isFirstParse = false;
                 }
-                else
-                    editor.Text = "Ø";
             }
+            else
+                editor.Text = "Ø";
         }
 
         void ExecuteGenerate()

@@ -15,7 +15,7 @@
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "">
 				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @MetaExtendedLineDecorator>
+				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 		<@UXTemplate :: "Ovel Edge">
 			<@$Is :: @UXTemplate>
@@ -57,7 +57,7 @@
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "">
 				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @MetaExtendedLineDecorator>
+				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 		<@UXTemplate :: "RectangleVisualiserItemEdge">
 			<@$Is :: @UXTemplate>

@@ -32,17 +32,13 @@ namespace m0.ZeroTypes.UX
             base.BaseEdgeToUpdated();
 
             LabelControl = GetLabelControl();
-
-            if (LabelControl is CodeControl)
-                ((CodeControl)LabelControl).BaseEdgeToUpdated();
         }
 
         public override void ViewAttributesUpdated()
         {
             base.ViewAttributesUpdated();
 
-            if (LabelControl is CodeControl)
-                ((CodeControl)LabelControl).ViewAttributesUpdated();
+            LabelControl = GetLabelControl();
         }
 
         protected virtual void SetBaselineColors()
@@ -168,6 +164,8 @@ namespace m0.ZeroTypes.UX
 
             CodeControl codeControl = new CodeControl(Vertex, true);
 
+            codeControl.BaseEdgeToUpdated();
+
             return codeControl;
         }
 
@@ -183,7 +181,7 @@ namespace m0.ZeroTypes.UX
             return textBlock;
         }
 
-        public FrameworkElement GetLabelControl_TextBlock()
+        private FrameworkElement GetLabelControl_TextBlock()
         {
             TextBlock textBlock = getTextBlock();
 
@@ -194,9 +192,6 @@ namespace m0.ZeroTypes.UX
 
             return textBlock;
         }
-
-
-
 
         // UNDER for RectangleItem
 
