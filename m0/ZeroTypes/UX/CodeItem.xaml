@@ -14,6 +14,7 @@
                 <RowDefinition Height="10"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
+            
             <Border Grid.Row="0" x:Name="LabelContainer" Padding="3,0,3,0" />
 
             <Border x:Name="InternalFrame" Grid.Row="1"  BorderThickness="0" Background="{StaticResource 0ForegroundBrush}"/>

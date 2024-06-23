@@ -27,7 +27,7 @@ namespace m0.ZeroTypes.UX
     public partial class ImageItem : RectangleItem_LabeledItem
     {
         static string[] _SubVertexesTriggeringItemVisualUpdate = new string[] {
-            "RoundEdgeSize", "HideHeader", "ConstantLabel", "LabelQuery", "ShowMeta", "UseCodeLabel", "FormalTextLanguage", "ShowMeta", "HideLabel", "BorderSize"};
+            "RoundEdgeSize", "HideHeader", "BorderSize", "ConstantLabel", "LabelQuery", "ShowMeta", "UseCodeLabel", "FormalTextLanguage", "ShowMeta", "HideLabel"};
         public override string[] SubVertexesTriggeringItemVisualUpdate { get { return _SubVertexesTriggeringItemVisualUpdate; } }
 
         public ImageItem() : base(new ZeroTypes.Edge(null))
@@ -57,40 +57,9 @@ namespace m0.ZeroTypes.UX
 
             base.ViewAttributesUpdated();
 
-            if (!HideLabel)
+            if (!HideHeader)
             {
-                if (ShowMeta)
-                {
-                    IEdge baseEdge = BaseEdge;
-                    IVertex baseEdgeTo = baseEdge.To;
-                    IVertex baseEdgeMeta = baseEdge.Meta;
-
-                    string meta_text, to_text;
-
-                    if (baseEdgeMeta != null)
-                        meta_text = baseEdgeMeta.Value.ToString();
-                    else
-                        meta_text = "Ø";
-
-                    if (baseEdgeTo != null)
-                        to_text = baseEdgeTo.Value.ToString();
-                    else
-                        to_text = "Ø";
-
-                    if (meta_text != "$Empty" && meta_text != "")
-                        this.Title.Text = meta_text + " : " + to_text;
-                    else
-                        this.Title.Text = to_text;
-                }
-                else
-                {
-                    IVertex baseEdgeTo = BaseEdgeTo;
-
-                    if (baseEdgeTo != null)
-                        this.Title.Text = baseEdgeTo.Value.ToString();
-                    else
-                        this.Title.Text = "Ø";
-                }
+                LabelContainer.Child = LabelControl;
 
                 double allHeight = this.ActualHeight;
 
@@ -114,8 +83,10 @@ namespace m0.ZeroTypes.UX
             SetBaselineColors();
         }
 
-        void SetBaselineColors()
+        protected override void SetBaselineColors()
         {
+            base.SetBaselineColors();
+
             Brush backgroundBrush = GetBackgroundBrush();
 
             Brush foregroundBrush = GetForegroundBrush();
@@ -124,8 +95,7 @@ namespace m0.ZeroTypes.UX
 
 
             this.Frame.Background = backgroundBrush;
-
-            this.Title.Foreground = foregroundBrush;
+            
             this.Foreground = foregroundBrush;
 
             this.Frame.BorderBrush = borderBrush;            
@@ -136,22 +106,10 @@ namespace m0.ZeroTypes.UX
             base.Select();
 
             this.Frame.BorderBrush = (Brush)FindResource("0SelectionBrush");
-
-            this.Title.Foreground = (Brush)FindResource("0BackgroundBrush");
+            
             this.Foreground = (Brush)FindResource("0BackgroundBrush");
 
             this.Frame.Background = (Brush)FindResource("0SelectionBrush");
-
-            this.Title.Cursor = Cursors.ScrollAll;    
-        }
-
-        public override void Unselect()
-        {
-            base.Unselect();
-
-            SetBaselineColors();
-
-            this.Title.Cursor = Cursors.Arrow;
         }
 
         public override void Highlight()
@@ -162,15 +120,8 @@ namespace m0.ZeroTypes.UX
 
             this.Foreground = (Brush)FindResource("0HighlightForegroundBrush"); 
            
-            this.Frame.Background = (Brush)FindResource("0HighlightBrush");
-            
-            this.Title.Foreground = (Brush)FindResource("0HighlightForegroundBrush");            
-        }
-
-        public override void Unhighlight()
-        {
-            base.Unhighlight();
-        }
+            this.Frame.Background = (Brush)FindResource("0HighlightBrush");                       
+        }        
         
         // UNDER        
 

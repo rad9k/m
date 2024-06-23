@@ -32,7 +32,7 @@ namespace m0.ZeroTypes.UX
         //
 
         static string[] _SubVertexesTriggeringItemVisualUpdate = new string[] {
-            "RoundEdgeSize", "HideHeader", "ConstantLabel", "LabelQuery", "ShowMeta", "UseCodeLabel", "FontSize", "FormalTextLanguage", "ShowMeta", "HideLabel", "BorderSize"};
+            "RoundEdgeSize", "HideHeader", "BorderSize", "ConstantLabel", "LabelQuery", "ShowMeta", "UseCodeLabel", "FontSize", "FormalTextLanguage", "ShowMeta", "HideLabel"};
         public override string[] SubVertexesTriggeringItemVisualUpdate { get { return _SubVertexesTriggeringItemVisualUpdate; } }
 
         //
@@ -154,12 +154,12 @@ namespace m0.ZeroTypes.UX
 
         public override void Highlight()
         {
+            base.Highlight();
+
             Brush backgroundBrush = GetBackgroundBrush();
 
             Brush foregroundBrush = GetForegroundBrush();
-
-            base.Highlight();
-
+            
             this.InternalFrame.Background = (Brush)FindResource("0HighlightBrush");
             this.Frame.BorderBrush = (Brush)FindResource("0HighlightBrush");
 

@@ -1,6 +1,8 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.UIWpf.Controls;
 using m0.UIWpf.UX;
+using m0.Util;
 using m0.ZeroCode.Helpers;
 using System;
 using System.Collections.Generic;
@@ -8,23 +10,193 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Input;
 
 namespace m0.ZeroTypes.UX
 {
     public class UXContainer_RectangleItem_LabeledItem : UXContainer
     {
-        // UNDER
+        public UXContainer_RectangleItem_LabeledItem(IEdge edge) : base(edge) { }        
+
+        // CODE for RectangleItem
+
+
+        // CODE for LabeledItem
+
+        protected FrameworkElement LabelControl;
+
+        public override void BaseEdgeToUpdated()
+        {
+            base.BaseEdgeToUpdated();
+
+            LabelControl = GetLabelControl();
+        }
+
+        public override void ViewAttributesUpdated()
+        {
+            base.ViewAttributesUpdated();
+
+            LabelControl = GetLabelControl();
+        }
+
+        protected virtual void SetBaselineColors()
+        {
+            Brush foregroundBrush = GetForegroundBrush();
+
+            GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", foregroundBrush);
+
+            GeneralUtil.SetPropertyIfPresent(LabelControl, "Background", null);
+        }
+
+        public override void Select()
+        {
+            base.Select();
+
+            GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", (Brush)FindResource("0BackgroundBrush"));
+
+            GeneralUtil.SetPropertyIfPresent(LabelControl, "Cursor", Cursors.ScrollAll);
+        }
+
+        public override void Unselect()
+        {
+            base.Unselect();
+
+            SetBaselineColors();
+
+            GeneralUtil.SetPropertyIfPresent(LabelControl, "Cursor", Cursors.Arrow);
+        }
+
+        public override void Highlight()
+        {
+            base.Highlight();
+
+            Brush backgroundBrush = GetBackgroundBrush();
+
+            Brush foregroundBrush = GetForegroundBrush();
+
+            if (UseCodeLabel)
+            {
+                GeneralUtil.SetPropertyIfPresent(LabelControl, "Background", backgroundBrush);
+
+                GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", foregroundBrush);
+            }
+            else
+                GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", (Brush)FindResource("0HighlightForegroundBrush"));
+        }
+
+        public string GetLabel()
+        {
+            StringBuilder label = new StringBuilder();
+
+            string constantLabel = ConstantLabel;
+
+            if (constantLabel != null)
+            {
+                label.Append(constantLabel);
+                label.Append(" | ");
+            }
+
+            IEdge edge = BaseEdge;
+
+            string labelQuery = LabelQuery;
+
+            if (labelQuery != null)
+            {
+                edge = edge.To.GetAll(false, labelQuery).FirstOrDefault();
+
+                if (edge == null)
+                    return "[empty query result]";
+            }
+
+            if (ShowMeta && edge.Meta.Value.ToString() != "$Empty")
+            {
+                if (edge.Meta.Value == null)
+                    label.Append("Ø");
+                else
+                    label.Append(edge.Meta.Value.ToString());
+
+                label.Append(" :: ");
+            }
+
+            if (edge.To.Value == null)
+                label.Append("Ø");
+            else
+                label.Append(edge.To.Value.ToString());
+
+            return label.ToString();
+        }
+
+        public FrameworkElement GetLabelControl()
+        {
+            FrameworkElement labelControl;
+
+            if (UseCodeLabel)
+                labelControl = GetLabelControl_Code();
+            else
+                labelControl = GetLabelControl_TextBlock();
+
+            labelControl.VerticalAlignment = VerticalAlignment.Center;
+            labelControl.HorizontalAlignment = HorizontalAlignment.Center;
+
+            return labelControl;
+        }
+
+        public FrameworkElement GetLabelControl_Code()
+        {
+            IEdge edge = BaseEdge;
+
+            string labelQuery = LabelQuery;
+
+            if (labelQuery != null)
+            {
+                edge = edge.To.GetAll(false, labelQuery).FirstOrDefault();
+
+                if (edge == null)
+                {
+                    TextBlock textBlock = getTextBlock();
+                    textBlock.Text = "[empty query result]";
+                    return textBlock;
+                }
+            }
+
+
+            CodeControl codeControl = new CodeControl(Vertex, true);
+
+            codeControl.BaseEdgeToUpdated();
+
+            return codeControl;
+        }
+
+        private TextBlock getTextBlock()
+        {
+            TextBlock textBlock = new TextBlock();
+
+            textBlock.HorizontalAlignment = HorizontalAlignment.Center;
+            textBlock.VerticalAlignment = VerticalAlignment.Center;
+            textBlock.TextWrapping = TextWrapping.Wrap;
+            textBlock.TextTrimming = TextTrimming.CharacterEllipsis;
+
+            return textBlock;
+        }
+
+        private FrameworkElement GetLabelControl_TextBlock()
+        {
+            TextBlock textBlock = getTextBlock();
+
+            if (HideLabel)
+                textBlock.Text = "";
+            else
+                textBlock.Text = GetLabel();
+
+            return textBlock;
+        }
+
+        // UNDER for RectangleItem
 
         static IVertex RoundEdgeSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\RoundEdgeSize");
         static IVertex HideHeader_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RectangleItem\HideHeader");
-
-        static IVertex ConstantLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\ConstantLabel");
-        static IVertex LabelQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\LabelQuery");
-        static IVertex UseCodeLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\UseCodeLabel");
-        static IVertex ShowMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\ShowMeta");
-        static IVertex HideLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\HideLabel");
-
-        public UXContainer_RectangleItem_LabeledItem(IEdge edge) : base(edge) { }
 
         public int RoundEdgeSize
         {
@@ -70,7 +242,13 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        //
+        // UNDER for LabeledItem
+
+        static IVertex ConstantLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\ConstantLabel");
+        static IVertex LabelQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\LabelQuery");
+        static IVertex UseCodeLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\UseCodeLabel");
+        static IVertex ShowMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\ShowMeta");
+        static IVertex HideLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\HideLabel");
 
         public string ConstantLabel
         {

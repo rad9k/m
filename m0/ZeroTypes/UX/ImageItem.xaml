@@ -14,7 +14,7 @@
                 <RowDefinition Height="17"/>
             </Grid.RowDefinitions>
             <Image Name="Image" Stretch="Fill" Grid.Row="0"></Image>
-            <TextBlock x:Name="Title" Grid.Row="1" HorizontalAlignment="Center" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" />
+            <Border Grid.Row="1" x:Name="LabelContainer" Padding="3,0,3,0"/>
 
             <!-- Margin="0,2,0,0" on TextBlock / seems not needed -->
         </Grid>
