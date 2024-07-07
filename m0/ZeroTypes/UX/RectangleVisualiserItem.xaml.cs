@@ -28,7 +28,7 @@ namespace m0.ZeroTypes.UX
     public partial class RectangleVisualiserItem : RectangleItem_LabeledItem
     {
         static string[] _SubVertexesTriggeringItemVisualUpdate = new string[] {
-            "RoundEdgeSize", "HideHeader", "ConstantLabel", "LabelQuery", "ShowMeta", "UseCodeLabel", "FormalTextLanguage", "ShowMeta", "HideLabel", "BorderSize"};
+            "RoundEdgeSize", "HideHeader", "ConstantLabel", "LabelQuery", "ShowMeta", "UseCodeLabel", "FontSize", "FormalTextLanguage", "ShowMeta", "HideLabel", "BorderSize"};
         public override string[] SubVertexesTriggeringItemVisualUpdate { get { return _SubVertexesTriggeringItemVisualUpdate; } }
 
         //
@@ -89,38 +89,7 @@ namespace m0.ZeroTypes.UX
         {
             base.ViewAttributesUpdated();
 
-            if (ShowMeta)
-            {
-                IEdge baseEdge = BaseEdge;
-                IVertex baseEdgeTo = baseEdge.To;
-                IVertex baseEdgeMeta = baseEdge.Meta;
-
-                string meta_text, to_text;
-
-                if (baseEdgeMeta != null)
-                    meta_text = baseEdgeMeta.Value.ToString();
-                else
-                    meta_text = "Ø";
-
-                if (baseEdgeTo != null)
-                    to_text = baseEdgeTo.Value.ToString();
-                else
-                    to_text = "Ø";
-
-                if (meta_text != "$Empty" && meta_text != "")
-                    this.Title.Text = meta_text + " : " + to_text;
-                else
-                    this.Title.Text = to_text;
-            }            
-            else
-            {
-                IVertex baseEdgeTo = BaseEdgeTo;
-
-                if (baseEdgeTo != null)
-                    this.Title.Text = baseEdgeTo.Value.ToString();
-                else
-                    this.Title.Text = "Ø";
-            }
+            LabelContainer.Child = LabelControl;
 
             double roundEdgeSize = RoundEdgeSize;
             
@@ -149,13 +118,13 @@ namespace m0.ZeroTypes.UX
 
             //
 
-            if (roundEdgeSize != 0)
+            //if (roundEdgeSize != 0)
             {
                 this.Frame.CornerRadius = new CornerRadius(RoundEdgeSize);
 
                 if (ContentVisualiser != null)
                 {
-                    this.Title.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize, RoundEdgeSize, 0);
+                    this.LabelContainer.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize, RoundEdgeSize, 0);
 
                     ((FrameworkElement)this.ContentVisualiser).Margin = new Thickness(RoundEdgeSize, 0, RoundEdgeSize, RoundEdgeSize);
 
@@ -163,9 +132,9 @@ namespace m0.ZeroTypes.UX
                 }
                 else
                 {
-                    this.Title.Margin = new Thickness(RoundEdgeSize);
+                    this.LabelContainer.Margin = new Thickness(RoundEdgeSize);
 
-                    this.Title.TextWrapping = TextWrapping.Wrap;
+                   // this.LabelContainer.TextWrapping = TextWrapping.Wrap;
 
                     TheGrid.RowDefinitions[0].Height = new GridLength(0, GridUnitType.Auto);
 
@@ -178,8 +147,10 @@ namespace m0.ZeroTypes.UX
             SetBaselineColors();
         }
 
-        void SetBaselineColors()
+        protected override void SetBaselineColors()
         {
+            base.SetBaselineColors();
+
             Brush backgroundBrush = GetBackgroundBrush();
 
             Brush foregroundBrush = GetForegroundBrush();
@@ -188,8 +159,7 @@ namespace m0.ZeroTypes.UX
 
 
             this.Frame.Background = backgroundBrush;
-
-            this.Title.Foreground = foregroundBrush;
+            
             this.Foreground = foregroundBrush;
 
             this.InternalFrame.Background = borderBrush;
@@ -209,14 +179,10 @@ namespace m0.ZeroTypes.UX
 
             this.InternalFrame.Background = (Brush)FindResource("0SelectionBrush");
             this.Frame.BorderBrush = (Brush)FindResource("0SelectionBrush");
-
-
-            this.Title.Foreground = (Brush)FindResource("0BackgroundBrush");
+            
             this.Foreground = (Brush)FindResource("0BackgroundBrush");
 
             this.Frame.Background = (Brush)FindResource("0SelectionBrush");
-
-            this.Title.Cursor = Cursors.ScrollAll;
 
             //
 
@@ -225,15 +191,6 @@ namespace m0.ZeroTypes.UX
                 GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Foreground", (Brush)FindResource("0BackgroundBrush"));
                 GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Background", (Brush)FindResource("0SelectionBrush"));
             }
-        }
-
-        public override void Unselect()
-        {
-            base.Unselect();
-
-            SetBaselineColors();
-
-            this.Title.Cursor = Cursors.Arrow;
         }
 
         public override void Highlight()
@@ -245,20 +202,13 @@ namespace m0.ZeroTypes.UX
 
             this.Foreground = (Brush)FindResource("0HighlightForegroundBrush"); 
            
-            this.Frame.Background = (Brush)FindResource("0HighlightBrush");
-            
-            this.Title.Foreground = (Brush)FindResource("0HighlightForegroundBrush");
+            this.Frame.Background = (Brush)FindResource("0HighlightBrush");                       
 
             if (ContentVisualiser != null) // not always works, but can
             {
                 GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Foreground", (Brush)FindResource("0HighlightForegroundBrush"));
                 GeneralUtil.SetPropertyIfPresent(ContentVisualiser, "Background", (Brush)FindResource("0HighlightBrush"));
             }
-        }
-
-        public override void Unhighlight()
-        {
-            base.Unhighlight();
         }
         
         // UNDER        

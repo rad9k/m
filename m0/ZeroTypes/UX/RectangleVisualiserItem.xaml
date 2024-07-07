@@ -13,9 +13,11 @@
                 <RowDefinition Height="17"/>
                 <RowDefinition Height="10"/>
                 <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>        
-                
-           <TextBlock Grid.Row="0" x:Name="Title" HorizontalAlignment="Center" Padding="3,0,3,0"></TextBlock>
+            </Grid.RowDefinitions>
+
+            <Border x:Name="LabelContainer" />
+
+            <!--BorderThickness="10" <TextBlock Grid.Row="0" x:Name="Title" HorizontalAlignment="Center" Padding="3,0,3,0"></TextBlock>-->
 
             <Border x:Name="InternalFrame" Grid.Row="1"  BorderThickness="0" Background="{StaticResource 0ForegroundBrush}"/>
 
