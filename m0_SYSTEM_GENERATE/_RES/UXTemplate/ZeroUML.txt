@@ -3,61 +3,42 @@
 	import @System\Data\UX\Colors direct meta
 	
 	<@UXTemplate :: "ZeroUML">
-		<@$Is :: @UXTemplate>
+		<@$Is :: @UXTemplate>		
 		
-		<@UXTemplate :: "CodeItem">
+		<@UXTemplate :: "Edge">
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "">
+			<@ItemClass :: @RectangleVisualiserItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\BaseGenericItemVertex>
+				<@LabeledItem\ShowMeta :: "True">
+			<@UXDecoratorTemplate :: "Edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+				
+		<@UXTemplate :: "Block">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:Block}">
+			<@MetaVertexTestQuery :: "Block">
 			<@ItemClass :: @CodeItem>
-			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
-				<@$Inherits :: @ZeroUML\BaseGenericItemVertex>
-				
-		<@UXTemplate :: "ImageItem">
+				<@$Inherits :: @ZeroUML\BaseActionItemVertex>				
+			<@$Inherits :: @ZeroUML\BaseActionDecorators>
+			
+		<@UXTemplate :: "NamedBlock">
 			<@$Is :: @UXTemplate>
-			<@DirectVertexTestQuery :: "">
-			<@ItemClass :: @ImageItem>
-			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@DirectVertexTestQuery :: "{$Is:NamedBlock}">
+			<@ItemClass :: @CodeItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
-				<@$Inherits :: @ZeroUML\BaseGenericItemVertex>
-				<@ImageItem\Filename :: "prezes.jpg">
-
-		<@UXTemplate :: "OvalItem">
-			<@$Is :: @UXTemplate>
-			<@DirectVertexTestQuery :: "">
-			<@ItemClass :: @OvalItem>
-			<@InstanceCreation :: @InstanceCreationEnum\Direct>
-			<@ItemVertex :: "">
-				<@$Inherits :: @ZeroUML\BaseGenericItemVertex>
-
-		<@UXTemplate :: "RectangleVisualiserItem empty">
-			<@$Is :: @UXTemplate>
-			<@DirectVertexTestQuery :: "">
-			<@ItemClass :: @RectangleVisualiserItem>
-			<@InstanceCreation :: @InstanceCreationEnum\Direct>
-			<@ItemVertex :: "">
-				<@$Inherits :: @ZeroUML\BaseGenericItemVertex>
-				
-		<@UXTemplate :: "RectangleVisualiserItem code">
-			<@$Is :: @UXTemplate>
-			<@DirectVertexTestQuery :: "">
-			<@MetaVertexTestQuery :: "">
-			<@ItemClass :: @RectangleVisualiserItem>
-			<@InstanceCreation :: @InstanceCreationEnum\Direct>
-			<@ItemVertex :: "">
-				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
-				<@LabeledItem\ShowMeta :: "False">
-				<@RectangleVisualiserItem\VisualiserClass :: @System\Meta\Visualiser\Code>
-				<@RectangleVisualiserItem\VisualiserVertex :: "">	
-	
-		<@UXTemplate :: "RhombusItem">
-			<@$Is :: @UXTemplate>
-			<@DirectVertexTestQuery :: "">
-			<@ItemClass :: @RhombusItem>
-			<@InstanceCreation :: @InstanceCreationEnum\Direct>
-			<@ItemVertex :: "">
-				<@$Inherits :: @ZeroUML\BaseGenericItemVertex>
-
+				<@$Inherits :: @ZeroUML\BaseActionItemVertex>								
+			<@$Inherits :: @ZeroUML\BaseActionDecorators>
+			
 		<"BaseGenericItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightRed>
 		<"BaseActionItemVertex">

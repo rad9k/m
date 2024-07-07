@@ -1,0 +1,75 @@
+"Templates"
+	import @System\Meta\ZeroTypes\UX direct meta
+	import @System\Data\UX\Colors direct meta
+	
+	<@UXTemplate :: "ZeroUML">
+		<@$Is :: @UXTemplate>
+		
+		<@UXTemplate :: "CodeItem">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@ItemClass :: @CodeItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\BaseGenericItemVertex>
+				
+		<@UXTemplate :: "ImageItem">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@ItemClass :: @ImageItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\BaseGenericItemVertex>
+				<@ImageItem\Filename :: "prezes.jpg">
+
+		<@UXTemplate :: "OvalItem">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@ItemClass :: @OvalItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\BaseGenericItemVertex>
+
+		<@UXTemplate :: "RectangleVisualiserItem empty">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@ItemClass :: @RectangleVisualiserItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\BaseGenericItemVertex>
+				
+		<@UXTemplate :: "RectangleVisualiserItem code">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@MetaVertexTestQuery :: "">
+			<@ItemClass :: @RectangleVisualiserItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
+				<@LabeledItem\ShowMeta :: "False">
+				<@RectangleVisualiserItem\VisualiserClass :: @System\Meta\Visualiser\Code>
+				<@RectangleVisualiserItem\VisualiserVertex :: "">	
+	
+		<@UXTemplate :: "RhombusItem">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@ItemClass :: @RhombusItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\BaseGenericItemVertex>
+
+		<"BaseGenericItemVertex">
+			<@UXItem\BackgroundColor :: @VeryVeryVeryLightRed>
+		<"BaseActionItemVertex">
+			<@UXItem\BackgroundColor :: @VeryVeryVeryLightVioletBlue>
+		<"BaseActionDecorators">
+			<@UXDecoratorTemplate :: "Next">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:Block\Next">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\LineWidth :: "3">
+					<@LineDecorator\HideLabel :: "True">
+					<@UXItem\ForegroundColor :: @LightCentralBlue>
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>			
