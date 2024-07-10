@@ -51,6 +51,12 @@ namespace m0.ZeroTypes.UX
                 ((CodeVisualiser)ContentVisualiser).ViewAttributesUpdated();
                 ((CodeVisualiser)ContentVisualiser).ScaleChange();
             }
+
+            if (ContentVisualiser is ClassVisualiser)
+            {
+                ((ClassVisualiser)ContentVisualiser).BaseEdgeToUpdated();
+                ((ClassVisualiser)ContentVisualiser).ScaleChange();
+            }
         }
 
         public override void VertexSetedUp()

@@ -31,7 +31,18 @@ namespace m0.ZeroUML
             if (min == max)
                 return "[" + min + "]";
 
-            return "["+min+".."+max+"]";
+            return "[" + min + ".." + max + "]";
+        }
+
+        public static string GetValueRangeString(IVertex baseVertex)
+        {
+            string min = GraphUtil.GetStringValue(GraphUtil.GetQueryOutFirst(baseVertex, "MinValue", null));
+            string max = GraphUtil.GetStringValue(GraphUtil.GetQueryOutFirst(baseVertex, "MaxValue", null));
+
+            if (min == "" || max == "")
+                return "";            
+
+            return "<" + min + ":" + max + ">";
         }
 
         public static void AddAllAttributesAndAssociationsVertices(IVertex ObjectVertex){

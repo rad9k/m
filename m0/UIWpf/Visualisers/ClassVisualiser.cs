@@ -15,10 +15,11 @@ using m0.UIWpf.Controls;
 using m0.UIWpf.Commands;
 using System.Windows;
 using m0.UIWpf.Visualisers.Helper;
+using m0.Lib;
 
 namespace m0.UIWpf.Visualisers
 {
-    class ClassVisualiser : TextBlock, IVisualiser, ITypedEdge
+    class ClassVisualiser : Border, IVisualiser, ITypedEdge
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
@@ -35,11 +36,19 @@ namespace m0.UIWpf.Visualisers
         public IEdge Edge { get; set; }
         // TypedEdge END
 
+        StackPanel stackPanel;
+
         public ClassVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile)
         {
-           this.Padding = new Thickness(2);
+            this.Padding = new Thickness(2);
 
-           new AtomVisualiserHelper(
+            stackPanel = new StackPanel();
+
+            stackPanel.Orientation = Orientation.Vertical;
+
+            this.Child = stackPanel;
+
+            new AtomVisualiserHelper(
                parentVisualiser,
                isVolatile,
                MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Class"), 
@@ -64,32 +73,73 @@ namespace m0.UIWpf.Visualisers
         {
             IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
 
-            if (bv != null && bv.Value != null /*&& ((String)bv.Value)!="$Empty"*/){
-                StringBuilder sb=new StringBuilder();
+            stackPanel.Children.Clear();
 
-                bool isFirst=true;
+            if (bv != null && bv.Value != null /*&& ((String)bv.Value)!="$Empty"*/) {                                                
+                foreach (IEdge e in GraphUtil.GetQueryOut(bv, "Attribute", null)) {                     
+                    StackPanel s = new StackPanel();
+                    s.Orientation = Orientation.Horizontal;
+                    stackPanel.Children.Add(s);
 
-                foreach(IEdge e in bv.GetAll(false, @"Attribute:")){
-                    if(isFirst==false)
-                        sb.Append("\n");
+                    string str = e.To.Value.ToString();
+                    TextBlock tb = new TextBlock();
+                    tb.FontWeight = FontWeights.Bold;
+
+                    IVertex eToEdgeTarget = GraphUtil.GetQueryOutFirst(e.To, "$EdgeTarget", null);
+
+                    if (eToEdgeTarget != null)
+                    {
+                        str += " : ";
+                        tb.Text = str;
+
+                        s.Children.Add(tb);
+
+                        tb = new TextBlock();
+                        tb.FontStyle = FontStyles.Italic;
+                        tb.Text = GraphUtil.GetStringValue(eToEdgeTarget);
+
+                        s.Children.Add(tb);
+                    }
                     else
-                        isFirst=false;
+                    {
+                        tb.Text = str;
 
-                    sb.Append(e.To.Value);
-
-                    if (e.To.Get(false, "$EdgeTarget:") != null)
-                        sb.Append(" : " + e.To.Get(false, @"$EdgeTarget:"));
+                        s.Children.Add(tb);
+                    }
 
                     string cardinalites = ClassVertex.GetCardinalitiesString(e.To);
 
-                    if(cardinalites!="")
-                        sb.Append(" "+cardinalites);
-                }
+                    if (cardinalites != "")
+                    {
+                        tb = new TextBlock();
 
-                this.Text = sb.ToString();
+                        tb.Text = " " + cardinalites;
+
+                        s.Children.Add(tb);
+                    }
+
+                    string valueRanges = ClassVertex.GetValueRangeString(e.To);
+
+                    if (valueRanges != "")
+                    {
+                        tb = new TextBlock();
+                        tb.FontStyle = FontStyles.Italic;
+
+                        tb.Text = valueRanges;
+
+                        s.Children.Add(tb);
+                    }
+
+                }                
             }
             else
-                this.Text = "Ø";
+            {
+                TextBlock tb = new TextBlock();
+
+                tb.Text = "Ø";
+
+                stackPanel.Children.Add(tb);
+            }                
         }
         
         public IVertex Vertex
