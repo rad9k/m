@@ -35,9 +35,7 @@ namespace m0.ZeroTypes.UX
             "RoundEdgeSize", "HideHeader", "BorderSize", "ConstantLabel", "LabelQuery", "ShowMeta", "UseCodeLabel", "FontSize", "FormalTextLanguage", "ShowMeta", "HideLabel"};
         public override string[] SubVertexesTriggeringItemVisualUpdate { get { return _SubVertexesTriggeringItemVisualUpdate; } }
 
-        //
-
-        IPlatformClass ContentVisualiser;
+        //        
 
         public CodeItem() : base(new ZeroTypes.Edge(null))
         {
@@ -64,7 +62,7 @@ namespace m0.ZeroTypes.UX
             base.BaseEdgeToUpdated();
 
             if (codeControl != null)
-                TheGrid.Children.Remove((UIElement)ContentVisualiser);
+                TheGrid.Children.Remove((UIElement)codeControl);
 
             codeControl = new CodeControl(Vertex, true);
             codeControl.BaseEdgeToUpdated();
@@ -102,6 +100,16 @@ namespace m0.ZeroTypes.UX
             }
 
             //
+
+            this.Frame.CornerRadius = new CornerRadius(RoundEdgeSize);
+
+            
+            this.LabelContainer.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize, RoundEdgeSize, 0);
+
+            ((FrameworkElement)this.codeControl).Margin = new Thickness(RoundEdgeSize, 0, RoundEdgeSize, RoundEdgeSize);
+
+            TheGrid.RowDefinitions[0].Height = new GridLength(18 + RoundEdgeSize);
+            
 
             SetBaselineColors();
         }

@@ -63,7 +63,7 @@ namespace m0.ZeroTypes.UX
 
                 double allHeight = this.ActualHeight;
 
-                Grid.RowDefinitions[1].Height = new GridLength(17);
+                TheGrid.RowDefinitions[1].Height = new GridLength(17);
 
                 if (allHeight > 0)
                     this.Height = allHeight;
@@ -72,13 +72,24 @@ namespace m0.ZeroTypes.UX
             {
                 double allHeight = this.ActualHeight;
 
-                Grid.RowDefinitions[1].Height = new GridLength(0);
+                TheGrid.RowDefinitions[1].Height = new GridLength(0);
 
                 if (allHeight > 0)
                     this.Height = allHeight;
             }
 
-            this.Frame.BorderThickness = new Thickness(BorderSize);            
+            this.Frame.BorderThickness = new Thickness(BorderSize);
+
+            //
+
+            this.Frame.CornerRadius = new CornerRadius(RoundEdgeSize);
+
+
+            this.LabelContainer.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize, RoundEdgeSize, 0);
+
+            Image.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize/2, RoundEdgeSize, RoundEdgeSize/2);
+
+            TheGrid.RowDefinitions[1].Height = new GridLength(18 + RoundEdgeSize);
 
             SetBaselineColors();
         }
