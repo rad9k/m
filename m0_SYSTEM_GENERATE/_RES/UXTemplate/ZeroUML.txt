@@ -20,6 +20,35 @@
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 				
+		<@UXTemplate :: "Class">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:Class}">
+			<@MetaVertexTestQuery :: "Class">
+			<@ItemClass :: @RectangleVisualiserItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\BaseActionItemVertex>				
+				<@LabeledItem\ShowMeta :: "False">
+				<@LabeledItem\ConstantLabel :: "block">
+				<@RectangleVisualiserItem\VisualiserClass :: @System\Meta\Visualiser\Class>
+			<@$Inherits :: @ZeroUML\BaseActionDecorators>
+			<@UXDecoratorTemplate :: "Association">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:Class\Association:">
+				<@ToDiagramItemTestQuery :: "UXTemplate:Class">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\IsDashed :: "True">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+			<@UXDecoratorTemplate :: "Aggregation">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:Class\Aggregation:">
+				<@ToDiagramItemTestQuery :: "UXTemplate:Class">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\IsDashed :: "True">
+					<@LineDecorator\BegAnchor :: @LineEndEnum\Diamond>
+				
 		<@UXTemplate :: "Block">
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:Block}">

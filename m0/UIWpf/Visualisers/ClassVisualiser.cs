@@ -109,7 +109,7 @@ namespace m0.UIWpf.Visualisers
 
                     string cardinalites = ClassVertex.GetCardinalitiesString(e.To);
 
-                    if (cardinalites != "")
+                    if (cardinalites != "") 
                     {
                         tb = new TextBlock();
 
