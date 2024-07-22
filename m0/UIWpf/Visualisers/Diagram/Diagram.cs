@@ -1240,11 +1240,11 @@ namespace m0.UIWpf.Visualisers.Diagram
                                         ndi.BaseEdge);
                         }
                         else
-                            UserInteractionUtil.ShowError(Vertex.Value+" Diagram","There is allready diagram item, that visualises dropped vertex.\n\nNow, it is not possible to add second representation of same vertex.\n\nOne can change this limitation by changing \"User\\CurrentUser:\\Settings:\\AllowManyUXItemsWithSameBaseEdgeTo:\" setting.");
+                            UserInteractionUtil.ShowError(Vertex.Value+"Diagram","There is allready diagram item, that visualises dropped vertex.\n\nNow, it is not possible to add second representation of same vertex.\n\nOne can change this limitation by changing \"User\\CurrentUser:\\Settings:\\AllowManyUXItemsWithSameBaseEdgeTo:\" setting.");
                         
                     }
                     else
-                        UserInteractionUtil.ShowError(Vertex.Value + " Diagram","There is allready \"" + ndi.DiagramItemDefinition.Value + "\" diagram item, that visualises dropped vertex.\n\nIt is not possible to add second representation of same vertex, with the same diagram item type.");
+                        UserInteractionUtil.ShowError(Vertex.Value + "Diagram","There is allready \"" + ndi.DiagramItemDefinition.Value + "\" diagram item, that visualises dropped vertex.\n\nIt is not possible to add second representation of same vertex, with the same diagram item type.");
                 }
             }
         }

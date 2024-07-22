@@ -1766,11 +1766,11 @@ namespace m0.UIWpf.UX
                                         ndi.BaseEdge);
                         }
                         else
-                            UserInteractionUtil.ShowError(Vertex.Value + " UXAggregtor","There is allready UX Item, that visualises dropped vertex.\n\nNow, it is not possible to add second representation of same vertex.\n\nOne can change this limitation by changing \"User\\CurrentUser:\\Settings:\\AllowManyUXItemsWithSameBaseEdgeTo:\" setting.");
+                            UserInteractionUtil.ShowError(Vertex.Value + "UXAggregtor","There is allready UX Item, that visualises dropped vertex.\n\nNow, it is not possible to add second representation of same vertex.\n\nOne can change this limitation by changing \"User\\CurrentUser:\\Settings:\\AllowManyUXItemsWithSameBaseEdgeTo:\" setting.");
                         
                     }
                     else
-                        UserInteractionUtil.ShowError(Vertex.Value + " UXAggregator","There is allready \"" + ndi.UXTemplate.Vertex.Value + "\" UX Item, that visualises dropped vertex.\n\nIt is not possible to add second representation of same vertex, with the same UX Item type.");
+                        UserInteractionUtil.ShowError(Vertex.Value + "UXAggregator","There is allready \"" + ndi.UXTemplate.Vertex.Value + "\" UX Item, that visualises dropped vertex.\n\nIt is not possible to add second representation of same vertex, with the same UX Item type.");
                 }
             }
         }
@@ -1809,7 +1809,7 @@ namespace m0.UIWpf.UX
             }
 
             if (v.Count() == 0)
-                UserInteractionUtil.ShowError(Vertex.Value + " Diagram", "There is no diagram line definition matching selected source and target items.");
+                UserInteractionUtil.ShowError(Vertex.Value + "Diagram", "There is no diagram line definition matching selected source and target items.");
 
             IVertex info = m0.MinusZero.Instance.CreateTempVertex();
             info.Value = "choose diagram line:";
@@ -1851,7 +1851,7 @@ namespace m0.UIWpf.UX
                     return true;
                 }
                 else
-                    UserInteractionUtil.ShowError(Vertex.Value + " Diagram", "Adding new diagram line  \"" + a.Value + "\" is not possible.\n\n" + test.Value);
+                    UserInteractionUtil.ShowError(Vertex.Value + "Diagram", "Adding new diagram line  \"" + a.Value + "\" is not possible.\n\n" + test.Value);
             }
 
             return false;
