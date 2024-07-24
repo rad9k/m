@@ -201,15 +201,15 @@ namespace m0.ZeroTypes
         public static IEdge AddEdgeOrVertexByMeta(IVertex baseVertex, IVertex metaVertex, IVertex toVertex, Point position, bool CreateEdgeOnly, bool ForceShowEditForm)
         {
             if (GraphUtil.ExistQueryOut(metaVertex,"$VertexTarget",null)
-                && CreateEdgeOnly==false)
+                && CreateEdgeOnly == false)
             {                
-                IVertex n=VertexOperations.AddInstance(baseVertex,metaVertex);
+                IVertex n = VertexOperations.AddInstance(baseVertex, metaVertex);
 
                 IEdge e = new EasyEdge(baseVertex, metaVertex, n);
 
                 n.AddEdge(MinusZero.Instance.EdgeTarget, toVertex);
 
-                if(ForceShowEditForm==true)
+                if (ForceShowEditForm == true)
                     MinusZero.Instance.DefaultUserInteraction.Edit(e.To, position);
 
                 return e;

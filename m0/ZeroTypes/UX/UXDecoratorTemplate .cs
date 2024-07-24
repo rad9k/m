@@ -109,7 +109,7 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        public bool CreateEdgeOnly
+        public bool CreateEdgeOnly // this can be tricky. check the references
         {
             get
             {

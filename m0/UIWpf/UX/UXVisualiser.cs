@@ -633,7 +633,8 @@ namespace m0.UIWpf.UX
             Edge lineDecorator_BaseEdge = lineDecorator.BaseEdge;
 
             if (GraphUtil.ExistQueryOut(lineDecorator_BaseEdge.Meta, "$VertexTarget", null)
-            && ((UXDecoratorTemplate)lineDecorator.UXTemplate).CreateEdgeOnly)
+            && !((UXDecoratorTemplate)lineDecorator.UXTemplate).CreateEdgeOnly // ???? ZZZ added ! hope this is ok
+            )
                 toFind = GraphUtil.GetQueryOutFirst(lineDecorator_BaseEdge.To, "$EdgeTarget", null);
             else
                 toFind = lineDecorator_BaseEdge.To;
@@ -1872,7 +1873,7 @@ namespace m0.UIWpf.UX
                 && !InstructionHelpers.CheckIfIsOrInherits(toEdge.To, eToEdgeTarget))
                 canAdd = false;
 
-            if (tem.CreateEdgeOnly
+            if (!tem.CreateEdgeOnly // ZZZ added !
                 && eToVertexTarget != null
                 && !InstructionHelpers.CheckIfIsOrInherits(toEdge.To, eToVertexTarget))
                 canAdd = false;

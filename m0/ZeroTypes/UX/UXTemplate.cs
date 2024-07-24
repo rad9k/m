@@ -172,7 +172,8 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        public IList<UXDecoratorTemplate> UXDecoratorTemplates
+        public IList<UXDecoratorTemplate> UXDecoratorTemplates 
+        // we need it as UXDecoratorTemplate inherits from UXTemplate and UXTemplate has $PlatformClass defined
         {
             get
             {
