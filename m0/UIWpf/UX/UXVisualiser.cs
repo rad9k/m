@@ -2125,12 +2125,12 @@ namespace m0.UIWpf.UX
                 foreach (IUXItem i in GetItemsDictionaryByBaseEdgeTo()[toEdge.To])
                     r.Add(i);
 
-          /*  IVertex toEdgeToEdgeTarget = GraphUtil.GetQueryOutFirst(toEdge.To, "$EdgeTarget", null);
+           IVertex toEdgeToEdgeTarget = GraphUtil.GetQueryOutFirst(toEdge.To, "$EdgeTarget", null); // THIS WAS COMMENTED OUT
 
             if (GraphUtil.ExistQueryOut(toEdge.Meta, "$VertexTarget", null) && toEdgeToEdgeTarget != null) // toEdgeToEdgeTarget is instance of GraphUtil.GetQueryOut(toEdge.Meta, "$VertexTarget", null)  ??
                 if (GetItemsDictionaryByBaseEdgeTo().ContainsKey(toEdgeToEdgeTarget))
                     foreach (IUXItem i in GetItemsDictionaryByBaseEdgeTo()[toEdgeToEdgeTarget])
-                        r.Add(i);*/
+                        r.Add(i);
             
             return r;
         }
