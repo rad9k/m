@@ -34,14 +34,16 @@
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 			<@UXDecoratorTemplate :: "Association">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Class\Association">
+				<@EdgeTestQuery :: "$Is:Class\Association">				
 				<@ToDiagramItemTestQuery :: "UXTemplate:Class">
 				<@DecoratorClass :: @LineDecorator>				
+				<@ForceShowEditForm :: "True">
 			<@UXDecoratorTemplate :: "Aggregation">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Class\Aggregation">
-				<@ToDiagramItemTestQuery :: "UXTemplate:Class">
+				<@EdgeTestQuery :: "$Is:Class\Aggregation">				
+				<@ToDiagramItemTestQuery :: "UXTemplate:Class">				
 				<@DecoratorClass :: @LineDecorator>
+				<@ForceShowEditForm :: "True">
 				<@DecoratorVertex :: "">					
 					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
 				
