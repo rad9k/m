@@ -210,7 +210,7 @@ namespace m0.ZeroTypes.UX
                 return;
 
             if (baseEdge.Meta.Get(false, "$VertexTarget:") != null
-                && ((UXDecoratorTemplate)UXTemplate).CreateEdgeOnly)                
+                && !((UXDecoratorTemplate)UXTemplate).CreateEdgeOnly) // ZZZ       
             {
                 IVertex v = baseEdge.To;
                 if (v.Value != null && !GeneralUtil.CompareStrings(v.Value, "$Empty"))

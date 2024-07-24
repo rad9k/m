@@ -2125,7 +2125,7 @@ namespace m0.UIWpf.UX
                 foreach (IUXItem i in GetItemsDictionaryByBaseEdgeTo()[toEdge.To])
                     r.Add(i);
 
-           IVertex toEdgeToEdgeTarget = GraphUtil.GetQueryOutFirst(toEdge.To, "$EdgeTarget", null); // THIS WAS COMMENTED OUT
+           IVertex toEdgeToEdgeTarget = GraphUtil.GetQueryOutFirst(toEdge.To, "$EdgeTarget", null); // THIS WAS COMMENTED OUT ZZZ but in order Associations to work needed to uncomment
 
             if (GraphUtil.ExistQueryOut(toEdge.Meta, "$VertexTarget", null) && toEdgeToEdgeTarget != null) // toEdgeToEdgeTarget is instance of GraphUtil.GetQueryOut(toEdge.Meta, "$VertexTarget", null)  ??
                 if (GetItemsDictionaryByBaseEdgeTo().ContainsKey(toEdgeToEdgeTarget))
