@@ -66,13 +66,6 @@ namespace m0.ZeroTypes.UX
 
             codeControl = new CodeControl(Vertex, true);
             codeControl.BaseEdgeToUpdated();
-
-            /*if (double.IsNaN(Width))
-            {
-                codeControl.UpdateLayout();
-                UpdateLayout();
-                UpdateDiagramLines();
-            }*/
         }
 
         public override void ViewAttributesUpdated()
