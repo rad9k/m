@@ -81,6 +81,13 @@ namespace m0.ZeroTypes.UX
 
                 this.MouseLeftButtonDown += MouseLeftButtonDownHandler;
             }
+
+            this.SizeChanged += UXItem_SizeChanged;
+        }
+
+        private void UXItem_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateDiagramLines();
         }
 
         protected Brush GetBackgroundBrush()
@@ -427,7 +434,7 @@ namespace m0.ZeroTypes.UX
 
             UpdateAnchors(x_orginal, y_orginal, width, height);
 
-            UpdateDiagramLines();
+            //UpdateDiagramLines(); //OnSizeChanged
 
             OwningVisualiser.CheckAndUpdateItemComposition(this, true);
         }
@@ -596,6 +603,9 @@ namespace m0.ZeroTypes.UX
 
         protected void UpdateDiagramLines(IUXItem toItem)
         {
+            if (toItem.OwningVisualiser == null)
+                return;
+
             List<ILineDecoratorBase> sameToItemLines = new List<ILineDecoratorBase>();
 
             Dictionary<IUXItem, List<ILineDecoratorBase>> DiagramLinesToDiagramItemDictionary = GetDiagramLinesToDiagramItemDictionary();

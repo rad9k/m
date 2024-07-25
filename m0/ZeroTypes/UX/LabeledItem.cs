@@ -85,14 +85,6 @@ namespace m0.ZeroTypes.UX
         {
             StringBuilder label = new StringBuilder();
 
-            string constantLabel = ConstantLabel;
-
-            if (constantLabel != null)
-            {
-                label.Append(constantLabel);
-                label.Append(" | ");
-            }
-
             IEdge edge = BaseEdge;
 
             string labelQuery = LabelQuery;
@@ -150,7 +142,7 @@ namespace m0.ZeroTypes.UX
 
                 if (edge == null)
                 {
-                    TextBlock textBlock = getTextBlock();
+                    TextBlock textBlock = getTextBlock(HorizontalAlignment.Center);
                     textBlock.Text = "[empty query result]";
                     return textBlock;
                 }
@@ -164,11 +156,11 @@ namespace m0.ZeroTypes.UX
             return codeControl;
         }
 
-        private TextBlock getTextBlock()
+        private TextBlock getTextBlock(HorizontalAlignment horlizontalAlignment)
         {
             TextBlock textBlock = new TextBlock();
 
-            textBlock.HorizontalAlignment = HorizontalAlignment.Center;
+            textBlock.HorizontalAlignment = horlizontalAlignment;
             textBlock.VerticalAlignment = VerticalAlignment.Center;
             textBlock.TextWrapping = TextWrapping.Wrap;
             textBlock.TextTrimming = TextTrimming.CharacterEllipsis;
@@ -178,14 +170,43 @@ namespace m0.ZeroTypes.UX
 
         private FrameworkElement GetLabelControl_TextBlock()
         {
-            TextBlock textBlock = getTextBlock();
+            TextBlock textBlock = getTextBlock(HorizontalAlignment.Center);
 
             if (HideLabel)
+            {
                 textBlock.Text = "";
+                return textBlock;
+            }
             else
-                textBlock.Text = GetLabel();
+            {
+                string constantLabel = ConstantLabel;
 
-            return textBlock;
+                if (constantLabel != null)
+                {
+                    StackPanel stack = new StackPanel();
+                    stack.HorizontalAlignment = HorizontalAlignment.Center;
+                    stack.Orientation = Orientation.Horizontal;
+
+                    TextBlock constantTextBlock = new TextBlock();
+
+                    constantTextBlock.FontStyle = FontStyles.Italic;
+
+                    constantTextBlock.Text = constantLabel;
+
+                    stack.Children.Add(constantTextBlock);
+
+                    textBlock.Text = " | " + GetLabel();
+
+                    stack.Children.Add(textBlock);
+
+                    return stack;
+                }
+                else
+                {
+                    textBlock.Text = GetLabel();
+                    return textBlock;
+                }
+            }
         }
 
 
