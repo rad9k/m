@@ -65,6 +65,7 @@ namespace m0.ZeroTypes.UX
                 TheGrid.Children.Remove((UIElement)codeControl);
 
             codeControl = new CodeControl(Vertex, true);
+            codeControl.NoBackgroundWorkOnGenerate = true;
             codeControl.BaseEdgeToUpdated();
         }
 

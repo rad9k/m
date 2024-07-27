@@ -36,7 +36,9 @@ namespace m0.UIWpf.Controls
     {
         static object lockObject = new object();
 
-        public bool GenerateAfterParse = true;        
+        public bool GenerateAfterParse = true;
+
+        public bool NoBackgroundWorkOnGenerate = false;
 
         public IVertex Vertex;
 
@@ -400,9 +402,16 @@ namespace m0.UIWpf.Controls
 
         void ExecuteGenerate()
         {
-            Thread thread = new Thread(ExecuteGenerate_SeparateThread);
-            thread.IsBackground = true;
-            thread.Start();
+            if (NoBackgroundWorkOnGenerate)
+            {
+                editor.Text = ExecuteGenerate_SeparateThread_internal();
+            }
+            else
+            {
+                Thread thread = new Thread(ExecuteGenerate_SeparateThread);
+                thread.IsBackground = true;
+                thread.Start();
+            }
         }
 
         private string ExecuteGenerate_SeparateThread_internal()
