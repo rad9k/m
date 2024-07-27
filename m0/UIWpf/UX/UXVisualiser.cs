@@ -285,17 +285,11 @@ namespace m0.UIWpf.UX
         public IVertex Vertex
         {
             get
-            {
-                if (IsVisualiser && VisualiserHelper != null)
-                    return VisualiserHelper.Vertex;
-                else
+            {                
                     return vertex;
             }
             set
             {
-                if (IsVisualiser && VisualiserHelper != null)
-                    VisualiserHelper.SetVertex(value);
-                else
                     vertex = value;
             }
         }
