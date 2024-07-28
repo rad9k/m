@@ -1737,11 +1737,11 @@ namespace m0.UIWpf.UX
                       if (ndi.UXTemplate.ForceShowEditForm)
                           MinusZero.Instance.DefaultUserInteraction.Edit(newVertex, WpfUtil.GetMousePositionDnd(e));
 
-                      IVertex newEdgeVertex = EdgeHelper.CreateTempEdgeVertex
+                    IVertex newEdgeVertex = EdgeHelper.CreateTempEdgeVertex(ve.From, ve.Meta, ve.To);
 
                       AddDiagramItem(p,
                                      ndi.UXTemplate,
-                                     ndi.BaseEdge.Get(false, "To:"), newVertex);
+                                     newEdgeVertex);
                   }
                   else
                   {
@@ -2009,30 +2009,6 @@ namespace m0.UIWpf.UX
             //
 
             HostItem(host, i, true);            
-        }
-
-        public void AddDiagramItem(Point p, UXTemplate UXTemplate, IVertex metaVertex, IVertex newVertex)
-        {
-            IUXContainer host = GetItemByPoint_ByCanvas(p);
-
-            Point p_translated = new Point(p.X, p.Y);
-
-            if (host == null)
-                host = this;
-            else
-                p_translated = Canvas.TranslatePoint(p, host.Canvas);            
-
-            IUXItem i = AddDiagramItem_Base(host, p_translated, UXTemplate);
-
-            //
-
-            IVertex be = i.Vertex.Get(false, "BaseEdge:");
-
-            EdgeHelper.AddEdgeVertexEdgesOnlyMetaTo(be, metaVertex, newVertex);
-
-            //
-
-            HostItem(host, i, true);
         }        
 
         public void CheckAndUpdateDiagramLines()

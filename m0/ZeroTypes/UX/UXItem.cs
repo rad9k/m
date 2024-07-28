@@ -7,6 +7,7 @@ using m0.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -126,12 +127,12 @@ namespace m0.ZeroTypes.UX
         public virtual void VertexSetedUp()
         {
             graphChangeListenerEdge = ExecutionFlowHelper.AddTriggerAndListener(Vertex,
-                new List<string> { @"", @"\" },
+                new List<string> { /*@"",*/ @"\" },
                 new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
                          GraphChangeFilterEnum.OutputEdgeAdded,
                          GraphChangeFilterEnum.OutputEdgeRemoved,
                          GraphChangeFilterEnum.OutputEdgeDisposed},
-                "UXItem",
+                "UXItem" + this.GetType().ToString(),
                 VertexChange);
 
             BaseEdgeToUpdated();
@@ -458,6 +459,9 @@ namespace m0.ZeroTypes.UX
 
         protected virtual INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
+            MinusZero.Instance.Log(1, "UXITEM", this.GetType().ToString());
+            ExecutionFlowHelper.DebugStackStraceAsEvents(exe.Stack);
+
             IVertex changedVertex = exe.Stack.Get(false, @"event:\ChangedVertex:");
 
             if (changedVertex != null)
