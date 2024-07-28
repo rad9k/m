@@ -117,7 +117,9 @@ namespace m0
         public IVertex CreateTempVertex() //edge
         {
             IEdge edge = TempStore.Root.AddVertexAndReturnEdge(empty, null);
+
             TempStore.Root.DeleteEdge(edge);
+
             return edge.To;
         }
 

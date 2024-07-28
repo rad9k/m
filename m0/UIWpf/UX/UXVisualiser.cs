@@ -1737,6 +1737,8 @@ namespace m0.UIWpf.UX
                       if (ndi.UXTemplate.ForceShowEditForm)
                           MinusZero.Instance.DefaultUserInteraction.Edit(newVertex, WpfUtil.GetMousePositionDnd(e));
 
+                      IVertex newEdgeVertex = EdgeHelper.CreateTempEdgeVertex
+
                       AddDiagramItem(p,
                                      ndi.UXTemplate,
                                      ndi.BaseEdge.Get(false, "To:"), newVertex);
