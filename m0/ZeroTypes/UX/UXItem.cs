@@ -25,7 +25,9 @@ namespace m0.ZeroTypes.UX
     }
 
     public class UXItem : UserControl, IUXItem, IPlatformClass
-    {        
+    {
+        public bool ForceVertexChangeOff { get; set; } = false;
+
         public virtual string[] SubVertexesTriggeringItemVisualUpdate { get; }
 
         //
@@ -132,7 +134,7 @@ namespace m0.ZeroTypes.UX
                          GraphChangeFilterEnum.OutputEdgeAdded,
                          GraphChangeFilterEnum.OutputEdgeRemoved,
                          GraphChangeFilterEnum.OutputEdgeDisposed},
-                "UXItem" + this.GetType().ToString(),
+                "UXItem",
                 VertexChange);
 
             BaseEdgeToUpdated();
@@ -459,8 +461,8 @@ namespace m0.ZeroTypes.UX
 
         protected virtual INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
-            MinusZero.Instance.Log(1, "UXITEM", this.GetType().ToString());
-            ExecutionFlowHelper.DebugStackStraceAsEvents(exe.Stack);
+            if (ForceVertexChangeOff)
+                return exe.Stack;
 
             IVertex changedVertex = exe.Stack.Get(false, @"event:\ChangedVertex:");
 

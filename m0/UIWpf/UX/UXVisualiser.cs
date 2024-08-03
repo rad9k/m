@@ -53,6 +53,10 @@ namespace m0.UIWpf.UX
 
     public class UXVisualiser : Border, IListVisualiser, IUXVisualiser, IMouseWheelHandler
     {
+        public bool ForceVertexChangeOff { 
+            get { return VisualiserHelper.ForceVertexChangeOff; } 
+            set { VisualiserHelper.ForceVertexChangeOff = value; } }
+
         public event Notify SelectedEdgesChange;
 
         static IVertex systemMetaBaseVertex = m0.MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex");
@@ -128,6 +132,8 @@ namespace m0.UIWpf.UX
             IsVisualiser = false;
 
             NestingLevel = 0;
+
+            ForceVertexChangeOff = false;
         }
 
         //
@@ -156,7 +162,7 @@ namespace m0.UIWpf.UX
                 UserInteractionUtil.ShowError("Diagram Visualiser", "There is allready Diagram Visualiser opened for this Edge");
 
                 return;
-            }
+            }            
 
             IsVisualiser = true;
 
@@ -188,6 +194,8 @@ namespace m0.UIWpf.UX
             this.Drop += dndDrop;
 
             this.KeyDown += Diagram_KeyDown;
+
+            ForceVertexChangeOff = false;
         }
 
         public void MouseWheelAction(MouseWheelEventArgs e)
@@ -1714,8 +1722,10 @@ namespace m0.UIWpf.UX
 
         /////////////////////////////
 
-        private void AddDiagramItemDialog(Point p, IVertex droppedVertex, bool isSet, DragEventArgs e)
+        private IUXItem AddDiagramItemDialog(Point p, IVertex droppedVertex, bool isSet, DragEventArgs e)
         {
+            IUXItem newUXItem = null;
+
             IVertex r = m0.MinusZero.Instance.Root;
 
             NewUXItem ndi = new NewUXItem(this, droppedVertex, isSet, WpfUtil.GetMousePositionDnd(e));
@@ -1737,9 +1747,9 @@ namespace m0.UIWpf.UX
                       if (ndi.UXTemplate.ForceShowEditForm)
                           MinusZero.Instance.DefaultUserInteraction.Edit(newVertex, WpfUtil.GetMousePositionDnd(e));
 
-                    IVertex newEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null/*ve.From*/, ve.Meta, ve.To);
+                    IVertex newEdgeVertex = EdgeHelper.CreateTempEdgeVertex(/*ve.From*/null, ve.Meta, ve.To);
 
-                      AddDiagramItem(p,
+                      newUXItem = AddDiagramItem(p,
                                      ndi.UXTemplate,
                                      newEdgeVertex);
                   }
@@ -1766,7 +1776,7 @@ namespace m0.UIWpf.UX
                         if (ThereIsDiagramItemOfThisBaseEdgeTo == false ||
                             GeneralUtil.CompareStrings(r.Get(false, @"User\CurrentUser:\Settings:\AllowManyUXItemsWithSameBaseEdgeTo:").Value, "True"))
                         {
-                            AddDiagramItem(p,
+                            newUXItem = AddDiagramItem(p,
                                         ndi.UXTemplate,
                                         ndi.BaseEdge);
                         }
@@ -1778,6 +1788,8 @@ namespace m0.UIWpf.UX
                         UserInteractionUtil.ShowError(Vertex.Value + "UXAggregator","There is allready \"" + ndi.UXTemplate.Vertex.Value + "\" UX Item, that visualises dropped vertex.\n\nIt is not possible to add second representation of same vertex, with the same UX Item type.");
                 }
             }
+
+            return newUXItem;
         }
 
         //
@@ -1918,6 +1930,8 @@ namespace m0.UIWpf.UX
 
         //
 
+        IList<IUXItem> NewUXItemsList = new List<IUXItem>();
+
         private void dndDrop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent("Vertex"))
@@ -1934,7 +1948,9 @@ namespace m0.UIWpf.UX
                     isSet = true;
 
                 if (isSet)
-                    User.Process.UX.NonAtomProcess.StartNonAtomProcess();                
+                    User.Process.UX.NonAtomProcess.StartNonAtomProcess();
+
+                NewUXItemsList.Clear();
 
                 ////////////////////////////////////////
                 Interaction.BeginInteractionWithGraph();
@@ -1942,15 +1958,27 @@ namespace m0.UIWpf.UX
 
                 foreach (IEdge eee in dndVertex)
                 {
-                    AddDiagramItemDialog(p, eee.To,isSet,e);
+                    IUXItem newUXItem = AddDiagramItemDialog(p, eee.To,isSet,e);
+
+                    if (newUXItem != null)
+                        NewUXItemsList.Add(newUXItem);
+
                     p.X += 25;
                     p.Y += 25;
                 }
 
+                foreach (IUXItem i in NewUXItemsList)
+                    i.ForceVertexChangeOff = true;
+
                 ////////////////////////////////////////
                 Interaction.EndInteractionWithGraph();
                 //////////////////////////////////////// 
-               
+
+                foreach (IUXItem i in NewUXItemsList)
+                    i.ForceVertexChangeOff = false;
+
+                NewUXItemsList.Clear();
+
 
                 CheckAndUpdateDiagramLines();
 
@@ -1988,7 +2016,7 @@ namespace m0.UIWpf.UX
             return i;
         }
 
-        public void AddDiagramItem(Point p, UXTemplate UXTemplate, IVertex BaseEdge){
+        public IUXItem AddDiagramItem(Point p, UXTemplate UXTemplate, IVertex BaseEdge){
             IUXContainer host = GetItemByPoint_ByCanvas(p);
 
             Point p_translated = new Point(p.X, p.Y);
@@ -2008,7 +2036,9 @@ namespace m0.UIWpf.UX
 
             //
 
-            HostItem(host, i, true);            
+            HostItem(host, i, true);
+
+            return i;
         }        
 
         public void CheckAndUpdateDiagramLines()

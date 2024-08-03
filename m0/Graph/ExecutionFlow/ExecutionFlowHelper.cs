@@ -346,16 +346,6 @@ namespace m0.Graph.ExecutionFlow
 
         public static bool IsVertexChange(IVertex stack, IVertex vertex)
         {
-            foreach (IEdge e in stack.GetAll(false, "event:"))
-            {
-                IVertex ee = e.To.Get(false, "ChangedVertex:");
-
-                if (ee != null && ee == vertex)
-                {
-                    int x = 0;
-                }
-            }
-
             foreach (IEdge e in stack.GetAll(false, @"event:\ChangedVertex:"))
                 if (e.To == vertex)
                     return true;

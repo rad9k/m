@@ -19,8 +19,8 @@ namespace m0.Foundation
         public IEdge Edge;
 
         public VertexChangeEventArgs(VertexChangeType _Type, IEdge _Edge){
-            Type=_Type;
-            Edge=_Edge;
+            Type = _Type;
+            Edge = _Edge;
         }
     }
 

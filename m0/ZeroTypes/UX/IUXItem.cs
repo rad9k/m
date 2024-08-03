@@ -14,6 +14,8 @@ namespace m0.ZeroTypes.UX
 {
     public interface IUXItem: IItem, IDisposable
     {
+        bool ForceVertexChangeOff { get; set; }
+
         IEdge ContainerEdge { get; set; }
 
         int NestingLevel { get; set; }
