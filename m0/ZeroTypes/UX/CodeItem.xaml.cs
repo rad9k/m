@@ -28,6 +28,7 @@ namespace m0.ZeroTypes.UX
     public partial class CodeItem : RectangleItem_LabeledItem
     {
         CodeControl codeControl;
+        bool codeControlAdded = false;
 
         //
 
@@ -52,9 +53,19 @@ namespace m0.ZeroTypes.UX
 
             LabelContainer.Child = LabelControl;
 
-            Grid.SetRow(codeControl, 2);
+            AddCodeControl();
+        }
 
-            TheGrid.Children.Add(codeControl);
+        void AddCodeControl()
+        {
+            if (codeControl != null && !codeControlAdded)
+            {
+                Grid.SetRow(codeControl, 2);
+
+                TheGrid.Children.Add(codeControl);
+
+                codeControlAdded = true;
+            }
         }
 
         public override void BaseEdgeToUpdated()
@@ -62,11 +73,16 @@ namespace m0.ZeroTypes.UX
             base.BaseEdgeToUpdated();
 
             if (codeControl != null)
+            {
                 TheGrid.Children.Remove((UIElement)codeControl);
+                codeControlAdded = false;
+            }
 
             codeControl = new CodeControl(Vertex, true);
             codeControl.NoBackgroundWorkOnGenerate = true;
             codeControl.BaseEdgeToUpdated();
+
+            AddCodeControl();
         }
 
         public override void ViewAttributesUpdated()
