@@ -434,7 +434,7 @@ namespace m0.UIWpf.UX
                     if(VertexOperations.IsAtomicVertex(e.To))
                         GraphUtil.SetVertexValue(baseVertex, e.Meta, e.To.Value); // shallow copy
                     else
-                        GraphUtil.CreateOrReplaceEdge(baseVertex, e.Meta, e.To); // deep BUT NOT COPY
+                        GraphUtil.CreateOrReplaceEdge_DeepCopy(baseVertex, e.Meta, e.To); // deep BUT NOT COPY
                 }
         }
 

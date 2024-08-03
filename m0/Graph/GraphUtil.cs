@@ -1064,8 +1064,7 @@ namespace m0.Graph
         }
 
         static public IEdge ReplaceEdge(IVertex Vertex, string MetaValue, IVertex NewEdgeToVertex)
-        {
-            //IEdge toReplace = FindEdgeByMetaValue(Vertex, MetaValue);
+        {            
             IEdge toReplace = GetQueryOutFirstEdge(Vertex, MetaValue, null);
 
             if (toReplace == null)
@@ -1086,6 +1085,20 @@ namespace m0.Graph
                 Vertex.DeleteEdge(toReplace);
 
             return  Vertex.AddEdge(metaVertex, NewEdgeToVertex);
+        }
+
+        static public IEdge CreateOrReplaceEdge_DeepCopy(IVertex Vertex, IVertex metaVertex, IVertex NewEdgeToVertex)
+        {
+            IEdge toReplace = FindEdgeByMetaVertex(Vertex, metaVertex);
+
+            if (toReplace != null)
+                Vertex.DeleteEdge(toReplace);
+
+            IEdge newEdge = Vertex.AddVertexAndReturnEdge(metaVertex, NewEdgeToVertex.Value);
+
+            DeepCopyByVertex(NewEdgeToVertex, newEdge.To);
+
+            return newEdge;
         }
 
         static public IEdge ReplaceEdge(IVertex Vertex, IVertex metaVertex, IVertex NewEdgeToVertex)
@@ -1220,6 +1233,30 @@ namespace m0.Graph
                     DeepCopy_Reccurent(e, newVertex, visited);
                 else
                     newVertex.AddEdge(e.Meta, e.To);                      
+        }
+
+        static public void DeepCopyByVertex(IVertex vertexToCopy, IVertex copyTo)
+        {            
+            HashSet<IVertex> visited = new HashSet<IVertex>();
+
+            DeepCopyByVertex_Reccurent(vertexToCopy, copyTo, visited);
+        }
+
+        static void DeepCopyByVertex_Reccurent(IVertex vertexToCopy, IVertex copyTo, HashSet<IVertex> visited)
+        {
+            copyTo.Value = vertexToCopy.Value;
+
+            visited.Add(vertexToCopy);
+
+            foreach (IEdge e in vertexToCopy)
+                if (!visited.Contains(e.To) && !VertexOperations.IsLink(e))
+                {
+                    IVertex newVertex = copyTo.AddVertex(e.Meta, null);
+
+                    DeepCopyByVertex_Reccurent(e.To, newVertex, visited);
+                }
+                else
+                    copyTo.AddEdge(e.Meta, e.To);
         }
 
         static public IEnumerable<IVertex> GetSubGraphWithoutLinksAsList(IVertex iterationRoot)
