@@ -27,7 +27,7 @@ namespace m0.User.Process.UX
 
         static void _log_one(Dictionary<IVertex, List<GraphChangeTransactionAtom>> o)
         {
-            //return;
+            return;
 
             foreach(IVertex k in o.Keys)
             {
