@@ -1752,7 +1752,7 @@ namespace m0.ZeroCode
 
             BaseEdge = new EasyEdge(null, null, v);            
 
-            // BaseEdge = _graphBaseEdge;
+             //BaseEdge = _graphBaseEdge;
         }
 
         public string Process(IEdge _graphBaseEdge)

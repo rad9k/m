@@ -122,7 +122,7 @@ namespace m0.ZeroCode
             IDictionary<IVertex, IVertex> sourceLinerizedDict = new Dictionary<IVertex, IVertex>();
             IList<IVertex> beenList = new List<IVertex>();
 
-            IEnumerable<IVertex> subGraph = GraphUtil.GetSubGraphWithoutLinksAsList_Raw(sourceBaseVertex);
+            IEnumerable<IVertex> subGraph = GraphUtil.GetSubGraphWithoutLinksAsList_Raw(sourceBaseVertex);            
 
             foreach (IVertex v in subGraph) {
                 IVertex v_new = MinusZero.Instance.CreateTempVertex();
@@ -131,6 +131,7 @@ namespace m0.ZeroCode
 
                 sourceLinerizedDict.Add(v, v_new);
             }
+            
 
             return LinearizeGraph_Reccurent(sourceBaseVertex, sourceLinerizedDict, beenList);
         }
@@ -168,7 +169,8 @@ namespace m0.ZeroCode
                 else
                     linearizedTo = e.To;
 
-                linearizedVertex.AddEdge(linearizedMeta, linearizedTo);
+                if (linearizedMeta.Value.ToString() != "$GraphChangeTrigger")
+                    linearizedVertex.AddEdge(linearizedMeta, linearizedTo);
 
                 LinearizeGraph_Reccurent(e.To, sourceLinerizedDict, beenList);
             }
