@@ -27,9 +27,9 @@ namespace m0.Graph.ExecutionFlow
 
         IList<ITransactionAtom> atoms = new List<ITransactionAtom>();
 
-        Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_OutEdgeValueChange = new Dictionary<IVertex, List<GraphChangeTransactionAtom>>();
-        Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_InEdge = new Dictionary<IVertex, List<GraphChangeTransactionAtom>>();
-        Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_MetaEdge = new Dictionary<IVertex, List<GraphChangeTransactionAtom>>();
+        public Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_OutEdgeValueChange = new Dictionary<IVertex, List<GraphChangeTransactionAtom>>();
+        public Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_InEdge = new Dictionary<IVertex, List<GraphChangeTransactionAtom>>();
+        public Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_MetaEdge = new Dictionary<IVertex, List<GraphChangeTransactionAtom>>();
 
         IList<ISecondStageCommitAction> secondStageCommitActionList = new List<ISecondStageCommitAction>();
 

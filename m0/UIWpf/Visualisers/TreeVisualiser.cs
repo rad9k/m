@@ -200,7 +200,9 @@ namespace m0.UIWpf.Visualisers
         }        
 
         public INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
-        {            
+        {
+           // ExecutionFlowHelper.DebugStackStraceAsEvents(exe.Stack);
+
             if (ParentVisualiser.VisualiserHelper.IsDisposed)
                 return exe.Stack;
 

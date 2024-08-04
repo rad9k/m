@@ -730,7 +730,9 @@ namespace m0.UIWpf.UX
         public void PaintDiagram()
         {
             if (ActualHeight != 0 || IsFirstPainted)
-            {                               
+            {
+                ScaleChange();
+
                 Canvas.Children.Clear();
 
                 Width = Size.Width ;
@@ -798,14 +800,14 @@ namespace m0.UIWpf.UX
 
             SetFocus();
 
+            ScrollViewerParent = GetScrollViewerParent(this);
+
             PaintDiagram();
 
             if (IsFirstPainted)
                 this.Loaded -= OnLoad;
 
-            VisualiserHelper.AddContextMenu();
-
-            ScrollViewerParent = GetScrollViewerParent(this);
+            VisualiserHelper.AddContextMenu();            
         }             
 
         IHasScrollViewer GetScrollViewerParent(DependencyObject e)
