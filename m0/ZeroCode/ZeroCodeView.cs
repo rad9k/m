@@ -169,7 +169,7 @@ namespace m0.ZeroCode
                 else
                     linearizedTo = e.To;
 
-                if (linearizedMeta.Value.ToString() != "$GraphChangeTrigger")
+                if (VertexOperations.CanCopyMeta(linearizedMeta))
                     linearizedVertex.AddEdge(linearizedMeta, linearizedTo);
 
                 LinearizeGraph_Reccurent(e.To, sourceLinerizedDict, beenList);

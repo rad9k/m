@@ -971,7 +971,7 @@ namespace m0.Graph
             IEdge newEdge = destination.AddVertexAndReturnEdge(source.Meta, source.To.Value);
 
             foreach (IEdge e in source.To)
-                if(e.Meta.Value.ToString() != "$GraphChangeTrigger")
+                if (VertexOperations.CanCopyEdge(e))
                     newEdge.To.AddVertex(e.Meta, e.To.Value);
 
             return newEdge;
@@ -1249,14 +1249,17 @@ namespace m0.Graph
             visited.Add(vertexToCopy);
 
             foreach (IEdge e in vertexToCopy)
-                if (!visited.Contains(e.To) && !VertexOperations.IsLink(e))
+                if (VertexOperations.CanCopyEdge(e))
                 {
-                    IVertex newVertex = copyTo.AddVertex(e.Meta, null);
+                    if (!visited.Contains(e.To) && !VertexOperations.IsLink(e))
+                    {
+                        IVertex newVertex = copyTo.AddVertex(e.Meta, null);
 
-                    DeepCopyByVertex_Reccurent(e.To, newVertex, visited);
+                        DeepCopyByVertex_Reccurent(e.To, newVertex, visited);
+                    }
+                    else
+                        copyTo.AddEdge(e.Meta, e.To);
                 }
-                else
-                    copyTo.AddEdge(e.Meta, e.To);
         }
 
         static public IEnumerable<IVertex> GetSubGraphWithoutLinksAsList(IVertex iterationRoot)

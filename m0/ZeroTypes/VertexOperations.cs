@@ -12,6 +12,22 @@ namespace m0.ZeroTypes
 {
     public class VertexOperations
     {
+        public static bool CanCopyEdge(IEdge e)
+        {
+            if (e.Meta.Value.ToString() == "$GraphChangeTrigger")
+                return false;
+
+            return true;
+        }
+
+        public static bool CanCopyMeta(IVertex v)
+        {
+            if (v.Value.ToString() == "$GraphChangeTrigger")
+                return false;
+
+            return true;
+        }
+
         public static bool IsLink(IEdge e)
         {
             if (GeneralUtil.CompareStrings(e.Meta.Value, "$EdgeTarget"))
@@ -52,7 +68,7 @@ namespace m0.ZeroTypes
 
         public static bool IsInheritedEdge(IVertex baseVertex, IVertex metaVertex)
         {
-            foreach(IEdge e in GraphUtil.GetQueryOut(baseVertex, "$Inherits",null))
+            foreach (IEdge e in GraphUtil.GetQueryOut(baseVertex, "$Inherits",null))
                 if (_IsInheritedEdge(e.To, metaVertex))
                     return true;
 
@@ -61,7 +77,7 @@ namespace m0.ZeroTypes
 
         private static bool _IsInheritedEdge(IVertex baseVertex, IVertex metaVertex)
         {
-            if(GraphUtil.ExistQueryOut(baseVertex, metaVertex.Value, null))
+            if (GraphUtil.ExistQueryOut(baseVertex, metaVertex.Value, null))
                 return true;
 
             foreach (IEdge e in GraphUtil.GetQueryOut(baseVertex, "$Inherits", null))
