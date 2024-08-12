@@ -1460,7 +1460,12 @@ namespace m0.ZeroTypes.UX
                 return (IUXItem)_i;
 
             return null;
-        }        
+        }
+
+        public void RemoveDecorator(IUXItem decorator)
+        {
+            Vertex.DeleteEdge(decorator.Edge);
+        }
 
         // Item
 

@@ -47,8 +47,8 @@ namespace m0.UIWpf.UX
     {
         public IVertex Meta;
         public IVertex To;
-        public int LineDecoratorNumber;
-        public int EdgesNumber;
+        public int NumberOfDecoratorsWithSameMetaTo;
+        public int NumberOfEdgesWithSameMetaTo;
     }
 
     public class UXVisualiser : Border, IListVisualiser, IUXVisualiser, IMouseWheelHandler
@@ -392,6 +392,29 @@ namespace m0.UIWpf.UX
             item.RemoveFromCanvas();
 
             item.Dispose(); // check if will not cause problems
+
+            RemoveAllDecoratorsWithGivenBaseEdgeTo(item);
+        }
+
+        private void RemoveAllDecoratorsWithGivenBaseEdgeTo(IUXItem item)
+        {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            //////////////////////////////////////// 
+
+            foreach (IUXItem i in  Items_all)
+                foreach (IUXItem decorator in i.Decorators)
+                    if (decorator is ILineDecoratorBase)
+                    {
+                        ILineDecoratorBase lineDecorator = (ILineDecoratorBase)decorator;
+
+                        if (lineDecorator.ToItem.BaseEdgeTo == item.BaseEdgeTo)
+                            i.RemoveDecorator(lineDecorator);
+                    }
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            //////////////////////////////////////// 
         }
 
         // TOO
@@ -567,7 +590,7 @@ namespace m0.UIWpf.UX
         
         public void AddLineObjects()
         {
-            List<MetaToPair> metatopairs = new List<MetaToPair>();
+           List<MetaToPair> metatopairs = new List<MetaToPair>();
 
            foreach(ITypedEdge _item in Items_all)
                {
@@ -578,12 +601,12 @@ namespace m0.UIWpf.UX
 
                    metatopairs.Clear();
 
-                   foreach(IUXItem decorator in item.Decorators) // calculate LineDecorator number and Edges number for each Meta/To edge pair
+                   foreach (IUXItem decorator in item.Decorators) // calculate LineDecorator number and Edges number for each Meta/To edge pair
                                                                 //foreach (IEdge l in item.Vertex.GetAll(false, "DiagramLine:")) // calculate DiagramLines number and Edges number for each Meta/To edge pair
                    { 
                        MetaToPair found = null;
 
-                       Edge decorator_BaseEdge= decorator.BaseEdge;
+                       Edge decorator_BaseEdge = decorator.BaseEdge;
 
                        foreach (MetaToPair pair in metatopairs)
                            if (pair.Meta == decorator_BaseEdge.Meta && pair.To == decorator_BaseEdge.To)
@@ -594,38 +617,38 @@ namespace m0.UIWpf.UX
                            MetaToPair newpair = new MetaToPair();
                            newpair.Meta = decorator_BaseEdge.Meta;
                            newpair.To = decorator_BaseEdge.To;
-                           newpair.LineDecoratorNumber = 1;
-                           newpair.EdgesNumber = 0;
+                           newpair.NumberOfDecoratorsWithSameMetaTo = 1;
+                           newpair.NumberOfEdgesWithSameMetaTo = 0;
 
                            foreach (IEdge e in item.BaseEdge.To)
                                if (newpair.Meta == e.Meta && newpair.To == e.To)
-                                   newpair.EdgesNumber++;
+                                   newpair.NumberOfEdgesWithSameMetaTo++;
 
                            metatopairs.Add(newpair);
                        
-                       }else
-                           found.LineDecoratorNumber++;
+                       } else
+                           found.NumberOfDecoratorsWithSameMetaTo++;
                    }
 
                    foreach (MetaToPair pair in metatopairs) { // delete DiagramLines for edges that been deleted
-                       if (pair.LineDecoratorNumber > pair.EdgesNumber)
+                       if (pair.NumberOfDecoratorsWithSameMetaTo > pair.NumberOfEdgesWithSameMetaTo)
                             foreach (IUXItem decorator in item.Decorators)
                             {
                                 Edge decorator_BaseEdge = decorator.BaseEdge;
 
                                 if (pair.Meta == decorator_BaseEdge.Meta 
                                     && pair.To == decorator_BaseEdge.To 
-                                    && pair.LineDecoratorNumber > pair.EdgesNumber)
+                                    && pair.NumberOfDecoratorsWithSameMetaTo > pair.NumberOfEdgesWithSameMetaTo)
                                 {
                                    item.Vertex.DeleteEdge(decorator.Edge);
-                                   pair.LineDecoratorNumber--;
+                                   pair.NumberOfDecoratorsWithSameMetaTo--;
                                 }
                             }
                    }
 
                     foreach (IUXItem decorator in item.Decorators)
                     // add diagram line objects
-                        if(decorator is LineDecorator)
+                        if (decorator is LineDecorator)
                         {
                             LineDecorator lineDecorator = (LineDecorator)decorator;
 
