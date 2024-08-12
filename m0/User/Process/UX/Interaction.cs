@@ -14,6 +14,29 @@ namespace m0.User.Process.UX
     {
         static int InteractionControlReccurection = 0;
 
+        public static void BeginInteractionWithGraph()
+        {
+            if (InteractionControlReccurection == 0)
+                ExecutionFlowHelper.StartTransaction();
+
+            InteractionControlReccurection++;
+        }
+
+        public static void EndInteractionWithGraph()
+        {
+            if (InteractionControlReccurection == 1)
+                ExecutionFlowHelper.CommitTransaction();
+
+            InteractionControlReccurection--;
+        }
+    }
+
+    /*
+
+    public class Interaction
+    {
+        static int InteractionControlReccurection = 0;
+
         static int cnt = 0;
 
         static void PrintCNT()
@@ -108,5 +131,5 @@ namespace m0.User.Process.UX
 
             MinusZero.Instance.Log(1, "ENDInteractionWithGraph", "stop");
         }
-    }
+    }*/
 }

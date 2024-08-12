@@ -169,10 +169,8 @@ namespace m0.ZeroCode
                 else
                     linearizedTo = e.To;
 
-                if (VertexOperations.CanCopyMeta(linearizedMeta))
+               if (VertexOperations.CanCopyMeta(linearizedMeta))
                     linearizedVertex.AddEdge(linearizedMeta, linearizedTo);
-                else
-                    MinusZero.Instance.Log(1, "LinearizeGraph_Reccurent", "xyz");
 
                 LinearizeGraph_Reccurent(e.To, sourceLinerizedDict, beenList);
             }
