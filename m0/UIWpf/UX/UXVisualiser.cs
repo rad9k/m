@@ -779,7 +779,8 @@ namespace m0.UIWpf.UX
                     if (i == null)
                         continue;
 
-                    HostItem(this, i, false);
+                    if (CheckIfItemIsValidAndRemoveIfInvalid(i))
+                        HostItem(this, i, false);
                 } 
                 
                 //
@@ -806,6 +807,17 @@ namespace m0.UIWpf.UX
                 Interaction.EndInteractionWithGraph();
                 ////////////////////////////////////////    
             }
+        }
+
+        private bool CheckIfItemIsValidAndRemoveIfInvalid(IUXItem item)
+        {
+            if (item.BaseEdgeTo == null)
+            {
+                item.ParentItem.RemoveItem(item);
+                return false;
+            }
+
+            return true;
         }
         
 

@@ -20,6 +20,21 @@
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 				
+		<@UXTemplate :: "Code">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@ItemClass :: @CodeItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\BaseGenericItemVertex>
+				<@LabeledItem\ShowMeta :: "True">
+			<@UXDecoratorTemplate :: "Edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+				
 		<@UXTemplate :: "Class">
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:Class}">
