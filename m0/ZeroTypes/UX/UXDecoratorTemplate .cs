@@ -15,7 +15,7 @@ namespace m0.ZeroTypes.UX
         static IVertex DecoratorClass_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\DecoratorClass");
         static IVertex DecoratorVertex_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\DecoratorVertex");
         static IVertex CreateEdgeOnly_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\CreateEdgeOnly");
-        static IVertex ForceShowEditForm_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\ForceShowEditForm");        
+        static IVertex EdgeTargetInEdgePointingToTargetItemBaseEdgeTo_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\EdgeTargetInEdgePointingToTargetItemBaseEdgeTo");
 
         static IVertex Size_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Size");
 
@@ -126,6 +126,28 @@ namespace m0.ZeroTypes.UX
 
                 if (val == null)
                     val = Vertex.AddVertex(CreateEdgeOnly_meta, value);
+                else
+                    val.Value = value;
+            }
+        }
+
+        public bool EdgeTargetInEdgePointingToTargetItemBaseEdgeTo // this can be tricky. check the references
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "EdgeTargetInEdgePointingToTargetItemBaseEdgeTo", null);
+
+                if (val == null)
+                    return false;
+
+                return GraphUtil.GetBooleanValueOrFalse(val);
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "EdgeTargetInEdgePointingToTargetItemBaseEdgeTo", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(EdgeTargetInEdgePointingToTargetItemBaseEdgeTo_meta, value);
                 else
                     val.Value = value;
             }

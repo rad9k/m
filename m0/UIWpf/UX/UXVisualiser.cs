@@ -2164,15 +2164,22 @@ namespace m0.UIWpf.UX
             ////////////////////////////////////////
         }
 
-        protected List<IUXItem> GetItemsByBaseEdgeTo_ForLines(IEdge toEdge) // MAX TOO
+        protected List<IUXItem> GetItemsByBaseEdgeTo_ForLines(IEdge toEdge)
         {
             List<IUXItem> r = new List<IUXItem>();
 
             if (GetItemsDictionaryByBaseEdgeTo().ContainsKey(toEdge.To))
                 foreach (IUXItem i in GetItemsDictionaryByBaseEdgeTo()[toEdge.To])
                     r.Add(i);
+            return r;
+        }
 
-           IVertex toEdgeToEdgeTarget = GraphUtil.GetQueryOutFirst(toEdge.To, "$EdgeTarget", null); // THIS WAS COMMENTED OUT ZZZ but in order Associations to work needed to uncomment
+        protected List<IUXItem> GetItemsByBaseEdgeTo_ForLines_EdgeTargetInEdgePointingToTargetItemBaseEdgeTo(IEdge toEdge)
+        // in order Associations to work 
+        {
+            List<IUXItem> r = new List<IUXItem>();
+
+            IVertex toEdgeToEdgeTarget = GraphUtil.GetQueryOutFirst(toEdge.To, "$EdgeTarget", null); 
 
             if (GraphUtil.ExistQueryOut(toEdge.Meta, "$VertexTarget", null) && toEdgeToEdgeTarget != null) // toEdgeToEdgeTarget is instance of GraphUtil.GetQueryOut(toEdge.Meta, "$VertexTarget", null)  ??
                 if (GetItemsDictionaryByBaseEdgeTo().ContainsKey(toEdgeToEdgeTarget))
@@ -2189,11 +2196,11 @@ namespace m0.UIWpf.UX
 
             foreach (UXDecoratorTemplate tem in item.UXTemplate.UXDecoratorTemplates)            
             {
-                bool canReturn=true;
+                bool canReturn = true;
 
                 string edgeTestQuery = tem.EdgeTestQuery;
 
-                if(edgeTestQuery != null && edgeTestQuery != ""){
+                if (edgeTestQuery != null && edgeTestQuery != ""){
                     canReturn=false;
 
                     foreach (IEdge toTest in item.BaseEdgeTo.GetAll(false, edgeTestQuery))

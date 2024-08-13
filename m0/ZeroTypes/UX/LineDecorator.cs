@@ -209,14 +209,14 @@ namespace m0.ZeroTypes.UX
             if (baseEdge.Meta == null) // during disposing
                 return;
 
-            if (baseEdge.Meta.Get(false, "$VertexTarget:") != null
+            /*if (baseEdge.Meta.Get(false, "$VertexTarget:") != null
                 && !((UXDecoratorTemplate)UXTemplate).CreateEdgeOnly) // ZZZ       
             {
                 IVertex v = baseEdge.To;
                 if (v.Value != null && !GeneralUtil.CompareStrings(v.Value, "$Empty"))
                     Label.Text = (string)v.Value;
             }
-            else
+            else*/
             {
                 IVertex v = baseEdge.Meta;
                 if (v.Value != null && !GeneralUtil.CompareStrings(v.Value, "$Empty"))
