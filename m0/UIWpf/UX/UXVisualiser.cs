@@ -2126,9 +2126,6 @@ namespace m0.UIWpf.UX
                 if (IsContainerEdge(e))
                     continue;
 
-
-                List<IUXItem> toDiagramItems = null;
-
                 bool needAdding = true;
 
                 if (item.GetDiagramLinesBaseEdgeToDictionary().ContainsKey(e.To))
@@ -2141,27 +2138,40 @@ namespace m0.UIWpf.UX
                             needAdding = false;
                     }
 
-                if (needAdding) {
-                    toDiagramItems = GetItemsByBaseEdgeTo_ForLines(e);
-                    
-                    foreach (IUXItem toDiagramItem in toDiagramItems)
-                    {
-                        if (item is IUXMultiContainerItem
-                            && toDiagramItem is IUXMultiContainerSubItem
-                            && toDiagramItem.ParentItem == item)
-                            continue;
+                if (needAdding)
+                {
+                    List<IUXItem> toDiagramItems = GetItemsByBaseEdgeTo_ForLines(e);
 
-                        UXDecoratorTemplate lineDef = GetLineDefinition(e, item, toDiagramItem);
+                    TryAddDiagramLineVertexForListOfItems(item, e, toDiagramItems, false);
 
-                        if (lineDef != null)
-                            AddDiagramLineVertex(item, e, lineDef, toDiagramItem);
-                    }
-                }           
+                    List<IUXItem> toDiagramItems_EdgeTargetInEdgePointingToTargetItemBaseEdgeTo = GetItemsByBaseEdgeTo_ForLines_EdgeTargetInEdgePointingToTargetItemBaseEdgeTo(e);
+
+                    TryAddDiagramLineVertexForListOfItems(item, e, toDiagramItems_EdgeTargetInEdgePointingToTargetItemBaseEdgeTo, true);
+                }
             }
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////
+        }
+
+        private void TryAddDiagramLineVertexForListOfItems(IUXItem item, IEdge e, List<IUXItem> toDiagramItems, bool isEdgeTargetInEdgePointingToTargetItemBaseEdgeTo)
+        {
+            foreach (IUXItem toDiagramItem in toDiagramItems)
+            {
+                if (item is IUXMultiContainerItem
+                    && toDiagramItem is IUXMultiContainerSubItem
+                    && toDiagramItem.ParentItem == item)
+                    continue;
+
+                UXDecoratorTemplate lineDef = GetLineDefinition(e, item, toDiagramItem);
+
+                if (lineDef != null && (
+                    isEdgeTargetInEdgePointingToTargetItemBaseEdgeTo == false ||
+                    lineDef.EdgeTargetInEdgePointingToTargetItemBaseEdgeTo
+                    ))
+                    AddDiagramLineVertex(item, e, lineDef, toDiagramItem);
+            }
         }
 
         protected List<IUXItem> GetItemsByBaseEdgeTo_ForLines(IEdge toEdge)
@@ -2201,7 +2211,10 @@ namespace m0.UIWpf.UX
                 string edgeTestQuery = tem.EdgeTestQuery;
 
                 if (edgeTestQuery != null && edgeTestQuery != ""){
-                    canReturn=false;
+                    canReturn = false;
+
+                    if (edgeTestQuery == "$EdgeTarget" && e.Meta.Value.ToString() == "$EdgeTarget")
+                        canReturn = true;
 
                     foreach (IEdge toTest in item.BaseEdgeTo.GetAll(false, edgeTestQuery))
                         if (toTest.To == e.Meta)

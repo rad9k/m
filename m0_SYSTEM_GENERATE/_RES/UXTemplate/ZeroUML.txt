@@ -53,12 +53,14 @@
 				<@ToDiagramItemTestQuery :: "UXTemplate:Class">
 				<@DecoratorClass :: @LineDecorator>				
 				<@ForceShowEditForm :: "True">
+				<@EdgeTargetInEdgePointingToTargetItemBaseEdgeTo :: "True">
 			<@UXDecoratorTemplate :: "Aggregation">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "$Is:Class\Aggregation">				
 				<@ToDiagramItemTestQuery :: "UXTemplate:Class">				
 				<@DecoratorClass :: @LineDecorator>
 				<@ForceShowEditForm :: "True">
+				<@EdgeTargetInEdgePointingToTargetItemBaseEdgeTo :: "True">
 				<@DecoratorVertex :: "">					
 					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
 				
@@ -86,8 +88,28 @@
 				<@LabeledItem\ConstantLabel :: "named block">
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 			
+		<@UXTemplate :: "Variable">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:Variable}">
+			<@MetaVertexTestQuery :: "Variable">
+			<@ItemClass :: @RectangleVisualiserItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\BaseStaticItemVertex>
+				<@LabeledItem\ShowMeta :: "True">
+			<@UXDecoratorTemplate :: "Type">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$EdgeTarget">
+				<@CreateEdgeOnly :: "True">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+			
 		<"BaseGenericItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightRed>
+		<"BaseStaticItemVertex">
+			<@UXItem\BackgroundColor :: @VeryVeryVeryLightGreen>
 		<"BaseActionItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightVioletBlue>
 		<"BaseActionDecorators">

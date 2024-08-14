@@ -710,9 +710,6 @@
     <Resource Include="_PROJECT\test\generator.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="_PROJECT\vis_update.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="_PROJECT\architecture\_EVENT.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -731,6 +728,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="_PROJECT\bug_and_test\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_PROJECT\_DOC\UXItemTemplate.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,0 +1,54 @@
+*** CreateEdgeOnly mistery
+
+
+PaintDiagram()
+	AddLineObjects()
+		!!! IUXItem GetToDiagramItemFromLineVertex(LineDecorator lineDecorator)
+
+		if lineDecorator_BaseEdge.Meta=="$VertexTarget" && !lineDecorator.UXTemplate.CreateEdgeOnly
+			toFind = GraphUtil.GetQueryOutFirst(lineDecorator_BaseEdge.To, "$EdgeTarget", null);
+        else
+            toFind = lineDecorator_BaseEdge.To;
+
+
+
+?MouseLeaveHandler(object sender, MouseEventArgs e)
+?MouseButtonUpHandler(object sender, MouseButtonEventArgs e)
+	void MouseUpOrLeave(bool IsUp, MouseEventArgs e) -> AnchorRightTop_MoveDiagramLine
+		?void DoMoveLineProcess(IUXItem fromItem, IUXItem toItem, ILineDecoratorBase line)
+		?void MouseUpOrLeave(bool IsUp, MouseEventArgs e) -> AnchorRightTop_CreateDiagramLine || AnchorRightTop_SubItem_CreateDiagramLine
+
+			bool DoCreateDiagramLine(IUXItem fromItem, IUXItem toItem)
+				!!! IEdge AddEdgeOrVertexByMeta(IVertex baseVertex, IVertex metaVertex, IVertex toVertex, Point position, bool CreateEdgeOnly, bool ForceShowEditForm)
+
+				if metaVertex="$VertexTarget" && CreateEdgeOnly == false)    
+					IVertex n = VertexOperations.AddInstance(baseVertex, metaVertex);
+					IEdge e = new EasyEdge(baseVertex, metaVertex, n);
+					n.AddEdge(MinusZero.Instance.EdgeTarget, toVertex);
+					return e;
+				else
+					return baseVertex.AddEdge(metaVertex, toVertex); 
+
+
+			bool DoCreateDiagramLine(IUXItem fromItem, IUXItem toItem)
+				!!! bool CanAddLineByDecoratorTemplateAndFromItemBaseEdgeToQuery(IUXItem toItem, IEdge toEdge, UXDecoratorTemplate tem, IEdge e)
+
+				    bool canAdd = true;
+
+					if (tem.ToDiagramItemTestQuery != null && toItem.Vertex.Get(false, tem.ToDiagramItemTestQuery) == null)
+						canAdd = false;
+
+					string eToEdgeTarget = (string)GraphUtil.GetValue(e.To.Get(false, @"$EdgeTarget:"));
+					string eToVertexTarget = (string)GraphUtil.GetValue(e.To.Get(false, @"$VertexTarget:"));
+
+					if (eToEdgeTarget != null
+						&& eToEdgeTarget != "Vertex" // Vertices do not have $Is:Vertex     
+						&& !InstructionHelpers.CheckIfIsOrInherits(toEdge.To, eToEdgeTarget))
+						canAdd = false;
+
+					if (!tem.CreateEdgeOnly // ZZZ added !
+						&& eToVertexTarget != null
+						&& !InstructionHelpers.CheckIfIsOrInherits(toEdge.To, eToVertexTarget))
+						canAdd = false;
+
+					return canAdd;
