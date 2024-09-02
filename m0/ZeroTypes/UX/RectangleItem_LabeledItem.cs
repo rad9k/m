@@ -25,7 +25,6 @@ namespace m0.ZeroTypes.UX
 
         // CODE for LabeledItem
 
-
         protected FrameworkElement LabelControl;
 
         public override void BaseEdgeToUpdated()
@@ -171,6 +170,9 @@ namespace m0.ZeroTypes.UX
             textBlock.TextWrapping = TextWrapping.Wrap;
             textBlock.TextTrimming = TextTrimming.CharacterEllipsis;
 
+            if (FontSize != 0)
+                textBlock.FontSize = this.FontSize;
+
             return textBlock;
         }
 
@@ -266,11 +268,36 @@ namespace m0.ZeroTypes.UX
 
         // UNDER for LabeledItem
 
+        static IVertex FontSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\FontSize");
         static IVertex ConstantLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\ConstantLabel");
         static IVertex LabelQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\LabelQuery");
         static IVertex UseCodeLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\UseCodeLabel");
+        static IVertex FormalTextLanguage_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\FormalTextLanguage");
         static IVertex ShowMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\ShowMeta");
         static IVertex HideLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\HideLabel");
+
+
+        public new double FontSize
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "FontSize", null);
+
+                if (val == null)
+                    return 0;
+
+                return GraphUtil.GetDoubleValueOr0(val);
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "FontSize", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(FontSize_meta, value);
+                else
+                    val.Value = value;
+            }
+        }
 
         public string ConstantLabel
         {
@@ -379,6 +406,18 @@ namespace m0.ZeroTypes.UX
                     val = Vertex.AddVertex(HideLabel_meta, value);
                 else
                     val.Value = value;
+            }
+        }
+
+        public IVertex FormalTextLanguage
+        {
+            get
+            {
+                return GraphUtil.GetQueryOutFirst(Vertex, "FormalTextLanguage", null);
+            }
+            set
+            {
+                GraphUtil.CreateOrReplaceEdge(Vertex, FormalTextLanguage_meta, value);
             }
         }
 

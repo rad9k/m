@@ -212,9 +212,7 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-
-
-        // UNDER
+        // UNDER for LabeledItem
 
         static IVertex FontSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\FontSize");
         static IVertex ConstantLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\ConstantLabel");
@@ -227,7 +225,7 @@ namespace m0.ZeroTypes.UX
 
         public LabeledItem(IEdge edge) : base(edge) { }
 
-        public double FontSize
+        public new double FontSize
         {
             get
             {
