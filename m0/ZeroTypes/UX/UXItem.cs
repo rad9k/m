@@ -464,6 +464,8 @@ namespace m0.ZeroTypes.UX
             if (ForceVertexChangeOff)
                 return exe.Stack;
 
+            bool do_ViewAttributesUpdated = false;
+
             IVertex changedVertex = exe.Stack.Get(false, @"event:\ChangedVertex:");
 
             if (changedVertex != null)
@@ -475,7 +477,7 @@ namespace m0.ZeroTypes.UX
                         trigger = true;
 
                 if (trigger)
-                    ViewAttributesUpdated();
+                    do_ViewAttributesUpdated = true;
             }
 
             //
@@ -514,9 +516,12 @@ namespace m0.ZeroTypes.UX
                 || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "Green")
                 || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "Blue")
                 || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "Opacity"))
-                ViewAttributesUpdated();
+                do_ViewAttributesUpdated = true;
 
             if (IsEdgeAddedTo(exe.Stack, Vertex))
+                do_ViewAttributesUpdated = true;
+
+            if (do_ViewAttributesUpdated)
                 ViewAttributesUpdated();
 
             return exe.Stack;

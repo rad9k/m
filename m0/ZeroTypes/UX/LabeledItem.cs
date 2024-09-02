@@ -165,6 +165,9 @@ namespace m0.ZeroTypes.UX
             textBlock.TextWrapping = TextWrapping.Wrap;
             textBlock.TextTrimming = TextTrimming.CharacterEllipsis;
 
+            if (FontSize != 0)
+                textBlock.FontSize = this.FontSize;
+
             return textBlock;
         }
 
@@ -213,6 +216,7 @@ namespace m0.ZeroTypes.UX
 
         // UNDER
 
+        static IVertex FontSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\FontSize");
         static IVertex ConstantLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\ConstantLabel");
         static IVertex LabelQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\LabelQuery");        
         static IVertex UseCodeLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\UseCodeLabel");
@@ -222,6 +226,28 @@ namespace m0.ZeroTypes.UX
         
 
         public LabeledItem(IEdge edge) : base(edge) { }
+
+        public double FontSize
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "FontSize", null);
+
+                if (val == null)
+                    return 0;
+
+                return GraphUtil.GetDoubleValueOr0(val);
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "FontSize", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(FontSize_meta, value);
+                else
+                    val.Value = value;
+            }
+        }
 
         public string ConstantLabel
         {

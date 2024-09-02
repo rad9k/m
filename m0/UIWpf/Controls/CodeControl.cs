@@ -443,7 +443,7 @@ namespace m0.UIWpf.Controls
                 editor.Background = (Brush)FindResource("0ProcessingBrush");
             });
 
-            
+
             string generated = ExecuteGenerate_SeparateThread_internal();
 
 
