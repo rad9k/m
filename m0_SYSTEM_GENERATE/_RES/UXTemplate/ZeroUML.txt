@@ -28,6 +28,23 @@
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\BaseGenericItemVertex>
 				<@LabeledItem\ShowMeta :: "True">
+				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\EdgeAndManyLines>
+			<@UXDecoratorTemplate :: "Edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+				
+		<@UXTemplate :: "Code Line">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@ItemClass :: @CodeItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\BaseGenericItemVertex>
+				<@LabeledItem\ShowMeta :: "True">
+				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\OneLine>
 			<@UXDecoratorTemplate :: "Edge">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "">
@@ -76,7 +93,7 @@
 				<@LabeledItem\ConstantLabel :: "block">
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 			
-		<@UXTemplate :: "NamedBlock">
+		<@UXTemplate :: "Named Block">
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:NamedBlock}">
 			<@MetaVertexTestQuery :: "NamedBlock">
