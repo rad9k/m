@@ -407,7 +407,7 @@ namespace m0.UIWpf.Controls
                 editor.Text = ExecuteGenerate_SeparateThread_internal();
             }
             else
-            {
+            {                                              
                 Thread thread = new Thread(ExecuteGenerate_SeparateThread);
                 thread.IsBackground = true;
                 thread.Start();
@@ -416,7 +416,7 @@ namespace m0.UIWpf.Controls
 
         private string ExecuteGenerate_SeparateThread_internal()
         {
-            //lock (lockObject)
+            lock (lockObject)            
             {
                 if (Vertex.DisposedState != DisposeStateEnum.Live)
                     return "";
@@ -443,9 +443,7 @@ namespace m0.UIWpf.Controls
                 editor.Background = (Brush)FindResource("0ProcessingBrush");
             });
 
-
-            string generated = ExecuteGenerate_SeparateThread_internal();
-
+            string generated = ExecuteGenerate_SeparateThread_internal();            
 
             m0Main.Instance.Dispatcher.Invoke(() =>
             {

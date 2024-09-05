@@ -122,13 +122,35 @@
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+					
+		<@UXTemplate :: "If">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:If}">
+			<@MetaVertexTestQuery :: "If">
+			<@ItemClass :: @RhombusItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
+				<@LabeledItem\ShowMeta :: "False">
+				<@LabeledItem\ConstantLabel :: "if">
+				<@LabeledItem\UseCodeLabel :: "True">
+				<@LabeledItem\LabelQuery :: "Test:">
+			<@$Inherits :: @ZeroUML\BaseActionDecorators>
+			<@UXDecoratorTemplate :: "than">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "">				
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@$Inherits :: @ZeroUML\ConditionalActionDecoratorVertex>
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
 			
 		<"BaseGenericItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightRed>
 		<"BaseStaticItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightGreen>
 		<"BaseActionItemVertex">
-			<@UXItem\BackgroundColor :: @VeryVeryVeryLightVioletBlue>
+			<@UXItem\BackgroundColor :: @VeryVeryVeryLightVioletBlue>			
 		<"BaseActionDecorators">
 			<@UXDecoratorTemplate :: "Next">
 				<@$Is :: @UXDecoratorTemplate>
@@ -136,7 +158,11 @@
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
-					<@LineDecorator\LineWidth :: "3">
+					<@LineDecorator\LineWidth :: "4">
 					<@LineDecorator\HideLabel :: "True">
 					<@UXItem\ForegroundColor :: @LightCentralBlue>
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>			
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>					
+		<"ConditionalActionDecoratorVertex">
+					<@LineDecorator\LineWidth :: "2">
+					<@LineDecorator\HideLabel :: "True">
+					<@UXItem\ForegroundColor :: @LightVioletBlue>					
