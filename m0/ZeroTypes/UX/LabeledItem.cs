@@ -115,7 +115,44 @@ namespace m0.ZeroTypes.UX
             return label.ToString();
         }
 
+        
+
         public FrameworkElement GetLabelControl()
+        {
+            StackPanel stack = new StackPanel();
+            stack.HorizontalAlignment = HorizontalAlignment.Center;
+            stack.Orientation = Orientation.Horizontal;
+
+            if (HideLabel)
+                return stack;
+
+            string constantLabel = ConstantLabel;
+
+            if (constantLabel != null)
+            {
+                TextBlock constantTextBlock = new TextBlock();
+
+                constantTextBlock.FontStyle = FontStyles.Italic;
+
+                constantTextBlock.Text = constantLabel;
+
+                stack.Children.Add(constantTextBlock);
+
+                //
+
+                TextBlock dividerTextBlock = new TextBlock();
+
+                dividerTextBlock.Text = " | ";
+
+                stack.Children.Add(dividerTextBlock);
+            }
+             
+            stack.Children.Add(GetLabelControl_RightPart());
+
+            return stack;                                
+        }
+
+        FrameworkElement GetLabelControl_RightPart()
         {
             FrameworkElement labelControl;
 
