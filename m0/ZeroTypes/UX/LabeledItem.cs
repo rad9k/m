@@ -211,42 +211,9 @@ namespace m0.ZeroTypes.UX
         private FrameworkElement GetLabelControl_TextBlock()
         {
             TextBlock textBlock = getTextBlock(HorizontalAlignment.Center);
-
-            if (HideLabel)
-            {
-                textBlock.Text = "";
-                return textBlock;
-            }
-            else
-            {
-                string constantLabel = ConstantLabel;
-
-                if (constantLabel != null)
-                {
-                    StackPanel stack = new StackPanel();
-                    stack.HorizontalAlignment = HorizontalAlignment.Center;
-                    stack.Orientation = Orientation.Horizontal;
-
-                    TextBlock constantTextBlock = new TextBlock();
-
-                    constantTextBlock.FontStyle = FontStyles.Italic;
-
-                    constantTextBlock.Text = constantLabel;
-
-                    stack.Children.Add(constantTextBlock);
-
-                    textBlock.Text = " | " + GetLabel();
-
-                    stack.Children.Add(textBlock);
-
-                    return stack;
-                }
-                else
-                {
-                    textBlock.Text = GetLabel();
-                    return textBlock;
-                }
-            }
+            
+            textBlock.Text = GetLabel();
+            return textBlock;            
         }
 
         // UNDER for LabeledItem
