@@ -130,9 +130,7 @@
 			<@ItemClass :: @RhombusItem>
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
-				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
-				<@LabeledItem\ShowMeta :: "False">
-				<@LabeledItem\ConstantLabel :: "if">
+				<@$Inherits :: @ZeroUML\BaseActionItemVertex>				
 				<@LabeledItem\UseCodeLabel :: "True">
 				<@LabeledItem\LabelQuery :: "Test:">
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>

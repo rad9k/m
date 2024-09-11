@@ -416,6 +416,7 @@ namespace m0.UIWpf.Controls
 
         private string ExecuteGenerate_SeparateThread_internal()
         {
+           // return "";
             lock (lockObject)            
             {
                 if (Vertex.DisposedState != DisposeStateEnum.Live)

@@ -189,7 +189,7 @@ namespace m0.UIWpf.Visualisers.Helper
 
             tempSelectedVertices.AddExternalReference();
 
-            GraphUtil.CopyEdges(Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"), tempSelectedVertices);
+            GraphUtil.CopyShallow(Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"), tempSelectedVertices);
         }
 
         protected void RestoreSelectedVertices()
@@ -199,7 +199,7 @@ namespace m0.UIWpf.Visualisers.Helper
                 VisualiserUtil.RemoveAllSelectedEdges(Visualiser);
 
                 IVertex sv = Vertex.Get(false, "SelectedEdges:");
-                GraphUtil.CopyEdges(tempSelectedVertices, sv);
+                GraphUtil.CopyShallow(tempSelectedVertices, sv);
 
                 tempSelectedVertices.RemoveExternalReference();
             }

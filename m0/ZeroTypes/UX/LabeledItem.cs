@@ -20,6 +20,8 @@ namespace m0.ZeroTypes.UX
     {
         // CODE for LabeledItem
 
+        static IVertex BaseEdge_meta = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge");
+
         protected FrameworkElement LabelControl;
 
         public override void BaseEdgeToUpdated()
@@ -81,56 +83,31 @@ namespace m0.ZeroTypes.UX
                 GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", (Brush)FindResource("0HighlightForegroundBrush"));
         }
 
-        public string GetLabel()
-        {
-            StringBuilder label = new StringBuilder();
+        IEdge BaseEdge_forLabel;
 
-            IEdge edge = BaseEdge;
+        public FrameworkElement GetLabelControl()
+        {
+            BaseEdge_forLabel = BaseEdge;
 
             string labelQuery = LabelQuery;
 
             if (labelQuery != null)
-            {
-                edge = edge.To.GetAll(false, labelQuery).FirstOrDefault();
+                BaseEdge_forLabel = BaseEdge.To.GetAll(false, labelQuery).FirstOrDefault();
 
-                if (edge == null)
-                    return "[empty query result]";
-            }
+            //
 
-            if (ShowMeta && edge.Meta.Value.ToString() != "$Empty")
-            {
-                if (edge.Meta.Value == null)
-                    label.Append("Ø");
-                else
-                    label.Append(edge.Meta.Value.ToString());
-
-                label.Append(" :: ");
-            }
-
-            if (edge.To.Value == null)
-                label.Append("Ø");
-            else
-                label.Append(edge.To.Value.ToString());
-
-            return label.ToString();
-        }
-
-        
-
-        public FrameworkElement GetLabelControl()
-        {
             StackPanel stack = new StackPanel();
             stack.HorizontalAlignment = HorizontalAlignment.Center;
             stack.Orientation = Orientation.Horizontal;
 
-            if (HideLabel)
+            if (HideLabel || BaseEdge_forLabel == null)
                 return stack;
 
             string constantLabel = ConstantLabel;
 
             if (constantLabel != null)
             {
-                TextBlock constantTextBlock = new TextBlock();
+                TextBlock constantTextBlock = getTextBlock(HorizontalAlignment.Center);
 
                 constantTextBlock.FontStyle = FontStyles.Italic;
 
@@ -140,16 +117,38 @@ namespace m0.ZeroTypes.UX
 
                 //
 
-                TextBlock dividerTextBlock = new TextBlock();
+                TextBlock dividerTextBlock = getTextBlock(HorizontalAlignment.Center);
 
                 dividerTextBlock.Text = " | ";
 
                 stack.Children.Add(dividerTextBlock);
             }
-             
+
             stack.Children.Add(GetLabelControl_RightPart());
 
-            return stack;                                
+            return stack;
+        }
+
+        public string GetLabel()
+        {
+            StringBuilder label = new StringBuilder();
+
+            if (ShowMeta && BaseEdge_forLabel.Meta.Value.ToString() != "$Empty")
+            {
+                if (BaseEdge_forLabel.Meta.Value == null)
+                    label.Append("Ø");
+                else
+                    label.Append(BaseEdge_forLabel.Meta.Value.ToString());
+
+                label.Append(" :: ");
+            }
+
+            if (BaseEdge_forLabel.To.Value == null)
+                label.Append("Ø");
+            else
+                label.Append(BaseEdge_forLabel.To.Value.ToString());
+
+            return label.ToString();
         }
 
         FrameworkElement GetLabelControl_RightPart()
@@ -161,32 +160,35 @@ namespace m0.ZeroTypes.UX
             else
                 labelControl = GetLabelControl_TextBlock();
 
-            labelControl.VerticalAlignment = VerticalAlignment.Center;
+            labelControl.VerticalAlignment = System.Windows.VerticalAlignment.Center;
             labelControl.HorizontalAlignment = HorizontalAlignment.Center;
 
             return labelControl;
         }
 
+        IVertex Vertex_forLabel = null;
+
         public FrameworkElement GetLabelControl_Code()
         {
-            IEdge edge = BaseEdge;
+            CodeControl codeControl;
 
-            string labelQuery = LabelQuery;
-
-            if (labelQuery != null)
+            if (LabelQuery != null)
             {
-                edge = edge.To.GetAll(false, labelQuery).FirstOrDefault();
-
-                if (edge == null)
+                if (Vertex_forLabel == null)
                 {
-                    TextBlock textBlock = getTextBlock(HorizontalAlignment.Center);
-                    textBlock.Text = "[empty query result]";
-                    return textBlock;
+                    Vertex_forLabel = MinusZero.Instance.CreateTempVertex();
+                    Vertex_forLabel.AddExternalReference();
                 }
-            }
+
+                GraphUtil.CopyShallow(Vertex, Vertex_forLabel);
+
+                EdgeHelper.CreateOrReplaceEdgeVertexFromIEdgeByMeta(Vertex_forLabel, BaseEdge_meta, BaseEdge_forLabel);
+
+                codeControl = new CodeControl(Vertex_forLabel, true);
+            }else
+                codeControl = new CodeControl(Vertex, true);
 
 
-            CodeControl codeControl = new CodeControl(Vertex, true);
 
             codeControl.BaseEdgeToUpdated();
 
@@ -198,7 +200,7 @@ namespace m0.ZeroTypes.UX
             TextBlock textBlock = new TextBlock();
 
             textBlock.HorizontalAlignment = horlizontalAlignment;
-            textBlock.VerticalAlignment = VerticalAlignment.Center;
+            textBlock.VerticalAlignment = System.Windows.VerticalAlignment.Center;
             textBlock.TextWrapping = TextWrapping.Wrap;
             textBlock.TextTrimming = TextTrimming.CharacterEllipsis;
 
@@ -211,9 +213,22 @@ namespace m0.ZeroTypes.UX
         private FrameworkElement GetLabelControl_TextBlock()
         {
             TextBlock textBlock = getTextBlock(HorizontalAlignment.Center);
-            
+
             textBlock.Text = GetLabel();
-            return textBlock;            
+            return textBlock;
+        }
+
+        public bool IsDisposed = false;
+
+        public virtual void Dispose()
+        {
+            if (!IsDisposed)
+            {
+                IsDisposed = true;
+
+                if (Vertex_forLabel != null)
+                    Vertex_forLabel.RemoveExternalReference();
+            }
         }
 
         // UNDER for LabeledItem

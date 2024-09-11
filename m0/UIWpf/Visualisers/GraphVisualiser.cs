@@ -751,7 +751,7 @@ namespace m0.UIWpf.Visualisers
         {
             tempSelectedVertices = MinusZero.Instance.CreateTempVertex();
 
-            GraphUtil.CopyEdges(Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"), tempSelectedVertices);
+            GraphUtil.CopyShallow(Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"), tempSelectedVertices);
         }
 
         protected void RestoreSelectedVertices()
@@ -762,7 +762,7 @@ namespace m0.UIWpf.Visualisers
             {
                 GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
 
-                GraphUtil.CopyEdges(tempSelectedVertices, sv);
+                GraphUtil.CopyShallow(tempSelectedVertices, sv);
 
                 GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(tempSelectedVertices); // 11.10.2018 ADDED. should cause no problems
             }

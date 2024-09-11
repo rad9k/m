@@ -960,13 +960,13 @@ namespace m0.Graph
             return (double)ret;
         }
 
-        static public void CopyEdges(IVertex source, IVertex destination)
+        static public void CopyShallow(IVertex source, IVertex destination)
         {
             foreach (IEdge e in source)
                 destination.AddEdge(e.Meta, e.To);
         }
 
-        static public IEdge CopyVertexOneLevel(IEdge source, IVertex destination)
+        static public IEdge CopyEdgeIntoVertexOneLevel(IEdge source, IVertex destination)
         {
             IEdge newEdge = destination.AddVertexAndReturnEdge(source.Meta, source.To.Value);
 

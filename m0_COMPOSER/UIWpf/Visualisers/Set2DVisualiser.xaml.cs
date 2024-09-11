@@ -608,7 +608,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 
                 if (isClipboardCopy)
                 {
-                    IEdge newEdge = GraphUtil.CopyVertexOneLevel(edge, VisualizedVertex);
+                    IEdge newEdge = GraphUtil.CopyEdgeIntoVertexOneLevel(edge, VisualizedVertex);
                         
                     AddToSelectedEdges(newEdge);   
                 }                

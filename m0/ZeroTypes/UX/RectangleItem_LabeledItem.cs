@@ -13,6 +13,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Input;
+using System.Windows.Forms.VisualStyles;
 
 namespace m0.ZeroTypes.UX
 {
@@ -24,6 +25,8 @@ namespace m0.ZeroTypes.UX
 
 
         // CODE for LabeledItem
+
+        static IVertex BaseEdge_meta = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge");
 
         protected FrameworkElement LabelControl;
 
@@ -86,41 +89,75 @@ namespace m0.ZeroTypes.UX
                 GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", (Brush)FindResource("0HighlightForegroundBrush"));
         }
 
-        public string GetLabel()
+        IEdge BaseEdge_forLabel;
+       
+        public FrameworkElement GetLabelControl()
         {
-            StringBuilder label = new StringBuilder();
-
-            IEdge edge = BaseEdge;
+            BaseEdge_forLabel = BaseEdge;
 
             string labelQuery = LabelQuery;
 
-            if (labelQuery != null)
-            {
-                edge = edge.To.GetAll(false, labelQuery).FirstOrDefault();
+            if (labelQuery != null)            
+                BaseEdge_forLabel = BaseEdge.To.GetAll(false, labelQuery).FirstOrDefault();
+            
+            //
 
-                if (edge == null)
-                    return "[empty query result]";
+            StackPanel stack = new StackPanel();
+            stack.HorizontalAlignment = HorizontalAlignment.Center;
+            stack.Orientation = Orientation.Horizontal;
+
+            if (HideLabel || BaseEdge_forLabel == null)
+                return stack;
+
+            string constantLabel = ConstantLabel;
+
+            if (constantLabel != null)
+            {
+                TextBlock constantTextBlock = getTextBlock(HorizontalAlignment.Center);
+
+                constantTextBlock.FontStyle = FontStyles.Italic;
+
+                constantTextBlock.Text = constantLabel;
+
+                stack.Children.Add(constantTextBlock);
+
+                //
+
+                TextBlock dividerTextBlock = getTextBlock(HorizontalAlignment.Center);
+
+                dividerTextBlock.Text = " | ";
+
+                stack.Children.Add(dividerTextBlock);
             }
 
-            if (ShowMeta && edge.Meta.Value.ToString() != "$Empty")
+            stack.Children.Add(GetLabelControl_RightPart());
+
+            return stack;
+        }
+
+        public string GetLabel()
+        {
+            StringBuilder label = new StringBuilder();            
+
+            if (ShowMeta && BaseEdge_forLabel.Meta.Value.ToString() != "$Empty")
             {
-                if (edge.Meta.Value == null)
+                if (BaseEdge_forLabel.Meta.Value == null)
                     label.Append("Ø");
                 else
-                    label.Append(edge.Meta.Value.ToString());
+                    label.Append(BaseEdge_forLabel.Meta.Value.ToString());
 
                 label.Append(" :: ");
             }
 
-            if (edge.To.Value == null)
+            if (BaseEdge_forLabel.To.Value == null)
                 label.Append("Ø");
             else
-                label.Append(edge.To.Value.ToString());
+                label.Append(BaseEdge_forLabel.To.Value.ToString());
 
             return label.ToString();
         }
 
-        public FrameworkElement GetLabelControl()
+        FrameworkElement GetLabelControl_RightPart()
         {
             FrameworkElement labelControl;
 
@@ -129,7 +166,7 @@ namespace m0.ZeroTypes.UX
             else
                 labelControl = GetLabelControl_TextBlock();
 
-            labelControl.VerticalAlignment = VerticalAlignment.Center;
+            labelControl.VerticalAlignment = System.Windows.VerticalAlignment.Center;
             labelControl.HorizontalAlignment = HorizontalAlignment.Center;
 
             return labelControl;
@@ -137,24 +174,18 @@ namespace m0.ZeroTypes.UX
 
         public FrameworkElement GetLabelControl_Code()
         {
-            IEdge edge = BaseEdge;
+            IVertex Vertex_forLabel = Vertex;
 
-            string labelQuery = LabelQuery;
-
-            if (labelQuery != null)
+            if (LabelQuery != null)
             {
-                edge = edge.To.GetAll(false, labelQuery).FirstOrDefault();
+                Vertex_forLabel = MinusZero.Instance.CreateTempVertex();
 
-                if (edge == null)
-                {
-                    TextBlock textBlock = getTextBlock(HorizontalAlignment.Center);
-                    textBlock.Text = "[empty query result]";
-                    return textBlock;
-                }
+                GraphUtil.CopyEdgeIntoVertexOneLevel(Edge, Vertex_forLabel);                                    
+
+                EdgeHelper.CreateOrReplaceEdgeVertexFromIEdgeByMeta(Vertex_forLabel, BaseEdge_meta, BaseEdge_forLabel);
             }
 
-
-            CodeControl codeControl = new CodeControl(Vertex, true);
+            CodeControl codeControl = new CodeControl(Vertex_forLabel, true);
 
             codeControl.BaseEdgeToUpdated();
 
@@ -166,7 +197,7 @@ namespace m0.ZeroTypes.UX
             TextBlock textBlock = new TextBlock();
 
             textBlock.HorizontalAlignment = horlizontalAlignment;
-            textBlock.VerticalAlignment = VerticalAlignment.Center;
+            textBlock.VerticalAlignment = System.Windows.VerticalAlignment.Center;
             textBlock.TextWrapping = TextWrapping.Wrap;
             textBlock.TextTrimming = TextTrimming.CharacterEllipsis;
 
@@ -180,41 +211,8 @@ namespace m0.ZeroTypes.UX
         {
             TextBlock textBlock = getTextBlock(HorizontalAlignment.Center);
 
-            if (HideLabel)
-            {
-                textBlock.Text = "";
-                return textBlock;
-            }
-            else
-            {
-                string constantLabel = ConstantLabel;
-
-                if (constantLabel != null)
-                {
-                    StackPanel stack = new StackPanel();
-                    stack.HorizontalAlignment = HorizontalAlignment.Center;
-                    stack.Orientation = Orientation.Horizontal;
-
-                    TextBlock constantTextBlock = new TextBlock();
-
-                    constantTextBlock.FontStyle = FontStyles.Italic;
-
-                    constantTextBlock.Text = constantLabel;
-
-                    stack.Children.Add(constantTextBlock);
-
-                    textBlock.Text = " | " + GetLabel();
-
-                    stack.Children.Add(textBlock);
-
-                    return stack;
-                }
-                else
-                {
-                    textBlock.Text = GetLabel();
-                    return textBlock;
-                }
-            }
+            textBlock.Text = GetLabel();
+            return textBlock;
         }
 
         // UNDER for RectangleItem
