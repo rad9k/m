@@ -27,6 +27,7 @@
 			<@InstanceCreation :: @InstanceCreationEnum\Direct>
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\BaseGenericItemVertex>
+				<@LabeledItem\ConstantLabel :: "code">
 				<@LabeledItem\ShowMeta :: "True">
 				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\EdgeAndManyLines>
 			<@UXDecoratorTemplate :: "Edge">
@@ -43,6 +44,7 @@
 			<@InstanceCreation :: @InstanceCreationEnum\Direct>
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\BaseGenericItemVertex>
+				<@LabeledItem\ConstantLabel :: "code line">
 				<@LabeledItem\ShowMeta :: "True">
 				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\OneLine>
 			<@UXDecoratorTemplate :: "Edge">
@@ -121,7 +123,7 @@
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>		
 					
 		<@UXTemplate :: "If">
 			<@$Is :: @UXTemplate>
@@ -161,6 +163,5 @@
 					<@UXItem\ForegroundColor :: @LightCentralBlue>
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>					
 		<"ConditionalActionDecoratorVertex">
-					<@LineDecorator\LineWidth :: "2">
-					<@LineDecorator\HideLabel :: "True">
-					<@UXItem\ForegroundColor :: @LightVioletBlue>					
+					<@LineDecorator\LineWidth :: "2">					
+					<@UXItem\ForegroundColor :: @VeryVeryLightVioletBlue>					
