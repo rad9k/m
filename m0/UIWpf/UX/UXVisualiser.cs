@@ -2191,7 +2191,7 @@ namespace m0.UIWpf.UX
 
             IVertex toEdgeToEdgeTarget = GraphUtil.GetQueryOutFirst(toEdge.To, "$EdgeTarget", null); 
 
-            if (GraphUtil.ExistQueryOut(toEdge.Meta, "$VertexTarget", null) && toEdgeToEdgeTarget != null) // toEdgeToEdgeTarget is instance of GraphUtil.GetQueryOut(toEdge.Meta, "$VertexTarget", null)  ??
+            if (toEdgeToEdgeTarget != null && GraphUtil.ExistQueryOut(toEdge.Meta, "$VertexTarget", null)) // toEdgeToEdgeTarget is instance of GraphUtil.GetQueryOut(toEdge.Meta, "$VertexTarget", null)  ??
                 if (GetItemsDictionaryByBaseEdgeTo().ContainsKey(toEdgeToEdgeTarget))
                     foreach (IUXItem i in GetItemsDictionaryByBaseEdgeTo()[toEdgeToEdgeTarget])
                         r.Add(i);
@@ -2203,6 +2203,9 @@ namespace m0.UIWpf.UX
             // Vertex / Edge handling << that was replaced by if(edgeTestQuery != null && edgeTestQuery != ""){ below
             //if (GraphUtil.GetValueAndCompareStrings(item.UXTemplate.Vertex, "Vertex"))
             //  return new UXDecoratorTemplate(item.Vertex.GetAll(false, @"UXTemplate:\UXDecoratorTemplate:Edge").FirstOrDefault());
+
+            UXDecoratorTemplate tem_found_NoEdgeTestQueries = null;
+            UXDecoratorTemplate tem_found_EdgeTestQueries = null;
 
             foreach (UXDecoratorTemplate tem in item.UXTemplate.UXDecoratorTemplates)            
             {
@@ -2227,11 +2230,20 @@ namespace m0.UIWpf.UX
 
                     if (toDiagramItemTestQuery != null
                         && toItem.Vertex.Get(false, toDiagramItemTestQuery) != null)
-                        return tem;
+                    {
+                        if (edgeTestQuery != null && edgeTestQuery != "")
+                            tem_found_EdgeTestQueries = tem;
+                        else
+                            tem_found_NoEdgeTestQueries = tem;
+                    }
+                        
                 }
             }
 
-            return null;           
+            if (tem_found_EdgeTestQueries != null)
+                return tem_found_EdgeTestQueries;
+
+            return tem_found_NoEdgeTestQueries; // can be null and that is ok
         }
 
         // UNDERPINNINGS

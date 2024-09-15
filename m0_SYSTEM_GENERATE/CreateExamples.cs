@@ -369,6 +369,15 @@ namespace m0_SYSTEM_GENERATE
             //MinusZero.Instance.NewDefaultParser.Parse(code, "\"Code\"\r\n\tvariable \"Magunia\" @String 5:10\r\n\tvariable \"Radek\" @String 2:2\r\n\tRadek += \"Koha\"\r\n\tMagunia=Radek\r\n\tMagunia ~= Radek:Koha");
 
 
+            IVertex code14 = code.AddVertex(null, null);
+            MinusZero.Instance.DefaultFormalTextParser.Parse(code14,
+            "\"Code14\"" +
+    "\r\n\tvariable \"a\" @Boolean" +
+    "\r\n\tvariable \"b\" @Boolean" +
+    "\r\n\tif (\"1\" + \"2\") == \"3\"" +
+    "\r\n\t\ta = \"True\"" +
+    "\r\n\tif \"1\" + \"2\" == \"3\"" +
+    "\r\n\t\tb = \"True\"");
 
     }
 
