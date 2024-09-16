@@ -179,6 +179,8 @@ namespace m0.ZeroTypes.UX
                     Vertex_forLabel = MinusZero.Instance.CreateTempVertex();
                     Vertex_forLabel.AddExternalReference();
                 }
+                else
+                    GraphUtil.RemoveAllEdges(Vertex_forLabel);
 
                 GraphUtil.CopyShallow(Vertex, Vertex_forLabel);
 

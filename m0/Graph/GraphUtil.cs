@@ -962,8 +962,9 @@ namespace m0.Graph
 
         static public void CopyShallow(IVertex source, IVertex destination)
         {
-            foreach (IEdge e in source)
-                destination.AddEdge(e.Meta, e.To);
+            foreach (IEdge e in source.OutEdgesRaw)
+                if (VertexOperations.CanCopyEdge(e))
+                    destination.AddEdge(e.Meta, e.To);
         }
 
         static public IEdge CopyEdgeIntoVertexOneLevel(IEdge source, IVertex destination)
@@ -1228,7 +1229,7 @@ namespace m0.Graph
 
             IVertex newVertex = copyTo.AddVertex(edgeToCopy.Meta, edgeToCopy.To.Value);
 
-            foreach (IEdge e in edgeToCopy.To)
+            foreach (IEdge e in edgeToCopy.To.OutEdgesRaw)
                 if (!visited.Contains(e.To) && !VertexOperations.IsLink(e))
                     DeepCopy_Reccurent(e, newVertex, visited);
                 else
@@ -1248,7 +1249,7 @@ namespace m0.Graph
 
             visited.Add(vertexToCopy);
 
-            foreach (IEdge e in vertexToCopy)
+            foreach (IEdge e in vertexToCopy.OutEdgesRaw)
                 if (VertexOperations.CanCopyEdge(e))
                 {
                     if (!visited.Contains(e.To) && !VertexOperations.IsLink(e))
@@ -1275,28 +1276,10 @@ namespace m0.Graph
         {
             visited.Add(baseVertex);
 
-            foreach (IEdge e in baseVertex.OutEdges)
-                if (!visited.Contains(e.To) && !VertexOperations.IsLink(e))
-                        GetSubGraphWithoutLinks_Reccurent(e.To, visited);                           
-        }
-
-        static public IEnumerable<IVertex> GetSubGraphWithoutLinksAsList_Raw(IVertex iterationRoot)
-        {
-            HashSet<IVertex> visited = new HashSet<IVertex>();
-
-            GetSubGraphWithoutLinks_Reccurent_Raw(iterationRoot, visited);
-
-            return visited;
-        }
-
-        static void GetSubGraphWithoutLinks_Reccurent_Raw(IVertex baseVertex, HashSet<IVertex> visited)
-        {
-            visited.Add(baseVertex);
-
             foreach (IEdge e in baseVertex.OutEdgesRaw)
                 if (!visited.Contains(e.To) && !VertexOperations.IsLink(e))
-                    GetSubGraphWithoutLinks_Reccurent_Raw(e.To, visited);
-        }
+                        GetSubGraphWithoutLinks_Reccurent(e.To, visited);                           
+        }      
 
         static public List<IEdge> GetSubGraphAsEdgesWithoutLinksAsList(IEdge iterationRoot)
         {
@@ -1320,7 +1303,7 @@ namespace m0.Graph
             {
                 visited.Add(baseEdge.To);
 
-                foreach (IEdge e in baseEdge.To.OutEdges)
+                foreach (IEdge e in baseEdge.To.OutEdgesRaw)
                     GetSubGraphAsEdgesWithoutLinks_Reccurent(e, visited, edges);
 
             }
@@ -1339,7 +1322,7 @@ namespace m0.Graph
         {
             visited.Add(baseVertex);
 
-            foreach (IEdge e in baseVertex.OutEdges)
+            foreach (IEdge e in baseVertex.OutEdgesRaw)
                 if (!visited.Contains(e.To) && e.To!=MinusZero.Instance.root)
                     GetSubGraphWithLinksButExcludeRoot_Reccurent(e.To, visited);
         }
@@ -1357,7 +1340,7 @@ namespace m0.Graph
         {
             visited.Add(baseVertex);
 
-            foreach (IEdge e in baseVertex.OutEdges)
+            foreach (IEdge e in baseVertex.OutEdgesRaw)
                 if (!visited.Contains(e.To) && !excludeList.Contains(e.To))
                     GetSubGraph_Reccurent_ExcludeList(e.To, visited, excludeList);
         }
@@ -1376,7 +1359,7 @@ namespace m0.Graph
         {
             visited.Add(baseVertex);
 
-            foreach (IEdge e in baseVertex.OutEdges)
+            foreach (IEdge e in baseVertex.OutEdgesRaw)
                 if (!visited.Contains(e.To) && !excludeList.Contains(e.To) && !VertexOperations.IsLink(e))
                     GetSubGraphWithoutLinks_Reccurent_ExcludeList(e.To, visited, excludeList);
         }
