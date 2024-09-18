@@ -168,13 +168,48 @@
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 			<@UXDecoratorTemplate :: "than">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "">				
+				<@EdgeTestQuery :: "????">				
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 					<@$Inherits :: @ZeroUML\ConditionalActionDecoratorVertex>
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
 					<@LineDecorator\ConstantLabel :: "than">
+					
+		<@UXTemplate :: "Test">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:Test}">
+			<@MetaVertexTestQuery :: "Test">
+			<@ItemClass :: @RhombusItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\BaseActionItemVertex>				
+				<@LabeledItem\UseCodeLabel :: "True">
+				<@LabeledItem\LabelQuery :: "Expression:">
+				<@RhombusItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
+			<@$Inherits :: @ZeroUML\BaseActionDecorators>
+			<@UXDecoratorTemplate :: "than">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "">				
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@$Inherits :: @ZeroUML\ConditionalActionDecoratorVertex>
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+					<@LineDecorator\ConstantLabel :: "case">
+					
+		<@UXTemplate :: "Case">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:Case}">
+			<@MetaVertexTestQuery :: "Case">
+			<@ItemClass :: @RectangleVisualiserItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\BaseActionItemVertex>				
+				<@LabeledItem\UseCodeLabel :: "True">
+				<@LabeledItem\LabelQuery :: "Expression:">
+				<@RhombusItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
+			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 			
 		<"BaseGenericItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightRed>
