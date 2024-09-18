@@ -15,10 +15,11 @@
 				<@LabeledItem\ShowMeta :: "True">
 			<@UXDecoratorTemplate :: "Edge">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "">
+				<@EdgeTestQuery :: "$Is:\">
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
 				
 		<@UXTemplate :: "Code">
 			<@$Is :: @UXTemplate>
@@ -32,10 +33,11 @@
 				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\EdgeAndManyLines>
 			<@UXDecoratorTemplate :: "Edge">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "">
+				<@EdgeTestQuery :: "$Is:\">
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
 				
 		<@UXTemplate :: "Code Line">
 			<@$Is :: @UXTemplate>
@@ -49,10 +51,11 @@
 				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\OneLine>
 			<@UXDecoratorTemplate :: "Edge">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "">
+				<@EdgeTestQuery :: "$Is:\">
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
 				
 		<@UXTemplate :: "Class">
 			<@$Is :: @UXTemplate>
@@ -60,12 +63,12 @@
 			<@MetaVertexTestQuery :: "Class">
 			<@ItemClass :: @RectangleVisualiserItem>
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ForceShowEditForm :: "True">
 			<@ItemVertex :: "">
-				<@$Inherits :: @ZeroUML\BaseActionItemVertex>				
+				<@$Inherits :: @ZeroUML\BaseStaticItemVertex>				
 				<@LabeledItem\ShowMeta :: "False">
 				<@LabeledItem\ConstantLabel :: "class">
-				<@RectangleVisualiserItem\VisualiserClass :: @System\Meta\Visualiser\Class>
-			<@$Inherits :: @ZeroUML\BaseActionDecorators>
+				<@RectangleVisualiserItem\VisualiserClass :: @System\Meta\Visualiser\Class>			
 			<@UXDecoratorTemplate :: "Association">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "$Is:Class\Association">				
@@ -82,6 +85,33 @@
 				<@EdgeTargetInEdgePointingToTargetItemBaseEdgeTo :: "True">
 				<@DecoratorVertex :: "">					
 					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+				
+		<@UXTemplate :: "Object">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:{$Is:Class}}">
+			<@MetaVertexTestQuery :: "{$Is:Class}">
+			<@ItemClass :: @RectangleVisualiserItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>			
+			<@ItemVertex :: "">
+				<@UXItem\BackgroundColor :: @VeryVeryLightBlue>							
+				<@LabeledItem\ShowMeta :: "True">
+				<@LabeledItem\ConstantLabel :: "object">
+				<@RectangleVisualiserItem\VisualiserClass :: @System\Meta\Visualiser\Form>			
+			<@UXDecoratorTemplate :: "Association">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:{$Is:Class}\Association:">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>												
+				<@DecoratorVertex :: "">										
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+			<@UXDecoratorTemplate :: "Aggregation">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:{$Is:Class}\Aggregation:">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>								
+				<@DecoratorVertex :: "">					
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
 				
 		<@UXTemplate :: "Block">
 			<@$Is :: @UXTemplate>
@@ -144,6 +174,7 @@
 				<@DecoratorVertex :: "">
 					<@$Inherits :: @ZeroUML\ConditionalActionDecoratorVertex>
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+					<@LineDecorator\ConstantLabel :: "than">
 			
 		<"BaseGenericItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightRed>
@@ -163,5 +194,5 @@
 					<@UXItem\ForegroundColor :: @LightCentralBlue>
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>					
 		<"ConditionalActionDecoratorVertex">
-					<@LineDecorator\LineWidth :: "2">					
-					<@UXItem\ForegroundColor :: @VeryVeryLightVioletBlue>					
+			<@LineDecorator\LineWidth :: "2">					
+			<@UXItem\ForegroundColor :: @VeryVeryLightVioletBlue>					

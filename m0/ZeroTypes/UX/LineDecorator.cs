@@ -209,16 +209,27 @@ namespace m0.ZeroTypes.UX
             if (baseEdge.Meta == null) // during disposing
                 return;
 
-            /*if (baseEdge.Meta.Get(false, "$VertexTarget:") != null
-                && !((UXDecoratorTemplate)UXTemplate).CreateEdgeOnly) // ZZZ       
+            string constantLabel = ConstantLabel;
+
+            if (constantLabel != null)
+            {
+                Label.Text = constantLabel;
+                return;
+            }
+
+            if (baseEdge.Meta.Get(false, "$VertexTarget:") != null
+                //&& !((UXDecoratorTemplate)UXTemplate).CreateEdgeOnly) // ZZZ       
+                && ((UXDecoratorTemplate)UXTemplate).EdgeTargetInEdgePointingToTargetItemBaseEdgeTo) // ZZZ       
             {
                 IVertex v = baseEdge.To;
+
                 if (v.Value != null && !GeneralUtil.CompareStrings(v.Value, "$Empty"))
                     Label.Text = (string)v.Value;
             }
-            else*/
+            else
             {
                 IVertex v = baseEdge.Meta;
+
                 if (v.Value != null && !GeneralUtil.CompareStrings(v.Value, "$Empty"))
                     Label.Text = (string)v.Value;
             }
@@ -397,6 +408,7 @@ namespace m0.ZeroTypes.UX
         static IVertex EndAnchor_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LineDecorator\EndAnchor");
         static IVertex IsDashed_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LineDecorator\IsDashed");
         static IVertex HideLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LineDecorator\HideLabel");
+        static IVertex ConstantLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LineDecorator\ConstantLabel");
 
         public LineEndEnum StartAnchor
         {
@@ -465,6 +477,28 @@ namespace m0.ZeroTypes.UX
 
                 if (val == null)
                     val = Vertex.AddVertex(HideLabel_meta, value);
+                else
+                    val.Value = value;
+            }
+        }
+
+        public string ConstantLabel
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ConstantLabel", null);
+
+                if (val == null)
+                    return null;
+
+                return val.Value.ToString();                
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ConstantLabel", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(ConstantLabel_meta, value);
                 else
                     val.Value = value;
             }
