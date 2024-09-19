@@ -15,7 +15,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>        
                            
-            <Border Grid.Row="0" x:Name="LabelContainer"  Background="Red"/>
+            <Border Grid.Row="0" x:Name="LabelContainer" />
 
             <Border x:Name="InternalFrame" Grid.Row="1"  BorderThickness="0.5"/>
 

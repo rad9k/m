@@ -25,7 +25,7 @@ namespace m0.ZeroTypes.UX
     public partial class ContainerItem : UXContainer_RectangleItem_LabeledItem
     {
         static string[] _SubVertexesTriggeringItemVisualUpdate = new string[] {
-            "RoundEdgeSize", "HideHeader", "BorderSize", "ConstantLabel", "LabelQuery", "ShowMeta", "UseCodeLabel", "FontSize", "FormalTextLanguage", "ShowMeta", "HideLabel"};
+            "RoundEdgeSize", "HideHeader", "ConstantLabel", "LabelQuery", "ShowMeta", "UseCodeLabel", "FontSize", "FormalTextLanguage", "ShowMeta", "HideLabel", "BorderSize"};
         public override string[] SubVertexesTriggeringItemVisualUpdate { get { return _SubVertexesTriggeringItemVisualUpdate; } }
 
         public ContainerItem() : base(new ZeroTypes.Edge(null))
@@ -41,7 +41,7 @@ namespace m0.ZeroTypes.UX
         {
             base.VertexSetedUp();
 
-            //LabelContainer.Child = LabelControl;
+            LabelContainer.Child = LabelControl;
 
             if (Canvas == null) {
                 Canvas = new Canvas();
