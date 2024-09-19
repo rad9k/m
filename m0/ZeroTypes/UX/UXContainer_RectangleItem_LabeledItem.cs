@@ -18,12 +18,15 @@ namespace m0.ZeroTypes.UX
 {
     public class UXContainer_RectangleItem_LabeledItem : UXContainer
     {
-        public UXContainer_RectangleItem_LabeledItem(IEdge edge) : base(edge) { }        
+        public UXContainer_RectangleItem_LabeledItem(IEdge edge) : base(edge) { }
 
         // CODE for RectangleItem
 
 
-        // CODE for LabeledItem
+        // CODE for RectangleItem
+
+
+        static IVertex BaseEdge_meta = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge");
 
         protected FrameworkElement LabelControl;
 
@@ -86,49 +89,75 @@ namespace m0.ZeroTypes.UX
                 GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", (Brush)FindResource("0HighlightForegroundBrush"));
         }
 
-        public string GetLabel()
+        IEdge BaseEdge_forLabel;
+
+        public FrameworkElement GetLabelControl()
         {
-            StringBuilder label = new StringBuilder();
+            BaseEdge_forLabel = BaseEdge;
+
+            string labelQuery = LabelQuery;
+
+            if (labelQuery != null)
+                BaseEdge_forLabel = BaseEdge.To.GetAll(false, labelQuery).FirstOrDefault();
+
+            //
+
+            StackPanel stack = new StackPanel();
+            stack.HorizontalAlignment = HorizontalAlignment.Center;
+            stack.Orientation = Orientation.Horizontal;
+
+            if (HideLabel || BaseEdge_forLabel == null)
+                return stack;
 
             string constantLabel = ConstantLabel;
 
             if (constantLabel != null)
             {
-                label.Append(constantLabel);
-                label.Append(" | ");
+                TextBlock constantTextBlock = getTextBlock(HorizontalAlignment.Center);
+
+                constantTextBlock.FontStyle = FontStyles.Italic;
+
+                constantTextBlock.Text = constantLabel;
+
+                stack.Children.Add(constantTextBlock);
+
+                //
+
+                TextBlock dividerTextBlock = getTextBlock(HorizontalAlignment.Center);
+
+                dividerTextBlock.Text = " | ";
+
+                stack.Children.Add(dividerTextBlock);
             }
 
-            IEdge edge = BaseEdge;
+            stack.Children.Add(GetLabelControl_RightPart());
 
-            string labelQuery = LabelQuery;
+            return stack;
+        }
 
-            if (labelQuery != null)
+        public string GetLabel()
+        {
+            StringBuilder label = new StringBuilder();
+
+            if (ShowMeta && BaseEdge_forLabel.Meta.Value.ToString() != "$Empty")
             {
-                edge = edge.To.GetAll(false, labelQuery).FirstOrDefault();
-
-                if (edge == null)
-                    return "[empty query result]";
-            }
-
-            if (ShowMeta && edge.Meta.Value.ToString() != "$Empty")
-            {
-                if (edge.Meta.Value == null)
+                if (BaseEdge_forLabel.Meta.Value == null)
                     label.Append("Ø");
                 else
-                    label.Append(edge.Meta.Value.ToString());
+                    label.Append(BaseEdge_forLabel.Meta.Value.ToString());
 
                 label.Append(" :: ");
             }
 
-            if (edge.To.Value == null)
+            if (BaseEdge_forLabel.To.Value == null)
                 label.Append("Ø");
             else
-                label.Append(edge.To.Value.ToString());
+                label.Append(BaseEdge_forLabel.To.Value.ToString());
 
             return label.ToString();
         }
 
-        public FrameworkElement GetLabelControl()
+        FrameworkElement GetLabelControl_RightPart()
         {
             FrameworkElement labelControl;
 
@@ -137,60 +166,78 @@ namespace m0.ZeroTypes.UX
             else
                 labelControl = GetLabelControl_TextBlock();
 
-            labelControl.VerticalAlignment = VerticalAlignment.Center;
+            labelControl.VerticalAlignment = System.Windows.VerticalAlignment.Center;
             labelControl.HorizontalAlignment = HorizontalAlignment.Center;
 
             return labelControl;
         }
 
+        IVertex Vertex_forLabel = null;
+
         public FrameworkElement GetLabelControl_Code()
         {
-            IEdge edge = BaseEdge;
+            CodeControl codeControl;
 
-            string labelQuery = LabelQuery;
-
-            if (labelQuery != null)
+            if (LabelQuery != null)
             {
-                edge = edge.To.GetAll(false, labelQuery).FirstOrDefault();
-
-                if (edge == null)
+                if (Vertex_forLabel == null)
                 {
-                    TextBlock textBlock = getTextBlock();
-                    textBlock.Text = "[empty query result]";
-                    return textBlock;
+                    Vertex_forLabel = MinusZero.Instance.CreateTempVertex();
+                    Vertex_forLabel.AddExternalReference();
                 }
+                else
+                    GraphUtil.RemoveAllEdges(Vertex_forLabel);
+
+                GraphUtil.CopyShallow(Vertex, Vertex_forLabel);
+
+                EdgeHelper.CreateOrReplaceEdgeVertexFromIEdgeByMeta(Vertex_forLabel, BaseEdge_meta, BaseEdge_forLabel);
+
+                codeControl = new CodeControl(Vertex_forLabel, true);
             }
+            else
+                codeControl = new CodeControl(Vertex, true);
 
 
-            CodeControl codeControl = new CodeControl(Vertex, true);
 
             codeControl.BaseEdgeToUpdated();
 
             return codeControl;
         }
 
-        private TextBlock getTextBlock()
+        private TextBlock getTextBlock(HorizontalAlignment horlizontalAlignment)
         {
             TextBlock textBlock = new TextBlock();
 
-            textBlock.HorizontalAlignment = HorizontalAlignment.Center;
-            textBlock.VerticalAlignment = VerticalAlignment.Center;
+            textBlock.HorizontalAlignment = horlizontalAlignment;
+            textBlock.VerticalAlignment = System.Windows.VerticalAlignment.Center;
             textBlock.TextWrapping = TextWrapping.Wrap;
             textBlock.TextTrimming = TextTrimming.CharacterEllipsis;
+
+            if (FontSize != 0)
+                textBlock.FontSize = this.FontSize;
 
             return textBlock;
         }
 
         private FrameworkElement GetLabelControl_TextBlock()
         {
-            TextBlock textBlock = getTextBlock();
+            TextBlock textBlock = getTextBlock(HorizontalAlignment.Center);
 
-            if (HideLabel)
-                textBlock.Text = "";
-            else
-                textBlock.Text = GetLabel();
-
+            textBlock.Text = GetLabel();
             return textBlock;
+        }
+
+        public bool IsDisposed = false;
+
+        public virtual void Dispose()
+        {
+            if (!IsDisposed)
+            {
+                IsDisposed = true;
+
+                if (Vertex_forLabel != null)
+                    Vertex_forLabel.RemoveExternalReference();
+            }
         }
 
         // UNDER for RectangleItem
@@ -244,11 +291,36 @@ namespace m0.ZeroTypes.UX
 
         // UNDER for LabeledItem
 
+        static IVertex FontSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\FontSize");
         static IVertex ConstantLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\ConstantLabel");
         static IVertex LabelQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\LabelQuery");
         static IVertex UseCodeLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\UseCodeLabel");
+        static IVertex FormalTextLanguage_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\FormalTextLanguage");
         static IVertex ShowMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\ShowMeta");
         static IVertex HideLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\HideLabel");
+
+
+        public new double FontSize
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "FontSize", null);
+
+                if (val == null)
+                    return 0;
+
+                return GraphUtil.GetDoubleValueOr0(val);
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "FontSize", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(FontSize_meta, value);
+                else
+                    val.Value = value;
+            }
+        }
 
         public string ConstantLabel
         {
@@ -359,6 +431,19 @@ namespace m0.ZeroTypes.UX
                     val.Value = value;
             }
         }
+
+        public IVertex FormalTextLanguage
+        {
+            get
+            {
+                return GraphUtil.GetQueryOutFirst(Vertex, "FormalTextLanguage", null);
+            }
+            set
+            {
+                GraphUtil.CreateOrReplaceEdge(Vertex, FormalTextLanguage_meta, value);
+            }
+        }
+
 
 
     }

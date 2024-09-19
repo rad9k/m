@@ -24,8 +24,6 @@ namespace m0.ZeroTypes.UX
         // CODE for RectangleItem
 
 
-        // CODE for LabeledItem
-
         static IVertex BaseEdge_meta = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge");
 
         protected FrameworkElement LabelControl;
@@ -90,16 +88,16 @@ namespace m0.ZeroTypes.UX
         }
 
         IEdge BaseEdge_forLabel;
-       
+
         public FrameworkElement GetLabelControl()
         {
             BaseEdge_forLabel = BaseEdge;
 
             string labelQuery = LabelQuery;
 
-            if (labelQuery != null)            
+            if (labelQuery != null)
                 BaseEdge_forLabel = BaseEdge.To.GetAll(false, labelQuery).FirstOrDefault();
-            
+
             //
 
             StackPanel stack = new StackPanel();
@@ -137,7 +135,7 @@ namespace m0.ZeroTypes.UX
 
         public string GetLabel()
         {
-            StringBuilder label = new StringBuilder();            
+            StringBuilder label = new StringBuilder();
 
             if (ShowMeta && BaseEdge_forLabel.Meta.Value.ToString() != "$Empty")
             {
@@ -172,20 +170,32 @@ namespace m0.ZeroTypes.UX
             return labelControl;
         }
 
+        IVertex Vertex_forLabel = null;
+
         public FrameworkElement GetLabelControl_Code()
         {
-            IVertex Vertex_forLabel = Vertex;
+            CodeControl codeControl;
 
             if (LabelQuery != null)
             {
-                Vertex_forLabel = MinusZero.Instance.CreateTempVertex();
+                if (Vertex_forLabel == null)
+                {
+                    Vertex_forLabel = MinusZero.Instance.CreateTempVertex();
+                    Vertex_forLabel.AddExternalReference();
+                }
+                else
+                    GraphUtil.RemoveAllEdges(Vertex_forLabel);
 
-                GraphUtil.CopyEdgeIntoVertexOneLevel(Edge, Vertex_forLabel);                                    
+                GraphUtil.CopyShallow(Vertex, Vertex_forLabel);
 
                 EdgeHelper.CreateOrReplaceEdgeVertexFromIEdgeByMeta(Vertex_forLabel, BaseEdge_meta, BaseEdge_forLabel);
-            }
 
-            CodeControl codeControl = new CodeControl(Vertex_forLabel, true);
+                codeControl = new CodeControl(Vertex_forLabel, true);
+            }
+            else
+                codeControl = new CodeControl(Vertex, true);
+
+
 
             codeControl.BaseEdgeToUpdated();
 
@@ -213,6 +223,19 @@ namespace m0.ZeroTypes.UX
 
             textBlock.Text = GetLabel();
             return textBlock;
+        }
+
+        public bool IsDisposed = false;
+
+        public virtual void Dispose()
+        {
+            if (!IsDisposed)
+            {
+                IsDisposed = true;
+
+                if (Vertex_forLabel != null)
+                    Vertex_forLabel.RemoveExternalReference();
+            }
         }
 
         // UNDER for RectangleItem
