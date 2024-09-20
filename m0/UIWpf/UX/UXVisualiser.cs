@@ -383,6 +383,17 @@ namespace m0.UIWpf.UX
 
         public void RemoveUXItem(IUXItem item)
         {
+            if (item is IUXContainer)
+            {
+                IUXContainer itemContainer = (IUXContainer)item;
+
+                foreach (ITypedEdge typedEdge in itemContainer.Items)
+                {
+                    if (typedEdge is IUXItem)
+                        RemoveUXItem((IUXItem)typedEdge);
+                }
+            }
+
             item.ParentItem.RemoveItem(item);
 
             Items_all.Remove(item);
@@ -2217,6 +2228,9 @@ namespace m0.UIWpf.UX
 
             foreach (UXDecoratorTemplate tem in item.UXTemplate.UXDecoratorTemplates)            
             {
+                if (tem.AddEmptyEdge && e.Meta.Value.ToString() == "$Empty")
+                    tem_found_NoEdgeTestQueries = tem;
+
                 bool canReturn = true;
 
                 string edgeTestQuery = tem.EdgeTestQuery;

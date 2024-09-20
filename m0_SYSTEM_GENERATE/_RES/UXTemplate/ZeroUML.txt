@@ -113,7 +113,7 @@
 					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
 				
-		<@UXTemplate :: "Block">
+		<@UXTemplate :: "Block (code)">
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:Block}">
 			<@MetaVertexTestQuery :: "Block">
@@ -125,7 +125,7 @@
 				<@LabeledItem\ConstantLabel :: "block">
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 			
-		<@UXTemplate :: "Named Block">
+		<@UXTemplate :: "Named Block (code)">
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:NamedBlock}">
 			<@MetaVertexTestQuery :: "NamedBlock">
@@ -135,7 +135,33 @@
 				<@$Inherits :: @ZeroUML\BaseActionItemVertex>								
 				<@LabeledItem\ShowMeta :: "False">
 				<@LabeledItem\ConstantLabel :: "named block">
+			<@$Inherits :: @ZeroUML\BaseActionDecorators>			
+			
+		<@UXTemplate :: "Block (container)">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:Block}">
+			<@MetaVertexTestQuery :: "Block">
+			<@ItemClass :: @ContainerItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
+				<@LabeledItem\ShowMeta :: "False">
+				<@LabeledItem\ConstantLabel :: "block">
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
+			<@$Inherits :: @ZeroUML\ActionContainerDecorators>
+			
+		<@UXTemplate :: "Named Block (container)">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:NamedBlock}">
+			<@MetaVertexTestQuery :: "NamedBlock">
+			<@ItemClass :: @ContainerItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\BaseActionItemVertex>								
+				<@LabeledItem\ShowMeta :: "False">
+				<@LabeledItem\ConstantLabel :: "named block">
+			<@$Inherits :: @ZeroUML\BaseActionDecorators>
+			<@$Inherits :: @ZeroUML\ActionContainerDecorators>
 			
 		<@UXTemplate :: "Variable">
 			<@$Is :: @UXTemplate>
@@ -168,7 +194,7 @@
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 			<@UXDecoratorTemplate :: "than">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "????">				
+				<@EdgeTestQuery :: "">				
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
@@ -188,10 +214,10 @@
 				<@LabeledItem\LabelQuery :: "Expression:">
 				<@RhombusItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
-			<@UXDecoratorTemplate :: "than">
+			<@UXDecoratorTemplate :: "case">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "">				
-				<@ToDiagramItemTestQuery :: "">
+				<@ToDiagramItemTestQuery :: "Case">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 					<@$Inherits :: @ZeroUML\ConditionalActionDecoratorVertex>
@@ -207,16 +233,38 @@
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\BaseActionItemVertex>				
 				<@LabeledItem\UseCodeLabel :: "True">
-				<@LabeledItem\LabelQuery :: "Expression:">
+				<@LabeledItem\ConstantLabel :: "case">
+				<@LabeledItem\LabelQuery :: "Test:">
 				<@RhombusItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
+			<@UXDecoratorTemplate :: "than">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "">				
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@$Inherits :: @ZeroUML\ConditionalActionDecoratorVertex>
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+					<@LineDecorator\ConstantLabel :: "than">
 			
 		<"BaseGenericItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightRed>
 		<"BaseStaticItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightGreen>
 		<"BaseActionItemVertex">
-			<@UXItem\BackgroundColor :: @VeryVeryVeryLightVioletBlue>			
+			<@UXItem\BackgroundColor :: @VeryVeryVeryLightVioletBlue>
+		<"ActionContainerDecorators">
+			<@UXDecoratorTemplate :: "Edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@AddEmptyEdge :: "True">
+				<@EdgeTestQuery :: "$Is:\">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@UXItem\BackgroundColor :: @VeryVeryVeryLightVioletBlue>
+					<@UXItem\ForegroundColor :: @Black>
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>			
 		<"BaseActionDecorators">
 			<@UXDecoratorTemplate :: "Next">
 				<@$Is :: @UXDecoratorTemplate>
@@ -227,7 +275,8 @@
 					<@LineDecorator\LineWidth :: "4">
 					<@LineDecorator\HideLabel :: "True">
 					<@UXItem\ForegroundColor :: @LightCentralBlue>
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>					
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+		<"ActionContainerDecorators">
 		<"ConditionalActionDecoratorVertex">
 			<@LineDecorator\LineWidth :: "2">					
-			<@UXItem\ForegroundColor :: @VeryVeryLightVioletBlue>					
+			<@UXItem\ForegroundColor :: @VeryVeryLightVioletBlue>
