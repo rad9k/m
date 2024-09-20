@@ -100,7 +100,7 @@ namespace m0.ZeroTypes.UX
             stack.HorizontalAlignment = HorizontalAlignment.Center;
             stack.Orientation = Orientation.Horizontal;
 
-            if (HideLabel || BaseEdge_forLabel == null)
+            if (BaseEdge_forLabel == null)
                 return stack;
 
             string constantLabel = ConstantLabel;
@@ -124,7 +124,8 @@ namespace m0.ZeroTypes.UX
                 stack.Children.Add(dividerTextBlock);
             }
 
-            stack.Children.Add(GetLabelControl_RightPart());
+            if (!HideLabel)
+                stack.Children.Add(GetLabelControl_RightPart());
 
             return stack;
         }
