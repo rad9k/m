@@ -28,8 +28,8 @@ namespace m0.ZeroTypes.UX
             c.Size.Width = 5000;
             c.Size.Height = 5000;
 
-            UXTemplate diagram_template = new UXTemplate(MinusZero.Instance.Root.GetAll(false, @"System\Data\UX\Templates\ZeroUML").FirstOrDefault());
-            c.NewItemUXTemplate = diagram_template;
+            UXTemplate diagram_default_template = new UXTemplate(MinusZero.Instance.Root.GetAll(false, @"System\Data\UX\Templates\ZeroUML").FirstOrDefault());
+            c.NewItemUXTemplate = diagram_default_template;
 
             return Visualiser_Vertex;
         }

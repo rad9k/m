@@ -377,7 +377,9 @@ namespace m0_SYSTEM_GENERATE
     "\r\n\tif (\"1\" + \"2\") == \"3\"" +
     "\r\n\t\ta = \"True\"" +
     "\r\n\tif \"1\" + \"2\" == \"3\"" +
-    "\r\n\t\tb = \"True\"");
+    "\r\n\t\tblock" +
+    "\r\n\t\t\tb = \"True\""
+    );
 
     }
 

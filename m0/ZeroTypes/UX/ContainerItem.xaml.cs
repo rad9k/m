@@ -131,7 +131,7 @@ namespace m0.ZeroTypes.UX
 
             this.Foreground = (Brush)FindResource("0HighlightForegroundBrush"); 
 
-            this.Frame.Background = (Brush)FindResource("0BackgroundBrush");         
+            this.Frame.Background = (Brush)FindResource("0HighlightBrush");         
         }
         
         // ContainerItem     
