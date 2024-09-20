@@ -297,6 +297,19 @@
 					<@$Inherits :: @ZeroUML\ConditionalActionDecoratorVertex>
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
 					<@LineDecorator\ConstantLabel :: "than">
+					
+		<@UXTemplate :: "While">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:While}">
+			<@MetaVertexTestQuery :: "While">
+			<@ItemClass :: @RectangleVisualiserItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
+				<@LabeledItem\ConstantLabel :: "fallback">
+				<@LabeledItem\HideLabel :: "True">
+				<@RhombusItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
+			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 			
 		<"BaseGenericItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightRed>
