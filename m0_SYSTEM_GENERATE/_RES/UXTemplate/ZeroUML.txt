@@ -302,14 +302,32 @@
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:While}">
 			<@MetaVertexTestQuery :: "While">
-			<@ItemClass :: @RectangleVisualiserItem>
+			<@ItemClass :: @MultiContainerItem>
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
-				<@LabeledItem\ConstantLabel :: "fallback">
-				<@LabeledItem\HideLabel :: "True">
+				<@LabeledItem\ConstantLabel :: "while">
+				<@LabeledItem\ShowMeta :: "True">
 				<@RhombusItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
+			<@UXTemplate :: "">
+				<@$Is :: @UXTemplate>
+				<@Name :: "Test">				
+				<@BaseEdgeQuery :: "Test:">
+				<@ItemVertex :: "">
+					<@Size :: "">
+						<@$Is :: @Size>
+						<@Width :: "0">
+						<@Height :: "10">				
+			<@UXTemplate :: "">
+				<@$Is :: @UXTemplate>
+				<@Name :: "Right">				
+				<@BaseEdgeQuery :: "$Empty:">
+				<@ItemVertex :: "">
+					<@Size :: "">
+						<@$Is :: @Size>
+						<@Width :: "0">
+						<@Height :: "20">
 			
 		<"BaseGenericItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightRed>
