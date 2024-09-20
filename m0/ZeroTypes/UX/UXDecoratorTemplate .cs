@@ -22,11 +22,11 @@ namespace m0.ZeroTypes.UX
 
         public UXDecoratorTemplate(IEdge edge) : base(edge) { }
 
-        public bool CreateEdgeOnly // this can be tricky. check the references
+        public bool AddEmptyEdge 
         {
             get
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "CreateEdgeOnly", null);
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "AddEmptyEdge", null);
 
                 if (val == null)
                     return false;
@@ -35,10 +35,10 @@ namespace m0.ZeroTypes.UX
             }
             set
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "CreateEdgeOnly", null);
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "AddEmptyEdge", null);
 
                 if (val == null)
-                    val = Vertex.AddVertex(CreateEdgeOnly_meta, value);
+                    val = Vertex.AddVertex(AddEmptyEdge_meta, value);
                 else
                     val.Value = value;
             }

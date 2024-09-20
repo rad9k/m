@@ -1838,8 +1838,7 @@ namespace m0.UIWpf.UX
                 return false;
 
             IEdge toEdge = toItem.BaseEdge;
-
-            
+         
 
             IVertex v = m0.MinusZero.Instance.CreateTempVertex();
 
@@ -1852,15 +1851,18 @@ namespace m0.UIWpf.UX
                     bool canAdd = CanAddLineByDecoratorTemplateAndFromItemBaseEdgeToQuery(toItem, toEdge, tem, e);
 
                     if (canAdd)
-                        AddNewLineOption(v, tem, e);
+                        AddNewLineOption(v, tem, e.To);
                 }
+
+                if (tem.AddEmptyEdge)
+                    AddNewLineOption(v, tem, MinusZero.Instance.Empty);
 
                 if (GeneralUtil.CompareStrings(tem.Vertex.Value, "VERTEX EDGE"))// Vertex\Edge
                     foreach (IEdge e in systemMetaBaseVertex)
-                        AddNewLineOption(v, tem, e);
+                        AddNewLineOption(v, tem, e.To);
 
                 if (tem.EdgeTestQuery == "$EdgeTarget") // $EdgeTarget is not present as there is no inheritance from Vertex                    
-                    AddNewLineOption(v, tem, GraphUtil.GetQueryOutFirstEdge(systemMetaBaseVertex, null, "$EdgeTarget"));
+                    AddNewLineOption(v, tem, GraphUtil.GetQueryOutFirstEdge(systemMetaBaseVertex, null, "$EdgeTarget").To);
             }
 
             if (v.Count() == 0)
@@ -1940,13 +1942,13 @@ namespace m0.UIWpf.UX
             return canAdd;
         }
 
-        private static void AddNewLineOption(IVertex v, UXDecoratorTemplate def, IEdge e)
+        private static void AddNewLineOption(IVertex v, UXDecoratorTemplate def, IVertex edgeVertex)
         {
             IVertex r = m0.MinusZero.Instance.Root;
 
-            IVertex vv = v.AddVertex(null, e.To.Value + " (" + def.Vertex.Value + ")");
+            IVertex vv = v.AddVertex(null, edgeVertex.Value + " (" + def.Vertex.Value + ")");
 
-            vv.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\UX\OptionEdge"), e.To);
+            vv.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\UX\OptionEdge"), edgeVertex);
             vv.AddEdge(r.Get(false, @"System\Meta\ZeroTypes\UX\OptionDiagramLineDefinition"), def.Vertex);
         }
 
