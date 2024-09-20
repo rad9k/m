@@ -1005,7 +1005,8 @@ namespace m0.UIWpf.UX
 
                 Panel.SetZIndex(CreateOrMoveDiagramLine, 100000);
 
-                CreateOrMoveDiagramLine.Stroke = (Brush)FindResource("0HighlightBrush");
+                CreateOrMoveDiagramLine.Stroke = (Brush)FindResource("0VeryLightHighlightBrush");
+                CreateOrMoveDiagramLine.Stroke = (Brush)FindResource("0VeryLightHighlightBrush");
 
                 CreateOrMoveDiagramLine.StrokeThickness = 2;
 
@@ -1913,6 +1914,11 @@ namespace m0.UIWpf.UX
 
         private static bool CanAddLineByDecoratorTemplateAndFromItemBaseEdgeToQuery(IUXItem toItem, IEdge toEdge, UXDecoratorTemplate tem, IEdge e)
         {
+            string eMetaValue = e.Meta.Value.ToString();
+
+            if (eMetaValue.Length > 0 && eMetaValue[0] == '$' && eMetaValue != "$Empty")
+                return false;
+
             bool canAdd = true;
 
             if (tem.ToDiagramItemTestQuery != null && toItem.Vertex.Get(false, tem.ToDiagramItemTestQuery) == null)

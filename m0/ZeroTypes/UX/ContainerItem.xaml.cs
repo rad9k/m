@@ -57,7 +57,7 @@ namespace m0.ZeroTypes.UX
         {
             base.ViewAttributesUpdated();
 
-            //LabelContainer.Child = LabelControl;
+            LabelContainer.Child = LabelControl;
 
             double roundEdgeSize = RoundEdgeSize;
 

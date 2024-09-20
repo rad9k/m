@@ -10,6 +10,7 @@ namespace m0.ZeroTypes.UX
 {
     public class UXDecoratorTemplate: UXTemplate
     {
+        static IVertex AddEmptyEdge_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\AddEmptyEdge");
         static IVertex EdgeTestQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\EdgeTestQuery");
         static IVertex ToDiagramItemTestQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\ToDiagramItemTestQuery");
         static IVertex DecoratorClass_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\DecoratorClass");
@@ -20,6 +21,28 @@ namespace m0.ZeroTypes.UX
         static IVertex Size_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Size");
 
         public UXDecoratorTemplate(IEdge edge) : base(edge) { }
+
+        public bool CreateEdgeOnly // this can be tricky. check the references
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "CreateEdgeOnly", null);
+
+                if (val == null)
+                    return false;
+
+                return GraphUtil.GetBooleanValueOrFalse(val);
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "CreateEdgeOnly", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(CreateEdgeOnly_meta, value);
+                else
+                    val.Value = value;
+            }
+        }
 
         public string EdgeTestQuery
         {
