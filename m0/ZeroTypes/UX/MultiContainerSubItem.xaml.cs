@@ -68,9 +68,9 @@ namespace m0.ZeroTypes.UX
 
         protected Brush GetParentBackgroundBrush()
         {
-            if (ParentItem != null && ParentItem is UXItem)
+            if (ParentItem != null && ParentItem is IUXMultiContainerItem)
             {
-                Color backgroundColor_parent = ((UXItem)ParentItem).BackgroundColor;
+                Color backgroundColor_parent = ((IUXMultiContainerItem)ParentItem).BackgroundColor;
 
                 if (backgroundColor_parent != null)
                     return backgroundColor_parent.GetBrush();
@@ -81,15 +81,54 @@ namespace m0.ZeroTypes.UX
 
         protected Brush GetParentForegroundBrush()
         {
-            if (ParentItem != null && ParentItem is UXItem)
+            if (ParentItem != null && ParentItem is IUXMultiContainerItem)
             {
-                Color backgroundColor_parent = ((UXItem)ParentItem).BackgroundColor;
+                Color color_parent = ((IUXMultiContainerItem)ParentItem).ForegroundColor;
 
-                if (backgroundColor_parent != null)
-                    return backgroundColor_parent.GetBrush();
+                if (color_parent != null)
+                    return color_parent.GetBrush();
+            }
+
+            return (Brush)FindResource("0ForegroundBrush");
+        }
+
+        protected double GetParentSubFontSize()
+        {
+            if (ParentItem != null && ParentItem is IUXMultiContainerItem)
+            {
+                double value_parent = ((IUXMultiContainerItem)ParentItem).SubFontSize;
+
+                if (value_parent != 0)
+                    return value_parent;
+            }
+
+            return 12;
+        }
+
+        protected Brush GetParentSubBackgroundBrush()
+        {
+            if (ParentItem != null && ParentItem is IUXMultiContainerItem)
+            {
+                Color color_parent = ((IUXMultiContainerItem)ParentItem).SubBackgroundColor;
+
+                if (color_parent != null)
+                    return color_parent.GetBrush();
             }
 
             return (Brush)FindResource("0BackgroundBrush");
+        }
+
+        protected Brush GetParentSubForegroundBrush()
+        {
+            if (ParentItem != null && ParentItem is IUXMultiContainerItem)
+            {
+                Color color_parent = ((IUXMultiContainerItem)ParentItem).SubForegroundColor;
+
+                if (color_parent != null)
+                    return color_parent.GetBrush();
+            }
+
+            return (Brush)FindResource("0ForegroundBrush");
         }
 
 
