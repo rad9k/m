@@ -472,6 +472,7 @@ namespace m0.ZeroTypes.UX
         static IVertex SubForegroundColor_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\MultiContainerItem\SubForegroundColor");
         static IVertex SubBackgroundColor_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\MultiContainerItem\SubBackgroundColor");
 
+        static IVertex Color_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Color");
 
         public OrientationEnum Orientation
         {
@@ -485,6 +486,64 @@ namespace m0.ZeroTypes.UX
             {
                 GraphUtil.CreateOrReplaceEdge(Vertex, Orientation_meta, OrientationEnumHelper.GetVertex(value));
             }
+        }
+
+        public double SubFontSize
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "SubFontSize", null);
+
+                if (val == null)
+                    return 0;
+
+                return GraphUtil.GetDoubleValueOr0(val);
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "SubFontSize", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(SubFontSize_meta, value);
+                else
+                    val.Value = value;
+            }
+        }
+
+        public UX.Color SubBackgroundColor
+        {
+            get
+            {
+                IEdge val = GraphUtil.GetQueryOutFirstEdge(Vertex, "SubBackgroundColor", null);
+
+                if (val == null)
+                    return null;
+
+                return (UX.Color)TypedEdge.Get(val, typeof(UX.Color));
+            }
+        }
+
+        public UX.Color SubBackgroundColorCreate()
+        {
+            return new UX.Color(VertexOperations.AddInstanceAndReturnEdge(Vertex, Color_type, SubBackgroundColor_meta));
+        }
+
+        public UX.Color SubForegroundColor
+        {
+            get
+            {
+                IEdge val = GraphUtil.GetQueryOutFirstEdge(Vertex, "SubForegroundColor", null);
+
+                if (val == null)
+                    return null;
+
+                return (UX.Color)TypedEdge.Get(val, typeof(UX.Color));
+            }
+        }
+
+        public UX.Color SubForegroundColorCreate()
+        {
+            return new UX.Color(VertexOperations.AddInstanceAndReturnEdge(Vertex, Color_type, SubBackgroundColor_meta));
         }
     }
 }
