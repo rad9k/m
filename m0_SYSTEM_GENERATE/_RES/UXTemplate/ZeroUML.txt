@@ -307,7 +307,7 @@
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
 				<@LabeledItem\ConstantLabel :: "while">
-				<@LabeledItem\ShowMeta :: "True">
+				<@LabeledItem\ShowMeta :: "False">
 				<@RhombusItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 			<@UXTemplate :: "">
@@ -321,7 +321,7 @@
 						<@Height :: "10">				
 			<@UXTemplate :: "">
 				<@$Is :: @UXTemplate>
-				<@Name :: "Right">				
+				<@Name :: "Do">				
 				<@BaseEdgeQuery :: "$Empty:">
 				<@ItemVertex :: "">
 					<@Size :: "">

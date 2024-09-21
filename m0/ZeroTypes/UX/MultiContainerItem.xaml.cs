@@ -468,6 +468,10 @@ namespace m0.ZeroTypes.UX
         // UNDER        
 
         static IVertex Orientation_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\MultiContainerItem\Orientation");
+        static IVertex SubFontSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\MultiContainerItem\SubFontSize");
+        static IVertex SubForegroundColor_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\MultiContainerItem\SubForegroundColor");
+        static IVertex SubBackgroundColor_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\MultiContainerItem\SubBackgroundColor");
+
 
         public OrientationEnum Orientation
         {

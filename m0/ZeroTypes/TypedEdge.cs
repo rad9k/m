@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.UIWpf.Visualisers.Helper;
 using m0.Util;
 using m0.ZeroTypes.UX;
 using System;
@@ -121,7 +122,12 @@ namespace m0.ZeroTypes
                 // as all of the m0.UIWpf.Visualisers.* are not created with Edges (constructor used is Vertex based),
                 // we can not use those objects as fully working ItypedEdges, so that is why we will need to create a separate
                 // object for those
-                if (!toCreateType.GetInterfaces().Contains(typeof(IItem))) 
+
+                //if (!toCreateType.GetInterfaces().Contains(typeof(IItem))) // << so far this was only triggered by UXTemplate and that was not the idea here
+
+                Type[] interfacesInToCreateType = toCreateType.GetInterfaces();
+
+                if (interfacesInToCreateType.Contains(typeof(IVisualiser)) && !interfacesInToCreateType.Contains(typeof(IUXVisualiser)))
                     toCreateType = typeof(Edge);
 
                 object obj = Activator.CreateInstance(toCreateType, edge);
