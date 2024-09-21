@@ -68,29 +68,31 @@ namespace m0.ZeroTypes.UX
 
         protected Brush GetParentBackgroundBrush()
         {
-            if (ParentItem == null || !(ParentItem is UXItem))
-                return null;
+            if (ParentItem != null && ParentItem is UXItem)
+            {
+                Color backgroundColor_parent = ((UXItem)ParentItem).BackgroundColor;
 
-            Color backgroundColor_parent = ((UXItem)ParentItem).BackgroundColor;
-
-            if (backgroundColor_parent != null)
-                return backgroundColor_parent.GetBrush();
-            else
+                if (backgroundColor_parent != null)
+                    return backgroundColor_parent.GetBrush();
+            }
+            
                 return (Brush)FindResource("0BackgroundBrush");
         }
 
         protected Brush GetParentForegroundBrush()
         {
-            if (ParentItem == null || !(ParentItem is UXItem))
-                return null;
+            if (ParentItem != null && ParentItem is UXItem)
+            {
+                Color backgroundColor_parent = ((UXItem)ParentItem).BackgroundColor;
 
-            Color foregroundColor_parent = ((UXItem)ParentItem).ForegroundColor;
+                if (backgroundColor_parent != null)
+                    return backgroundColor_parent.GetBrush();
+            }
 
-            if (foregroundColor_parent != null)
-                return foregroundColor_parent.GetBrush();
-            else
-                return (Brush)FindResource("0ForegroundBrush");
+            return (Brush)FindResource("0BackgroundBrush");
         }
+
+
 
         public void ViewAttributesUpdated()
         {            
