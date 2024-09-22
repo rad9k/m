@@ -158,6 +158,7 @@
     <Compile Include="UIWpf\Visualisers\INoDownVisualiser.cs" />
     <Compile Include="Util\ZString.cs" />
     <Compile Include="ZeroCode\Helpers\DictionariesForFormalTextLanguageFactory.cs" />
+    <Compile Include="ZeroTypes\UX\CodeRepresentationEnum.cs" />
     <Compile Include="ZeroTypes\UX\IUXMultiContainerItem.cs" />
     <Compile Include="ZeroTypes\UX\IUXMultiContainerSubItem.cs" />
     <Compile Include="ZeroTypes\UX\IUXDecorator.cs" />
