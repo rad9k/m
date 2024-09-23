@@ -25,7 +25,7 @@ namespace m0.ZeroTypes.UX
     public partial class ContainerItem : UXContainer_RectangleItem_LabeledItem
     {
         static string[] _SubVertexesTriggeringItemVisualUpdate = new string[] {
-            "RoundEdgeSize", "HideHeader", "ConstantLabel", "LabelQuery", "ShowMeta", "UseCodeLabel", "FontSize", "FormalTextLanguage", "ShowMeta", "HideLabel", "BorderSize"};
+            "RoundEdgeSize", "HideHeader", "ConstantLabel", "LabelQuery", "ShowMeta", "UseCodeLabel", "FontSize", "FormalTextLanguage", "CodeRepresentation", "ShowMeta", "HideLabel", "BorderSize"};
         public override string[] SubVertexesTriggeringItemVisualUpdate { get { return _SubVertexesTriggeringItemVisualUpdate; } }
 
         public ContainerItem() : base(new ZeroTypes.Edge(null))
@@ -63,7 +63,9 @@ namespace m0.ZeroTypes.UX
 
             if (roundEdgeSize != 0)
             {
-                this.Frame.CornerRadius = new CornerRadius(RoundEdgeSize);                
+                this.Frame.CornerRadius = new CornerRadius(RoundEdgeSize);
+
+                this.LabelContainer.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize, RoundEdgeSize, 0);
 
                 Canvas.Margin = new Thickness(RoundEdgeSize, 0, RoundEdgeSize, RoundEdgeSize);
 
@@ -135,52 +137,7 @@ namespace m0.ZeroTypes.UX
         }
         
         // ContainerItem     
-
-        static IVertex ShowMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\ContainerItem\ShowMeta");
-        static IVertex RoundEdgeSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\ContainerItem\RoundEdgeSize");
         
-        public bool ShowMeta
-        {
-            get
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ShowMeta", null);
-
-                if (val == null)
-                    return false;
-
-                return GraphUtil.GetBooleanValueOrFalse(val);
-            }
-            set
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ShowMeta", null);
-
-                if (val == null)
-                    val = Vertex.AddVertex(ShowMeta_meta, value);
-                else
-                    val.Value = value;
-            }
-        }
-
-        public double RoundEdgeSize
-        {
-            get
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "RoundEdgeSize", null);
-
-                if (val == null)
-                    return 0;
-
-                return GraphUtil.GetDoubleValueOr0(val);
-            }
-            set
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "RoundEdgeSize", null);
-
-                if (val == null)
-                    val = Vertex.AddVertex(RoundEdgeSize_meta, value);
-                else
-                    val.Value = value;
-            }
-        }                
+       
     }
 }

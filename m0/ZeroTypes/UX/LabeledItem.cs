@@ -336,17 +336,17 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        public CodeRepresentationEnum Orientation
+        public CodeRepresentationEnum CodeRepresentation
         {
             get
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "Orientation", null);
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "CodeRepresentation", null);
 
-                return OrientationEnumHelper.GetEnum(val);
+                return CodeRepresentationEnumHelper.GetEnum(val);
             }
             set
             {
-                GraphUtil.CreateOrReplaceEdge(Vertex, Orientation_meta, OrientationEnumHelper.GetVertex(value));
+                GraphUtil.CreateOrReplaceEdge(Vertex, CodeRepresentation_meta, CodeRepresentationEnumHelper.GetVertex(value));
             }
         }
 
