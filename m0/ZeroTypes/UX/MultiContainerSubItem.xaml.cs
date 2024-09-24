@@ -42,7 +42,7 @@ namespace m0.ZeroTypes.UX
             InitializeComponent();
         }
 
-        public void VertexSetedUp()
+        public override void VertexSetedUp()
         {            
             Canvas.ClipToBounds = true;                                   
         }
