@@ -55,6 +55,18 @@ namespace m0.ZeroTypes.UX
             CreateSubItemVertexes();
 
             CreateSubConainerControls();
+
+            //
+
+            foreach (ITypedEdge _i in Items)
+            {
+                IUXItem i = UXItem.GetUXItem(this, _i);
+
+                if (i == null)
+                    continue;
+
+                i.VertexSetedUp();
+            }
         }
 
         void CreateSubItemVertexes()
@@ -279,10 +291,10 @@ namespace m0.ZeroTypes.UX
 
             //
 
-            ItemVisualUpdate_Items();
+            ViewAttributesUpdated_Items();
         }
 
-        public void ItemVisualUpdate_Items()
+        public void ViewAttributesUpdated_Items()
         {
             foreach (ITypedEdge _i in Items)
             {
