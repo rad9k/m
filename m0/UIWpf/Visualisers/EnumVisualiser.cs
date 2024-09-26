@@ -114,13 +114,18 @@ namespace m0.UIWpf.Visualisers
             if (bev == null)
                 return;
 
-            IVertex fromv = bev.Get(false, "From:");
-            IVertex metav = bev.Get(false, "Meta:");
-            IVertex tov = fromv.Get(false, metav.Value.ToString()+":");
-            //bev.Get(false, "To:");
+            IVertex fromv;
+            IVertex metav;
+            IVertex tov;
 
+            fromv = bev.Get(false, "From:");
+
+            if (fromv == null) // happens on dispose?
+                return;
+
+            metav = bev.Get(false, "Meta:");
+            tov = fromv.Get(false, metav.Value.ToString()+":");
             
-
             if (fromv!=null && metav!=null /*&& tov!=null*/){                           
                 CanProceedUIUpdateEvent = false;
 
