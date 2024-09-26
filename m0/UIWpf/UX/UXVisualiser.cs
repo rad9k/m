@@ -155,7 +155,7 @@ namespace m0.UIWpf.UX
             this.Child = Canvas;
         }
 
-        public UXVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser , bool isVolatile)
+        public UXVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile)
         {
             if (VisualisersList.GetVisualiser(baseEdgeVertex.Get(false, "To:")) != null)
             {

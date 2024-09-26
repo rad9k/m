@@ -133,38 +133,40 @@ namespace m0.ZeroTypes.UX
 
 
 
-        public void ViewAttributesUpdated()
+        public override void ViewAttributesUpdated()
         {            
             Label.Text = UXTemplate.Name;
 
-            SetColors(GetParentBackgroundBrush(), GetParentForegroundBrush());      
+            Label.FontSize = GetParentSubFontSize();
+
+            SetColors(GetParentBackgroundBrush(), GetParentSubBackgroundBrush(), GetParentSubForegroundBrush());      
         }
 
-        private void SetColors(Brush backgroundBrush, Brush foregroundBrush)
+        private void SetColors(Brush backgroundBrush_canvas, Brush foregroundBrush_label, Brush backgroundBrush_label)
         {
-            Label.Background = foregroundBrush;
-            Label.Foreground = backgroundBrush;
+            Label.Background = foregroundBrush_label;
+            Label.Foreground = backgroundBrush_label;
 
-            canvas.Background = backgroundBrush;
+            canvas.Background = backgroundBrush_canvas;
         }
 
-        public void Select() {
-            SetColors((Brush)FindResource("0SelectionBrush"), (Brush)FindResource("0BackgroundBrush"));
+        public override void Select() {
+            SetColors((Brush)FindResource("0SelectionBrush"), (Brush)FindResource("0SelectionBrush"), (Brush)FindResource("0BackgroundBrush"));
         }
 
-        public void Unselect() {
-            SetColors(GetParentBackgroundBrush(), GetParentForegroundBrush());            
+        public override void Unselect() {
+            SetColors(GetParentBackgroundBrush(), GetParentSubBackgroundBrush(), GetParentSubForegroundBrush());
         }
 
-        public void Highlight() {
-            SetColors((Brush)FindResource("0HighlightForegroundBrush"), (Brush)FindResource("0HighlightBrush"));
+        public override void Highlight() {
+            SetColors((Brush)FindResource("0HighlightForegroundBrush"), (Brush)FindResource("0HighlightBrush"), (Brush)FindResource("0HighlightForegroundBrush"));
         }
 
-        public void Unhighlight() {
-            SetColors(GetParentBackgroundBrush(), GetParentForegroundBrush());
+        public override void Unhighlight() {
+            SetColors(GetParentBackgroundBrush(), GetParentSubBackgroundBrush(), GetParentSubForegroundBrush());
         }
 
-        protected INoInEdgeInOutVertexVertex VertexChange(IExecution exe)        
+        protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)        
         {
             return exe.Stack;
             // return base.VertexChange(exe);

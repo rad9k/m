@@ -41,7 +41,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ZoomScrollView = ZoomScrollView_Instance;
         }
 
-        public MelodyFlowVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
+        public MelodyFlowVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile)
         {
             InitializeComponent();
 

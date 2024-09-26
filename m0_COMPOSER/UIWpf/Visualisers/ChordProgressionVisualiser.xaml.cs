@@ -40,7 +40,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ZoomScrollView = ZoomScrollView_Instance;
         }
 
-        public ChordProgressionVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
+        public ChordProgressionVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile)
         {
             InitializeComponent();
 

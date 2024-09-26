@@ -132,7 +132,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             }
         }        
 
-        public SongVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
+        public SongVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile)
         {
             InitializeComponent();
 

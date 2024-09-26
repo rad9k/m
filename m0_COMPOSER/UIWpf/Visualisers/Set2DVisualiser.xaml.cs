@@ -122,7 +122,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ZoomScrollView = ZoomScrollView_Instance;
         }
 
-        public Set2DVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser)
+        public Set2DVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile)
         {
             InitializeComponent();
 

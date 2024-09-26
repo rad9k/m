@@ -121,7 +121,7 @@ namespace m0.UIWpf.Visualisers
 
             
 
-            if(fromv!=null && metav!=null /*&& tov!=null*/){                           
+            if (fromv!=null && metav!=null /*&& tov!=null*/){                           
                 CanProceedUIUpdateEvent = false;
 
                 int cnt = 0;
