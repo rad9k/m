@@ -100,9 +100,7 @@ namespace m0.ZeroTypes.UX
                         item_Size.Height = template_Size.Height;
                     }
 
-                    item.BaseEdgeCreate();
-
-                    IVertex empty = m0.MinusZero.Instance.Empty;
+                    item.BaseEdgeCreate();                    
 
                     IEdge baseEdge = baseEdgeTo.GetAll(false, template.BaseEdgeQuery).FirstOrDefault();
 
