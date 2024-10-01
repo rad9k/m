@@ -166,7 +166,7 @@ namespace m0.ZeroTypes.UX
                 splitter.DragCompleted += Splitter_DragCompleted;
             }
 
-            if (Orientation == OrientationEnum.Horizontal)
+            if (Orientation == OrientationEnum.Vertical)
             {                                
                 if (addSplitter)
                 {
@@ -192,7 +192,13 @@ namespace m0.ZeroTypes.UX
                 RowDefinition rowDefinition = new RowDefinition();
 
                 if (size != null)
-                    rowDefinition.Height = new GridLength(size.Height, GridUnitType.Star);
+                {
+                    if (size.Height > 0) 
+                        rowDefinition.Height = new GridLength(size.Height, GridUnitType.Pixel);
+
+                    if (size.Height < 0)
+                        rowDefinition.Height = new GridLength(-size.Height, GridUnitType.Star);
+                }
 
                 SubGrid.RowDefinitions.Add(rowDefinition);
 
@@ -228,7 +234,13 @@ namespace m0.ZeroTypes.UX
                 ColumnDefinition columnDefinition = new ColumnDefinition();
 
                 if (size != null)
-                    columnDefinition.Width = new GridLength(size.Width, GridUnitType.Star);
+                {
+                    if (size.Width > 0)
+                        columnDefinition.Width = new GridLength(size.Width, GridUnitType.Pixel);
+
+                    if (size.Height < 0)
+                        columnDefinition.Width = new GridLength(-size.Width, GridUnitType.Star);
+                }
 
                 SubGrid.ColumnDefinitions.Add(columnDefinition);
 
