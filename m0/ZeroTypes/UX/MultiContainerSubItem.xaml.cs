@@ -178,6 +178,7 @@ namespace m0.ZeroTypes.UX
         static IVertex ExpandedSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\ExpandedSize");
         static IVertex CollapsedSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\CollapsedSize");
         static IVertex ContainerEdgeQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\ContainerEdgeQuery");
+        static IVertex SubItemsNotVisible_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\SubItemsNotVisible");
         static IVertex NewItemUXTemplate_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\NewItemUXTemplate");
 
         static IVertex Size_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Size");        
@@ -262,6 +263,28 @@ namespace m0.ZeroTypes.UX
 
                 if (val == null)
                     val = Vertex.AddVertex(ContainerEdgeQuery_meta, value);
+                else
+                    val.Value = value;
+            }
+        }
+
+        public bool SubItemsNotVisible
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "SubItemsNotVisible", null);
+
+                if (val == null)
+                    return false;
+
+                return GraphUtil.GetBooleanValueOrFalse(val);
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "SubItemsNotVisible", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(SubItemsNotVisible_meta, value);
                 else
                     val.Value = value;
             }

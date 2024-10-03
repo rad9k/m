@@ -21,6 +21,8 @@ namespace m0.ZeroTypes.UX
 
         UX.Size CollapsedSizeCreate();
 
+        bool SubItemsNotVisible { get; set; }
+
         UX.UXTemplate NewItemUXTemplate { get; set; }
     }
 }
