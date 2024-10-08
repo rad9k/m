@@ -10,7 +10,10 @@
     <DockPanel x:Name="Panel" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch">
         <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch">
             <TextBlock Name="Label" DockPanel.Dock="Left"  />
-            <ToggleButton Name ="CodeToggle" DockPanel.Dock="Right"/>
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Background="Red">
+                <TextBlock>code</TextBlock>
+                <ToggleButton Name="CodeToggle" />
+            </StackPanel>
         </DockPanel>
         <Canvas x:Name="canvas" />
     </DockPanel>
