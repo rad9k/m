@@ -4,6 +4,11 @@
              xmlns:local="clr-namespace:m0_RUN"             
             StartupUri="StartWindow.xaml">
     <Application.Resources>
-        <ResourceDictionary Source="ResourceDictionaryWhite.xaml"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ResourceDictionaryWhite.xaml"/>
+                <ResourceDictionary Source="iOSStyleTogglebutton.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
