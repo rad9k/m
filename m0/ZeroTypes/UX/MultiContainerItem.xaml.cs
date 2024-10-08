@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -18,6 +17,9 @@ using m0.ZeroTypes;
 using m0.Util;
 using m0.UIWpf;
 using System.Windows.Media.Media3D;
+
+using System.Windows.Forms;
+using System.Windows;
 
 namespace m0.ZeroTypes.UX
 {
@@ -100,6 +102,27 @@ namespace m0.ZeroTypes.UX
 
                         item_Size.Width = template_Size.Width;
                         item_Size.Height = template_Size.Height;
+
+
+                        /*if (Orientation == OrientationEnum.Vertical)
+                        {                            
+                            if (size.Height > 0)
+                                    rowDefinition.Height = new GridLength(size.Height, GridUnitType.Pixel);
+
+                                if (size.Height < 0)
+                                    rowDefinition.Height = new GridLength(-size.Height, GridUnitType.Star);                         
+                        }
+                        else
+                        {
+                            if (size != null)
+                            {
+                                if (size.Width > 0)
+                                    columnDefinition.Width = new GridLength(size.Width, GridUnitType.Pixel);
+
+                                if (size.Height < 0)
+                                    columnDefinition.Width = new GridLength(-size.Width, GridUnitType.Star);
+                            }
+                        }*/
                     }
 
                     // subitemsnotvisible
@@ -171,7 +194,7 @@ namespace m0.ZeroTypes.UX
             if (addSplitter) {
                 splitter = new GridSplitter();
 
-                splitter.Background = (Brush)FindResource("0VeryLightHighlightBrush");
+                splitter.Background = (System.Windows.Media.Brush)FindResource("0VeryLightHighlightBrush");
 
                 SubGrid.Children.Add(splitter);
 
@@ -188,7 +211,7 @@ namespace m0.ZeroTypes.UX
 
                     SubGrid.RowDefinitions.Add(splitterRow);
 
-                    splitter.HorizontalAlignment = HorizontalAlignment.Stretch;
+                    splitter.HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch;
                     splitter.Height = 3;
                     splitter.ResizeBehavior = GridResizeBehavior.PreviousAndNext;
 
@@ -196,7 +219,7 @@ namespace m0.ZeroTypes.UX
 
                     cnt++;
 
-                    WpfUtil.DecorateWithCustomCursor(splitter, Cursors.SizeNS);
+                    WpfUtil.DecorateWithCustomCursor(splitter, System.Windows.Input.Cursors.SizeNS);
                 }
 
                 //
@@ -238,7 +261,7 @@ namespace m0.ZeroTypes.UX
 
                     cnt++;
 
-                    WpfUtil.DecorateWithCustomCursor(splitter, Cursors.SizeWE);
+                    WpfUtil.DecorateWithCustomCursor(splitter, System.Windows.Input.Cursors.SizeWE);
                 }
 
                 //
@@ -335,12 +358,12 @@ namespace m0.ZeroTypes.UX
         {            
             base.Select();
             
-            this.InternalFrame.BorderBrush = (Brush)FindResource("0SelectionBrush");
-            this.Frame.BorderBrush = (Brush)FindResource("0SelectionBrush");
+            this.InternalFrame.BorderBrush = (System.Windows.Media.Brush)FindResource("0SelectionBrush");
+            this.Frame.BorderBrush = (System.Windows.Media.Brush)FindResource("0SelectionBrush");
 
-            this.Foreground = (Brush)FindResource("0BackgroundBrush");
+            this.Foreground = (System.Windows.Media.Brush)FindResource("0BackgroundBrush");
 
-            this.Frame.Background = (Brush)FindResource("0SelectionBrush");//new SolidColorBrush(Colors.Red);            
+            this.Frame.Background = (System.Windows.Media.Brush)FindResource("0SelectionBrush");//new SolidColorBrush(Colors.Red);            
 
             //
 
@@ -380,13 +403,13 @@ namespace m0.ZeroTypes.UX
         {            
             base.Highlight();
 
-            this.InternalFrame.BorderBrush = (Brush)FindResource("0HighlightBrush");
-            this.Frame.BorderBrush = (Brush)FindResource("0HighlightBrush");
+            this.InternalFrame.BorderBrush = (System.Windows.Media.Brush)FindResource("0HighlightBrush");
+            this.Frame.BorderBrush = (System.Windows.Media.Brush)FindResource("0HighlightBrush");
 
-            this.Foreground = (Brush)FindResource("0HighlightForegroundBrush"); 
+            this.Foreground = (System.Windows.Media.Brush)FindResource("0HighlightForegroundBrush"); 
 
             
-            this.Frame.Background = (Brush)FindResource("0HighlightBrush");                       
+            this.Frame.Background = (System.Windows.Media.Brush)FindResource("0HighlightBrush");                       
 
             //
 
@@ -442,7 +465,7 @@ namespace m0.ZeroTypes.UX
 
                 FrameworkElement subItem_FrameworkElement = (FrameworkElement)i;
 
-                Point subItemLeftTop = subItem_FrameworkElement.TranslatePoint(new Point(0, 0), OwningVisualiser.Canvas);
+                System.Windows.Point subItemLeftTop = subItem_FrameworkElement.TranslatePoint(new Point(0, 0), OwningVisualiser.Canvas);
 
                 double _left = subItemLeftTop.X;
                 double _top = subItemLeftTop.Y;
