@@ -228,7 +228,7 @@ namespace m0.ZeroTypes.UX
             return textBlock;
         }
 
-        public bool IsDisposed = false;
+        public new bool IsDisposed = false;
 
         public override void Dispose()
         {
