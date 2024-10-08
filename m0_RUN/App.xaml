@@ -7,7 +7,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="ResourceDictionaryWhite.xaml"/>
-                <ResourceDictionary Source="iOSStyleTogglebutton.xaml"/>
+                <!--<ResourceDictionary Source="iOSStyleTogglebutton.xaml"/>-->
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

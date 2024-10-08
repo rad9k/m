@@ -76,13 +76,15 @@ namespace m0.ZeroTypes.UX
             if (Items.Count == 0)
                 foreach (UXTemplate template in UXTemplate.UXTemplate_)
                 {
-                    IUXItem item = (IUXItem)AddItem(MultiContainerSubItem_type);
+                    IUXContainer item = (IUXContainer)AddItem(MultiContainerSubItem_type);
 
                     item.NestingLevel = this.NestingLevel + 1;
 
                     item.Vertex.Value = template.Name;
 
                     item.UXTemplate = template;                    
+
+                    // size
 
                     IEdge template_SizeEdge = GraphUtil.GetQueryOutFirstEdge(template.ItemVertex, "Size", null);
 
@@ -99,6 +101,18 @@ namespace m0.ZeroTypes.UX
                         item_Size.Width = template_Size.Width;
                         item_Size.Height = template_Size.Height;
                     }
+
+                    // subitemsnotvisible
+
+                    IEdge template_SubItemsNotVisible = GraphUtil.GetQueryOutFirstEdge(template.ItemVertex, "SubItemsNotVisible", null);
+
+                    if (template_SubItemsNotVisible != null)                    
+                        if (GraphUtil.GetBooleanValueOrFalse(template_SubItemsNotVisible.To))
+                            item.SubItemsNotVisible = true;
+                        else
+                            item.SubItemsNotVisible = false;
+
+                    // base edge
 
                     item.BaseEdgeCreate();                    
 

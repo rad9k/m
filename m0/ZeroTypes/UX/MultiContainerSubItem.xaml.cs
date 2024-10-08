@@ -66,6 +66,22 @@ namespace m0.ZeroTypes.UX
             UpdateDiagramLines();
         }
 
+        private void CodeToggle_Click(object sender, RoutedEventArgs e)
+        {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            //////////////////////////////////////// 
+            
+            if (CodeToggle.IsChecked == true)
+                SubItemsNotVisible = true;
+            else
+                SubItemsNotVisible = false;
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            //////////////////////////////////////// 
+        }
+
         protected Brush GetParentBackgroundBrush()
         {
             if (ParentItem != null && ParentItem is IUXMultiContainerItem)
@@ -76,7 +92,7 @@ namespace m0.ZeroTypes.UX
                     return backgroundColor_parent.GetBrush();
             }
             
-                return (Brush)FindResource("0BackgroundBrush");
+            return (Brush)FindResource("0BackgroundBrush");
         }
 
         protected Brush GetParentForegroundBrush()
@@ -139,13 +155,19 @@ namespace m0.ZeroTypes.UX
 
             Label.FontSize = GetParentSubFontSize();
 
-            SetColors(GetParentBackgroundBrush(), GetParentSubBackgroundBrush(), GetParentSubForegroundBrush());      
+            SetColors(GetParentBackgroundBrush(), GetParentSubBackgroundBrush(), GetParentSubForegroundBrush());
+
+            if (SubItemsNotVisible)
+                CodeToggle.IsChecked = true;
+            else
+                CodeToggle.IsChecked = false;
         }
 
         private void SetColors(Brush backgroundBrush_canvas, Brush foregroundBrush_label, Brush backgroundBrush_label)
         {
-            Label.Background = foregroundBrush_label;
+            TopPane.Background = foregroundBrush_label;
             Label.Foreground = backgroundBrush_label;
+            CodeLabel.Foreground = backgroundBrush_label;
 
             canvas.Background = backgroundBrush_canvas;
         }
@@ -310,6 +332,7 @@ namespace m0.ZeroTypes.UX
             {
                 GraphUtil.CreateOrReplaceEdge(Vertex, NewItemUXTemplate_meta, value.Vertex);
             }
-        }        
+        }
+        
     }
 }

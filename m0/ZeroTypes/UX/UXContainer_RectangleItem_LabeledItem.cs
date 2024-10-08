@@ -230,7 +230,7 @@ namespace m0.ZeroTypes.UX
 
         public bool IsDisposed = false;
 
-        public virtual void Dispose()
+        public override void Dispose()
         {
             if (!IsDisposed)
             {
@@ -238,6 +238,8 @@ namespace m0.ZeroTypes.UX
 
                 if (Vertex_forLabel != null)
                     Vertex_forLabel.RemoveExternalReference();
+
+                base.Dispose();
             }
         }
 
