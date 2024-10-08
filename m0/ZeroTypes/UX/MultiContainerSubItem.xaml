@@ -8,7 +8,10 @@
              SizeChanged="UserControl_SizeChanged">
 
     <DockPanel x:Name="Panel" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch">
-        <TextBlock Name="Label" DockPanel.Dock="Top"/>
+        <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch">
+            <TextBlock Name="Label" DockPanel.Dock="Left"  />
+            <ToggleButton Name ="CodeToggle" DockPanel.Dock="Right"/>
+        </DockPanel>
         <Canvas x:Name="canvas" />
     </DockPanel>
         
