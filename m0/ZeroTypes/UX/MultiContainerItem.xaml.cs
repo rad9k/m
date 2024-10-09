@@ -220,7 +220,7 @@ namespace m0.ZeroTypes.UX
 
                 RowDefinition rowDefinition = new RowDefinition();
 
-                if (size != null)
+                if (size != null && size.Height != 0)
                 {                        
                     if (SizeInTemplateWasMinus)
                         rowDefinition.Height = new GridLength(size.Height, GridUnitType.Star);
@@ -261,7 +261,7 @@ namespace m0.ZeroTypes.UX
 
                 ColumnDefinition columnDefinition = new ColumnDefinition();
 
-                if (size != null)
+                if (size != null & size.Width != 0)
                 {                    
                     if (SizeInTemplateWasMinus)
                         columnDefinition.Width = new GridLength(size.Width, GridUnitType.Star);
