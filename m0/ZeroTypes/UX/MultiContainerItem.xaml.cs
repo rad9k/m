@@ -36,8 +36,6 @@ namespace m0.ZeroTypes.UX
 
         static IVertex MultiContainerSubItem_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\MultiContainerSubItem");
 
-        bool SizeInTemplateWasMinus = false;
-
         public MultiContainerItem() : base(new ZeroTypes.Edge(null))
         {
             InitializeComponent();            
@@ -105,18 +103,6 @@ namespace m0.ZeroTypes.UX
                         item_Size.Width = Math.Abs(template_Size.Width); // can be -1 >> grid size in stars 
                         item_Size.Height = Math.Abs(template_Size.Height);
                         // also if template_Size.Width/.Height is < 0, we assume it is < 0 for all the templates
-
-
-                        if (Orientation == OrientationEnum.Vertical)
-                        {
-                            if (template_Size.Height < 0)
-                                SizeInTemplateWasMinus = true;
-                        }
-                        else
-                        {
-                            if (template_Size.Width < 0)
-                                SizeInTemplateWasMinus = true;
-                        }
                     }
 
                     // subitemsnotvisible
@@ -180,7 +166,32 @@ namespace m0.ZeroTypes.UX
 
 
             Size size = item.Size;
-            
+
+            IEdge template_SizeEdge = GraphUtil.GetQueryOutFirstEdge(item.UXTemplate.ItemVertex, "Size", null);
+
+            Size template_Size = null;
+
+            bool template_horizontal_zero = false;
+            bool template_vertical_zero = false;
+            bool template_horizontal_minus = false;
+            bool template_vertical_minus = false;
+
+            if (template_SizeEdge != null) {
+                template_Size = new Size(template_SizeEdge);
+
+                if (template_Size.Width == 0)
+                    template_horizontal_zero = true;
+
+                if (template_Size.Height == 0)
+                    template_vertical_zero = true;
+
+                if (template_Size.Width < 0)
+                    template_horizontal_minus = true;
+
+                if (template_Size.Height < 0)
+                    template_vertical_minus = true;
+            }
+
             //
 
             GridSplitter splitter = null;            
@@ -196,7 +207,7 @@ namespace m0.ZeroTypes.UX
             }
 
             if (Orientation == OrientationEnum.Vertical)
-            {                                
+            {
                 if (addSplitter)
                 {
                     RowDefinition splitterRow = new RowDefinition();
@@ -220,9 +231,9 @@ namespace m0.ZeroTypes.UX
 
                 RowDefinition rowDefinition = new RowDefinition();
 
-                if (size != null && size.Height != 0)
+                if (size != null && size.Height != 0 && !template_vertical_zero)
                 {                        
-                    if (SizeInTemplateWasMinus)
+                    if (template_vertical_minus)
                         rowDefinition.Height = new GridLength(size.Height, GridUnitType.Star);
                     else
                         rowDefinition.Height = new GridLength(size.Height, GridUnitType.Pixel);
@@ -261,9 +272,9 @@ namespace m0.ZeroTypes.UX
 
                 ColumnDefinition columnDefinition = new ColumnDefinition();
 
-                if (size != null & size.Width != 0)
+                if (size != null & size.Width != 0 && !template_horizontal_zero)
                 {                    
-                    if (SizeInTemplateWasMinus)
+                    if (template_horizontal_minus)
                         columnDefinition.Width = new GridLength(size.Width, GridUnitType.Star);
                     else
                         columnDefinition.Width = new GridLength(size.Width, GridUnitType.Pixel);
