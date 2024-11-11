@@ -24,9 +24,16 @@ namespace m0.UIWpf.Dialog
 
         TextBox AddSection(string label)
         {
-            Label l = new Label();
-            l.Content = label;
+            //Label l = new Label();
+            TextBox l = new TextBox();
+            l.Text = label;
             l.FontWeight = FontWeights.Bold;
+            l.Margin = new Thickness(0, 0, 0, 5);
+            l.Foreground = (Brush)FindResource("0ForegroundBrush");
+            l.BorderBrush = (Brush)FindResource("0VeryLightHighlightBrush");
+            l.Background = (Brush)FindResource("0VeryLightHighlightBrush");
+
+
             content.Children.Add(l);
 
             TextBox t = new TextBox();
