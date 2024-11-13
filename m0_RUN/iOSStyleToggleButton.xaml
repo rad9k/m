@@ -29,7 +29,7 @@
                             <EventTrigger RoutedEvent="Checked">
                                 <BeginStoryboard>
                                     <Storyboard>
-                                        <ColorAnimation Storyboard.TargetName="Border"
+                                        <ColorAnimation Storyboard.Target="{Binding ElementName=Border}"
                                                         Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
                                                         To="#FF4CD661"
                                                         Duration="0:0:0.1" />
@@ -40,7 +40,7 @@
                                     </Storyboard>
                                 </BeginStoryboard>
                             </EventTrigger>
-                            <EventTrigger RoutedEvent="Unchecked">
+                            <!--<EventTrigger RoutedEvent="Unchecked">
                                 <BeginStoryboard>
                                     <Storyboard>
                                         <ColorAnimation Storyboard.TargetName="Border"
@@ -53,7 +53,7 @@
                                                             Duration="0:0:0.1" />
                                     </Storyboard>
                                 </BeginStoryboard>
-                            </EventTrigger>
+                            </EventTrigger>-->
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
