@@ -26,20 +26,22 @@
                             </Border>
                         </Viewbox>
                         <ControlTemplate.Triggers>
-                            <EventTrigger RoutedEvent="Checked">
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.Target="{Binding ElementName=Border}"
-                                                        Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
-                                                        To="#FF4CD661"
-                                                        Duration="0:0:0.1" />
-                                        <ThicknessAnimation Storyboard.TargetName="Ellipse"
-                                                            Storyboard.TargetProperty="Margin"
-                                                            To="20 1 2 1"
+                            <Trigger Property="IsChecked" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="Border"
+                                                            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                            To="#FF4CD661"
                                                             Duration="0:0:0.1" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </EventTrigger>
+                                            <ThicknessAnimation Storyboard.TargetName="Ellipse"
+                                                                Storyboard.TargetProperty="Margin"
+                                                                To="20 1 2 1"
+                                                                Duration="0:0:0.1" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                            </Trigger>
                             <!--<EventTrigger RoutedEvent="Unchecked">
                                 <BeginStoryboard>
                                     <Storyboard>
