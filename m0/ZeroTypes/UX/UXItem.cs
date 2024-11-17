@@ -190,7 +190,14 @@ namespace m0.ZeroTypes.UX
 
         public virtual void RemoveFromCanvas()
         {
-            OwningVisualiser.Canvas.Children.Remove(this);
+            if (ParentItem is IUXContainer && !(ParentItem is IUXMultiContainerItem))
+            {
+                IUXContainer PerentItem_UXContainer = (IUXContainer)ParentItem;
+
+                PerentItem_UXContainer.Canvas.Children.Remove(this);
+            }
+            else
+                OwningVisualiser.Canvas.Children.Remove(this);
 
             Unselect();
 

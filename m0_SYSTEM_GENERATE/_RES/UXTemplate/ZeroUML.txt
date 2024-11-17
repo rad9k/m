@@ -174,7 +174,7 @@
 			<@UXDecoratorTemplate :: "Edge">
 				<@$Is :: @UXDecoratorTemplate>
 				<@AddEmptyEdge :: "True">
-				<@EdgeTestQuery :: "">
+				<@EdgeTestQuery :: "$Is:\">
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
@@ -232,7 +232,7 @@
 				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
 				<@LabeledItem\UseCodeLabel :: "True">
 				<@LabeledItem\LabelQuery :: "Expression:">
-				<@RhombusItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
+				<@UXItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 			<@UXDecoratorTemplate :: "case">
 				<@$Is :: @UXDecoratorTemplate>
@@ -264,7 +264,7 @@
 				<@LabeledItem\UseCodeLabel :: "True">
 				<@LabeledItem\ConstantLabel :: "case">
 				<@LabeledItem\LabelQuery :: "Test:">
-				<@RhombusItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
+				<@UXItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 			<@UXDecoratorTemplate :: "than">
 				<@$Is :: @UXDecoratorTemplate>
@@ -286,7 +286,7 @@
 				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
 				<@LabeledItem\ConstantLabel :: "fallback">
 				<@LabeledItem\HideLabel :: "True">
-				<@RhombusItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
+				<@UXItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 			<@UXDecoratorTemplate :: "than">
 				<@$Is :: @UXDecoratorTemplate>
@@ -308,26 +308,32 @@
 				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
 				<@LabeledItem\ConstantLabel :: "while">
 				<@LabeledItem\ShowMeta :: "False">
-				<@RhombusItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
+				<@UXItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
+				<@MultiContainerItem\Orientation :: @OrientationEnum\Vertical>
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
-			<@UXTemplate :: "">
+			<@UXTemplate :: "Test">
 				<@$Is :: @UXTemplate>
-				<@Name :: "Test">				
-				<@BaseEdgeQuery :: "Test:">
+				<@ItemVertex :: "">
+					<@UXContainer\SubItemsNotVisible :: "True">
+					<@Size :: "">
+						<@$Is :: @Size>
+						<@Width :: "0">
+						<@Height :: "35">
+				<@UXDecoratorTemplate :: "test">
+					<@$Is :: @UXDecoratorTemplate>
+					<@EdgeTestQuery :: "$Is:While\Test">
+					<@ToDiagramItemTestQuery :: "">
+					<@DecoratorClass :: @LineDecorator>
+					<@DecoratorVertex :: "">
+						<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+						<@LineDecorator\ConstantLabel :: "test">
+			<@UXTemplate :: "Do">
+				<@$Is :: @UXTemplate>				
 				<@ItemVertex :: "">
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
-						<@Height :: "10">				
-			<@UXTemplate :: "">
-				<@$Is :: @UXTemplate>
-				<@Name :: "Do">				
-				<@BaseEdgeQuery :: "$Empty:">
-				<@ItemVertex :: "">
-					<@Size :: "">
-						<@$Is :: @Size>
-						<@Width :: "0">
-						<@Height :: "20">
+						<@Height :: "0">
 			
 		<"BaseGenericItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightRed>
@@ -335,18 +341,6 @@
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightGreen>
 		<"BaseActionItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightVioletBlue>
-		<"ActionContainerDecorators">
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@AddEmptyEdge :: "True">
-				<@EdgeTestQuery :: "$Is:\">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@UXItem\BackgroundColor :: @VeryVeryVeryLightVioletBlue>
-					<@UXItem\ForegroundColor :: @Black>
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
 		<"BaseActionDecorators">
 			<@UXDecoratorTemplate :: "Next">
 				<@$Is :: @UXDecoratorTemplate>
