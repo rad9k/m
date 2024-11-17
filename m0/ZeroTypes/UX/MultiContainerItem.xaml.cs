@@ -73,6 +73,8 @@ namespace m0.ZeroTypes.UX
 
         void CreateSubItemVertexes()
         {
+            IEdge baseEdge = BaseEdge;
+
             IVertex baseEdgeTo = BaseEdge.To;
 
             if (Items.Count == 0)
@@ -82,7 +84,8 @@ namespace m0.ZeroTypes.UX
 
                     item.NestingLevel = this.NestingLevel + 1;
 
-                    item.Vertex.Value = template.Name;
+                    //item.Vertex.Value = template.Name;
+                    item.Vertex.Value = GraphUtil.GetStringValue(template.Vertex);
 
                     item.UXTemplate = template;                    
 
@@ -117,15 +120,22 @@ namespace m0.ZeroTypes.UX
 
                     // base edge
 
-                    item.BaseEdgeCreate();                    
+                    item.BaseEdgeCreate();
 
-                    IEdge baseEdge = baseEdgeTo.GetAll(false, template.BaseEdgeQuery).FirstOrDefault();
+                    IEdge item_baseEdge;
+                    
+                    string template_BaseEdgeQuery = template.BaseEdgeQuery;
+
+                    if (template_BaseEdgeQuery != null)
+                        item_baseEdge = baseEdgeTo.GetAll(false, template.BaseEdgeQuery).FirstOrDefault();
+                    else
+                        item_baseEdge = baseEdge;
 
                     Edge item_BaseEdge = item.BaseEdge;
 
-                    item_BaseEdge.From = baseEdge.From;
-                    item_BaseEdge.Meta = baseEdge.Meta;
-                    item_BaseEdge.To = baseEdge.To;
+                    item_BaseEdge.From = item_baseEdge.From;
+                    item_BaseEdge.Meta = item_baseEdge.Meta;
+                    item_BaseEdge.To = item_baseEdge.To;
                 }
         }
 

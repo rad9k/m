@@ -9,8 +9,7 @@ using System.Threading.Tasks;
 namespace m0.ZeroTypes.UX
 {
     public class UXTemplate: TypedEdge
-    {
-        static IVertex Name_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\Name");
+    {        
         static IVertex UXTemplate_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\UXTemplate");
         static IVertex DirectVertexTestQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\DirectVertexTestQuery");
         static IVertex MetaVertexTestQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\MetaVertexTestQuery");
@@ -28,28 +27,6 @@ namespace m0.ZeroTypes.UX
 
 
         public UXTemplate(IEdge edge) : base(edge) { }
-
-        public string Name
-        {
-            get
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "Name", null);
-
-                if (val == null)
-                    return null;
-
-                return GraphUtil.GetStringValue(val);
-            }
-            set
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "Name", null);
-
-                if (val == null)
-                    val = Vertex.AddVertex(Name_meta, value);
-                else
-                    val.Value = value;
-            }
-        }
 
         public IList<UXTemplate> UXTemplate_
         {

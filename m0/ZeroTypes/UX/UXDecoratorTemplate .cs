@@ -22,7 +22,7 @@ namespace m0.ZeroTypes.UX
 
         public UXDecoratorTemplate(IEdge edge) : base(edge) { }
 
-        public bool AddEmptyEdge 
+        public bool AddEmptyEdge // $Empty::
         {
             get
             {

@@ -150,8 +150,10 @@ namespace m0.ZeroTypes.UX
 
 
         public override void ViewAttributesUpdated()
-        {            
-            Label.Text = UXTemplate.Name;
+        {
+            //Label.Text = UXTemplate.Name;
+
+            Label.Text = GraphUtil.GetStringValue(UXTemplate.Vertex);
 
             Label.FontSize = GetParentSubFontSize();
 
