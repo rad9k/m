@@ -3483,7 +3483,7 @@ namespace m0
                 "Enum:CodeRepresentationEnum{EnumValue:OneLine,EnumValue:ManyLines,EnumValue:VertexAndManyLines,EnumValue:EdgeAndManyLines}," +
                 "Class:LineDecoratorBase{Attribute:LineWidth{MinValue:1,MaxValue:10,$MinCardinality:0,$MaxCardinality:1},Association:ToItem{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:UXDecoratorTemplate{Attribute:AddEmptyEdge{$MinCardinality:0,$MaxCardinality:1},Attribute:EdgeTestQuery{$MinCardinality:1,$MaxCardinality:1},Attribute:ToDiagramItemTestQuery{$MinCardinality:0,$MaxCardinality:1},Attribute:CreateEdgeOnly{$MinCardinality:0,$MaxCardinality:1},Association:DecoratorClass{$MinCardinality:0,$MaxCardinality:1},Attribute:DecoratorVertex{$MinCardinality:0,$MaxCardinality:1},Attribute:EdgeTargetInEdgePointingToTargetItemBaseEdgeTo{$MinCardinality:0,$MaxCardinality:1}}," +
-                "Class:LabeledItem{Attribute:ConstantLabel{$MinCardinality:0,$MaxCardinality:1},Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:HideLabel{$MinCardinality:0,$MaxCardinality:1},Attribute:LabelQuery{$MinCardinality:0,$MaxCardinality:1},Attribute:UseCodeLabel{$MinCardinality:0,$MaxCardinality:1},Attribute:FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1},Attribute:CodeRepresentation{$MinCardinality:0,$MaxCardinality:1},Attribute:FontSize{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:12,MinValue:1,MaxValue:40,$DisplayLarger:}}," +
+                "Class:LabeledItem{Attribute:ConstantLabel{$MinCardinality:0,$MaxCardinality:1},Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:HideLabel{$MinCardinality:0,$MaxCardinality:1},Attribute:UseCodeLabel{$MinCardinality:0,$MaxCardinality:1}}," +
                 "Class:RectangleItem{Attribute:HideHeader{$MinCardinality:0,$MaxCardinality:1},Attribute:RoundEdgeSize{MinValue:0,MaxValue:200,$MinCardinality:0,$MaxCardinality:1}}," +
                 "Class:ImageItem{Attribute:Filename{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:OvalItem{}," +
@@ -3496,7 +3496,8 @@ namespace m0
                 "Class:ContainerItem{}," +
                 "Enum:OrientationEnum{EnumValue:Horizontal,EnumValue:Vertical},"+
                 "Class:MultiContainerItem{Attribute:Orientation{$MinCardinality:0,$MaxCardinality:1},Attribute:SubFontSize{$MinCardinality:0,$MaxCardinality:1,$DefaultValue:12,MinValue:1,MaxValue:40,$DisplayLarger:},Attribute:SubBackgroundColor{$MinCardinality:0,$MaxCardinality:1},,Attribute:SubForegroundColor{$MinCardinality:0,$MaxCardinality:1}}," +
-                "Class:MultiContainerSubItem" +
+                "Class:MultiContainerSubItem," +
+                "Class:CodeView{Attribute:ContentQuery{$MinCardinality:0,$MaxCardinality:1},Attribute:FontSize{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:12,MinValue:1,MaxValue:40,$DisplayLarger:},Attribute:CodeRepresentation{$MinCardinality:0,$MaxCardinality:1},Attribute:FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}" +
                 "}");
 
             // UXItem [EXTENSION]
@@ -3553,12 +3554,9 @@ namespace m0
 
             smzu.Get(false, @"LabeledItem").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
             smzu.Get(false, @"LabeledItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"UXItem"));
-            smzu.Get(false, @"LabeledItem\ConstantLabel").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
-            smzu.Get(false, @"LabeledItem\LabelQuery").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
-            smzu.Get(false, @"LabeledItem\UseCodeLabel").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
-            smzu.Get(false, @"LabeledItem\FontSize").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Float"));
-            smzu.Get(false, @"LabeledItem\FormalTextLanguage").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\VertexType"));
-            smzu.Get(false, @"LabeledItem\CodeRepresentation").AddEdge(sm.Get(false, @"?$EdgeTarget"), smzu.Get(false, @"CodeRepresentationEnum"));
+            smzu.Get(false, @"LabeledItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"CodeView"));
+            smzu.Get(false, @"LabeledItem\ConstantLabel").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));            
+            smzu.Get(false, @"LabeledItem\UseCodeLabel").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));            
             smzu.Get(false, @"LabeledItem\ShowMeta").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             smzu.Get(false, @"LabeledItem\HideLabel").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));            
 
@@ -3680,7 +3678,15 @@ namespace m0
 
             smzu.Get(false, @"MultiContainerSubItem").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
             smzu.Get(false, @"MultiContainerSubItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"UXContainer"));
+            smzu.Get(false, @"MultiContainerSubItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"CodeView"));
             smzu.Get(false, @"MultiContainerSubItem").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.MultiContainerSubItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+
+            // CodeView
+
+            smzu.Get(false, @"CodeView\ContentQuery").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
+            smzu.Get(false, @"CodeView\FontSize").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Float"));
+            smzu.Get(false, @"CodeView\FormalTextLanguage").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\VertexType"));
+            smzu.Get(false, @"CodeView\CodeRepresentation").AddEdge(sm.Get(false, @"?$EdgeTarget"), smzu.Get(false, @"CodeRepresentationEnum"));
 
 
         }

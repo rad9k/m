@@ -89,7 +89,7 @@ namespace m0.ZeroTypes.UX
         {
             BaseEdge_forLabel = BaseEdge;
 
-            string labelQuery = LabelQuery;
+            string labelQuery = ContentQuery;
 
             if (labelQuery != null)
                 BaseEdge_forLabel = BaseEdge.To.GetAll(false, labelQuery).FirstOrDefault();
@@ -173,7 +173,7 @@ namespace m0.ZeroTypes.UX
         {
             CodeControl codeControl;
 
-            if (LabelQuery != null)
+            if (ContentQuery != null)
             {
                 if (Vertex_forLabel == null)
                 {
@@ -240,7 +240,7 @@ namespace m0.ZeroTypes.UX
 
         static IVertex FontSize_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\FontSize");
         static IVertex ConstantLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\ConstantLabel");
-        static IVertex LabelQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\LabelQuery");        
+        static IVertex ContentQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\ContentQuery");
         static IVertex UseCodeLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\UseCodeLabel");
         static IVertex FormalTextLanguage_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\FormalTextLanguage");
         static IVertex CodeRepresentation_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\CodeRepresentation");
@@ -294,11 +294,11 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        public string LabelQuery
+        public string ContentQuery
         {
             get
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "LabelQuery", null);
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ContentQuery", null);
 
                 if (val == null)
                     return null;
@@ -307,10 +307,10 @@ namespace m0.ZeroTypes.UX
             }
             set
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "LabelQuery", null);
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ContentQuery", null);
 
                 if (val == null)
-                    val = Vertex.AddVertex(LabelQuery_meta, value);
+                    val = Vertex.AddVertex(ContentQuery_meta, value);
                 else
                     val.Value = value;
             }
