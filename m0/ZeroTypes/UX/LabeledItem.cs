@@ -173,7 +173,7 @@ namespace m0.ZeroTypes.UX
         {
             CodeControl codeControl;
 
-            if (ContentQuery != null)
+            /*if (ContentQuery != null) // ContentQuery to be handled in CodeControl
             {
                 if (Vertex_forLabel == null)
                 {
@@ -188,8 +188,9 @@ namespace m0.ZeroTypes.UX
                 EdgeHelper.CreateOrReplaceEdgeVertexFromIEdgeByMeta(Vertex_forLabel, BaseEdge_meta, BaseEdge_forLabel);
 
                 codeControl = new CodeControl(Vertex_forLabel, true);
-            }else
-                codeControl = new CodeControl(Vertex, true);
+            }else*/
+
+            codeControl = new CodeControl(Vertex, true);
 
 
 
