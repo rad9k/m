@@ -143,6 +143,15 @@ namespace m0.UIWpf.Controls
 
         string editor_Text;
 
+        private IVertex GetBaseEdgeTo()
+        {
+            IVertex BaseEdgeToVertex = Vertex.Get(false, @"BaseEdge:\To:");
+
+            string Conte
+
+            return BaseEdgeToVertex;
+        }
+
         private void ExecuteParse()
         {            
             editor_Text = editor.Text;
