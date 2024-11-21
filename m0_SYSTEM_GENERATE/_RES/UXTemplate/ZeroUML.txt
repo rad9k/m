@@ -210,7 +210,7 @@
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
 				<@LabeledItem\UseCodeLabel :: "True">
-				<@LabeledItem\LabelQuery :: "Test:">
+				<@LabeledItem\ContentQuery :: "Test:">
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 			<@UXDecoratorTemplate :: "than">
 				<@$Is :: @UXDecoratorTemplate>
@@ -231,7 +231,7 @@
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
 				<@LabeledItem\UseCodeLabel :: "True">
-				<@LabeledItem\LabelQuery :: "Expression:">
+				<@LabeledItem\ContentQuery :: "Expression:">
 				<@UXItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 			<@UXDecoratorTemplate :: "case">
@@ -263,7 +263,7 @@
 				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
 				<@LabeledItem\UseCodeLabel :: "True">
 				<@LabeledItem\ConstantLabel :: "case">
-				<@LabeledItem\LabelQuery :: "Test:">
+				<@LabeledItem\ContentQuery :: "Test:">
 				<@UXItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 			<@UXDecoratorTemplate :: "than">
