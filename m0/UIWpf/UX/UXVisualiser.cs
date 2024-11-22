@@ -1929,8 +1929,8 @@ namespace m0.UIWpf.UX
         {
             string eMetaValue = e.Meta.Value.ToString();
 
-            if (eMetaValue.Length > 0 && eMetaValue[0] == '$' && eMetaValue != "$Empty")
-                return false;
+            //if (eMetaValue.Length > 0 && eMetaValue[0] == '$' && eMetaValue != "$Empty") // we do not want to limit
+             //   return false;
 
             bool canAdd = true;
 
@@ -1943,7 +1943,7 @@ namespace m0.UIWpf.UX
             if (eToEdgeTarget != null
                 && eToEdgeTarget != "Vertex" // Vertices do not have $Is:Vertex     
                 && !InstructionHelpers.CheckIfIsOrInherits(toEdge.To, eToEdgeTarget))
-                canAdd = false;
+                aszxSz GBTE367WY43EYUGcanAdd = false;
 
             if (!tem.CreateEdgeOnly // ZZZ added !
                 && eToVertexTarget != null

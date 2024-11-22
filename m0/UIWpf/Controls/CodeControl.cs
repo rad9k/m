@@ -143,13 +143,21 @@ namespace m0.UIWpf.Controls
 
         string editor_Text;
 
+        private IEdge GetBaseEdge()
+        {
+            IEdge BaseEdge = EdgeHelper.CreateIEdgeFromEdgeVertex(Vertex.Get(false, @"BaseEdge:"));
+
+            string ContentQuery = GraphUtil.GetStringValueOrNull(Vertex.Get(false, "@ContentQuery:"));
+
+            if (ContentQuery != null)
+                BaseEdge = BaseEdge.To.GetAll(false, ContentQuery).FirstOrDefault();
+
+            return BaseEdge;
+        }
+
         private IVertex GetBaseEdgeTo()
         {
-            IVertex BaseEdgeToVertex = Vertex.Get(false, @"BaseEdge:\To:");
-
-            string Conte
-
-            return BaseEdgeToVertex;
+            return GetBaseEdge().To;
         }
 
         private void ExecuteParse()
@@ -174,7 +182,7 @@ namespace m0.UIWpf.Controls
 
                 TextMemory.Add(editor_Text);
 
-                IVertex BaseEdgeToVertex = Vertex.Get(false, @"BaseEdge:\To:");
+                IVertex BaseEdgeToVertex = GetBaseEdgeTo();
 
                 IVertex ftl = GraphUtil.GetQueryOutFirst(Vertex, "FormalTextLanguage", null);
 
@@ -387,7 +395,7 @@ namespace m0.UIWpf.Controls
             if (doNotParse)
                 return;
 
-            IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
+            IVertex bv = GetBaseEdgeTo();
 
             if (bv != null /*&& bv.Value != null && ((String)bv.Value)!="$Empty"*/)
             {
@@ -431,7 +439,9 @@ namespace m0.UIWpf.Controls
                 if (Vertex.DisposedState != DisposeStateEnum.Live)
                     return "";
 
-                EdgeBase ee = new EdgeBase(Vertex.Get(false, @"BaseEdge:\From:"), Vertex.Get(false, @"BaseEdge:\Meta:"), Vertex.Get(false, @"BaseEdge:\To:"));
+                //EdgeBase ee = new EdgeBase(Vertex.Get(false, @"BaseEdge:\From:"), Vertex.Get(false, @"BaseEdge:\Meta:"), Vertex.Get(false, @"BaseEdge:\To:"));
+
+                IEdge ee = GetBaseEdge();
 
                 IVertex ftl = GraphUtil.GetQueryOutFirst(Vertex, "FormalTextLanguage", null);
 
