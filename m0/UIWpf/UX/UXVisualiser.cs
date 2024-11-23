@@ -479,17 +479,22 @@ namespace m0.UIWpf.UX
             Items_all.Add(item);
 
             if (item is IUXMultiContainerSubItem)
-            {
+            {                
                 IUXMultiContainerSubItem item_multiContainerSubItem = (IUXMultiContainerSubItem)item;
-                foreach (ITypedEdge _i in item.Items)
-                {
-                    IUXItem i = UXItem.GetUXItem(this, _i);
 
-                    if (i == null)
-                        continue;
+                if (item_multiContainerSubItem.SubItemsNotVisible)
+                {
+
+                }else
+                    foreach (ITypedEdge _i in item.Items)
+                    {
+                        IUXItem i = UXItem.GetUXItem(this, _i);
+
+                        if (i == null)
+                            continue;
                     
-                    HostItem(item_multiContainerSubItem, i, newItemCreation);
-                }
+                        HostItem(item_multiContainerSubItem, i, newItemCreation);
+                    }
 
                 return;
             }                        
