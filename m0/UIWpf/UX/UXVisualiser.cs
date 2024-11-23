@@ -1444,7 +1444,7 @@ namespace m0.UIWpf.UX
             UXDecoratorTemplate tem = (UXDecoratorTemplate)line.UXTemplate;
 
             foreach (IEdge e in fromItem.BaseEdgeTo.GetAll(false, tem.EdgeTestQuery))            
-                if(CanAddLineByDecoratorTemplateAndFromItemBaseEdgeToQuery(toItem, toItem.BaseEdge, tem, e));
+                if (CanAddLineByDecoratorTemplateAndFromItemBaseEdgeToQuery(toItem, toItem.BaseEdge, tem, e));
                     canAdd = true;
 
             return canAdd;
@@ -1857,13 +1857,16 @@ namespace m0.UIWpf.UX
 
             foreach (UXDecoratorTemplate tem in fromItem.UXTemplate.UXDecoratorTemplates)
             {
-                foreach (IEdge e in fromItemBaseEdgeTo.GetAll(false, tem.EdgeTestQuery))
-                {
-                    bool canAdd = CanAddLineByDecoratorTemplateAndFromItemBaseEdgeToQuery(toItem, toEdge, tem, e);
+                string tem_EdgeTestQuery = tem.EdgeTestQuery;
 
-                    if (canAdd)
-                        AddNewLineOption(v, tem, e.To);
-                }
+                if (tem_EdgeTestQuery != null)
+                    foreach (IEdge e in fromItemBaseEdgeTo.GetAll(false, tem_EdgeTestQuery))
+                    {
+                        bool canAdd = CanAddLineByDecoratorTemplateAndFromItemBaseEdgeToQuery(toItem, toEdge, tem, e);
+
+                        if (canAdd)
+                            AddNewLineOption(v, tem, e.To);
+                    }
 
                 if (tem.AddEmptyEdge)
                     AddNewLineOption(v, tem, MinusZero.Instance.Empty);
@@ -1943,7 +1946,7 @@ namespace m0.UIWpf.UX
             if (eToEdgeTarget != null
                 && eToEdgeTarget != "Vertex" // Vertices do not have $Is:Vertex     
                 && !InstructionHelpers.CheckIfIsOrInherits(toEdge.To, eToEdgeTarget))
-                aszxSz GBTE367WY43EYUGcanAdd = false;
+                canAdd = false;
 
             if (!tem.CreateEdgeOnly // ZZZ added !
                 && eToVertexTarget != null
