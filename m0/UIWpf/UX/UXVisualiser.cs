@@ -1888,18 +1888,18 @@ namespace m0.UIWpf.UX
 
             Point mousePosition = WpfUtil.GetMousePosition();
 
-            IVertex a = MinusZero.Instance.DefaultUserInteraction.SelectDialog(info, v, mousePosition);
+            IVertex selected = MinusZero.Instance.DefaultUserInteraction.SelectDialog(info, v, mousePosition);
 
-            if (a != null)
+            if (selected != null)
             {
-                IVertex test = VertexOperations.TestIfNewEdgeValid(fromItemBaseEdgeTo, a.Get(false, "OptionEdge:"), toEdge.To);
+                IVertex test = VertexOperations.TestIfNewEdgeValid(fromItemBaseEdgeTo, selected.Get(false, "OptionEdge:"), toEdge.To);
 
                 if (test == null)
                 {
                     //UXDecoratorTemplate chosenTemplate = new UXDecoratorTemplate(a.GetAll(false, "OptionDiagramLineDefinition:").FirstOrDefault());
 
                     UXDecoratorTemplate chosenTemplate = (UXDecoratorTemplate)TypedEdge.Get(
-                        a.GetAll(false, "OptionDiagramLineDefinition:").FirstOrDefault(), 
+                        selected.GetAll(false, "OptionDiagramLineDefinition:").FirstOrDefault(), 
                         typeof(UXDecoratorTemplate));
 
                     ////////////////////////////////////////
@@ -1907,7 +1907,7 @@ namespace m0.UIWpf.UX
                     ////////////////////////////////////////            
 
                     IEdge edge = VertexOperations.AddEdgeOrVertexByMeta(fromItemBaseEdgeTo,
-                        a.Get(false, "OptionEdge:"),
+                        selected.Get(false, "OptionEdge:"),
                         toEdge.To,
                         mousePosition,
                         chosenTemplate.CreateEdgeOnly,
@@ -1922,7 +1922,7 @@ namespace m0.UIWpf.UX
                     return true;
                 }
                 else
-                    UserInteractionUtil.ShowError(Vertex.Value + "Diagram", "Adding new diagram line  \"" + a.Value + "\" is not possible.\n\n" + test.Value);
+                    UserInteractionUtil.ShowError(Vertex.Value + "Diagram", "Adding new diagram line  \"" + selected.Value + "\" is not possible.\n\n" + test.Value);
             }
 
             return false;
@@ -2191,7 +2191,7 @@ namespace m0.UIWpf.UX
                 if (lineDef != null && (
                     isEdgeTargetInEdgePointingToTargetItemBaseEdgeTo == false ||
                     lineDef.EdgeTargetInEdgePointingToTargetItemBaseEdgeTo
-                    ))
+                    ))                
                     AddDiagramLineVertex(item, e, lineDef, toDiagramItem);
             }
         }
@@ -2231,12 +2231,17 @@ namespace m0.UIWpf.UX
 
             foreach (UXDecoratorTemplate tem in item.UXTemplate.UXDecoratorTemplates)            
             {
-                if (tem.AddEmptyEdge && e.Meta.Value.ToString() == "$Empty")
-                    tem_found_NoEdgeTestQueries = tem;
-
-                bool canReturn = true;
-
                 string edgeTestQuery = tem.EdgeTestQuery;
+
+                if (tem.AddEmptyEdge)
+                {
+                    if (e.Meta.Value.ToString() == "$Empty")
+                        tem_found_NoEdgeTestQueries = tem;
+                    else if (edgeTestQuery == null)
+                        return null;
+                }
+
+                bool canReturn = true;                
 
                 if (edgeTestQuery != null && edgeTestQuery != ""){
                     canReturn = false;
