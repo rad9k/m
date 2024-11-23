@@ -1870,7 +1870,7 @@ namespace m0.UIWpf.UX
                             AddNewLineOption(v, tem, e.To);
                     }
 
-                if (tem.AddEmptyEdge)
+                if (tem.SupportEmptyMetaEdge)
                     AddNewLineOption(v, tem, MinusZero.Instance.Empty);
 
                 if (GeneralUtil.CompareStrings(tem.Vertex.Value, "VERTEX EDGE"))// Vertex\Edge
@@ -2235,7 +2235,7 @@ namespace m0.UIWpf.UX
             {
                 string edgeTestQuery = tem.EdgeTestQuery;
 
-                if (tem.AddEmptyEdge)
+                if (tem.SupportEmptyMetaEdge)
                 {
                     if (e.Meta.Value.ToString() == "$Empty")
                         tem_found_NoEdgeTestQueries = tem;

@@ -10,7 +10,7 @@ namespace m0.ZeroTypes.UX
 {
     public class UXDecoratorTemplate: UXTemplate
     {
-        static IVertex AddEmptyEdge_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\AddEmptyEdge");
+        static IVertex SupportEmptyMetaEdge_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\SupportEmptyMetaEdge");
         static IVertex EdgeTestQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\EdgeTestQuery");
         static IVertex ToDiagramItemTestQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\ToDiagramItemTestQuery");
         static IVertex DecoratorClass_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\DecoratorClass");
@@ -22,11 +22,11 @@ namespace m0.ZeroTypes.UX
 
         public UXDecoratorTemplate(IEdge edge) : base(edge) { }
 
-        public bool AddEmptyEdge // $Empty::
+        public bool SupportEmptyMetaEdge // $Empty::
         {
             get
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "AddEmptyEdge", null);
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "SupportEmptyMetaEdge", null);
 
                 if (val == null)
                     return false;
@@ -35,10 +35,10 @@ namespace m0.ZeroTypes.UX
             }
             set
             {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "AddEmptyEdge", null);
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "SupportEmptyMetaEdge", null);
 
                 if (val == null)
-                    val = Vertex.AddVertex(AddEmptyEdge_meta, value);
+                    val = Vertex.AddVertex(SupportEmptyMetaEdge_meta, value);
                 else
                     val.Value = value;
             }

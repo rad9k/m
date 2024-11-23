@@ -118,12 +118,27 @@ namespace m0.ZeroTypes.UX
                         else
                             item.SubItemsNotVisible = false;
 
-                    // contentquey
+                    // contentquery
 
                     IVertex template_ContentQuery = GraphUtil.GetQueryOutFirst(template.ItemVertex, "ContentQuery", null);
 
                     if (template_ContentQuery != null)
                         item.ContentQuery = GraphUtil.GetStringValue(template_ContentQuery);
+
+                    // formaltextlanguage
+
+                    IVertex template_FormalTextLanguage = GraphUtil.GetQueryOutFirst(template.ItemVertex, "FormalTextLanguage", null);
+
+                    if (template_FormalTextLanguage != null)
+                        item.FormalTextLanguage = template_FormalTextLanguage;
+
+                    // CodeRepresentation
+
+                    IVertex template_CodeRepresentation = GraphUtil.GetQueryOutFirst(template.ItemVertex, "CodeRepresentation", null);
+
+                    if (template_CodeRepresentation != null)
+                        item.CodeRepresentation = CodeRepresentationEnumHelper.GetEnum(template_CodeRepresentation);
+
 
                     // base edge
 
