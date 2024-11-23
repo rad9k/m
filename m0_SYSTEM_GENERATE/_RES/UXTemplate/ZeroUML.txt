@@ -334,6 +334,14 @@
 						<@$Is :: @Size>
 						<@Width :: "0">
 						<@Height :: "0">
+				<@UXDecoratorTemplate :: "do">
+					<@$Is :: @UXDecoratorTemplate>
+					<@AddEmptyEdge :: "True">
+					<@ToDiagramItemTestQuery :: "">
+					<@DecoratorClass :: @LineDecorator>
+					<@DecoratorVertex :: "">
+						<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+						<@LineDecorator\ConstantLabel :: "do">
 			
 		<"BaseGenericItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightRed>
