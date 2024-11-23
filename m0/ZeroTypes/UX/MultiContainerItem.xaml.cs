@@ -80,7 +80,7 @@ namespace m0.ZeroTypes.UX
             if (Items.Count == 0)
                 foreach (UXTemplate template in UXTemplate.UXTemplate_)
                 {
-                    IUXContainer item = (IUXContainer)AddItem(MultiContainerSubItem_type);
+                    MultiContainerSubItem item = (MultiContainerSubItem)AddItem(MultiContainerSubItem_type);                    
 
                     item.NestingLevel = this.NestingLevel + 1;
 
@@ -110,13 +110,20 @@ namespace m0.ZeroTypes.UX
 
                     // subitemsnotvisible
 
-                    IEdge template_SubItemsNotVisible = GraphUtil.GetQueryOutFirstEdge(template.ItemVertex, "SubItemsNotVisible", null);
+                    IVertex template_SubItemsNotVisible = GraphUtil.GetQueryOutFirst(template.ItemVertex, "SubItemsNotVisible", null);
 
                     if (template_SubItemsNotVisible != null)                    
-                        if (GraphUtil.GetBooleanValueOrFalse(template_SubItemsNotVisible.To))
+                        if (GraphUtil.GetBooleanValueOrFalse(template_SubItemsNotVisible))
                             item.SubItemsNotVisible = true;
                         else
                             item.SubItemsNotVisible = false;
+
+                    // contentquey
+
+                    IVertex template_ContentQuery = GraphUtil.GetQueryOutFirst(template.ItemVertex, "ContentQuery", null);
+
+                    if (template_ContentQuery != null)
+                        item.ContentQuery = GraphUtil.GetStringValue(template_ContentQuery);
 
                     // base edge
 

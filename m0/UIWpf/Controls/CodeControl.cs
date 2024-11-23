@@ -42,7 +42,7 @@ namespace m0.UIWpf.Controls
 
         public IVertex Vertex;
 
-        public bool NoVertexForTextMemory = false;        
+        public bool NoVertexForTextMemory = false;
 
         //
 
@@ -50,7 +50,7 @@ namespace m0.UIWpf.Controls
 
         bool doNotParse = false;
 
-        
+
 
         //
 
@@ -59,6 +59,8 @@ namespace m0.UIWpf.Controls
         public void UpdateView() { ViewAttributesUpdated(); }
 
         public void UnselectAllSelectedEdges() { }
+
+        public CodeControl(IVertex _Vertex) : this(_Vertex, true) { }
 
         public CodeControl(IVertex _Vertex, bool _NoVertexForTextMemory)
         {
@@ -147,7 +149,7 @@ namespace m0.UIWpf.Controls
         {
             IEdge BaseEdge = EdgeHelper.CreateIEdgeFromEdgeVertex(Vertex.Get(false, @"BaseEdge:"));
 
-            string ContentQuery = GraphUtil.GetStringValueOrNull(Vertex.Get(false, "@ContentQuery:"));
+            string ContentQuery = GraphUtil.GetStringValueOrNull(Vertex.Get(false, @"ContentQuery:"));
 
             if (ContentQuery != null)
                 BaseEdge = BaseEdge.To.GetAll(false, ContentQuery).FirstOrDefault();

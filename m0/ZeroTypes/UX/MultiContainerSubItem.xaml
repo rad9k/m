@@ -15,7 +15,7 @@
                 <TextBlock Name="CodeLabel" FontSize="6" HorizontalAlignment="Center">code</TextBlock>
             </StackPanel>
         </DockPanel>
-        <Canvas x:Name="canvas" />
+        <Border x:Name="Content"/>
     </DockPanel>
         
 </my:UXItem>

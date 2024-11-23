@@ -19,6 +19,7 @@ using m0.Util;
 using System.Windows.Forms.VisualStyles;
 using m0.Graph.ExecutionFlow;
 using m0.User.Process.UX;
+using m0.UIWpf.Controls;
 
 namespace m0.ZeroTypes.UX
 {
@@ -27,6 +28,8 @@ namespace m0.ZeroTypes.UX
     /// </summary>
     public partial class MultiContainerSubItem : UXItem, IUXMultiContainerSubItem
     {
+        Canvas canvas;
+        
         public Canvas Canvas { 
             get { return canvas; }
             set { }
@@ -42,9 +45,66 @@ namespace m0.ZeroTypes.UX
             InitializeComponent();
         }
 
+        bool SubItemsNotVisible_prev;
+        bool wasUpdated = false;
+
+        private void ClearContent()
+        {
+            if (Content.Child != null)
+            {
+                if (Content.Child is Canvas)
+                {
+                    foreach (object o in ((Canvas)Content.Child).Children)
+                    {
+                        if (o is IUXItem)
+                        {
+                            IUXItem o_IUXItem = (IUXItem)o;
+
+                            o_IUXItem.Dispose();
+                        }
+                    }                    
+                }
+
+                Content.Child = null;
+            }
+        }
+
+        private void ContentUpdate()
+        {
+            bool subItemnsNotVisible = SubItemsNotVisible;
+
+            if (!wasUpdated || subItemnsNotVisible != SubItemsNotVisible_prev)
+            {
+                wasUpdated = true;
+
+                ClearContent();
+
+                if (SubItemsNotVisible)
+                {
+                    CodeToggle.IsChecked = true;
+
+                    CodeControl codeControl = new CodeControl(Vertex);
+
+                    Content.Child = codeControl;
+
+                    codeControl.BaseEdgeToUpdated();
+                }
+                else
+                {
+                    canvas = new Canvas();
+
+                    Content.Child = canvas;
+
+                    Canvas.ClipToBounds = true;
+
+                    CodeToggle.IsChecked = false;
+                }
+            }
+        }
+
         public override void VertexSetedUp()
-        {            
-            Canvas.ClipToBounds = true;                                   
+        {
+            ContentUpdate();            
         }
 
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -150,19 +210,14 @@ namespace m0.ZeroTypes.UX
 
 
         public override void ViewAttributesUpdated()
-        {
-            //Label.Text = UXTemplate.Name;
-
+        {            
             Label.Text = GraphUtil.GetStringValue(UXTemplate.Vertex);
 
             Label.FontSize = GetParentSubFontSize();
 
             SetColors(GetParentBackgroundBrush(), GetParentSubBackgroundBrush(), GetParentSubForegroundBrush());
 
-            if (SubItemsNotVisible)
-                CodeToggle.IsChecked = true;
-            else
-                CodeToggle.IsChecked = false;
+            ContentUpdate();
         }
 
         private void SetColors(Brush backgroundBrush_canvas, Brush foregroundBrush_label, Brush backgroundBrush_label)
@@ -171,7 +226,7 @@ namespace m0.ZeroTypes.UX
             Label.Foreground = backgroundBrush_label;
             CodeLabel.Foreground = backgroundBrush_label;
 
-            canvas.Background = backgroundBrush_canvas;
+            Content.Background = backgroundBrush_canvas;
         }
 
         public override void Select() {
@@ -204,6 +259,7 @@ namespace m0.ZeroTypes.UX
         static IVertex ContainerEdgeQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\ContainerEdgeQuery");
         static IVertex SubItemsNotVisible_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\SubItemsNotVisible");
         static IVertex NewItemUXTemplate_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\NewItemUXTemplate");
+        static IVertex ContentQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\CodeView\ContentQuery");
 
         static IVertex Size_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Size");        
 
@@ -335,6 +391,28 @@ namespace m0.ZeroTypes.UX
                 GraphUtil.CreateOrReplaceEdge(Vertex, NewItemUXTemplate_meta, value.Vertex);
             }
         }
-        
+
+        public string ContentQuery
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ContentQuery", null);
+
+                if (val == null)
+                    return null;
+
+                return GraphUtil.GetStringValue(val);
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ContentQuery", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(ContentQuery_meta, value);
+                else
+                    val.Value = value;
+            }
+        }
+
     }
 }

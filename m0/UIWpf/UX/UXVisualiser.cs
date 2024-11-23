@@ -482,10 +482,7 @@ namespace m0.UIWpf.UX
             {                
                 IUXMultiContainerSubItem item_multiContainerSubItem = (IUXMultiContainerSubItem)item;
 
-                if (item_multiContainerSubItem.SubItemsNotVisible)
-                {
-
-                }else
+                if (!item_multiContainerSubItem.SubItemsNotVisible) // not adding items when we are about to display code here
                     foreach (ITypedEdge _i in item.Items)
                     {
                         IUXItem i = UXItem.GetUXItem(this, _i);
