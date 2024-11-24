@@ -123,6 +123,7 @@
 				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
 				<@LabeledItem\ShowMeta :: "False">
 				<@LabeledItem\ConstantLabel :: "block">
+				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\ManyLines>
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 			
 		<@UXTemplate :: "Named Block (code)">
@@ -135,6 +136,7 @@
 				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
 				<@LabeledItem\ShowMeta :: "False">
 				<@LabeledItem\ConstantLabel :: "named block">
+				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\ManyLines>
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>			
 			
 		<@UXTemplate :: "Block (container)">
@@ -173,7 +175,7 @@
 				<@LabeledItem\ConstantLabel :: "package">			
 			<@UXDecoratorTemplate :: "Edge">
 				<@$Is :: @UXDecoratorTemplate>
-				<@SupportEmptyMetaEdge :: "True">
+				<@AddEmptyEdge :: "True">
 				<@EdgeTestQuery :: "$Is:\">
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
@@ -211,6 +213,7 @@
 				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
 				<@LabeledItem\UseCodeLabel :: "True">
 				<@LabeledItem\ContentQuery :: "Test:">
+				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\OneLine>
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 			<@UXDecoratorTemplate :: "than">
 				<@$Is :: @UXDecoratorTemplate>
@@ -232,6 +235,7 @@
 				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
 				<@LabeledItem\UseCodeLabel :: "True">
 				<@LabeledItem\ContentQuery :: "Expression:">
+				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\OneLine>
 				<@UXItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 			<@UXDecoratorTemplate :: "case">
@@ -264,6 +268,7 @@
 				<@LabeledItem\UseCodeLabel :: "True">
 				<@LabeledItem\ConstantLabel :: "case">
 				<@LabeledItem\ContentQuery :: "Test:">
+				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\OneLine>
 				<@UXItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 			<@UXDecoratorTemplate :: "than">
@@ -316,6 +321,7 @@
 				<@ItemVertex :: "">
 					<@UXContainer\SubItemsNotVisible :: "True">
 					<@CodeView\ContentQuery :: "Test:">
+					<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\OneLine>
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
@@ -338,7 +344,7 @@
 						<@Height :: "0">
 				<@UXDecoratorTemplate :: "do">
 					<@$Is :: @UXDecoratorTemplate>
-					<@SupportEmptyMetaEdge :: "True">
+					<@AddEmptyEdge :: "True">
 					<@ToDiagramItemTestQuery :: "">
 					<@DecoratorClass :: @LineDecorator>
 					<@DecoratorVertex :: "">
