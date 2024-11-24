@@ -2,6 +2,7 @@
 using m0.Graph;
 using m0.Graph.ExecutionFlow;
 using m0.UIWpf;
+using m0.UIWpf.UX;
 using m0.User.Process.UX;
 using m0.Util;
 using System;
@@ -221,7 +222,7 @@ namespace m0.ZeroTypes.UX
             newline.OwningVisualiser = this.OwningVisualiser;
 
             if (newline.UXTemplate != null)
-                OwningVisualiser.AddEdgesFromDefintion(newline.Vertex, ((UXDecoratorTemplate)newline.UXTemplate).DecoratorVertex);
+                UXVisualiser.AddEdgesFromDefintion(newline.Vertex, ((UXDecoratorTemplate)newline.UXTemplate).DecoratorVertex);
 
             newline.FromDiagramItem = this;
 

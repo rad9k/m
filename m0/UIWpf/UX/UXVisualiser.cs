@@ -457,7 +457,7 @@ namespace m0.UIWpf.UX
             return new List<IUXItem>();
         }
 
-        public void AddEdgesFromDefintion(IVertex baseVertex, IVertex definitionEdges)
+        public static void AddEdgesFromDefintion(IVertex baseVertex, IVertex definitionEdges)
         {
             if (definitionEdges == null)
                 return;

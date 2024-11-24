@@ -19,6 +19,7 @@ using m0.Util;
 using System.Xml.Linq;
 using m0.User.Process.UX;
 using m0.UIWpf.Visualisers;
+using m0.UIWpf.UX;
 
 namespace m0.ZeroTypes.UX
 {
@@ -77,7 +78,7 @@ namespace m0.ZeroTypes.UX
 
                     TheGrid.Children.Add((UIElement)ContentVisualiser);
 
-                    OwningVisualiser.AddEdgesFromDefintion(ContentVisualiser.Vertex, VisualiserVertex);
+                    UXVisualiser.AddEdgesFromDefintion(ContentVisualiser.Vertex, VisualiserVertex);
 
                     VisualiserHack();
                 }

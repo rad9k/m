@@ -20,6 +20,7 @@ using System.Windows.Media.Media3D;
 
 using System.Windows.Forms;
 using System.Windows;
+using m0.UIWpf.UX;
 
 namespace m0.ZeroTypes.UX
 {
@@ -58,6 +59,8 @@ namespace m0.ZeroTypes.UX
 
             CreateSubConainerControls();
 
+            CorrectSize();
+
             //
 
             foreach (ITypedEdge _i in Items)
@@ -68,6 +71,15 @@ namespace m0.ZeroTypes.UX
                     continue;
 
                 i.VertexSetedUp();
+            }
+        }
+
+        public void CorrectSize()
+        {
+            if (_Canvas.ActualWidth != 0)
+            {
+                SubGrid.Width = _Canvas.ActualWidth;
+                SubGrid.Height = _Canvas.ActualHeight;
             }
         }
 
@@ -89,6 +101,9 @@ namespace m0.ZeroTypes.UX
 
                     item.UXTemplate = template;                    
 
+                    UXVisualiser.AddEdgesFromDefintion(item.Vertex, template.ItemVertex);
+
+                    /*
                     // size
 
                     IEdge template_SizeEdge = GraphUtil.GetQueryOutFirstEdge(template.ItemVertex, "Size", null);
@@ -139,7 +154,7 @@ namespace m0.ZeroTypes.UX
                     if (template_CodeRepresentation != null)
                         item.CodeRepresentation = CodeRepresentationEnumHelper.GetEnum(template_CodeRepresentation);
 
-
+                    */
                     // base edge
 
                     item.BaseEdgeCreate();
@@ -199,30 +214,7 @@ namespace m0.ZeroTypes.UX
 
             Size size = item.Size;
 
-            IEdge template_SizeEdge = GraphUtil.GetQueryOutFirstEdge(item.UXTemplate.ItemVertex, "Size", null);
-
-            Size template_Size = null;
-
-            bool template_horizontal_zero = false;
-            bool template_vertical_zero = false;
-            bool template_horizontal_minus = false;
-            bool template_vertical_minus = false;
-
-            if (template_SizeEdge != null) {
-                template_Size = new Size(template_SizeEdge);
-
-                if (template_Size.Width == 0)
-                    template_horizontal_zero = true;
-
-                if (template_Size.Height == 0)
-                    template_vertical_zero = true;
-
-                if (template_Size.Width < 0)
-                    template_horizontal_minus = true;
-
-                if (template_Size.Height < 0)
-                    template_vertical_minus = true;
-            }
+            IEdge template_SizeEdge = GraphUtil.GetQueryOutFirstEdge(item.UXTemplate.ItemVertex, "Size", null);            
 
             //
 
@@ -263,14 +255,9 @@ namespace m0.ZeroTypes.UX
 
                 RowDefinition rowDefinition = new RowDefinition();
 
-                if (size != null && size.Height != 0 && !template_vertical_zero)
-                {                        
-                    if (template_vertical_minus)
-                        rowDefinition.Height = new GridLength(size.Height, GridUnitType.Star);
-                    else
-                        rowDefinition.Height = new GridLength(size.Height, GridUnitType.Pixel);
-                }
-
+                if (size != null && size.Height != 0)                                                            
+                    rowDefinition.Height = new GridLength(size.Height, GridUnitType.Star);
+                    
                 SubGrid.RowDefinitions.Add(rowDefinition);
 
                 //
@@ -305,13 +292,8 @@ namespace m0.ZeroTypes.UX
 
                 ColumnDefinition columnDefinition = new ColumnDefinition();
 
-                if (size != null & size.Width != 0 && !template_horizontal_zero)
-                {                    
-                    if (template_horizontal_minus)
-                        columnDefinition.Width = new GridLength(size.Width, GridUnitType.Star);
-                    else
-                        columnDefinition.Width = new GridLength(size.Width, GridUnitType.Pixel);
-                }
+                if (size != null & size.Width != 0)
+                    columnDefinition.Width = new GridLength(size.Width, GridUnitType.Star);                
 
                 SubGrid.ColumnDefinitions.Add(columnDefinition);
 
