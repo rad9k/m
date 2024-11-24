@@ -120,9 +120,9 @@ namespace m0.ZeroTypes.UX
             Interaction.BeginInteractionWithGraph();
             //////////////////////////////////////// 
 
-            //s.Width = ActualWidth;
+            s.Width = ActualWidth;
 
-           // s.Height = ActualHeight;
+            s.Height = ActualHeight;
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
