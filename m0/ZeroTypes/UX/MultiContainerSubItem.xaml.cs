@@ -75,7 +75,7 @@ namespace m0.ZeroTypes.UX
 
             if (!wasUpdated || subItemnsNotVisible != SubItemsNotVisible_prev)
             {
-                wasUpdated = true;
+                SubItemsNotVisible_prev = subItemnsNotVisible;                
 
                 ClearContent();
 
@@ -99,6 +99,11 @@ namespace m0.ZeroTypes.UX
 
                     CodeToggle.IsChecked = false;
                 }
+
+                if (wasUpdated)
+                    this.OwningVisualiser.Paint();
+
+                wasUpdated = true;                
             }
         }
 
@@ -140,6 +145,8 @@ namespace m0.ZeroTypes.UX
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             //////////////////////////////////////// 
+            
+            ContentUpdate();
         }
 
         protected Brush GetParentBackgroundBrush()
@@ -209,7 +216,7 @@ namespace m0.ZeroTypes.UX
 
 
 
-        public override void ViewAttributesUpdated()
+        public override void ViewAttributesUpdated() // this is not called when it should be. there is NO proper event routing in multicointinersubitems
         {            
             Label.Text = GraphUtil.GetStringValue(UXTemplate.Vertex);
 

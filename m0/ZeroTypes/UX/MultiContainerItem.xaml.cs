@@ -275,7 +275,8 @@ namespace m0.ZeroTypes.UX
 
                 //
 
-                SubGrid.Children.Add(subItem_UIElement);
+                if (!SubGrid.Children.Contains(subItem_UIElement)) // dirt hack
+                    SubGrid.Children.Add(subItem_UIElement);
 
                 Grid.SetRow(subItem_UIElement, cnt);
             }
@@ -316,7 +317,8 @@ namespace m0.ZeroTypes.UX
 
                 //
                 
-                SubGrid.Children.Add(subItem_UIElement);
+                if (!SubGrid.Children.Contains(subItem_UIElement)) // dirt hack
+                    SubGrid.Children.Add(subItem_UIElement);
 
                 Grid.SetColumn(subItem_UIElement, cnt);
             }

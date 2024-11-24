@@ -28,7 +28,9 @@ namespace m0.ZeroTypes.UX
     }
 
     public interface IUXVisualiser: IUXContainer
-    {        
+    {
+        void Paint();
+
         bool IsSelecting { get; }
 
         bool IsDrawingOrMovingLine { get; }

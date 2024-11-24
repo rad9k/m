@@ -117,7 +117,7 @@ namespace m0.UIWpf.UX
         static string[] _MetaTriggeringUpdateView = new string[] { };
         public virtual string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
-        public virtual void BaseEdgeToUpdated() { PaintDiagram(); }
+        public virtual void BaseEdgeToUpdated() { Paint(); }
 
         //
 
@@ -760,10 +760,10 @@ namespace m0.UIWpf.UX
 
         public virtual void ViewAttributesUpdated()        
         {
-            PaintDiagram();
+            Paint();
         }
 
-        public void PaintDiagram()
+        public void Paint()
         {
             if (ActualHeight != 0 || IsFirstPainted)
             {
@@ -850,7 +850,7 @@ namespace m0.UIWpf.UX
 
             ScrollViewerParent = GetScrollViewerParent(this);
 
-            PaintDiagram();
+            Paint();
 
             if (IsFirstPainted)
                 this.Loaded -= OnLoad;
@@ -1565,6 +1565,21 @@ namespace m0.UIWpf.UX
 
         public bool IsDisposed = false;
 
+        private void DisposeAllItems()
+        {
+            foreach (ITypedEdge e in Items)
+                if (e is IDisposable)
+                    ((IDisposable)e).Dispose();
+
+            foreach (ITypedEdge e in VolatileItems)
+            {
+                Vertex.DeleteEdge(e.Edge);
+
+                if (e is IDisposable)
+                    ((IDisposable)e).Dispose();
+            }
+        }
+
         public void Dispose()
         {
             if (IsDisposed == false)
@@ -1577,17 +1592,7 @@ namespace m0.UIWpf.UX
 
                     GraphChangeTrigger.RemoveListener(VisualiserHelper.graphChangeListenerEdge);
 
-                    foreach (ITypedEdge e in Items)
-                        if (e is IDisposable)
-                            ((IDisposable)e).Dispose();
-
-                    foreach (ITypedEdge e in VolatileItems)
-                    {
-                        Vertex.DeleteEdge(e.Edge);
-
-                        if (e is IDisposable)
-                            ((IDisposable)e).Dispose();
-                    }
+                    DisposeAllItems();
                 }
                 else
                 {
