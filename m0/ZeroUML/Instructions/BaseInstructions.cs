@@ -2240,7 +2240,7 @@ namespace m0.ZeroUML.Instructions
 
             foreach (IEdge e in expressionResult)
             {
-                string parsed = MinusZero.Instance.DefaultFormalTextGenerator.Generate(language, e);
+                string parsed = MinusZero.Instance.DefaultFormalTextGenerator.Generate(language, e, ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
 
                 newStack.AddVertex(null, parsed);
             }

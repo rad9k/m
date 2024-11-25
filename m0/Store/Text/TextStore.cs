@@ -113,7 +113,7 @@ namespace m0.Store.Text
 
             EasyEdge e = new EasyEdge(MinusZero.Instance.Empty, null, root);
 
-            string generated = MinusZero.Instance.DefaultFormalTextGenerator.Generate(formalTextLanguageVertex, e);
+            string generated = MinusZero.Instance.DefaultFormalTextGenerator.Generate(formalTextLanguageVertex, e, ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
 
             writeStream.Write(generated);
 

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using m0.Foundation;
+using m0.ZeroTypes.UX;
 
 namespace m0.ZeroCode
 {
@@ -42,14 +43,14 @@ namespace m0.ZeroCode
             return instance.Process(rootVertex, text);
         }
 
-        public string Generate(IEdge graphBaseEdge)
+        public string Generate(IEdge graphBaseEdge, CodeRepresentationEnum codeRepresentation)
         {
             //Graph2TextProcessing ZeroCodeGraph2StringProcessing_Instance = new Graph2TextProcessing(MinusZero.Instance.DefaultFormalTextLanguage);
 
             return ZeroCodeGraph2StringProcessing_Instance.Process(graphBaseEdge);
         }
 
-        public string Generate(IVertex formalTextLanguage, IEdge graphBaseEdge)
+        public string Generate(IVertex formalTextLanguage, IEdge graphBaseEdge, CodeRepresentationEnum codeRepresentation)
         {
             //Graph2TextProcessing instance = new Graph2TextProcessing(formalTextLanguage);
 

@@ -450,9 +450,9 @@ namespace m0.UIWpf.Controls
                 string generated;
 
                 if (ftl == null)
-                    generated = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ee);
+                    generated = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ee, ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
                 else
-                    generated = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ftl, ee);
+                    generated = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ftl, ee, ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
 
                 return generated;
             }
