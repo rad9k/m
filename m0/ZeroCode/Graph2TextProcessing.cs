@@ -3,6 +3,7 @@ using m0.Graph;
 using m0.Util;
 using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
+using m0.ZeroTypes.UX;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -1755,7 +1756,39 @@ namespace m0.ZeroCode
              //BaseEdge = _graphBaseEdge;
         }
 
-        public string Process(IEdge _graphBaseEdge)
+        public string Process(IEdge _graphBaseEdge, CodeRepresentationEnum codeRepresentation)
+        {
+            switch (codeRepresentation)
+            {
+                case CodeRepresentationEnum.OneLine: return Process_OneLine(_graphBaseEdge); 
+
+                case CodeRepresentationEnum.EdgeAndManyLines: return Process_EdgeAndManyLines(_graphBaseEdge);
+
+                case CodeRepresentationEnum.VertexAndManyLines: return Process_VertexAndManyLines(_graphBaseEdge);
+
+                case CodeRepresentationEnum.ManyLines: return Process_ManyLines(_graphBaseEdge);
+            }
+
+            return null;
+        }
+
+        public string Process_EdgeAndManyLines(IEdge _graphBaseEdge)
+        {
+            return null;
+        }
+
+        public string Process_VertexAndManyLines(IEdge _graphBaseEdge)
+        {
+            return null;
+        }
+
+        public string Process_ManyLines(IEdge _graphBaseEdge)
+        {
+            return null;
+        }
+
+
+        public string Process_OneLine(IEdge _graphBaseEdge)
         {       
             prepareBaseEdge(_graphBaseEdge);
 

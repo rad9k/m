@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 
 using m0.Foundation;
+using m0.ZeroTypes.UX;
 
 namespace m0.FormalTextLanguage
 {
     public interface IFormalTextParser
     {
-        IVertex Parse(IVertex rootVertex, string text);
+        IVertex Parse(IVertex rootVertex, string text, CodeRepresentationEnum codeRepresentation);
 
-        IVertex Parse(IVertex formalTextLanguage, IVertex rootVertex, string text);
+        IVertex Parse(IVertex formalTextLanguage, IVertex rootVertex, string text, CodeRepresentationEnum codeRepresentation);
     }
 }

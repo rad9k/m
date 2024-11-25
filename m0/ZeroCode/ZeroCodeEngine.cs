@@ -47,7 +47,7 @@ namespace m0.ZeroCode
         {
             //Graph2TextProcessing ZeroCodeGraph2StringProcessing_Instance = new Graph2TextProcessing(MinusZero.Instance.DefaultFormalTextLanguage);
 
-            return ZeroCodeGraph2StringProcessing_Instance.Process(graphBaseEdge);
+            return ZeroCodeGraph2StringProcessing_Instance.Process(graphBaseEdge, codeRepresentation);
         }
 
         public string Generate(IVertex formalTextLanguage, IEdge graphBaseEdge, CodeRepresentationEnum codeRepresentation)
@@ -67,7 +67,7 @@ namespace m0.ZeroCode
                 ZeroCodeGraph2StringProcessing_InstanceDictionary.Add(formalTextLanguage, instance);
             }
 
-            return instance.Process(graphBaseEdge);
+            return instance.Process(graphBaseEdge, codeRepresentation);
         }
 
         public ZeroCodeEngine()
