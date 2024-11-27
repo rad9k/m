@@ -2210,7 +2210,7 @@ namespace m0.ZeroUML.Instructions
             {
                 IVertex newVertex = newStack.AddVertex(null, "");
 
-                MinusZero.Instance.DefaultFormalTextParser.Parse(language, newVertex, e.To.Value.ToString());
+                MinusZero.Instance.DefaultFormalTextParser.Parse(language, newVertex, e.To.Value.ToString(), m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
             }
 
             return newStack;

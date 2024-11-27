@@ -3,6 +3,7 @@ using m0.Graph;
 using m0.Util;
 using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
+using m0.ZeroTypes.UX;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -3103,9 +3104,30 @@ namespace m0.ZeroCode
             GraphUtil.DeleteEdgeByMeta(baseVertex, "$ParseRoot");
 
             baseVertex.Value = firstValue;
+        }
+
+        public IVertex Process(IVertex _baseVertex, string _text, CodeRepresentationEnum codeRepresentation)
+        {
+
         }        
-      
-        public IVertex Process(IVertex _baseVertex, string _text)
+        
+        public IVertex Process_OneLine(IVertex _baseVertex, string _text)
+        {
+
+        }
+
+        public IVertex Process_ManyLines(IVertex _baseVertex, string _text)
+        {
+
+        }
+
+        public IVertex Process_EdgeAndManyLines(IVertex _baseVertex, string _text)
+        {
+
+        }
+
+
+        public IVertex Process_VertexAndManyLines(IVertex _baseVertex, string _text)
         {
             ZeroCodeUtil.ClearZeroCodeUtilDicionaries();
 

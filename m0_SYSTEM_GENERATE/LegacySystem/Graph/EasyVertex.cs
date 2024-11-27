@@ -36,7 +36,7 @@ namespace m0.LegacySystem.Graph
             {
                 queryVertex = MinusZero.Instance.CreateTempVertex();                
 
-                parseError = DefaultParser.Parse(queryVertex, query);
+                parseError = DefaultParser.Parse(queryVertex, query, ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
 
                 if (parseError == null)
                 {

@@ -200,9 +200,9 @@ namespace m0.UIWpf.Controls
                 IVertex errorList;
 
                 if (ftl == null)
-                    errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(BaseEdgeToVertex, editor_Text);
+                    errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(BaseEdgeToVertex, editor_Text, m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
                 else
-                    errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(ftl, BaseEdgeToVertex, editor_Text);
+                    errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(ftl, BaseEdgeToVertex, editor_Text, m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
 
                 //
 

@@ -53,7 +53,7 @@ namespace m0.Store.Text
 
                         root = new EasyVertex(this);
 
-                        IVertex errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(formalTextLanguageVertex, root, body);
+                        IVertex errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(formalTextLanguageVertex, root, body, m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
 
                         if (errorList.OutEdges.Count > 0)
                             canWrite = false;
