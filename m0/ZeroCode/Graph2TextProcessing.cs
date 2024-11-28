@@ -1777,7 +1777,7 @@ namespace m0.ZeroCode
             return null;
         }
 
-        public string Process_VertexAndManyLines(IEdge _graphBaseEdge)
+        public string Process_OneLine(IEdge _graphBaseEdge)
         {
             return null;
         }
@@ -1788,7 +1788,7 @@ namespace m0.ZeroCode
         }
 
 
-        public string Process_OneLine(IEdge _graphBaseEdge)
+        public string Process_VertexAndManyLines(IEdge _graphBaseEdge)
         {       
             prepareBaseEdge(_graphBaseEdge);
 
