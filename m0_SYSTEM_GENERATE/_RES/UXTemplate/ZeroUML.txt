@@ -175,7 +175,7 @@
 				<@LabeledItem\ConstantLabel :: "package">			
 			<@UXDecoratorTemplate :: "Edge">
 				<@$Is :: @UXDecoratorTemplate>
-				<@AddEmptyEdge :: "True">
+				<@SupportEmptyMetaEdge :: "True">
 				<@EdgeTestQuery :: "$Is:\">
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
@@ -325,7 +325,7 @@
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
-						<@Height :: "35">
+						<@Height :: "-60">
 				<@UXDecoratorTemplate :: "test">
 					<@$Is :: @UXDecoratorTemplate>
 					<@EdgeTestQuery :: "$Is:While\Test">
@@ -341,10 +341,10 @@
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
-						<@Height :: "0">
+						<@Height :: "-30">
 				<@UXDecoratorTemplate :: "do">
 					<@$Is :: @UXDecoratorTemplate>
-					<@AddEmptyEdge :: "True">
+					<@SupportEmptyMetaEdge :: "True">
 					<@ToDiagramItemTestQuery :: "">
 					<@DecoratorClass :: @LineDecorator>
 					<@DecoratorVertex :: "">
