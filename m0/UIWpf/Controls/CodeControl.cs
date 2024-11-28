@@ -184,7 +184,7 @@ namespace m0.UIWpf.Controls
 
                 TextMemory.Add(editor_Text);
 
-                IVertex BaseEdgeToVertex = GetBaseEdgeTo();
+                IEdge BaseEdge = GetBaseEdge();
 
                 IVertex ftl = GraphUtil.GetQueryOutFirst(Vertex, "FormalTextLanguage", null);
 
@@ -200,9 +200,9 @@ namespace m0.UIWpf.Controls
                 IVertex errorList;
 
                 if (ftl == null)
-                    errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(BaseEdgeToVertex, editor_Text, m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
+                    errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(BaseEdge, editor_Text, m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
                 else
-                    errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(ftl, BaseEdgeToVertex, editor_Text, m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
+                    errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(ftl, BaseEdge, editor_Text, m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
 
                 //
 

@@ -149,7 +149,7 @@ namespace m0_SYSTEM_GENERATE
 
             static void _exeTest(IVertex code)
             {
-                IVertex code1 = code.AddVertex(null, null);
+                IEdge code1 = code.AddVertexAndReturnEdge(null, null);
             MinusZero.Instance.DefaultFormalTextParser.Parse(code1,
                 "\"Code1\"" + "" +
                 "\r\n\tvariable \"A\" @String" +
@@ -169,7 +169,7 @@ namespace m0_SYSTEM_GENERATE
 
                 );
 
-            IVertex code2 = code.AddVertex(null, null);
+            IEdge code2 = code.AddVertexAndReturnEdge(null, null);
             MinusZero.Instance.DefaultFormalTextParser.Parse(code2,
                             "\"Code2\"" +
                             "\r\n\tvariable \"Test\" @String" +
@@ -185,7 +185,7 @@ namespace m0_SYSTEM_GENERATE
                             "\r\n\tTest3 += Test\\ <-> Radek", m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines
                             );
 
-            IVertex code3 = code.AddVertex(null, null);
+            IEdge code3 = code.AddVertexAndReturnEdge(null, null);
             MinusZero.Instance.DefaultFormalTextParser.Parse(code3,
             "\"Code3\"" +
             "\r\n\tvariable \"A\" @String" +
@@ -199,7 +199,7 @@ namespace m0_SYSTEM_GENERATE
             "\r\n\t@X[\"Radek\"]", m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines
             );
 
-            IVertex code4 = code.AddVertex(null, null);
+            IEdge code4 = code.AddVertexAndReturnEdge(null, null);
             MinusZero.Instance.DefaultFormalTextParser.Parse(code4,
             "\"Code4\"" +
             "\r\n\tvariable \"A\" @String" +
@@ -224,7 +224,7 @@ namespace m0_SYSTEM_GENERATE
 
             //() ! <>
 
-            IVertex code5 = code.AddVertex(null, null);
+            IEdge code5 = code.AddVertexAndReturnEdge(null, null);
             MinusZero.Instance.DefaultFormalTextParser.Parse(code5,
            "\"Code5\"" +
            "\r\n\tvariable \"A\" @String" +
@@ -239,7 +239,7 @@ namespace m0_SYSTEM_GENERATE
            "\r\n\tD = !C", m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines
            );
 
-            IVertex code6 = code.AddVertex(null, null);
+            IEdge code6 = code.AddVertexAndReturnEdge(null, null);
             MinusZero.Instance.DefaultFormalTextParser.Parse(code6,
           "\"Code6\"" +
           "\r\n\tvariable \"A\" @String" +

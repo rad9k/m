@@ -16,6 +16,7 @@ using m0.Graph.Internal;
 using m0.Graph.ExecutionFlow;
 using static m0.Graph.GraphUtil;
 using m0.UIWpf.Visualisers;
+using m0.ZeroTypes;
 
 namespace m0.Graph
 {
@@ -732,9 +733,9 @@ namespace m0.Graph
                 queryVertex = cache[query];
             else
             {
-                queryVertex = MinusZero.Instance.CreateTempVertex();
+                queryVertex = MinusZero.Instance.CreateTempVertex();                
 
-                parseError = MinusZero.Instance.DefaultFormalTextParser.Parse(queryVertex, query, ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
+                parseError = MinusZero.Instance.DefaultFormalTextParser.Parse( new EdgeBase(null, null, queryVertex), query, ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
 
                 if (parseError == null || parseError.Count() == 0 /* && !cache.ContainsKey(query)*/)
                 {
@@ -767,7 +768,7 @@ namespace m0.Graph
             {
                 queryVertex = MinusZero.Instance.CreateTempVertex();
 
-                parseError = MinusZero.Instance.DefaultFormalTextParser.Parse(queryVertex, query, m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
+                parseError = MinusZero.Instance.DefaultFormalTextParser.Parse(new EdgeBase(null, null, queryVertex), query, m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
 
                 if (parseError == null || parseError.Count() == 0/* && || !cache.ContainsKey(query)*/)  // it happens to exist there so need to check again
                 {

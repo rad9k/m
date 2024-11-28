@@ -3106,43 +3106,43 @@ namespace m0.ZeroCode
             baseVertex.Value = firstValue;
         }
 
-        public IVertex Process(IVertex _baseVertex, string _text, CodeRepresentationEnum codeRepresentation)
+        public IVertex Process(IEdge _baseEdge, string _text, CodeRepresentationEnum codeRepresentation)
         {
             switch (codeRepresentation)
             {
-                case CodeRepresentationEnum.OneLine: return Process_OneLine(_baseVertex, _text);
+                case CodeRepresentationEnum.OneLine: return Process_OneLine(_baseEdge, _text);
 
-                case CodeRepresentationEnum.EdgeAndManyLines: return Process_EdgeAndManyLines(_baseVertex, _text);
+                case CodeRepresentationEnum.EdgeAndManyLines: return Process_EdgeAndManyLines(_baseEdge, _text);
 
-                case CodeRepresentationEnum.VertexAndManyLines: return Process_VertexAndManyLines(_baseVertex, _text);
+                case CodeRepresentationEnum.VertexAndManyLines: return Process_VertexAndManyLines(_baseEdge, _text);
 
-                case CodeRepresentationEnum.ManyLines: return Process_ManyLines(_baseVertex, _text);
+                case CodeRepresentationEnum.ManyLines: return Process_ManyLines(_baseEdge, _text);
             }
 
             return null;
         }        
         
-        public IVertex Process_OneLine(IVertex _baseVertex, string _text)
+        public IVertex Process_OneLine(IEdge _baseEdge, string _text)
         {
             return null;
         }
 
-        public IVertex Process_ManyLines(IVertex _baseVertex, string _text)
+        public IVertex Process_ManyLines(IEdge _baseEdge, string _text)
         {
             return null;
         }
 
-        public IVertex Process_EdgeAndManyLines(IVertex _baseVertex, string _text)
+        public IVertex Process_EdgeAndManyLines(IEdge _baseEdge, string _text)
         {
             return null;
         }
 
 
-        public IVertex Process_VertexAndManyLines(IVertex _baseVertex, string _text)
+        public IVertex Process_VertexAndManyLines(IEdge _baseEdge, string _text)
         {
             ZeroCodeUtil.ClearZeroCodeUtilDicionaries();
 
-            baseVertex = _baseVertex;
+            baseVertex = _baseEdge.To;
 
             errorList = MinusZero.Instance.CreateTempVertex();
 

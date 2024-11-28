@@ -2208,9 +2208,9 @@ namespace m0.ZeroUML.Instructions
 
             foreach (IEdge e in expressionResult)
             {
-                IVertex newVertex = newStack.AddVertex(null, "");
+                IEdge newEdge = newStack.AddVertexAndReturnEdge(null, "");
 
-                MinusZero.Instance.DefaultFormalTextParser.Parse(language, newVertex, e.To.Value.ToString(), m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
+                MinusZero.Instance.DefaultFormalTextParser.Parse(language, newEdge, e.To.Value.ToString(), m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
             }
 
             return newStack;

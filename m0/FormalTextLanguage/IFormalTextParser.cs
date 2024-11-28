@@ -10,8 +10,8 @@ namespace m0.FormalTextLanguage
 {
     public interface IFormalTextParser
     {
-        IVertex Parse(IVertex rootVertex, string text, CodeRepresentationEnum codeRepresentation);
+        IVertex Parse(IEdge rootEdge, string text, CodeRepresentationEnum codeRepresentation);
 
-        IVertex Parse(IVertex formalTextLanguage, IVertex rootVertex, string text, CodeRepresentationEnum codeRepresentation);
+        IVertex Parse(IVertex formalTextLanguage, IEdge rootEdge, string text, CodeRepresentationEnum codeRepresentation);
     }
 }
