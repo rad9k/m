@@ -29,6 +29,7 @@ using ICSharpCode.AvalonEdit.Editing;
 using System.Threading;
 using m0.UIWpf.Dialog;
 using System.Diagnostics;
+using m0.ZeroTypes.UX;
 
 namespace m0.UIWpf.Controls
 {
@@ -162,6 +163,16 @@ namespace m0.UIWpf.Controls
             return GetBaseEdge().To;
         }
 
+        private CodeRepresentationEnum GetCodeRepresentation()
+        {
+            IVertex CodeRepresentationVertex = Vertex.Get(false, @"CodeRepresentation:");
+
+            if (CodeRepresentationVertex != null)
+                return CodeRepresentationEnumHelper.GetEnum(CodeRepresentationVertex);
+            else
+                return CodeRepresentationEnum.VertexAndManyLines;
+        }
+
         private void ExecuteParse()
         {            
             editor_Text = editor.Text;
@@ -200,9 +211,9 @@ namespace m0.UIWpf.Controls
                 IVertex errorList;
 
                 if (ftl == null)
-                    errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(BaseEdge, editor_Text, m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
+                    errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(BaseEdge, editor_Text, GetCodeRepresentation());
                 else
-                    errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(ftl, BaseEdge, editor_Text, m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
+                    errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(ftl, BaseEdge, editor_Text, GetCodeRepresentation());
 
                 //
 
@@ -357,7 +368,7 @@ namespace m0.UIWpf.Controls
             editor.FontFamily = new FontFamily("Consolas");
             editor.FontWeight = FontWeight.FromOpenTypeWeight(1);
 
-            editor.Foreground = new SolidColorBrush(Color.FromRgb(0X2B, 0X91, 0XAF));
+            editor.Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0X2B, 0X91, 0XAF));
 
             editor.LineNumbersForeground = new SolidColorBrush(Colors.LightGray);
 
@@ -450,9 +461,9 @@ namespace m0.UIWpf.Controls
                 string generated;
 
                 if (ftl == null)
-                    generated = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ee, ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
+                    generated = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ee, GetCodeRepresentation());
                 else
-                    generated = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ftl, ee, ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
+                    generated = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ftl, ee, GetCodeRepresentation());
 
                 return generated;
             }
