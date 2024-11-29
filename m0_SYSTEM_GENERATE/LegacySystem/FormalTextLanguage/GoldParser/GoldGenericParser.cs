@@ -7,6 +7,7 @@ using m0.Foundation;
 using m0.Graph;
 using m0.Util;
 using m0;
+using m0.ZeroTypes.UX;
 
 
 namespace m0.FormalTextLanguage.GoldParser
@@ -23,8 +24,9 @@ namespace m0.FormalTextLanguage.GoldParser
 
         public bool RemoveBeginEndQuotas;
 
-        public IVertex Parse(IVertex rootVertex, string text)
+        public IVertex Parse(IEdge rootEdge, string text, CodeRepresentationEnum codeRepresentation)
         {
+            IVertex rootVertex = rootEdge.To;
 
             if (goldParser.Parse(new System.IO.StringReader(text)))
             {
@@ -138,7 +140,7 @@ namespace m0.FormalTextLanguage.GoldParser
                 }
         }
 
-        public IVertex Parse(IVertex formalTextLanguage, IVertex rootVertex, string text)
+        public IVertex Parse(IVertex formalTextLanguage, IEdge rootEdge, string text, CodeRepresentationEnum codeRepresentation)
         {
             throw new NotImplementedException();
         }

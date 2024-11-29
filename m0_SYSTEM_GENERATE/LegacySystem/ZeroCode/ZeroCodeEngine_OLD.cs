@@ -9,6 +9,7 @@ using m0.FormalTextLanguage.GoldParser;
 using m0.Graph;
 using m0.Util;
 using m0.ZeroTypes;
+using m0.ZeroTypes.UX;
 
 namespace m0.LegacySystem.ZeroCode
 {
@@ -24,9 +25,9 @@ namespace m0.LegacySystem.ZeroCode
 
  #region Parse
 
-        public IVertex Parse(Foundation.IVertex rootVertex, string text)
-        {
-            return Parser.Parse(rootVertex, text);
+        public IVertex Parse(Foundation.IEdge rootEdge, string text, CodeRepresentationEnum codeRepresentation)
+        {            
+            return Parser.Parse(rootEdge, text, codeRepresentation);
         }
 
         #endregion
@@ -506,7 +507,7 @@ namespace m0.LegacySystem.ZeroCode
             }
         }
 
-        public IVertex Parse(IVertex formalTextLanguage, IVertex rootVertex, string text)
+        public IVertex Parse(IVertex formalTextLanguage, IEdge rootEdge, string text, CodeRepresentationEnum codeRepresentation)
         {
             throw new NotImplementedException();
         }

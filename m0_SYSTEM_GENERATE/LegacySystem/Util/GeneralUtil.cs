@@ -22,7 +22,7 @@ namespace m0.LegacySystem.Util
 
             //z.DefaultParser.Parse(expressionAsVertex, expressionAsString);
 
-            LegacySystem.ZeroCodeEngine_OLD.Parse(expressionAsVertex, expressionAsString);
+            LegacySystem.ZeroCodeEngine_OLD.Parse(new EdgeBase(null, null, expressionAsVertex), expressionAsString, m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
 
             return LegacySystem.ZeroCodeEngine_OLD.OldStyleExecute(baseVertex, inputVertex, expressionAsVertex);
         }

@@ -1,5 +1,6 @@
 ﻿using m0.FormalTextLanguage;
 using m0.Foundation;
+using m0.Graph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +37,7 @@ namespace m0.LegacySystem.Graph
             {
                 queryVertex = MinusZero.Instance.CreateTempVertex();                
 
-                parseError = DefaultParser.Parse(queryVertex, query, ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
+                parseError = DefaultParser.Parse(new EdgeBase(null, null, queryVertex), query, ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
 
                 if (parseError == null)
                 {

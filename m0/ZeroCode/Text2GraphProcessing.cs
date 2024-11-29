@@ -2895,7 +2895,7 @@ namespace m0.ZeroCode
             this.L1009_left = _l1009_left;
             this.L1009_right = _l1009_right;
 
-            return Process(_baseVertex, _text, m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
+            return Process(new EdgeBase(null, null, _baseVertex), _text, m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
         }
 
         private bool ProcessToVertexMocksToLinks_Delegate(IEdge edge)

@@ -251,7 +251,7 @@ namespace m0_SYSTEM_GENERATE
           "\r\n\tA = @Add[\"3\"]", m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines
           );
 
-            IVertex code7 = code.AddVertex(null, null);
+            IEdge code7 = code.AddVertexAndReturnEdge(null, null);
             MinusZero.Instance.DefaultFormalTextParser.Parse(code7,
              "\"Code7\"" +
              "\r\n\tvariable \"A\" @String" +
@@ -280,7 +280,7 @@ namespace m0_SYSTEM_GENERATE
              "\r\n\t\t\t\tE += (W * \"200\") + (Z * \"20\") + (X*\"4\") + Y", m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines
              );
 
-            IVertex code8 = code.AddVertex(null, null);
+            IEdge code8 = code.AddVertexAndReturnEdge(null, null);
             MinusZero.Instance.DefaultFormalTextParser.Parse(code8,
        "\"Code8\"" +
        "\r\n\tvariable \"A\" @String" +
@@ -292,13 +292,13 @@ namespace m0_SYSTEM_GENERATE
 
        );
 
-            IVertex code9 = code.AddVertex(null, null);
+            IEdge code9 = code.AddVertexAndReturnEdge(null, null);
             MinusZero.Instance.DefaultFormalTextParser.Parse(code9,
         "\"Code9\"" +
         "\r\n\tvariable \"a\" @Vertex" +
         "\r\n\ta=@@System", m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
 
-            IVertex code10 = code.AddVertex(null, null);
+            IEdge code10 = code.AddVertexAndReturnEdge(null, null);
             MinusZero.Instance.DefaultFormalTextParser.Parse(code10,
         "\"Code10\"" +
         "\r\n\t\"X\"" +
@@ -313,7 +313,7 @@ namespace m0_SYSTEM_GENERATE
         "\r\n\tD = execute(parse(\"A + A\"))", m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines
         );
 
-            IVertex code11 = code.AddVertex(null, null);
+            IEdge code11 = code.AddVertexAndReturnEdge(null, null);
             MinusZero.Instance.DefaultFormalTextParser.Parse(code11,
             "\"Code11\"" +
             "\r\n\t\"x\"" +
@@ -328,7 +328,7 @@ namespace m0_SYSTEM_GENERATE
             "\r\n\ta = ($\\:x<<\"1\">>\\<+>$\\:x<<\"2\">>\\)\\" +
             "\r\n\t@@x<<\"2\">>\\b<<\"2\">>\\z3", m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
 
-            IVertex code12 = code.AddVertex(null, null);
+            IEdge code12 = code.AddVertexAndReturnEdge(null, null);
             MinusZero.Instance.DefaultFormalTextParser.Parse(code12,
         "\"Code12\"" +
         "\r\n\tclass \"Person\"" +
@@ -343,7 +343,7 @@ namespace m0_SYSTEM_GENERATE
     "\r\n\tperson.setName[\"Rad9k\"]" +
     "\r\n\tname = person.getName[]", m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
 
-            IVertex code13 = code.AddVertex(null, null);
+            IEdge code13 = code.AddVertexAndReturnEdge(null, null);
             MinusZero.Instance.DefaultFormalTextParser.Parse(code13,
             "\"Code13\"" +
     "\r\n\tvariable \"mis\" @Boolean" +
@@ -369,7 +369,7 @@ namespace m0_SYSTEM_GENERATE
             //MinusZero.Instance.NewDefaultParser.Parse(code, "\"Code\"\r\n\tvariable \"Magunia\" @String 5:10\r\n\tvariable \"Radek\" @String 2:2\r\n\tRadek += \"Koha\"\r\n\tMagunia=Radek\r\n\tMagunia ~= Radek:Koha");
 
 
-            IVertex code14 = code.AddVertex(null, null);
+            IEdge code14 = code.AddVertexAndReturnEdge(null, null);
             MinusZero.Instance.DefaultFormalTextParser.Parse(code14,
             "\"Code14\"" +
     "\r\n\tvariable \"a\" @Boolean" +
