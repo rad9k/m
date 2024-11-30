@@ -3531,6 +3531,22 @@ namespace m0
             smzu.Get(false, @"UXTemplate\ContainerEdgeMetaVertex").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\VertexType"));
             smzu.Get(false, @"UXTemplate\BaseEdgeQuery").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
 
+            // InstanceCreationEnum
+
+            smzu.Get(false, @"InstanceCreationEnum").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));
+
+            // CodeRepresentationEnum
+            
+            smzu.Get(false, @"CodeRepresentationEnum").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));
+
+            // LineEndEnum
+
+            smzu.Get(false, @"LineEndEnum").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));
+
+            // OrientationEnum
+
+            smzu.Get(false, @"OrientationEnum").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));
+
             // LineDecoratorBase
 
             smzu.Get(false, @"LineDecoratorBase").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
@@ -3602,8 +3618,7 @@ namespace m0
             smzu.Get(false, @"CodeItem").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
             smzu.Get(false, @"CodeItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"RectangleItem"));
             smzu.Get(false, @"CodeItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"LabeledItem"));
-            smzu.Get(false, @"CodeItem").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.CodeItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            smzu.Get(false, @"CodeItem\CodeRepresentation").AddEdge(sm.Get(false, @"?$EdgeTarget"), smzu.Get(false, @"CodeRepresentationEnum"));            
+            smzu.Get(false, @"CodeItem").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.CodeItem, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");            
 
             // RectangleVisualiserItem
 
@@ -3687,7 +3702,8 @@ namespace m0
             smzu.Get(false, @"CodeView\ContentQuery").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
             smzu.Get(false, @"CodeView\FontSize").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Float"));
             smzu.Get(false, @"CodeView\FormalTextLanguage").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\VertexType"));
-            smzu.Get(false, @"CodeView\CodeRepresentation").AddEdge(sm.Get(false, @"?$EdgeTarget"), smzu.Get(false, @"CodeRepresentationEnum"));
+            smzu.Get(false, @"CodeView\CodeRepresentation").AddEdge(sm.Get(false, @"?$EdgeTarget"), smzu.Get(false, @"CodeRepresentationEnum"));            
+            smzu.Get(false, @"CodeView\CodeRepresentation").AddEdge(sm.Get(false, @"?$DefaultValue"), smzu.Get(false, @"CodeRepresentationEnum\VertexAndManyLines"));
 
 
         }

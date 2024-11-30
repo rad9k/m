@@ -60,7 +60,7 @@ namespace m0.UIWpf.Visualisers
         {
             Scale = _scale;
 
-            Margin = 5;
+            Margin = 3;
         
             this.Background = (Brush)FindResource("0BackgroundBrush");
 
