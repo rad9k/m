@@ -47,8 +47,7 @@ namespace m0.Graph
                 if (value)
                 {
                     _InEdgesDictionariesNeedsRebuild = true;
-
-                    InEdgesDictionariesNeedsRebuild_Edges = true;
+         
                     InEdgesDictionariesNeedsRebuild_Meta = true;
                     InEdgesDictionariesNeedsRebuild_Value = true;
                     InEdgesDictionariesNeedsRebuild_MetaAndValue = true;
@@ -57,15 +56,12 @@ namespace m0.Graph
                 {
                     _InEdgesDictionariesNeedsRebuild = false;
 
-                    InEdgesDictionariesNeedsRebuild_Edges = false;
                     InEdgesDictionariesNeedsRebuild_Meta = false;
                     InEdgesDictionariesNeedsRebuild_Value = false;
                     InEdgesDictionariesNeedsRebuild_MetaAndValue = false;
                 }
             }
-        }
-
-        protected bool InEdgesDictionariesNeedsRebuild_Edges { get; set; }
+        }        
 
         protected bool InEdgesDictionariesNeedsRebuild_Meta { get; set; }
 

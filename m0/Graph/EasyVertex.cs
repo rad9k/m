@@ -97,34 +97,10 @@ namespace m0.Graph
         public override IList<IEdge> InEdges
         {
             get
-            {
-                if (InEdgesDictionariesNeedsRebuild_Edges)
-                {
-                    InEdgesDictionariesRebuild_Edges();
-                    InEdgesDictionariesNeedsRebuild_Edges = false;
-                    return _InEdges;
-                }
-                else
-                    return _InEdges;
+            {                
+                return InEdgesRaw;
             }                       
-        }
-
-        private void InEdgesDictionariesRebuild_Edges()
-        {
-            if (HasInheritance && AllowInheritance)
-            {
-                List<IEdge> FullEdges = InEdgesRaw.ToList();
-
-                HashSet<IVertex> parents = VertexHelper.GetInheritParents(this);
-
-                foreach (IVertex v in parents)
-                    FullEdges.AddRange(v.InEdgesRaw);
-
-                _InEdges = FullEdges;
-            }
-            else
-                _InEdges = InEdgesRaw;
-        }
+        }        
 
         public override IList<IEdge> OutEdgesRaw { get { return edgeDictionaries.Out; } }
 
