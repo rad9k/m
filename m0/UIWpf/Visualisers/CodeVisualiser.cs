@@ -43,7 +43,9 @@ namespace m0.UIWpf.Visualisers
         static string[] _MetaTriggeringUpdateView = new string[] {"ShowWhiteSpace", "ShowLineNumbers", "HighlightedLine", "ShowFolding", "ContentQuery", "FontSize", "CodeRepresentation", "FormalTextLanguage" };
         public string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
-        public void ViewAttributesUpdated() { CodeControl.ViewAttributesUpdated(); }
+        public void ViewAttributesUpdated() { 
+            CodeControl.ViewAttributesUpdated(); 
+        }
 
         public void UnselectAllSelectedEdges() { }
 
