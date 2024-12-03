@@ -303,9 +303,20 @@ namespace m0.UIWpf.Controls
         FoldingManager foldingManager;
         DispatcherTimer foldingUpdateTimer;
 
+        CodeRepresentationEnum codeRepresentation_prev;
+
+        bool codeRepresentation_prev_calculated = false;
+
         public void ViewAttributesUpdated()
         {
-            if(GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, @"ShowWhiteSpace:"),"True"))
+            IVertex codeRepresentation_Vertex = Vertex.Get(false, @"ShowWhiteSpace:");
+
+            if (codeRepresentation_Vertex != null)
+            {
+                CodeRepresentationEnum codeRepresentation
+            }
+
+            if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, @"ShowWhiteSpace:"),"True"))
                 editor.Options.ShowTabs = true;
             else
                 editor.Options.ShowTabs = false;
