@@ -1756,7 +1756,7 @@ namespace m0.ZeroCode
         {
             IVertex v = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(_graphBaseEdge.To);
 
-            BaseEdge = new EasyEdge(null, null, v);            
+            BaseEdge = new EasyEdge(_graphBaseEdge.From, _graphBaseEdge.Meta, v); // this is some crazy hybrid. this is non consistent and might not work!
 
              //BaseEdge = _graphBaseEdge;
         }
@@ -1779,7 +1779,49 @@ namespace m0.ZeroCode
 
         public string Process_EdgeAndManyLines(IEdge _graphBaseEdge)
         {
-            return null;
+            prepareBaseEdge(_graphBaseEdge);
+
+            BeenList = new HashSet<IEdge>();
+            BeenList_Keyword = new HashSet<IEdge>();
+            newLinesBeenList = new HashSet<IEdge>();
+
+            Source = new StringBuilder();
+            Imports = new Dictionary<IVertex, IList<IVertex>>();
+            VerticesDictionary = new Dictionary<IVertex, VertexData>();
+            SubGraphVerticesDictionary = new Dictionary<IVertex, VertexData>();
+            KeywordMatchedSubGraphEdges = new Dictionary<IEdge, KeywordMatch>();
+
+            DoKeywordDefinitionContainLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
+            DoKeywordDefinitionContainStartInLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
+
+            //             
+
+            GetLinksForSubGraphVertices(BaseEdge, null, 0);
+
+            BeenList.Clear();
+
+            MatchKeywords(BaseEdge, null);
+
+            BeenList.Clear();
+
+            //
+
+            BeenList.Add(BaseEdge);
+
+            //
+
+            //ImportImports(FormalTextLanguage.Get(false, "DefaultImports:"));
+            ImportImports(GraphUtil.GetQueryOutFirst(FormalTextLanguage, "DefaultImports", null));
+            ImportImports(BaseEdge.To);
+
+            //AppendPrefix();
+            AppendAsNew(BaseEdge.To);
+            //AppendSuffix();            
+
+            foreach (IEdge e in BaseEdge.To.OutEdgesRaw)
+                ZeroCodeGraph2String_Reccurent(e, 1, BaseEdge, null);
+
+            return Source.ToString();
         }
 
         public string Process_OneLine(IEdge _graphBaseEdge)
@@ -1834,7 +1876,6 @@ namespace m0.ZeroCode
                 ZeroCodeGraph2String_Reccurent(e, 0, BaseEdge, null);
 
             return Source.ToString();
-
         }
 
 
