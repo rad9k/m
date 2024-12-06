@@ -309,11 +309,21 @@ namespace m0.UIWpf.Controls
 
         public void ViewAttributesUpdated()
         {
-            IVertex codeRepresentation_Vertex = Vertex.Get(false, @"ShowWhiteSpace:");
+            IVertex codeRepresentation_Vertex = Vertex.Get(false, @"CodeRepresentation:");
 
             if (codeRepresentation_Vertex != null)
             {
-                CodeRepresentationEnum codeRepresentation
+                CodeRepresentationEnum codeRepresentation = CodeRepresentationEnumHelper.GetEnum(codeRepresentation_Vertex);
+
+                if (codeRepresentation_prev_calculated)
+                {
+                    if (codeRepresentation_prev != codeRepresentation)
+                        ExecuteGenerate();
+                }
+                else
+                    codeRepresentation_prev_calculated = true;
+
+                codeRepresentation_prev = codeRepresentation;
             }
 
             if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, @"ShowWhiteSpace:"),"True"))
