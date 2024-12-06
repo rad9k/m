@@ -532,11 +532,16 @@ namespace m0.ZeroCode
             return sb.ToString();
         }
 
+        bool ommitOnce_AppendNewLineAndTabs = false;
+
         void AppendNewLineAndTabs()
         {
             // SourceAppend(getNewLineAndTabsString()); << no as SourceAppend adds getNewLineAndTabsString() on its own
 
-            Source.Append(getNewLineAndTabsString());
+            if (!ommitOnce_AppendNewLineAndTabs)
+                Source.Append(getNewLineAndTabsString());
+                
+            ommitOnce_AppendNewLineAndTabs = false;
         }
 
 
@@ -1784,7 +1789,52 @@ namespace m0.ZeroCode
 
         public string Process_ManyLines(IEdge _graphBaseEdge)
         {
-            return null;
+            prepareBaseEdge(_graphBaseEdge);
+
+            BeenList = new HashSet<IEdge>();
+            BeenList_Keyword = new HashSet<IEdge>();
+            newLinesBeenList = new HashSet<IEdge>();
+
+            Source = new StringBuilder();
+            Imports = new Dictionary<IVertex, IList<IVertex>>();
+            VerticesDictionary = new Dictionary<IVertex, VertexData>();
+            SubGraphVerticesDictionary = new Dictionary<IVertex, VertexData>();
+            KeywordMatchedSubGraphEdges = new Dictionary<IEdge, KeywordMatch>();
+
+            DoKeywordDefinitionContainLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
+            DoKeywordDefinitionContainStartInLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
+
+            //             
+
+            GetLinksForSubGraphVertices(BaseEdge, null, 0);
+
+            BeenList.Clear();
+
+            MatchKeywords(BaseEdge, null);
+
+            BeenList.Clear();
+
+            //
+
+            BeenList.Add(BaseEdge);
+
+            //
+
+            //ImportImports(FormalTextLanguage.Get(false, "DefaultImports:"));
+            ImportImports(GraphUtil.GetQueryOutFirst(FormalTextLanguage, "DefaultImports", null));
+            ImportImports(BaseEdge.To);
+
+            //AppendPrefix();
+            //AppendAsNew(BaseEdge.To);
+            //AppendSuffix();
+
+            ommitOnce_AppendNewLineAndTabs = true;
+
+            foreach (IEdge e in BaseEdge.To.OutEdgesRaw)
+                ZeroCodeGraph2String_Reccurent(e, 0, BaseEdge, null);
+
+            return Source.ToString();
+
         }
 
 
