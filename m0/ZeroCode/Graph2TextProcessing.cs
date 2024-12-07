@@ -1806,7 +1806,7 @@ namespace m0.ZeroCode
 
             //
 
-            BeenList.Add(BaseEdge);
+            //BeenList.Add(BaseEdge);
 
             //
 
@@ -1821,9 +1821,9 @@ namespace m0.ZeroCode
             //foreach (IEdge e in BaseEdge.To.OutEdgesRaw)
             //  ZeroCodeGraph2String_Reccurent(e, 1, BaseEdge, null);
 
-            //ZeroCodeGraph2String_Reccurent(BaseEdge, 0, new EasyEdge(null, null, BaseEdge.From), null);
+            ZeroCodeGraph2String_Reccurent(BaseEdge, 0, new EasyEdge(null, null, BaseEdge.From), null);
 
-            ZeroCodeGraph2String_Reccurent(BaseEdge, 0, BaseEdge, null);
+            //ZeroCodeGraph2String_Reccurent(BaseEdge, 0, BaseEdge, null);
 
             return Source.ToString();
         }
