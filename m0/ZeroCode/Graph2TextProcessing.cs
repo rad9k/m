@@ -1815,11 +1815,15 @@ namespace m0.ZeroCode
             ImportImports(BaseEdge.To);
 
             //AppendPrefix();
-            AppendAsNew(BaseEdge.To);
+            //AppendAsNew(BaseEdge.To);
             //AppendSuffix();            
 
-            foreach (IEdge e in BaseEdge.To.OutEdgesRaw)
-                ZeroCodeGraph2String_Reccurent(e, 1, BaseEdge, null);
+            //foreach (IEdge e in BaseEdge.To.OutEdgesRaw)
+            //  ZeroCodeGraph2String_Reccurent(e, 1, BaseEdge, null);
+
+            //ZeroCodeGraph2String_Reccurent(BaseEdge, 0, new EasyEdge(null, null, BaseEdge.From), null);
+
+            ZeroCodeGraph2String_Reccurent(BaseEdge, 0, BaseEdge, null);
 
             return Source.ToString();
         }
