@@ -1605,7 +1605,16 @@ namespace m0.ZeroCode
             return thereWasMatch;
         }
 
-        public void GetLinksForSubGraphVertices(IEdge e, string path, int nestedLevel)
+        public void GetLinksForSubGraphVertices_BaseEdge()
+        {
+            IEdge ee = BaseEdge;
+
+            BeenList.Add(ee);                                   
+                
+            SubGraphVerticesDictionary.Add(ee.To, new VertexData("", 0));            
+        }
+
+        public void GetLinksForSubGraphVertices_subVertexes(IEdge e, string path, int nestedLevel)
         {
             BeenList.Add(e);
 
@@ -1638,7 +1647,7 @@ namespace m0.ZeroCode
                         SubGraphVerticesDictionary.Add(ee.To, new VertexData(LinkString, nestedLevel));
 
                     if (beenThereButNeedToReEnter || !BeenList.Contains(ee))
-                        GetLinksForSubGraphVertices(ee, LinkString, nestedLevel+1);
+                        GetLinksForSubGraphVertices_subVertexes(ee, LinkString, nestedLevel+1);
                 }
         }
 
@@ -1799,7 +1808,7 @@ namespace m0.ZeroCode
         public string Process_EdgeAndManyLines(IEdge _graphBaseEdge)
         {
             ommitOnce_AppendNewLineAndTabs = true;
-            ommitOnce_checkIfSubGraphVerticesDictionaryContainsVertex = true;
+            //ommitOnce_checkIfSubGraphVerticesDictionaryContainsVertex = true;
             ommitOnce_baseEdgePath = true;
 
             //
@@ -1821,7 +1830,8 @@ namespace m0.ZeroCode
 
             //             
 
-            GetLinksForSubGraphVertices(BaseEdge, null, 0);
+            GetLinksForSubGraphVertices_BaseEdge();
+            GetLinksForSubGraphVertices_subVertexes(BaseEdge, null, 0);
 
             BeenList.Clear();
 
@@ -1869,7 +1879,7 @@ namespace m0.ZeroCode
 
             //             
 
-            GetLinksForSubGraphVertices(BaseEdge, null, 0);
+            GetLinksForSubGraphVertices_subVertexes(BaseEdge, null, 0);
 
             BeenList.Clear();
 
@@ -1911,7 +1921,7 @@ namespace m0.ZeroCode
             
             //             
 
-            GetLinksForSubGraphVertices(BaseEdge, null, 0);
+            GetLinksForSubGraphVertices_subVertexes(BaseEdge, null, 0);
 
             BeenList.Clear();
 
