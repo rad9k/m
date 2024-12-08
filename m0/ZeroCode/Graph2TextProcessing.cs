@@ -1281,9 +1281,18 @@ namespace m0.ZeroCode
             }
         }
 
+        bool ommitOnce_checkIfSubGraphVerticesDictionaryContainsVertex = false;
+
         private bool isVertexNew(IEdge e, string path)
         {
-            if (!SubGraphVerticesDictionary.ContainsKey(e.To))
+            if (ommitOnce_checkIfSubGraphVerticesDictionaryContainsVertex)
+            {
+                ommitOnce_checkIfSubGraphVerticesDictionaryContainsVertex = false;
+
+                return true;
+            }
+            else
+                if (!SubGraphVerticesDictionary.ContainsKey(e.To))
                 return false; // is it possible? YES
 
             VertexData eVertexData = SubGraphVerticesDictionary[e.To];
@@ -1667,6 +1676,8 @@ namespace m0.ZeroCode
 
         // bool log = true;
 
+        bool ommitOnce_baseEdgePath = false;
+
         void ZeroCodeGraph2String_Reccurent(IEdge baseEdge, int level, IEdge parent, string path)
         {
               //if (log)
@@ -1685,10 +1696,18 @@ namespace m0.ZeroCode
             if (!ShallProcess(baseEdge))
                 return;
 
-            if (path != null)
-                path = path + "\\" + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(dict, baseEdge);
-            else
-                path = GraphUtil.GetIdentyfyingQuerySubString_MetaMode(dict, baseEdge);
+            if (ommitOnce_baseEdgePath)
+            {
+                path = "";
+                ommitOnce_baseEdgePath = false;
+            }else
+            {
+
+                if (path != null && path != "")
+                    path = path + "\\" + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(dict, baseEdge);
+                else
+                    path = GraphUtil.GetIdentyfyingQuerySubString_MetaMode(dict, baseEdge);
+            }
 
             if (GeneralUtil.CompareStrings(baseEdge.Meta, "$Is") && baseEdge.To == parent.Meta && !KeywordMatchedSubGraphEdges.ContainsKey(baseEdge))
             {
@@ -1779,6 +1798,12 @@ namespace m0.ZeroCode
 
         public string Process_EdgeAndManyLines(IEdge _graphBaseEdge)
         {
+            ommitOnce_AppendNewLineAndTabs = true;
+            ommitOnce_checkIfSubGraphVerticesDictionaryContainsVertex = true;
+            ommitOnce_baseEdgePath = true;
+
+            //
+
             prepareBaseEdge(_graphBaseEdge);
 
             BeenList = new HashSet<IEdge>();
@@ -1806,20 +1831,8 @@ namespace m0.ZeroCode
 
             //
 
-            //BeenList.Add(BaseEdge);
-
-            //
-
-            //ImportImports(FormalTextLanguage.Get(false, "DefaultImports:"));
             ImportImports(GraphUtil.GetQueryOutFirst(FormalTextLanguage, "DefaultImports", null));
             ImportImports(BaseEdge.To);
-
-            //AppendPrefix();
-            //AppendAsNew(BaseEdge.To);
-            //AppendSuffix();            
-
-            //foreach (IEdge e in BaseEdge.To.OutEdgesRaw)
-            //  ZeroCodeGraph2String_Reccurent(e, 1, BaseEdge, null);
 
             ZeroCodeGraph2String_Reccurent(BaseEdge, 0, new EasyEdge(null, null, BaseEdge.From), null);
 
@@ -1835,6 +1848,10 @@ namespace m0.ZeroCode
 
         public string Process_ManyLines(IEdge _graphBaseEdge)
         {
+            ommitOnce_AppendNewLineAndTabs = true;
+
+            //
+
             prepareBaseEdge(_graphBaseEdge);
 
             BeenList = new HashSet<IEdge>();
@@ -1866,22 +1883,14 @@ namespace m0.ZeroCode
 
             //
 
-            //ImportImports(FormalTextLanguage.Get(false, "DefaultImports:"));
             ImportImports(GraphUtil.GetQueryOutFirst(FormalTextLanguage, "DefaultImports", null));
-            ImportImports(BaseEdge.To);
-
-            //AppendPrefix();
-            //AppendAsNew(BaseEdge.To);
-            //AppendSuffix();
-
-            ommitOnce_AppendNewLineAndTabs = true;
+            ImportImports(BaseEdge.To);            
 
             foreach (IEdge e in BaseEdge.To.OutEdgesRaw)
                 ZeroCodeGraph2String_Reccurent(e, 0, BaseEdge, null);
 
             return Source.ToString();
         }
-
 
         public string Process_VertexAndManyLines(IEdge _graphBaseEdge)
         {       
