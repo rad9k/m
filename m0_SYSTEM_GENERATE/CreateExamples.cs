@@ -149,7 +149,13 @@ namespace m0_SYSTEM_GENERATE
 
             static void _exeTest(IVertex code)
             {
-                IEdge code1 = code.AddVertexAndReturnEdge(null, null);
+            IEdge code0 = code.AddVertexAndReturnEdge(null, null);
+            MinusZero.Instance.DefaultFormalTextParser.Parse(code0,
+                "\"Code0\"" + "" +
+                "\r\n\tvariable \"A\" @String" , m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines
+                );
+
+            IEdge code1 = code.AddVertexAndReturnEdge(null, null);
             MinusZero.Instance.DefaultFormalTextParser.Parse(code1,
                 "\"Code1\"" + "" +
                 "\r\n\tvariable \"A\" @String" +
