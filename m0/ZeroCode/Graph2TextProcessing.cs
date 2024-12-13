@@ -1651,7 +1651,7 @@ namespace m0.ZeroCode
                 }
         }
 
-        public void MatchKeywords(IEdge e, string path)
+        public void MatchKeywords(IEdge e, string path, bool executeOnRootEdge)
         {
             BeenList.Add(e);
 
@@ -1660,15 +1660,21 @@ namespace m0.ZeroCode
             if (path != null)
                 suffix = "\\";
 
+            if (executeOnRootEdge)
+                MatchKeywords_inner(e, path, suffix, e);
+
             foreach (IEdge ee in e.To.OutEdgesRaw)
-            {
-                    string LinkString = path + suffix + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(dict, ee);
+                MatchKeywords_inner(e, path, suffix, ee);
+        }
 
-                    CheckVertexIfItMachesAnyKeywordGraphs(ee, LinkString, e);                    
+        private void MatchKeywords_inner(IEdge e, string path, string suffix, IEdge ee)
+        {
+            string LinkString = path + suffix + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(dict, ee);
 
-                    if (!BeenList.Contains(ee) && !VertexOperations.IsLink(ee))
-                        MatchKeywords(ee, LinkString);
-            }
+            CheckVertexIfItMachesAnyKeywordGraphs(ee, LinkString, e);
+
+            if (!BeenList.Contains(ee) && !VertexOperations.IsLink(ee))
+                MatchKeywords(ee, LinkString, false);
         }
 
         void AppendPrefix()
@@ -1835,7 +1841,7 @@ namespace m0.ZeroCode
 
             BeenList.Clear();
 
-            MatchKeywords(BaseEdge, null);
+            MatchKeywords(BaseEdge, null, true);
 
             BeenList.Clear();
 
@@ -1883,7 +1889,7 @@ namespace m0.ZeroCode
 
             BeenList.Clear();
 
-            MatchKeywords(BaseEdge, null);
+            MatchKeywords(BaseEdge, null, false);
 
             BeenList.Clear();
 
@@ -1925,7 +1931,7 @@ namespace m0.ZeroCode
 
             BeenList.Clear();
 
-            MatchKeywords(BaseEdge, null);
+            MatchKeywords(BaseEdge, null, false);
 
             BeenList.Clear();
 
