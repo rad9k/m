@@ -6,6 +6,7 @@ using m0.ZeroTypes;
 using m0.ZeroTypes.UX;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -1296,6 +1297,9 @@ namespace m0.ZeroCode
                 return false; // is it possible? YES
 
             VertexData eVertexData = SubGraphVerticesDictionary[e.To];
+
+            if (eVertexData.LinkString == "") // root
+                return true;
 
             if ((path == null || eVertexData.LinkString == path) && !eVertexData.VertexHasBeenAppendedAsNew)
             {
