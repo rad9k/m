@@ -150,6 +150,7 @@
 				<@LabeledItem\ShowMeta :: "False">
 				<@LabeledItem\ConstantLabel :: "block">
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
+			<@$Inherits :: @ZeroUML\ActionContainerDecorators>
 			
 		<@UXTemplate :: "Named Block (container)">
 			<@$Is :: @UXTemplate>
@@ -162,6 +163,7 @@
 				<@LabeledItem\ShowMeta :: "False">
 				<@LabeledItem\ConstantLabel :: "named block">
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
+			<@$Inherits :: @ZeroUML\ActionContainerDecorators>
 			
 		<@UXTemplate :: "Package (container)">
 			<@$Is :: @UXTemplate>
@@ -173,17 +175,7 @@
 				<@$Inherits :: @ZeroUML\BaseStaticItemVertex>
 				<@LabeledItem\ShowMeta :: "False">
 				<@LabeledItem\ConstantLabel :: "package">			
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@SupportEmptyMetaEdge :: "True">
-				<@EdgeTestQuery :: "$Is:\">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@UXItem\BackgroundColor :: @VeryVeryVeryLightGreen>
-					<@UXItem\ForegroundColor :: @Black>
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+			<@$Inherits :: @ZeroUML\StaticContainerDecorators>
 			
 		<@UXTemplate :: "Variable">
 			<@$Is :: @UXTemplate>
@@ -367,6 +359,30 @@
 					<@LineDecorator\LineWidth :: "4">
 					<@LineDecorator\HideLabel :: "True">
 					<@UXItem\ForegroundColor :: @LightCentralBlue>
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+		<"StaticContainerDecorators">
+			<@UXDecoratorTemplate :: "Edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@SupportEmptyMetaEdge :: "True">
+				<@EdgeTestQuery :: "$Is:\">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@UXItem\BackgroundColor :: @VeryVeryVeryLightGreen>
+					<@UXItem\ForegroundColor :: @Black>
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+		<"ActionContainerDecorators">
+			<@UXDecoratorTemplate :: "Edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@SupportEmptyMetaEdge :: "True">
+				<@EdgeTestQuery :: "$Is:\">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@UXItem\BackgroundColor :: @VeryVeryVeryLightVioletBlue>
+					<@UXItem\ForegroundColor :: @Black>
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
 		<"ConditionalActionDecoratorVertex">
 			<@LineDecorator\LineWidth :: "2">
