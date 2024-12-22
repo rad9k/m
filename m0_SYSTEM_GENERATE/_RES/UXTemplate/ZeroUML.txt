@@ -376,7 +376,6 @@
 			<@UXDecoratorTemplate :: "Edge">
 				<@$Is :: @UXDecoratorTemplate>
 				<@SupportEmptyMetaEdge :: "True">
-				<@EdgeTestQuery :: "">
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
