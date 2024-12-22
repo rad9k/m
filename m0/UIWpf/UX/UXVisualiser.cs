@@ -2233,7 +2233,8 @@ namespace m0.UIWpf.UX
             //if (GraphUtil.GetValueAndCompareStrings(item.UXTemplate.Vertex, "Vertex"))
             //  return new UXDecoratorTemplate(item.Vertex.GetAll(false, @"UXTemplate:\UXDecoratorTemplate:Edge").FirstOrDefault());
 
-            UXDecoratorTemplate tem_found_NoEdgeTestQueries = null;
+            UXDecoratorTemplate tem_found_EmptyMetaEdge = null;
+            UXDecoratorTemplate tem_found_AnyMetaEdge = null;
             UXDecoratorTemplate tem_found_EdgeTestQueries = null;
 
             foreach (UXDecoratorTemplate tem in item.UXTemplate.UXDecoratorTemplates)            
@@ -2243,10 +2244,13 @@ namespace m0.UIWpf.UX
                 if (tem.SupportEmptyMetaEdge)
                 {
                     if (e.Meta.Value.ToString() == "$Empty")
-                        tem_found_NoEdgeTestQueries = tem;
-                    else if (edgeTestQuery == null)
-                        return null;
+                        tem_found_EmptyMetaEdge = tem;
+                    //else if (edgeTestQuery == null) // seems to be a bug? >> commented out
+                      //  return null;
                 }
+
+                if (tem.SupportAnyMetaEdge)
+                    tem_found_AnyMetaEdge = tem;
 
                 bool canReturn = true;                
 
@@ -2271,16 +2275,19 @@ namespace m0.UIWpf.UX
                         if (edgeTestQuery != null && edgeTestQuery != "")
                             tem_found_EdgeTestQueries = tem;
                         else
-                            tem_found_NoEdgeTestQueries = tem;
-                    }
-                        
+                            if (tem_found_EmptyMetaEdge == null)
+                                tem_found_EmptyMetaEdge = tem;
+                    }                    
                 }
             }
 
             if (tem_found_EdgeTestQueries != null)
                 return tem_found_EdgeTestQueries;
 
-            return tem_found_NoEdgeTestQueries; // can be null and that is ok
+            if (tem_found_EmptyMetaEdge != null)
+                return tem_found_EmptyMetaEdge;
+
+            return tem_found_AnyMetaEdge; // can be null and that is ok
         }
 
         // UNDERPINNINGS

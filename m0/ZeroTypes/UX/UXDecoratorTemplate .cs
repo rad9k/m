@@ -11,6 +11,7 @@ namespace m0.ZeroTypes.UX
     public class UXDecoratorTemplate: UXTemplate
     {
         static IVertex SupportEmptyMetaEdge_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\SupportEmptyMetaEdge");
+        static IVertex SupportAnyMetaEdge_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\SupportAnyMetaEdge");
         static IVertex EdgeTestQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\EdgeTestQuery");
         static IVertex ToDiagramItemTestQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\ToDiagramItemTestQuery");
         static IVertex DecoratorClass_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXDecoratorTemplate\DecoratorClass");
@@ -39,6 +40,28 @@ namespace m0.ZeroTypes.UX
 
                 if (val == null)
                     val = Vertex.AddVertex(SupportEmptyMetaEdge_meta, value);
+                else
+                    val.Value = value;
+            }
+        }
+
+        public bool SupportAnyMetaEdge // $Empty::
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "SupportAnyMetaEdge", null);
+
+                if (val == null)
+                    return false;
+
+                return GraphUtil.GetBooleanValueOrFalse(val);
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "SupportAnyMetaEdge", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(SupportAnyMetaEdge_meta, value);
                 else
                     val.Value = value;
             }
