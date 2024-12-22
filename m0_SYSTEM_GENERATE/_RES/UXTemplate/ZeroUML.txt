@@ -38,6 +38,24 @@
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+				
+		<@UXTemplate :: "Code Line">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@ItemClass :: @CodeItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\BaseGenericItemVertex>
+				<@LabeledItem\ConstantLabel :: "code line">
+				<@LabeledItem\ShowMeta :: "True">
+				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\VertexAndManyLines>
+			<@UXDecoratorTemplate :: "Edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:\">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
 
 		<@UXTemplate :: "Class">
 			<@$Is :: @UXTemplate>
