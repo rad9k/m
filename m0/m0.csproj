@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
+	<LangVersion>8.0</LangVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
@@ -148,6 +149,7 @@
       <DependentUpon>AnimatedHideArea_VerticalRight.xaml</DependentUpon>
     </Compile>
     <Compile Include="UIWpf\Controls\CodeControl.cs" />
+    <Compile Include="UIWpf\Controls\DashedBorder.cs" />
     <Compile Include="UIWpf\Controls\IHasScrollViewer.cs" />
     <Compile Include="UIWpf\Controls\IMouseWheelHandler.cs" />
     <Compile Include="UIWpf\Controls\MultiplyConverter.cs" />

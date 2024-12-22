@@ -20,11 +20,7 @@ namespace m0.ZeroTypes.UX
     {
         public UXContainer_RectangleItem_LabeledItem(IEdge edge) : base(edge) { }
 
-        // CODE for RectangleItem
-
-
-        // CODE for RectangleItem
-
+        // BEG CODE for LabeledItem
 
         static IVertex BaseEdge_meta = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge");
 
@@ -179,7 +175,7 @@ namespace m0.ZeroTypes.UX
         {
             CodeControl codeControl;
 
-            if (ContentQuery != null)
+            /*if (ContentQuery != null) // ContentQuery to be handled in CodeControl
             {
                 if (Vertex_forLabel == null)
                 {
@@ -194,9 +190,9 @@ namespace m0.ZeroTypes.UX
                 EdgeHelper.CreateOrReplaceEdgeVertexFromIEdgeByMeta(Vertex_forLabel, BaseEdge_meta, BaseEdge_forLabel);
 
                 codeControl = new CodeControl(Vertex_forLabel, true);
-            }
-            else
-                codeControl = new CodeControl(Vertex, true);
+            }else*/
+
+            codeControl = new CodeControl(Vertex, true);
 
 
 
@@ -242,6 +238,8 @@ namespace m0.ZeroTypes.UX
                 base.Dispose();
             }
         }
+
+        // END CODE for LabeledItem 
 
         // UNDER for RectangleItem
 

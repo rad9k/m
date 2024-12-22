@@ -18,7 +18,7 @@ namespace m0.ZeroTypes.UX
 {
     public class LabeledItem : UXItem
     {
-        // CODE for LabeledItem
+        // BEG CODE for LabeledItem
 
         static IVertex BaseEdge_meta = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge");
 
@@ -236,6 +236,8 @@ namespace m0.ZeroTypes.UX
                 base.Dispose();
             }
         }
+
+        // END CODE for LabeledItem 
 
         // UNDER for LabeledItem
 

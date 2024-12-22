@@ -195,7 +195,7 @@
 				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
 				<@LabeledItem\UseCodeLabel :: "True">
 				<@LabeledItem\ContentQuery :: "Test:">
-				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\OneLine>
+				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\EdgeAndManyLines>
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 			<@UXDecoratorTemplate :: "than">
 				<@$Is :: @UXDecoratorTemplate>
@@ -217,7 +217,7 @@
 				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
 				<@LabeledItem\UseCodeLabel :: "True">
 				<@LabeledItem\ContentQuery :: "Expression:">
-				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\OneLine>
+				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\EdgeAndManyLines>
 				<@UXItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 			<@UXDecoratorTemplate :: "case">
@@ -250,7 +250,7 @@
 				<@LabeledItem\UseCodeLabel :: "True">
 				<@LabeledItem\ConstantLabel :: "case">
 				<@LabeledItem\ContentQuery :: "Test:">
-				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\OneLine>
+				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\EdgeAndManyLines>
 				<@UXItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 			<@UXDecoratorTemplate :: "than">
@@ -303,7 +303,7 @@
 				<@ItemVertex :: "">
 					<@UXContainer\SubItemsNotVisible :: "True">
 					<@CodeView\ContentQuery :: "Test:">
-					<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\OneLine>
+					<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\EdgeAndManyLines>
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">

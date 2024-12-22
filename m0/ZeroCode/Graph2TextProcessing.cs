@@ -1207,6 +1207,8 @@ namespace m0.ZeroCode
                 return false;
         }
 
+        bool ommitOnce_AppendEdge_Meta = false;
+
         bool AppendEdge(IEdge e, IEdge parent, string path, bool ParentKmHasTabAddingOmmit)
         {
             if (KeywordMatchedSubGraphEdges.ContainsKey(e))
@@ -1225,15 +1227,21 @@ namespace m0.ZeroCode
 
             if (!IsNullOrEmpty(e.Meta))
             {
-                AppendPrefix();
+                if (ommitOnce_AppendEdge_Meta)
+                {
+                    ommitOnce_AppendEdge_Meta = false;
+                } else
+                {
+                    AppendPrefix();
 
-                prefixAppended = true;
+                    prefixAppended = true;
 
-                //AppendAsLink(e.Meta, parent, true);
+                    //AppendAsLink(e.Meta, parent, true);
 
-                AppendAsLink(e.Meta, parent, false); // XXX we want cvtq linx in <> with @
+                    AppendAsLink(e.Meta, parent, false); // XXX we want cvtq linx in <> with @
 
-                AppendDoubleColon();
+                    AppendDoubleColon();
+                }
             }
 
             //return AppendVertex(e, path, prefixAppended, true, true);
@@ -1817,8 +1825,7 @@ namespace m0.ZeroCode
 
         public string Process_EdgeAndManyLines(IEdge _graphBaseEdge)
         {
-            ommitOnce_AppendNewLineAndTabs = true;
-            //ommitOnce_checkIfSubGraphVerticesDictionaryContainsVertex = true;
+            ommitOnce_AppendNewLineAndTabs = true;            
             ommitOnce_baseEdgePath = true;
 
             //
@@ -1863,7 +1870,48 @@ namespace m0.ZeroCode
 
         public string Process_OneLine(IEdge _graphBaseEdge)
         {
-            return null;
+            ommitOnce_AppendNewLineAndTabs = true;
+            ommitOnce_baseEdgePath = true;
+            ommitOnce_AppendEdge_Meta = true;
+
+            //
+
+            prepareBaseEdge(_graphBaseEdge);
+
+            BeenList = new HashSet<IEdge>();
+            BeenList_Keyword = new HashSet<IEdge>();
+            newLinesBeenList = new HashSet<IEdge>();
+
+            Source = new StringBuilder();
+            Imports = new Dictionary<IVertex, IList<IVertex>>();
+            VerticesDictionary = new Dictionary<IVertex, VertexData>();
+            SubGraphVerticesDictionary = new Dictionary<IVertex, VertexData>();
+            KeywordMatchedSubGraphEdges = new Dictionary<IEdge, KeywordMatch>();
+
+            DoKeywordDefinitionContainLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
+            DoKeywordDefinitionContainStartInLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
+
+            //             
+
+            GetLinksForSubGraphVertices_BaseEdge();
+            GetLinksForSubGraphVertices_subVertexes(BaseEdge, null, 0);
+
+            BeenList.Clear();
+
+            MatchKeywords(BaseEdge, null, true);
+
+            BeenList.Clear();
+
+            //
+
+            ImportImports(GraphUtil.GetQueryOutFirst(FormalTextLanguage, "DefaultImports", null));
+            ImportImports(BaseEdge.To);
+
+            ZeroCodeGraph2String_Reccurent(BaseEdge, 0, new EasyEdge(null, null, BaseEdge.From), null);
+
+            //ZeroCodeGraph2String_Reccurent(BaseEdge, 0, BaseEdge, null);
+
+            return Source.ToString();
         }
 
         public string Process_ManyLines(IEdge _graphBaseEdge)
