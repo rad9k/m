@@ -5,6 +5,23 @@
 	<@UXTemplate :: "ZeroUML">
 		<@$Is :: @UXTemplate>		
 		
+		<@UXTemplate :: "Vertex">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@ItemClass :: @RectangleVisualiserItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\BaseGenericItemVertex>
+				<@LabeledItem\ShowMeta :: "False">
+			<@UXDecoratorTemplate :: "Edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:\">
+				<@SupportAnyMetaEdge :: "True">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+					
 		<@UXTemplate :: "Edge">
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "">
@@ -49,7 +66,7 @@
 				<@$Inherits :: @ZeroUML\BaseGenericItemVertex>
 				<@LabeledItem\ConstantLabel :: "code line">
 				<@LabeledItem\ShowMeta :: "True">
-				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\VertexAndManyLines>
+				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\OneLine>
 			<@UXDecoratorTemplate :: "Edge">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "$Is:\">
@@ -331,6 +348,7 @@
 				<@$Is :: @UXTemplate>				
 				<@ItemVertex :: "">
 					<@CodeView\ContentQuery :: "$Empty:">
+					<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\EdgeAndManyLines>
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
