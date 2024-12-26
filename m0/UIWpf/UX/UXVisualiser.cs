@@ -1696,7 +1696,9 @@ namespace m0.UIWpf.UX
             {
                 IUXContainer toBeParentItem = GetItemByPoint_ByCanvas(itemPosition_absolute); // can take some time, especially when moving
 
-                if (toBeParentItem != item.ParentItem && toBeParentItem != item)
+                if (toBeParentItem != item.ParentItem 
+                    && toBeParentItem.ParentItem != item
+                    && toBeParentItem != item)
                     MoveToParentItem(item, toBeParentItem);
             }
         }
