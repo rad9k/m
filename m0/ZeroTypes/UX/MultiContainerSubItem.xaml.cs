@@ -33,7 +33,24 @@ namespace m0.ZeroTypes.UX
         public Canvas Canvas { 
             get { return canvas; }
             set { }
-        }        
+        }
+
+        private void CreateNotExistingContentQueryEdge()
+        {
+            IVertex notExistingContentQueryEdge = NotExistingContentQueryEdge;
+
+            if (notExistingContentQueryEdge != null)
+            {
+                string contentQuery = ContentQuery;
+
+                if (contentQuery != null) {
+                    IVertex baseEdgeTo = BaseEdge.To;
+
+                    if (baseEdgeTo.Get(false, contentQuery) == null)
+                        baseEdgeTo.AddVertex(notExistingContentQueryEdge, null);
+                }                        
+            }
+        }
 
         public MultiContainerSubItem() : base(new ZeroTypes.Edge(null), true)
         {
@@ -42,7 +59,7 @@ namespace m0.ZeroTypes.UX
 
         public MultiContainerSubItem(IEdge edge) : base(edge, true)
         {
-            InitializeComponent();
+            InitializeComponent();            
         }
 
         bool SubItemsNotVisible_prev;
@@ -72,6 +89,8 @@ namespace m0.ZeroTypes.UX
         private void ContentUpdate()
         {
             bool subItemnsNotVisible = SubItemsNotVisible;
+
+            CreateNotExistingContentQueryEdge();
 
             if (!wasUpdated || subItemnsNotVisible != SubItemsNotVisible_prev)
             {
@@ -257,7 +276,23 @@ namespace m0.ZeroTypes.UX
             return exe.Stack;
             // return base.VertexChange(exe);
         }
-        
+
+        // MultiContainerSubItem
+
+        static IVertex NotExistingContentQueryEdge_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\MultiContainerSubItem\NotExistingContentQueryEdge");
+
+        public IVertex NotExistingContentQueryEdge
+        {
+            get
+            {
+                return GraphUtil.GetQueryOutFirst(Vertex, "NotExistingContentQueryEdge", null);
+            }
+            set
+            {
+                GraphUtil.CreateOrReplaceEdge(Vertex, NotExistingContentQueryEdge_meta, value);
+            }
+        }
+
         // UXContainer
 
         static IVertex IsExpanded_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\IsExpanded");

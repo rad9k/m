@@ -101,7 +101,7 @@ namespace m0.ZeroTypes.UX
 
                     item.UXTemplate = template;                    
 
-                    //UXVisualiser.AddEdgesFromDefintion(item.Vertex, template.ItemVertex); // we need special treatment of size
+                    //UXVisualiser.AddEdgesFromDefintion(item.Vertex, template.ItemVertex); // we need special treatment of size, so can not just copy
                     
                     // size
 
@@ -153,7 +153,15 @@ namespace m0.ZeroTypes.UX
                     if (template_CodeRepresentation != null)
                         item.CodeRepresentation = CodeRepresentationEnumHelper.GetEnum(template_CodeRepresentation);
 
-                    
+                    // NotExistingContentQueryEdge
+
+                    IVertex template_NotExistingContentQueryEdge = GraphUtil.GetQueryOutFirst(template.ItemVertex, "NotExistingContentQueryEdge", null);
+
+                    if (template_NotExistingContentQueryEdge != null)
+                        item.NotExistingContentQueryEdge = template_NotExistingContentQueryEdge;
+
+
+
                     // base edge
 
                     item.BaseEdgeCreate();
@@ -163,7 +171,7 @@ namespace m0.ZeroTypes.UX
                     string template_BaseEdgeQuery = template.BaseEdgeQuery;
 
                     if (template_BaseEdgeQuery != null)
-                        item_baseEdge = baseEdgeTo.GetAll(false, template.BaseEdgeQuery).FirstOrDefault();
+                        item_baseEdge = baseEdgeTo.GetAll(false, template_BaseEdgeQuery).FirstOrDefault();
                     else
                         item_baseEdge = baseEdge;
 
