@@ -1807,22 +1807,6 @@ namespace m0.ZeroCode
              //BaseEdge = _graphBaseEdge;
         }
 
-        public string Process(IEdge _graphBaseEdge, CodeRepresentationEnum codeRepresentation)
-        {
-            switch (codeRepresentation)
-            {
-                case CodeRepresentationEnum.OneLine: return Process_OneLine(_graphBaseEdge); 
-
-                case CodeRepresentationEnum.EdgeAndManyLines: return Process_EdgeAndManyLines(_graphBaseEdge);
-
-                case CodeRepresentationEnum.VertexAndManyLines: return Process_VertexAndManyLines(_graphBaseEdge);
-
-                case CodeRepresentationEnum.ManyLines: return Process_ManyLines(_graphBaseEdge);
-            }
-
-            return null;
-        }
-
         public string Process_EdgeAndManyLines(IEdge _graphBaseEdge)
         {
             ommitOnce_AppendNewLineAndTabs = true;            
@@ -1961,7 +1945,7 @@ namespace m0.ZeroCode
         }
 
         public string Process_VertexAndManyLines(IEdge _graphBaseEdge)
-        {       
+        {
             prepareBaseEdge(_graphBaseEdge);
 
             BeenList = new HashSet<IEdge>();
@@ -2005,6 +1989,29 @@ namespace m0.ZeroCode
                 ZeroCodeGraph2String_Reccurent(e, 1, BaseEdge, null);
 
             return Source.ToString();
+        }
+
+        public string Process_ManyLinesExcludingParent(IEdge _graphBaseEdge)
+        {
+            return "elo";
+        }
+
+        public string Process(IEdge _graphBaseEdge, CodeRepresentationEnum codeRepresentation)
+        {
+            switch (codeRepresentation)
+            {
+                case CodeRepresentationEnum.OneLine: return Process_OneLine(_graphBaseEdge);
+
+                case CodeRepresentationEnum.EdgeAndManyLines: return Process_EdgeAndManyLines(_graphBaseEdge);
+
+                case CodeRepresentationEnum.VertexAndManyLines: return Process_VertexAndManyLines(_graphBaseEdge);
+
+                case CodeRepresentationEnum.ManyLines: return Process_ManyLines(_graphBaseEdge);
+
+                case CodeRepresentationEnum.ManyLinesExcludingParent: return Process_ManyLinesExcludingParent(_graphBaseEdge);
+            }
+
+            return null;
         }
     }
 }

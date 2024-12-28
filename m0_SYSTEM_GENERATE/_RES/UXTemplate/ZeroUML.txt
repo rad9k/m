@@ -390,19 +390,12 @@
 				<@ItemVertex :: "">
 					<@CodeView\ContentQuery :: "$Empty:">
 					<@MultiContainerSubItem\NotExistingContentQueryEdge :: @$Empty>
-					<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\EdgeAndManyLines>
+					<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\ManyLinesExcludingParent>
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
 						<@Height :: "0">
-				<@UXDecoratorTemplate :: "do">
-					<@$Is :: @UXDecoratorTemplate>
-					<@SupportEmptyMetaEdge :: "True">
-					<@ToDiagramItemTestQuery :: "">
-					<@DecoratorClass :: @LineDecorator>
-					<@DecoratorVertex :: "">
-						<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-						<@LineDecorator\ConstantLabel :: "do">
+				<@$Inherits :: @ZeroUML\ActionContainerDecorators>				
 			
 		<"BaseGenericItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightRed>
@@ -435,18 +428,16 @@
 					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
 		<"ActionContainerDecorators">
-			<@UXDecoratorTemplate :: "Edge">
+			<@UXDecoratorTemplate :: "body">
 				<@$Is :: @UXDecoratorTemplate>
-				<@SupportEmptyMetaEdge :: "True">
-				<@SupportAnyMetaEdge :: "True">
-				<@EdgeTestQuery :: "$Is:\">
+				<@SupportEmptyMetaEdge :: "True">				
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 					<@UXItem\BackgroundColor :: @VeryVeryVeryLightVioletBlue>
-					<@UXItem\ForegroundColor :: @Black>
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+					<@UXItem\ForegroundColor :: @Black>					
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+					<@LineDecorator\ConstantLabel :: "body">
 		<"ConditionalActionDecoratorVertex">
 			<@LineDecorator\LineWidth :: "2">
 			<@UXItem\ForegroundColor :: @VeryVeryLightVioletBlue>

@@ -3104,22 +3104,6 @@ namespace m0.ZeroCode
             GraphUtil.DeleteEdgeByMeta(baseVertex, "$ParseRoot");
 
             baseVertex.Value = firstValue;
-        }
-
-        public IVertex Process(IEdge _baseEdge, string _text, CodeRepresentationEnum codeRepresentation)
-        {
-            switch (codeRepresentation)
-            {
-                case CodeRepresentationEnum.OneLine: return Process_OneLine(_baseEdge, _text);
-
-                case CodeRepresentationEnum.EdgeAndManyLines: return Process_EdgeAndManyLines(_baseEdge, _text);
-
-                case CodeRepresentationEnum.VertexAndManyLines: return Process_VertexAndManyLines(_baseEdge, _text);
-
-                case CodeRepresentationEnum.ManyLines: return Process_ManyLines(_baseEdge, _text);
-            }
-
-            return null;
         }        
         
         public IVertex Process_OneLine(IEdge _baseEdge, string _text)
@@ -3136,7 +3120,6 @@ namespace m0.ZeroCode
         {
             return null;
         }
-
 
         public IVertex Process_VertexAndManyLines(IEdge _baseEdge, string _text)
         {
@@ -3198,6 +3181,29 @@ namespace m0.ZeroCode
             DisposeImportList();
 
             return errorList;
+        }
+
+        public IVertex Process_ManyLinesExcludingParent(IEdge _baseEdge, string _text)
+        {
+            return null;
+        }
+
+        public IVertex Process(IEdge _baseEdge, string _text, CodeRepresentationEnum codeRepresentation)
+        {
+            switch (codeRepresentation)
+            {
+                case CodeRepresentationEnum.OneLine: return Process_OneLine(_baseEdge, _text);
+
+                case CodeRepresentationEnum.EdgeAndManyLines: return Process_EdgeAndManyLines(_baseEdge, _text);
+
+                case CodeRepresentationEnum.VertexAndManyLines: return Process_VertexAndManyLines(_baseEdge, _text);
+
+                case CodeRepresentationEnum.ManyLines: return Process_ManyLines(_baseEdge, _text);
+
+                case CodeRepresentationEnum.ManyLinesExcludingParent: return Process_ManyLinesExcludingParent(_baseEdge, _text);
+            }
+
+            return null;
         }
 
         public void DisposeImportList()
