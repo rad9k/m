@@ -2634,7 +2634,7 @@ namespace m0.ZeroCode
 
                 int lineEndWithoutTrim, next;
 
-                if (ZeroCodeUtil.IsCRLF(text[p]))
+                if (ZeroCodeUtil.IsCRorLF(text[p]))
                 {
                     li.lineBeg = p;
                     li.lineEnd = p;
@@ -2700,7 +2700,7 @@ namespace m0.ZeroCode
                 if (next + 1 >= text.Length)
                     return;
 
-                if (ZeroCodeUtil.IsCRLF(text[next]))
+                if (ZeroCodeUtil.IsCRorLF(text[next]))
                     next++;
 
                 if (next >= text.Length)
@@ -3140,6 +3140,10 @@ namespace m0.ZeroCode
 
         public IVertex Process_VertexAndManyLines(IEdge _baseEdge, string _text)
         {
+            MultiLineString m = new MultiLineString(_text);
+
+            //
+
             ZeroCodeUtil.ClearZeroCodeUtilDicionaries();
 
             baseVertex = _baseEdge.To;

@@ -317,6 +317,8 @@ namespace m0.ZeroCode
     {
         static StringMatchingDictionary smdict = new StringMatchingDictionary();
 
+        public static string CRLF = "\r\n";
+
         public static void ClearZeroCodeUtilDicionaries()
         {
             smdict.DoTextRangeContainString.Clear();
@@ -729,7 +731,7 @@ namespace m0.ZeroCode
                 if (pos >= s.Length)
                     return -1;
 
-                if (IsCRLF(s[pos]))
+                if (IsCRorLF(s[pos]))
                     return pos;
 
                 pos++;
@@ -738,9 +740,17 @@ namespace m0.ZeroCode
             return -1; // no hit @here
         }
 
-        public static bool IsCRLF(char c)
+        public static bool IsCRorLF(char c)
         {
             if (c == '\r' || c == '\n')
+                return true;
+
+            return false;
+        }
+
+        public static bool IsCRLF(string s, int pos)
+        {
+            if ((pos + 1) < s.Length && s[pos] == '\r' && s[pos + 1] == '\n')
                 return true;
 
             return false;
