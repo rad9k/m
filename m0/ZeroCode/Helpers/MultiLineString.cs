@@ -61,7 +61,7 @@ namespace m0.ZeroCode.Helpers
         {
             StringBuilder sb = new StringBuilder();
 
-            for (int x = 0; x < NumberOfLines) {
+            for (int x = 0; x < NumberOfLines; x++) {
                 if (x != 0)
                     sb.Append(ZeroCodeUtil.CRLF);
 

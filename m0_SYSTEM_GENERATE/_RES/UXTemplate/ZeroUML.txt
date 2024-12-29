@@ -374,8 +374,7 @@
 				<@LabeledItem\ConstantLabel :: "function">
 				<@LabeledItem\ShowMeta :: "False">
 				<@UXItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
-				<@MultiContainerItem\Orientation :: @OrientationEnum\Vertical>
-			<@$Inherits :: @ZeroUML\BaseActionDecorators>
+				<@MultiContainerItem\Orientation :: @OrientationEnum\Vertical>			
 			<@UXTemplate :: "abstraction">
 				<@$Is :: @UXTemplate>
 				<@ItemVertex :: "">
