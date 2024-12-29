@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.User.Process.UX;
 using m0.Util;
 using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
@@ -1798,9 +1799,19 @@ namespace m0.ZeroCode
                 }
         }
 
-        public void prepareBaseEdge(IEdge _graphBaseEdge)
+        public void prepareBaseEdge(IEdge _graphBaseEdge, bool createArtificialParent)
         {
-            IVertex v = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(_graphBaseEdge.To);
+            IVertex startingVertex = _graphBaseEdge.To;
+
+            if (createArtificialParent)
+            {
+                startingVertex = MinusZero.Instance.CreateTempVertex();
+
+                startingVertex.AddEdge(_graphBaseEdge.Meta, _graphBaseEdge.To);
+            }
+                
+            
+            IVertex v = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(startingVertex);
 
             BaseEdge = new EasyEdge(_graphBaseEdge.From, _graphBaseEdge.Meta, v); // this is some crazy hybrid. this is non consistent and might not work!
 
@@ -1814,7 +1825,7 @@ namespace m0.ZeroCode
 
             //
 
-            prepareBaseEdge(_graphBaseEdge);
+            prepareBaseEdge(_graphBaseEdge, false);
 
             BeenList = new HashSet<IEdge>();
             BeenList_Keyword = new HashSet<IEdge>();
@@ -1860,7 +1871,7 @@ namespace m0.ZeroCode
 
             //
 
-            prepareBaseEdge(_graphBaseEdge);
+            prepareBaseEdge(_graphBaseEdge, false);
 
             BeenList = new HashSet<IEdge>();
             BeenList_Keyword = new HashSet<IEdge>();
@@ -1904,7 +1915,7 @@ namespace m0.ZeroCode
 
             //
 
-            prepareBaseEdge(_graphBaseEdge);
+            prepareBaseEdge(_graphBaseEdge, true);
 
             BeenList = new HashSet<IEdge>();
             BeenList_Keyword = new HashSet<IEdge>();
@@ -1946,7 +1957,7 @@ namespace m0.ZeroCode
 
         public string Process_VertexAndManyLines(IEdge _graphBaseEdge)
         {
-            prepareBaseEdge(_graphBaseEdge);
+            prepareBaseEdge(_graphBaseEdge, false);
 
             BeenList = new HashSet<IEdge>();
             BeenList_Keyword = new HashSet<IEdge>();

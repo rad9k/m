@@ -4,6 +4,7 @@ using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -16,7 +17,7 @@ namespace m0.ZeroCode
         static FormalTextLanguageDictinaries dict = DictionariesForFormalTextLanguageFactory.Get(
             MinusZero.Instance.Root.Get(false, @"System\FormalTextLanguage\ZeroCode"));
 
-        // USES:
+        // WHO USES:
         // - Text2GraphProcessing.CodeViewProcess
 
         // Linear exection form => Next based execution form
@@ -111,7 +112,7 @@ namespace m0.ZeroCode
                 }
         }
 
-        // USES:
+        // WHO USES:
         // - Graph2TextProcessing.prepareBaseEdge
 
         // Next based execution form => Linear exection form
@@ -122,7 +123,7 @@ namespace m0.ZeroCode
             IDictionary<IVertex, IVertex> sourceLinerizedDict = new Dictionary<IVertex, IVertex>();
             IList<IVertex> beenList = new List<IVertex>();
 
-            IEnumerable<IVertex> subGraph = GraphUtil.GetSubGraphWithoutLinksAsList(sourceBaseVertex);            
+            IEnumerable<IVertex> subGraph = GraphUtil.GetSubGraphWithoutLinksAsList(sourceBaseVertex);
 
             foreach (IVertex v in subGraph) {
                 IVertex v_new = MinusZero.Instance.CreateTempVertex();
