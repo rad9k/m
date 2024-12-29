@@ -394,7 +394,8 @@
 						<@$Is :: @Size>
 						<@Width :: "0">
 						<@Height :: "0">
-				<@$Inherits :: @ZeroUML\ActionContainerDecorators>				
+				<@$Inherits :: @ZeroUML\ActionContainerDecorators>
+				<@$Inherits :: @ZeroUML\StaticContainerDecorators>
 			
 		<"BaseGenericItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightRed>
