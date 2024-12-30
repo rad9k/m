@@ -141,7 +141,7 @@
 				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
 				<@LabeledItem\ShowMeta :: "False">
 				<@LabeledItem\ConstantLabel :: "block">
-				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\ManyLines>
+				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\LinearizedManyLines>
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 			
 		<@UXTemplate :: "Named Block (code)">
@@ -154,7 +154,7 @@
 				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
 				<@LabeledItem\ShowMeta :: "False">
 				<@LabeledItem\ConstantLabel :: "named block">
-				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\ManyLines>
+				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\LinearizedManyLines>
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>			
 			
 		<@UXTemplate :: "Block (container)">

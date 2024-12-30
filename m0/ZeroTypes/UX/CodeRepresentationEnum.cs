@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace m0.ZeroTypes.UX
 {
-    public enum CodeRepresentationEnum { OneLine, ManyLines, ManyLinesExcludingParent, VertexAndManyLines, EdgeAndManyLines }
+    public enum CodeRepresentationEnum { OneLine, LinearizedManyLines, ManyLinesExcludingParent, VertexAndManyLines, EdgeAndManyLines }
 
     class CodeRepresentationEnumHelper
     {
         static IVertex OneLine_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\CodeRepresentationEnum\OneLine");
-        static IVertex ManyLines_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\CodeRepresentationEnum\ManyLines");
+        static IVertex LinearizedManyLines_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\CodeRepresentationEnum\LinearizedManyLines");
         static IVertex ManyLinesExcludingParent_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\CodeRepresentationEnum\ManyLinesExcludingParent");
         static IVertex VertexAndManyLines_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\CodeRepresentationEnum\VertexAndManyLines");
         static IVertex EdgeAndManyLines_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\CodeRepresentationEnum\EdgeAndManyLines");
@@ -26,7 +26,7 @@ namespace m0.ZeroTypes.UX
             {
                 case "OneLine": return CodeRepresentationEnum.OneLine;
 
-                case "ManyLines": return CodeRepresentationEnum.ManyLines;
+                case "LinearizedManyLines": return CodeRepresentationEnum.LinearizedManyLines;
 
                 case "ManyLinesExcludingParent": return CodeRepresentationEnum.ManyLinesExcludingParent;
 
@@ -44,7 +44,7 @@ namespace m0.ZeroTypes.UX
             {
                 case CodeRepresentationEnum.OneLine: return OneLine_meta;
 
-                case CodeRepresentationEnum.ManyLines: return ManyLines_meta;
+                case CodeRepresentationEnum.LinearizedManyLines: return LinearizedManyLines_meta;
 
                 case CodeRepresentationEnum.ManyLinesExcludingParent: return ManyLinesExcludingParent_meta;
 

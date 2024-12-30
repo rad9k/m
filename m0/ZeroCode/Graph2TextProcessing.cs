@@ -1909,7 +1909,7 @@ namespace m0.ZeroCode
             return Source.ToString();
         }
 
-        public string Process_ManyLines(IEdge _graphBaseEdge)
+        public string Process_LinearizedManyLines(IEdge _graphBaseEdge)
         {
             ommitOnce_AppendNewLineAndTabs = true;
 
@@ -2017,7 +2017,7 @@ namespace m0.ZeroCode
 
                 case CodeRepresentationEnum.VertexAndManyLines: return Process_VertexAndManyLines(_graphBaseEdge);
 
-                case CodeRepresentationEnum.ManyLines: return Process_ManyLines(_graphBaseEdge);
+                case CodeRepresentationEnum.LinearizedManyLines: return Process_LinearizedManyLines(_graphBaseEdge);
 
                 case CodeRepresentationEnum.ManyLinesExcludingParent: return Process_ManyLinesExcludingParent(_graphBaseEdge);
             }

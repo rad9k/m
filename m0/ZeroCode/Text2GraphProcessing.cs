@@ -3111,7 +3111,7 @@ namespace m0.ZeroCode
             return null;
         }
 
-        public IVertex Process_ManyLines(IEdge _baseEdge, string _text)
+        public IVertex Process_LinearizedManyLines(IEdge _baseEdge, string _text)
         {
             return null;
         }
@@ -3198,7 +3198,7 @@ namespace m0.ZeroCode
 
                 case CodeRepresentationEnum.VertexAndManyLines: return Process_VertexAndManyLines(_baseEdge, _text);
 
-                case CodeRepresentationEnum.ManyLines: return Process_ManyLines(_baseEdge, _text);
+                case CodeRepresentationEnum.LinearizedManyLines: return Process_LinearizedManyLines(_baseEdge, _text);
 
                 case CodeRepresentationEnum.ManyLinesExcludingParent: return Process_ManyLinesExcludingParent(_baseEdge, _text);
             }
