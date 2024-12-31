@@ -3122,11 +3122,7 @@ namespace m0.ZeroCode
         }
 
         public IVertex Process_VertexAndManyLines(IEdge _baseEdge, string _text)
-        {
-            MultiLineString m = new MultiLineString(_text);
-
-            //
-
+        {            
             ZeroCodeUtil.ClearZeroCodeUtilDicionaries();
 
             baseVertex = _baseEdge.To;

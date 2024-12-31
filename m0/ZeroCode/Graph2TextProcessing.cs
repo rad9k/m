@@ -2004,7 +2004,18 @@ namespace m0.ZeroCode
 
         public string Process_ManyLinesExcludingParent(IEdge _graphBaseEdge)
         {
-            return "elo";
+            //string txt = Process_LinearizedManyLines(_graphBaseEdge);
+
+            string txt = Process_EdgeAndManyLines(_graphBaseEdge);
+
+            MultiLineString multiLineString = new MultiLineString(txt);
+
+            if (multiLineString.NumberOfLines < 2)
+                return "";
+
+            multiLineString.RemoveLeftTab();
+
+            return multiLineString.ToString(2, multiLineString.NumberOfLines);
         }
 
         public string Process(IEdge _graphBaseEdge, CodeRepresentationEnum codeRepresentation)

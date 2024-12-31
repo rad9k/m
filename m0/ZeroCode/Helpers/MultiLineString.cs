@@ -1,5 +1,7 @@
-﻿using System;
+﻿using m0.ZeroTypes.UX;
+using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,27 +25,38 @@ namespace m0.ZeroCode.Helpers
 
         void ProcessInputString()
         {
-            int lineCounter = 0;
+            int lineCounter = 1;
 
             int prev_position = 0;
+
+            bool wasCRLFLastChars = false;
 
             for (int position = 0; position < input.Length; position++)
             {
                 if (ZeroCodeUtil.IsCRLF(input, position)) {
-                    dict.Add(lineCounter, input.Substring(prev_position, position - prev_position));
+                    dict.Add(lineCounter, input.Substring(prev_position, position - prev_position + 2));
 
                     lineCounter++;
 
-                    prev_position = position;
+                    prev_position = position + 2;
+
+                    if (position == input.Length - 1)
+                        wasCRLFLastChars = true;
                 }
             }
 
-            NumberOfLines = lineCounter;
+            if (!wasCRLFLastChars)
+            {
+                dict.Add(lineCounter, input.Substring(prev_position, input.Length - prev_position));
+                lineCounter++;
+            }
+
+            NumberOfLines = lineCounter - 1;
         }
 
-        void RemoveLeftTab(int fromLine, int toLine)
+        public void RemoveLeftTab(int fromLine, int toLine)
         {
-            for (int x = fromLine; x < toLine; x++)
+            for (int x = fromLine; x <= toLine; x++)
             {
                 string line = dict[x];
 
@@ -57,16 +70,22 @@ namespace m0.ZeroCode.Helpers
             }
         }
 
+        public void RemoveLeftTab()
+        {
+            RemoveLeftTab(1, NumberOfLines);
+        }
+
         public override string ToString()
+        {
+            return ToString(1, NumberOfLines);
+        }
+
+        public string ToString(int fromLine, int toLine)
         {
             StringBuilder sb = new StringBuilder();
 
-            for (int x = 0; x < NumberOfLines; x++) {
-                if (x != 0)
-                    sb.Append(ZeroCodeUtil.CRLF);
-
-                sb.Append(dict[x]);
-            }
+            for (int x = fromLine; x <= toLine; x++)            
+                sb.Append(dict[x]);            
 
             return sb.ToString();
         }
