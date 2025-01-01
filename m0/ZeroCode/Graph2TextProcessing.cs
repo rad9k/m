@@ -1807,7 +1807,9 @@ namespace m0.ZeroCode
             {
                 startingVertex = MinusZero.Instance.CreateTempVertex();
 
-                startingVertex.AddEdge(_graphBaseEdge.Meta, _graphBaseEdge.To);
+                //startingVertex.AddEdge(_graphBaseEdge.Meta, _graphBaseEdge.To);
+
+                startingVertex.AddEdge(null, _graphBaseEdge.To);
             }
                 
             
@@ -1861,6 +1863,18 @@ namespace m0.ZeroCode
             //ZeroCodeGraph2String_Reccurent(BaseEdge, 0, BaseEdge, null);
 
             return Source.ToString();
+        }
+
+        public string Process_EdgeOneLine(IEdge _graphBaseEdge)
+        {
+            string txt = Process_EdgeAndManyLines(_graphBaseEdge);
+
+            MultiLineString multiLineString = new MultiLineString(txt);
+
+            if (multiLineString.NumberOfLines < 1)
+                return "";
+
+            return multiLineString.ToString(1, 1);
         }
 
         public string Process_OneLine(IEdge _graphBaseEdge)

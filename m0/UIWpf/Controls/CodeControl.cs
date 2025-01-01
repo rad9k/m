@@ -221,7 +221,7 @@ namespace m0.UIWpf.Controls
 
                 string generated = null;
 
-                if (errorList.OutEdges.Count == 0 && GenerateAfterParse)
+                if (errorList != null && errorList.OutEdges.Count == 0 && GenerateAfterParse)
                     generated = ExecuteGenerate_SeparateThread_internal();
 
                 m0Main.Instance.Dispatcher.Invoke(() =>

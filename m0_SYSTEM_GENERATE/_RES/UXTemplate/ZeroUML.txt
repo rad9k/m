@@ -48,14 +48,15 @@
 				<@$Inherits :: @ZeroUML\BaseGenericItemVertex>
 				<@LabeledItem\ConstantLabel :: "code">
 				<@LabeledItem\ShowMeta :: "True">
-				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\EdgeAndManyLines>
+				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\LinearizedManyLines>
+			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 			<@UXDecoratorTemplate :: "Edge">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "$Is:\">
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>			
 				
 		<@UXTemplate :: "Code Line">
 			<@$Is :: @UXTemplate>
@@ -66,14 +67,15 @@
 				<@$Inherits :: @ZeroUML\BaseGenericItemVertex>
 				<@LabeledItem\ConstantLabel :: "code line">
 				<@LabeledItem\ShowMeta :: "True">
-				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\OneLine>
+				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\OneLine>			
+			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 			<@UXDecoratorTemplate :: "Edge">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "$Is:\">
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>			
 
 		<@UXTemplate :: "Class">
 			<@$Is :: @UXTemplate>
@@ -141,7 +143,7 @@
 				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
 				<@LabeledItem\ShowMeta :: "False">
 				<@LabeledItem\ConstantLabel :: "block">
-				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\LinearizedManyLines>
+				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\ManyLinesExcludingParent>
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 			
 		<@UXTemplate :: "Named Block (code)">
@@ -154,7 +156,7 @@
 				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
 				<@LabeledItem\ShowMeta :: "False">
 				<@LabeledItem\ConstantLabel :: "named block">
-				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\LinearizedManyLines>
+				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\ManyLinesExcludingParent>
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>			
 			
 		<@UXTemplate :: "Block (container)">
@@ -223,7 +225,7 @@
 				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
 				<@LabeledItem\UseCodeLabel :: "True">
 				<@LabeledItem\ContentQuery :: "Test:">
-				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\OneLine>
+				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\EdgeOneLine>
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 			<@UXDecoratorTemplate :: "than">
 				<@$Is :: @UXDecoratorTemplate>
@@ -245,7 +247,7 @@
 				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
 				<@LabeledItem\UseCodeLabel :: "True">
 				<@LabeledItem\ContentQuery :: "Expression:">
-				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\OneLine>
+				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\EdgeOneLine>
 				<@UXItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 			<@UXDecoratorTemplate :: "case">
@@ -320,10 +322,9 @@
 			<@ItemClass :: @MultiContainerItem>
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
-				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
+				<@$Inherits :: @ZeroUML\BaseActionContainerItemVertex>
 				<@LabeledItem\ConstantLabel :: "while">
-				<@LabeledItem\ShowMeta :: "False">
-				<@UXItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
+				<@LabeledItem\ShowMeta :: "False">				
 				<@MultiContainerItem\Orientation :: @OrientationEnum\Vertical>
 			<@$Inherits :: @ZeroUML\BaseActionDecorators>
 			<@UXTemplate :: "Test">
@@ -349,7 +350,7 @@
 				<@ItemVertex :: "">
 					<@CodeView\ContentQuery :: "$Empty:">
 					<@MultiContainerSubItem\NotExistingContentQueryEdge :: @$Empty>
-					<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\EdgeAndManyLines>
+					<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\LinearizedManyLines>
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
@@ -370,10 +371,9 @@
 			<@ItemClass :: @MultiContainerItem>
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
-				<@$Inherits :: @ZeroUML\BaseActionItemVertex>
+				<@$Inherits :: @ZeroUML\BaseActionContainerItemVertex>
 				<@LabeledItem\ConstantLabel :: "function">
-				<@LabeledItem\ShowMeta :: "False">
-				<@UXItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
+				<@LabeledItem\ShowMeta :: "False">				
 				<@MultiContainerItem\Orientation :: @OrientationEnum\Vertical>			
 			<@UXTemplate :: "abstraction">
 				<@$Is :: @UXTemplate>
@@ -386,8 +386,7 @@
 						<@Height :: "32">				
 			<@UXTemplate :: "body">
 				<@$Is :: @UXTemplate>				
-				<@ItemVertex :: "">
-					<@CodeView\ContentQuery :: "$Empty:">
+				<@ItemVertex :: "">					
 					<@MultiContainerSubItem\NotExistingContentQueryEdge :: @$Empty>
 					<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\ManyLinesExcludingParent>
 					<@Size :: "">
@@ -403,6 +402,8 @@
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightGreen>
 		<"BaseActionItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightVioletBlue>
+		<"BaseActionContainerItemVertex">
+			<@UXItem\BackgroundColor :: @VeryVeryVeryVeryLightVioletBlue>
 		<"BaseActionDecorators">
 			<@UXDecoratorTemplate :: "Next">
 				<@$Is :: @UXDecoratorTemplate>

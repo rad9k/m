@@ -384,6 +384,7 @@ namespace m0_SYSTEM_GENERATE
     "\r\n\t\ta = \"True\"" +
     "\r\n\tif \"1\" + \"2\" == \"3\"" +
     "\r\n\t\tblock" +
+    "\r\n\t\t\ta = \"False\"" +
     "\r\n\t\t\tb = \"True\"", m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines
     );
 

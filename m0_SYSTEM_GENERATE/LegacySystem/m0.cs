@@ -5717,6 +5717,9 @@ namespace m0
             foreach (var de in baseColors)
                 ColorHelper.AddColor(Colors, "VeryVeryVeryLight" + de.Key, ScaleUp(de.Value[0], 0.92), ScaleUp(de.Value[1], 0.92), ScaleUp(de.Value[2], 0.92), 255);
 
+            foreach (var de in baseColors)
+                ColorHelper.AddColor(Colors, "VeryVeryVeryVeryLight" + de.Key, ScaleUp(de.Value[0], 0.97), ScaleUp(de.Value[1], 0.97), ScaleUp(de.Value[2], 0.97), 255);
+
         }
 
         IVertex AddUXTemplate(IVertex where, String Value, bool doNotShowInherited,
