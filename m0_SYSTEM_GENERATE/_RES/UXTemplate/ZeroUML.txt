@@ -18,7 +18,7 @@
 				<@EdgeTestQuery :: "$Is:\">
 				<@SupportAnyMetaEdge :: "True">
 				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorClass :: @MetaExtendedLineDecorator>
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
 					
@@ -35,6 +35,24 @@
 				<@EdgeTestQuery :: "$Is:\">
 				<@SupportAnyMetaEdge :: "True">
 				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @MetaExtendedLineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+
+		<@UXTemplate :: "Generic Code">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@ItemClass :: @CodeItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\GenericItemVertex>
+				<@LabeledItem\ConstantLabel :: "code">
+				<@LabeledItem\ShowMeta :: "True">
+				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\LinearizedManyLines>			
+			<@UXDecoratorTemplate :: "Edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:\">
+				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
@@ -45,7 +63,7 @@
 			<@ItemClass :: @CodeItem>
 			<@InstanceCreation :: @InstanceCreationEnum\Direct>
 			<@ItemVertex :: "">
-				<@$Inherits :: @ZeroUML\GenericItemVertex>
+				<@$Inherits :: @ZeroUML\ActionItemVertex>
 				<@LabeledItem\ConstantLabel :: "code">
 				<@LabeledItem\ShowMeta :: "True">
 				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\LinearizedManyLines>
@@ -64,7 +82,7 @@
 			<@ItemClass :: @CodeItem>
 			<@InstanceCreation :: @InstanceCreationEnum\Direct>
 			<@ItemVertex :: "">
-				<@$Inherits :: @ZeroUML\GenericItemVertex>
+				<@$Inherits :: @ZeroUML\ActionItemVertex>
 				<@LabeledItem\ConstantLabel :: "code line">
 				<@LabeledItem\ShowMeta :: "True">
 				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\OneLine>			
