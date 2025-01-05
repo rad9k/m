@@ -106,22 +106,28 @@ namespace m0.ZeroTypes.UX
                 BorderSize_nonZero = 1;
 
             this.Frame.BorderThickness = new Thickness(BorderSize_nonZero);
+            int headerHeight = 13;
 
             if (ContentVisualiser != null)
             {
                 if (HideHeader)
                 {
-                    this.TheGrid.RowDefinitions[0].Height = new GridLength(0);
+                    headerHeight = 0;
+
+                    this.TheGrid.RowDefinitions[0].Height = new GridLength(headerHeight);
                     this.TheGrid.RowDefinitions[1].Height = new GridLength(0);
                 }
                 else
                 {
-                    this.TheGrid.RowDefinitions[0].Height = new GridLength(17);
+                    this.TheGrid.RowDefinitions[0].Height = new GridLength(headerHeight);
                     this.TheGrid.RowDefinitions[1].Height = new GridLength(BorderSize_nonZero);
                 }
             }
             else
+            {
+                this.TheGrid.RowDefinitions[0].Height = new GridLength(headerHeight);
                 this.TheGrid.RowDefinitions[1].Height = new GridLength(0);
+            }
 
             //
 
@@ -135,7 +141,7 @@ namespace m0.ZeroTypes.UX
 
                     ((FrameworkElement)this.ContentVisualiser).Margin = new Thickness(RoundEdgeSize, 0, RoundEdgeSize, RoundEdgeSize);
 
-                    TheGrid.RowDefinitions[0].Height = new GridLength(18 + RoundEdgeSize);
+                    TheGrid.RowDefinitions[0].Height = new GridLength(headerHeight + RoundEdgeSize);
                 }
                 else
                 {

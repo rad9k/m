@@ -1941,13 +1941,11 @@ namespace m0.UIWpf.UX
         {
             string eMetaValue = e.Meta.Value.ToString();
 
-            //if (eMetaValue.Length > 0 && eMetaValue[0] == '$' && eMetaValue != "$Empty") // we do not want to limit
-             //   return false;
-
-            bool canAdd = true;
+            if (eMetaValue.Length > 0 && eMetaValue[0] == '$' && eMetaValue != "$Empty") // we do not want to limit
+                return false;
 
             if (tem.ToDiagramItemTestQuery != null && toItem.Vertex.Get(false, tem.ToDiagramItemTestQuery) == null)
-                canAdd = false;
+                return false;
 
             string eToEdgeTarget = (string)GraphUtil.GetValue(e.To.Get(false, @"$EdgeTarget:"));
             string eToVertexTarget = (string)GraphUtil.GetValue(e.To.Get(false, @"$VertexTarget:"));
@@ -1955,14 +1953,14 @@ namespace m0.UIWpf.UX
             if (eToEdgeTarget != null
                 && eToEdgeTarget != "Vertex" // Vertices do not have $Is:Vertex     
                 && !InstructionHelpers.CheckIfIsOrInherits(toEdge.To, eToEdgeTarget))
-                canAdd = false;
+                return false;
 
             if (!tem.CreateEdgeOnly // ZZZ added !
                 && eToVertexTarget != null
                 && !InstructionHelpers.CheckIfIsOrInherits(toEdge.To, eToVertexTarget))
-                canAdd = false;
+                return false;
 
-            return canAdd;
+            return true;
         }
 
         private static void AddNewLineOption(IVertex v, UXDecoratorTemplate def, IVertex edgeVertex)

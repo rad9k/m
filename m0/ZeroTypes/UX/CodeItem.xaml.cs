@@ -19,6 +19,7 @@ using m0.Util;
 using System.Xml.Linq;
 using m0.User.Process.UX;
 using m0.UIWpf.Controls;
+using System.Windows.Forms;
 
 namespace m0.ZeroTypes.UX
 {
@@ -106,27 +107,36 @@ namespace m0.ZeroTypes.UX
 
             this.Frame.BorderThickness = new Thickness(BorderSize_nonZero);
 
+            int headerHeight;
+
             if (HideHeader)
-            {
+            {                                                                                                                                                                                                 
                 this.TheGrid.RowDefinitions[0].Height = new GridLength(0);
                 this.TheGrid.RowDefinitions[1].Height = new GridLength(0);
+
+                headerHeight = 0;
             }
             else
             {
-                this.TheGrid.RowDefinitions[0].Height = new GridLength(17);
+                headerHeight = 11;
+
+                this.TheGrid.RowDefinitions[0].Height = new GridLength(headerHeight);
                 this.TheGrid.RowDefinitions[1].Height = new GridLength(BorderSize_nonZero);
             }
 
             //
 
-            this.Frame.CornerRadius = new CornerRadius(RoundEdgeSize);
+            //if (RoundEdgeSize > 0)
+            {
+                this.Frame.CornerRadius = new CornerRadius(RoundEdgeSize);
 
-            
-            this.LabelContainer.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize, RoundEdgeSize, 0);
 
-            ((FrameworkElement)this.codeControl).Margin = new Thickness(RoundEdgeSize, 0, RoundEdgeSize, RoundEdgeSize);
+                this.LabelContainer.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize, RoundEdgeSize, 0);
 
-            TheGrid.RowDefinitions[0].Height = new GridLength(18 + RoundEdgeSize);
+                ((FrameworkElement)this.codeControl).Margin = new Thickness(RoundEdgeSize, 0, RoundEdgeSize, RoundEdgeSize);
+
+                TheGrid.RowDefinitions[0].Height = new GridLength(headerHeight + RoundEdgeSize);
+            }
             
 
             SetBaselineColors();

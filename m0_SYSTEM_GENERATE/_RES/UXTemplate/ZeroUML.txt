@@ -38,24 +38,6 @@
 				<@DecoratorClass :: @MetaExtendedLineDecorator>
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-
-		<@UXTemplate :: "Generic Code">
-			<@$Is :: @UXTemplate>
-			<@DirectVertexTestQuery :: "">
-			<@ItemClass :: @CodeItem>
-			<@InstanceCreation :: @InstanceCreationEnum\Direct>
-			<@ItemVertex :: "">
-				<@$Inherits :: @ZeroUML\GenericItemVertex>
-				<@LabeledItem\ConstantLabel :: "code">
-				<@LabeledItem\ShowMeta :: "True">
-				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\LinearizedManyLines>			
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
 				
 		<@UXTemplate :: "Code">
 			<@$Is :: @UXTemplate>
@@ -407,6 +389,26 @@
 						<@Width :: "0">
 						<@Height :: "0">				
 				<@$Inherits :: @ZeroUML\StaticContainerDecorators>
+				
+		<@UXTemplate :: "Generic Code">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@ItemClass :: @CodeItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\GenericItemVertex>
+				<@LabeledItem\ConstantLabel :: "generic code">
+				<@LabeledItem\ShowMeta :: "True">
+				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\EdgeAndManyLines>			
+			<@UXDecoratorTemplate :: "Edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@SupportEmptyMetaEdge :: "True">
+				<@SupportAnyMetaEdge :: "True">
+				<@EdgeTestQuery :: "$Is:\">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
 			
 		<"GenericItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightRed>
