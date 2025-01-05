@@ -137,7 +137,7 @@ namespace m0.ZeroTypes.UX
 
                 if (ContentVisualiser != null)
                 {
-                    this.LabelContainer.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize, RoundEdgeSize, 2);
+                    this.LabelContainer.Margin = new Thickness(RoundEdgeSize + 2, RoundEdgeSize, RoundEdgeSize + 2, 2);
 
                     ((FrameworkElement)this.ContentVisualiser).Margin = new Thickness(RoundEdgeSize, 0, RoundEdgeSize, RoundEdgeSize);
 
@@ -145,7 +145,7 @@ namespace m0.ZeroTypes.UX
                 }
                 else
                 {
-                    this.LabelContainer.Margin = new Thickness(RoundEdgeSize + 2, RoundEdgeSize + 2, RoundEdgeSize, 2);
+                    this.LabelContainer.Margin = new Thickness(RoundEdgeSize + 2, RoundEdgeSize, RoundEdgeSize + 2, 1);
 
                     // this.LabelContainer.TextWrapping = TextWrapping.Wrap;
 

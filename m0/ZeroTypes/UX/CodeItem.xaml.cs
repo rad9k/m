@@ -126,21 +126,19 @@ namespace m0.ZeroTypes.UX
 
             //
 
-            //if (RoundEdgeSize > 0)
-            {
-                this.Frame.CornerRadius = new CornerRadius(RoundEdgeSize);
-
-
-                this.LabelContainer.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize, RoundEdgeSize, 2);
-
-                ((FrameworkElement)this.codeControl).Margin = new Thickness(RoundEdgeSize, 0, RoundEdgeSize, RoundEdgeSize);
-
-                TheGrid.RowDefinitions[0].Height = new GridLength(headerHeight + RoundEdgeSize);
-            }
             
+            this.Frame.CornerRadius = new CornerRadius(RoundEdgeSize);
 
+
+            this.LabelContainer.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize, RoundEdgeSize, 2);
+
+            ((FrameworkElement)this.codeControl).Margin = new Thickness(RoundEdgeSize, 0, RoundEdgeSize, RoundEdgeSize);
+
+            
+            TheGrid.RowDefinitions[0].Height = new GridLength(headerHeight + RoundEdgeSize);
+                       
             SetBaselineColors();
-        }
+        }        
 
         protected override void SetBaselineColors()
         {
