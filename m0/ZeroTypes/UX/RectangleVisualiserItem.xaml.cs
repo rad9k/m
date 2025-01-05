@@ -106,7 +106,7 @@ namespace m0.ZeroTypes.UX
                 BorderSize_nonZero = 1;
 
             this.Frame.BorderThickness = new Thickness(BorderSize_nonZero);
-            int headerHeight = 13;
+            int headerHeight = 15;
 
             if (ContentVisualiser != null)
             {
@@ -137,7 +137,7 @@ namespace m0.ZeroTypes.UX
 
                 if (ContentVisualiser != null)
                 {
-                    this.LabelContainer.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize, RoundEdgeSize, 0);
+                    this.LabelContainer.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize, RoundEdgeSize, 2);
 
                     ((FrameworkElement)this.ContentVisualiser).Margin = new Thickness(RoundEdgeSize, 0, RoundEdgeSize, RoundEdgeSize);
 
@@ -145,9 +145,9 @@ namespace m0.ZeroTypes.UX
                 }
                 else
                 {
-                    this.LabelContainer.Margin = new Thickness(RoundEdgeSize);
+                    this.LabelContainer.Margin = new Thickness(RoundEdgeSize + 2, RoundEdgeSize + 2, RoundEdgeSize, 2);
 
-                   // this.LabelContainer.TextWrapping = TextWrapping.Wrap;
+                    // this.LabelContainer.TextWrapping = TextWrapping.Wrap;
 
                     TheGrid.RowDefinitions[0].Height = new GridLength(0, GridUnitType.Auto);
 

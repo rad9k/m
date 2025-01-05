@@ -118,7 +118,7 @@ namespace m0.ZeroTypes.UX
             }
             else
             {
-                headerHeight = 11;
+                headerHeight = 15;
 
                 this.TheGrid.RowDefinitions[0].Height = new GridLength(headerHeight);
                 this.TheGrid.RowDefinitions[1].Height = new GridLength(BorderSize_nonZero);
@@ -131,7 +131,7 @@ namespace m0.ZeroTypes.UX
                 this.Frame.CornerRadius = new CornerRadius(RoundEdgeSize);
 
 
-                this.LabelContainer.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize, RoundEdgeSize, 0);
+                this.LabelContainer.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize, RoundEdgeSize, 2);
 
                 ((FrameworkElement)this.codeControl).Margin = new Thickness(RoundEdgeSize, 0, RoundEdgeSize, RoundEdgeSize);
 
