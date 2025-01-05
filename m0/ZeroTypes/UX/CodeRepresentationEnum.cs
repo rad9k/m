@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace m0.ZeroTypes.UX
 {
-    public enum CodeRepresentationEnum { OneLine, LinearizedManyLines, ManyLinesExcludingParent, VertexAndManyLines, EdgeAndManyLines }
+    public enum CodeRepresentationEnum { OneLine, EdgeOneLine, LinearizedManyLines, ManyLinesExcludingParent, VertexAndManyLines, EdgeAndManyLines }
 
     class CodeRepresentationEnumHelper
     {
         static IVertex OneLine_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\CodeRepresentationEnum\OneLine");
+        static IVertex EdgeOneLine_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\CodeRepresentationEnum\EdgeOneLine");
         static IVertex LinearizedManyLines_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\CodeRepresentationEnum\LinearizedManyLines");
         static IVertex ManyLinesExcludingParent_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\CodeRepresentationEnum\ManyLinesExcludingParent");
         static IVertex VertexAndManyLines_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\CodeRepresentationEnum\VertexAndManyLines");
@@ -25,6 +26,8 @@ namespace m0.ZeroTypes.UX
             switch (v.Value.ToString())
             {
                 case "OneLine": return CodeRepresentationEnum.OneLine;
+
+                case "EdgeOneLine": return CodeRepresentationEnum.EdgeOneLine;
 
                 case "LinearizedManyLines": return CodeRepresentationEnum.LinearizedManyLines;
 
@@ -43,6 +46,8 @@ namespace m0.ZeroTypes.UX
             switch (e)
             {
                 case CodeRepresentationEnum.OneLine: return OneLine_meta;
+
+                case CodeRepresentationEnum.EdgeOneLine: return EdgeOneLine_meta;
 
                 case CodeRepresentationEnum.LinearizedManyLines: return LinearizedManyLines_meta;
 

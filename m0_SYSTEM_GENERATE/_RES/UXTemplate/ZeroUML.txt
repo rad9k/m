@@ -26,7 +26,7 @@
 				<@$Inherits :: @ZeroUML\ActionItemVertex>
 				<@LabeledItem\ConstantLabel :: "code line">
 				<@LabeledItem\ShowMeta :: "True">
-				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\OneLine>			
+				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\EdgeOneLine>			
 			<@$Inherits :: @ZeroUML\ActionDecorators>			
 
 		<@UXTemplate :: "Class">

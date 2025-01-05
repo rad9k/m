@@ -2038,6 +2038,8 @@ namespace m0.ZeroCode
             {
                 case CodeRepresentationEnum.OneLine: return Process_OneLine(_graphBaseEdge);
 
+                case CodeRepresentationEnum.EdgeOneLine: return Process_EdgeOneLine(_graphBaseEdge);
+
                 case CodeRepresentationEnum.EdgeAndManyLines: return Process_EdgeAndManyLines(_graphBaseEdge);
 
                 case CodeRepresentationEnum.VertexAndManyLines: return Process_VertexAndManyLines(_graphBaseEdge);
