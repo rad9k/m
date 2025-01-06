@@ -85,9 +85,16 @@ namespace m0.ZeroCode.Helpers
             StringBuilder sb = new StringBuilder();
 
             for (int x = fromLine; x <= toLine; x++)            
-                sb.Append(dict[x]);            
+                sb.Append(dict[x]);
 
-            return sb.ToString();
+            string toReturn = sb.ToString();
+
+            if (toReturn.Length > 1 
+                && toReturn[toReturn.Length - 2] == '\r'
+                && toReturn[toReturn.Length - 1] == '\n')
+                toReturn = toReturn.Substring(0, toReturn.Length - 2);
+
+            return toReturn;
         }
     }
 }
