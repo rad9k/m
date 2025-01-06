@@ -104,6 +104,8 @@ namespace m0.ZeroTypes.UX
 
                     CodeControl codeControl = new CodeControl(Vertex);
 
+                    codeControl.Margin = new Thickness(2, 0, 2, 0);
+
                     Content.Child = codeControl;
 
                     codeControl.BaseEdgeToUpdated();

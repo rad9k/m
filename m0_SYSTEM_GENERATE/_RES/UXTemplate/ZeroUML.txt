@@ -321,7 +321,8 @@
 				<@$Inherits :: @ZeroUML\StaticContainerItemVertex>
 				<@LabeledItem\ConstantLabel :: "function">
 				<@LabeledItem\ShowMeta :: "False">				
-				<@MultiContainerItem\Orientation :: @OrientationEnum\Vertical>			
+				<@MultiContainerItem\Orientation :: @OrientationEnum\Vertical>
+				<@MultiContainerItem\SubBackgroundColor :: @VeryVeryVeryLightGreen>
 			<@UXTemplate :: "abstraction">
 				<@$Is :: @UXTemplate>
 				<@ItemVertex :: "">
