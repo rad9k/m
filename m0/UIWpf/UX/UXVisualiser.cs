@@ -161,6 +161,8 @@ namespace m0.UIWpf.UX
             {
                 UserInteractionUtil.ShowError("Diagram Visualiser", "There is allready Diagram Visualiser opened for this Edge");
 
+                canLoad = false;
+
                 return;
             }            
 
@@ -841,9 +843,11 @@ namespace m0.UIWpf.UX
             Keyboard.Focus(this);
         }
 
+        bool canLoad = true;
+
         public void OnLoad(object sender, RoutedEventArgs e)
         {
-            if (IsFirstPainted)
+            if (IsFirstPainted || !canLoad)
                 return;
 
             SetFocus();

@@ -105,11 +105,14 @@ namespace m0.UIWpf.UX
         protected void UpdateItemList()
         {
             if (ItemsList != null)
-                ItemsList.RemoveExternalReference();
+                ItemsList.RemoveExternalReference();            
 
-           ItemsList = m0.MinusZero.Instance.CreateTempVertex();     
+           ItemsList = m0.MinusZero.Instance.CreateTempVertex();
 
-           if (InstanceRadio.IsChecked == true)
+            if (visualiser.NewItemUXTemplate == null)
+                return;
+
+            if (InstanceRadio.IsChecked == true)
            {
                 IVertex Instance = visualiser.NewItemUXTemplate.Vertex.GetAll(false, @"{InstanceCreation:Instance}");
              

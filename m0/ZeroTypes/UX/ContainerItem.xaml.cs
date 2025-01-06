@@ -61,15 +61,15 @@ namespace m0.ZeroTypes.UX
 
             double roundEdgeSize = RoundEdgeSize;
 
+            this.LabelContainer.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize, RoundEdgeSize, 1);
+
             if (roundEdgeSize != 0)
             {
                 this.Frame.CornerRadius = new CornerRadius(RoundEdgeSize);
-
-                this.LabelContainer.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize, RoundEdgeSize, 0);
-
+               
                 Canvas.Margin = new Thickness(RoundEdgeSize, 0, RoundEdgeSize, RoundEdgeSize);
 
-                TheGrid.RowDefinitions[0].Height = new GridLength(18 + RoundEdgeSize);
+                TheGrid.RowDefinitions[0].Height = new GridLength(16 + RoundEdgeSize);
             }
 
             double borderSize = BorderSize;

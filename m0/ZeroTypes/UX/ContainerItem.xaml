@@ -10,7 +10,7 @@
     <Border x:Name="Frame"  BorderBrush="{StaticResource 0ForegroundBrush}" BorderThickness="1" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch">
         <Grid x:Name="TheGrid">
             <Grid.RowDefinitions>
-                <RowDefinition Height="17"/>
+                <RowDefinition Height="16"/>
                 <RowDefinition Height="1"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>        

@@ -89,7 +89,7 @@ namespace m0.ZeroTypes.UX
 
             Image.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize/2, RoundEdgeSize, RoundEdgeSize/2);
 
-            TheGrid.RowDefinitions[1].Height = new GridLength(18 + RoundEdgeSize);
+            TheGrid.RowDefinitions[1].Height = new GridLength(16 + RoundEdgeSize);
 
             SetBaselineColors();
         }
