@@ -1154,7 +1154,7 @@ namespace m0.UIWpf.UX
 
             foreach (IEdge ed in Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"))
                 foreach (IUXItem item in GetItemsByVertex(ed.To))
-                    if(item.NestingLevel == 1)
+                    if (item.NestingLevel == 1)
                         item.MoveItem(item.Position.X + x, item.Position.Y + y, false);
                     else
                         item.MoveItem(x, y, true);

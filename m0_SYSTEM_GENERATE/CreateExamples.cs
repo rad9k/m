@@ -388,6 +388,11 @@ namespace m0_SYSTEM_GENERATE
     "\r\n\t\t\tb = \"True\"", m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines
     );
 
+            IVertex pv = code.AddVertex(m0.MinusZero.Instance.root.Get(false, @"System\Meta\ZeroUML\Package"), "TestPackage");
+
+            pv.AddEdge(m0.MinusZero.Instance.root.Get(false, @"System\Meta\Base\Vertex\$Is"),
+                m0.MinusZero.Instance.root.Get(false, @"System\Meta\ZeroUML\Package"));
+
     }
 
         public static void CreateTestData()
