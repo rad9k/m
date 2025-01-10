@@ -2456,6 +2456,16 @@ namespace m0
             IVertex o_block_no_name_base = o_block_no_name.AddVertex(any, "");
 
             o_block_no_name_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Block"));
+
+            // package
+            //
+            // package
+
+            IVertex o_package = k.AddVertex(keyword, "package (?<name>)");
+
+            IVertex o_package_base = o_package.AddVertex(any, "(?<name>)");
+
+            o_package_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Package"));
         }
 
         private static void AddDoubleOperator(IVertex k, IVertex smu, IVertex smb, IVertex keyword, IVertex any, string text, string _is)

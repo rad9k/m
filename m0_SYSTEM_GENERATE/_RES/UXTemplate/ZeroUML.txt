@@ -342,6 +342,38 @@
 						<@Width :: "0">
 						<@Height :: "0">				
 				<@$Inherits :: @ZeroUML\StaticContainerDecorators>
+				
+		<@UXTemplate :: "Method">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:Method}">
+			<@MetaVertexTestQuery :: "Method">
+			<@ItemClass :: @MultiContainerItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\StaticContainerItemVertex>
+				<@LabeledItem\ConstantLabel :: "method">
+				<@LabeledItem\ShowMeta :: "False">				
+				<@MultiContainerItem\Orientation :: @OrientationEnum\Vertical>
+				<@MultiContainerItem\SubBackgroundColor :: @VeryVeryVeryLightGreen>
+			<@UXTemplate :: "abstraction">
+				<@$Is :: @UXTemplate>
+				<@ItemVertex :: "">
+					<@UXContainer\SubItemsNotVisible :: "True">					
+					<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\EdgeOneLine>
+					<@Size :: "">
+						<@$Is :: @Size>
+						<@Width :: "0">
+						<@Height :: "32">				
+			<@UXTemplate :: "body">
+				<@$Is :: @UXTemplate>				
+				<@ItemVertex :: "">					
+					<@MultiContainerSubItem\NotExistingContentQueryEdge :: @$Empty>
+					<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\ManyLinesExcludingParent>
+					<@Size :: "">
+						<@$Is :: @Size>
+						<@Width :: "0">
+						<@Height :: "0">				
+				<@$Inherits :: @ZeroUML\StaticContainerDecorators>
 		
 		<@UXTemplate :: "Vertex">
 			<@$Is :: @UXTemplate>
