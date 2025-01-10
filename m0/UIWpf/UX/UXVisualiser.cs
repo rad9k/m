@@ -1672,13 +1672,14 @@ namespace m0.UIWpf.UX
         {
             Point itemPosition_absolute = GetItemAbsolutePosition(item);
 
-            if (fastMode)
+          /*  if (fastMode) // will not use it as seems not to be needed
             {
                 Position itemPosition_relative = item.Position;
 
                 FrameworkElement item_FrameworkElement = (FrameworkElement)item;
 
-                if (item.ParentItem != this && item.ParentItem != null)                
+                if (//item.ParentItem != this && // this will make simple multi selected (move)-> container scenario not working
+                    item.ParentItem != null)                
                 {
                     FrameworkElement itemParent_FrameworkElement = (FrameworkElement)item.ParentItem;
 
@@ -1696,7 +1697,7 @@ namespace m0.UIWpf.UX
                     }
                 }
             }
-            else
+            else*/
             {
                 IUXContainer toBeParentItem = GetItemByPoint_ByCanvas(itemPosition_absolute); // can take some time, especially when moving
 

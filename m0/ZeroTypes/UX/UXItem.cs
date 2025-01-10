@@ -445,7 +445,7 @@ namespace m0.ZeroTypes.UX
 
             UpdateAnchors(x_orginal, y_orginal, width, height);
 
-            //UpdateDiagramLines(); //OnSizeChanged
+            //UpdateDiagramLines(); //On SizeChanged
 
             OwningVisualiser.CheckAndUpdateItemComposition(this, true);
         }
