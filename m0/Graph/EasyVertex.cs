@@ -566,7 +566,7 @@ namespace m0.Graph
         }
 
         public override void QueryOutEdges(object meta, object to, out IEdge result, out IList<IEdge> results)
-        {
+         {
             result = null;
             results = null;
 

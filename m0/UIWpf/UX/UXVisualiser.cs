@@ -1392,7 +1392,7 @@ namespace m0.UIWpf.UX
                     RemoveMultiSelectionMovingSprites(e.GetPosition(ClickedItem_FrameworkElemet).X - ClickPositionX_ItemCordinates,
                             e.GetPosition(ClickedItem_FrameworkElemet).Y - ClickPositionY_ItemCordinates);
                 else
-                    CheckAndUpdateItemComposition(ClickedItem, false);
+                    CheckAndUpdateItemParent(ClickedItem, false);
             
             
 
@@ -1627,13 +1627,14 @@ namespace m0.UIWpf.UX
                     item_absolute.Y <= p.Y &&
                     p.X <= item_absolute.X + item_FrameworkElement.ActualWidth &&
                     p.Y <= item_absolute.Y + item_FrameworkElement.ActualHeight)
-                    if (i.NestingLevel > highestNestingLevel)
+                    if (i.NestingLevel > highestNestingLevel
+                        && !itemToReturn.SubItemsNotVisible)
                     {
                         itemToReturn = (IUXContainer)i;
                         highestNestingLevel = i.NestingLevel;
                     }               
-            }            
-
+            }
+            
             return itemToReturn;
         }
 
@@ -1668,7 +1669,7 @@ namespace m0.UIWpf.UX
             return itemToReturn;
         }        
 
-        public void CheckAndUpdateItemComposition(IUXItem item, bool fastMode)
+        public void CheckAndUpdateItemParent(IUXItem item, bool fastMode)
         {
             Point itemPosition_absolute = GetItemAbsolutePosition(item);
 

@@ -365,7 +365,7 @@ namespace m0.ZeroTypes.UX
 
             UpdateDiagramLines();
 
-            OwningVisualiser.CheckAndUpdateItemComposition(this, true);
+            OwningVisualiser.CheckAndUpdateItemParent(this, true);
         }
 
         static public IUXItem GetUXItem(IItem parent, ITypedEdge i)
@@ -447,7 +447,7 @@ namespace m0.ZeroTypes.UX
 
             //UpdateDiagramLines(); //On SizeChanged
 
-            OwningVisualiser.CheckAndUpdateItemComposition(this, true);
+            OwningVisualiser.CheckAndUpdateItemParent(this, true);
         }
 
         public void AddToSelectedEdges()

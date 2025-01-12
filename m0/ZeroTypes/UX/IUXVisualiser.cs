@@ -61,7 +61,7 @@ namespace m0.ZeroTypes.UX
 
         void CheckAndUpdateDiagramLinesForItem(IUXItem item);
 
-        void CheckAndUpdateItemComposition(IUXItem item, bool fastMode);
+        void CheckAndUpdateItemParent(IUXItem item, bool fastMode);
     }
 
 }

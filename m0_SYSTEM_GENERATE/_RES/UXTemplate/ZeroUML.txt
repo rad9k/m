@@ -57,6 +57,14 @@
 				<@EdgeTargetInEdgePointingToTargetItemBaseEdgeTo :: "True">
 				<@DecoratorVertex :: "">
 					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			<@UXDecoratorTemplate :: "Method">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:Class\Method">
+				<@ToDiagramItemTestQuery :: "UXTemplate:Method">
+				<@DecoratorClass :: @LineDecorator>
+				<@ForceShowEditForm :: "True">				
+				<@DecoratorVertex :: "">
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
 
 		<@UXTemplate :: "Object">
 			<@$Is :: @UXTemplate>
@@ -272,7 +280,7 @@
 				<@$Inherits :: @ZeroUML\ActionContainerItemVertex>
 				<@LabeledItem\ConstantLabel :: "while">
 				<@LabeledItem\ShowMeta :: "False">				
-				<@MultiContainerItem\Orientation :: @OrientationEnum\Vertical>
+				<@MultiContainerItem\Orientation :: @OrientationEnum\Vertical>				
 			<@$Inherits :: @ZeroUML\ActionDecorators>
 			<@UXTemplate :: "Test">
 				<@$Is :: @UXTemplate>
@@ -321,8 +329,7 @@
 				<@$Inherits :: @ZeroUML\StaticContainerItemVertex>
 				<@LabeledItem\ConstantLabel :: "function">
 				<@LabeledItem\ShowMeta :: "False">				
-				<@MultiContainerItem\Orientation :: @OrientationEnum\Vertical>
-				<@MultiContainerItem\SubBackgroundColor :: @VeryVeryVeryLightGreen>
+				<@MultiContainerItem\Orientation :: @OrientationEnum\Vertical>				
 			<@UXTemplate :: "abstraction">
 				<@$Is :: @UXTemplate>
 				<@ItemVertex :: "">
@@ -437,8 +444,10 @@
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightVioletBlue>
 		<"StaticContainerItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryVeryLightGreen>
+			<@MultiContainerItem\SubBackgroundColor :: @VeryVeryLightLightGreen>
 		<"ActionContainerItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryVeryLightVioletBlue>
+			<@MultiContainerItem\SubBackgroundColor :: @VeryVeryLightVioletBlue>
 		<"ActionDecorators">
 			<@UXDecoratorTemplate :: "Next">
 				<@$Is :: @UXDecoratorTemplate>
