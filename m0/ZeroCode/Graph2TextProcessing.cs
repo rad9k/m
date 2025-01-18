@@ -828,6 +828,13 @@ namespace m0.ZeroCode
             
             BeenList_Keyword.Add(keywordEdge);
 
+            // 2025 baby!
+
+            //foreach(IEdge matchedEdge in km.MatchedEdges)
+              //  BeenList.Add(matchedEdge);
+
+            //
+
             bool whatToReturn = true;
 
             bool shouldDecreaseTabTimes = false;
