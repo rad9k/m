@@ -830,8 +830,8 @@ namespace m0.ZeroCode
 
             // 2025 baby!
 
-            //foreach(IEdge matchedEdge in km.MatchedEdges)
-              //  BeenList.Add(matchedEdge);
+            foreach(IEdge matchedEdge in km.MatchedEdges)
+                BeenList.Add(matchedEdge);
 
             //
 

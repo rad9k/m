@@ -388,6 +388,21 @@ namespace m0_SYSTEM_GENERATE
     "\r\n\t\t\tb = \"True\"", m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines
     );
 
+            IEdge code15 = code.AddVertexAndReturnEdge(null, null);
+            MinusZero.Instance.DefaultFormalTextParser.Parse(code15,
+            "\"Code15\"" +    
+    "\r\n\tnamedblock \"ablok\"" +
+    "\r\n\t\ta = \"True\"" +
+    "\r\n\t\tb = \"True\"" +
+    "\r\n\tnamedblock \"bblok\"" +
+    "\r\n\t\tb = \"True\"" +    
+    "\r\n\tblock" +
+    "\r\n\t\ta = \"False\"" +
+    "\r\n\tblock" +
+    "\r\n\t\ta = \"False\"" +
+    "\r\n\t\tb = \"True\"", m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines
+    );
+
             IVertex pv = code.AddVertex(m0.MinusZero.Instance.root.Get(false, @"System\Meta\ZeroUML\Package"), "TestPackage");
 
             pv.AddEdge(m0.MinusZero.Instance.root.Get(false, @"System\Meta\Base\Vertex\$Is"),

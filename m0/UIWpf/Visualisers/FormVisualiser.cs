@@ -460,8 +460,13 @@ namespace m0.UIWpf.Visualisers
                     {                       
                         ci.Value.MetaControl.Width = maxMetaWidthInColumn[ci.Value.Column];
                         ci.Value.GapControl.Width = 0;
-                        
-                        ci.Value.DataControl.Width = oneColumnWidth - maxMetaWidthInColumn[ci.Value.Column] - metaVsDataSeparator - 5;                                  
+
+                    double ci_Value_DataControl_Width_to_be = oneColumnWidth - maxMetaWidthInColumn[ci.Value.Column] - metaVsDataSeparator - 5;
+
+                    if (ci_Value_DataControl_Width_to_be < 0)
+                        ci_Value_DataControl_Width_to_be = 0;
+
+                    ci.Value.DataControl.Width = ci_Value_DataControl_Width_to_be;
                     }
             else
                 foreach (KeyValuePair<IVertex, ControlInfo> ci in i.ControlInfos) // if there are sections
