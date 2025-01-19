@@ -444,7 +444,7 @@
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightVioletBlue>
 		<"StaticContainerItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryVeryLightGreen>
-			<@MultiContainerItem\SubBackgroundColor :: @VeryVeryLightLightGreen>
+			<@MultiContainerItem\SubBackgroundColor :: @VeryVeryLightGreen>
 		<"ActionContainerItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryVeryLightVioletBlue>
 			<@MultiContainerItem\SubBackgroundColor :: @VeryVeryLightVioletBlue>
