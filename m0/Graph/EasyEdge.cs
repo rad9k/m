@@ -26,10 +26,6 @@ namespace m0.Graph
             MetaIdentifier = _MetaIdentifier;
         }
 
-        bool isHidden;
-
-        public bool IsHidden { get { return isHidden; } }
-
         public string ToStoreIdentifier { get; set; }
         public string ToStoreTypeName { get; set; }
         public object ToIdentifier { get; set; }
