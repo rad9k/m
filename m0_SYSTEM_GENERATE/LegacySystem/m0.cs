@@ -2443,8 +2443,8 @@ namespace m0
 
             IVertex o_block = k.AddVertex(keyword, "namedblock (?<name>)");
 
-            //IVertex o_block_base = o_block.AddVertex(any, "(?<name>)");
-            IVertex o_block_base = o_block.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"NamedBlock"), "(?<name>)");
+            IVertex o_block_base = o_block.AddVertex(any, "(?<name>)");
+            //IVertex o_block_base = o_block.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"NamedBlock"), "(?<name>)");
 
             o_block_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"NamedBlock"));            
 
