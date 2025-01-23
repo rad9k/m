@@ -1,7 +1,7 @@
 ﻿1) Code Diagram
 	+ MultiContainer
 	+ CodeBlock
-	- CodeBlock for MultiContainer?
+	+ CodeBlock for MultiContainer?
 	- ZeroCode <> diagram (template)
 
 2) Selected View

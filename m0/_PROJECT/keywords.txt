@@ -20,6 +20,9 @@ execute
 parse
 generate
 new
+block
+namedblock
+package
 =
 +=
 +<
