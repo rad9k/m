@@ -466,10 +466,11 @@ namespace m0_SYSTEM_GENERATE
             tr.Get(false, @"TEST3\Basket").AddEdge(r.Get(false, @"System\Meta?$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
             tr.Get(false, @"TEST3\Item").AddEdge(r.Get(false, @"System\Meta?$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(tr, r.Get(false, @"System\Meta"), "{TEST2,TEST22,TEST{Class:Person{Association:Spouse{$MaxCardinality:1,$MaxTargetCardinality:1},Aggregation:Child{$MaxCardinality:3},Attribute:Name,Attribute:Surname,Attribute:Age{MinValue:0,MaxValue:40},Attribute:NoseLength{MinValue:0,MaxValue:40},Attribute:Money{MinValue:0,MaxValue:1000},Attribute:IsGood,Attribute:IsPretty,Attribute:IsPretty2,Attribute:IsPretty3},Enum:Pretty{EnumValue:Yes,EnumValue:No,EnumValue:Maybe}}}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(tr, r.Get(false, @"System\Meta"), "{TEST2,TEST22,TEST{Class:Person{Association:Spouse{$MaxCardinality:1,$MaxTargetCardinality:1},Aggregation:Child{$MaxCardinality:3},Attribute:Name,Attribute:Surname,Attribute:Age{MinValue:0,MaxValue:40},Attribute:NoseLength{MinValue:0,MaxValue:40},Attribute:Money{MinValue:0,MaxValue:1000},Attribute:IsGood,Attribute:IsPretty,Attribute:IsPretty2,Attribute:IsPretty3},Class:PersonB{Association:Spouse{$MaxCardinality:1,$MaxTargetCardinality:1},Aggregation:Child{$MaxCardinality:3},Attribute:Name,Attribute:Surname,Attribute:Age{MinValue:0,MaxValue:40},Attribute:NoseLength{MinValue:0,MaxValue:40},Attribute:Money{MinValue:0,MaxValue:1000},Attribute:IsGood,Attribute:IsPretty,Attribute:IsPretty2,Attribute:IsPretty3},Enum:Pretty{EnumValue:Yes,EnumValue:No,EnumValue:Maybe}}}");
 
             tr.Get(false, @"TEST\Pretty").AddEdge(r.Get(false, @"System\Meta?$Inherits"), r.Get(false, @"System\Meta\ZeroTypes\EnumBase"));
             tr.Get(false, @"TEST\Person").AddEdge(r.Get(false, @"System\Meta?$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
+            tr.Get(false, @"TEST\PersonB").AddEdge(r.Get(false, @"System\Meta?$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
 
 
             ///
@@ -484,6 +485,7 @@ namespace m0_SYSTEM_GENERATE
             IVertex EdgeTarget = r.Get(false, @"System\Meta?$EdgeTarget");
 
             IVertex Person = tr.Get(false, @"TEST\Person");
+            IVertex Person2 = tr.Get(false, @"TEST\PersonB");
 
 
 
@@ -538,6 +540,20 @@ namespace m0_SYSTEM_GENERATE
             Person.Get(false, "IsPretty").AddEdge(EdgeTarget, tr.Get(false, @"TEST\Pretty"));
             Person.Get(false, "IsPretty2").AddEdge(EdgeTarget, tr.Get(false, @"TEST\Pretty"));
             Person.Get(false, "IsPretty3").AddEdge(EdgeTarget, tr.Get(false, @"TEST\Pretty"));
+
+            Person2.Get(false, "Name").AddEdge(EdgeTarget, smzt.Get(false, "String"));
+
+            Person2.Get(false, "Spouse").AddEdge(r.Get(false, @"System\Meta?$EdgeTarget"), Person2);
+            Person2.Get(false, "Child").AddEdge(r.Get(false, @"System\Meta?$EdgeTarget"), Person2);
+
+            Person2.Get(false, "Surname").AddEdge(EdgeTarget, smzt.Get(false, "String"));
+            Person2.Get(false, "Age").AddEdge(EdgeTarget, smzt.Get(false, "Integer"));
+            Person2.Get(false, "NoseLength").AddEdge(EdgeTarget, smzt.Get(false, "Float"));
+            Person2.Get(false, "Money").AddEdge(EdgeTarget, smzt.Get(false, "Decimal"));
+            Person2.Get(false, "IsGood").AddEdge(EdgeTarget, smzt.Get(false, "Boolean"));
+            Person2.Get(false, "IsPretty").AddEdge(EdgeTarget, tr.Get(false, @"TEST\Pretty"));
+            Person2.Get(false, "IsPretty2").AddEdge(EdgeTarget, tr.Get(false, @"TEST\Pretty"));
+            Person2.Get(false, "IsPretty3").AddEdge(EdgeTarget, tr.Get(false, @"TEST\Pretty"));
 
 
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(tr.Get(false, "TEST"), tr.Get(false, @"TEST"), "{Person:Person1{Name:Radek,Surname:Tereszczuk,Age:34,NoseLength:\"2,3\",Money:999,IsGood:False,IsPretty:},Person:Person2{Name:Maurycy,Surname:Tereszczuk,Age:1,NoseLength:1.1,Money:9999,IsGood:True,IsPretty:}}");

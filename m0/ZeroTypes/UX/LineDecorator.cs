@@ -300,7 +300,7 @@ namespace m0.ZeroTypes.UX
 
             Line2D l2d = Geometry2D.GetLine2DFromPoints(_FromX, _FromY, _ToX, _ToY);
 
-            if (p.X + OwningVisualiser.LineSelectionDelta < Math.Min(_FromX, _ToX) ||
+             if (p.X + OwningVisualiser.LineSelectionDelta < Math.Min(_FromX, _ToX) ||
                 p.X - OwningVisualiser.LineSelectionDelta > Math.Max(_FromX, _ToX) ||
                 p.Y + OwningVisualiser.LineSelectionDelta < Math.Min(_FromY, _ToY) ||
                 p.Y - OwningVisualiser.LineSelectionDelta > Math.Max(_FromY, _ToY))
