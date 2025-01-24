@@ -221,7 +221,8 @@ namespace m0.ZeroTypes
         public static IEdge AddEdgeOrVertexByMeta(IVertex baseVertex, IVertex metaVertex, IVertex toVertex, Point position, bool CreateEdgeOnly, bool ForceShowEditForm)
         {
             if (GraphUtil.ExistQueryOut(metaVertex,"$VertexTarget", null)
-                && CreateEdgeOnly == false)
+                && !CreateEdgeOnly
+                )
             {                
                 IVertex n = VertexOperations.AddInstance(baseVertex, metaVertex);
 

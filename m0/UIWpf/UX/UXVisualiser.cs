@@ -667,21 +667,23 @@ namespace m0.UIWpf.UX
                         {
                             LineDecorator lineDecorator = (LineDecorator)decorator;
 
-                            item.AddDiagramLineObject(GetToDiagramItemFromLineVertex(lineDecorator), lineDecorator);
+                        //item.AddDiagramLineObject(GetToDiagramItemFromLineVertex(lineDecorator), lineDecorator);
+
+                            item.AddDiagramLineObject(lineDecorator.ToItem, lineDecorator);
                         }                    
                }
            
         }
 
         // TOO
-        public IUXItem GetToDiagramItemFromLineVertex(LineDecorator lineDecorator)
+        public IUXItem GetToDiagramItemFromLineVertex(LineDecorator lineDecorator) // this one is probably NOT needed
         {
             IVertex toFind = null;
 
             Edge lineDecorator_BaseEdge = lineDecorator.BaseEdge;
 
             if (GraphUtil.ExistQueryOut(lineDecorator_BaseEdge.Meta, "$VertexTarget", null)
-            && !((UXDecoratorTemplate)lineDecorator.UXTemplate).CreateEdgeOnly // ???? ZZZ added ! hope this is ok
+            //&& !((UXDecoratorTemplate)lineDecorator.UXTemplate).CreateEdgeOnly // ???? ZZZ added ! hope this is ok
             )
                 toFind = GraphUtil.GetQueryOutFirst(lineDecorator_BaseEdge.To, "$EdgeTarget", null);
             else
@@ -1961,8 +1963,8 @@ namespace m0.UIWpf.UX
                 && !InstructionHelpers.CheckIfIsOrInherits(toEdge.To, eToEdgeTarget))
                 return false;
 
-            if (!tem.CreateEdgeOnly // ZZZ added !
-                && eToVertexTarget != null
+            if (!tem.CreateEdgeOnly &&// ZZZ added !
+                eToVertexTarget != null
                 && !InstructionHelpers.CheckIfIsOrInherits(toEdge.To, eToVertexTarget))
                 return false;
 
