@@ -425,7 +425,15 @@ namespace m0_SYSTEM_GENERATE
     "\r\n\tfunction \"Bfunc\"()" +
     "\r\n\t\ta=b" +
     "\r\n\tfunction \"Cfunc\"()" +
-    "\r\n\t\treturn Name"
+    "\r\n\t\treturn Name" +    
+    "\r\n\tfunction \"Xfunc\"()" +
+    "\r\n\t\twhile a==b" +
+    "\r\n\t\t\tb=a" +
+    "\r\n\t\t\ta=b" +
+    "\r\n\t\twhile a==b" +
+    "\r\n\t\t\ta=b" +
+    "\r\n\t\twhile a==b" +
+    "\r\n\t\t\treturn Name" 
     , m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines
     );
 

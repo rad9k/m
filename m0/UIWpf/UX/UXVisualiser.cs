@@ -2203,8 +2203,9 @@ namespace m0.UIWpf.UX
 
                 UXDecoratorTemplate lineDef = GetLineDefinition(e, item, toDiagramItem);
 
-                if (lineDef != null && (
-                    isEdgeTargetInEdgePointingToTargetItemBaseEdgeTo == false ||
+                if (lineDef != null && 
+                    !(toDiagramItem is IUXMultiContainerSubItem) &&
+                    (isEdgeTargetInEdgePointingToTargetItemBaseEdgeTo == false ||
                     lineDef.EdgeTargetInEdgePointingToTargetItemBaseEdgeTo
                     ))                
                     AddDiagramLineVertex(item, e, lineDef, toDiagramItem);
