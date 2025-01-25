@@ -2249,18 +2249,20 @@ namespace m0.UIWpf.UX
             {
                 string edgeTestQuery = tem.EdgeTestQuery;
 
+                bool canReturn = true;
+
                 if (tem.SupportEmptyMetaEdge)
                 {
                     if (e.Meta.Value.ToString() == "$Empty")
                         tem_found_EmptyMetaEdge = tem;
-                    //else if (edgeTestQuery == null) // seems to be a bug? >> commented out
-                      //  return null;
+
+                    canReturn = false;
                 }
 
                 if (tem.SupportAnyMetaEdge)
                     tem_found_AnyMetaEdge = tem;
 
-                bool canReturn = true;                
+                
 
                 if (edgeTestQuery != null && edgeTestQuery != ""){
                     canReturn = false;
