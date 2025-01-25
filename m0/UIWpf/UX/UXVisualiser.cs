@@ -1451,7 +1451,12 @@ namespace m0.UIWpf.UX
 
             UXDecoratorTemplate tem = (UXDecoratorTemplate)line.UXTemplate;
 
-            foreach (IEdge e in fromItem.BaseEdgeTo.GetAll(false, tem.EdgeTestQuery))            
+            IVertex edgesToTest = fromItem.BaseEdgeTo;
+
+            if (tem.EdgeTestQuery != null)
+                edgesToTest = fromItem.BaseEdgeTo.GetAll(false, tem.EdgeTestQuery);
+
+            foreach (IEdge e in edgesToTest)
                 if (CanAddLineByDecoratorTemplateAndFromItemBaseEdgeToQuery(toItem, toItem.BaseEdge, tem, e));
                     canAdd = true;
 
