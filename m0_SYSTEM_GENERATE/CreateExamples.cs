@@ -390,13 +390,13 @@ namespace m0_SYSTEM_GENERATE
 
             IEdge code15 = code.AddVertexAndReturnEdge(null, null);
             MinusZero.Instance.DefaultFormalTextParser.Parse(code15,
-            "\"code test\"" +    
+            "\"code test\"" +
     "\r\n\tnamedblock \"Ablok\"" +
     "\r\n\t\ta = \"True\"" +
     "\r\n\t\tb = \"True\"" +
-    "\r\n\tnamedblock \"Bblok\"" +
+    "\r\n\tnamedblock \"Bblok\"()" +
     "\r\n\t\tb = \"True\"" +
-    "\r\n\tnamedblock \"Cblok\"" +
+    "\r\n\tnamedblock \"Cblok\"()" +
     "\r\n\t\treturn Name" +    
     "\r\n\tblock" +
     "\r\n\t\ta = \"False\"" +
