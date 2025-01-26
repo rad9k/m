@@ -406,24 +406,24 @@ namespace m0_SYSTEM_GENERATE
     "\r\n\tblock" +
     "\r\n\t\treturn Name" +
     "\r\n\tif a==b" +
-    "\r\n\t\tb=a" +
-    "\r\n\t\ta=b" +
+    "\r\n\t\ta = \"True\"" +
+    "\r\n\t\tb = \"True\"" +
     "\r\n\tif a==b" +
-    "\r\n\t\ta=b" +
+    "\r\n\t\tb = \"True\"" +
     "\r\n\tif a==b" +
-    "\r\n\t\t return Name" +
+    "\r\n\t\treturn Name" +
     "\r\n\twhile a==b" +
-    "\r\n\t\tb=a" +
-    "\r\n\t\ta=b" +
+    "\r\n\t\ta = \"True\"" +
+    "\r\n\t\tb = \"True\"" +
     "\r\n\twhile a==b" +
-    "\r\n\t\ta=b" +
+    "\r\n\t\tb = \"True\"" +
     "\r\n\twhile a==b" +    
     "\r\n\t\treturn Name" +
     "\r\n\tfunction \"Afunc\"()" +
-    "\r\n\t\tb=a" +
-    "\r\n\t\ta=b" +
+    "\r\n\t\ta = \"True\"" +
+    "\r\n\t\tb = \"True\"" +
     "\r\n\tfunction \"Bfunc\"()" +
-    "\r\n\t\ta=b" +
+    "\r\n\t\tb = \"True\"" +
     "\r\n\tfunction \"Cfunc\"()" +
     "\r\n\t\treturn Name" +    
     "\r\n\tfunction \"Xfunc\"()" +
