@@ -485,7 +485,7 @@ namespace m0
                 //Do{$MinCardinality:0,$MaxCardinality:1}
                 ",Variable{$MinCardinality:0,$MaxCardinality:-1},Type{$$NoSequentialExecution:,$MinCardinality:0,$MaxCardinality:-1}}" +
                 ",StackFrameCreatorWithInputOutput{Output{$$NoSequentialExecution:,$MinCardinality:0,$MaxCardinality:1},InputParameter{$$NoSequentialExecution:,$MinCardinality:0,$MaxCardinality:-1}}" +
-                ",Function{$$NoSequentialExecution:},Block,NamedBlock"+                 
+                ",Function{$$NoSequentialExecution:},Block,NamedBlock,NamedBlock2{$$NoSequentialExecution:}" +                 
                 ",While{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}}" +
                 ",ForEach{Variable{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},Set{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}}" +
                 ",If{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}},Test{Expression{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}},Case{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}},Fallback" +
@@ -586,7 +586,7 @@ namespace m0
             AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "Parse"), "Parse");
             AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "Generate"), "Generate");
             AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "ParseWithLanguage"), "Parse");
-            AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu,false, "GenerateWithLanguage"), "Generate");
+            AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "GenerateWithLanguage"), "Generate");
 
 
 
@@ -853,6 +853,10 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "Action"));
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "StackFrameCreatorWithInputOutput"));
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"NamedBlock2").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "StackFrameCreatorWithInputOutput"));
 
@@ -2444,9 +2448,9 @@ namespace m0
             //IVertex o_block = k.AddVertex(keyword, "namedblock (?<name>)");
 
             //IVertex o_block_base = o_block.AddVertex(any, "(?<name>)");
-            //IVertex o_block_base = o_block.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"NamedBlock"), "(?<name>)");
+            //IVertex o_block_base = o_block.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"NamedBlock2"), "(?<name>)");
 
-            //o_block_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"NamedBlock"));
+            //o_block_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"NamedBlock2"));
 
             //IVertex NBX = k.AddVertex(keyword, "namedblock (?<name>) ((*(+, +)(?<paramType>) (?<paramName>)*))");
 
@@ -2458,13 +2462,13 @@ namespace m0
             NBX_function.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "Function"));
 
-           /* IVertex NBX_f2fip = NBX_function.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function\InputParameter"), "(?<paramName>)");
+            /*IVertex NBX_f2fip = NBX_function.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function\InputParameter"), "(?<paramName>)");
 
             NBX_f2fip.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$EdgeTarget"), "(?<paramType>)");
-
-            NBX_f2fip.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
-                Empty);*/
             
+            NBX_f2fip.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
+                Empty);*/            
+
             // block 
             //
             // block
