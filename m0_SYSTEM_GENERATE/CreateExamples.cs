@@ -433,7 +433,9 @@ namespace m0_SYSTEM_GENERATE
     "\r\n\t\twhile a==b" +
     "\r\n\t\t\ta=b" +
     "\r\n\t\twhile a==b" +
-    "\r\n\t\t\treturn Name" 
+    "\r\n\t\t\treturn Name" +
+    "\r\n\tnamedblock \"TESTBLOK\"" +
+    "\r\n\t\ta = \"True\""     
     , m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines
     );
 

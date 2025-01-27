@@ -1409,11 +1409,11 @@ namespace m0
 
             m2fip.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
                 Empty);
-
+            
             // function
             //
             // function (?<name>) (?<returnType>) [(*(+, +)(?<paramType>) (?<paramName>)*)]
-
+            /*
             IVertex function = k.AddVertex(keyword, "function (?<name>) (?<returnType>)((*(+, +)(?<paramType>) (?<paramName>)*))");
 
             IVertex function_function = function.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function"), "(?<name>)");
@@ -1446,7 +1446,7 @@ namespace m0
             f2fip.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$EdgeTarget"), "(?<paramType>)");
 
             f2fip.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
-                Empty);
+                Empty);*/
 
             /////////////////////////////////////////////////////////
             //
@@ -2456,8 +2456,8 @@ namespace m0
 
             IVertex NBX = k.AddVertex(keyword, "namedblock (?<name>)");
 
-            IVertex NBX_function = NBX.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function"), "(?<name>)");
-            //IVertex NBX_function = NBX.AddVertex(any, "(?<name>)");
+             //IVertex NBX_function = NBX.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function"), "(?<name>)");
+            IVertex NBX_function = NBX.AddVertex(any, "(?<name>)");
 
             NBX_function.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "Function"));

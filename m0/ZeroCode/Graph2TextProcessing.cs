@@ -1818,9 +1818,11 @@ namespace m0.ZeroCode
 
                 startingVertex.AddEdge(null, _graphBaseEdge.To);
             }
-                
-            
-            IVertex v = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(startingVertex);
+
+
+            //IVertex v = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(startingVertex);
+
+            IVertex v = startingVertex;
 
             BaseEdge = new EasyEdge(_graphBaseEdge.From, _graphBaseEdge.Meta, v); // this is some crazy hybrid. this is non consistent and might not work!
 
