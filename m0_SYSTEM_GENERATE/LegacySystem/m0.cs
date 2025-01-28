@@ -485,7 +485,7 @@ namespace m0
                 //Do{$MinCardinality:0,$MaxCardinality:1}
                 ",Variable{$MinCardinality:0,$MaxCardinality:-1},Type{$$NoSequentialExecution:,$MinCardinality:0,$MaxCardinality:-1}}" +
                 ",StackFrameCreatorWithInputOutput{Output{$$NoSequentialExecution:,$MinCardinality:0,$MaxCardinality:1},InputParameter{$$NoSequentialExecution:,$MinCardinality:0,$MaxCardinality:-1}}" +
-                ",Function{$$NoSequentialExecution:},Block,NamedBlock,NamedBlock2{$$NoSequentialExecution:}" +                 
+                ",Function{$$NoSequentialExecution:},Block,NamedBlock,NamedBlock2{$$NoSequentialExecution:},F2unction{$$NoSequentialExecution:}" +                 
                 ",While{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}}" +
                 ",ForEach{Variable{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},Set{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}}" +
                 ",If{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}},Test{Expression{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}},Case{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}},Fallback" +
@@ -603,6 +603,10 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"StackFrameCreator").AddEdge(
                 null,
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "Function"));
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"StackFrameCreator").AddEdge(
+                null,
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "F2unction"));
 
 
             // expression inherits
@@ -856,6 +860,10 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "StackFrameCreatorWithInputOutput"));
 
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"F2unction").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "StackFrameCreatorWithInputOutput"));
+
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"NamedBlock2").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "StackFrameCreatorWithInputOutput"));
@@ -1042,6 +1050,7 @@ namespace m0
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Block"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "NamedBlock"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Function"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "F2unction"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "If"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Test"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "While"));
@@ -2456,11 +2465,11 @@ namespace m0
 
             IVertex NBX = k.AddVertex(keyword, "namedblock (?<name>)");
 
-             //IVertex NBX_function = NBX.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function"), "(?<name>)");
-            IVertex NBX_function = NBX.AddVertex(any, "(?<name>)");
+             IVertex NBX_function = NBX.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"F2unction"), "(?<name>)");
+            //IVertex NBX_function = NBX.AddVertex(any, "(?<name>)");
 
             NBX_function.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
-                LegacySystem.Graph.EasyVertex.Get(smu, false, "Function"));
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "F2unction"));
 
             /*IVertex NBX_f2fip = NBX_function.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function\InputParameter"), "(?<paramName>)");
 
