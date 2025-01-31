@@ -12,7 +12,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-
 namespace m0_SYSTEM_GENERATE
 {
     class Program
