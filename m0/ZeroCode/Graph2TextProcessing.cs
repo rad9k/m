@@ -1806,7 +1806,16 @@ namespace m0.ZeroCode
                 }
         }
 
-        public void prepareBaseEdge(IEdge _graphBaseEdge, bool createArtificialParent)
+        public void prepareBaseEdge(IEdge _graphBaseEdge)
+        {
+            IVertex v = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(_graphBaseEdge.To);
+
+            BaseEdge = new EasyEdge(_graphBaseEdge.From, _graphBaseEdge.Meta, v); // this is some crazy hybrid. this is non consistent and might not work!
+
+             //BaseEdge = _graphBaseEdge;
+        }
+
+        public void prepareBaseEdge_withArtificialParent(IEdge _graphBaseEdge)
         {
             IVertex startingVertex = _graphBaseEdge.To;
 
@@ -1820,13 +1829,11 @@ namespace m0.ZeroCode
             }
 
 
-            //IVertex v = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(startingVertex);
-
-            IVertex v = startingVertex;
+            IVertex v = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(startingVertex);
 
             BaseEdge = new EasyEdge(_graphBaseEdge.From, _graphBaseEdge.Meta, v); // this is some crazy hybrid. this is non consistent and might not work!
 
-             //BaseEdge = _graphBaseEdge;
+            //BaseEdge = _graphBaseEdge;
         }
 
         public string Process_EdgeAndManyLines(IEdge _graphBaseEdge)
@@ -1836,7 +1843,7 @@ namespace m0.ZeroCode
 
             //
 
-            prepareBaseEdge(_graphBaseEdge, false);
+            prepareBaseEdge(_graphBaseEdge);
 
             BeenList = new HashSet<IEdge>();
             BeenList_Keyword = new HashSet<IEdge>();
@@ -1894,7 +1901,7 @@ namespace m0.ZeroCode
 
             //
 
-            prepareBaseEdge(_graphBaseEdge, false);
+            prepareBaseEdge(_graphBaseEdge);
 
             BeenList = new HashSet<IEdge>();
             BeenList_Keyword = new HashSet<IEdge>();
@@ -1938,7 +1945,7 @@ namespace m0.ZeroCode
 
             //
 
-            prepareBaseEdge(_graphBaseEdge, true);
+            prepareBaseEdge_withArtificialParent(_graphBaseEdge);
 
             BeenList = new HashSet<IEdge>();
             BeenList_Keyword = new HashSet<IEdge>();
@@ -1980,7 +1987,7 @@ namespace m0.ZeroCode
 
         public string Process_VertexAndManyLines(IEdge _graphBaseEdge)
         {
-            prepareBaseEdge(_graphBaseEdge, false);
+            prepareBaseEdge(_graphBaseEdge);
 
             BeenList = new HashSet<IEdge>();
             BeenList_Keyword = new HashSet<IEdge>();
@@ -2027,8 +2034,6 @@ namespace m0.ZeroCode
 
         public string Process_ManyLinesExcludingParent(IEdge _graphBaseEdge)
         {
-            //string txt = Process_LinearizedManyLines(_graphBaseEdge);
-
             string txt = Process_EdgeAndManyLines(_graphBaseEdge);
 
             MultiLineString multiLineString = new MultiLineString(txt);

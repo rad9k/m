@@ -390,8 +390,8 @@ namespace m0_SYSTEM_GENERATE
 
             IEdge code15 = code.AddVertexAndReturnEdge(null, null);
             MinusZero.Instance.DefaultFormalTextParser.Parse(code15,
-            "\"code test\"" +
-    "\r\n\tnamedblock \"Ablok\"" +
+            "\"aacode test\"" +
+    "\r\n\tnamedblock \"Ablok\"()" +
     "\r\n\t\ta = \"True\"" +
     "\r\n\t\tb = \"True\"" +
     "\r\n\tnamedblock \"Bblok\"()" +
@@ -434,8 +434,18 @@ namespace m0_SYSTEM_GENERATE
     "\r\n\t\t\ta=b" +
     "\r\n\t\twhile a==b" +
     "\r\n\t\t\treturn Name" +
-    "\r\n\tnamedblock \"TESTBLOK\"" +
+    "\r\n\tnamedblock \"TESTBLOK\"()" +
     "\r\n\t\ta = \"True\""     
+    , m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines
+    );
+
+            IEdge code16 = code.AddVertexAndReturnEdge(null, null);
+            MinusZero.Instance.DefaultFormalTextParser.Parse(code16,
+            "\"code test2\"" +
+    "\r\n\tnamedblock \"Ablok\"()" +
+    "\r\n\t\ta = \"True\"" +
+    "\r\n\tfunction \"Afunc\"()" +
+    "\r\n\t\ta = \"True\"" 
     , m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines
     );
 
