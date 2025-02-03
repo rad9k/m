@@ -70,9 +70,30 @@ namespace m0.ZeroCode.Helpers
             }
         }
 
+        public void RemoveLeftTab_TwoTimes(int fromLine, int toLine)
+        {
+            for (int x = fromLine; x <= toLine; x++)
+            {
+                string line = dict[x];
+
+                string newline = line;
+
+                if (line[0] == '\t' && line[1] == '\t')
+                    newline = line.Substring(2);
+
+                dict.Remove(x);
+                dict.Add(x, newline);
+            }
+        }
+
         public void RemoveLeftTab()
         {
             RemoveLeftTab(1, NumberOfLines);
+        }
+
+        public void RemoveLeftTab_TwoTimes()
+        {
+            RemoveLeftTab_TwoTimes(1, NumberOfLines);
         }
 
         public override string ToString()

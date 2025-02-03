@@ -2454,14 +2454,14 @@ namespace m0
             //
             // namedblock (?<name>))
 
-            //IVertex o_block = k.AddVertex(keyword, "namedblock (?<name>)");
+            IVertex o_block = k.AddVertex(keyword, "namedblock (?<name>)");
 
-            //IVertex o_block_base = o_block.AddVertex(any, "(?<name>)");
+            IVertex o_block_base = o_block.AddVertex(any, "(?<name>)");
             //IVertex o_block_base = o_block.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"NamedBlock2"), "(?<name>)");
 
-            //o_block_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"NamedBlock2"));
+            o_block_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"NamedBlock"));
 
-            IVertex NBX = k.AddVertex(keyword, "namedblock (?<name>) ((*(+, +)(?<paramType>) (?<paramName>)*))");
+           /* IVertex NBX = k.AddVertex(keyword, "namedblock (?<name>) ((*(+, +)(?<paramType>) (?<paramName>)*))");
 
             //IVertex NBX = k.AddVertex(keyword, "namedblock (?<name>)");
 
@@ -2476,7 +2476,7 @@ namespace m0
             NBX_f2fip.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$EdgeTarget"), "(?<paramType>)");
             
             NBX_f2fip.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
-                Empty);            
+                Empty);            */
 
             // block 
             //

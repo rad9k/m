@@ -1817,33 +1817,27 @@ namespace m0.ZeroCode
 
         public void prepareBaseEdge_withArtificialParent(IEdge _graphBaseEdge)
         {
-            IVertex startingVertex = _graphBaseEdge.To;
+            IVertex startingVertex = MinusZero.Instance.CreateTempVertex();
 
-            if (createArtificialParent)
-            {
-                startingVertex = MinusZero.Instance.CreateTempVertex();
+            //startingVertex.AddEdge(_graphBaseEdge.Meta, _graphBaseEdge.To);
 
-                //startingVertex.AddEdge(_graphBaseEdge.Meta, _graphBaseEdge.To);
-
-                startingVertex.AddEdge(null, _graphBaseEdge.To);
-            }
-
-
+            startingVertex.AddEdge(_graphBaseEdge.Meta, _graphBaseEdge.To);
+            
             IVertex v = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(startingVertex);
 
-            BaseEdge = new EasyEdge(_graphBaseEdge.From, _graphBaseEdge.Meta, v); // this is some crazy hybrid. this is non consistent and might not work!
+            BaseEdge = new EasyEdge(_graphBaseEdge.From, null, v); // this is some crazy hybrid. this is non consistent and might not work!
 
             //BaseEdge = _graphBaseEdge;
         }
 
-        public string Process_EdgeAndManyLines(IEdge _graphBaseEdge)
+        public string Process_EdgeAndManyLines_Inner(IEdge _graphBaseEdge)
         {
             ommitOnce_AppendNewLineAndTabs = true;            
             ommitOnce_baseEdgePath = true;
 
             //
 
-            prepareBaseEdge(_graphBaseEdge);
+            prepareBaseEdge_withArtificialParent(_graphBaseEdge);
 
             BeenList = new HashSet<IEdge>();
             BeenList_Keyword = new HashSet<IEdge>();
@@ -2032,9 +2026,9 @@ namespace m0.ZeroCode
             return Source.ToString();
         }
 
-        public string Process_ManyLinesExcludingParent(IEdge _graphBaseEdge)
+        public string Process_EdgeAndManyLines(IEdge _graphBaseEdge)
         {
-            string txt = Process_EdgeAndManyLines(_graphBaseEdge);
+            string txt = Process_EdgeAndManyLines_Inner(_graphBaseEdge);
 
             MultiLineString multiLineString = new MultiLineString(txt);
 
@@ -2044,6 +2038,20 @@ namespace m0.ZeroCode
             multiLineString.RemoveLeftTab();
 
             return multiLineString.ToString(2, multiLineString.NumberOfLines);
+        }
+
+        public string Process_ManyLinesExcludingParent(IEdge _graphBaseEdge)
+        {
+            string txt = Process_EdgeAndManyLines_Inner(_graphBaseEdge);
+
+            MultiLineString multiLineString = new MultiLineString(txt);
+
+            if (multiLineString.NumberOfLines < 2)
+                return "";
+
+            multiLineString.RemoveLeftTab_TwoTimes();
+
+            return multiLineString.ToString(3, multiLineString.NumberOfLines);
         }
 
         public string Process(IEdge _graphBaseEdge, CodeRepresentationEnum codeRepresentation)
