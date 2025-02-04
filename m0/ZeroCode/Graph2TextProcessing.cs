@@ -1821,7 +1821,7 @@ namespace m0.ZeroCode
 
             //startingVertex.AddEdge(_graphBaseEdge.Meta, _graphBaseEdge.To);
 
-            startingVertex.AddEdge(_graphBaseEdge.Meta, _graphBaseEdge.To);
+            startingVertex.AddEdge(null, _graphBaseEdge.To);
             
             IVertex v = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(startingVertex);
 
