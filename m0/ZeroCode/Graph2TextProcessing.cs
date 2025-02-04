@@ -1821,11 +1821,18 @@ namespace m0.ZeroCode
 
             //startingVertex.AddEdge(_graphBaseEdge.Meta, _graphBaseEdge.To);
 
-            startingVertex.AddEdge(null, _graphBaseEdge.To);
             
-            IVertex v = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(startingVertex);
 
-            BaseEdge = new EasyEdge(_graphBaseEdge.From, null, v); // this is some crazy hybrid. this is non consistent and might not work!
+            //IVertex v = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(startingVertex);
+            IVertex v = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(_graphBaseEdge.To);
+
+            startingVertex.AddEdge(_graphBaseEdge.Meta, v);
+
+            BaseEdge = new EasyEdge(_graphBaseEdge.From, null, startingVertex);
+
+            //_graphBaseEdge.From.AddEdge(null, v);
+
+            //BaseEdge = new EasyEdge(_graphBaseEdge.From, null, v); // this is some crazy hybrid. this is non consistent and might not work!
 
             //BaseEdge = _graphBaseEdge;
         }
@@ -1838,6 +1845,7 @@ namespace m0.ZeroCode
             //
 
             prepareBaseEdge_withArtificialParent(_graphBaseEdge);
+            //prepareBaseEdge(_graphBaseEdge);
 
             BeenList = new HashSet<IEdge>();
             BeenList_Keyword = new HashSet<IEdge>();
@@ -2029,6 +2037,8 @@ namespace m0.ZeroCode
         public string Process_EdgeAndManyLines(IEdge _graphBaseEdge)
         {
             string txt = Process_EdgeAndManyLines_Inner(_graphBaseEdge);
+
+            return txt;
 
             MultiLineString multiLineString = new MultiLineString(txt);
 
