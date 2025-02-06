@@ -442,7 +442,11 @@ namespace m0_SYSTEM_GENERATE
             IEdge code16 = code.AddVertexAndReturnEdge(null, null);
             MinusZero.Instance.DefaultFormalTextParser.Parse(code16,
             "\"code test2\"" +
+    "\r\n\tblock" +
+    "\r\n\t\ta = \"True\"" +
     "\r\n\tnamedblock \"Ablok\"()" +
+    "\r\n\t\ta = \"True\"" +
+    "\r\n\tblock" +
     "\r\n\t\ta = \"True\"" +
     "\r\n\tfunction \"Afunc\"()" +
     "\r\n\t\ta = \"True\"" 

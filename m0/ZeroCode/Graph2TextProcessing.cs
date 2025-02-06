@@ -1,18 +1,14 @@
-﻿using m0.Foundation;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using m0.Foundation;
 using m0.Graph;
-using m0.User.Process.UX;
 using m0.Util;
 using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
 using m0.ZeroTypes.UX;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlTypes;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Windows.Input;
 
 namespace m0.ZeroCode
 {
@@ -1737,8 +1733,8 @@ namespace m0.ZeroCode
                 ommitOnce_baseEdgePath = false;
             }else
             {
-
                 if (path != null && path != "")
+                //if (path != null) // is it ok? 2025.02.06
                     path = path + "\\" + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(dict, baseEdge);
                 else
                     path = GraphUtil.GetIdentyfyingQuerySubString_MetaMode(dict, baseEdge);
@@ -1815,18 +1811,30 @@ namespace m0.ZeroCode
              //BaseEdge = _graphBaseEdge;
         }
 
-        public void prepareBaseEdge_withArtificialParent(IEdge _graphBaseEdge)
+        public void prepareBaseEdge_withArtificialParent_linearize_edge(IEdge _graphBaseEdge)
         {
             IVertex startingVertex = MinusZero.Instance.CreateTempVertex();
 
             //startingVertex.AddEdge(_graphBaseEdge.Meta, _graphBaseEdge.To);
 
-            
+            startingVertex.AddEdge(_graphBaseEdge.Meta, _graphBaseEdge.To);
 
-            //IVertex v = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(startingVertex);
-            IVertex v = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(_graphBaseEdge.To);
+            IVertex v = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(startingVertex);
 
-            startingVertex.AddEdge(_graphBaseEdge.Meta, v);
+            BaseEdge = new EasyEdge(_graphBaseEdge.From, null, v); // this is some crazy hybrid. this is non consistent and might not work!
+
+            //BaseEdge = _graphBaseEdge;
+        }
+
+        public void prepareBaseEdge_withArtificialParent_edge_linearize(IEdge _graphBaseEdge)
+        {
+            IVertex startingVertex = MinusZero.Instance.CreateTempVertex();
+
+            IVertex linearized = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(_graphBaseEdge.To);
+
+            IVertex startingvertex2 = startingVertex.AddVertex(null, "beg");
+
+            startingvertex2.AddEdge(_graphBaseEdge.Meta, linearized);
 
             BaseEdge = new EasyEdge(_graphBaseEdge.From, null, startingVertex);
 
@@ -1844,8 +1852,7 @@ namespace m0.ZeroCode
 
             //
 
-            prepareBaseEdge_withArtificialParent(_graphBaseEdge);
-            //prepareBaseEdge(_graphBaseEdge);
+            prepareBaseEdge_withArtificialParent_edge_linearize(_graphBaseEdge);
 
             BeenList = new HashSet<IEdge>();
             BeenList_Keyword = new HashSet<IEdge>();
@@ -1947,7 +1954,7 @@ namespace m0.ZeroCode
 
             //
 
-            prepareBaseEdge_withArtificialParent(_graphBaseEdge);
+            prepareBaseEdge_withArtificialParent_linearize_edge(_graphBaseEdge);
 
             BeenList = new HashSet<IEdge>();
             BeenList_Keyword = new HashSet<IEdge>();
@@ -2038,16 +2045,14 @@ namespace m0.ZeroCode
         {
             string txt = Process_EdgeAndManyLines_Inner(_graphBaseEdge);
 
-            return txt;
-
             MultiLineString multiLineString = new MultiLineString(txt);
 
             if (multiLineString.NumberOfLines < 2)
                 return "";
 
-            multiLineString.RemoveLeftTab();
+            multiLineString.RemoveLeftTab_TwoTimes();
 
-            return multiLineString.ToString(2, multiLineString.NumberOfLines);
+            return multiLineString.ToString(3, multiLineString.NumberOfLines);
         }
 
         public string Process_ManyLinesExcludingParent(IEdge _graphBaseEdge)
@@ -2059,9 +2064,9 @@ namespace m0.ZeroCode
             if (multiLineString.NumberOfLines < 2)
                 return "";
 
-            multiLineString.RemoveLeftTab_TwoTimes();
+            multiLineString.RemoveLeftTab_ThreeTimes();
 
-            return multiLineString.ToString(3, multiLineString.NumberOfLines);
+            return multiLineString.ToString(4, multiLineString.NumberOfLines);
         }
 
         public string Process(IEdge _graphBaseEdge, CodeRepresentationEnum codeRepresentation)
