@@ -367,7 +367,6 @@ namespace m0.UIWpf.UX
                 IVertex ui_Vertex = ui.Vertex;
 
                 ItemsDictionaryByVertex[ui.Vertex] = ui;
-    
             }
 
             _needRebuildItemsDictionaryByVertex = false;
@@ -618,7 +617,17 @@ namespace m0.UIWpf.UX
 
                    foreach (IUXItem decorator in item.Decorators) // calculate LineDecorator number and Edges number for each Meta/To edge pair
                                                                 //foreach (IEdge l in item.Vertex.GetAll(false, "DiagramLine:")) // calculate DiagramLines number and Edges number for each Meta/To edge pair
-                   { 
+                   {
+                       if (!(decorator is ILineDecoratorBase))
+                       {
+                            ILineDecoratorBase line_decorator = (ILineDecoratorBase)decorator;
+
+                            if (!Items_all.Contains(line_decorator.ToItem))
+                                continue;
+                       }
+                       else
+                           continue;
+                       
                        MetaToPair found = null;
 
                        Edge decorator_BaseEdge = decorator.BaseEdge;
@@ -664,12 +673,15 @@ namespace m0.UIWpf.UX
                     foreach (IUXItem decorator in item.Decorators)
                     // add diagram line objects
                         if (decorator is LineDecorator)
-                        {
+                        {                        
                             LineDecorator lineDecorator = (LineDecorator)decorator;
+
+                            if (!Items_all.Contains(lineDecorator.ToItem))
+                                continue;
 
                         //item.AddDiagramLineObject(GetToDiagramItemFromLineVertex(lineDecorator), lineDecorator);
 
-                            item.AddDiagramLineObject(lineDecorator.ToItem, lineDecorator);
+                        item.AddDiagramLineObject(lineDecorator.ToItem, lineDecorator);
                         }                    
                }
            

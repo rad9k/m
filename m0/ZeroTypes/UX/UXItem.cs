@@ -1057,7 +1057,7 @@ namespace m0.ZeroTypes.UX
 
         public virtual Point GetLineAnchorLocation(IUXItem _toItem, bool useToPoint, Point toPoint, int toItemDiagramLinesCount, int toItemDiagramLineNumber, bool isSelfStart)
         {
-            if (!(_toItem is FrameworkElement))
+            if (!(_toItem is FrameworkElement) || OwningVisualiser == null)
                 return new Point();
 
             FrameworkElement toItem = (FrameworkElement)_toItem;

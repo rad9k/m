@@ -271,6 +271,9 @@ namespace m0.ZeroTypes.UX
 
         public override double GetMouseDistance(Point p)
         {
+            if (OwningVisualiser == null)
+                return double.MaxValue;
+
             if (!isSelfRelation)
             {
                 return GetMouseDistance_Helper(p, FromX, FromY, ToX, ToY);
