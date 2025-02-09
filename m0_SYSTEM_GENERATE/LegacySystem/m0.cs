@@ -193,7 +193,7 @@ namespace m0
         {
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, null, "{Base{$,Vertex{$IsLink,$Inherits,$NoInherit,$NoCopy,$StackFrameInherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,$ExecutableEndPoint,$GraphChangeTrigger,$VertexEval,MetaEdge,Author,Dependency},$Import,$ImportMeta,$Keyword,$KeywordGroupDefinition,$$KeywordGroup,$$KeywordManyRoot,$$LocalRoot,$$StartInLocalRoot,$$EmptyKeyword,$$NewVertexKeyword,$$ForceNewVertex,$$LinkKeyword,$$NonSelfRecursiveParameters,$$Import,$$ImportDirect,$$ImportMeta,$$ImportDirectMeta,$$NoSequentialExecution,$$NextAtomRoot,$NewLine,$ParseRoot,$ParseArtefacts,Link}}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, null, "{Base{$,Vertex{$IsLink,$Inherits,$NoInherit,$NoCopy,$StackFrameInherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,$ExecutableEndPoint,$GraphChangeTrigger,$VertexEval,$InstanceCreationPriority,MetaEdge,Author,Dependency},$Import,$ImportMeta,$Keyword,$KeywordGroupDefinition,$$KeywordGroup,$$KeywordManyRoot,$$LocalRoot,$$StartInLocalRoot,$$EmptyKeyword,$$NewVertexKeyword,$$ForceNewVertex,$$LinkKeyword,$$NonSelfRecursiveParameters,$$Import,$$ImportDirect,$$ImportMeta,$$ImportDirectMeta,$$NoSequentialExecution,$$NextAtomRoot,$NewLine,$ParseRoot,$ParseArtefacts,Link}}");
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base").AddEdge(
                 null,
@@ -337,7 +337,7 @@ namespace m0
         {
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, null, "{ZeroUML{Type,AtomType,StateMachine{State{Transition}},Enum{EnumValue},Selector,Class{Attribute{MinValue,MaxValue},Association,Aggregation,$PlatformClassName}}}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, null, "{ZeroUML{Type,AtomType,StateMachine{State{Transition}},Enum{EnumValue},Selector,Class{Attribute{MinValue,MaxValue},Association,Aggregation,$PlatformClassName,$InstanceCreationPriority:}}}");
 
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Selector"), sm, "{$MinCardinality:0,$MaxCardinality:-1}");
 
@@ -483,15 +483,15 @@ namespace m0
                 ",Action,Return{Expression{$MinCardinality:0,$MaxCardinality:1}},NextOut{Next{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",StackFrameCreator{$$NextAtomRoot:" +
                 //Do{$MinCardinality:0,$MaxCardinality:1}
-                ",Variable{$MinCardinality:0,$MaxCardinality:-1},Type{$$NoSequentialExecution:,$MinCardinality:0,$MaxCardinality:-1}}" +
+                ",Variable{$MinCardinality:0,$MaxCardinality:-1,$InstanceCreationPriority:},Type{$$NoSequentialExecution:,$MinCardinality:0,$MaxCardinality:-1}}" +
                 ",StackFrameCreatorWithInputOutput{Output{$$NoSequentialExecution:,$MinCardinality:0,$MaxCardinality:1},InputParameter{$$NoSequentialExecution:,$MinCardinality:0,$MaxCardinality:-1}}" +
-                ",Function{$$NoSequentialExecution:},Block,NamedBlock" +                 
-                ",While{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}}" +
-                ",ForEach{Variable{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},Set{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}}" +
-                ",If{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}},Test{Expression{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}},Case{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1}},Fallback" +
+                ",Function{$$NoSequentialExecution:,$InstanceCreationPriority:},Block{$InstanceCreationPriority:},NamedBlock{$InstanceCreationPriority:}" +
+                ",While{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},$InstanceCreationPriority:}" +
+                ",ForEach{Variable{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},Set{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},$InstanceCreationPriority:}" +
+                ",If{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},$InstanceCreationPriority:},Test{Expression{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},$InstanceCreationPriority:},Case{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},$InstanceCreationPriority:},Fallback{$InstanceCreationPriority:}" +
                 ",EmptySet,Constant" +
                 ",Execute,Parse,ParseWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}},Generate,GenerateWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}" +
-                ",this" +
+                ",this,Package{$InstanceCreationPriority:}" +
                 "}");            
 
             // Link
@@ -597,7 +597,7 @@ namespace m0
             method.AddEdge(LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "StackFrameCreatorWithInputOutput"));
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(method, sm, "{$MinCardinality:0,$MaxCardinality:-1}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(method, sm, "{$MinCardinality:0,$MaxCardinality:-1,$InstanceCreationPriority:}");
 
             // cycle edges
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"StackFrameCreator").AddEdge(
@@ -986,7 +986,7 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"ForEach\Set").AddEdge(isAggregation, Empty);
 
             // package
-            IVertex package = smu.AddVertex(null, "Package");
+            IVertex package = LegacySystem.Graph.EasyVertex.Get(smu, false, "Package");
 
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Package"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function\Variable"));
