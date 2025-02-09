@@ -173,7 +173,49 @@
 				<@LabeledItem\ShowMeta :: "False">
 				<@LabeledItem\ConstantLabel :: "named block">
 			<@$Inherits :: @ZeroUML\ActionDecorators>
-			<@$Inherits :: @ZeroUML\ActionContainerDecorators>
+			<@$Inherits :: @ZeroUML\ActionContainerDecorators>				
+			
+		<@UXTemplate :: "Package">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:Package}">
+			<@MetaVertexTestQuery :: "Package">			
+			<@ItemClass :: @RectangleVisualiserItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\StaticItemVertex>
+				<@LabeledItem\ShowMeta :: "False">
+				<@LabeledItem\ConstantLabel :: "package">
+				<@UXItem\BorderSize :: "3">
+			<@UXDecoratorTemplate :: "Edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:\">				
+				<@SupportAnyMetaEdge :: "True">
+				<@SupportEmptyMetaEdge :: "True">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+			<@UXDecoratorTemplate :: "Variable">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:Package\Variable">
+				<@ToDiagramItemTestQuery :: "UXTemplate:Variable">
+				<@DecoratorClass :: @LineDecorator>				
+				<@DecoratorVertex :: "">
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			<@UXDecoratorTemplate :: "Function">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:Package\Function">
+				<@ToDiagramItemTestQuery :: "UXTemplate:Function">
+				<@DecoratorClass :: @LineDecorator>				
+				<@DecoratorVertex :: "">
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			<@UXDecoratorTemplate :: "Class">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:Package\Class">
+				<@ToDiagramItemTestQuery :: "UXTemplate:Class">
+				<@DecoratorClass :: @LineDecorator>				
+				<@DecoratorVertex :: "">
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
 			
 		<@UXTemplate :: "Package (container)">
 			<@$Is :: @UXTemplate>

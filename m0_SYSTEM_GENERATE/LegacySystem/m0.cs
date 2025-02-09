@@ -986,67 +986,21 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"ForEach\Set").AddEdge(isAggregation, Empty);
 
             // package
-            IVertex package = smu.AddVertex(null, "Package");            
+            IVertex package = smu.AddVertex(null, "Package");
 
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Link"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "AtomType"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "StateMachine"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Enum"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Package"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function\Variable"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Function"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Class"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Query"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "FunctionCall"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "SetIndex"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "SetCount"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "InnerCreation"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "\"{}\""));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "EdgeSetAdd"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "EdgeSetSubstract"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "EmptySet"));
-
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "+"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "-"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Mul"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "/"));
-
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Equal"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "ExactEqual"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "VertexEqual"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "NotEqual"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Negation"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "And"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Or"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "MoreThan"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "LessThan"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "MoreOrEqualThan"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "LessOrEqualThan"));
-
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "?"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "\"\\ \""));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Colon"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleColon"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleSemicolon"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "CopySet"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "MetaToTo"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "()"));            
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "RedirectLeftEdgesToRightVertices"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "AddLeftEdgesToRightVertices"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "AddRightEdgesIntoLeftEdges"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "DeleteRightVertices"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "DeleteRightEdgesFromLeftEdges"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "DeleteRightVerticesFromLeftEdges"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "SetLeftVertexesToFirstRightVertexValue"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphIncludingLinksAsIsInLeftVertex"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Method"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Block"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "NamedBlock"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Function"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "If"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Test"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "While"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "ForEach"));
-
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "MethodCall"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "New"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "If"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Test"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Case"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Fallback"));            
 
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\$Import"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\$ImportMeta"));
@@ -2692,7 +2646,7 @@ namespace m0
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
 
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, sm, "{ZeroTypes{AtomType:String,AtomType:Integer,AtomType:Decimal,AtomType:Float,AtomType:Boolean,Type:VertexType,Class:Edge{Association:From{$MinCardinality:0,$MaxCardinality:1},Association:Meta{$MinCardinality:1,$MaxCardinality:1},Association:To{$MinCardinality:1,$MaxCardinality:1}},Class:DateTime{Attribute:Year{$MinCardinality:1,$MaxCardinality:1},Attribute:Month{$MinCardinality:1,$MaxCardinality:1},Attribute:Day{$MinCardinality:1,$MaxCardinality:1},Attribute:Hour{$MinCardinality:1,$MaxCardinality:1},Attribute:Minute{$MinCardinality:1,$MaxCardinality:1},Attribute:Second{$MinCardinality:1,$MaxCardinality:1},Attribute:Millisecond{$MinCardinality:0,$MaxCardinality:1}},Class:FormalTextLanguage,Enum:EnumBase,Class:HasBaseEdge{Attribute:BaseEdge{$MinCardinality:1,$MaxCardinality:1}},Class:HasSelectedEdges{Attribute:SelectedEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:},Attribute:ShowSelectedEdgesBaseEdge{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False}},Class:HasFilter{Attribute:FilterQuery{$MinCardinality:0,$MaxCardinality:1}},Class:HasExecutableVertex{Attribute:ExecutableVertex{$MinCardinality:1,$MaxCardinality:1}},Class:Exception{Attribute:Where{$MinCardinality:0,$MaxCardinality:1},Attribute:Type{$MinCardinality:0,$MaxCardinality:1},Attribute:What{$MinCardinality:1,$MaxCardinality:1}},Enum:ExceptionTypeEnum{EnumValue:Error,EnumValue:Warning,EnumValue:Info}}}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, sm, "{ZeroTypes{AtomType:String,AtomType:Integer,AtomType:Decimal,AtomType:Float,AtomType:Boolean,Type:VertexType,Class:Edge{Association:From{$MinCardinality:0,$MaxCardinality:1},Association:Meta{$MinCardinality:1,$MaxCardinality:1},Association:To{$MinCardinality:1,$MaxCardinality:1}},Class:DateTime{Attribute:Year{$MinCardinality:1,$MaxCardinality:1},Attribute:Month{$MinCardinality:1,$MaxCardinality:1},Attribute:Day{$MinCardinality:1,$MaxCardinality:1},Attribute:Hour{$MinCardinality:1,$MaxCardinality:1},Attribute:Minute{$MinCardinality:1,$MaxCardinality:1},Attribute:Second{$MinCardinality:1,$MaxCardinality:1},Attribute:Millisecond{$MinCardinality:0,$MaxCardinality:1}},Class:FormalTextLanguage,Enum:EnumBase,Class:HasBaseEdge{Attribute:BaseEdge{$MinCardinality:1,$MaxCardinality:1}},Class:HasSelectedEdges{Attribute:SelectedEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:},Attribute:ShowSelectedEdgesBaseEdge{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False}},Class:HasFilter{Attribute:FilterQuery{$MinCardinality:0,$MaxCardinality:1}},Class:HasExecutableVertex{Attribute:ExecutableVertex{$MinCardinality:1,$MaxCardinality:1}},Class:Exception{Attribute:CodeEdge{$MinCardinality:0,$MaxCardinality:1},Attribute:DataEdge{$MinCardinality:0,$MaxCardinality:-1},Attribute:Where{$MinCardinality:0,$MaxCardinality:1},Attribute:Type{$MinCardinality:0,$MaxCardinality:1},Attribute:What{$MinCardinality:1,$MaxCardinality:1}},Enum:ExceptionTypeEnum{EnumValue:Error,EnumValue:Warning,EnumValue:Info}}}");
 
             IVertex FormalTextLanguage = LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\FormalTextLanguage");
 
@@ -2846,12 +2800,20 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\EnumBase"));
 
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Exception\Where").AddEdge(
+            // exception
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Exception\DataEdge").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\String"));
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Edge"));
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Exception\CodeEdge").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Edge"));
+
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Exception\Type").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\ExceptionTypeEnum"));
+
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Exception\What").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"), 
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\String"));
@@ -6439,6 +6401,24 @@ namespace m0
 
 
         }
+        
+        private void CreateQuick()
+        {            
+            IVertex atomtype = Root.Get(false, @"System\Meta\ZeroUML\AtomType");
+
+            IVertex quick = Root.AddVertex(null, "Quick");
+
+            quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Package"));
+            quick.AddEdge(atomtype, Root.Get(false, @"System\Meta\ZeroTypes\String"));
+            quick.AddEdge(atomtype, Root.Get(false, @"System\Meta\ZeroTypes\Integer"));
+            quick.AddEdge(atomtype, Root.Get(false, @"System\Meta\ZeroTypes\Decimal"));
+            quick.AddEdge(atomtype, Root.Get(false, @"System\Meta\ZeroTypes\Float"));
+            quick.AddEdge(atomtype, Root.Get(false, @"System\Meta\ZeroTypes\Boolean"));
+            quick.AddEdge(atomtype, Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
+            quick.AddEdge(atomtype, Root.Get(false, @"System\Meta\ZeroTypes\DateTime"));
+            quick.AddEdge(atomtype, Root.Get(false, @"System\Meta\ZeroTypes\EnumBase"));
+            quick.AddEdge(atomtype, Root.Get(false, @"System\Meta\ZeroTypes\Exception"));                        
+        }
 
         private void Initialize_PreParserReady()
         {
@@ -6545,6 +6525,12 @@ namespace m0
             AddIsAggregation();
 
             CheckAndCorrecIsClass();
+
+            //////////////////////////
+
+            CreateQuick();
+
+
 
             IsInitialized = true;            
         }

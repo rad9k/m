@@ -58,7 +58,7 @@ namespace m0_SYSTEM_GENERATE
 
             //
 
-            print("* filling System and User");
+            print("* filling System, User and Quick");
 
             LegacySystem_MinusZero.Instance.Initialize();
 
@@ -77,6 +77,7 @@ namespace m0_SYSTEM_GENERATE
             IVertex root = LegacySystem_MinusZero.Instance.Root;
             IVertex SystemVertex = root.Get(false, "System");
             IVertex User = root.Get(false, "User");
+            IVertex Quick = root.Get(false, "Quick");
 
             IVertex examples = root.Get(false, "examples");
 
@@ -117,6 +118,14 @@ namespace m0_SYSTEM_GENERATE
             GeneralUtil.CreateM0JAndMoveEdgesIntoIt_IncludeEverythingBesidesList("user.m0j", User, new HashSet<IVertex>(systemSubGraphWithLinks), storeOverride);            
 
             print("* User saved to \"user.m0j\"");
+
+            //
+
+            print("* saving Quick to \"quick.m0j\"");
+
+            GeneralUtil.CreateM0JAndMoveEdgesIntoIt_IncludeEverythingBesidesList("quick.m0j", Quick, new HashSet<IVertex>(systemSubGraphWithLinks), storeOverride);
+
+            print("* Quick saved to \"quick.m0j\"");
 
             //
 
@@ -165,9 +174,9 @@ namespace m0_SYSTEM_GENERATE
 
             print("execution succesfull finish");
 
-            //System.Diagnostics.Process.Start("c:\\Users\\radoslaw.tereszczuk\\Source\\Repos\\m\\m0_SYSTEM_GENERATE\\bin\\Debug\\x.bat");
+            System.Diagnostics.Process.Start("c:\\Users\\rad9k\\Source\\Repos\\m\\m0_SYSTEM_GENERATE\\bin\\Debug\\x.bat");
 
-            System.Diagnostics.Process.Start("c:\\Users\\radoslaw.tereszczuk\\Source\\Repos\\m\\m0_SYSTEM_GENERATE\\bin\\Debug\\xx.bat");
+            //System.Diagnostics.Process.Start("c:\\Users\\radoslaw.tereszczuk\\Source\\Repos\\m\\m0_SYSTEM_GENERATE\\bin\\Debug\\xx.bat");
 
             //System.Diagnostics.Process.Start("c:\\Users\\teres\\source\\repos\\m\\m0_SYSTEM_GENERATE\\bin\\Debug\\a.bat");
         }
