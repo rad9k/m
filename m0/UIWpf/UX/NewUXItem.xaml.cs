@@ -229,6 +229,9 @@ namespace m0.UIWpf.UX
 
         private void BaseEdgeSet()
         {
+            if (BaseEdge.Get(false, @"To:\\$InstanceCreationPriority:") != null)
+                InstanceRadio.IsChecked = true;
+
             UpdateItemList();
 
             if ((bool)DirectRadio.IsChecked && (ItemsList.Count() == 1))
