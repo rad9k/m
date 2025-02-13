@@ -73,6 +73,7 @@ namespace m0.UIWpf.UX
         protected void NameControlsShow(){
             NameLabel.Visibility = Visibility.Visible;
             NameTextBox.Visibility = Visibility.Visible;
+            NameTextBox.Focus();
         }
 
         protected void NameControlsHide()
@@ -166,10 +167,12 @@ namespace m0.UIWpf.UX
 
                 CreateButton.IsEnabled = true;
 
-                if(InstanceRadio.IsChecked==true)
+                if (InstanceRadio.IsChecked==true)
                     NameControlsShow();
                 else
                     NameControlsHide();               
+
+
             }
             else
             {
@@ -186,7 +189,7 @@ namespace m0.UIWpf.UX
         {
             IVertex question = GetRememberedQuestion();
 
-            IVertex answer=User.Process.UX.NonAtomProcess.GetUserChoice(question);
+            IVertex answer = User.Process.UX.NonAtomProcess.GetUserChoice(question);
 
             if (answer != null)
             {
@@ -261,7 +264,7 @@ namespace m0.UIWpf.UX
                     InstanceValue = NameTextBox.Text;
                 }
                
-                if(Remember.IsChecked==true) // remember choice
+                if (Remember.IsChecked == true) // remember choice
                 { 
                     IVertex question = GetRememberedQuestion();
                   
