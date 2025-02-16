@@ -179,13 +179,20 @@
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:Package}">
 			<@MetaVertexTestQuery :: "Package">			
-			<@ItemClass :: @RectangleVisualiserItem>
+			<@ItemClass :: @ContainerItem>
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
-				<@$Inherits :: @ZeroUML\StaticItemVertex>
+				<@$Inherits :: @ZeroUML\StaticContainerItemVertex>
 				<@LabeledItem\ShowMeta :: "False">
 				<@LabeledItem\ConstantLabel :: "package">
 				<@UXItem\BorderSize :: "3">			
+			<@UXDecoratorTemplate :: "Package">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:Package\Package">
+				<@ToDiagramItemTestQuery :: "UXTemplate:Package">
+				<@DecoratorClass :: @LineDecorator>				
+				<@DecoratorVertex :: "">
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>			
 			<@UXDecoratorTemplate :: "Variable">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "$Is:Package\Variable">
