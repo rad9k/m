@@ -185,16 +185,7 @@
 				<@$Inherits :: @ZeroUML\StaticItemVertex>
 				<@LabeledItem\ShowMeta :: "False">
 				<@LabeledItem\ConstantLabel :: "package">
-				<@UXItem\BorderSize :: "3">
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">				
-				<@SupportAnyMetaEdge :: "True">
-				<@SupportEmptyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+				<@UXItem\BorderSize :: "3">			
 			<@UXDecoratorTemplate :: "Variable">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "$Is:Package\Variable">
@@ -216,6 +207,15 @@
 				<@DecoratorClass :: @LineDecorator>				
 				<@DecoratorVertex :: "">
 					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			<@UXDecoratorTemplate :: "Edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:\">				
+				<@SupportAnyMetaEdge :: "True">
+				<@SupportEmptyMetaEdge :: "True">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
 			
 		<@UXTemplate :: "Package (container)">
 			<@$Is :: @UXTemplate>

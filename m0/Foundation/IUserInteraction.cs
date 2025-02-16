@@ -18,7 +18,7 @@ namespace m0.Foundation
 
         void ShowException(IVertex exception);
 
-        IVertex SelectDialog(IVertex info, IVertex options, Point? position);
+        IVertex SelectDialog(IVertex info, IVertex options, bool firstSelected, Point? position);
 
         IVertex SelectDialogButton(IVertex info, IVertex options, Point? position);
 

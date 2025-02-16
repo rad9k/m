@@ -302,9 +302,9 @@ namespace m0
             i.ShowDialog();
         }
 
-        public IVertex SelectDialog(IVertex info, IVertex options, Point? position)
+        public IVertex SelectDialog(IVertex info, IVertex options, bool firstSelected, Point? position)
         {
-            SelectWindow d = new SelectWindow(info, options,position);
+            SelectWindow d = new SelectWindow(info, options, firstSelected, position);
 
             return d.SelectedOption;
         }

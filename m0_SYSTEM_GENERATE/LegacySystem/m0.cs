@@ -2419,7 +2419,7 @@ namespace m0
 
             IVertex o_package = k.AddVertex(keyword, "package (?<name>)");
 
-            IVertex o_package_base = o_package.AddVertex(any, "(?<name>)");
+            IVertex o_package_base = o_package.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Package"), "(?<name>)");
 
             o_package_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Package"));
         }

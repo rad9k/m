@@ -369,7 +369,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                 
             Point mousePosition=WpfUtil.GetMousePosition();
 
-            IVertex a = MinusZero.Instance.DefaultUserInteraction.SelectDialog(info, v, mousePosition);
+            IVertex a = MinusZero.Instance.DefaultUserInteraction.SelectDialog(info, v, false, mousePosition);
 
                 if (a != null){
                     IVertex test = VertexOperations.TestIfNewEdgeValid(Vertex.Get(false, @"BaseEdge:\To:"), a.Get(false, "OptionEdge:"), toEdge.Get(false, "To:"));

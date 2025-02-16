@@ -171,8 +171,6 @@ namespace m0.UIWpf.UX
                     NameControlsShow();
                 else
                     NameControlsHide();               
-
-
             }
             else
             {
@@ -232,10 +230,18 @@ namespace m0.UIWpf.UX
 
         private void BaseEdgeSet()
         {
-            if (BaseEdge.Get(false, @"To:\\$InstanceCreationPriority:") != null)
+            bool is_InstanceCreationPriority = false;
+
+            if (BaseEdge.Get(false, @"To:\$InstanceCreationPriority:") != null)
+            {
                 InstanceRadio.IsChecked = true;
+                is_InstanceCreationPriority = true;
+            }
 
             UpdateItemList();
+
+            if (is_InstanceCreationPriority)
+                this.List.SelectedIndex = 0;
 
             if ((bool)DirectRadio.IsChecked && (ItemsList.Count() == 1))
             {

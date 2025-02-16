@@ -28,7 +28,7 @@ namespace m0.UIWpf.Dialog
             WpfUtil.SetWindowPosition(this, _mousePosition);
         }
 
-        public SelectWindow(IVertex info, IVertex options, Point? position)
+        public SelectWindow(IVertex info, IVertex options, bool firstSelected, Point? position)
         {            
             if (options.Count() > 1)
             {
@@ -45,6 +45,9 @@ namespace m0.UIWpf.Dialog
                 Info.Content = info.Value;
 
                 List.ItemsSource = options;
+
+                if (firstSelected)
+                    List.SelectedIndex = 0;
 
                 ShowDialog();
             }

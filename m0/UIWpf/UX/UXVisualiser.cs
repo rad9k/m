@@ -1922,7 +1922,7 @@ namespace m0.UIWpf.UX
 
             Point mousePosition = WpfUtil.GetMousePosition();
 
-            IVertex selected = MinusZero.Instance.DefaultUserInteraction.SelectDialog(info, v, mousePosition);
+            IVertex selected = MinusZero.Instance.DefaultUserInteraction.SelectDialog(info, v, true, mousePosition);
 
             if (selected != null)
             {
@@ -1980,7 +1980,8 @@ namespace m0.UIWpf.UX
                 && !InstructionHelpers.CheckIfIsOrInherits(toEdge.To, eToEdgeTarget))
                 return false;
 
-            if (!tem.CreateEdgeOnly &&// ZZZ added !
+            //if (!tem.CreateEdgeOnly &&// ZZZ added !
+            if (tem.CreateEdgeOnly && // normally we have CreateEdgeOnly being FALSE, so... we want to activatge this only if CreateEdgeOnly = True
                 eToVertexTarget != null
                 && !InstructionHelpers.CheckIfIsOrInherits(toEdge.To, eToVertexTarget))
                 return false;
