@@ -173,6 +173,7 @@
 				<@$Inherits :: @ZeroUML\ActionContainerItemVertex>
 				<@LabeledItem\ShowMeta :: "False">
 				<@LabeledItem\ConstantLabel :: "named block">
+			<@$Inherits :: @ZeroUML\PackageDecorators>
 			<@$Inherits :: @ZeroUML\NextDecorator>
 			<@$Inherits :: @ZeroUML\bodyDecorator>				
 			
@@ -187,19 +188,7 @@
 				<@LabeledItem\ShowMeta :: "False">
 				<@LabeledItem\ConstantLabel :: "package">
 				<@UXItem\BorderSize :: "3">
-			<@$Inherits :: @ZeroUML\PackageDecorators>
-			
-		<@UXTemplate :: "Package (container)">
-			<@$Is :: @UXTemplate>
-			<@DirectVertexTestQuery :: "{$Is:Package}">
-			<@MetaVertexTestQuery :: "Package">
-			<@ItemClass :: @ContainerItem>
-			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
-			<@ItemVertex :: "">
-				<@$Inherits :: @ZeroUML\StaticContainerItemVertex>
-				<@LabeledItem\ShowMeta :: "False">
-				<@LabeledItem\ConstantLabel :: "package">			
-			<@$Inherits :: @ZeroUML\EdgeDecorator>
+			<@$Inherits :: @ZeroUML\PackageDecorators>			
 			
 		<@UXTemplate :: "Variable">
 			<@$Is :: @UXTemplate>
@@ -239,6 +228,7 @@
 				<@DecoratorVertex :: "">
 					<@$Inherits :: @ZeroUML\ConditionalActionDecoratorVertex>					
 					<@LineDecorator\ConstantLabel :: "than">
+				<@$Inherits :: @ZeroUML\PackageDecorators>
 					
 		<@UXTemplate :: "Test">
 			<@$Is :: @UXTemplate>
@@ -261,14 +251,14 @@
 				<@DecoratorVertex :: "">
 					<@$Inherits :: @ZeroUML\ConditionalActionDecoratorVertex>					
 					<@LineDecorator\ConstantLabel :: "case">
-			<@UXDecoratorTemplate :: "case">
+			<@UXDecoratorTemplate :: "fallback">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "">
 				<@ToDiagramItemTestQuery :: "Fallback">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 					<@$Inherits :: @ZeroUML\ConditionalActionDecoratorVertex>					
-					<@LineDecorator\ConstantLabel :: "case">
+					<@LineDecorator\ConstantLabel :: "fallback">
 					
 		<@UXTemplate :: "Case">
 			<@$Is :: @UXTemplate>
