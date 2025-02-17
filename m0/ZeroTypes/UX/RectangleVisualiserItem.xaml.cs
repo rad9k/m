@@ -91,68 +91,7 @@ namespace m0.ZeroTypes.UX
 
             base.VertexSetedUp();
         }
-
-        public /*override*/ void _ViewAttributesUpdated()
-        {
-            base.ViewAttributesUpdated();
-
-            LabelContainer.Child = LabelControl;
-
-            double roundEdgeSize = RoundEdgeSize;
-
-            double BorderSize_nonZero = BorderSize; ;
-
-            if (BorderSize_nonZero == 0)
-                BorderSize_nonZero = 1;
-
-            this.Frame.BorderThickness = new Thickness(BorderSize_nonZero);
-
-            if (ContentVisualiser != null)
-            {
-                if (HideHeader)
-                {
-                    this.TheGrid.RowDefinitions[0].Height = new GridLength(0);
-                    this.TheGrid.RowDefinitions[1].Height = new GridLength(0);
-                }
-                else
-                {
-                    this.TheGrid.RowDefinitions[0].Height = new GridLength(17);
-                    this.TheGrid.RowDefinitions[1].Height = new GridLength(BorderSize_nonZero);
-                }
-            }
-            else
-                this.TheGrid.RowDefinitions[1].Height = new GridLength(0);
-
-            //
-
-            //if (roundEdgeSize != 0)
-            {
-                this.Frame.CornerRadius = new CornerRadius(RoundEdgeSize);
-
-                if (ContentVisualiser != null)
-                {
-                    this.LabelContainer.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize, RoundEdgeSize, 0);
-
-                    ((FrameworkElement)this.ContentVisualiser).Margin = new Thickness(RoundEdgeSize, 0, RoundEdgeSize, RoundEdgeSize);
-
-                    TheGrid.RowDefinitions[0].Height = new GridLength(18 + RoundEdgeSize);
-                }
-                else
-                {
-                    this.LabelContainer.Margin = new Thickness(RoundEdgeSize);
-
-                    // this.LabelContainer.TextWrapping = TextWrapping.Wrap;
-
-                    TheGrid.RowDefinitions[0].Height = new GridLength(0, GridUnitType.Auto);
-
-                    TheGrid.Children.Remove(InternalFrame);
-                }
-            }
-
-            //
-
-            SetBaselineColors();
-        }
+        
         public override void ViewAttributesUpdated()
         {
             base.ViewAttributesUpdated();

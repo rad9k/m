@@ -61,7 +61,7 @@ namespace m0.ZeroTypes.UX
 
             double roundEdgeSize = RoundEdgeSize;
 
-            this.LabelContainer.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize, RoundEdgeSize, 1);
+            this.LabelContainer.Margin = new Thickness(RoundEdgeSize + 2, RoundEdgeSize, RoundEdgeSize + 2, 1);
 
             if (roundEdgeSize != 0)
             {

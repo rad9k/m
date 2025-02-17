@@ -364,11 +364,11 @@ namespace m0.ZeroTypes.UX
 
             double roundEdgeSize = RoundEdgeSize;
 
+            this.LabelContainer.Margin = new Thickness(RoundEdgeSize + 2, RoundEdgeSize, RoundEdgeSize + 2, 0);
+
             if (roundEdgeSize != 0)
             {                
-                this.Frame.CornerRadius = new CornerRadius(RoundEdgeSize);
-                
-                this.LabelContainer.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize, RoundEdgeSize, 0);
+                this.Frame.CornerRadius = new CornerRadius(RoundEdgeSize);                               
 
                 _Canvas.Margin = new Thickness(RoundEdgeSize, 0, RoundEdgeSize, RoundEdgeSize);
 

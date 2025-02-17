@@ -225,7 +225,7 @@
 				<@SupportEmptyMetaEdge :: "True">
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
+				<@DecoratorVertex :: "than">
 					<@$Inherits :: @ZeroUML\ConditionalActionDecoratorVertex>					
 					<@LineDecorator\ConstantLabel :: "than">
 				<@$Inherits :: @ZeroUML\PackageDecorators>
@@ -274,6 +274,7 @@
 				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\LinearizedManyLines>
 				<@UXItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
 			<@$Inherits :: @ZeroUML\NextDecorator>
+			<@$Inherits :: @ZeroUML\PackageDecorators>
 			<@UXDecoratorTemplate :: "than">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "">
@@ -295,6 +296,7 @@
 				<@LabeledItem\HideLabel :: "True">
 				<@UXItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
 			<@$Inherits :: @ZeroUML\NextDecorator>
+			<@$Inherits :: @ZeroUML\PackageDecorators>
 			<@UXDecoratorTemplate :: "than">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "">
@@ -344,6 +346,7 @@
 						<@$Is :: @Size>
 						<@Width :: "0">
 						<@Height :: "0">
+				<@$Inherits :: @ZeroUML\PackageDecorators>
 				<@UXDecoratorTemplate :: "do">
 					<@$Is :: @UXDecoratorTemplate>
 					<@SupportEmptyMetaEdge :: "True">
@@ -411,6 +414,7 @@
 						<@$Is :: @Size>
 						<@Width :: "0">
 						<@Height :: "0">
+				<@$Inherits :: @ZeroUML\PackageDecorators>
 				<@UXDecoratorTemplate :: "do">
 					<@$Is :: @UXDecoratorTemplate>
 					<@SupportEmptyMetaEdge :: "True">
@@ -448,8 +452,9 @@
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
-						<@Height :: "0">				
-				<@$Inherits :: @ZeroUML\EdgeDecorator>
+						<@Height :: "0">
+				<@$Inherits :: @ZeroUML\PackageDecorators>
+				<@$Inherits :: @ZeroUML\bodyDecorator>
 				
 		<@UXTemplate :: "Method">
 			<@$Is :: @UXTemplate>
@@ -480,8 +485,9 @@
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
-						<@Height :: "0">				
-				<@$Inherits :: @ZeroUML\EdgeDecorator>
+						<@Height :: "0">
+				<@$Inherits :: @ZeroUML\PackageDecorators>
+				<@$Inherits :: @ZeroUML\bodyDecorator>
 		
 		<@UXTemplate :: "Vertex">
 			<@$Is :: @UXTemplate>
