@@ -15,7 +15,7 @@
 				<@LabeledItem\ConstantLabel :: "code linear">
 				<@LabeledItem\ShowMeta :: "True">
 				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\LinearizedManyLines>
-			<@$Inherits :: @ZeroUML\ActionDecorators>
+			<@$Inherits :: @ZeroUML\NextDecorator>
 			<@UXDecoratorTemplate :: "Edge">
 				<@$Is :: @UXDecoratorTemplate>
 				<@SupportEmptyMetaEdge :: "True">
@@ -36,7 +36,7 @@
 				<@LabeledItem\ConstantLabel :: "code edge">
 				<@LabeledItem\ShowMeta :: "True">
 				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\EdgeAndManyLines>
-			<@$Inherits :: @ZeroUML\ActionDecorators>
+			<@$Inherits :: @ZeroUML\NextDecorator>
 			<@UXDecoratorTemplate :: "Edge">
 				<@$Is :: @UXDecoratorTemplate>
 				<@SupportEmptyMetaEdge :: "True">
@@ -57,7 +57,7 @@
 				<@LabeledItem\ConstantLabel :: "code line">
 				<@LabeledItem\ShowMeta :: "True">
 				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\EdgeOneLine>			
-			<@$Inherits :: @ZeroUML\ActionDecorators>			
+			<@$Inherits :: @ZeroUML\NextDecorator>			
 
 		<@UXTemplate :: "Class">
 			<@$Is :: @UXTemplate>
@@ -134,7 +134,7 @@
 				<@LabeledItem\ShowMeta :: "False">
 				<@LabeledItem\ConstantLabel :: "block">
 				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\ManyLinesExcludingParent>
-			<@$Inherits :: @ZeroUML\ActionDecorators>
+			<@$Inherits :: @ZeroUML\NextDecorator>
 			
 		<@UXTemplate :: "Named Block (code)">
 			<@$Is :: @UXTemplate>
@@ -147,7 +147,7 @@
 				<@LabeledItem\ShowMeta :: "False">
 				<@LabeledItem\ConstantLabel :: "named block">
 				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\ManyLinesExcludingParent>
-			<@$Inherits :: @ZeroUML\ActionDecorators>			
+			<@$Inherits :: @ZeroUML\NextDecorator>			
 			
 		<@UXTemplate :: "Block (container)">
 			<@$Is :: @UXTemplate>
@@ -159,8 +159,9 @@
 				<@$Inherits :: @ZeroUML\ActionContainerItemVertex>
 				<@LabeledItem\ShowMeta :: "False">
 				<@LabeledItem\ConstantLabel :: "block">
-			<@$Inherits :: @ZeroUML\ActionDecorators>
-			<@$Inherits :: @ZeroUML\ActionContainerDecorators>
+			<@$Inherits :: @ZeroUML\PackageDecorators>
+			<@$Inherits :: @ZeroUML\NextDecorator>
+			<@$Inherits :: @ZeroUML\bodyDecorator>
 			
 		<@UXTemplate :: "Named Block (container)">
 			<@$Is :: @UXTemplate>
@@ -172,8 +173,8 @@
 				<@$Inherits :: @ZeroUML\ActionContainerItemVertex>
 				<@LabeledItem\ShowMeta :: "False">
 				<@LabeledItem\ConstantLabel :: "named block">
-			<@$Inherits :: @ZeroUML\ActionDecorators>
-			<@$Inherits :: @ZeroUML\ActionContainerDecorators>				
+			<@$Inherits :: @ZeroUML\NextDecorator>
+			<@$Inherits :: @ZeroUML\bodyDecorator>				
 			
 		<@UXTemplate :: "Package">
 			<@$Is :: @UXTemplate>
@@ -185,44 +186,8 @@
 				<@$Inherits :: @ZeroUML\StaticContainerItemVertex>
 				<@LabeledItem\ShowMeta :: "False">
 				<@LabeledItem\ConstantLabel :: "package">
-				<@UXItem\BorderSize :: "3">			
-			<@UXDecoratorTemplate :: "Package">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Package\Package">
-				<@ToDiagramItemTestQuery :: "UXTemplate:Package">
-				<@DecoratorClass :: @LineDecorator>				
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>			
-			<@UXDecoratorTemplate :: "Variable">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Package\Variable">
-				<@ToDiagramItemTestQuery :: "UXTemplate:Variable">
-				<@DecoratorClass :: @LineDecorator>				
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
-			<@UXDecoratorTemplate :: "Function">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Package\Function">
-				<@ToDiagramItemTestQuery :: "UXTemplate:Function">
-				<@DecoratorClass :: @LineDecorator>				
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
-			<@UXDecoratorTemplate :: "Class">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Package\Class">
-				<@ToDiagramItemTestQuery :: "UXTemplate:Class">
-				<@DecoratorClass :: @LineDecorator>				
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">				
-				<@SupportAnyMetaEdge :: "True">
-				<@SupportEmptyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+				<@UXItem\BorderSize :: "3">
+			<@$Inherits :: @ZeroUML\PackageDecorators>
 			
 		<@UXTemplate :: "Package (container)">
 			<@$Is :: @UXTemplate>
@@ -234,7 +199,7 @@
 				<@$Inherits :: @ZeroUML\StaticContainerItemVertex>
 				<@LabeledItem\ShowMeta :: "False">
 				<@LabeledItem\ConstantLabel :: "package">			
-			<@$Inherits :: @ZeroUML\StaticContainerDecorators>
+			<@$Inherits :: @ZeroUML\EdgeDecorator>
 			
 		<@UXTemplate :: "Variable">
 			<@$Is :: @UXTemplate>
@@ -265,7 +230,7 @@
 				<@LabeledItem\UseCodeLabel :: "True">
 				<@LabeledItem\ContentQuery :: "Test:">
 				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\LinearizedManyLines>
-			<@$Inherits :: @ZeroUML\ActionDecorators>
+			<@$Inherits :: @ZeroUML\NextDecorator>
 			<@UXDecoratorTemplate :: "than">
 				<@$Is :: @UXDecoratorTemplate>
 				<@SupportEmptyMetaEdge :: "True">
@@ -287,7 +252,7 @@
 				<@LabeledItem\ContentQuery :: "Expression:">
 				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\LinearizedManyLines>
 				<@UXItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
-			<@$Inherits :: @ZeroUML\ActionDecorators>
+			<@$Inherits :: @ZeroUML\NextDecorator>
 			<@UXDecoratorTemplate :: "case">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "">
@@ -318,7 +283,7 @@
 				<@LabeledItem\ContentQuery :: "Test:">
 				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\LinearizedManyLines>
 				<@UXItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
-			<@$Inherits :: @ZeroUML\ActionDecorators>
+			<@$Inherits :: @ZeroUML\NextDecorator>
 			<@UXDecoratorTemplate :: "than">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "">
@@ -339,7 +304,7 @@
 				<@LabeledItem\ConstantLabel :: "fallback">
 				<@LabeledItem\HideLabel :: "True">
 				<@UXItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
-			<@$Inherits :: @ZeroUML\ActionDecorators>
+			<@$Inherits :: @ZeroUML\NextDecorator>
 			<@UXDecoratorTemplate :: "than">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "">
@@ -360,7 +325,7 @@
 				<@LabeledItem\ConstantLabel :: "while">
 				<@LabeledItem\ShowMeta :: "False">				
 				<@MultiContainerItem\Orientation :: @OrientationEnum\Vertical>				
-			<@$Inherits :: @ZeroUML\ActionDecorators>
+			<@$Inherits :: @ZeroUML\NextDecorator>
 			<@UXTemplate :: "Test">
 				<@$Is :: @UXTemplate>
 				<@ItemVertex :: "">
@@ -409,7 +374,7 @@
 				<@LabeledItem\ConstantLabel :: "for each">
 				<@LabeledItem\ShowMeta :: "False">				
 				<@MultiContainerItem\Orientation :: @OrientationEnum\Vertical>				
-			<@$Inherits :: @ZeroUML\ActionDecorators>
+			<@$Inherits :: @ZeroUML\NextDecorator>
 			<@UXTemplate :: "Variable">
 				<@$Is :: @UXTemplate>
 				<@ItemVertex :: "">
@@ -494,7 +459,7 @@
 						<@$Is :: @Size>
 						<@Width :: "0">
 						<@Height :: "0">				
-				<@$Inherits :: @ZeroUML\StaticContainerDecorators>
+				<@$Inherits :: @ZeroUML\EdgeDecorator>
 				
 		<@UXTemplate :: "Method">
 			<@$Is :: @UXTemplate>
@@ -526,7 +491,7 @@
 						<@$Is :: @Size>
 						<@Width :: "0">
 						<@Height :: "0">				
-				<@$Inherits :: @ZeroUML\StaticContainerDecorators>
+				<@$Inherits :: @ZeroUML\EdgeDecorator>
 		
 		<@UXTemplate :: "Vertex">
 			<@$Is :: @UXTemplate>
@@ -574,7 +539,7 @@
 		<"ActionContainerItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryVeryLightVioletBlue>
 			<@MultiContainerItem\SubBackgroundColor :: @VeryVeryLightVioletBlue>
-		<"ActionDecorators">
+		<"NextDecorator">
 			<@UXDecoratorTemplate :: "Next">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "$Is:\Next">
@@ -585,7 +550,7 @@
 					<@LineDecorator\HideLabel :: "True">
 					<@UXItem\ForegroundColor :: @LightCentralBlue>
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-		<"StaticContainerDecorators">
+		<"EdgeDecorator">
 			<@UXDecoratorTemplate :: "Edge">
 				<@$Is :: @UXDecoratorTemplate>
 				<@SupportEmptyMetaEdge :: "True">
@@ -598,7 +563,7 @@
 					<@UXItem\ForegroundColor :: @Black>
 					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-		<"ActionContainerDecorators">
+		<"bodyDecorator">
 			<@UXDecoratorTemplate :: "body">
 				<@$Is :: @UXDecoratorTemplate>
 				<@SupportEmptyMetaEdge :: "True">
@@ -612,3 +577,41 @@
 			<@LineDecorator\LineWidth :: "2">
 			<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
 			<@UXItem\ForegroundColor :: @VeryVeryLightVioletBlue>
+		<"PackageDecorators">
+			<@UXDecoratorTemplate :: "Package">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:Package\Package">
+				<@ToDiagramItemTestQuery :: "UXTemplate:Package">
+				<@DecoratorClass :: @LineDecorator>				
+				<@DecoratorVertex :: "">
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>			
+			<@UXDecoratorTemplate :: "Variable">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:Package\Variable">
+				<@ToDiagramItemTestQuery :: "UXTemplate:Variable">
+				<@DecoratorClass :: @LineDecorator>				
+				<@DecoratorVertex :: "">
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			<@UXDecoratorTemplate :: "Function">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:Package\Function">
+				<@ToDiagramItemTestQuery :: "UXTemplate:Function">
+				<@DecoratorClass :: @LineDecorator>				
+				<@DecoratorVertex :: "">
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			<@UXDecoratorTemplate :: "Class">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:Package\Class">
+				<@ToDiagramItemTestQuery :: "UXTemplate:Class">
+				<@DecoratorClass :: @LineDecorator>				
+				<@DecoratorVertex :: "">
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			<@UXDecoratorTemplate :: "Edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:\">				
+				<@SupportAnyMetaEdge :: "True">
+				<@SupportEmptyMetaEdge :: "True">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
