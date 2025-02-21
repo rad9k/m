@@ -337,7 +337,7 @@ namespace m0
         {
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, null, "{ZeroUML{Type,AtomType,StateMachine{State{Transition}},Enum{EnumValue},Selector,Class{Attribute{MinValue,MaxValue},Association,Aggregation,$PlatformClassName,$InstanceCreationPriority:}}}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, null, "{ZeroUML{Type,AtomType,StateMachine{State{Transition}},Enum{EnumValue},Selector,Class{Attribute{MinValue,MaxValue},Association,Aggregation,$PlatformClassName}}}");
 
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Selector"), sm, "{$MinCardinality:0,$MaxCardinality:-1}");
 
@@ -460,6 +460,12 @@ namespace m0
             IVertex nse = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\$$NoSequentialExecution");
 
             IVertex isAggregation = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$IsAggregation");
+
+            // enhance ZeroUML\Class with $InstanceCreationPriority:
+
+            LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroUML\Class").AddVertex(
+                LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$InstanceCreationPriority"),
+                null);
 
             // "\ " > "\"
             // "|" > ":"
@@ -6454,7 +6460,7 @@ namespace m0
 
             CreateSystemMetaZeroTypes_UX();
 
-            CreateSystemMetaZeroTypesExecutionFlow_Part1();
+            CreateSystemMetaZeroTypesExecutionFlow_Part1();            
 
             CreateSystemMetaZeroUML_ZeroCode_part();
 
