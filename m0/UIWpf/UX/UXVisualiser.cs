@@ -1882,6 +1882,9 @@ namespace m0.UIWpf.UX
             if (toItem == this)
                 return false;
 
+            DoCreateDiagramLine_Edge_toUse = null;
+            DoCreateDiagramLine_DiagramLineDefinition_toUse = null;
+
             IEdge toEdge = toItem.BaseEdge;
          
 
@@ -1922,18 +1925,31 @@ namespace m0.UIWpf.UX
 
             Point mousePosition = WpfUtil.GetMousePosition();
 
-            IVertex selected = MinusZero.Instance.DefaultUserInteraction.SelectDialog(info, v, true, mousePosition);
+            IVertex selected = null;
+                
+            if (DoCreateDiagramLine_Edge_toUse == null)
+                selected = MinusZero.Instance.DefaultUserInteraction.SelectDialog(info, v, true, mousePosition);
 
-            if (selected != null)
+            if (selected != null || DoCreateDiagramLine_Edge_toUse != null)
             {
-                IVertex test = VertexOperations.TestIfNewEdgeValid(fromItemBaseEdgeTo, selected.Get(false, "OptionEdge:"), toEdge.To);
+                IEdge DoCreateDiagramLine_DiagramLineDefinition_toUse_Edge = null;
+
+                if (DoCreateDiagramLine_Edge_toUse == null)
+                {
+                    DoCreateDiagramLine_Edge_toUse = selected.Get(false, "OptionEdge:");
+                    DoCreateDiagramLine_DiagramLineDefinition_toUse_Edge = selected.GetAll(false, "OptionDiagramLineDefinition:").FirstOrDefault();
+                }
+                else
+                    DoCreateDiagramLine_DiagramLineDefinition_toUse_Edge = new EasyEdge(null, null, DoCreateDiagramLine_Edge_toUse);
+
+                IVertex test = VertexOperations.TestIfNewEdgeValid(fromItemBaseEdgeTo, DoCreateDiagramLine_Edge_toUse, toEdge.To);
 
                 if (test == null)
                 {
                     //UXDecoratorTemplate chosenTemplate = new UXDecoratorTemplate(a.GetAll(false, "OptionDiagramLineDefinition:").FirstOrDefault());
 
                     UXDecoratorTemplate chosenTemplate = (UXDecoratorTemplate)TypedEdge.Get(
-                        selected.GetAll(false, "OptionDiagramLineDefinition:").FirstOrDefault(), 
+                        DoCreateDiagramLine_DiagramLineDefinition_toUse_Edge, 
                         typeof(UXDecoratorTemplate));
 
                     ////////////////////////////////////////
@@ -1941,7 +1957,7 @@ namespace m0.UIWpf.UX
                     ////////////////////////////////////////            
 
                     IEdge edge = VertexOperations.AddEdgeOrVertexByMeta(fromItemBaseEdgeTo,
-                        selected.Get(false, "OptionEdge:"),
+                        DoCreateDiagramLine_Edge_toUse,
                         toEdge.To,
                         mousePosition,
                         chosenTemplate.CreateEdgeOnly,
@@ -1989,8 +2005,18 @@ namespace m0.UIWpf.UX
             return true;
         }
 
+        static IVertex DoCreateDiagramLine_Edge_toUse = null;
+        static IVertex DoCreateDiagramLine_DiagramLineDefinition_toUse = null;
+
         private static void AddNewLineOption(IVertex v, UXDecoratorTemplate def, IVertex edgeVertex)
         {
+           if (def.EdgeTestQuery != null && def.EdgeTestQuery != ""
+                && def.ToDiagramItemTestQuery != null && def.ToDiagramItemTestQuery != "")
+            {
+                DoCreateDiagramLine_Edge_toUse = edgeVertex;
+                DoCreateDiagramLine_DiagramLineDefinition_toUse = def.Vertex;
+            }
+            
             IVertex r = m0.MinusZero.Instance.Root;
 
             IVertex vv = v.AddVertex(null, edgeVertex.Value + " (" + def.Vertex.Value + ")");
