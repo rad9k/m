@@ -576,28 +576,28 @@
 		<"PackageDecorators">
 			<@UXDecoratorTemplate :: "Package">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Package\Package">
+				<@EdgeTestQuery :: "$Is:\Package">
 				<@ToDiagramItemTestQuery :: "UXTemplate:Package">
 				<@DecoratorClass :: @LineDecorator>				
 				<@DecoratorVertex :: "">
 					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>			
 			<@UXDecoratorTemplate :: "Variable">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Package\Variable">
+				<@EdgeTestQuery :: "$Is:\Variable">
 				<@ToDiagramItemTestQuery :: "UXTemplate:Variable">
 				<@DecoratorClass :: @LineDecorator>				
 				<@DecoratorVertex :: "">
 					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
 			<@UXDecoratorTemplate :: "Function">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Package\Function">
+				<@EdgeTestQuery :: "$Is:\Function">
 				<@ToDiagramItemTestQuery :: "UXTemplate:Function">
 				<@DecoratorClass :: @LineDecorator>				
 				<@DecoratorVertex :: "">
 					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
 			<@UXDecoratorTemplate :: "Class">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Package\Class">
+				<@EdgeTestQuery :: "$Is:\Class">
 				<@ToDiagramItemTestQuery :: "UXTemplate:Class">
 				<@DecoratorClass :: @LineDecorator>				
 				<@DecoratorVertex :: "">

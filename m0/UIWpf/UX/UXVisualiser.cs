@@ -1940,7 +1940,7 @@ namespace m0.UIWpf.UX
                     DoCreateDiagramLine_DiagramLineDefinition_toUse_Edge = selected.GetAll(false, "OptionDiagramLineDefinition:").FirstOrDefault();
                 }
                 else
-                    DoCreateDiagramLine_DiagramLineDefinition_toUse_Edge = new EasyEdge(null, null, DoCreateDiagramLine_Edge_toUse);
+                    DoCreateDiagramLine_DiagramLineDefinition_toUse_Edge = new EasyEdge(null, null, DoCreateDiagramLine_DiagramLineDefinition_toUse);
 
                 IVertex test = VertexOperations.TestIfNewEdgeValid(fromItemBaseEdgeTo, DoCreateDiagramLine_Edge_toUse, toEdge.To);
 
