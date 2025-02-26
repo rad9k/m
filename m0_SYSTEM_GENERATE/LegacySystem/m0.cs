@@ -487,9 +487,8 @@ namespace m0
                 ",SetLeftVertexesToFirstRightVertexValue,AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex,AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphIncludingLinksAsIsInLeftVertex" +
                 ",Equal,ExactEqual,VertexEqual,NotEqual,Negation,And,Or,MoreThan,LessThan,MoreOrEqualThan,LessOrEqualThan" +
                 ",Action,Return{Expression{$MinCardinality:0,$MaxCardinality:1}},NextOut{Next{$MinCardinality:0,$MaxCardinality:1}}" +
-                ",StackFrameCreator{$$NextAtomRoot:" +
-                //Do{$MinCardinality:0,$MaxCardinality:1}
-                ",Variable{$MinCardinality:0,$MaxCardinality:-1,$InstanceCreationPriority:},Type{$$NoSequentialExecution:,$MinCardinality:0,$MaxCardinality:-1}}" +
+                ",StackFrameCreator{$$NextAtomRoot:,Type{$$NoSequentialExecution:,$MinCardinality:0,$MaxCardinality:-1}}" +
+                ",Variable{$MinCardinality:0,$MaxCardinality:-1,$InstanceCreationPriority:}" +
                 ",StackFrameCreatorWithInputOutput{Output{$$NoSequentialExecution:,$MinCardinality:0,$MaxCardinality:1},InputParameter{$$NoSequentialExecution:,$MinCardinality:0,$MaxCardinality:-1}}" +
                 ",Function{$$NoSequentialExecution:,$InstanceCreationPriority:},Block{$InstanceCreationPriority:},NamedBlock{$InstanceCreationPriority:}" +
                 ",While{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},$InstanceCreationPriority:}" +
@@ -576,7 +575,7 @@ namespace m0
 
             // stack operators
 
-            AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, @"StackFrameCreator\Variable"), "CreateStackEdge");
+            AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Variable"), "CreateStackEdge");
 
             // vertex creation operators
 
@@ -600,15 +599,16 @@ namespace m0
 
             // method
             IVertex method = LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class").AddVertex(null, "Method");
+            
             method.AddEdge(LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "StackFrameCreatorWithInputOutput"));
 
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(method, sm, "{$MinCardinality:0,$MaxCardinality:-1,$InstanceCreationPriority:}");
 
-            // cycle edges
+            // StackFrameCreator
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"StackFrameCreator").AddEdge(
-                null,
-                LegacySystem.Graph.EasyVertex.Get(smu, false, "Function"));
+                LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "Package"));
 
             // expression inherits
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"Constant").AddEdge(
@@ -801,9 +801,9 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"Block").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "Action"));
-            /* LegacySystem.Graph.EasyVertex.Get(smu, false, @"Block").AddEdge( // this probably not want
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"Block").AddEdge( 
                  LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
-                 LegacySystem.Graph.EasyVertex.Get(smu, false, "StackFrameCreator"));*/
+                 LegacySystem.Graph.EasyVertex.Get(smu, false, "Package")); // and not StackFrameCreator
             
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"NamedBlock").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
@@ -811,9 +811,9 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"NamedBlock").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "Action"));
-            /* LegacySystem.Graph.EasyVertex.Get(smu, false, @"NamedBlock").AddEdge( // this probably not want
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"NamedBlock").AddEdge( 
                  LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
-                 LegacySystem.Graph.EasyVertex.Get(smu, false, "StackFrameCreator"));*/
+                 LegacySystem.Graph.EasyVertex.Get(smu, false, "Package"));  // and not StackFrameCreator
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"While").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
@@ -821,6 +821,9 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"While").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "Action"));
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"While").AddEdge(
+                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
+                 LegacySystem.Graph.EasyVertex.Get(smu, false, "Package"));  // and not StackFrameCreator
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"If").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
@@ -828,6 +831,9 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"If").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "Action"));
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"If").AddEdge(
+                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
+                 LegacySystem.Graph.EasyVertex.Get(smu, false, "Package"));  // and not StackFrameCreator
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"Test").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
@@ -835,13 +841,19 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"Test").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "Action"));
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"Test").AddEdge(
+                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
+                 LegacySystem.Graph.EasyVertex.Get(smu, false, "Package"));  // and not StackFrameCreator
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"Case").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "NextOut")); // XXX got to think
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"Case").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
-                LegacySystem.Graph.EasyVertex.Get(smu, false, "Action"));
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "Case"));
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"NamedBlock").AddEdge(
+                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
+                 LegacySystem.Graph.EasyVertex.Get(smu, false, "Package"));  // and not StackFrameCreator
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"Fallback").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
@@ -849,6 +861,9 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"Fallback").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "Action"));
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"Fallback").AddEdge(
+                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
+                 LegacySystem.Graph.EasyVertex.Get(smu, false, "Package"));  // and not StackFrameCreator
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"ForEach").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
@@ -856,6 +871,9 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"ForEach").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "Action"));
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"ForEach").AddEdge(
+                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
+                 LegacySystem.Graph.EasyVertex.Get(smu, false, "Package"));  // and not StackFrameCreator
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
@@ -929,7 +947,7 @@ namespace m0
             //LegacySystem.Graph.EasyVertex.Get(smu, false, @"StackFrameCreator\Do").AddEdge(
                 //LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 //LegacySystem.Graph.EasyVertex.Get(smu, false, @"Atom"));
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"StackFrameCreator\Variable").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"Variable").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$VertexTarget"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, @"Type"));
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"StackFrameCreator\Type").AddEdge(
@@ -975,9 +993,8 @@ namespace m0
             // $IsAggregation's for EdgeTargets
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"Return\Expression").AddEdge(isAggregation, Empty);
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"NextOut\Next").AddEdge(isAggregation, Empty);
-
-            //LegacySystem.Graph.EasyVertex.Get(smu, false, @"StackFrameCreator\Do").AddEdge(isAggregation, Empty);
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"StackFrameCreator\Variable").AddEdge(isAggregation, Empty);
+            
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"Variable").AddEdge(isAggregation, Empty);
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"StackFrameCreator\Type").AddEdge(isAggregation, Empty);
             //  smu.Get(false, @"StackFrameCreatorWithInputOutput\Output").AddEdge(isAggregation, Empty); // this - no!            
 
@@ -995,7 +1012,7 @@ namespace m0
             IVertex package = LegacySystem.Graph.EasyVertex.Get(smu, false, "Package");
 
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Package"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function\Variable"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Variable"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Function"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Class"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Method"));
