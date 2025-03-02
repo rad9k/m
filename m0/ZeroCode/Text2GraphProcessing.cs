@@ -3111,16 +3111,19 @@ namespace m0.ZeroCode
             return null;
         }
 
+        // used by ZeroUML diagram representation
         public IVertex Process_EdgeOneLine(IEdge _baseEdge, string _text)
         {
             return null;
         }
 
+        // used by ZeroUML diagram representation
         public IVertex Process_LinearizedManyLines(IEdge _baseEdge, string _text)
         {
             return null;
         }
 
+        // used by ZeroUML diagram representation
         public IVertex Process_EdgeAndManyLines(IEdge _baseEdge, string _text)
         {
             return null;
@@ -3184,6 +3187,7 @@ namespace m0.ZeroCode
             return errorList;
         }
 
+        // used by ZeroUML diagram representation
         public IVertex Process_ManyLinesExcludingParent(IEdge _baseEdge, string _text)
         {
             return null;
