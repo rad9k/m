@@ -128,7 +128,7 @@
 			<@DirectVertexTestQuery :: "{$Is:Block}">
 			<@MetaVertexTestQuery :: "Block">
 			<@ItemClass :: @CodeItem>
-			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>			
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\ActionItemVertex>
 				<@LabeledItem\ShowMeta :: "False">
@@ -154,7 +154,7 @@
 			<@DirectVertexTestQuery :: "{$Is:Block}">
 			<@MetaVertexTestQuery :: "Block">
 			<@ItemClass :: @ContainerItem>
-			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>			
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\ActionContainerItemVertex>
 				<@LabeledItem\ShowMeta :: "False">
@@ -213,7 +213,7 @@
 			<@DirectVertexTestQuery :: "{$Is:If}">
 			<@MetaVertexTestQuery :: "If">
 			<@ItemClass :: @RhombusItem>
-			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>			
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\ActionItemVertex>
 				<@LabeledItem\UseCodeLabel :: "True">
@@ -311,7 +311,7 @@
 			<@DirectVertexTestQuery :: "{$Is:While}">
 			<@MetaVertexTestQuery :: "While">
 			<@ItemClass :: @MultiContainerItem>
-			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>			
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\ActionContainerItemVertex>
 				<@LabeledItem\ConstantLabel :: "while">
@@ -361,7 +361,7 @@
 			<@DirectVertexTestQuery :: "{$Is:ForEach}">
 			<@MetaVertexTestQuery :: "ForEach">
 			<@ItemClass :: @MultiContainerItem>
-			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>			
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\ActionContainerItemVertex>
 				<@LabeledItem\ConstantLabel :: "for each">
