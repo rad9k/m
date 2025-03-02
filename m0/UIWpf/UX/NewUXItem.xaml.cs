@@ -228,15 +228,24 @@ namespace m0.UIWpf.UX
             get { return _BaseEdge; }
         }
 
+        bool is_InstanceCreationPriority = false;
+        bool is_EmptyValueInstance = false;
         private void BaseEdgeSet()
         {
-            bool is_InstanceCreationPriority = false;
+            
 
             if (BaseEdge.Get(false, @"To:\$InstanceCreationPriority:") != null)
             {
                 InstanceRadio.IsChecked = true;
                 is_InstanceCreationPriority = true;
             }
+
+            if (BaseEdge.Get(false, @"To:\$EmptyValueInstance:") != null)
+            {
+                is_EmptyValueInstance = true;
+            }
+
+            
 
             UpdateItemList();
 

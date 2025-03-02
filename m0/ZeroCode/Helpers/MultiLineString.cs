@@ -1,4 +1,5 @@
-﻿using m0.ZeroTypes.UX;
+﻿using ICSharpCode.AvalonEdit.Document;
+using m0.ZeroTypes.UX;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
@@ -21,7 +22,9 @@ namespace m0.ZeroCode.Helpers
             input = _input;
 
             ProcessInputString();
-        }        
+        }
+
+
 
         void ProcessInputString()
         {
@@ -52,6 +55,29 @@ namespace m0.ZeroCode.Helpers
             }
 
             NumberOfLines = lineCounter - 1;
+        }
+
+        public void AddLeftTab(int fromLine, int toLine, int noOfTabs)
+        {
+            StringBuilder tabs = new StringBuilder();
+
+            for (int x = 0; x < noOfTabs; x++)
+                tabs.Append("\t");
+
+            for (int x = fromLine; x <= toLine; x++)
+            {
+                string line = dict[x];
+
+                string newline = tabs + line;
+                
+                dict.Remove(x);
+                dict.Add(x, newline);
+            }
+        }
+
+        public void AddLeftTab(int noOfTabs)
+        {
+            AddLeftTab(1, NumberOfLines, noOfTabs);
         }
 
         public void RemoveLeftTab(int fromLine, int toLine)

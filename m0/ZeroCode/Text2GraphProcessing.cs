@@ -3111,6 +3111,11 @@ namespace m0.ZeroCode
             return null;
         }
 
+        public IVertex Process_EdgeOneLine(IEdge _baseEdge, string _text)
+        {
+            return null;
+        }
+
         public IVertex Process_LinearizedManyLines(IEdge _baseEdge, string _text)
         {
             return null;
@@ -3189,6 +3194,8 @@ namespace m0.ZeroCode
             switch (codeRepresentation)
             {
                 case CodeRepresentationEnum.OneLine: return Process_OneLine(_baseEdge, _text);
+
+                case CodeRepresentationEnum.EdgeOneLine: return Process_EdgeOneLine(_baseEdge, _text);
 
                 case CodeRepresentationEnum.EdgeAndManyLines: return Process_EdgeAndManyLines(_baseEdge, _text);
 

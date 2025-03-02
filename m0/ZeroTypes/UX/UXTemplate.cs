@@ -21,6 +21,7 @@ namespace m0.ZeroTypes.UX
         static IVertex ForceShowEditForm_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\ForceShowEditForm");
         static IVertex ContainerEdgeMetaVertex_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\ContainerEdgeMetaVertex");
         static IVertex BaseEdgeQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\BaseEdgeQuery");
+        static IVertex EmptyValueInstance_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate\EmptyValueInstance");
 
         static IVertex Size_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Size");
         static IVertex UXTemplate_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXTemplate");
@@ -260,6 +261,28 @@ namespace m0.ZeroTypes.UX
 
                 if (val == null)
                     val = Vertex.AddVertex(BaseEdgeQuery_meta, value);
+                else
+                    val.Value = value;
+            }
+        }
+        
+        public bool EmptyValueInstance
+        {
+            get
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "EmptyValueInstance", null);
+
+                if (val == null)
+                    return false;
+
+                return GraphUtil.GetBooleanValueOrFalse(val);
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "EmptyValueInstance", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(EmptyValueInstance_meta, value);
                 else
                     val.Value = value;
             }
