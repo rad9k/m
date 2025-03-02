@@ -35,6 +35,8 @@ namespace m0.UIWpf.UX
 
         IUXVisualiser visualiser;
 
+        Boolean showDialog = true;
+
         public NewUXItem(IUXVisualiser _visualiser, IVertex _baseEdge, bool isSet, Point mousePos)
         {
             visualiser = _visualiser;
@@ -66,14 +68,18 @@ namespace m0.UIWpf.UX
             {
                 BaseEdgeSet();
 
-                ShowDialog();
+                if (showDialog)
+                    ShowDialog();
             }
         }    
 
         protected void NameControlsShow(){
-            NameLabel.Visibility = Visibility.Visible;
-            NameTextBox.Visibility = Visibility.Visible;
-            NameTextBox.Focus();
+            if (!is_EmptyValueInstance)
+            {
+                NameLabel.Visibility = Visibility.Visible;
+                NameTextBox.Visibility = Visibility.Visible;
+                NameTextBox.Focus();
+            }
         }
 
         protected void NameControlsHide()
@@ -230,10 +236,9 @@ namespace m0.UIWpf.UX
 
         bool is_InstanceCreationPriority = false;
         bool is_EmptyValueInstance = false;
-        private void BaseEdgeSet()
-        {
-            
 
+        private void BaseEdgeSet()
+        {            
             if (BaseEdge.Get(false, @"To:\$InstanceCreationPriority:") != null)
             {
                 InstanceRadio.IsChecked = true;
@@ -245,15 +250,21 @@ namespace m0.UIWpf.UX
                 is_EmptyValueInstance = true;
             }
 
-            
-
             UpdateItemList();
 
             if (is_InstanceCreationPriority)
                 this.List.SelectedIndex = 0;
 
-            if ((bool)DirectRadio.IsChecked && (ItemsList.Count() == 1))
+            if ((bool)InstanceRadio.IsChecked && ItemsList.Count() == 1 && is_EmptyValueInstance)
             {
+                InstanceOfMeta = true;
+                this.List.SelectedIndex = 0;
+                UXTemplate = (UXTemplate)TypedEdge.Get((IEdge)List.SelectedValue, typeof(UXTemplate));
+                showDialog = false;
+            }
+
+            if ((bool)DirectRadio.IsChecked && (ItemsList.Count() == 1))
+            {                
                 InstanceRadio.IsChecked = true;
 
                 UpdateItemList();
