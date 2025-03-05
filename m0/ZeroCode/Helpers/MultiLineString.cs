@@ -1,4 +1,4 @@
-﻿using ICSharpCode.AvalonEdit.Document;
+﻿ using ICSharpCode.AvalonEdit.Document;
 using m0.ZeroTypes.UX;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ namespace m0.ZeroCode.Helpers
 {
     class MultiLineString
     {
-        Dictionary<int, string> dict = new Dictionary<int, string>();
+        public Dictionary<int, string> Lines = new Dictionary<int, string>();
 
         string input;
 
@@ -37,7 +37,7 @@ namespace m0.ZeroCode.Helpers
             for (int position = 0; position < input.Length; position++)
             {
                 if (ZeroCodeUtil.IsCRLF(input, position)) {
-                    dict.Add(lineCounter, input.Substring(prev_position, position - prev_position + 2));
+                    Lines.Add(lineCounter, input.Substring(prev_position, position - prev_position + 2));
 
                     lineCounter++;
 
@@ -50,7 +50,7 @@ namespace m0.ZeroCode.Helpers
 
             if (!wasCRLFLastChars)
             {
-                dict.Add(lineCounter, input.Substring(prev_position, input.Length - prev_position));
+                Lines.Add(lineCounter, input.Substring(prev_position, input.Length - prev_position));
                 lineCounter++;
             }
 
@@ -66,12 +66,12 @@ namespace m0.ZeroCode.Helpers
 
             for (int x = fromLine; x <= toLine; x++)
             {
-                string line = dict[x];
+                string line = Lines[x];
 
                 string newline = tabs + line;
                 
-                dict.Remove(x);
-                dict.Add(x, newline);
+                Lines.Remove(x);
+                Lines.Add(x, newline);
             }
         }
 
@@ -84,15 +84,15 @@ namespace m0.ZeroCode.Helpers
         {
             for (int x = fromLine; x <= toLine; x++)
             {
-                string line = dict[x];
+                string line = Lines[x];
 
                 string newline = line;
 
                 if (line[0]=='\t')
                     newline = line.Substring(1);
 
-                dict.Remove(x);
-                dict.Add(x, newline);
+                Lines.Remove(x);
+                Lines.Add(x, newline);
             }
         }
 
@@ -100,15 +100,15 @@ namespace m0.ZeroCode.Helpers
         {
             for (int x = fromLine; x <= toLine; x++)
             {
-                string line = dict[x];
+                string line = Lines[x];
 
                 string newline = line;
 
                 if (line[0] == '\t' && line[1] == '\t')
                     newline = line.Substring(2);
 
-                dict.Remove(x);
-                dict.Add(x, newline);
+                Lines.Remove(x);
+                Lines.Add(x, newline);
             }
         }
 
@@ -116,15 +116,15 @@ namespace m0.ZeroCode.Helpers
         {
             for (int x = fromLine; x <= toLine; x++)
             {
-                string line = dict[x];
+                string line = Lines[x];
 
                 string newline = line;
 
                 if (line[0] == '\t' && line[1] == '\t' && line[2] == '\t')
                     newline = line.Substring(3);
 
-                dict.Remove(x);
-                dict.Add(x, newline);
+                Lines.Remove(x);
+                Lines.Add(x, newline);
             }
         }
 
@@ -143,6 +143,23 @@ namespace m0.ZeroCode.Helpers
             RemoveLeftTab_ThreeTimes(1, NumberOfLines);
         }
 
+        public void InsertEmptyLineBeforeLineNo(int lineNo)
+        {
+            Dictionary<int, string> dict_new = new Dictionary<int, string>();
+
+            foreach (KeyValuePair<int,string> kvp in Lines)            
+                if (kvp.Key >= lineNo)                
+                    dict_new.Add(kvp.Key + 1, kvp.Value);
+                else
+                    dict_new.Add(kvp.Key, kvp.Value);
+
+            dict_new.Add(lineNo, "\r\n");
+
+            Lines = dict_new;
+
+            NumberOfLines++;
+        }
+
         public override string ToString()
         {
             return ToString(1, NumberOfLines);
@@ -153,7 +170,7 @@ namespace m0.ZeroCode.Helpers
             StringBuilder sb = new StringBuilder();
 
             for (int x = fromLine; x <= toLine; x++)            
-                sb.Append(dict[x]);
+                sb.Append(Lines[x]);
 
             string toReturn = sb.ToString();
 

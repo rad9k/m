@@ -3126,7 +3126,25 @@ namespace m0.ZeroCode
         // used by ZeroUML diagram representation
         public IVertex Process_EdgeAndManyLines(IEdge _baseEdge, string _text)
         {
-            return null;
+            MultiLineString mls = new MultiLineString(_text);
+
+            mls.AddLeftTab(1);
+            mls.InsertEmptyLineBeforeLineNo(1);
+            mls.Lines[1] = "\"\"\r\n";
+
+            string s = mls.ToString();
+
+            IEdge _baseEdge_new = m0.MinusZero.Instance.CreateTempEdge();
+
+            _baseEdge_new.To.AddEdge(null, _baseEdge.To);
+
+            IVertex returnedVertex = Process_VertexAndManyLines(_baseEdge_new, mls.ToString());
+
+            _baseEdge.From.AddEdge(_baseEdge_new.To.First().Meta, _baseEdge_new.To.First().To);
+
+            _baseEdge.From.DeleteEdge(_baseEdge);            
+
+            return returnedVertex;
         }
 
         public IVertex Process_VertexAndManyLines(IEdge _baseEdge, string _text)
