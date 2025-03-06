@@ -2210,7 +2210,8 @@ namespace m0.ZeroUML.Instructions
             {
                 IEdge newEdge = newStack.AddVertexAndReturnEdge(null, "");
 
-                MinusZero.Instance.DefaultFormalTextParser.Parse(language, newEdge, e.To.Value.ToString(), m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
+                IEdge baseEdge_new;
+                MinusZero.Instance.DefaultFormalTextParser.Parse(language, newEdge, e.To.Value.ToString(), m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new);
             }
 
             return newStack;

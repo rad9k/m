@@ -35,9 +35,10 @@ namespace m0.LegacySystem.Graph
                 queryVertex = chache[query];
             else
             {
-                queryVertex = MinusZero.Instance.CreateTempVertex();                
+                queryVertex = MinusZero.Instance.CreateTempVertex();
 
-                parseError = DefaultParser.Parse(new EdgeBase(null, null, queryVertex), query, ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
+                IEdge baseEdge_new;
+                parseError = DefaultParser.Parse(new EdgeBase(null, null, queryVertex), query, ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new);
 
                 if (parseError == null)
                 {

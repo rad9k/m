@@ -709,9 +709,10 @@ namespace m0.Graph
                 queryVertex = cache[query];
             else
             {
-                queryVertex = MinusZero.Instance.CreateTempVertex();                
+                queryVertex = MinusZero.Instance.CreateTempVertex();
 
-                parseError = MinusZero.Instance.DefaultFormalTextParser.Parse( new EdgeBase(null, null, queryVertex), query, ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
+                IEdge baseEdge_new;
+                parseError = MinusZero.Instance.DefaultFormalTextParser.Parse( new EdgeBase(null, null, queryVertex), query, ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new);
 
                 if (parseError == null || parseError.Count() == 0 /* && !cache.ContainsKey(query)*/)
                 {
@@ -744,7 +745,8 @@ namespace m0.Graph
             {
                 queryVertex = MinusZero.Instance.CreateTempVertex();
 
-                parseError = MinusZero.Instance.DefaultFormalTextParser.Parse(new EdgeBase(null, null, queryVertex), query, m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
+                IEdge baseEdge_new;
+                parseError = MinusZero.Instance.DefaultFormalTextParser.Parse(new EdgeBase(null, null, queryVertex), query, m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new);
 
                 if (parseError == null || parseError.Count() == 0/* && || !cache.ContainsKey(query)*/)  // it happens to exist there so need to check again
                 {

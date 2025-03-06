@@ -2895,7 +2895,8 @@ namespace m0.ZeroCode
             this.L1009_left = _l1009_left;
             this.L1009_right = _l1009_right;
 
-            return Process(new EdgeBase(null, null, _baseVertex), _text, m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
+            IEdge baseEdge_new;
+            return Process(new EdgeBase(null, null, _baseVertex), _text, m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new);
         }
 
         private bool ProcessToVertexMocksToLinks_Delegate(IEdge edge)
@@ -3211,8 +3212,10 @@ namespace m0.ZeroCode
             return null;
         }
 
-        public IVertex Process(IEdge _baseEdge, string _text, CodeRepresentationEnum codeRepresentation)
+        public IVertex Process(IEdge _baseEdge, string _text, CodeRepresentationEnum codeRepresentation, out IEdge rootEdge_new)
         {
+            rootEdge_new = null;
+
             switch (codeRepresentation)
             {
                 case CodeRepresentationEnum.OneLine: return Process_OneLine(_baseEdge, _text);

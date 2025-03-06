@@ -31,16 +31,16 @@ namespace m0.ZeroCode
             return ZeroCodeExecuter_Instance.GetAll(metaMode, baseVertex, expression);
         }
 
-        public IVertex Parse(IEdge rootEdge, string text, CodeRepresentationEnum codeRepresentation)
+        public IVertex Parse(IEdge rootEdge, string text, CodeRepresentationEnum codeRepresentation, out IEdge rootEdge_new)
         {
-            return Parse(MinusZero.Instance.DefaultFormalTextLanguage, rootEdge, text, codeRepresentation);                
+            return Parse(MinusZero.Instance.DefaultFormalTextLanguage, rootEdge, text, codeRepresentation, out rootEdge_new);                
         }
 
-        public IVertex Parse(IVertex formalTextLanguage, IEdge rootEdge, string text, CodeRepresentationEnum codeRepresentation)
+        public IVertex Parse(IVertex formalTextLanguage, IEdge rootEdge, string text, CodeRepresentationEnum codeRepresentation, out IEdge rootEdge_new)
         {
             Text2GraphProcessing instance = new Text2GraphProcessing(formalTextLanguage);            
 
-            return instance.Process(rootEdge, text, codeRepresentation);
+            return instance.Process(rootEdge, text, codeRepresentation, out rootEdge_new);
         }
 
         public string Generate(IEdge graphBaseEdge, CodeRepresentationEnum codeRepresentation)

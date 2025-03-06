@@ -210,10 +210,12 @@ namespace m0.UIWpf.Controls
 
                 IVertex errorList;
 
+                IEdge baseEdge_new;
+
                 if (ftl == null)
-                    errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(BaseEdge, editor_Text, GetCodeRepresentation());
+                    errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(BaseEdge, editor_Text, GetCodeRepresentation(), out baseEdge_new);
                 else
-                    errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(ftl, BaseEdge, editor_Text, GetCodeRepresentation());
+                    errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(ftl, BaseEdge, editor_Text, GetCodeRepresentation(), out baseEdge_new);
 
                 //
 

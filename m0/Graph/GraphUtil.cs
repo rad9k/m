@@ -145,7 +145,8 @@ namespace m0.Graph
         {
             string text = System.IO.File.ReadAllText(fileName);
 
-            MinusZero.Instance.DefaultFormalTextParser.Parse(new EdgeBase(null, null, baseVertex), text, m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
+            IEdge baseEdge_new;
+            MinusZero.Instance.DefaultFormalTextParser.Parse(new EdgeBase(null, null, baseVertex), text, m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new);
         }
 
         public static void LoadParseAndMove(string fileName, IVertex baseVertex, string vertexName)
