@@ -84,7 +84,14 @@ namespace m0.UIWpf.Controls
             this.Child = editor;
 
             editor.Background = null;
+
+            editor.TextChanged += Editor_TextChanged;
         }
+
+        private void Editor_TextChanged(object sender, EventArgs e)
+        {
+            editor.Background = (Brush)FindResource("0EditorChangedBrush");
+        }        
 
         int _TextMemoryMax;
         int TextMemoryMax
@@ -300,13 +307,26 @@ namespace m0.UIWpf.Controls
         private void CodeVisualiser_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Escape)
+            {
                 ExecuteParse();
+                return;
+            }
 
             if (e.Key == Key.Left && Keyboard.IsKeyDown(Key.RightAlt))
+            {
                 ReferenceTextMemoryLeft();
+                return;
+            }
 
             if (e.Key == Key.Right && Keyboard.IsKeyDown(Key.RightAlt))
+            {
                 ReferenceTextMemoryRight();
+                return;
+            }
+
+            //if (Keyboard.is)
+
+            
         }
 
         TabFoldingStrategy foldingStrategy;

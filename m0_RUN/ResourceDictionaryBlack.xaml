@@ -21,6 +21,7 @@
     <Color x:Key="0VeryLightHighlight">#AF4145</Color>
     <Color x:Key="0Grip">#AF4145</Color>
     <Color x:Key="0Processing">#f4f5ce</Color>
+    <Color x:Key="0EditorChanged">#F6F6FF</Color>
     <Color x:Key="0Error">#FF0000</Color>
     <Color x:Key="0Black">#000000</Color>
     <Color x:Key="0White">#FFFFFF</Color>
@@ -44,6 +45,7 @@
     <SolidColorBrush x:Key="0VeryLightHighlightBrush" Color="{StaticResource 0VeryLightHighlight}" />
     <SolidColorBrush x:Key="0GripBrush" Color="{StaticResource 0Grip}" />
     <SolidColorBrush x:Key="0ProcessingBrush" Color="{StaticResource 0Processing}" />
+    <SolidColorBrush x:Key="0EditorChangedBrush" Color="{StaticResource 0EditorChanged}" />
     <SolidColorBrush x:Key="0ErrorBrush" Color="{StaticResource 0Error}" />
     <SolidColorBrush x:Key="0BlackBrush" Color="{StaticResource 0Black}" />
     <SolidColorBrush x:Key="0WhiteBrush" Color="{StaticResource 0White}" />
