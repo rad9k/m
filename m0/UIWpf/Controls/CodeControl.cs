@@ -158,6 +158,11 @@ namespace m0.UIWpf.Controls
             return BaseEdge;
         }
 
+        private void SetBaseEdge(IEdge baseEdge)
+        {
+            EdgeHelper.ReplaceEdgeVertexEdges(Vertex.Get(false, @"BaseEdge:"), baseEdge);
+        }
+
         private IVertex GetBaseEdgeTo()
         {
             return GetBaseEdge().To;
@@ -218,6 +223,9 @@ namespace m0.UIWpf.Controls
                     errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(ftl, BaseEdge, editor_Text, GetCodeRepresentation(), out baseEdge_new);
 
                 //
+
+                if (baseEdge_new != null)
+                    SetBaseEdge(baseEdge_new);
 
                 int errorLine = -1;
 

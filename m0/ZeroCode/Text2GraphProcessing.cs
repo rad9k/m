@@ -3125,7 +3125,7 @@ namespace m0.ZeroCode
         }
 
         // used by ZeroUML diagram representation
-        public IVertex Process_EdgeAndManyLines(IEdge _baseEdge, string _text)
+        public IVertex Process_EdgeAndManyLines(IEdge _baseEdge, string _text, out IEdge rootEdge_new)
         {
             MultiLineString mls = new MultiLineString(_text);
 
@@ -3141,7 +3141,7 @@ namespace m0.ZeroCode
 
             IVertex returnedVertex = Process_VertexAndManyLines(_baseEdge_new, mls.ToString());
 
-            _baseEdge.From.AddEdge(_baseEdge_new.To.First().Meta, _baseEdge_new.To.First().To);
+            rootEdge_new = _baseEdge.From.AddEdge(_baseEdge_new.To.First().Meta, _baseEdge_new.To.First().To);
 
             _baseEdge.From.DeleteEdge(_baseEdge);            
 
@@ -3222,7 +3222,7 @@ namespace m0.ZeroCode
 
                 case CodeRepresentationEnum.EdgeOneLine: return Process_EdgeOneLine(_baseEdge, _text);
 
-                case CodeRepresentationEnum.EdgeAndManyLines: return Process_EdgeAndManyLines(_baseEdge, _text);
+                case CodeRepresentationEnum.EdgeAndManyLines: return Process_EdgeAndManyLines(_baseEdge, _text, out rootEdge_new);
 
                 case CodeRepresentationEnum.VertexAndManyLines: return Process_VertexAndManyLines(_baseEdge, _text);
 
