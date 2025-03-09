@@ -189,6 +189,8 @@ namespace m0.UIWpf.Controls
         {            
             editor_Text = editor.Text;
 
+            //ExecuteParse_SeparateThread();
+
             Thread thread = new Thread(ExecuteParse_SeparateThread);
             thread.IsBackground = true;
             thread.Start();
@@ -220,15 +222,15 @@ namespace m0.UIWpf.Controls
 
                 //
 
-                IVertex errorList;
+                IVertex errorList = null;
 
-                IEdge baseEdge_new;
+                IEdge baseEdge_new = null;
 
                 if (ftl == null)
                     errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(BaseEdge, editor_Text, GetCodeRepresentation(), out baseEdge_new);
                 else
                     errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(ftl, BaseEdge, editor_Text, GetCodeRepresentation(), out baseEdge_new);
-
+              
                 //
 
                 if (baseEdge_new != null)
@@ -243,20 +245,23 @@ namespace m0.UIWpf.Controls
 
                 m0Main.Instance.Dispatcher.Invoke(() =>
                 {
-                    if (errorList.OutEdges.Count == 0)
+                    if (errorList != null)
                     {
-                        if (generated != null)
-                            editor.Text = generated;
+                        if (errorList.OutEdges.Count == 0)
+                        {
+                            if (generated != null)
+                                editor.Text = generated;
 
-                        //editor.Background = (Brush)FindResource("0BackgroundBrush");
+                            //editor.Background = (Brush)FindResource("0BackgroundBrush");
 
-                        editor.Background = null;
-                    }
-                    else
-                    {
-                        editor.Background = (Brush)FindResource("0LightErrorBrush");
+                            editor.Background = null;
+                        }
+                        else
+                        {
+                            editor.Background = (Brush)FindResource("0LightErrorBrush");
 
-                        errorLine = GraphUtil.GetIntegerValueOr0(errorList.OutEdges[0].To.Get(false, "Where:"));
+                            errorLine = GraphUtil.GetIntegerValueOr0(errorList.OutEdges[0].To.Get(false, "Where:"));
+                        }
                     }
                 });
 
@@ -486,6 +491,7 @@ namespace m0.UIWpf.Controls
             if (NoBackgroundWorkOnGenerate)
             {
                 editor.Text = ExecuteGenerate_SeparateThread_internal();
+                editor.Background = null;
             }
             else
             {                                              
