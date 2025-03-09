@@ -168,11 +168,11 @@ namespace m0.UIWpf.Controls
 
         private void SetBaseEdge(IEdge baseEdge)
         {
-            ExecutionFlowHelper.GraphChangeWatchOff();
+            //ExecutionFlowHelper.GraphChangeWatchOff();
 
-            EdgeHelper.ReplaceEdgeVertexEdges(Vertex.Get(false, @"BaseEdge:"), baseEdge);
+            //EdgeHelper.ReplaceEdgeVertexEdges(Vertex.Get(false, @"BaseEdge:"), baseEdge);
 
-            ExecutionFlowHelper.GraphChangeWatchOn();
+            //ExecutionFlowHelper.GraphChangeWatchOn();
         }
 
         private IVertex GetBaseEdgeTo()
@@ -198,11 +198,12 @@ namespace m0.UIWpf.Controls
 
             Thread thread = new Thread(ExecuteParse_SeparateThread);
             thread.IsBackground = true;
-            thread.Start();
+            thread.Start();            
         }
 
         private void ExecuteParse_SeparateThread()
         {
+           // ExecutionFlowHelper.GraphChangeWatchOff();
             lock (lockObject)
             {
                 if (Vertex.DisposedState != DisposeStateEnum.Live)
@@ -238,8 +239,8 @@ namespace m0.UIWpf.Controls
               
                 //
 
-                //if (baseEdge_new != null)
-                  //  SetBaseEdge(baseEdge_new);
+                if (baseEdge_new != null)
+                    SetBaseEdge(baseEdge_new);
 
                 int errorLine = -1;
 
@@ -291,6 +292,7 @@ namespace m0.UIWpf.Controls
                         editor.TextArea.Caret.Line = errorLine + 1;
                 });
             }
+           // ExecutionFlowHelper.GraphChangeWatchOff();
         }
 
         private void ReferenceTextMemoryLeft()

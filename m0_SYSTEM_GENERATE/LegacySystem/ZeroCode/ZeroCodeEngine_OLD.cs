@@ -25,9 +25,9 @@ namespace m0.LegacySystem.ZeroCode
 
  #region Parse
 
-        public IVertex Parse(Foundation.IEdge rootEdge, string text, CodeRepresentationEnum codeRepresentation)
+        public IVertex Parse(Foundation.IEdge rootEdge, string text, CodeRepresentationEnum codeRepresentation, out IEdge edge)
         {            
-            return Parser.Parse(rootEdge, text, codeRepresentation);
+            return Parser.Parse(rootEdge, text, codeRepresentation, out edge);
         }
 
         #endregion
@@ -507,8 +507,10 @@ namespace m0.LegacySystem.ZeroCode
             }
         }
 
-        public IVertex Parse(IVertex formalTextLanguage, IEdge rootEdge, string text, CodeRepresentationEnum codeRepresentation)
+        public IVertex Parse(IVertex formalTextLanguage, IEdge rootEdge, string text, CodeRepresentationEnum codeRepresentation, out IEdge edge)
         {
+            edge = null;
+
             throw new NotImplementedException();
         }
 

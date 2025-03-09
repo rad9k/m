@@ -25,6 +25,27 @@
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+		
+		<@UXTemplate :: "Code XXX EDGE">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@ItemClass :: @CodeItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\ActionItemVertex>
+				<@LabeledItem\ConstantLabel :: "code edge">
+				<@LabeledItem\ShowMeta :: "True">
+				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\VertexAndManyLines>
+			<@$Inherits :: @ZeroUML\NextDecorator>
+			<@UXDecoratorTemplate :: "Edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@SupportEmptyMetaEdge :: "True">
+				<@SupportAnyMetaEdge :: "True">				
+				<@EdgeTestQuery :: "$Is:\">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
 
 		<@UXTemplate :: "Code EDGE">
 			<@$Is :: @UXTemplate>

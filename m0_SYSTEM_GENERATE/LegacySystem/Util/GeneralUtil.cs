@@ -21,8 +21,9 @@ namespace m0.LegacySystem.Util
             IVertex expressionAsVertex = MinusZero.Instance.CreateTempVertex();
 
             //z.DefaultParser.Parse(expressionAsVertex, expressionAsString);
+            IEdge edge;
 
-            LegacySystem.ZeroCodeEngine_OLD.Parse(new EdgeBase(null, null, expressionAsVertex), expressionAsString, m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
+            LegacySystem.ZeroCodeEngine_OLD.Parse(new EdgeBase(null, null, expressionAsVertex), expressionAsString, m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out edge);
 
             return LegacySystem.ZeroCodeEngine_OLD.OldStyleExecute(baseVertex, inputVertex, expressionAsVertex);
         }
