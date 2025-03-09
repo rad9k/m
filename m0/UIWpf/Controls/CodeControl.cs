@@ -170,7 +170,7 @@ namespace m0.UIWpf.Controls
         {
             //ExecutionFlowHelper.GraphChangeWatchOff();
 
-            //EdgeHelper.ReplaceEdgeVertexEdges(Vertex.Get(false, @"BaseEdge:"), baseEdge);
+            EdgeHelper.ReplaceEdgeVertexEdges(Vertex.Get(false, @"BaseEdge:"), baseEdge);
 
             //ExecutionFlowHelper.GraphChangeWatchOn();
         }
