@@ -30,6 +30,7 @@ using System.Threading;
 using m0.UIWpf.Dialog;
 using System.Diagnostics;
 using m0.ZeroTypes.UX;
+using m0.Graph.ExecutionFlow;
 
 namespace m0.UIWpf.Controls
 {
@@ -167,7 +168,11 @@ namespace m0.UIWpf.Controls
 
         private void SetBaseEdge(IEdge baseEdge)
         {
+            ExecutionFlowHelper.GraphChangeWatchOff();
+
             EdgeHelper.ReplaceEdgeVertexEdges(Vertex.Get(false, @"BaseEdge:"), baseEdge);
+
+            ExecutionFlowHelper.GraphChangeWatchOn();
         }
 
         private IVertex GetBaseEdgeTo()
@@ -233,8 +238,8 @@ namespace m0.UIWpf.Controls
               
                 //
 
-                if (baseEdge_new != null)
-                    SetBaseEdge(baseEdge_new);
+                //if (baseEdge_new != null)
+                  //  SetBaseEdge(baseEdge_new);
 
                 int errorLine = -1;
 
