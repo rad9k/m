@@ -194,11 +194,16 @@ namespace m0.UIWpf.Controls
         {            
             editor_Text = editor.Text;
 
-            //ExecuteParse_SeparateThread();
-
-            Thread thread = new Thread(ExecuteParse_SeparateThread);
-            thread.IsBackground = true;
-            thread.Start();            
+            if (NoBackgroundWorkOnGenerate)
+            {
+                ExecuteParse_SeparateThread();
+            }
+            else
+            {
+                Thread thread = new Thread(ExecuteParse_SeparateThread);
+                thread.IsBackground = true;
+                thread.Start();
+            }
         }
 
         private void ExecuteParse_SeparateThread()
@@ -238,9 +243,6 @@ namespace m0.UIWpf.Controls
                     errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(ftl, BaseEdge, editor_Text, GetCodeRepresentation(), out baseEdge_new);
               
                 //
-
-                if (baseEdge_new != null)
-                    SetBaseEdge(baseEdge_new);
 
                 int errorLine = -1;
 
