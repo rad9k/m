@@ -3174,20 +3174,14 @@ namespace m0.ZeroCode
 
             IEdge parsedRootEdge = _baseEdge_parentEdge.To.First();
 
-            //rootEdge_new = _baseEdge.From.AddEdge(parsedRootEdge.Meta, parsedRootEdge.To);
-
-            rootEdge_new = _baseEdge.From.AddEdge(MinusZero.Instance.root.OutEdges.First().To, parsedRootEdge.To);
+            rootEdge_new = _baseEdge.From.AddEdge(parsedRootEdge.Meta, parsedRootEdge.To);            
 
             //
 
             _baseEdge.From.DeleteEdge(_baseEdge);
 
             MoveInEdgesFromOneVertexToAnother(_baseEdge.To, rootEdge_new.To);
-            //rootEdge_new = null;
-            //
-
             
-
             //
             
             return returnedVertex;
