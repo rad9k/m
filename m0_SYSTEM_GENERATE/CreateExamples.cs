@@ -393,6 +393,7 @@ namespace m0_SYSTEM_GENERATE
             MinusZero.Instance.DefaultFormalTextParser.Parse(code15,
             "\"aacode test\"" +
     "\r\n\tnamedblock \"Ablok\"()" +
+    "\r\n\t\tvariable \"a\" @Boolean" +
     "\r\n\t\ta = \"True\"" +
     "\r\n\t\tb = \"True\"" +
     "\r\n\tnamedblock \"Bblok\"()" +
@@ -421,6 +422,7 @@ namespace m0_SYSTEM_GENERATE
     "\r\n\twhile a==b" +    
     "\r\n\t\treturn Name" +
     "\r\n\tfunction \"Afunc\"()" +
+    "\r\n\t\tvariable \"a\" @Boolean" +
     "\r\n\t\ta = \"True\"" +
     "\r\n\t\tb = \"True\"" +
     "\r\n\tfunction \"Bfunc\"()" +

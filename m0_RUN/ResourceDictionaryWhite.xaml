@@ -20,7 +20,7 @@
     <Color x:Key="0VeryLightHighlight">#B1C5FF</Color>
     <Color x:Key="0Grip">#E1E5FF</Color>
     <Color x:Key="0Processing">#FFFFCF</Color>
-    <Color x:Key="0EditorChanged">#F5F5FF</Color>
+    <Color x:Key="0EditorChanged">#F1F1FF</Color>
     <Color x:Key="0Error">#FF0000</Color>
     <Color x:Key="0LightError">#ffbbbb</Color>
     <Color x:Key="0Black">#000000</Color>

@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.UIWpf.Dialog;
 using m0.Util;
 using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
@@ -3144,9 +3145,27 @@ namespace m0.ZeroCode
         }
 
         // used by ZeroUML diagram representation
-        public IVertex Process_LinearizedManyLines(IEdge _baseEdge, string _text)
+        public IVertex Process_LinearizedManyLines(IEdge _baseEdge, string _text, out IEdge rootEdge_new)
         {
-            return null;
+            MultiLineString mls = new MultiLineString(_text);
+
+            mls.AddLeftTab(1);
+            mls.InsertEmptyLineBeforeLineNo(1);
+            mls.Lines[1] = "\"\"\r\n";
+
+            //
+
+            IEdge _baseEdge_parentEdge = m0.MinusZero.Instance.CreateTempEdge();
+
+            _baseEdge_parentEdge.To.AddEdge(_baseEdge.Meta, _baseEdge.To);
+
+            //
+
+            IVertex returnedVertex = Process_VertexAndManyLines(_baseEdge_parentEdge, mls.ToString());
+
+            rootEdge_new = _baseEdge_parentEdge.To.OutEdges.FirstOrDefault();
+
+            return returnedVertex;
         }
 
         // used by ZeroUML diagram representation
@@ -3157,8 +3176,6 @@ namespace m0.ZeroCode
             mls.AddLeftTab(1);
             mls.InsertEmptyLineBeforeLineNo(1);
             mls.Lines[1] = "\"\"\r\n";
-
-            string s = mls.ToString();
 
             //
 
@@ -3248,7 +3265,38 @@ namespace m0.ZeroCode
         // used by ZeroUML diagram representation
         public IVertex Process_ManyLinesExcludingParent(IEdge _baseEdge, string _text)
         {
-            return null;
+            IEdge nextEdge = GraphUtil.GetQueryOutFirstEdge(_baseEdge.To, "Next", null);
+
+            if (nextEdge != null)
+                _baseEdge.To.DeleteEdge(nextEdge);
+                
+            //
+
+            string firstLine = MinusZero.Instance.DefaultFormalTextGenerator.Generate(
+                _baseEdge,
+                CodeRepresentationEnum.EdgeOneLine);
+
+
+            MultiLineString mls = new MultiLineString(_text);
+
+            mls.AddLeftTab(1);
+            mls.InsertEmptyLineBeforeLineNo(1);
+            mls.Lines[1] = firstLine + "\r\n";
+
+            //
+
+            IEdge _baseEdge_parentEdge = m0.MinusZero.Instance.CreateTempEdge();
+
+            _baseEdge_parentEdge.To.AddEdge(null, _baseEdge.To);
+
+            //
+
+            IVertex returnedVertex = Process_VertexAndManyLines(_baseEdge, mls.ToString());
+
+            if (nextEdge != null)
+                _baseEdge.To.AddEdge(nextEdge.Meta, nextEdge.To);
+
+            return returnedVertex;
         }
 
         public IVertex Process(IEdge _baseEdge, string _text, CodeRepresentationEnum codeRepresentation, out IEdge rootEdge_new)
@@ -3265,7 +3313,7 @@ namespace m0.ZeroCode
 
                 case CodeRepresentationEnum.VertexAndManyLines: return Process_VertexAndManyLines(_baseEdge, _text);
 
-                case CodeRepresentationEnum.LinearizedManyLines: return Process_LinearizedManyLines(_baseEdge, _text);
+                case CodeRepresentationEnum.LinearizedManyLines: return Process_LinearizedManyLines(_baseEdge, _text, out rootEdge_new);
 
                 case CodeRepresentationEnum.ManyLinesExcludingParent: return Process_ManyLinesExcludingParent(_baseEdge, _text);
             }
