@@ -192,8 +192,6 @@ namespace m0.ZeroTypes.UX
 
             codeControl = new CodeControl(Vertex, true);
 
-
-
             codeControl.BaseEdgeToUpdated();
 
             return codeControl;

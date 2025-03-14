@@ -3147,6 +3147,8 @@ namespace m0.ZeroCode
         // used by ZeroUML diagram representation
         public IVertex Process_LinearizedManyLines(IEdge _baseEdge, string _text, out IEdge rootEdge_new)
         {
+            IVertex _baseEdge_meta = _baseEdge.Meta;
+
             MultiLineString mls = new MultiLineString(_text);
 
             mls.AddLeftTab(1);
@@ -3163,7 +3165,20 @@ namespace m0.ZeroCode
 
             IVertex returnedVertex = Process_VertexAndManyLines(_baseEdge_parentEdge, mls.ToString());
 
-            rootEdge_new = _baseEdge_parentEdge.To.OutEdges.FirstOrDefault();
+            IEdge parsedRootEdge = _baseEdge_parentEdge.To.First();
+
+            if (_baseEdge_meta == MinusZero.Instance.Empty)
+                rootEdge_new = parsedRootEdge;
+            else
+                rootEdge_new = _baseEdge.From.AddEdge(_baseEdge_meta, parsedRootEdge.To);
+            
+            //
+
+            _baseEdge.From.DeleteEdge(_baseEdge);
+
+            //MoveInEdgesFromOneVertexToAnother(_baseEdge.To, rootEdge_new.To);
+
+            //
 
             return returnedVertex;
         }
