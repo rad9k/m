@@ -46,7 +46,7 @@ namespace m0.ZeroTypes.UX
 
             GeneralUtil.SetPropertyIfPresent(LabelControl, "Background", null);
 
-            if (UseCodeLabel)
+            if (UseCodeLabel && codeControl.editor.Background != (Brush)FindResource("0EditorChangedBrush"))
                 codeControl.editor.Background = null;
         }
 
@@ -56,7 +56,8 @@ namespace m0.ZeroTypes.UX
 
             GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", (Brush)FindResource("0BackgroundBrush"));
 
-            GeneralUtil.SetPropertyIfPresent(LabelControl, "Background", (Brush)FindResource("0SelectionBrush"));
+            if (UseCodeLabel && codeControl.editor.Background != (Brush)FindResource("0EditorChangedBrush"))
+                GeneralUtil.SetPropertyIfPresent(LabelControl, "Background", (Brush)FindResource("0SelectionBrush"));
 
             GeneralUtil.SetPropertyIfPresent(LabelControl, "Cursor", Cursors.ScrollAll);
         }
@@ -66,8 +67,6 @@ namespace m0.ZeroTypes.UX
             base.Unselect();
 
             SetBaselineColors();
-
-            GeneralUtil.SetPropertyIfPresent(LabelControl, "Background", null);
 
             GeneralUtil.SetPropertyIfPresent(LabelControl, "Cursor", Cursors.Arrow);
         }
@@ -83,11 +82,10 @@ namespace m0.ZeroTypes.UX
             
             if (UseCodeLabel)
             {
-                codeControl.editor.Background = backgroundBrush;
+                if (codeControl.editor.Background != (Brush)FindResource("0EditorChangedBrush"))
+                    codeControl.editor.Background = backgroundBrush;
 
-                //GeneralUtil.SetPropertyIfPresent(LabelControl, "Background", backgroundBrush);
-
-                //GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", foregroundBrush);
+                GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", foregroundBrush);
             }
             else
                 GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", (Brush)FindResource("0HighlightForegroundBrush"));

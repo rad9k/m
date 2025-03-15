@@ -287,6 +287,20 @@ namespace m0_SYSTEM_GENERATE
              "\r\n\t\t\t\tE += (W * \"200\") + (Z * \"20\") + (X*\"4\") + Y", m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new
              );
 
+            IEdge code7b = code.AddVertexAndReturnEdge(null, null);
+            MinusZero.Instance.DefaultFormalTextParser.Parse(code7b,
+             "\"Code7b\"" +
+             "\r\n\tvariable \"A\" @String" +
+             "\r\n\tvariable \"B\" @String" +
+             "\r\n\tA = \"a\"" +
+             "\r\n\tA += \"1\"" +
+             "\r\n\tA += \"2\"" +
+             "\r\n\tB = \"b\"" +
+             "\r\n\tforeach \"X\" in A" +
+             "\r\n\t\tB += X", m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new
+             );
+
+
             IEdge code8 = code.AddVertexAndReturnEdge(null, null);
             MinusZero.Instance.DefaultFormalTextParser.Parse(code8,
        "\"Code8\"" +

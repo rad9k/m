@@ -21,7 +21,7 @@
     <Color x:Key="0VeryLightHighlight">#AF4145</Color>
     <Color x:Key="0Grip">#AF4145</Color>
     <Color x:Key="0Processing">#f4f5ce</Color>
-    <Color x:Key="0EditorChanged">#E5E5FF</Color>
+    <Color x:Key="0EditorChanged">#E1E1FF</Color>
     <Color x:Key="0Error">#FF0000</Color>
     <Color x:Key="0Black">#000000</Color>
     <Color x:Key="0White">#FFFFFF</Color>
