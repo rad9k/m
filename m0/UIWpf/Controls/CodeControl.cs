@@ -48,7 +48,7 @@ namespace m0.UIWpf.Controls
 
         //
 
-        TextEditor editor = new TextEditor();
+        public TextEditor editor = new TextEditor();
 
         bool doNotParse = false;
 
@@ -84,14 +84,12 @@ namespace m0.UIWpf.Controls
 
             this.Child = editor;
 
-            editor.Background = null;
-
             editor.TextChanged += Editor_TextChanged;
         }
 
         private void Editor_TextChanged(object sender, EventArgs e)
         {
-            editor.Background = (Brush)FindResource("0EditorChangedBrush");
+           editor.Background = (Brush)FindResource("0EditorChangedBrush");
         }        
 
         int _TextMemoryMax;
@@ -208,7 +206,6 @@ namespace m0.UIWpf.Controls
 
         private void ExecuteParse_SeparateThread()
         {
-           // ExecutionFlowHelper.GraphChangeWatchOff();
             lock (lockObject)
             {
                 if (Vertex.DisposedState != DisposeStateEnum.Live)
@@ -260,8 +257,6 @@ namespace m0.UIWpf.Controls
                             if (generated != null)
                                 editor.Text = generated;
 
-                            //editor.Background = (Brush)FindResource("0BackgroundBrush");
-
                             editor.Background = null;
                         }
                         else
@@ -294,7 +289,6 @@ namespace m0.UIWpf.Controls
                         editor.TextArea.Caret.Line = errorLine + 1;
                 });
             }
-           // ExecutionFlowHelper.GraphChangeWatchOff();
         }
 
         private void ReferenceTextMemoryLeft()
@@ -337,10 +331,6 @@ namespace m0.UIWpf.Controls
                 ReferenceTextMemoryRight();
                 return;
             }
-
-            //if (Keyboard.is)
-
-            
         }
 
         TabFoldingStrategy foldingStrategy;
@@ -425,10 +415,10 @@ namespace m0.UIWpf.Controls
 
         void EditSetup()
         {
+            editor.Background = null;
+
             editor.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
             editor.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
-
-            editor.Background = new SolidColorBrush(Colors.Green);
 
             editor.FontFamily = new FontFamily("Consolas");
             editor.FontWeight = FontWeight.FromOpenTypeWeight(1);
@@ -475,7 +465,7 @@ namespace m0.UIWpf.Controls
 
             IVertex bv = GetBaseEdgeTo();
 
-            if (bv != null /*&& bv.Value != null && ((String)bv.Value)!="$Empty"*/)
+            if (bv != null)
             {
                 ExecuteGenerate();
 
@@ -512,13 +502,10 @@ namespace m0.UIWpf.Controls
 
         private string ExecuteGenerate_SeparateThread_internal()
         {
-           // return "";
             lock (lockObject)            
             {
                 if (Vertex.DisposedState != DisposeStateEnum.Live)
                     return "";
-
-                //EdgeBase ee = new EdgeBase(Vertex.Get(false, @"BaseEdge:\From:"), Vertex.Get(false, @"BaseEdge:\Meta:"), Vertex.Get(false, @"BaseEdge:\To:"));
 
                 IEdge ee = GetBaseEdge();
 
@@ -539,7 +526,7 @@ namespace m0.UIWpf.Controls
         {
             m0Main.Instance.Dispatcher.Invoke(() =>
             {
-                editor.Background = (Brush)FindResource("0ProcessingBrush");
+               editor.Background = (Brush)FindResource("0ProcessingBrush");
             });
 
             string generated = ExecuteGenerate_SeparateThread_internal();            
@@ -547,8 +534,6 @@ namespace m0.UIWpf.Controls
             m0Main.Instance.Dispatcher.Invoke(() =>
             {
                 editor.Text = generated;
-
-                //editor.Background = (Brush)FindResource("0BackgroundBrush");
 
                 editor.Background = null;
             });

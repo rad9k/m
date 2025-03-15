@@ -45,6 +45,9 @@ namespace m0.ZeroTypes.UX
             GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", foregroundBrush);
 
             GeneralUtil.SetPropertyIfPresent(LabelControl, "Background", null);
+
+            if (UseCodeLabel)
+                codeControl.editor.Background = null;
         }
 
         public override void Select()
@@ -52,6 +55,8 @@ namespace m0.ZeroTypes.UX
             base.Select();
 
             GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", (Brush)FindResource("0BackgroundBrush"));
+
+            GeneralUtil.SetPropertyIfPresent(LabelControl, "Background", (Brush)FindResource("0SelectionBrush"));
 
             GeneralUtil.SetPropertyIfPresent(LabelControl, "Cursor", Cursors.ScrollAll);
         }
@@ -61,6 +66,8 @@ namespace m0.ZeroTypes.UX
             base.Unselect();
 
             SetBaselineColors();
+
+            GeneralUtil.SetPropertyIfPresent(LabelControl, "Background", null);
 
             GeneralUtil.SetPropertyIfPresent(LabelControl, "Cursor", Cursors.Arrow);
         }
@@ -73,11 +80,14 @@ namespace m0.ZeroTypes.UX
 
             Brush foregroundBrush = GetForegroundBrush();
 
+            
             if (UseCodeLabel)
             {
-                GeneralUtil.SetPropertyIfPresent(LabelControl, "Background", backgroundBrush);
+                codeControl.editor.Background = backgroundBrush;
 
-                GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", foregroundBrush);
+                //GeneralUtil.SetPropertyIfPresent(LabelControl, "Background", backgroundBrush);
+
+                //GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", foregroundBrush);
             }
             else
                 GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", (Brush)FindResource("0HighlightForegroundBrush"));
@@ -169,27 +179,10 @@ namespace m0.ZeroTypes.UX
 
         IVertex Vertex_forLabel = null;
 
+        CodeControl codeControl;
+
         public FrameworkElement GetLabelControl_Code()
         {
-            CodeControl codeControl;
-
-            /*if (ContentQuery != null) // ContentQuery to be handled in CodeControl
-            {
-                if (Vertex_forLabel == null)
-                {
-                    Vertex_forLabel = MinusZero.Instance.CreateTempVertex();
-                    Vertex_forLabel.AddExternalReference();
-                }
-                else
-                    GraphUtil.RemoveAllEdges(Vertex_forLabel);
-
-                GraphUtil.CopyShallow(Vertex, Vertex_forLabel);
-
-                EdgeHelper.CreateOrReplaceEdgeVertexFromIEdgeByMeta(Vertex_forLabel, BaseEdge_meta, BaseEdge_forLabel);
-
-                codeControl = new CodeControl(Vertex_forLabel, true);
-            }else*/
-
             codeControl = new CodeControl(Vertex, true);
 
             codeControl.BaseEdgeToUpdated();
