@@ -468,20 +468,20 @@ namespace m0_SYSTEM_GENERATE
             IEdge code17 = code.AddVertexAndReturnEdge(null, null);
             MinusZero.Instance.DefaultFormalTextParser.Parse(code17,
             "\"parsetest\"" +
-"\twhile \"3\" == \"4\"" +
-"\t\tfunction \"Cin\"()" +
-"\t\t@\\Cin[]" +
-"\tfunction \"B\"()" +
-"\t\tfunction \"Bin\"()" +
-"\t\t @B\\Bin[]" +
-"\tfunction \"A\"()" +
-"\t\tforeach \"X\" in x" +
-"\t\t\tforeach \"Y\" in y" +
-"\t\t\t\tX += Y" +
-"\twhile \"1\" == \"2\"" +
-"\t\tforeach \"X\" in x" +
-"\t\t\tforeach \"Y\" in y" +
-"\t\t\t\tX += Y\"
+"\r\n\twhile \"3\" == \"4\"" +
+"\r\n\t\tfunction \"Cin\"()" +
+"\r\n\t\t@\\Cin[]" +
+"\r\n\tfunction \"B\"()" +
+"\r\n\t\tfunction \"Bin\"()" +
+"\r\n\t\t @B\\Bin[]" +
+"\r\n\tfunction \"A\"()" +
+"\r\n\t\tforeach \"X\" in x" +
+"\r\n\t\t\tforeach \"Y\" in y" +
+"\r\n\t\t\t\tX += Y" +
+"\r\n\twhile \"1\" == \"2\"" +
+"\r\n\t\tforeach \"X\" in x" +
+"\r\n\t\t\tforeach \"Y\" in y" +
+"\r\n\t\t\t\tX += Y"
 , m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new
     );
 

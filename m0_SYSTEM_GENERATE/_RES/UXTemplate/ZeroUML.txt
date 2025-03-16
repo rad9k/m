@@ -327,7 +327,7 @@
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
-						<@Height :: "27">
+						<@Height :: "26">
 				<@UXDecoratorTemplate :: "test">
 					<@$Is :: @UXDecoratorTemplate>
 					<@EdgeTestQuery :: "$Is:While\Test">
@@ -377,7 +377,7 @@
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
-						<@Height :: "27">
+						<@Height :: "26">
 				<@UXDecoratorTemplate :: "variable">
 					<@$Is :: @UXDecoratorTemplate>
 					<@EdgeTestQuery :: "$Is:ForEach\Variable">
@@ -395,7 +395,7 @@
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
-						<@Height :: "27">
+						<@Height :: "26">
 				<@UXDecoratorTemplate :: "set">
 					<@$Is :: @UXDecoratorTemplate>
 					<@EdgeTestQuery :: "$Is:ForEach\Set">
@@ -443,7 +443,7 @@
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
-						<@Height :: "27">				
+						<@Height :: "26">				
 			<@UXTemplate :: "body">
 				<@$Is :: @UXTemplate>				
 				<@ItemVertex :: "">					
@@ -476,7 +476,7 @@
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
-						<@Height :: "27">				
+						<@Height :: "26">				
 			<@UXTemplate :: "body">
 				<@$Is :: @UXTemplate>				
 				<@ItemVertex :: "">					
