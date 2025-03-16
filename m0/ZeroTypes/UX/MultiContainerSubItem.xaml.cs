@@ -206,7 +206,7 @@ namespace m0.ZeroTypes.UX
                     return value_parent;
             }
 
-            return 12;
+            return 8;
         }
 
         protected Brush GetParentSubBackgroundBrush()

@@ -9,10 +9,10 @@
 
     <DockPanel x:Name="Panel" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch">
         <DockPanel x:Name="TopPane" DockPanel.Dock="Top" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" LastChildFill="False">
-            <TextBlock Name="Label" DockPanel.Dock="Left"/>
-            <StackPanel DockPanel.Dock="Right" Orientation="Vertical">
+            <TextBlock Name="Label" DockPanel.Dock="Left" Margin="1,0,0,0"/>
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                 <ToggleButton Name="CodeToggle" Height="7" Click="CodeToggle_Click"/>
-                <TextBlock Name="CodeLabel" FontSize="6" HorizontalAlignment="Center">code</TextBlock>
+                <TextBlock Name="CodeLabel" FontSize="8" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,1,0">code</TextBlock>
             </StackPanel>
         </DockPanel>
         <Border x:Name="Content"/>

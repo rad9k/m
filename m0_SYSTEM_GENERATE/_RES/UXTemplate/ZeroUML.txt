@@ -24,28 +24,7 @@
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-		
-		<@UXTemplate :: "Code XXX EDGE">
-			<@$Is :: @UXTemplate>
-			<@DirectVertexTestQuery :: "">
-			<@ItemClass :: @CodeItem>
-			<@InstanceCreation :: @InstanceCreationEnum\Direct>
-			<@ItemVertex :: "">
-				<@$Inherits :: @ZeroUML\ActionItemVertex>
-				<@LabeledItem\ConstantLabel :: "code edge">
-				<@LabeledItem\ShowMeta :: "True">
-				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\VertexAndManyLines>
-			<@$Inherits :: @ZeroUML\NextDecorator>
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@SupportEmptyMetaEdge :: "True">
-				<@SupportAnyMetaEdge :: "True">				
-				<@EdgeTestQuery :: "$Is:\">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>		
 
 		<@UXTemplate :: "Code EDGE">
 			<@$Is :: @UXTemplate>
@@ -348,7 +327,7 @@
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
-						<@Height :: "32">
+						<@Height :: "27">
 				<@UXDecoratorTemplate :: "test">
 					<@$Is :: @UXDecoratorTemplate>
 					<@EdgeTestQuery :: "$Is:While\Test">
@@ -398,7 +377,7 @@
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
-						<@Height :: "32">
+						<@Height :: "27">
 				<@UXDecoratorTemplate :: "variable">
 					<@$Is :: @UXDecoratorTemplate>
 					<@EdgeTestQuery :: "$Is:ForEach\Variable">
@@ -416,7 +395,7 @@
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
-						<@Height :: "32">
+						<@Height :: "27">
 				<@UXDecoratorTemplate :: "set">
 					<@$Is :: @UXDecoratorTemplate>
 					<@EdgeTestQuery :: "$Is:ForEach\Set">
@@ -464,7 +443,7 @@
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
-						<@Height :: "32">				
+						<@Height :: "27">				
 			<@UXTemplate :: "body">
 				<@$Is :: @UXTemplate>				
 				<@ItemVertex :: "">					
@@ -497,7 +476,7 @@
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
-						<@Height :: "32">				
+						<@Height :: "27">				
 			<@UXTemplate :: "body">
 				<@$Is :: @UXTemplate>				
 				<@ItemVertex :: "">					

@@ -82,7 +82,7 @@ namespace m0.ZeroTypes.UX
             }
 
             codeControl = new CodeControl(Vertex, true);
-            codeControl.NoBackgroundWorkOnGenerate = true;
+            //codeControl.NoBackgroundWorkOnGenerate = true;
             codeControl.GenerateAfterParse = false;
             codeControl.BaseEdgeToUpdated();
 

@@ -164,6 +164,7 @@ namespace m0.UIWpf.Controls
             return BaseEdge;
         }
 
+        // not used now but might be helpfull in future
         private void SetBaseEdge(IEdge baseEdge)
         {
             //ExecutionFlowHelper.GraphChangeWatchOff();
