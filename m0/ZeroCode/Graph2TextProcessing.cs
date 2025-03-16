@@ -1834,7 +1834,7 @@ namespace m0.ZeroCode
 
             IVertex linearized = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(_graphBaseEdge.To);
 
-            IVertex startingvertex2 = startingVertex.AddVertex(null, "beg"); // beg
+            IVertex startingvertex2 = startingVertex.AddVertex(null, "START"); // beg
 
             startingvertex2.AddEdge(_graphBaseEdge.Meta, linearized);
 
