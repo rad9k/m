@@ -465,6 +465,22 @@ namespace m0_SYSTEM_GENERATE
     , m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new
     );
 
+            "Z"
+\twhile "3" == "4"
+\t\tfunction "Cin"()
+\t\t@\Cin[]
+\tfunction "B"()
+\t\tfunction "Bin"()
+\t\t @B\Bin[]
+\tfunction "A"()
+\t\tforeach "X" in x
+\t\t\tforeach "Y" in y
+\t\t\t\tX += Y
+\twhile "1" == "2"
+\t\tforeach "X" in x
+\t\t\tforeach "Y" in y
+\t\t\t\tX += Y
+
             IVertex pv = code.AddVertex(m0.MinusZero.Instance.root.Get(false, @"System\Meta\ZeroUML\Package"), "TestPackage");
 
             pv.AddEdge(m0.MinusZero.Instance.root.Get(false, @"System\Meta\Base\Vertex\$Is"),
