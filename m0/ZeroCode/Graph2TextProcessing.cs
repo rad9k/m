@@ -1813,19 +1813,26 @@ namespace m0.ZeroCode
 
         public void prepareBaseEdge_withArtificialParent_linearize_edge(IEdge _graphBaseEdge)
         {
-            IVertex startingVertex = MinusZero.Instance.CreateTempVertex();
-
-            //startingVertex.AddEdge(_graphBaseEdge.Meta, _graphBaseEdge.To);
+            IVertex startingVertex = MinusZero.Instance.CreateTempVertex();            
 
             startingVertex.AddEdge(null, _graphBaseEdge.To);
 
             IVertex v = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(startingVertex);
 
-            BaseEdge = new EasyEdge(_graphBaseEdge.From, null, v); // this is some crazy hybrid. this is non consistent and might not work!
+            IVertex articifialParent = MinusZero.Instance.CreateTempVertex();
 
-            //_graphBaseEdge.From.AddEdge()
+            BaseEdge = new EasyEdge(_graphBaseEdge.From, null, v); // this is some crazy hybrid. this is non consistent and might not work!        
+        }
 
-            //BaseEdge = _graphBaseEdge;
+        public void prepareBaseEdge_withArtificialParent_linearize_edge_copy(IEdge _graphBaseEdge)
+        {
+            IVertex startingVertex = MinusZero.Instance.CreateTempVertex();
+
+            startingVertex.AddEdge(null, _graphBaseEdge.To);
+
+            IVertex v = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(startingVertex);
+
+            BaseEdge = new EasyEdge(_graphBaseEdge.From, null, v); // this is some crazy hybrid. this is non consistent and might not work!        
         }
 
         public void prepareBaseEdge_withArtificialParent_edge_linearize(IEdge _graphBaseEdge)
