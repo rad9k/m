@@ -19,6 +19,8 @@ namespace m0.ZeroTypes.UX
 {
     public class RectangleItem_LabeledItem : UXItem
     {
+        TextBox textBox_forBaseEdge = null;
+
         public RectangleItem_LabeledItem(IEdge edge) : base(edge) { }
 
         // BEG CODE for LabeledItem
@@ -57,6 +59,12 @@ namespace m0.ZeroTypes.UX
             GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", (Brush)FindResource("0BackgroundBrush"));
 
             GeneralUtil.SetPropertyIfPresent(LabelControl, "Cursor", Cursors.ScrollAll);
+
+            if (textBox_forBaseEdge != null)
+            {
+                textBox_forBaseEdge.Background = (Brush)FindResource("0BackgroundBrush");
+                textBox_forBaseEdge.Foreground = (Brush)FindResource("0ForegroundBrush");
+            }
         }
 
         public override void Unselect()
@@ -66,6 +74,12 @@ namespace m0.ZeroTypes.UX
             SetBaselineColors();
 
             GeneralUtil.SetPropertyIfPresent(LabelControl, "Cursor", Cursors.Arrow);
+
+            if (textBox_forBaseEdge != null)
+            {
+                textBox_forBaseEdge.Background = null;
+                textBox_forBaseEdge.Foreground = (Brush)FindResource("0ForegroundBrush");
+            }
         }
 
         public override void Highlight()
@@ -110,7 +124,7 @@ namespace m0.ZeroTypes.UX
 
             if (constantLabel != null)
             {
-                TextBlock constantTextBlock = getTextBlock(HorizontalAlignment.Center);
+                TextBlock constantTextBlock = GetTextBlock(HorizontalAlignment.Center);
 
                 constantTextBlock.FontStyle = FontStyles.Italic;
 
@@ -120,7 +134,7 @@ namespace m0.ZeroTypes.UX
 
                 //
 
-                TextBlock dividerTextBlock = getTextBlock(HorizontalAlignment.Center);
+                TextBlock dividerTextBlock = GetTextBlock(HorizontalAlignment.Center);
 
                 dividerTextBlock.Text = " | ";
 
@@ -131,6 +145,35 @@ namespace m0.ZeroTypes.UX
                 stack.Children.Add(GetLabelControl_RightPart());
 
             return stack;
+        }
+
+        public string GetLabel_Left()
+        {
+            StringBuilder label = new StringBuilder();
+
+            if (ShowMeta && BaseEdge_forLabel.Meta.Value.ToString() != "$Empty")
+            {
+                if (BaseEdge_forLabel.Meta.Value == null)
+                    label.Append("Ø");
+                else
+                    label.Append(BaseEdge_forLabel.Meta.Value.ToString());
+
+                label.Append(" :: ");
+            }
+
+            return label.ToString();
+        }
+
+        public string GetLabel_Right()
+        {
+            StringBuilder label = new StringBuilder();            
+
+            if (BaseEdge_forLabel.To.Value == null)
+                label.Append("Ø");
+            else
+                label.Append(BaseEdge_forLabel.To.Value.ToString());
+
+            return label.ToString();
         }
 
         public string GetLabel()
@@ -162,7 +205,7 @@ namespace m0.ZeroTypes.UX
             if (UseCodeLabel)
                 labelControl = GetLabelControl_Code();
             else
-                labelControl = GetLabelControl_TextBlock();
+                labelControl = GetLabelControl_Text();
 
             labelControl.VerticalAlignment = System.Windows.VerticalAlignment.Center;
             labelControl.HorizontalAlignment = HorizontalAlignment.Center;
@@ -174,35 +217,16 @@ namespace m0.ZeroTypes.UX
 
         public FrameworkElement GetLabelControl_Code()
         {
-            CodeControl codeControl;
-
-            /*if (ContentQuery != null) // ContentQuery to be handled in CodeControl
-            {
-                if (Vertex_forLabel == null)
-                {
-                    Vertex_forLabel = MinusZero.Instance.CreateTempVertex();
-                    Vertex_forLabel.AddExternalReference();
-                }
-                else
-                    GraphUtil.RemoveAllEdges(Vertex_forLabel);
-
-                GraphUtil.CopyShallow(Vertex, Vertex_forLabel);
-
-                EdgeHelper.CreateOrReplaceEdgeVertexFromIEdgeByMeta(Vertex_forLabel, BaseEdge_meta, BaseEdge_forLabel);
-
-                codeControl = new CodeControl(Vertex_forLabel, true);
-            }else*/
+            CodeControl codeControl;          
 
             codeControl = new CodeControl(Vertex, true);
-
-
 
             codeControl.BaseEdgeToUpdated();
 
             return codeControl;
         }
 
-        private TextBlock getTextBlock(HorizontalAlignment horlizontalAlignment)
+        private TextBlock GetTextBlock(HorizontalAlignment horlizontalAlignment)
         {
             TextBlock textBlock = new TextBlock();
 
@@ -217,12 +241,38 @@ namespace m0.ZeroTypes.UX
             return textBlock;
         }
 
-        private FrameworkElement GetLabelControl_TextBlock()
+        private TextBox GetTextBox(HorizontalAlignment horlizontalAlignment)
         {
-            TextBlock textBlock = getTextBlock(HorizontalAlignment.Center);
+            TextBox textBox = new TextBox();
 
-            textBlock.Text = GetLabel();
-            return textBlock;
+            textBox.BorderThickness = new Thickness(0);
+            textBox.Background = null;
+            textBox.HorizontalAlignment = horlizontalAlignment;
+            textBox.VerticalAlignment = System.Windows.VerticalAlignment.Center;
+            textBox.TextWrapping = TextWrapping.Wrap;
+            //textBox.TextTrimming = TextTrimming.CharacterEllipsis;
+
+            if (FontSize != 0)
+                textBox.FontSize = this.FontSize;            
+
+            textBox.PreviewMouseLeftButtonDown += TextBox_PreviewMouseLeftButtonDown;
+
+            return textBox;
+        }
+
+        private void TextBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.MouseLeftButtonDownHandler(sender, e);
+
+            e.Handled = false;
+        }
+
+        private FrameworkElement GetLabelControl_Text()
+        {
+            textBox_forBaseEdge = GetTextBox(HorizontalAlignment.Center);
+
+            textBox_forBaseEdge.Text = GetLabel();
+            return textBox_forBaseEdge;
         }
 
         public new bool IsDisposed = false;
