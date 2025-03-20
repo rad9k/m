@@ -14,6 +14,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Input;
 using System.Windows.Forms.VisualStyles;
+using m0.User.Process.UX;
 
 namespace m0.ZeroTypes.UX
 {
@@ -221,21 +222,42 @@ namespace m0.ZeroTypes.UX
 
         private TextBox GetTextBox(HorizontalAlignment horlizontalAlignment)
         {
-            TextBox textBox = new TextBox();
+            textBox_forBaseEdge = new TextBox();
 
-            textBox.BorderThickness = new Thickness(0);
-            textBox.Background = null;
-            textBox.HorizontalAlignment = horlizontalAlignment;
-            textBox.VerticalAlignment = System.Windows.VerticalAlignment.Center;
-            textBox.TextWrapping = TextWrapping.Wrap;
+            //textBox_forBaseEdge.AcceptsReturn = true;
+            textBox_forBaseEdge.BorderThickness = new Thickness(0);
+            textBox_forBaseEdge.Background = null;
+            textBox_forBaseEdge.HorizontalAlignment = horlizontalAlignment;
+            textBox_forBaseEdge.VerticalAlignment = System.Windows.VerticalAlignment.Center;
+            textBox_forBaseEdge.TextWrapping = TextWrapping.Wrap;
             //textBox.TextTrimming = TextTrimming.CharacterEllipsis;
 
             if (FontSize != 0)
-                textBox.FontSize = this.FontSize;            
+                textBox_forBaseEdge.FontSize = this.FontSize;            
 
-            textBox.PreviewMouseLeftButtonDown += TextBox_PreviewMouseLeftButtonDown;
+            textBox_forBaseEdge.PreviewMouseLeftButtonDown += TextBox_PreviewMouseLeftButtonDown;
+            textBox_forBaseEdge.TextChanged += TextBox_TextChanged;
 
-            return textBox;
+            return textBox_forBaseEdge;
+        }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            bool ForceVertexChangeOff_prev = ForceVertexChangeOff;
+
+            ForceVertexChangeOff = true;
+
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+            
+            BaseEdge.To.Value = textBox_forBaseEdge.Text;
+
+            //////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            //////////////////////////////////////
+            
+            ForceVertexChangeOff = ForceVertexChangeOff_prev;
         }
 
         private void TextBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -250,7 +272,7 @@ namespace m0.ZeroTypes.UX
             string leftText = GetLabel_Left();
             string rightText = GetLabel_Right();
 
-            textBox_forBaseEdge = GetTextBox(HorizontalAlignment.Center);
+            GetTextBox(HorizontalAlignment.Center);
             textBox_forBaseEdge.Text = rightText;
 
             if (leftText == "")
