@@ -176,28 +176,6 @@ namespace m0.ZeroTypes.UX
             return label.ToString();
         }
 
-        public string GetLabel()
-        {
-            StringBuilder label = new StringBuilder();
-
-            if (ShowMeta && BaseEdge_forLabel.Meta.Value.ToString() != "$Empty")
-            {
-                if (BaseEdge_forLabel.Meta.Value == null)
-                    label.Append("Ø");
-                else
-                    label.Append(BaseEdge_forLabel.Meta.Value.ToString());
-
-                label.Append(" :: ");
-            }
-
-            if (BaseEdge_forLabel.To.Value == null)
-                label.Append("Ø");
-            else
-                label.Append(BaseEdge_forLabel.To.Value.ToString());
-
-            return label.ToString();
-        }
-
         FrameworkElement GetLabelControl_RightPart()
         {
             FrameworkElement labelControl;
@@ -268,11 +246,31 @@ namespace m0.ZeroTypes.UX
         }
 
         private FrameworkElement GetLabelControl_Text()
-        {
-            textBox_forBaseEdge = GetTextBox(HorizontalAlignment.Center);
+        {            
+            string leftText = GetLabel_Left();
+            string rightText = GetLabel_Right();
 
-            textBox_forBaseEdge.Text = GetLabel();
-            return textBox_forBaseEdge;
+            textBox_forBaseEdge = GetTextBox(HorizontalAlignment.Center);
+            textBox_forBaseEdge.Text = rightText;
+
+            if (leftText == "")
+            {                
+                return textBox_forBaseEdge;
+            }
+            else
+            {
+                StackPanel stack = new StackPanel();
+                stack.HorizontalAlignment = HorizontalAlignment.Center;
+                stack.Orientation = Orientation.Horizontal;
+
+                TextBlock left = GetTextBlock(HorizontalAlignment.Center);
+                left.Text = leftText;
+
+                stack.Children.Add(left);
+                stack.Children.Add(textBox_forBaseEdge);
+
+                return stack;
+            }            
         }
 
         public new bool IsDisposed = false;
