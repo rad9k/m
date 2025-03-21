@@ -235,8 +235,9 @@ namespace m0.ZeroTypes.UX
             if (FontSize != 0)
                 textBox_forBaseEdge.FontSize = this.FontSize;            
 
+            textBox_forBaseEdge.MouseMove
             textBox_forBaseEdge.PreviewMouseLeftButtonDown += TextBox_PreviewMouseLeftButtonDown;
-            //textBox_forBaseEdge.TextChanged += TextBox_TextChanged;
+            textBox_forBaseEdge.TextChanged += TextBox_TextChanged;
 
             return textBox_forBaseEdge;
         }
