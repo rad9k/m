@@ -1017,7 +1017,8 @@ namespace m0.UIWpf.UX
             ////////////////////////////////////////            
         }
 
-        protected void MouseButtonDownHandler(object sender, MouseButtonEventArgs e)
+        //protected void MouseButtonDownHandler(object sender, MouseButtonEventArgs e)
+        public void MouseButtonDownHandler(object sender, MouseButtonEventArgs e)
         {
             SelectionArea.StartSelection(e.GetPosition(Canvas));
 
@@ -1178,7 +1179,8 @@ namespace m0.UIWpf.UX
             //////////////////////////////////////// 
         }
 
-        protected void MouseMoveHandler(object sender, MouseEventArgs e)
+        //protected void MouseMoveHandler(object sender, MouseEventArgs e)
+        public void MouseMoveHandler(object sender, MouseEventArgs e)
         {            
             if (e.LeftButton == MouseButtonState.Pressed)
             {

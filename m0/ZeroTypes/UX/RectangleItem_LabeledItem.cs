@@ -233,13 +233,18 @@ namespace m0.ZeroTypes.UX
             //textBox.TextTrimming = TextTrimming.CharacterEllipsis;
 
             if (FontSize != 0)
-                textBox_forBaseEdge.FontSize = this.FontSize;            
+                textBox_forBaseEdge.FontSize = this.FontSize;
 
-            textBox_forBaseEdge.MouseMove
-            textBox_forBaseEdge.PreviewMouseLeftButtonDown += TextBox_PreviewMouseLeftButtonDown;
+            textBox_forBaseEdge.PreviewMouseMove += TextBox_forBaseEdge_MouseMove;
+            textBox_forBaseEdge.MouseLeftButtonDown += TextBox_PreviewMouseLeftButtonDown;
             textBox_forBaseEdge.TextChanged += TextBox_TextChanged;
 
             return textBox_forBaseEdge;
+        }
+
+        private void TextBox_forBaseEdge_MouseMove(object sender, MouseEventArgs e)
+        {
+            ((UXVisualiser)this.OwningVisualiser).MouseMoveHandler(sender, e);
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -264,6 +269,8 @@ namespace m0.ZeroTypes.UX
         private void TextBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             this.MouseLeftButtonDownHandler(sender, e);
+
+            ((UXVisualiser)this.OwningVisualiser).MouseButtonDownHandler(sender, e);
 
             e.Handled = false;
         }
