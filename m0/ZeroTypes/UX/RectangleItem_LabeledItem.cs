@@ -224,6 +224,8 @@ namespace m0.ZeroTypes.UX
         {
             textBox_forBaseEdge = new TextBox();
 
+            //textBox_forBaseEdge.IsEnabled = false;
+
             //textBox_forBaseEdge.AcceptsReturn = true;
             textBox_forBaseEdge.BorderThickness = new Thickness(0);
             textBox_forBaseEdge.Background = null;
@@ -235,11 +237,18 @@ namespace m0.ZeroTypes.UX
             if (FontSize != 0)
                 textBox_forBaseEdge.FontSize = this.FontSize;
 
-            textBox_forBaseEdge.PreviewMouseMove += TextBox_forBaseEdge_MouseMove;
-            textBox_forBaseEdge.MouseLeftButtonDown += TextBox_PreviewMouseLeftButtonDown;
-            textBox_forBaseEdge.TextChanged += TextBox_TextChanged;
+            //textBox_forBaseEdge.PreviewMouseMove += TextBox_forBaseEdge_MouseMove;
+            textBox_forBaseEdge.PreviewMouseLeftButtonDown += TextBox_PreviewMouseLeftButtonDown;
+            //textBox_forBaseEdge.TextChanged += TextBox_TextChanged;
+
+            textBox_forBaseEdge.MouseLeave += TextBox_forBaseEdge_MouseLeave;
 
             return textBox_forBaseEdge;
+        }
+
+        private void TextBox_forBaseEdge_MouseLeave(object sender, MouseEventArgs e)
+        {
+            UXItem_MouseEnter(sender, e);
         }
 
         private void TextBox_forBaseEdge_MouseMove(object sender, MouseEventArgs e)
@@ -270,7 +279,7 @@ namespace m0.ZeroTypes.UX
         {
             this.MouseLeftButtonDownHandler(sender, e);
 
-            ((UXVisualiser)this.OwningVisualiser).MouseButtonDownHandler(sender, e);
+            //((UXVisualiser)this.OwningVisualiser).MouseButtonDownHandler(sender, e);
 
             e.Handled = false;
         }

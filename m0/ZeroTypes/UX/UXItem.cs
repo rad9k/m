@@ -79,9 +79,9 @@ namespace m0.ZeroTypes.UX
 
                 //this.SizeChanged += DiagramItemBase_SizeChanged;
 
-                this.MouseEnter += DiagramItemBase_MouseEnter;
+                this.MouseEnter += UXItem_MouseEnter;
 
-                this.MouseLeave += DiagramItemBase_MouseLeave;
+                this.MouseLeave += UXItem_MouseLeave;
 
                 this.MouseLeftButtonDown += MouseLeftButtonDownHandler;
             }
@@ -91,6 +91,8 @@ namespace m0.ZeroTypes.UX
 
         private void UXItem_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            MinusZero.Instance.Log(2, "UXItem", "SizeChanged");
+
             UpdateDiagramLines();
         }
 
@@ -757,14 +759,19 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        private void DiagramItemBase_MouseLeave(object sender, MouseEventArgs e)
+        private void UXItem_MouseLeave(object sender, MouseEventArgs e)
         {
+            MinusZero.Instance.Log(2, "UXItem", "DiagramItemBase_MouseLeave");
+
             if (OwningVisualiser.IsDrawingOrMovingLine == false && OwningVisualiser.IsSelecting == false)
                 UnhighlightThisAndAllConectedByDiagramLine();
         }
 
-        private void DiagramItemBase_MouseEnter(object sender, MouseEventArgs e)
+        //private void UXItem_MouseEnter(object sender, MouseEventArgs e)
+        public void UXItem_MouseEnter(object sender, MouseEventArgs e)
         {
+            MinusZero.Instance.Log(2, "UXItem", "DiagramItemBase_MouseEnter");
+
             OwningVisualiser.UnhighlightAllSelectedEdges();
 
             if (OwningVisualiser.IsDrawingOrMovingLine == false && OwningVisualiser.IsSelecting == false)
@@ -788,11 +795,14 @@ namespace m0.ZeroTypes.UX
 
         protected void MouseLeftButtonDownHandler(object sender, MouseButtonEventArgs e)
         {
+            MinusZero.Instance.Log(2, "UXItem", "MouseLeftButtonDownHandler");
+
             OwningVisualiser.SetFocus();
 
             OwningVisualiser.ClickPositionX_ItemCordinates = e.GetPosition(this).X;
             OwningVisualiser.ClickPositionY_ItemCordinates = e.GetPosition(this).Y;
 
+            MinusZero.Instance.Log(2, "UXItem", "MouseLeftButtonDownHandler ClickTargetEnum.Item");
             OwningVisualiser.ClickTarget = ClickTargetEnum.Item;
             OwningVisualiser.ClickedItem = this;
 
@@ -1014,6 +1024,7 @@ namespace m0.ZeroTypes.UX
             FrameworkElement anchor = (FrameworkElement)sender;
 
             OwningVisualiser.ClickTarget = GetAnchorsClickTarget(anchor);
+            MinusZero.Instance.Log(2, "UXItem", "AnchorMouseButtonDown OwningVisualiser.ClickTarget = GetAnchorsClickTarget(anchor); ");
 
             OwningVisualiser.ClickedAnchor = anchor;
 

@@ -1017,16 +1017,6 @@ namespace m0.UIWpf.UX
             ////////////////////////////////////////            
         }
 
-        //protected void MouseButtonDownHandler(object sender, MouseButtonEventArgs e)
-        public void MouseButtonDownHandler(object sender, MouseButtonEventArgs e)
-        {
-            SelectionArea.StartSelection(e.GetPosition(Canvas));
-
-            ClickTarget = ClickTargetEnum.Selection;
-
-            UnselectAllSelectedEdges();
-        }
-
         protected void CreateAndUpdateCreateDiagramLine(double ToX, double ToY)
         {
             if (CreateOrMoveDiagramLine == null)
@@ -1179,9 +1169,102 @@ namespace m0.UIWpf.UX
             //////////////////////////////////////// 
         }
 
+        //protected void MouseButtonDownHandler(object sender, MouseButtonEventArgs e)
+        public void MouseButtonDownHandler(object sender, MouseButtonEventArgs e)
+        {
+            MinusZero.Instance.Log(2, "UXVisualiser", "MouseButtonDownHandler");
+
+            SelectionArea.StartSelection(e.GetPosition(Canvas));
+
+            ClickTarget = ClickTargetEnum.Selection;
+            MinusZero.Instance.Log(2, "UXVisualiser", "MouseButtonDownHandler ClickTarget = ClickTargetEnum.Selection");
+
+            UnselectAllSelectedEdges();
+        }
+
+
+        protected void MouseLeaveHandler(object sender, MouseEventArgs e)
+        {
+            MinusZero.Instance.Log(2, "UXVisualiser", "MouseLeaveHandler");
+
+            MouseUpOrLeave(false, e);
+        }
+
+        protected void MouseButtonUpHandler(object sender, MouseButtonEventArgs e)
+        {
+            MinusZero.Instance.Log(2, "UXVisualiser", "MouseButtonUpHandler");
+
+            MouseUpOrLeave(true, e);
+        }
+
+        protected void MouseUpOrLeave(bool IsUp, MouseEventArgs e)
+        {
+            if (ClickTarget == ClickTargetEnum.Selection)
+            {
+                SelectItemsBySelectionArea();
+
+                SelectionArea.HideSelectionArea();
+            }
+            if (!(ClickedItem is FrameworkElement))
+                return;
+
+            FrameworkElement ClickedItem_FrameworkElemet = (FrameworkElement)ClickedItem;
+
+            SetFocus();
+
+            if (ClickTarget == ClickTargetEnum.Item)
+                if (IsMultiSelectionMoving)
+                    RemoveMultiSelectionMovingSprites(e.GetPosition(ClickedItem_FrameworkElemet).X - ClickPositionX_ItemCordinates,
+                            e.GetPosition(ClickedItem_FrameworkElemet).Y - ClickPositionY_ItemCordinates);
+                else
+                    CheckAndUpdateItemParent(ClickedItem, false);
+
+
+
+            if (ClickTarget == ClickTargetEnum.AnchorRightTop_CreateDiagramLine
+                || ClickTarget == ClickTargetEnum.AnchorRightTop_SubItem_CreateDiagramLine)
+            {
+                if (HighlightedItem != null)
+                {
+                    HighlightedItem.Unhighlight();
+
+                    if (IsUp)
+                        DoCreateDiagramLine(ClickedItem, HighlightedItem);
+                }
+
+                HighlightedItem = null;
+                Canvas.Children.Remove(CreateOrMoveDiagramLine);
+                CreateOrMoveDiagramLine = null;
+
+                IsDrawingOrMovingLine = false;
+            }
+
+            if (ClickTarget == ClickTargetEnum.AnchorRightTop_MoveDiagramLine)
+            {
+                if (HighlightedItem != null)
+                {
+                    HighlightedItem.Unhighlight();
+
+                    if (IsUp)
+                        DoMoveLineProcess(SelectedLine_FromItem, HighlightedItem, SelectedLine);
+                }
+
+                HighlightedItem = null;
+                Canvas.Children.Remove(CreateOrMoveDiagramLine);
+                CreateOrMoveDiagramLine = null;
+
+                IsDrawingOrMovingLine = false;
+            }
+
+            ClickTarget = ClickTargetEnum.MouseUpOrLeave;
+            MinusZero.Instance.Log(2, "UXVisualiser", "MouseUpOrLeave ClickTarget = ClickTargetEnum.MouseUpOrLeave ");
+        }
+
         //protected void MouseMoveHandler(object sender, MouseEventArgs e)
         public void MouseMoveHandler(object sender, MouseEventArgs e)
-        {            
+        {
+            MinusZero.Instance.Log(2, "UXVisualiser", "MouseMoveHandler " + ClickTarget);
+
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 if (ClickTarget == ClickTargetEnum.Selection) // selection
@@ -1280,6 +1363,7 @@ namespace m0.UIWpf.UX
 
                 if (ClickTarget == ClickTargetEnum.Item) // item move
                 {
+                    MinusZero.Instance.Log(2, "UXVisualiser", "MouseMoveHandler ITEM MOVE");
                     int selectedEdgesCount = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}").Count();
 
                     if (( selectedEdgesCount > 0 && ClickedItem.IsSelected == false) ||
@@ -1376,79 +1460,7 @@ namespace m0.UIWpf.UX
 
                     prevSelectedLine = null;
                 }
-        }
-
-        protected void MouseLeaveHandler(object sender, MouseEventArgs e)
-        {
-            MouseUpOrLeave(false, e);
-        }
-
-        protected void MouseButtonUpHandler(object sender, MouseButtonEventArgs e)
-        {
-            MouseUpOrLeave(true, e);
-        }
-
-        protected void MouseUpOrLeave(bool IsUp, MouseEventArgs e)
-        {
-            if (ClickTarget == ClickTargetEnum.Selection)
-            {
-                SelectItemsBySelectionArea();
-
-                SelectionArea.HideSelectionArea();
-            }
-            if (!(ClickedItem is FrameworkElement))
-                return;
-
-            FrameworkElement ClickedItem_FrameworkElemet = (FrameworkElement)ClickedItem;
-
-            SetFocus();
-
-            if (ClickTarget == ClickTargetEnum.Item)
-                if (IsMultiSelectionMoving)
-                    RemoveMultiSelectionMovingSprites(e.GetPosition(ClickedItem_FrameworkElemet).X - ClickPositionX_ItemCordinates,
-                            e.GetPosition(ClickedItem_FrameworkElemet).Y - ClickPositionY_ItemCordinates);
-                else
-                    CheckAndUpdateItemParent(ClickedItem, false);
-            
-            
-
-            if (ClickTarget == ClickTargetEnum.AnchorRightTop_CreateDiagramLine
-                || ClickTarget == ClickTargetEnum.AnchorRightTop_SubItem_CreateDiagramLine)
-            {
-                if (HighlightedItem != null)
-                {
-                    HighlightedItem.Unhighlight();
-
-                    if (IsUp)
-                        DoCreateDiagramLine(ClickedItem, HighlightedItem);
-                }
-
-                HighlightedItem = null;
-                Canvas.Children.Remove(CreateOrMoveDiagramLine);
-                CreateOrMoveDiagramLine = null;
-
-                IsDrawingOrMovingLine = false;
-            }
-
-            if (ClickTarget == ClickTargetEnum.AnchorRightTop_MoveDiagramLine)
-            {
-                if (HighlightedItem != null)
-                {
-                    HighlightedItem.Unhighlight();
-
-                    if (IsUp)
-                        DoMoveLineProcess(SelectedLine_FromItem, HighlightedItem, SelectedLine);
-                }
-
-                HighlightedItem = null;
-                Canvas.Children.Remove(CreateOrMoveDiagramLine);
-                CreateOrMoveDiagramLine = null;
-
-                IsDrawingOrMovingLine = false;
-            }
-
-            ClickTarget = ClickTargetEnum.MouseUpOrLeave;
-        }
+        }        
 
         private void DoMoveLineProcess(IUXItem fromItem, IUXItem toItem, ILineDecoratorBase line)
         {
