@@ -1171,29 +1171,22 @@ namespace m0.UIWpf.UX
 
         //protected void MouseButtonDownHandler(object sender, MouseButtonEventArgs e)
         public void MouseButtonDownHandler(object sender, MouseButtonEventArgs e)
-        {
-            MinusZero.Instance.Log(2, "UXVisualiser", "MouseButtonDownHandler");
-
+        {            
             SelectionArea.StartSelection(e.GetPosition(Canvas));
 
-            ClickTarget = ClickTargetEnum.Selection;
-            MinusZero.Instance.Log(2, "UXVisualiser", "MouseButtonDownHandler ClickTarget = ClickTargetEnum.Selection");
+            ClickTarget = ClickTargetEnum.Selection;         
 
             UnselectAllSelectedEdges();
         }
 
 
         protected void MouseLeaveHandler(object sender, MouseEventArgs e)
-        {
-            MinusZero.Instance.Log(2, "UXVisualiser", "MouseLeaveHandler");
-
+        {            
             MouseUpOrLeave(false, e);
         }
 
         protected void MouseButtonUpHandler(object sender, MouseButtonEventArgs e)
-        {
-            MinusZero.Instance.Log(2, "UXVisualiser", "MouseButtonUpHandler");
-
+        {         
             MouseUpOrLeave(true, e);
         }
 
@@ -1218,7 +1211,6 @@ namespace m0.UIWpf.UX
                             e.GetPosition(ClickedItem_FrameworkElemet).Y - ClickPositionY_ItemCordinates);
                 else
                     CheckAndUpdateItemParent(ClickedItem, false);
-
 
 
             if (ClickTarget == ClickTargetEnum.AnchorRightTop_CreateDiagramLine
@@ -1256,15 +1248,12 @@ namespace m0.UIWpf.UX
                 IsDrawingOrMovingLine = false;
             }
 
-            ClickTarget = ClickTargetEnum.MouseUpOrLeave;
-            MinusZero.Instance.Log(2, "UXVisualiser", "MouseUpOrLeave ClickTarget = ClickTargetEnum.MouseUpOrLeave ");
+            ClickTarget = ClickTargetEnum.MouseUpOrLeave;         
         }
 
         //protected void MouseMoveHandler(object sender, MouseEventArgs e)
         public void MouseMoveHandler(object sender, MouseEventArgs e)
         {
-            MinusZero.Instance.Log(2, "UXVisualiser" + this.GetHashCode(), "MouseMoveHandler " + ClickTarget + " " + e.LeftButton);
-
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 if (ClickTarget == ClickTargetEnum.Selection) // selection
@@ -1363,7 +1352,6 @@ namespace m0.UIWpf.UX
 
                 if (ClickTarget == ClickTargetEnum.Item) // item move
                 {
-                    MinusZero.Instance.Log(2, "UXVisualiser", "MouseMoveHandler ITEM MOVE");
                     int selectedEdgesCount = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}").Count();
 
                     if (( selectedEdgesCount > 0 && ClickedItem.IsSelected == false) ||
@@ -1388,7 +1376,7 @@ namespace m0.UIWpf.UX
                             (e.GetPosition(Canvas).Y - ClickPositionY_ItemCordinates), false);
                     }
                 }
-            }else
+            } else
             {
                 CheckIfLineNeedsSelection(e.GetPosition(Canvas));
             }
