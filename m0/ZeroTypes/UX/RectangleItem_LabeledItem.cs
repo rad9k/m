@@ -20,12 +20,12 @@ using System.Windows.Data;
 namespace m0.ZeroTypes.UX
 {
     public class RectangleItem_LabeledItem : UXItem
-    {
-        TextBox textBox_forBaseEdge = null;
-
+    {        
         public RectangleItem_LabeledItem(IEdge edge) : base(edge) { }
 
         // BEG CODE for LabeledItem
+
+        TextBox textBox_forBaseEdge = null;
 
         static IVertex BaseEdge_meta = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge");
 
@@ -71,6 +71,8 @@ namespace m0.ZeroTypes.UX
 
         public override void Unselect()
         {
+            Brush foregroundBrush = GetForegroundBrush();
+
             base.Unselect();
 
             SetBaselineColors();
@@ -80,7 +82,7 @@ namespace m0.ZeroTypes.UX
             if (textBox_forBaseEdge != null)
             {
                 textBox_forBaseEdge.Background = null;
-                textBox_forBaseEdge.Foreground = (Brush)FindResource("0ForegroundBrush");
+                textBox_forBaseEdge.Foreground = foregroundBrush;
             }
         }
 
@@ -99,7 +101,15 @@ namespace m0.ZeroTypes.UX
                 GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", foregroundBrush);
             }
             else
+            {
                 GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", (Brush)FindResource("0HighlightForegroundBrush"));
+
+                if (textBox_forBaseEdge != null)
+                {
+                    textBox_forBaseEdge.Background = null;
+                    textBox_forBaseEdge.Foreground = (Brush)FindResource("0HighlightForegroundBrush");
+                }
+            }
         }
 
         IEdge BaseEdge_forLabel;
@@ -168,7 +178,7 @@ namespace m0.ZeroTypes.UX
 
         public string GetLabel_Right()
         {
-            StringBuilder label = new StringBuilder();            
+            StringBuilder label = new StringBuilder();
 
             if (BaseEdge_forLabel.To.Value == null)
                 label.Append("Ø");
@@ -197,7 +207,7 @@ namespace m0.ZeroTypes.UX
 
         public FrameworkElement GetLabelControl_Code()
         {
-            CodeControl codeControl;          
+            CodeControl codeControl;
 
             codeControl = new CodeControl(Vertex, true);
 
@@ -225,22 +235,18 @@ namespace m0.ZeroTypes.UX
         {
             textBox_forBaseEdge = new TextBox();
 
-            //textBox_forBaseEdge.IsEnabled = false;
-
-            //textBox_forBaseEdge.AcceptsReturn = true;
             textBox_forBaseEdge.BorderThickness = new Thickness(0);
             textBox_forBaseEdge.Background = null;
             textBox_forBaseEdge.HorizontalAlignment = horlizontalAlignment;
             textBox_forBaseEdge.VerticalAlignment = System.Windows.VerticalAlignment.Center;
             textBox_forBaseEdge.TextWrapping = TextWrapping.Wrap;
-            //textBox.TextTrimming = TextTrimming.CharacterEllipsis;
 
             if (FontSize != 0)
                 textBox_forBaseEdge.FontSize = this.FontSize;
 
             textBox_forBaseEdge.PreviewMouseMove += TextBox_forBaseEdge_MouseMove;
             textBox_forBaseEdge.PreviewMouseLeftButtonDown += TextBox_PreviewMouseLeftButtonDown;
-            textBox_forBaseEdge.TextChanged += TextBox_TextChanged;         
+            textBox_forBaseEdge.TextChanged += TextBox_TextChanged;
 
             return textBox_forBaseEdge;
         }
@@ -252,7 +258,7 @@ namespace m0.ZeroTypes.UX
 
         string TextBox_TextChanged_memory = null;
 
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)        
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             string newText = textBox_forBaseEdge.Text;
 
@@ -282,13 +288,11 @@ namespace m0.ZeroTypes.UX
         {
             this.MouseLeftButtonDownHandler(sender, e);
 
-            //((UXVisualiser)this.OwningVisualiser).MouseButtonDownHandler(sender, e);
-
             e.Handled = false;
         }
 
         private FrameworkElement GetLabelControl_Text()
-        {            
+        {
             string leftText = GetLabel_Left();
             string rightText = GetLabel_Right();
 
@@ -296,7 +300,7 @@ namespace m0.ZeroTypes.UX
             textBox_forBaseEdge.Text = rightText;
 
             if (leftText == "")
-            {                
+            {
                 return textBox_forBaseEdge;
             }
             else
@@ -312,7 +316,7 @@ namespace m0.ZeroTypes.UX
                 stack.Children.Add(textBox_forBaseEdge);
 
                 return stack;
-            }            
+            }
         }
 
         public new bool IsDisposed = false;
