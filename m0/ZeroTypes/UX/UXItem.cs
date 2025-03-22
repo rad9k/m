@@ -795,7 +795,7 @@ namespace m0.ZeroTypes.UX
 
         protected void MouseLeftButtonDownHandler(object sender, MouseButtonEventArgs e)
         {
-            MinusZero.Instance.Log(2, "UXItem", "MouseLeftButtonDownHandler");
+            MinusZero.Instance.Log(2, "UXItem" + this.GetHashCode(), "MouseLeftButtonDownHandler");
 
             OwningVisualiser.SetFocus();
 

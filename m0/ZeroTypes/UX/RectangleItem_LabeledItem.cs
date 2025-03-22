@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Input;
 using System.Windows.Forms.VisualStyles;
 using m0.User.Process.UX;
+using System.Windows.Data;
 
 namespace m0.ZeroTypes.UX
 {
@@ -237,18 +238,11 @@ namespace m0.ZeroTypes.UX
             if (FontSize != 0)
                 textBox_forBaseEdge.FontSize = this.FontSize;
 
-            //textBox_forBaseEdge.PreviewMouseMove += TextBox_forBaseEdge_MouseMove;
+            textBox_forBaseEdge.PreviewMouseMove += TextBox_forBaseEdge_MouseMove;
             textBox_forBaseEdge.PreviewMouseLeftButtonDown += TextBox_PreviewMouseLeftButtonDown;
-            //textBox_forBaseEdge.TextChanged += TextBox_TextChanged;
-
-            textBox_forBaseEdge.MouseLeave += TextBox_forBaseEdge_MouseLeave;
+            textBox_forBaseEdge.TextChanged += TextBox_TextChanged;         
 
             return textBox_forBaseEdge;
-        }
-
-        private void TextBox_forBaseEdge_MouseLeave(object sender, MouseEventArgs e)
-        {
-            UXItem_MouseEnter(sender, e);
         }
 
         private void TextBox_forBaseEdge_MouseMove(object sender, MouseEventArgs e)
@@ -256,23 +250,32 @@ namespace m0.ZeroTypes.UX
             ((UXVisualiser)this.OwningVisualiser).MouseMoveHandler(sender, e);
         }
 
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        string TextBox_TextChanged_memory = null;
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)        
         {
-            bool ForceVertexChangeOff_prev = ForceVertexChangeOff;
+            string newText = textBox_forBaseEdge.Text;
 
-            ForceVertexChangeOff = true;
+            if (TextBox_TextChanged_memory == null || TextBox_TextChanged_memory != newText)
+            {
+                bool ForceVertexChangeOff_prev = ForceVertexChangeOff;
 
-            ////////////////////////////////////////
-            Interaction.BeginInteractionWithGraph();
-            ////////////////////////////////////////
-            
-            BaseEdge.To.Value = textBox_forBaseEdge.Text;
+                ForceVertexChangeOff = true;
 
-            //////////////////////////////////////
-            Interaction.EndInteractionWithGraph();
-            //////////////////////////////////////
-            
-            ForceVertexChangeOff = ForceVertexChangeOff_prev;
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
+
+                BaseEdge.To.Value = newText;
+
+                //////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                //////////////////////////////////////
+
+                ForceVertexChangeOff = ForceVertexChangeOff_prev;
+
+                TextBox_TextChanged_memory = newText;
+            }
         }
 
         private void TextBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)

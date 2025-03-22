@@ -1263,7 +1263,7 @@ namespace m0.UIWpf.UX
         //protected void MouseMoveHandler(object sender, MouseEventArgs e)
         public void MouseMoveHandler(object sender, MouseEventArgs e)
         {
-            MinusZero.Instance.Log(2, "UXVisualiser", "MouseMoveHandler " + ClickTarget);
+            MinusZero.Instance.Log(2, "UXVisualiser" + this.GetHashCode(), "MouseMoveHandler " + ClickTarget + " " + e.LeftButton);
 
             if (e.LeftButton == MouseButtonState.Pressed)
             {
