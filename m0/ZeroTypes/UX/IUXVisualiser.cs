@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace m0.ZeroTypes.UX
 {
@@ -62,6 +63,14 @@ namespace m0.ZeroTypes.UX
         void CheckAndUpdateDiagramLinesForItem(IUXItem item);
 
         void CheckAndUpdateItemParent(IUXItem item, bool fastMode);
+
+        //
+
+        void MouseButtonUpHandler(object sender, MouseButtonEventArgs e);
+
+        void MouseMoveHandler(object sender, MouseEventArgs e);
+
+        bool SuspendSetFocus { get; set; }
     }
 
 }

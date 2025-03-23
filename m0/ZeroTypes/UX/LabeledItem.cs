@@ -242,14 +242,35 @@ namespace m0.ZeroTypes.UX
 
             textBox_forBaseEdge.PreviewMouseMove += TextBox_forBaseEdge_MouseMove;
             textBox_forBaseEdge.PreviewMouseLeftButtonDown += TextBox_PreviewMouseLeftButtonDown;
+            textBox_forBaseEdge.PreviewMouseLeftButtonUp += TextBox_forBaseEdge_PreviewMouseLeftButtonUp;
             textBox_forBaseEdge.TextChanged += TextBox_TextChanged;
 
             return textBox_forBaseEdge;
         }
 
+        private void TextBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            MouseLeftButtonDownHandler(sender, e);
+
+            e.Handled = false;
+        }
+
+        private void TextBox_forBaseEdge_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            bool SuspendSetFocus_prev = OwningVisualiser.SuspendSetFocus;
+
+            OwningVisualiser.SuspendSetFocus = true;
+
+            this.OwningVisualiser.MouseButtonUpHandler(sender, e);
+
+            OwningVisualiser.SuspendSetFocus = SuspendSetFocus_prev;
+
+            e.Handled = false;
+        }
+
         private void TextBox_forBaseEdge_MouseMove(object sender, MouseEventArgs e)
         {
-            ((UXVisualiser)this.OwningVisualiser).MouseMoveHandler(sender, e);
+            OwningVisualiser.MouseMoveHandler(sender, e);
         }
 
         string TextBox_TextChanged_memory = null;
@@ -278,13 +299,6 @@ namespace m0.ZeroTypes.UX
 
                 TextBox_TextChanged_memory = newText;
             }
-        }
-
-        private void TextBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            this.MouseLeftButtonDownHandler(sender, e);
-
-            e.Handled = false;
         }
 
         private FrameworkElement GetLabelControl_Text()

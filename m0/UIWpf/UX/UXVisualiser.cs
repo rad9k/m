@@ -852,6 +852,9 @@ namespace m0.UIWpf.UX
 
         public void SetFocus()
         {
+            if (SuspendSetFocus)
+                return;
+
             this.Focusable = true;
 
             Keyboard.Focus(this);
@@ -1179,13 +1182,12 @@ namespace m0.UIWpf.UX
             UnselectAllSelectedEdges();
         }
 
-
         protected void MouseLeaveHandler(object sender, MouseEventArgs e)
         {            
             MouseUpOrLeave(false, e);
         }
 
-        protected void MouseButtonUpHandler(object sender, MouseButtonEventArgs e)
+        public void MouseButtonUpHandler(object sender, MouseButtonEventArgs e)
         {         
             MouseUpOrLeave(true, e);
         }
@@ -2945,5 +2947,6 @@ namespace m0.UIWpf.UX
 
         // TypedEdge        
         public IEdge Edge { get; set; }
+        public bool SuspendSetFocus { get; set; }
     }
 }
