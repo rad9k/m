@@ -27,7 +27,7 @@ namespace m0.ZeroTypes.UX
             MetaLine.Stroke = (Brush)LineEndings.FindResource("0ForegroundBrush");
             MetaLine.StrokeDashArray = new DoubleCollection(new double[] { 5, 3 });
         }        
-        /*
+        
         public override void SetPosition(double _FromX, double _FromY, double _ToX, double _ToY, bool isSelfRelation, double selfRelationX, double selfRelationY)
         {
             FromX = _FromX;
@@ -64,7 +64,7 @@ namespace m0.ZeroTypes.UX
 
             MetaLine.Points = pc;
         }
-
+        
         public override void AddToCanvas()
         {
             IEdge baseEdge = BaseEdge;
@@ -72,11 +72,11 @@ namespace m0.ZeroTypes.UX
             OwningVisualiser.Canvas.Children.Add(LineEndings);
             OwningVisualiser.Canvas.Children.Add(Line);
 
-            if (baseEdge.Meta == MinusZero.Instance.Empty)
-                return;           
-
-            if (OwningVisualiser.GetItemsDictionaryByBaseEdgeTo().ContainsKey(baseEdge.Meta))
-                MetaDiagramItem = OwningVisualiser.GetItemsDictionaryByBaseEdgeTo()[baseEdge.Meta].FirstOrDefault();
+            if (baseEdge.Meta != MinusZero.Instance.Empty)
+            {             
+                if (OwningVisualiser.GetItemsDictionaryByBaseEdgeTo().ContainsKey(baseEdge.Meta))
+                    MetaDiagramItem = OwningVisualiser.GetItemsDictionaryByBaseEdgeTo()[baseEdge.Meta].FirstOrDefault();
+            }
 
             if (MetaDiagramItem != null)
             {
@@ -84,11 +84,14 @@ namespace m0.ZeroTypes.UX
                 MetaDiagramItem.AddAsToMetaLine(this);
             }
             else
-                OwningVisualiser.Canvas.Children.Add(Label);
+            {
+                if (!HideLabel)
+                    OwningVisualiser.Canvas.Children.Add(Label);
+            }
             
             VertexSetedUp();
         }
-
+        
         public override void RemoveFromCanvas()
         {
             OwningVisualiser.Canvas.Children.Remove(MetaLine);
@@ -131,6 +134,6 @@ namespace m0.ZeroTypes.UX
             MetaLine.Stroke = foregroundBrush;
 
             Panel.SetZIndex(MetaLine, 0);
-        }*/
+        }
     }
 }
