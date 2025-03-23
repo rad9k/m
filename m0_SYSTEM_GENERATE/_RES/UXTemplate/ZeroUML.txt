@@ -47,7 +47,7 @@
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
 				
-		<@UXTemplate :: "Code Line">
+		<@UXTemplate :: "Code LINE">
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "">
 			<@ItemClass :: @CodeItem>
@@ -501,6 +501,7 @@
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "$Is:\">				
 				<@SupportAnyMetaEdge :: "True">
+				<@SupportEmptyMetaEdge :: "True">
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @MetaExtendedLineDecorator>
 				<@DecoratorVertex :: "">
@@ -518,8 +519,28 @@
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "$Is:\">
 				<@SupportAnyMetaEdge :: "True">
+				<@SupportEmptyMetaEdge :: "True">
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @MetaExtendedLineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+					
+		<@UXTemplate :: "Edge CONTAINER">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@ContainerEdgeMetaVertex :: @System\Meta\Base\$Empty>
+			<@ItemClass :: @ContainerItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\GenericItemVertex>
+				<@LabeledItem\ShowMeta :: "True">
+			<@UXDecoratorTemplate :: "Edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:\">
+				<@SupportAnyMetaEdge :: "True">
+				<@SupportEmptyMetaEdge :: "True">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
 					
