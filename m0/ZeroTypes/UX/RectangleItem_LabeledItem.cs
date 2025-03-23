@@ -120,7 +120,7 @@ namespace m0.ZeroTypes.UX
                 if (textBox_forBaseEdge != null)
                 {
                     textBox_forBaseEdge.Background = null;
-                    textBox_forBaseEdge.Foreground = (Brush)FindResource("0HighlightForegroundBrush");
+                    textBox_forBaseEdge.Foreground = new SolidColorBrush(Colors.Red);//(Brush)FindResource("0HighlightForegroundBrush");
 
                     textBox_forBaseEdge_Brush_set = true;
                     textBox_forBaseEdge_Background = textBox_forBaseEdge.Background;
