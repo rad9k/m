@@ -40,7 +40,13 @@ namespace m0.ZeroTypes.UX
         }
 
         bool shouldTryToLoad = true;
-        
+
+        protected override void UpdateLabelControl(FrameworkElement LabelControl)
+        {
+            if (!HideHeader)
+                LabelContainer.Child = LabelControl;
+        }
+
         public override void ViewAttributesUpdated()
         {
             if(shouldTryToLoad)
@@ -58,9 +64,7 @@ namespace m0.ZeroTypes.UX
             base.ViewAttributesUpdated();
 
             if (!HideHeader)
-            {
-                LabelContainer.Child = LabelControl;
-
+            {             
                 double allHeight = this.ActualHeight;
 
                 TheGrid.RowDefinitions[1].Height = new GridLength(17);

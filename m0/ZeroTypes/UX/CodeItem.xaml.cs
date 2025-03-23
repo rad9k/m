@@ -48,11 +48,14 @@ namespace m0.ZeroTypes.UX
             InitializeComponent();
         }
 
+        protected override void UpdateLabelControl(FrameworkElement LabelControl)
+        {
+            LabelContainer.Child = LabelControl;
+        }
+
         public override void VertexSetedUp()
         {
-            base.VertexSetedUp();
-
-            LabelContainer.Child = LabelControl;
+            base.VertexSetedUp();            
 
             AddCodeControl();
         }
@@ -91,9 +94,7 @@ namespace m0.ZeroTypes.UX
 
         public override void ViewAttributesUpdated()
         {
-            base.ViewAttributesUpdated();
-
-            LabelContainer.Child = LabelControl;
+            base.ViewAttributesUpdated();            
 
             //
 

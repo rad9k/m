@@ -355,12 +355,15 @@ namespace m0.ZeroTypes.UX
         {
             UpdateSubItemAchors();
         }
-        
+
+        protected override void UpdateLabelControl(FrameworkElement LabelControl)
+        {
+            LabelContainer.Child = LabelControl;
+        }
+
         public override void ViewAttributesUpdated()
         {
-            base.ViewAttributesUpdated();
-
-            LabelContainer.Child = LabelControl;
+            base.ViewAttributesUpdated();         
 
             double roundEdgeSize = RoundEdgeSize;
 

@@ -91,12 +91,15 @@ namespace m0.ZeroTypes.UX
 
             base.VertexSetedUp();
         }
-        
+
+        protected override void UpdateLabelControl(FrameworkElement LabelControl)
+        {
+            LabelContainer.Child = LabelControl;
+        }
+
         public override void ViewAttributesUpdated()
         {
             base.ViewAttributesUpdated();
-
-            LabelContainer.Child = LabelControl;
 
             double roundEdgeSize = RoundEdgeSize;
             

@@ -45,11 +45,14 @@ namespace m0.ZeroTypes.UX
             InitializeComponent();
         }
 
+        protected override void UpdateLabelControl(FrameworkElement LabelControl)
+        {
+            LabelContainer.Child = LabelControl;
+        }
+
         public override void ViewAttributesUpdated()
         {
-            base.ViewAttributesUpdated();
-
-            LabelContainer.Child = LabelControl;
+            base.ViewAttributesUpdated();        
 
             if (BorderSize != 0)
                 this.Elipse.StrokeThickness = BorderSize;

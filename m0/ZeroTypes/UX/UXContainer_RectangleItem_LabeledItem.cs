@@ -23,24 +23,30 @@ namespace m0.ZeroTypes.UX
 
         // BEG CODE for LabeledItem
 
+        FrameworkElement LabelControl;
+
         TextBox textBox_forBaseEdge = null;
 
         static IVertex BaseEdge_meta = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge");
 
-        protected FrameworkElement LabelControl;
+        protected virtual void UpdateLabelControl(FrameworkElement LabelControl)
+        {
+
+        }
 
         public override void BaseEdgeToUpdated()
         {
             base.BaseEdgeToUpdated();
 
-            LabelControl = GetLabelControl();
+            UpdateLabelControl(GetLabelControl());
+
         }
 
         public override void ViewAttributesUpdated()
         {
             base.ViewAttributesUpdated();
 
-            LabelControl = GetLabelControl();
+            UpdateLabelControl(GetLabelControl());
         }
 
         protected virtual void SetBaselineColors()
@@ -62,8 +68,8 @@ namespace m0.ZeroTypes.UX
 
             if (textBox_forBaseEdge != null)
             {
-                textBox_forBaseEdge.Background = (Brush)FindResource("0BackgroundBrush");
-                textBox_forBaseEdge.Foreground = (Brush)FindResource("0ForegroundBrush");
+                textBox_forBaseEdge.Background = (Brush)FindResource("0ForegroundBrush");
+                textBox_forBaseEdge.Foreground = (Brush)FindResource("0BackgroundBrush");
             }
         }
 
@@ -128,7 +134,11 @@ namespace m0.ZeroTypes.UX
             stack.Orientation = Orientation.Horizontal;
 
             if (BaseEdge_forLabel == null)
+            {
+                LabelControl = stack;
+
                 return stack;
+            }
 
             string constantLabel = ConstantLabel;
 
@@ -153,6 +163,8 @@ namespace m0.ZeroTypes.UX
 
             if (!HideLabel)
                 stack.Children.Add(GetLabelControl_RightPart());
+
+            LabelControl = stack;
 
             return stack;
         }
@@ -229,7 +241,7 @@ namespace m0.ZeroTypes.UX
             return textBlock;
         }
 
-        private TextBox GetTextBox(HorizontalAlignment horlizontalAlignment)
+        private void GetTextBox(HorizontalAlignment horlizontalAlignment)
         {
             textBox_forBaseEdge = new TextBox();
 
@@ -246,8 +258,6 @@ namespace m0.ZeroTypes.UX
             textBox_forBaseEdge.PreviewMouseLeftButtonDown += TextBox_PreviewMouseLeftButtonDown;
             textBox_forBaseEdge.PreviewMouseLeftButtonUp += TextBox_forBaseEdge_PreviewMouseLeftButtonUp;
             textBox_forBaseEdge.TextChanged += TextBox_TextChanged;
-
-            return textBox_forBaseEdge;
         }
 
         private void TextBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)

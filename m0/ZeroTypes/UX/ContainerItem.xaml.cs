@@ -37,11 +37,14 @@ namespace m0.ZeroTypes.UX
             InitializeComponent();
         }
 
+        protected override void UpdateLabelControl(FrameworkElement LabelControl)
+        {
+            LabelContainer.Child = LabelControl;
+        }
+
         public override void VertexSetedUp()
         {
             base.VertexSetedUp();
-
-            LabelContainer.Child = LabelControl;
 
             if (Canvas == null) {
                 Canvas = new Canvas();
@@ -56,8 +59,6 @@ namespace m0.ZeroTypes.UX
         public override void ViewAttributesUpdated()
         {
             base.ViewAttributesUpdated();
-
-            LabelContainer.Child = LabelControl;
 
             double roundEdgeSize = RoundEdgeSize;
 
