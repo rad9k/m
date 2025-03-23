@@ -26,6 +26,9 @@ namespace m0.ZeroTypes.UX
         // BEG CODE for LabeledItem
 
         TextBox textBox_forBaseEdge = null;
+        bool textBox_forBaseEdge_Brush_set = false;
+        Brush textBox_forBaseEdge_Background = null;
+        Brush textBox_forBaseEdge_Foreground = null;
 
         static IVertex BaseEdge_meta = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge");
 
@@ -64,8 +67,14 @@ namespace m0.ZeroTypes.UX
 
             if (textBox_forBaseEdge != null)
             {
-                textBox_forBaseEdge.Background = (Brush)FindResource("0BackgroundBrush");
-                textBox_forBaseEdge.Foreground = (Brush)FindResource("0ForegroundBrush");
+                textBox_forBaseEdge.Background = (Brush)FindResource("0ForegroundBrush");
+                textBox_forBaseEdge.Foreground = (Brush)FindResource("0BackgroundBrush");
+
+                textBox_forBaseEdge.Foreground = new SolidColorBrush(Colors.Red);
+
+                textBox_forBaseEdge_Brush_set = true;
+                textBox_forBaseEdge_Background = textBox_forBaseEdge.Background;
+                textBox_forBaseEdge_Foreground = textBox_forBaseEdge.Foreground;
             }
         }
 
@@ -83,6 +92,10 @@ namespace m0.ZeroTypes.UX
             {
                 textBox_forBaseEdge.Background = null;
                 textBox_forBaseEdge.Foreground = foregroundBrush;
+
+                textBox_forBaseEdge_Brush_set = true;
+                textBox_forBaseEdge_Background = textBox_forBaseEdge.Background;
+                textBox_forBaseEdge_Foreground = textBox_forBaseEdge.Foreground;
             }
         }
 
@@ -108,6 +121,10 @@ namespace m0.ZeroTypes.UX
                 {
                     textBox_forBaseEdge.Background = null;
                     textBox_forBaseEdge.Foreground = (Brush)FindResource("0HighlightForegroundBrush");
+
+                    textBox_forBaseEdge_Brush_set = true;
+                    textBox_forBaseEdge_Background = textBox_forBaseEdge.Background;
+                    textBox_forBaseEdge_Foreground = textBox_forBaseEdge.Foreground;
                 }
             }
         }
@@ -231,8 +248,8 @@ namespace m0.ZeroTypes.UX
             return textBlock;
         }
 
-        private TextBox GetTextBox(HorizontalAlignment horlizontalAlignment)
-        {
+        private void GetTextBox(HorizontalAlignment horlizontalAlignment)
+        {            
             textBox_forBaseEdge = new TextBox();
             
             textBox_forBaseEdge.BorderThickness = new Thickness(0);
@@ -249,7 +266,11 @@ namespace m0.ZeroTypes.UX
             textBox_forBaseEdge.PreviewMouseLeftButtonUp += TextBox_forBaseEdge_PreviewMouseLeftButtonUp;
             textBox_forBaseEdge.TextChanged += TextBox_TextChanged;
 
-            return textBox_forBaseEdge;
+            if (textBox_forBaseEdge_Brush_set)
+            {
+                textBox_forBaseEdge.Background = textBox_forBaseEdge_Background;
+                textBox_forBaseEdge.Foreground = textBox_forBaseEdge_Foreground;
+            }
         }
 
         private void TextBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
