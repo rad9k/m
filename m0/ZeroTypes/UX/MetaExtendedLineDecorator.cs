@@ -15,7 +15,7 @@ using System.Windows.Media;
 namespace m0.ZeroTypes.UX
 {
     public class MetaExtendedLineDecorator : LineDecorator
-    {
+    {        
         public IUXItem MetaDiagramItem;
 
         protected ArrowPolyline MetaLine = new ArrowPolyline();
@@ -27,7 +27,7 @@ namespace m0.ZeroTypes.UX
             MetaLine.Stroke = (Brush)LineEndings.FindResource("0ForegroundBrush");
             MetaLine.StrokeDashArray = new DoubleCollection(new double[] { 5, 3 });
         }        
-
+        /*
         public override void SetPosition(double _FromX, double _FromY, double _ToX, double _ToY, bool isSelfRelation, double selfRelationX, double selfRelationY)
         {
             FromX = _FromX;
@@ -131,6 +131,6 @@ namespace m0.ZeroTypes.UX
             MetaLine.Stroke = foregroundBrush;
 
             Panel.SetZIndex(MetaLine, 0);
-        }
+        }*/
     }
 }

@@ -476,12 +476,12 @@ namespace m0.UIWpf.Visualisers
                     if (getSection(ci.Key) == null)
                     {
                         ci.Value.GapControl.Width = (sectionControlBorderWidth / 2) - 2;
-                        ci.Value.DataControl.Width = oneColumnWidth - maxMetaWidthInColumn[ci.Value.Column] - metaVsDataSeparator - 9 - sectionControlBorderWidth / 2;
+                        ci.Value.DataControl.Width = Math.Abs(oneColumnWidth - maxMetaWidthInColumn[ci.Value.Column] - metaVsDataSeparator - 9 - sectionControlBorderWidth / 2);
                     }
                     else
                     {
                         ci.Value.GapControl.Width = 0;
-                        ci.Value.DataControl.Width = oneColumnWidth - maxMetaWidthInColumn[ci.Value.Column] - metaVsDataSeparator - sectionControlBorderWidth;
+                        ci.Value.DataControl.Width = Math.Abs(oneColumnWidth - maxMetaWidthInColumn[ci.Value.Column] - metaVsDataSeparator - sectionControlBorderWidth);
                     }
                 }
         }
