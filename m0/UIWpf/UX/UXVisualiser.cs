@@ -681,7 +681,7 @@ namespace m0.UIWpf.UX
 
                         //item.AddDiagramLineObject(GetToDiagramItemFromLineVertex(lineDecorator), lineDecorator);
 
-                        item.AddDiagramLineObject(lineDecorator.ToItem, lineDecorator);
+                        item.AddDiagramLineObject(lineDecorator.ToItem, lineDecorator); // here
                         }                    
                }
            

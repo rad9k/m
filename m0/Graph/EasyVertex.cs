@@ -50,11 +50,6 @@ namespace m0.Graph
 
                 //FireChange(new VertexChangeEventArgs(VertexChangeType.ValueChanged, null));
 
-                if (GeneralUtil.CompareStrings(_Value, "Arrow"))
-                {
-                    int x = 0;
-                }
-
                 if (CanEmitGraphChangeEvents)
                     ExecutionFlowHelper.AddTransactionAtom(new GraphChangeTransactionAtom(
                         this,
@@ -364,6 +359,11 @@ namespace m0.Graph
 
         public override IEdge AddEdge(IVertex metaVertex, IVertex destVertex)
         {
+            if (metaVertex != null && GeneralUtil.CompareStrings(metaVertex, "EndAnchor") && (String)destVertex.Value == "Arrow")
+            {
+                int x = 0;
+            }
+
             if (DisposedState == DisposeStateEnum.Disposed)
                 throw new Exception("Vertex not live");
 
