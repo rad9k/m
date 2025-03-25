@@ -679,8 +679,6 @@ namespace m0.UIWpf.UX
                             if (!Items_all.Contains(lineDecorator.ToItem))
                                 continue;
 
-                        //item.AddDiagramLineObject(GetToDiagramItemFromLineVertex(lineDecorator), lineDecorator);
-
                         item.AddDiagramLineObject(lineDecorator.ToItem, lineDecorator); // here
                         }                    
                }
