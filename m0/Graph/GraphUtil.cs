@@ -670,6 +670,8 @@ namespace m0.Graph
             if (vertex == null || metaVertex == null)
                 return null;
 
+            if (VertexOperations.IsLink()
+
             IVertex getByMeta = GetQueryOutFirst(vertex, metaVertex.Value, null);                
 
             if (getByMeta == null)

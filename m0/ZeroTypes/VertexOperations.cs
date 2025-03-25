@@ -28,18 +28,23 @@ namespace m0.ZeroTypes
             return true;
         }
 
-        public static bool IsLink(IEdge e)
+        public static bool IsLink(IVertex e_Meta)
         {
-            if (GeneralUtil.CompareStrings(e.Meta.Value, "$EdgeTarget"))
+            if (GeneralUtil.CompareStrings(e_Meta.Value, "$EdgeTarget"))
                 return true;
 
-            if (GraphUtil.ExistQueryOut(e.Meta, "$EdgeTarget", null) && !GraphUtil.ExistQueryOut(e.Meta, "$IsAggregation", null))
+            if (GraphUtil.ExistQueryOut(e_Meta, "$EdgeTarget", null) && !GraphUtil.ExistQueryOut(e_Meta, "$IsAggregation", null))
                 return true;
 
-            if (GraphUtil.GetQueryOutFirst(e.Meta, "$IsLink", null) != null)
+            if (GraphUtil.GetQueryOutFirst(e_Meta, "$IsLink", null) != null)
                 return true;
 
             return false;
+        }
+
+        public static bool IsLink(IEdge e)
+        {
+            return IsLink(e.Meta);
         }
 
         public static bool IsMetaAndToVertexEnoughToIdentifyEdge(IVertex baseVertex, IVertex meta, IVertex to)
