@@ -670,16 +670,23 @@ namespace m0.Graph
             if (vertex == null || metaVertex == null)
                 return null;
 
-            if (VertexOperations.IsLink()
+            IEdge edgeByMeta = GetQueryOut(vertex, metaVertex.Value, null).FirstOrDefault();
 
-            IVertex getByMeta = GetQueryOutFirst(vertex, metaVertex.Value, null);                
-
-            if (getByMeta == null)
+            if (edgeByMeta == null)
                 return vertex.AddVertex(metaVertex, value);
             else
             {
-                getByMeta.Value = value;
-                return getByMeta;                
+                if (VertexOperations.IsLink(metaVertex))
+                {
+                    edgeByMeta.From.DeleteEdge(edgeByMeta);
+
+                    return edgeByMeta.From.AddVertexAndReturnEdge(metaVertex, value).To;
+                }
+                else
+                {
+                    edgeByMeta.To.Value = value;
+                    return edgeByMeta.To;
+                }
             }            
         }
 
