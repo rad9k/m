@@ -40,7 +40,7 @@ namespace m0.ZeroTypes.UX
 
         void RemoveFromCanvas();
         
-        void AddDiagramLineObject(IUXItem toItem, ILineDecoratorBase lineDecorator);
+        void AddDiagramLineObject(IUXItem toItem, ILineDecoratorBase lineDecorator, bool AddDecoratorVertex);
 
         void RemoveDiagramLine(ILineDecoratorBase line);
 

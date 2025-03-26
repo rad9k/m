@@ -679,7 +679,7 @@ namespace m0.UIWpf.UX
                             if (!Items_all.Contains(lineDecorator.ToItem))
                                 continue;
 
-                        item.AddDiagramLineObject(lineDecorator.ToItem, lineDecorator); // here
+                        item.AddDiagramLineObject(lineDecorator.ToItem, lineDecorator, false); 
                         }                    
                }
            
@@ -2041,7 +2041,7 @@ namespace m0.UIWpf.UX
 
             newLine.BaseEdgeSet(edge);
 
-            fromItem.AddDiagramLineObject(toItem, newLine);
+            fromItem.AddDiagramLineObject(toItem, newLine, true);
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
@@ -2488,7 +2488,7 @@ namespace m0.UIWpf.UX
 
         public virtual void RemoveFromCanvas() { }
 
-        public void AddDiagramLineObject(IUXItem toItem, ILineDecoratorBase lineDecorator) { }
+        public void AddDiagramLineObject(IUXItem toItem, ILineDecoratorBase lineDecorator, bool AddDecoratorVertex) { }
 
         public void RemoveDiagramLine(ILineDecoratorBase line) { }
 

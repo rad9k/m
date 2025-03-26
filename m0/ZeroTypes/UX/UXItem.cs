@@ -216,15 +216,19 @@ namespace m0.ZeroTypes.UX
                 l.RemoveFromCanvas();
         }
 
-        public void AddDiagramLineObject(IUXItem toItem, ILineDecoratorBase newline)
+        public void AddDiagramLineObject(IUXItem toItem, ILineDecoratorBase newline, bool AddDecoratorVertex)
         {
             if (toItem == null)
                 return;
 
             newline.OwningVisualiser = this.OwningVisualiser;
 
-            if (newline.UXTemplate != null)
-                UXVisualiser.AddEdgesFromDefintion(newline.Vertex, ((UXDecoratorTemplate)newline.UXTemplate).DecoratorVertex);
+            if (newline.UXTemplate != null && AddDecoratorVertex)
+            {
+                IVertex DecoratorVertex = ((UXDecoratorTemplate)newline.UXTemplate).DecoratorVertex;                
+
+                UXVisualiser.AddEdgesFromDefintion(newline.Vertex, DecoratorVertex);
+            }
 
             newline.FromDiagramItem = this;
 
