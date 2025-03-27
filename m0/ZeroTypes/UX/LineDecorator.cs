@@ -65,6 +65,9 @@ namespace m0.ZeroTypes.UX
 
         protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
+            MinusZero.Instance.Log(1, "VERTEX CHANGE", "");
+            ExecutionFlowHelper.DebugStackStraceAsEvents(exe.Stack);
+
             if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "IsDashed")
                 || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "LineWidth"))
                 UpdateLine();
