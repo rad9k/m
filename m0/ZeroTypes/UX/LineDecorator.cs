@@ -28,7 +28,9 @@ namespace m0.ZeroTypes.UX
 
         public override void VertexSetedUp()
         {
+            UpdateLineEnds();
             VertexUpdated();
+            UpdateLabelVisibility();
 
             graphChangeListenerEdge = ExecutionFlowHelper.AddTriggerAndListener(Vertex,
                  new List<string> { "", @"\" },
@@ -64,10 +66,7 @@ namespace m0.ZeroTypes.UX
         }
 
         protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
-        {
-            MinusZero.Instance.Log(1, "VERTEX CHANGE", "");
-            ExecutionFlowHelper.DebugStackStraceAsEvents(exe.Stack);
-
+        {                       
             if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "IsDashed")
                 || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "LineWidth"))
                 UpdateLine();
@@ -122,7 +121,8 @@ namespace m0.ZeroTypes.UX
             if (HideLabel)
                 OwningVisualiser.Canvas.Children.Remove(Label);
             else
-                OwningVisualiser.Canvas.Children.Add(Label);
+                if (!OwningVisualiser.Canvas.Children.Contains(Label))
+                    OwningVisualiser.Canvas.Children.Add(Label);
         }
 
         protected virtual void UpdateLineEnds()
