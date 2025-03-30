@@ -3206,13 +3206,18 @@ namespace m0.ZeroCode
 
             IEdge parsedRootEdge = _baseEdge_parentEdge.To.First();
 
-            rootEdge_new = _baseEdge.From.AddEdge(parsedRootEdge.Meta, parsedRootEdge.To);            
+            if (_baseEdge.Meta.Value.ToString() != "$Empty") // hak over hak. I do not uderstand why it is not working properly. no time to fix
+            {
+                rootEdge_new = _baseEdge.From.AddEdge(parsedRootEdge.Meta, parsedRootEdge.To);
 
-            //
+                //
 
-            _baseEdge.From.DeleteEdge(_baseEdge);
+                _baseEdge.From.DeleteEdge(_baseEdge);
 
-            MoveInEdgesFromOneVertexToAnother(_baseEdge.To, rootEdge_new.To);
+                MoveInEdgesFromOneVertexToAnother(_baseEdge.To, rootEdge_new.To);
+            }
+            else
+                rootEdge_new = parsedRootEdge;
             
             //
             

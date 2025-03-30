@@ -476,6 +476,11 @@ namespace m0.Graph
 
             IEdge edge = edgeDictionaries.Out.Get(_edge);
 
+            if (edge == null)
+                foreach (IEdge e in OutEdges)
+                    if (e.From == _edge.From && e.Meta == _edge.Meta && e.To == _edge.To)
+                        edge = e;
+
             if (edge != null)
             {                
                 OutEdgesRaw.Remove(edge);
