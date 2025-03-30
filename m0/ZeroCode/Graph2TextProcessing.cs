@@ -1835,7 +1835,7 @@ namespace m0.ZeroCode
             BaseEdge = new EasyEdge(_graphBaseEdge.From, null, v); // this is some crazy hybrid. this is non consistent and might not work!        
         }
 
-        public void prepareBaseEdge_withArtificialParent_edge_linearize(IEdge _graphBaseEdge)
+        public void prepareBaseEdge_EdgeAndManyLines_Inner(IEdge _graphBaseEdge)
         {
             IVertex startingVertex = MinusZero.Instance.CreateTempVertex();
 
@@ -1861,7 +1861,7 @@ namespace m0.ZeroCode
 
             //
 
-            prepareBaseEdge_withArtificialParent_edge_linearize(_graphBaseEdge);
+            prepareBaseEdge_EdgeAndManyLines_Inner(_graphBaseEdge);
 
             BeenList = new HashSet<IEdge>();
             BeenList_Keyword = new HashSet<IEdge>();
@@ -1896,7 +1896,7 @@ namespace m0.ZeroCode
 
             //ZeroCodeGraph2String_Reccurent(BaseEdge, 0, BaseEdge, null);
 
-            return Source.ToString();
+            return Source.Replace("@START\\","@\\") .ToString();
         }
 
         public string Process_EdgeOneLine(IEdge _graphBaseEdge)

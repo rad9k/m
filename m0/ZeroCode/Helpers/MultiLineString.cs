@@ -57,6 +57,17 @@ namespace m0.ZeroCode.Helpers
             NumberOfLines = lineCounter - 1;
         }
 
+        public void Replace(string from, string to)
+        {
+            Replace(1, NumberOfLines, from, to);
+        }
+
+        public void Replace(int fromLine, int toLine, string from, string to)
+        {
+            for (int i = fromLine; i < toLine; i++)
+                Lines[i] = Lines[i].Replace(from, to);
+        }
+
         public void AddLeftTab(int fromLine, int toLine, int noOfTabs)
         {
             StringBuilder tabs = new StringBuilder();
