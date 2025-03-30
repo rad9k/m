@@ -1896,7 +1896,8 @@ namespace m0.ZeroCode
 
             //ZeroCodeGraph2String_Reccurent(BaseEdge, 0, BaseEdge, null);
 
-            return Source.Replace("@START\\","@\\") .ToString();
+            //return Source.Replace("@START\\","@\\") .ToString();
+            return Source.ToString();
         }
 
         public string Process_EdgeOneLine(IEdge _graphBaseEdge)
