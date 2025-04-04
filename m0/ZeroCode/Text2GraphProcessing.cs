@@ -3196,7 +3196,7 @@ namespace m0.ZeroCode
 
             IEdge _baseEdge_parentEdge = m0.MinusZero.Instance.CreateTempEdge();
 
-            _baseEdge_parentEdge.To.AddEdge(null, _baseEdge.To);
+            _baseEdge_parentEdge.To.AddEdge(_baseEdge.Meta, _baseEdge.To);
 
             //
 
@@ -3221,6 +3221,46 @@ namespace m0.ZeroCode
             
             //
             
+            return returnedVertex;
+        }
+
+        public IVertex Process_EdgeAndManyLines_copy(IEdge _baseEdge, string _text, out IEdge rootEdge_new)
+        {
+            MultiLineString mls = new MultiLineString(_text);
+
+            mls.AddLeftTab(1);
+            mls.InsertEmptyLineBeforeLineNo(1);
+            mls.Lines[1] = "\"\"\r\n";
+
+            //
+
+            IEdge _baseEdge_parentEdge = m0.MinusZero.Instance.CreateTempEdge();
+
+            _baseEdge_parentEdge.To.AddEdge(null, _baseEdge.To);
+
+            //
+
+            IVertex returnedVertex = Process_VertexAndManyLines(_baseEdge_parentEdge, mls.ToString());
+
+            //
+
+            IEdge parsedRootEdge = _baseEdge_parentEdge.To.First();
+
+            if (_baseEdge.Meta.Value.ToString() != "$Empty") // hak over hak. I do not uderstand why it is not working properly. no time to fix
+            {
+                rootEdge_new = _baseEdge.From.AddEdge(parsedRootEdge.Meta, parsedRootEdge.To);
+
+                //
+
+                _baseEdge.From.DeleteEdge(_baseEdge);
+
+                MoveInEdgesFromOneVertexToAnother(_baseEdge.To, rootEdge_new.To);
+            }
+            else
+                rootEdge_new = parsedRootEdge;
+
+            //
+
             return returnedVertex;
         }
 
