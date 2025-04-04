@@ -239,6 +239,9 @@ namespace m0.UIWpf.Controls
                     errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(BaseEdge, editor_Text, GetCodeRepresentation(), out baseEdge_new);
                 else
                     errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(ftl, BaseEdge, editor_Text, GetCodeRepresentation(), out baseEdge_new);
+
+                if (baseEdge_new != null)
+                    SetBaseEdge(baseEdge_new);
               
                 //
 

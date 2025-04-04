@@ -3110,27 +3110,34 @@ namespace m0.ZeroCode
 
         //
 
-        void MoveInEdgesFromOneVertexToAnother(IVertex fromVertex, IVertex toVertex)
+        void MoveInEdgesFromOneVertexToAnother(IEdge fromEdge, IEdge toEdge)
         {
+            IVertex fromVertex = fromEdge.To;
+            IVertex toVertex = toEdge.To;
+
             IList<IEdge> InEdgesRaw = fromVertex.InEdgesRaw.ToList();
 
-            foreach (IEdge e in InEdgesRaw)                
-                {
+            foreach (IEdge e in InEdgesRaw)
+            {
+                if (e.From == fromEdge.From && e.Meta == fromEdge.Meta)
+                    e.From.AddEdge(toEdge.Meta, toVertex);
+                else
                     e.From.AddEdge(e.Meta, toVertex);
-                    e.From.DeleteEdge(e);
-                }
+                
+                e.From.DeleteEdge(e);
+            }
 
             IList<IEdge> MetaInEdgesRaw = fromVertex.MetaInEdgesRaw.ToList();
 
-            foreach (IEdge e in MetaInEdgesRaw)                
-                {
-                    foreach (IEdge ee in e.From.ToList())
-                        if (ee.Meta == e.Meta && ee.To == e.To) // no to create non exising edge XXX
-                        {
-                            e.From.AddEdge(toVertex, e.To);
-                            e.From.DeleteEdge(e);
-                        }
-                }
+            foreach (IEdge e in MetaInEdgesRaw)
+            {
+                foreach (IEdge ee in e.From.ToList())
+                    if (ee.Meta == e.Meta && ee.To == e.To) // no to create non exising edge XXX
+                    {
+                        e.From.AddEdge(toVertex, e.To);
+                        e.From.DeleteEdge(e);
+                    }
+            }
         }
 
         public IVertex Process_OneLine(IEdge _baseEdge, string _text)
@@ -3194,72 +3201,17 @@ namespace m0.ZeroCode
 
             //
 
-            IEdge _baseEdge_parentEdge = m0.MinusZero.Instance.CreateTempEdge();
+            IEdge parentEdge = m0.MinusZero.Instance.CreateTempEdge();
 
-            _baseEdge_parentEdge.To.AddEdge(_baseEdge.Meta, _baseEdge.To);
-
-            //
-
-            IVertex returnedVertex = Process_VertexAndManyLines(_baseEdge_parentEdge, mls.ToString());
+            parentEdge.To.AddEdge(_baseEdge.Meta, _baseEdge.To);
 
             //
 
-            IEdge parsedRootEdge = _baseEdge_parentEdge.To.First();
+            IVertex returnedVertex = Process_VertexAndManyLines(parentEdge, mls.ToString());
 
-            if (_baseEdge.Meta.Value.ToString() != "$Empty") // hak over hak. I do not uderstand why it is not working properly. no time to fix
-            {
-                rootEdge_new = _baseEdge.From.AddEdge(parsedRootEdge.Meta, parsedRootEdge.To);
+            rootEdge_new = parentEdge.To.OutEdges.FirstOrDefault();
 
-                //
-
-                _baseEdge.From.DeleteEdge(_baseEdge);
-
-                MoveInEdgesFromOneVertexToAnother(_baseEdge.To, rootEdge_new.To);
-            }
-            else
-                rootEdge_new = parsedRootEdge;
-            
-            //
-            
-            return returnedVertex;
-        }
-
-        public IVertex Process_EdgeAndManyLines_copy(IEdge _baseEdge, string _text, out IEdge rootEdge_new)
-        {
-            MultiLineString mls = new MultiLineString(_text);
-
-            mls.AddLeftTab(1);
-            mls.InsertEmptyLineBeforeLineNo(1);
-            mls.Lines[1] = "\"\"\r\n";
-
-            //
-
-            IEdge _baseEdge_parentEdge = m0.MinusZero.Instance.CreateTempEdge();
-
-            _baseEdge_parentEdge.To.AddEdge(null, _baseEdge.To);
-
-            //
-
-            IVertex returnedVertex = Process_VertexAndManyLines(_baseEdge_parentEdge, mls.ToString());
-
-            //
-
-            IEdge parsedRootEdge = _baseEdge_parentEdge.To.First();
-
-            if (_baseEdge.Meta.Value.ToString() != "$Empty") // hak over hak. I do not uderstand why it is not working properly. no time to fix
-            {
-                rootEdge_new = _baseEdge.From.AddEdge(parsedRootEdge.Meta, parsedRootEdge.To);
-
-                //
-
-                _baseEdge.From.DeleteEdge(_baseEdge);
-
-                MoveInEdgesFromOneVertexToAnother(_baseEdge.To, rootEdge_new.To);
-            }
-            else
-                rootEdge_new = parsedRootEdge;
-
-            //
+            MoveInEdgesFromOneVertexToAnother(_baseEdge, rootEdge_new);
 
             return returnedVertex;
         }
