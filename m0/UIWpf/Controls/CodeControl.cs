@@ -154,6 +154,9 @@ namespace m0.UIWpf.Controls
 
         private IEdge GetBaseEdge()
         {
+            if (baseEdgeFinal != null)
+                return baseEdgeFinal;
+
             IEdge BaseEdge = EdgeHelper.CreateIEdgeFromEdgeVertex(Vertex.Get(false, @"BaseEdge:"));
 
             string ContentQuery = GraphUtil.GetStringValueOrNull(Vertex.Get(false, @"ContentQuery:"));
@@ -164,12 +167,16 @@ namespace m0.UIWpf.Controls
             return BaseEdge;
         }
 
+        IEdge baseEdgeFinal = null;
+
         // not used now but might be helpfull in future
-        private void SetBaseEdge(IEdge baseEdge)
+        private void SetBaseEdgeFinal(IEdge baseEdge)
         {
             //ExecutionFlowHelper.GraphChangeWatchOff();
 
-            EdgeHelper.ReplaceEdgeVertexEdges(Vertex.Get(false, @"BaseEdge:"), baseEdge);
+            //EdgeHelper.ReplaceEdgeVertexEdges(Vertex.Get(false, @"BaseEdge:"), baseEdge);
+
+            baseEdgeFinal = baseEdge;
 
             //ExecutionFlowHelper.GraphChangeWatchOn();
         }
@@ -241,7 +248,7 @@ namespace m0.UIWpf.Controls
                     errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(ftl, BaseEdge, editor_Text, GetCodeRepresentation(), out baseEdge_new);
 
                 if (baseEdge_new != null)
-                    SetBaseEdge(baseEdge_new);
+                    SetBaseEdgeFinal(baseEdge_new);
               
                 //
 
