@@ -3141,9 +3141,15 @@ namespace m0.ZeroCode
         }
         
         // used by ZeroUML diagram representation
-        public IVertex Process_EdgeOneLine(IEdge _baseEdge, string _text)
+        public IVertex Process_EdgeOneLine(IEdge _baseEdge, string _text, out IEdge rootEdge_new)
         {
-            return null;
+            string vertexAndManyLines = MinusZero.Instance.DefaultFormalTextGenerator.Generate(_baseEdge, CodeRepresentationEnum.EdgeAndManyLines);
+
+            MultiLineString mls = new MultiLineString(vertexAndManyLines);
+
+            mls.Lines[1] = _text + "\r\n";
+
+            return Process_EdgeAndManyLines(_baseEdge, mls.ToString(), out rootEdge_new);            
         }
 
         // used by ZeroUML diagram representation
@@ -3312,7 +3318,7 @@ namespace m0.ZeroCode
 
             switch (codeRepresentation)
             {
-                case CodeRepresentationEnum.EdgeOneLine: return Process_EdgeOneLine(_baseEdge, _text);
+                case CodeRepresentationEnum.EdgeOneLine: return Process_EdgeOneLine(_baseEdge, _text, out rootEdge_new);
 
                 case CodeRepresentationEnum.EdgeAndManyLines: return Process_EdgeAndManyLines(_baseEdge, _text, out rootEdge_new);
 
