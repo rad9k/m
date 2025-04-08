@@ -3139,12 +3139,7 @@ namespace m0.ZeroCode
                     }
             }
         }
-
-        public IVertex Process_OneLine(IEdge _baseEdge, string _text)
-        {
-            return null;
-        }
-
+        
         // used by ZeroUML diagram representation
         public IVertex Process_EdgeOneLine(IEdge _baseEdge, string _text)
         {
@@ -3317,8 +3312,6 @@ namespace m0.ZeroCode
 
             switch (codeRepresentation)
             {
-                case CodeRepresentationEnum.OneLine: return Process_OneLine(_baseEdge, _text);
-
                 case CodeRepresentationEnum.EdgeOneLine: return Process_EdgeOneLine(_baseEdge, _text);
 
                 case CodeRepresentationEnum.EdgeAndManyLines: return Process_EdgeAndManyLines(_baseEdge, _text, out rootEdge_new);

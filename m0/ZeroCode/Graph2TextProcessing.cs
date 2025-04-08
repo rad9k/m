@@ -1809,49 +1809,33 @@ namespace m0.ZeroCode
             BaseEdge = new EasyEdge(_graphBaseEdge.From, _graphBaseEdge.Meta, v); // this is some crazy hybrid. this is non consistent and might not work!
 
              //BaseEdge = _graphBaseEdge;
-        }
+        }              
 
-        public void prepareBaseEdge_withArtificialParent_linearize_edge(IEdge _graphBaseEdge)
-        {
-            IVertex startingVertex = MinusZero.Instance.CreateTempVertex();            
-
-            startingVertex.AddEdge(null, _graphBaseEdge.To);
-
-            IVertex v = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(startingVertex);
-
-            IVertex articifialParent = MinusZero.Instance.CreateTempVertex();
-
-            BaseEdge = new EasyEdge(_graphBaseEdge.From, null, v); // this is some crazy hybrid. this is non consistent and might not work!        
-        }
-
-        public void prepareBaseEdge_withArtificialParent_linearize_edge_copy(IEdge _graphBaseEdge)
-        {
-            IVertex startingVertex = MinusZero.Instance.CreateTempVertex();
-
-            startingVertex.AddEdge(null, _graphBaseEdge.To);
-
-            IVertex v = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(startingVertex);
-
-            BaseEdge = new EasyEdge(_graphBaseEdge.From, null, v); // this is some crazy hybrid. this is non consistent and might not work!        
-        }
-
-        public void prepareBaseEdge_EdgeAndManyLines_Inner(IEdge _graphBaseEdge)
-        {
-            IVertex startingVertex = MinusZero.Instance.CreateTempVertex();
-
+        public void prepareBaseEdge_EdgeAndManyLines(IEdge _graphBaseEdge)
+        {            
             IVertex linearized = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(_graphBaseEdge.To);
+
+            IVertex startingVertex = MinusZero.Instance.CreateTempVertex();
 
             IVertex startingvertex2 = startingVertex.AddVertex(null, "START"); // beg
 
             startingvertex2.AddEdge(_graphBaseEdge.Meta, linearized);
 
-            BaseEdge = new EasyEdge(_graphBaseEdge.From, null, startingVertex);
+            BaseEdge = new EasyEdge(_graphBaseEdge.From, null, startingVertex);        
+        }
 
-            //_graphBaseEdge.From.AddEdge(null, v);
+        public string Process_EdgeAndManyLines(IEdge _graphBaseEdge)
+        {
+            string txt = Process_EdgeAndManyLines_Inner(_graphBaseEdge);
 
-            //BaseEdge = new EasyEdge(_graphBaseEdge.From, null, v); // this is some crazy hybrid. this is non consistent and might not work!
+            MultiLineString multiLineString = new MultiLineString(txt);
 
-            //BaseEdge = _graphBaseEdge;
+            if (multiLineString.NumberOfLines < 2)
+                return "";
+
+            multiLineString.RemoveLeftTab_TwoTimes();
+
+            return multiLineString.ToString(3, multiLineString.NumberOfLines);
         }
 
         public string Process_EdgeAndManyLines_Inner(IEdge _graphBaseEdge)
@@ -1861,7 +1845,7 @@ namespace m0.ZeroCode
 
             //
 
-            prepareBaseEdge_EdgeAndManyLines_Inner(_graphBaseEdge);
+            prepareBaseEdge_EdgeAndManyLines(_graphBaseEdge);
 
             BeenList = new HashSet<IEdge>();
             BeenList_Keyword = new HashSet<IEdge>();
@@ -1912,59 +1896,44 @@ namespace m0.ZeroCode
             return multiLineString.ToString(1, 1);
         }
 
-        public string Process_OneLine(IEdge _graphBaseEdge)
+        public void prepareBaseEdge_LinearizedManyLines(IEdge _graphBaseEdge)
         {
-            ommitOnce_AppendNewLineAndTabs = true;
-            ommitOnce_baseEdgePath = true;
-            ommitOnce_AppendEdge_Meta = true;
+            IVertex startingVertex = MinusZero.Instance.CreateTempVertex();
 
-            //
+            startingVertex.AddEdge(null, _graphBaseEdge.To);
 
-            prepareBaseEdge(_graphBaseEdge);
+            IVertex v = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(startingVertex);
 
-            BeenList = new HashSet<IEdge>();
-            BeenList_Keyword = new HashSet<IEdge>();
-            newLinesBeenList = new HashSet<IEdge>();
+            IVertex articifialParent = MinusZero.Instance.CreateTempVertex();
 
-            Source = new StringBuilder();
-            Imports = new Dictionary<IVertex, IList<IVertex>>();
-            VerticesDictionary = new Dictionary<IVertex, VertexData>();
-            SubGraphVerticesDictionary = new Dictionary<IVertex, VertexData>();
-            KeywordMatchedSubGraphEdges = new Dictionary<IEdge, KeywordMatch>();
+            articifialParent.AddEdge(null, v);
 
-            DoKeywordDefinitionContainLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
-            DoKeywordDefinitionContainStartInLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
+            v.Value = "START";
 
-            //             
-
-            GetLinksForSubGraphVertices_BaseEdge();
-            GetLinksForSubGraphVertices_subVertexes(BaseEdge, null, 0);
-
-            BeenList.Clear();
-
-            MatchKeywords(BaseEdge, null, true);
-
-            BeenList.Clear();
-
-            //
-
-            ImportImports(GraphUtil.GetQueryOutFirst(FormalTextLanguage, "DefaultImports", null));
-            ImportImports(BaseEdge.To);
-
-            ZeroCodeGraph2String_Reccurent(BaseEdge, 0, new EasyEdge(null, null, BaseEdge.From), null);
-
-            //ZeroCodeGraph2String_Reccurent(BaseEdge, 0, BaseEdge, null);
-
-            return Source.ToString();
+            BaseEdge = new EasyEdge(_graphBaseEdge.From, null, articifialParent);
         }
 
         public string Process_LinearizedManyLines(IEdge _graphBaseEdge)
         {
+            string txt = Process_LinearizedManyLines_Inner(_graphBaseEdge);            
+
+            MultiLineString multiLineString = new MultiLineString(txt);
+
+            if (multiLineString.NumberOfLines < 2)
+                return "";
+
+            multiLineString.RemoveLeftTab();
+
+            return multiLineString.ToString(2, multiLineString.NumberOfLines);
+        }
+
+        public string Process_LinearizedManyLines_Inner(IEdge _graphBaseEdge)
+        {
             ommitOnce_AppendNewLineAndTabs = true;
 
             //
 
-            prepareBaseEdge_withArtificialParent_linearize_edge(_graphBaseEdge);
+            prepareBaseEdge_LinearizedManyLines(_graphBaseEdge);
 
             BeenList = new HashSet<IEdge>();
             BeenList_Keyword = new HashSet<IEdge>();
@@ -2001,7 +1970,8 @@ namespace m0.ZeroCode
             foreach (IEdge e in BaseEdge.To.OutEdgesRaw)
                 ZeroCodeGraph2String_Reccurent(e, 0, BaseEdge, null);
 
-            return Source.ToString();
+            return Source.Replace("@START\\", "@\\").ToString(); // NEED TO BE SURE THIS IS ENOUGH. having problems with [] calls
+            //return Source.ToString();
         }
 
         public string Process_VertexAndManyLines(IEdge _graphBaseEdge)
@@ -2051,20 +2021,6 @@ namespace m0.ZeroCode
             return Source.ToString();
         }
 
-        public string Process_EdgeAndManyLines(IEdge _graphBaseEdge)
-        {
-            string txt = Process_EdgeAndManyLines_Inner(_graphBaseEdge);
-
-            MultiLineString multiLineString = new MultiLineString(txt);
-
-            if (multiLineString.NumberOfLines < 2)
-                return "";
-
-            multiLineString.RemoveLeftTab_TwoTimes();
-
-            return multiLineString.ToString(3, multiLineString.NumberOfLines);
-        }
-
         public string Process_ManyLinesExcludingParent(IEdge _graphBaseEdge)
         {
             string txt = Process_EdgeAndManyLines_Inner(_graphBaseEdge);
@@ -2082,9 +2038,7 @@ namespace m0.ZeroCode
         public string Process(IEdge _graphBaseEdge, CodeRepresentationEnum codeRepresentation)
         {
             switch (codeRepresentation)
-            {
-                case CodeRepresentationEnum.OneLine: return Process_OneLine(_graphBaseEdge);
-
+            {                
                 case CodeRepresentationEnum.EdgeOneLine: return Process_EdgeOneLine(_graphBaseEdge);
 
                 case CodeRepresentationEnum.EdgeAndManyLines: return Process_EdgeAndManyLines(_graphBaseEdge);

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace m0.ZeroTypes.UX
 {
-    public enum CodeRepresentationEnum { OneLine, EdgeOneLine, LinearizedManyLines, ManyLinesExcludingParent, VertexAndManyLines, EdgeAndManyLines }
+    public enum CodeRepresentationEnum { EdgeOneLine, LinearizedManyLines, ManyLinesExcludingParent, VertexAndManyLines, EdgeAndManyLines }
 
     class CodeRepresentationEnumHelper
     {
@@ -24,9 +24,7 @@ namespace m0.ZeroTypes.UX
                 return CodeRepresentationEnum.VertexAndManyLines;
 
             switch (v.Value.ToString())
-            {
-                case "OneLine": return CodeRepresentationEnum.OneLine;
-
+            {                
                 case "EdgeOneLine": return CodeRepresentationEnum.EdgeOneLine;
 
                 case "LinearizedManyLines": return CodeRepresentationEnum.LinearizedManyLines;
@@ -44,9 +42,7 @@ namespace m0.ZeroTypes.UX
         public static IVertex GetVertex(CodeRepresentationEnum e)
         {
             switch (e)
-            {
-                case CodeRepresentationEnum.OneLine: return OneLine_meta;
-
+            {                
                 case CodeRepresentationEnum.EdgeOneLine: return EdgeOneLine_meta;
 
                 case CodeRepresentationEnum.LinearizedManyLines: return LinearizedManyLines_meta;
