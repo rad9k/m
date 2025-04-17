@@ -604,6 +604,7 @@
 					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>			
 			<@UXDecoratorTemplate :: "Variable">
 				<@$Is :: @UXDecoratorTemplate>
+				<@CreateEdgeOnly :: "True">
 				<@EdgeTestQuery :: "$Is:\Variable">
 				<@ToDiagramItemTestQuery :: "UXTemplate:Variable">
 				<@DecoratorClass :: @LineDecorator>				

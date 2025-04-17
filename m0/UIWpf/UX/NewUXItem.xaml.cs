@@ -187,6 +187,9 @@ namespace m0.UIWpf.UX
 
                 NameControlsHide();
             }
+
+            if (ItemsList.Count() > 0)
+                this.List.SelectedIndex = 0;
         }
 
         private bool CheckIfThereIsChoiceRemembered()
@@ -276,9 +279,6 @@ namespace m0.UIWpf.UX
                 //else
                   //  this.List.SelectedIndex = 0;
             }
-
-            if (ItemsList.Count() > 0)
-                this.List.SelectedIndex = 0;
         }
 
         private void CreateButton_Click(object sender, RoutedEventArgs e)

@@ -296,7 +296,8 @@ namespace m0.ZeroTypes
                             canAdd = false;
                     }
                     else
-                        canAdd = true;
+                        //canAdd = false; // it was true. 2025.04.17 we do not want new edges when mincardinality is not specified
+                        canAdd = true; // aparently we need that as a lot of code depends on that :/
                 }
                 else
                 {                    
@@ -304,7 +305,7 @@ namespace m0.ZeroTypes
                         canAdd = true;
                 }
 
-                if(canAdd)
+                if (canAdd)
                     if (GraphUtil.ExistQueryOut(child.To, "$DefaultValue", null))
                         nv.AddVertex(child.To, GraphUtil.GetQueryOutFirst(child.To, "$DefaultValue", null).Value);
                     else

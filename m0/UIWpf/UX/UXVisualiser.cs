@@ -2005,11 +2005,14 @@ namespace m0.UIWpf.UX
                 && !InstructionHelpers.CheckIfIsOrInherits(toEdge.To, eToEdgeTarget))
                 return false;
 
-            //if (!tem.CreateEdgeOnly &&// ZZZ added !
-            if (tem.CreateEdgeOnly && // normally we have CreateEdgeOnly being FALSE, so... we want to activatge this only if CreateEdgeOnly = True
+            // 2025.04.17 - we use CreateEdgeOnly for Variables. the code below seems to be not needed now
+            /*
+            if (!tem.CreateEdgeOnly &&// ZZZ added !
+            //if (tem.CreateEdgeOnly && // normally we have CreateEdgeOnly being FALSE, so... we want to activatge this only if CreateEdgeOnly = True
+              //above is WRONG for sure
                 eToVertexTarget != null
                 && !InstructionHelpers.CheckIfIsOrInherits(toEdge.To, eToVertexTarget))
-                return false;
+                return false;*/
 
             return true;
         }
