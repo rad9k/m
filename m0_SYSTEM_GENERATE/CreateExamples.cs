@@ -413,7 +413,11 @@ namespace m0_SYSTEM_GENERATE
     "\r\n\tnamedblock \"Bblok\"()" +
     "\r\n\t\tb = \"True\"" +
     "\r\n\tnamedblock \"Cblok\"()" +
-    "\r\n\t\treturn Name" +    
+    "\r\n\t\treturn Name" +
+    "\r\n\tnamedblock \"Dblok\"()" +
+    "\r\n\t\tforeach \"X\" in x" +
+    "\r\n\t\t\tforeach \"Y\" in y" +
+    "\r\n\t\t\t\tX += Y" +
     "\r\n\tblock" +
     "\r\n\t\ta = \"False\"" +
     "\r\n\t\tb = \"True\"" +

@@ -273,9 +273,12 @@ namespace m0.UIWpf.UX
                 {
                     RadioLabel_MouseDown_Instance(null, null);
                 }
-                else
-                    this.List.SelectedIndex = 0;
+                //else
+                  //  this.List.SelectedIndex = 0;
             }
+
+            if (ItemsList.Count() > 0)
+                this.List.SelectedIndex = 0;
         }
 
         private void CreateButton_Click(object sender, RoutedEventArgs e)

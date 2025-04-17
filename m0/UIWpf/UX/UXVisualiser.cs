@@ -1884,6 +1884,7 @@ namespace m0.UIWpf.UX
             if (toItem == this)
                 return false;
 
+            DoCreateDiagramLine_toUse_count = 0;
             DoCreateDiagramLine_Edge_toUse = null;
             DoCreateDiagramLine_DiagramLineDefinition_toUse = null;
 
@@ -1928,7 +1929,13 @@ namespace m0.UIWpf.UX
             Point mousePosition = WpfUtil.GetMousePosition();
 
             IVertex selected = null;
-                
+
+            if (DoCreateDiagramLine_toUse_count > 1)
+            {
+                DoCreateDiagramLine_DiagramLineDefinition_toUse = null;
+                DoCreateDiagramLine_Edge_toUse = null;
+            }
+
             if (DoCreateDiagramLine_Edge_toUse == null)
                 selected = MinusZero.Instance.DefaultUserInteraction.SelectDialog(info, v, true, mousePosition);
 
@@ -2007,16 +2014,18 @@ namespace m0.UIWpf.UX
             return true;
         }
 
-        static IVertex DoCreateDiagramLine_Edge_toUse = null;
-        static IVertex DoCreateDiagramLine_DiagramLineDefinition_toUse = null;
+        int DoCreateDiagramLine_toUse_count;
+        IVertex DoCreateDiagramLine_Edge_toUse = null;
+        IVertex DoCreateDiagramLine_DiagramLineDefinition_toUse = null;
 
-        private static void AddNewLineOption(IVertex v, UXDecoratorTemplate def, IVertex edgeVertex)
+        private void AddNewLineOption(IVertex v, UXDecoratorTemplate def, IVertex edgeVertex)
         {
            if (def.EdgeTestQuery != null && def.EdgeTestQuery != ""
                 && def.ToDiagramItemTestQuery != null && def.ToDiagramItemTestQuery != "")
             {
                 DoCreateDiagramLine_Edge_toUse = edgeVertex;
                 DoCreateDiagramLine_DiagramLineDefinition_toUse = def.Vertex;
+                DoCreateDiagramLine_toUse_count++;
             }
             
             IVertex r = m0.MinusZero.Instance.Root;
