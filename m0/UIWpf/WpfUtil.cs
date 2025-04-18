@@ -19,6 +19,7 @@ using m0.UIWpf.Visualisers.Helper;
 using m0.ZeroTypes;
 using System.Windows.Threading;
 using m0.ZeroTypes.UX;
+using System.Windows.Forms;
 
 namespace m0.UIWpf
 {
@@ -36,7 +37,7 @@ namespace m0.UIWpf
             Dnd.MinimumVerticalDragDistance = SystemParameters.MinimumVerticalDragDistance * 2;
         }
 
-        public static void DecorateWithCustomCursor(FrameworkElement e, Cursor cursor)
+        public static void DecorateWithCustomCursor(FrameworkElement e, System.Windows.Input.Cursor cursor)
         {
             e.Tag = cursor;
 
@@ -46,15 +47,15 @@ namespace m0.UIWpf
 
         private static void DecorateWithCustomCursor_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            WpfUtil.SetCursor(Cursors.Arrow);
+            WpfUtil.SetCursor(System.Windows.Input.Cursors.Arrow);
         }
 
         private static void DecorateWithCustomCursor_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
             FrameworkElement fe = (FrameworkElement)sender;
 
-            if (fe.Tag is Cursor)
-                WpfUtil.SetCursor((Cursor)fe.Tag);
+            if (fe.Tag is System.Windows.Input.Cursor)
+                WpfUtil.SetCursor((System.Windows.Input.Cursor)fe.Tag);
         }
 
         public static Line CreateLine(double thickness, Brush stroke)
@@ -152,13 +153,13 @@ namespace m0.UIWpf
 
         public static void SetCursorFromResource(string resourceName)
         {
-            System.Windows.Resources.StreamResourceInfo info = Application.GetResourceStream(new Uri(resourceName, UriKind.Relative));
+            System.Windows.Resources.StreamResourceInfo info = System.Windows.Application.GetResourceStream(new Uri(resourceName, UriKind.Relative));
 
 
             Mouse.OverrideCursor = new System.Windows.Input.Cursor(info.Stream);
         }
 
-        public static void SetCursor(Cursor cursor)
+        public static void SetCursor(System.Windows.Input.Cursor cursor)
         {
             Mouse.OverrideCursor = cursor;
         }
@@ -168,7 +169,7 @@ namespace m0.UIWpf
             var formattedText = new FormattedText(
                 tb.Text,
                 CultureInfo.CurrentCulture,
-                FlowDirection.LeftToRight,
+                System.Windows.FlowDirection.LeftToRight,
                 new Typeface(tb.FontFamily, tb.FontStyle, tb.FontWeight, tb.FontStretch),
                 tb.FontSize,
                 Brushes.Black,
@@ -233,7 +234,7 @@ namespace m0.UIWpf
             e.Y2 = y2;
         }
 
-        public static Line DrawLine(Panel c, double x1, double y1, double x2, double y2, double thickness, Brush brush)
+        public static Line DrawLine(System.Windows.Controls.Panel c, double x1, double y1, double x2, double y2, double thickness, Brush brush)
         {
             Line lr = new Line();
 
@@ -248,7 +249,7 @@ namespace m0.UIWpf
             return lr;
         }
 
-        public static Line DrawLine(Panel canvas, double X1, double Y1, double X2, double Y2, Brush brush)
+        public static Line DrawLine(System.Windows.Controls.Panel canvas, double X1, double Y1, double X2, double Y2, Brush brush)
         {
             Line l = new Line();
 
@@ -265,7 +266,7 @@ namespace m0.UIWpf
 
         public static void Print(Canvas canvas, string text, double x, double y, string fontName, double size, Brush brush)
         {
-            Label l = new Label();
+            System.Windows.Controls.Label l = new System.Windows.Controls.Label();
 
             l.Foreground = brush;
 
@@ -283,7 +284,7 @@ namespace m0.UIWpf
 
             l.FontSize = size;
 
-            if(fontName != null)
+            if (fontName != null)
                 l.FontFamily = new FontFamily(fontName);
         }
 
@@ -324,7 +325,7 @@ namespace m0.UIWpf
                 DependencyObject dObj = hit.VisualHit;
                 while (dObj != null)
                 {
-                    if (dObj is ScrollBar) return true;
+                    if (dObj is System.Windows.Controls.Primitives.ScrollBar) return true;
 
                     if ((dObj is Visual) || (dObj is Visual3D)) dObj = VisualTreeHelper.GetParent(dObj);
                     else dObj = LogicalTreeHelper.GetParent(dObj);
@@ -385,15 +386,15 @@ namespace m0.UIWpf
                 
         public static Point GetMousePosition()
         {
-          Point p=new Point();
+            Point p = new Point();
 
-          p.X = Mouse.GetPosition(m0Main.Instance).X + m0Main.Instance.Left;
-          p.Y = Mouse.GetPosition(m0Main.Instance).Y + m0Main.Instance.Top;
+            p.X = Mouse.GetPosition(m0Main.Instance).X + m0Main.Instance.Left;
+            p.Y = Mouse.GetPosition(m0Main.Instance).Y + m0Main.Instance.Top;
 
-          return p;
+            return p;
         }
 
-        public static Point GetMousePositionDnd(DragEventArgs e)
+        public static Point GetMousePositionDnd(System.Windows.DragEventArgs e)
         {
             Point p = new Point();
 
@@ -403,43 +404,50 @@ namespace m0.UIWpf
             return p;
         }
 
-        public static void SetWindowPosition(Window control, Point position)
+        public static System.Windows.Size GetWpfScreenSizeFromPoint(Point wpfPoint)
         {
-            if (position!=null)
-            {
-                double screenWidth = 0;
-                double screenHeight = 0;
+            // Znajdź źródło (dla DPI)
+            var source = PresentationSource.FromVisual(m0Main.Instance);
+            if (source == null)
+                return new System.Windows.Size(0, 0); // fallback
 
-                foreach (System.Windows.Forms.Screen s in System.Windows.Forms.Screen.AllScreens)
-                    if(s.WorkingArea.Left <= position.X && s.WorkingArea.Right >= position.X && // XXX why it is not working for second screen?
-                       s.WorkingArea.Top <= position.Y && s.WorkingArea.Bottom >= position.Y)
-                        {
-                            screenWidth = s.WorkingArea.Width;
-                            screenHeight = s.WorkingArea.Height;
-                        }
+            // Macierz przekształcenia z WPF -> fizyczne piksele
+            var transformToDevice = source.CompositionTarget.TransformToDevice;
+            var transformFromDevice = source.CompositionTarget.TransformFromDevice;
 
-                if (screenWidth == 0)
-                {
-                    System.Windows.Forms.Screen lastScreen = System.Windows.Forms.Screen.AllScreens[System.Windows.Forms.Screen.AllScreens.Length - 1];
+            // Konwersja WPF → fizyczne piksele
+            int physicalX = (int)(wpfPoint.X * transformToDevice.M11);
+            int physicalY = (int)(wpfPoint.Y * transformToDevice.M22);
 
-                    screenWidth = lastScreen.WorkingArea.Width;
-                    screenHeight = lastScreen.WorkingArea.Height;
-                }
+            // Znajdź monitor zawierający ten punkt
+            var screen = Screen.FromPoint(new System.Drawing.Point(physicalX, physicalY));
+            var bounds = screen.WorkingArea;
 
-                if (position.X + control.ActualWidth > screenWidth)
-                    control.Left = screenWidth - control.ActualWidth;
-                else
-                    control.Left = position.X;
+            // Konwersja granic ekranu z pikseli → WPF
+            Point topLeft = transformFromDevice.Transform(new Point(bounds.Left, bounds.Top));
+            Point bottomRight = transformFromDevice.Transform(new Point(bounds.Right, bounds.Bottom));
 
-                if (position.Y + control.ActualHeight > screenHeight)
-                    control.Top = screenHeight - control.ActualHeight - 75; // 50 is for taskbar that used to be on the bottom
-                else
-                    control.Top = position.Y;// - 150;
+            // Oblicz rozmiary
+            double widthWpf = bottomRight.X - topLeft.X;
+            double heightWpf = bottomRight.Y - topLeft.Y;
 
-               // if (control.Top < 0)
-                //    control.Top = 0;
-            }
+            return new System.Windows.Size(widthWpf, heightWpf);
         }
 
+        public static void SetWindowPosition(Window window, Point position)
+        {
+            System.Windows.Size size = GetWpfScreenSizeFromPoint(position);
+
+            Point position_tobe = new Point(position.X, position.Y);
+            
+            if (position.X + window.ActualWidth > size.Width)
+                position_tobe.X = size.Width - window.ActualWidth;
+
+            if (position.Y + window.ActualHeight > size.Height)
+                position_tobe.Y = size.Height - window.ActualHeight;
+
+            window.Left = position_tobe.X;
+            window.Top = position_tobe.Y;
+        }        
     }
 }
