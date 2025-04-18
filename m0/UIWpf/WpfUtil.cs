@@ -387,7 +387,7 @@ namespace m0.UIWpf
         {
           Point p=new Point();
 
-          p.X=Mouse.GetPosition(m0Main.Instance).X+m0Main.Instance.Left;
+          p.X = Mouse.GetPosition(m0Main.Instance).X + m0Main.Instance.Left;
           p.Y = Mouse.GetPosition(m0Main.Instance).Y + m0Main.Instance.Top;
 
           return p;
