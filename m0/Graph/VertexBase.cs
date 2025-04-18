@@ -242,11 +242,6 @@ namespace m0.Graph
 
         public virtual IEdge AddVertexAndReturnEdge(IVertex metaVertex, object val)
         {
-            if (metaVertex != null && metaVertex.Value.ToString() == "A")
-            {
-                int x = 0;
-            }
-
             if (DisposedState == DisposeStateEnum.Disposed)
                 throw new Exception("Vertex not live");
 
