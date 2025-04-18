@@ -2052,7 +2052,7 @@ namespace m0
 
             IVertex o_case = k.AddVertex(keyword, "case (?<test>)");
 
-            IVertex o_case_any = o_case.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Test\Case"), "");
+            IVertex o_case_any = o_case.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, "Case"), "");
 
             o_case_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "Case"));
