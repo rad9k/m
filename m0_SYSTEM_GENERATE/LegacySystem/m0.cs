@@ -493,7 +493,7 @@ namespace m0
                 ",Function{$$NoSequentialExecution:,$InstanceCreationPriority:},Block{$InstanceCreationPriority:,$EmptyValueInstance:},NamedBlock{$InstanceCreationPriority:}" +
                 ",While{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},$InstanceCreationPriority:,$EmptyValueInstance:}" +
                 ",ForEach{Variable{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},Set{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},$InstanceCreationPriority:,$EmptyValueInstance:}" +
-                ",If{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},$InstanceCreationPriority:,$EmptyValueInstance:},Test{Expression{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},$InstanceCreationPriority:},Case{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},$InstanceCreationPriority:},Fallback{$InstanceCreationPriority:}" +
+                ",If{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},$InstanceCreationPriority:,$EmptyValueInstance:},Test{Expression{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},$InstanceCreationPriority:,$EmptyValueInstance:},Case{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},$InstanceCreationPriority:,$EmptyValueInstance:},Fallback{$InstanceCreationPriority:,$EmptyValueInstance:}" +
                 ",EmptySet,Constant" +
                 ",Execute,Parse,ParseWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}},Generate,GenerateWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",this,Package{$InstanceCreationPriority:}" +
