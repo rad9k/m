@@ -850,8 +850,8 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "NextOut")); // XXX got to think
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"Case").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
-                LegacySystem.Graph.EasyVertex.Get(smu, false, "Case"));
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"NamedBlock").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "Action"));
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"Case").AddEdge(
                  LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                  LegacySystem.Graph.EasyVertex.Get(smu, false, "Package"));  // and not StackFrameCreator
 
