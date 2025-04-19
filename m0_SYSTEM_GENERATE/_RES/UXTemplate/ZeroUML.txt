@@ -245,7 +245,7 @@
 			<@$Inherits :: @ZeroUML\NextDecorator>
 			<@UXDecoratorTemplate :: "case">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "">
+				<@EdgeTestQuery :: "$Is:Test\Case">
 				<@ToDiagramItemTestQuery :: "Case">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
@@ -253,7 +253,7 @@
 					<@LineDecorator\ConstantLabel :: "case">
 			<@UXDecoratorTemplate :: "fallback">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "">
+				<@EdgeTestQuery :: "$Is:Test\Fallback">
 				<@ToDiagramItemTestQuery :: "Fallback">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">

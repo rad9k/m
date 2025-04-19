@@ -497,7 +497,7 @@ namespace m0_SYSTEM_GENERATE
     }
 
         public static void CreateTestData()
-        {
+        {            
             IVertex r = MinusZero.Instance.Root;
 
             //JsonSerializationStore jss = new JsonSerializationStore(@"c:\m0\x",MinusZero.Instance, new AccessLevelEnum[] { });
