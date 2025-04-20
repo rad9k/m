@@ -38,7 +38,7 @@ namespace m0.UIWpf.Controls
     {
         static object lockObject = new object();
 
-        public bool GenerateAfterParse = false;
+        public bool GenerateAfterParse = true;
 
         public bool NoBackgroundWorkOnGenerate = false;
 
