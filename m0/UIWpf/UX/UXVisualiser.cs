@@ -2233,7 +2233,7 @@ namespace m0.UIWpf.UX
                             needAdding = false;
                     }
 
-                if (needAdding)
+                if (needAdding && CanAddLine(item,e))
                 {
                     List<IUXItem> toDiagramItems = GetItemsByBaseEdgeTo_ForLines(e);
 
@@ -2248,6 +2248,20 @@ namespace m0.UIWpf.UX
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////
+        }
+
+        private bool CanAddLine(IUXItem item, IEdge e)
+        {
+            if (item is IUXMultiContainerSubItem)
+            {
+                IUXMultiContainerItem parentItem = (IUXMultiContainerItem)item.ParentItem;
+
+                foreach (IUXDecorator dec in parentItem.Decorators)
+                    if (EdgeHelper.CompareIEdges(dec.BaseEdge, e))
+                        return false;
+            }
+
+            return true;
         }
 
         private void TryAddDiagramLineVertexForListOfItems(IUXItem item, IEdge e, List<IUXItem> toDiagramItems, bool isEdgeTargetInEdgePointingToTargetItemBaseEdgeTo)
