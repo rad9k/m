@@ -1027,12 +1027,7 @@ namespace m0
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Block"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "NamedBlock"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "While"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "ForEach"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "If"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Test"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Case"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Fallback"));            
-
+            
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\$Import"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\$ImportMeta"));
         }
@@ -6433,6 +6428,22 @@ namespace m0
             IVertex quick = Root.AddVertex(null, "Quick");
 
             quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Package"));
+
+            quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Variable"));
+            quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Function"));
+            quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Class"));
+            quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Class\Method"));
+            quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Block"));
+            quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\NamedBlock"));
+            quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\While"));
+            quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\ForEach"));
+            quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\If"));
+            quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Test"));
+            quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Case"));
+            quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Fallback"));
+
+
+
             quick.AddEdge(atomtype, Root.Get(false, @"System\Meta\ZeroTypes\String"));
             quick.AddEdge(atomtype, Root.Get(false, @"System\Meta\ZeroTypes\Integer"));
             quick.AddEdge(atomtype, Root.Get(false, @"System\Meta\ZeroTypes\Decimal"));
