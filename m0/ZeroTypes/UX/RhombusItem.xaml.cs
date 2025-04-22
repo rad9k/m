@@ -101,6 +101,9 @@ namespace m0.ZeroTypes.UX
 
         public override Point GetLineAnchorLocation(IUXItem _toItem, bool useToPoint, Point toPoint, int toItemDiagramLinesCount, int toItemDiagramLineNumber, bool isSelfStart)        
         {
+            if (OwningVisualiser == null)
+                return new Point();
+
             if (!(_toItem is FrameworkElement))
                 return new Point();
 
