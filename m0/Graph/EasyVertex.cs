@@ -360,7 +360,7 @@ namespace m0.Graph
         public override IEdge AddEdge(IVertex metaVertex, IVertex destVertex)
         {
            /* if (
-                metaVertex != null && GeneralUtil.CompareStrings(metaVertex, "Decorator") 
+                metaVertex != null && GeneralUtil.CompareStrings(metaVertex, "If") 
                 //&& (String)destVertex.Value == "Arrow"
                 )
             {

@@ -257,7 +257,12 @@ namespace m0.ZeroTypes
             IVertex nv;
 
             if (baseVertex != null)
-                ne = baseVertex.AddVertexAndReturnEdge(edgeVertex, null);
+            {
+                if (GraphUtil.ExistQueryOut(metaVertex, "$EmptyMetaInstance", null))
+                    ne = baseVertex.AddVertexAndReturnEdge(null, null);
+                else
+                    ne = baseVertex.AddVertexAndReturnEdge(edgeVertex, null);
+            }
             else
                 ne = MinusZero.Instance.CreateTempEdge();
 

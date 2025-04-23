@@ -516,10 +516,16 @@ namespace m0.UIWpf.UX
             {
                 if (host.Canvas != null)
                 {
+                    var parent = VisualTreeHelper.GetParent(item_UIElement) as Canvas;
+                    if (parent != null)
+                    {
+                        parent.Children.Remove(item_UIElement);
+                    }
+
                     host.Canvas.Children.Add(item_UIElement);
                 }
             }
-            catch
+            catch (Exception ex) 
             {
                 UserInteractionUtil.ShowError("UXVisualiser", "Item allready opened in another visualiser instance");
             }
