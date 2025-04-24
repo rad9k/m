@@ -37,6 +37,9 @@ namespace m0.ZeroTypes.UX
 
         private void CreateNotExistingContentQueryEdge()
         {
+            if (!SubItemsNotVisible)
+                return;
+
             IVertex notExistingContentQueryEdge = NotExistingContentQueryEdge;
 
             if (notExistingContentQueryEdge != null)
