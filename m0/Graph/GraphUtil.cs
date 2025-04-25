@@ -561,14 +561,17 @@ namespace m0.Graph
                 {
                     int pos = 0;
                     IList<IEdge> q = GraphUtil.GetQueryOut(e.From, e.Meta.Value, e.To.Value);
-                    //IVertex q = e.From.GetAll(false, ZeroCodeCommon.stringToPossiblyEscapedString(e.Meta.ToString()) + ZeroCodeCommon.MetaSeparator + ZeroCodeCommon.stringToPossiblyEscapedString(e.To.ToString()));
+                    //IVertex q = e.From.GetAll(false, ZeroCodeCommon.stringToPossiblyEscapedString(e.Meta.ToString()) + ZeroCodeCommon.MetaSeparator + ZeroCodeCommon.stringToPossiblyEscapedString(e.To.ToString()));                    
 
                     IVertex tv;
                     do
                     {
                         tv = q.ElementAt(pos).To;
                         pos++;
-                    } while (tv != e.To);
+                    } while (tv != e.To || pos == q.Count);
+
+                    if (pos == q.Count)
+                        return "GetIdentyfyingQuerySubString_MetaMode_ERROR";
 
                     return GetQueryStringPart_MetaMode(dict, e.Meta,e.To) + dict.SetIndexPrefix + "\"" + pos + "\"" + dict.SetIndexPostfix; 
                 }
