@@ -446,8 +446,7 @@
 						<@Height :: "26">				
 			<@UXTemplate :: "body">
 				<@$Is :: @UXTemplate>				
-				<@ItemVertex :: "">					
-					<@MultiContainerSubItem\NotExistingContentQueryEdge :: @$Empty>
+				<@ItemVertex :: "">										
 					<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\ManyLinesExcludingParent>
 					<@Size :: "">
 						<@$Is :: @Size>
@@ -480,7 +479,6 @@
 			<@UXTemplate :: "body">
 				<@$Is :: @UXTemplate>				
 				<@ItemVertex :: "">					
-					<@MultiContainerSubItem\NotExistingContentQueryEdge :: @$Empty>
 					<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\ManyLinesExcludingParent>
 					<@Size :: "">
 						<@$Is :: @Size>

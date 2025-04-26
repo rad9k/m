@@ -160,12 +160,12 @@ namespace m0.ZeroTypes.UX
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             //////////////////////////////////////// 
-            
-            if (CodeToggle.IsChecked == true)
-                SubItemsNotVisible = true;
-            else
-                SubItemsNotVisible = false;
 
+                if (CodeToggle.IsChecked == true)
+                    SubItemsNotVisible = true;
+                else
+                    SubItemsNotVisible = false;
+            
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             //////////////////////////////////////// 
