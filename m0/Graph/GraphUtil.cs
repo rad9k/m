@@ -568,10 +568,7 @@ namespace m0.Graph
                     {
                         tv = q.ElementAt(pos).To;
                         pos++;
-                    } while (tv != e.To && pos != q.Count);
-
-                    if (pos == q.Count)
-                        return "GetIdentyfyingQuerySubString_MetaMode_ERROR";
+                    } while (tv != e.To && pos > q.Count);                    
 
                     return GetQueryStringPart_MetaMode(dict, e.Meta,e.To) + dict.SetIndexPrefix + "\"" + pos + "\"" + dict.SetIndexPostfix; 
                 }

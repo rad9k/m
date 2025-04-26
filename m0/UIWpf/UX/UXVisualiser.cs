@@ -1645,6 +1645,9 @@ namespace m0.UIWpf.UX
                 if (i == null || !(i is IUXContainer) || ((IUXContainer)i).Canvas == null)
                     continue;
 
+                if (i is IUXMultiContainerSubItem && ((IUXMultiContainerSubItem)i).SubItemsNotVisible)
+                    continue;
+
                 Canvas item_canvas = ((IUXContainer)i).Canvas;
                 
                 Point item_absolute = item_canvas.TranslatePoint(new Point(0, 0), Canvas);

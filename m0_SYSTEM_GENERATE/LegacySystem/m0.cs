@@ -3701,7 +3701,7 @@ namespace m0
             smzu.Get(false, @"CodeView\FontSize").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Float"));
             smzu.Get(false, @"CodeView\FormalTextLanguage").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\VertexType"));
             smzu.Get(false, @"CodeView\CodeRepresentation").AddEdge(sm.Get(false, @"?$EdgeTarget"), smzu.Get(false, @"CodeRepresentationEnum"));            
-            smzu.Get(false, @"CodeView\CodeRepresentation").AddEdge(sm.Get(false, @"?$DefaultValue"), smzu.Get(false, @"CodeRepresentationEnum\EdgeAndManyLines"));
+            smzu.Get(false, @"CodeView\CodeRepresentation").AddEdge(sm.Get(false, @"?$DefaultValue"), smzu.Get(false, @"CodeRepresentationEnum\VertexAndManyLines"));
 
 
         }
