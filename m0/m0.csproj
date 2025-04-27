@@ -627,7 +627,7 @@
     <EmbeddedResource Include="ZeroCodeHighlighting.xshd" />
     <None Include="_PROJECT\diagrams.eap" />
     <None Include="_PROJECT\test\edgeonly.xlsx" />
-    <None Include="_PROJECT\view.md" />
+    <None Include="_PROJECT\MD\view.md" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Untitled1.png" />
@@ -738,7 +738,7 @@
     <Folder Include="_PROJECT\bug_and_test\" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="_PROJECT\_DOC\UXItemTemplate.txt" />
+    <Resource Include="_PROJECT\CODE_RESEARCH\UXItemTemplate.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
