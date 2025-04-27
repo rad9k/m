@@ -1949,9 +1949,9 @@ namespace m0
             //
             //  _(?<expr>)
 
-            AddSingleOperator(k, smu, smb, keyword, any, "_(?<expr>)", "CopySet");
+            AddSingleOperator(k, smu, smb, keyword, any, "%(?<expr>)", "CopySet");
 
-            LegacySystem.Graph.EasyVertex.Get(k, false, "_(?<expr>)").AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy);
+            LegacySystem.Graph.EasyVertex.Get(k, false, "%(?<expr>)").AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy);
 
             // `
             //

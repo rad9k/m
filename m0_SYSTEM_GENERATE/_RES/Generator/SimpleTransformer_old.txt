@@ -45,14 +45,14 @@
 		attribute "AdditionalOctaveShift" @Integer
 		method "CopyAtomAttributes" ()
 			<@System\Meta\Presentation\$Hide :: @$Empty>
-			Output\ExtendTimeLength = %Input\ExtendTimeLength
+			Output\ExtendTimeLength = _Input\ExtendTimeLength
 			if Output\Length === ~00
-				Output +< @@HasLength\Length :: %"0"
-			Output\Length = %Input\Length
+				Output +< @@HasLength\Length :: _"0"
+			Output\Length = _Input\Length
 			if Output\IsDrum === ~00
-				Output +< @@Sequence\IsDrum :: %"False"
+				Output +< @@Sequence\IsDrum :: _"False"
 			if Input\IsDrum<> == "1"
-				Output\IsDrum = %Input\IsDrum
+				Output\IsDrum = _Input\IsDrum
 		method "DoNoteShift" (@Integer "note")
 			variable "nNote" @Integer
 			this\'AdditionalOctaveShift' = "0"
@@ -113,7 +113,7 @@
 						velocity = this.'DoVelocityShift'[e\Velocity]
 						length = this.'DoLengthShift'[e\Length]
 						@@$Is ;; @@NoteEvent
-						@@Event\TriggerTime :: %e\TriggerTime
+						@@Event\TriggerTime :: _e\TriggerTime
 						@@HasLength\Length :: length
 						@@Pitch\Octave :: octave
 						@@Pitch\Note :: note
@@ -121,8 +121,8 @@
 					if e\$Is:ControlChangeEvent<> == "1"
 						CCvalue = this.'DoControlChangeShift'[e\Value]
 						@@$Is ;; @@ControlChangeEvent
-						@@Event\TriggerTime :: %e\TriggerTime
-						@@ControlChange\Number :: %e\Number
+						@@Event\TriggerTime :: _e\TriggerTime
+						@@ControlChange\Number :: _e\Number
 						@@ControlChange\Value :: CCvalue
 				}
 		method "PutIntoStore" ()

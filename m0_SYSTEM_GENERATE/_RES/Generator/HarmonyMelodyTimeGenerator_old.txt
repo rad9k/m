@@ -16,12 +16,12 @@
 		method "CopyAtomAttributes" ()
 			<@System\Meta\Presentation\$Hide :: @$Empty>
 			if Output\Length === ~00
-				Output +< @@HasLength\Length :: %"0"
-			Output\Length = %TriggerSet\Length
+				Output +< @@HasLength\Length :: _"0"
+			Output\Length = _TriggerSet\Length
 			if Output\IsDrum === ~00
-				Output +< @@Sequence\IsDrum :: %"False"
+				Output +< @@Sequence\IsDrum :: _"False"
 			if MelodyFlow\IsDrum<> == "1"
-				Output\IsDrum = %MelodyFlow\IsDrum
+				Output\IsDrum = _MelodyFlow\IsDrum
 		method "CreateEventsNoDrum" ()
 			<@System\Meta\Presentation\$Hide :: @$Empty>
 			variable "note" @Integer
@@ -34,13 +34,13 @@
 			foreach t in TriggerSet\Trigger:
 				Output +< @@History\Event :: t{
 					melody = MelodyFlow\Step<<counter>>\Quant\Note
-					note = %sortedChordProgressionChord1<<melody + "1">>\Note
+					note = _sortedChordProgressionChord1<<melody + "1">>\Note
 					@@$Is ;; @@NoteEvent
-					@@Event\TriggerTime :: %t\TriggerTime
-					@@HasLength\Length :: %t\Length
-					@@Pitch\Octave :: %BaseOctave
+					@@Event\TriggerTime :: _t\TriggerTime
+					@@HasLength\Length :: _t\Length
+					@@Pitch\Octave :: _BaseOctave
 					@@Pitch\Note :: note
-					@@Note\Velocity :: %t\Velocity
+					@@Note\Velocity :: _t\Velocity
 					counter = counter + "1"
 				}
 		method "CreateEventsDrum" ()
@@ -52,11 +52,11 @@
 				foreach quant in MelodyFlow\Step<<counter>>\Quant
 					Output +< @@History\Event :: t{
 						@@$Is ;; @@NoteEvent
-						@@Event\TriggerTime :: %t\TriggerTime
+						@@Event\TriggerTime :: _t\TriggerTime
 						@@HasLength\Length :: - "0"
-						@@Pitch\Octave :: %quant\Octave
-						@@Pitch\Note :: %quant\Note
-						@@Note\Velocity :: %t\Velocity
+						@@Pitch\Octave :: _quant\Octave
+						@@Pitch\Note :: _quant\Note
+						@@Note\Velocity :: _t\Velocity
 					}
 				counter = counter + "1"
 		method "PutIntoStore" ()
