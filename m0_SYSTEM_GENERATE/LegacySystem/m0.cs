@@ -496,6 +496,7 @@ namespace m0
                 ",If{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},$InstanceCreationPriority:,$EmptyValueInstance:,$EmptyMetaInstance:},Test{Expression{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},Case{$MinCardinality:0,$MaxCardinality:-1,$IsAggregation:},Fallback{$MinCardinality:0,$MaxCardinality:1,$IsAggregation:},$InstanceCreationPriority:,$EmptyValueInstance:,$EmptyMetaInstance:},Case{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},$InstanceCreationPriority:,$EmptyValueInstance:},Fallback{$InstanceCreationPriority:,$EmptyValueInstance:}" +
                 ",EmptySet,Constant" +
                 ",Execute,Parse,ParseWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}},Generate,GenerateWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}" +
+                ",CreateView{Source{TriggerQuery,TransformFunction},Target}" +
                 ",this,Package{$InstanceCreationPriority:}" +
                 "}");            
 
@@ -592,6 +593,10 @@ namespace m0
             AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "Generate"), "Generate");
             AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "ParseWithLanguage"), "Parse");
             AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "GenerateWithLanguage"), "Generate");
+
+            // create_view
+
+            AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "CreateView"), "CreateView");
 
 
 
@@ -778,6 +783,10 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleSemicolon").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "PropagateToStackExpression"));
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, "CreateView").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "ZeroOperator"));
 
             // rest inherits
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"Action").AddEdge(
@@ -993,6 +1002,26 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"GenerateWithLanguage\FormalTextLanguage").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, @"Atom"));
+
+            // create_view
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\Source\TriggerQuery").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smzt, false, @"String"));
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\Source\TransformFunction").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function"));
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\Target").AddEdge(
+               null,
+               LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\Source\TriggerQuery"));
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\Target").AddEdge(
+               null,
+               LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\Source\TransformFunction"));
+
+            //
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"ParseWithLanguage\FormalTextLanguage").AddEdge(isAggregation, Empty);
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"GenerateWithLanguage\FormalTextLanguage").AddEdge(isAggregation, Empty);

@@ -22,6 +22,8 @@ View is defined as meta edge. When this meta edge is added to given vertex (the 
 	- trigger query
 	- transform function
 
+__After the "Possible view definitions" evaluation we come to conclusion, that just trigger queries and transform function are enough to express above.__
+
 ### transform function parameters
 
 - events @Vertex
@@ -35,8 +37,27 @@ View is defined as meta edge. When this meta edge is added to given vertex (the 
 |:-----------------------------|:--------------|:---------------|:-------------------|:------------------------|:-------------------|:------------------------|
 |one time from source to target|fire and forget|source to target|NO                  |YES                      |NO                  |NO                       |
 |updatable source to target    |updatable      |source to target|YES                 |YES                      |NO                  |NO                       |
-|updatable target to source    |updatable      |target to source|NO                  |NO                       |YES                 |YES                     
+|updatable target to source    |updatable      |target to source|NO                  |NO                       |YES                 |YES                      |
 |updatable both                |updatable      |both            |YES                 |YES                      |YES                 |YES                      |
 
-## View defintion
+## Graph
+
+- `$Empty ::`
+	- `$Is :: CreateView`
+	- `Source ::`
+		- `TriggerQuery :: <string>`
+		- `TransformFunction :: <function>`
+	- `Target ::`
+		- `TriggerQuery :: <string>`
+		- `TransformFunction :: <function>`
+
 ## Syntax
+	vertex +< create_view
+		view_source
+			view_query "<string>"
+			view_query "<string>"
+			view_function @source_function
+		view_target
+			view_query "<string>"
+			view_query "<string>"
+			view_function @target_function

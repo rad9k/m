@@ -626,6 +626,7 @@
     <AppDesigner Include="Properties\" />
     <EmbeddedResource Include="ZeroCodeHighlighting.xshd" />
     <None Include="_PROJECT\diagrams.eap" />
+    <None Include="_PROJECT\MD\graph_trigger.md" />
     <None Include="_PROJECT\test\edgeonly.xlsx" />
     <None Include="_PROJECT\MD\view.md" />
   </ItemGroup>
