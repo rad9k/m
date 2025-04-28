@@ -455,6 +455,7 @@ namespace m0
         {
             IVertex smu = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroUML");
             IVertex smzt = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes");
+            IVertex smzte = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\ExecutionFlow");
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
 
             IVertex nse = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\$$NoSequentialExecution");
@@ -497,6 +498,7 @@ namespace m0
                 ",EmptySet,Constant" +
                 ",Execute,Parse,ParseWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}},Generate,GenerateWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",CreateView{Source{TriggerQuery,TransformFunction},Target}" +
+                ",CreateTrigger{Query,Filter,Listener}" +
                 ",this,Package{$InstanceCreationPriority:}" +
                 "}");            
 
@@ -598,6 +600,9 @@ namespace m0
 
             AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "CreateView"), "CreateView");
 
+            // create trigger
+
+            AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "CreateTrigger"), "CreateTrigger");
 
 
             ////////////////////////////////////////////////////////////////////////
@@ -785,6 +790,10 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "PropagateToStackExpression"));
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, "CreateView").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "ZeroOperator"));
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, "CreateTrigger").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "ZeroOperator"));
 
@@ -1020,6 +1029,20 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\Target").AddEdge(
                null,
                LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\Source\TransformFunction"));
+
+            // create trigger
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Filter").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smzte, false, @"GraphChangeFilterEnum"));
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Query").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smzt, false, @"String"));
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Listener").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function"));
 
             //
 
@@ -2471,6 +2494,16 @@ namespace m0
             // package
             //
             // package
+
+            IVertex o_package = k.AddVertex(keyword, "package (?<name>)");
+
+            IVertex o_package_base = o_package.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Package"), "(?<name>)");
+
+            o_package_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Package"));
+
+            // create trigger
+            //
+            // create trigger
 
             IVertex o_package = k.AddVertex(keyword, "package (?<name>)");
 

@@ -23,7 +23,7 @@
 
 ## Syntax
 
-	vertex +< create_trigger
+	vertex +< create_trigger "<name string>"
 		trigger_filter @<GraphChangeFilterEnum value>
 		trigger_query "<string>"
 		trigger_listener @listener_function

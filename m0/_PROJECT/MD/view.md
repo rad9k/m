@@ -42,7 +42,7 @@ __After the "Possible view definitions" evaluation we come to conclusion, that j
 
 ## Graph
 
-- `$Empty ::`
+- `$Empty :: <name string>`
 	- `$Is :: CreateView`
 	- `Source ::`
 		- `TriggerQuery :: <string>`
@@ -52,7 +52,7 @@ __After the "Possible view definitions" evaluation we come to conclusion, that j
 		- `TransformFunction :: <function>`
 
 ## Syntax
-	vertex +< create_view
+	vertex +< create_view "<name string>"
 		view_source
 			view_query "<string>"
 			view_query "<string>"
