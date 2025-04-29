@@ -1501,7 +1501,7 @@ namespace m0
 
             // function
             //
-            // func (?<name>) [(*(+, +)(?<paramType>) (?<paramName>)*)]
+            // funct (?<name>) [(*(+, +)(?<paramType>) (?<paramName>)*)]
 
             IVertex function3 = k.AddVertex(keyword, "funct (?<name>) ((*(+, +)(?<paramType>) (?<paramName>)*))");
 
