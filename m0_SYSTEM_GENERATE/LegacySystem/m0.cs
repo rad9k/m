@@ -1051,6 +1051,7 @@ namespace m0
 
 
             // $IsAggregation's for EdgeTargets
+
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"Return\Expression").AddEdge(isAggregation, Empty);
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"NextOut\Next").AddEdge(isAggregation, Empty);
             
@@ -1067,6 +1068,26 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"Case\Test").AddEdge(isAggregation, Empty);
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"ForEach\Set").AddEdge(isAggregation, Empty);
+
+            //
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger").AddEdge(isAggregation, Empty);
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Query").AddEdge(isAggregation, Empty);
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\Listener").AddEdge(isAggregation, Empty);
+
+            //
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView").AddEdge(isAggregation, Empty);
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\Source").AddEdge(isAggregation, Empty);
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\Target").AddEdge(isAggregation, Empty);
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\Source\TriggerQuery").AddEdge(isAggregation, Empty);
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\Source").AddEdge(isAggregation, Empty);
 
             // package
             IVertex package = LegacySystem.Graph.EasyVertex.Get(smu, false, "Package");
