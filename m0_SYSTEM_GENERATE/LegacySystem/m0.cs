@@ -1075,7 +1075,7 @@ namespace m0
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Query").AddEdge(isAggregation, Empty);
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\Listener").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Listener").AddEdge(isAggregation, Empty);
 
             //
 
