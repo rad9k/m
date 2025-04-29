@@ -2505,11 +2505,29 @@ namespace m0
             //
             // create trigger
 
-            IVertex o_package = k.AddVertex(keyword, "package (?<name>)");
+            IVertex o_create_trigger = k.AddVertex(keyword, "create trigger (?<name>)");
 
-            IVertex o_package_base = o_package.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Package"), "(?<name>)");
+            IVertex o_create_trigger_base = o_create_trigger.AddVertex(any, "(?<name>)");
 
-            o_package_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Package"));
+            o_create_trigger_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger"));
+
+            // trigger filter
+
+            IVertex o_trigger_filter = k.AddVertex(keyword, "trigger filter (?<filter>)");
+
+            IVertex o_trigger_filter_base = o_trigger_filter.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Filter"), "(?<filter>)");
+
+            // trigger query
+
+            IVertex o_trigger_query = k.AddVertex(keyword, "trigger query (?<query>)");
+
+            IVertex o_trigger_query_base = o_trigger_query.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Query"), "(?<query>)");
+
+            // trigger listener
+
+            IVertex o_trigger_listener = k.AddVertex(keyword, "trigger listener (?<listener>)");
+
+            IVertex o_trigger_listener_base = o_trigger_listener.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Listener"), "(?<listener>)");
         }
 
         private static void AddDoubleOperator(IVertex k, IVertex smu, IVertex smb, IVertex keyword, IVertex any, string text, string _is)
@@ -2630,6 +2648,8 @@ namespace m0
             DirectMeta.Value = "$ImportDirectMeta";
 
             DirectMeta.AddEdge(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$IsLink"), Empty);
+
+            di.AddEdge(DirectMeta, LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum"));
 
             di.AddEdge(DirectMeta, LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroUML"));
 

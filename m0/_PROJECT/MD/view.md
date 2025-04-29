@@ -51,13 +51,13 @@ __After the "Possible view definitions" evaluation we come to conclusion, that j
 		- `TriggerQuery :: <string>`
 		- `TransformFunction :: <function>`
 
-## Syntax
-	vertex +< create_view "<name string>"
-		view_source
-			view_query "<string>"
-			view_query "<string>"
-			view_function @source_function
-		view_target
-			view_query "<string>"
-			view_query "<string>"
-			view_function @target_function
+## Create Syntax
+	vertex +< create view "<name string>"
+		view source
+			view query "<string>"
+			view query "<string>"
+			view function @source_function
+		view target
+			view query "<string>"
+			view query "<string>"
+			view function @target_function

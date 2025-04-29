@@ -21,9 +21,9 @@
 - MetaEdgeRemoved
 - OutputEdgeDisposed
 
-## Syntax
+## Create Syntax
 
-	vertex +< create_trigger "<name string>"
-		trigger_filter @<GraphChangeFilterEnum value>
-		trigger_query "<string>"
-		trigger_listener @listener_function
+	vertex +< create trigger "<name string>"
+		trigger filter @<GraphChangeFilterEnum value>
+		trigger query "<string>"
+		trigger listener @listener_function
