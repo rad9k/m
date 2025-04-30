@@ -66,7 +66,14 @@
       <Word>this</Word>
       <Word>block</Word>
       <Word>namedblock</Word>
-      <Word>package</Word>
+      <Word>trigger</Word>
+	  <Word>filter</Word>
+	  <Word>query</Word>
+	  <Word>filter</Word>
+	  <Word>listener</Word>
+	  <Word>view</Word>
+	  <Word>source</Word>
+	  <Word>target</Word>
     </Keywords>
 
 

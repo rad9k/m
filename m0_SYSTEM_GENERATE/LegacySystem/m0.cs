@@ -497,8 +497,8 @@ namespace m0
                 ",If{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},$InstanceCreationPriority:,$EmptyValueInstance:,$EmptyMetaInstance:},Test{Expression{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},Case{$MinCardinality:0,$MaxCardinality:-1,$IsAggregation:},Fallback{$MinCardinality:0,$MaxCardinality:1,$IsAggregation:},$InstanceCreationPriority:,$EmptyValueInstance:,$EmptyMetaInstance:},Case{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},$InstanceCreationPriority:,$EmptyValueInstance:},Fallback{$InstanceCreationPriority:,$EmptyValueInstance:}" +
                 ",EmptySet,Constant" +
                 ",Execute,Parse,ParseWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}},Generate,GenerateWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}" +
-                ",CreateView{Source{TriggerQuery,TransformFunction},Target}" +
-                ",CreateTrigger{Query,Filter,Listener}" +
+                ",CreateView{CreateIn,Source{TriggerQuery,TransformFunction},Target}" +
+                ",CreateTrigger{CreateIn,Query,Filter,Listener}" +
                 ",this,Package{$InstanceCreationPriority:}" +
                 "}");            
 
@@ -1073,6 +1073,8 @@ namespace m0
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger").AddEdge(isAggregation, Empty);
 
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\CreateIn").AddEdge(isAggregation, Empty);
+
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Query").AddEdge(isAggregation, Empty);
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Listener").AddEdge(isAggregation, Empty);
@@ -1080,6 +1082,8 @@ namespace m0
             //
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView").AddEdge(isAggregation, Empty);
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\CreateIn").AddEdge(isAggregation, Empty);
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\Source").AddEdge(isAggregation, Empty);
 
@@ -2544,33 +2548,33 @@ namespace m0
             //
             // create trigger
 
-            IVertex o_create_trigger = k.AddVertex(keyword, "ctct (?<query>) create trigger (?<name>)");
+            IVertex o_create_trigger = k.AddVertex(keyword, "trigger (?<name>)");
 
-            IVertex o_create_trigger_base = o_create_trigger.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger"), "(?<name>)");
+            IVertex o_create_trigger_base = o_create_trigger.AddVertex(any, "(?<name>)");
 
-           // o_create_trigger_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$StartInLocalRoot"), "");
+            //o_create_trigger_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$StartInLocalRoot"), "");
 
             o_create_trigger_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger"));
 
-            IVertex o_trigger_query_base2 = o_create_trigger_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Query"), "(?<query>)");
+         //   IVertex o_trigger_query_base2 = o_create_trigger_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Query"), "(?<query>)");
 
-            // trigger filter
+          /*  // trigger filter
 
             IVertex o_trigger_filter = k.AddVertex(keyword, "trigger filter (?<filter>)");
 
             IVertex o_trigger_filter_base = o_trigger_filter.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Filter"), "(?<filter>)");
-
+          */
             // trigger query
 
-            IVertex o_trigger_query = k.AddVertex(keyword, "trigger query (?<query>)");
+            IVertex o_trigger_query = k.AddVertex(keyword, "query (?<query>)");
 
             IVertex o_trigger_query_base = o_trigger_query.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Query"), "(?<query>)");
 
             // trigger listener
-
+/*
             IVertex o_trigger_listener = k.AddVertex(keyword, "trigger listener (?<listener>)");
 
-            IVertex o_trigger_listener_base = o_trigger_listener.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Listener"), "(?<listener>)");
+            IVertex o_trigger_listener_base = o_trigger_listener.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Listener"), "(?<listener>)");*/
         }
 
         private static void AddDoubleOperator(IVertex k, IVertex smu, IVertex smb, IVertex keyword, IVertex any, string text, string _is)

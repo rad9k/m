@@ -44,6 +44,7 @@ __After the "Possible view definitions" evaluation we come to conclusion, that j
 
 - `$Empty :: <name string>`
 	- `$Is :: CreateView`
+	- `CreateIn :: <query>`
 	- `Source ::`
 		- `TriggerQuery :: <string>`
 		- `TransformFunction :: <function>`
@@ -52,7 +53,7 @@ __After the "Possible view definitions" evaluation we come to conclusion, that j
 		- `TransformFunction :: <function>`
 
 ## Create Syntax
-	vertex +< create view "<name string>"
+	in <query> create view "<name string>"
 		view source
 			view query "<string>"
 			view query "<string>"

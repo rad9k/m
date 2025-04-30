@@ -4,6 +4,7 @@
 
 - `GraphChangeTrigger :: <name string>`
 	- `$Is :: GraphChangeTrigger`
+	- `CreateIn :: <query>`
 	- `ChangeTypeFilter :: <GraphChangeFilterEnum>`
 	- `ScopeQuery :: <string>`
 	- `Listener :: <listener function>`
@@ -23,7 +24,7 @@
 
 ## Create Syntax
 
-	vertex +< create trigger "<name string>"
+	in <query> create trigger "<name string>"
 		trigger filter @<GraphChangeFilterEnum value>
 		trigger query "<string>"
 		trigger listener @listener_function
