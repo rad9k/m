@@ -2544,13 +2544,15 @@ namespace m0
             //
             // create trigger
 
-            IVertex o_create_trigger = k.AddVertex(keyword, "create trigger (?<name>)");
+            IVertex o_create_trigger = k.AddVertex(keyword, "ctct (?<query>) create trigger (?<name>)");
 
-            IVertex o_create_trigger_base = o_create_trigger.AddVertex(any, "(?<name>)");
+            IVertex o_create_trigger_base = o_create_trigger.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger"), "(?<name>)");
 
-            o_create_trigger_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$StartInLocalRoot"), "");
+           // o_create_trigger_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$StartInLocalRoot"), "");
 
             o_create_trigger_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger"));
+
+            IVertex o_trigger_query_base2 = o_create_trigger_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Query"), "(?<query>)");
 
             // trigger filter
 
