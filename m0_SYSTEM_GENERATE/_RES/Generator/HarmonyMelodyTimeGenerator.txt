@@ -35,7 +35,7 @@
 				Output +< @@History\Event :: t{
 					melody = MelodyFlow\Step<<counter>>\Quant\Note
 					note = %sortedChordProgressionChord1<<melody + "1">>\Note
-					@@$Is ;; @@NoteEvent
+					@@$Is ::> @@NoteEvent
 					@@Event\TriggerTime :: %t\TriggerTime
 					@@HasLength\Length :: %t\Length
 					@@Pitch\Octave :: %BaseOctave
@@ -51,7 +51,7 @@
 			foreach t in TriggerSet\Trigger:
 				foreach quant in MelodyFlow\Step<<counter>>\Quant
 					Output +< @@History\Event :: t{
-						@@$Is ;; @@NoteEvent
+						@@$Is ::> @@NoteEvent
 						@@Event\TriggerTime :: %t\TriggerTime
 						@@HasLength\Length :: - "0"
 						@@Pitch\Octave :: %quant\Octave
@@ -63,8 +63,8 @@
 			<@System\Meta\Presentation\$Hide :: @$Empty>
 			variable "parentVertex" @Vertex
 			parentVertex = Output#Sequence:
-			parentVertex <+< @@Sequence ;; Output
-			parentVertex -< @@Sequence ;; this\Output
+			parentVertex <+< @@Sequence ::> Output
+			parentVertex -< @@Sequence ::> this\Output
 		method "Dispose" ()
 			<@System\Meta\Presentation\$Hide :: @$Empty>
 		method "Process" ()

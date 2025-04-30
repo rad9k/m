@@ -1898,7 +1898,7 @@ namespace m0
             //
             // (?<left_ColonEmptyNew>);;(?<SUB>)(?<right_ColonEmptyNew>)                         
 
-            IVertex o_doubleSemicolon = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>) ;; (?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)");
+            IVertex o_doubleSemicolon = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>) ::> (?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)");
 
             //IVertex o_doubleSemicolon = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLink>);;(?<SUB>)(?<right_ColonEmptyInner2SlashMarkIndexMethodNewLink>)");
 
@@ -1922,7 +1922,7 @@ namespace m0
             //
             // ;;(?<SUB>)(?<right_ColonEmptyNew>)                         
 
-            IVertex o_doubleSemicolon2 = k.AddVertex(keyword, ";; (?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)");
+            IVertex o_doubleSemicolon2 = k.AddVertex(keyword, "::> (?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)");
 
             //IVertex o_doubleSemicolon2 = k.AddVertex(keyword, ";;(?<SUB>)(?<right_ColonEmptyInner2SlashMarkIndexMethodNewLink>)");
 
@@ -1943,7 +1943,7 @@ namespace m0
             //
             // (?<left_ColonEmptyNew>);;(?<SUB>)                         
 
-            IVertex o_doubleSemicolon3 = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>) ;;");
+            IVertex o_doubleSemicolon3 = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>) ::>");
 
             // Vertex o_doubleSemicolon3 = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLink>);;(?<SUB>)");
 

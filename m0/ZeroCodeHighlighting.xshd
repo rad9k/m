@@ -78,16 +78,16 @@
 
 
     <Rule color="DoubleColon">
-      ::|;;
+      ::|&lt;|&gt;
     </Rule>
     
     <Rule color="Operator">
-      \#|&lt;&gt;|&lt;\+&gt;|&lt;-&gt;|&lt;-|\+&lt;|=|\+=|~=|-&lt;|~&lt;|&lt;-|&lt;\+&lt;|&lt;&lt;&lt;|&lt;&lt;|&gt;&gt;|~00|\+|-|\*|/|==|===|====|!=|!|\&amp;|\||&gt;=|&lt;=|::|:|;;|%|`|\[|\]|\(|\)|\\|\?|\{|\}|\.|,|\+&lt;
+		\#|&lt;&gt;|&lt;\+&gt;|&lt;-&gt;|&lt;-|\+&lt;|=|\+=|~=|-&lt;|~&lt;|&lt;-|&lt;\+&lt;|&lt;&lt;&lt;|&lt;&lt;|&gt;&gt;|~00|\+|-|\*|/|==|===|====|!=|!|\&amp;|\||&gt;=|&lt;=|::|:|;;|%|`|\[|\]|\(|\)|\\|\?|\{|\}|\.|,|\+&lt;
     </Rule>
 
 
     <Rule color="grey">
-      &lt;|&gt;|\^
+      \^
     </Rule>
 
     <Rule color="DolarKeyword">

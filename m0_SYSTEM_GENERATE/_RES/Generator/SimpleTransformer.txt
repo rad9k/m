@@ -112,7 +112,7 @@
 						octave = this.'DoOctaveShift'[e\Octave]
 						velocity = this.'DoVelocityShift'[e\Velocity]
 						length = this.'DoLengthShift'[e\Length]
-						@@$Is ;; @@NoteEvent
+						@@$Is ::> @@NoteEvent
 						@@Event\TriggerTime :: %e\TriggerTime
 						@@HasLength\Length :: length
 						@@Pitch\Octave :: octave
@@ -120,7 +120,7 @@
 						@@Note\Velocity :: velocity
 					if e\$Is:ControlChangeEvent<> == "1"
 						CCvalue = this.'DoControlChangeShift'[e\Value]
-						@@$Is ;; @@ControlChangeEvent
+						@@$Is ::> @@ControlChangeEvent
 						@@Event\TriggerTime :: %e\TriggerTime
 						@@ControlChange\Number :: %e\Number
 						@@ControlChange\Value :: CCvalue
@@ -129,8 +129,8 @@
 			<@System\Meta\Presentation\$Hide :: @$Empty>
 			variable "parentVertex" @Vertex
 			parentVertex = Output#Sequence:
-			parentVertex <+< @@Sequence ;; Output
-			parentVertex -< @@Sequence ;; this\Output
+			parentVertex <+< @@Sequence ::> Output
+			parentVertex -< @@Sequence ::> this\Output
 		method "Dispose" ()
 			<@System\Meta\Presentation\$Hide :: @$Empty>
 			this\'AdditionalOctaveShift' = "0"
