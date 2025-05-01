@@ -1,15 +1,15 @@
 # Graph Change Trigger
 
-## Graph
+## Graph 
 
-- `GraphChangeTrigger :: <name string>`
-	- `$Is :: GraphChangeTrigger`
-	- `CreateIn :: <query>`
-	- `ChangeTypeFilter :: <GraphChangeFilterEnum>`
-	- `ScopeQuery :: <string>`
-	- `Listener :: <listener function>`
+	<$GraphChangeTrigger :: "name string">
+		<@$Is :: @GraphChangeTrigger>		
+		<@ChangeTypeFilter :: @GraphChangeFilterEnum/value>
+		<@ScopeQuery :: "query">
+		<@Listener :: @ListenerFunction>
 
-### GraphChangeFilterEnum
+
+## GraphChangeFilterEnum
 
 - OnlyNonTransactedRootVertexEvents
 - FilterOutRootVertexEvents
@@ -22,7 +22,16 @@
 - MetaEdgeRemoved
 - OutputEdgeDisposed
 
-## Create Syntax
+## create trigger Graph
+
+	<@CreateTrigger :: "name string">
+		<@$Is :: @CreateTrigger>
+		<@CreateIn :: "query">
+		<@ChangeTypeFilter :: @GraphChangeFilterEnum/value>
+		<@ScopeQuery :: "query">
+		<@Listener :: @ListenerFunction>
+
+## create trigger Syntax
 
 	in <query> create trigger "<name string>"
 		trigger filter @<GraphChangeFilterEnum value>

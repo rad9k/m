@@ -498,7 +498,7 @@ namespace m0
                 ",EmptySet,Constant" +
                 ",Execute,Parse,ParseWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}},Generate,GenerateWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",CreateView{CreateIn,Source{TriggerQuery,TransformFunction},Target}" +
-                ",CreateTrigger{CreateIn,Query,Filter,Listener}" +
+                ",CreateTrigger{CreateIn,ScopeQuery,ChangeTypeFilter,Listener}" +
                 ",this,Package{$InstanceCreationPriority:}" +
                 "}");            
 
