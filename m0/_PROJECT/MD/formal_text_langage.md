@@ -4,28 +4,30 @@
 
 Those meta edges are used in keyword definition.
 
-### (?<ANY>)
+### ANY
 
-`(?<ANY>) :: <new vertex>`
+	<(?<ANY>) :: <new vertex>>
 
-The `(?<ANY>)` meta edge in keyword definition will match any meta edge to match this keyword in given edge. This is especially usefull when nesting expressions. Example:
+The `(?<ANY>)` meta edge in keyword definition will match any meta edge to match this keyword in given edge. This is especially usefull when nesting expressions. 
 
-	$Keyword :: (?<left>) +<(?<SUB>) (?<right>)
-		(?<ANY>) ::
-			$Is :: AddRightEdgeesIntoLeftEdges
-			LeftExpression :: (?<left>)
-			RightExpression :: (?<right>)
+Example:
+
+	<@$Keyword :: ""(?<left>) +<(?<SUB>) (?<right>)">
+		<@(?<ANY>) :: >
+			<@$Is :: AddRightEdgeesIntoLeftEdges>
+			<@LeftExpression :: "(?<left>)">
+			<@RightExpression :: "(?<right>)">
 
 Above keyword will match following sub graph, even as there is `Next` meta in the root edge. The `Next` meta does not exist in the keyword definition and is matched by `(?<ANY>)`.
 
-	Next ::
-		$Is :: AddRightEdgeesIntoLeftEdges
-		LeftExpression :: "A"
-		RightExpression :: "B"
+	<@Next :: >
+		<@$Is :: @AddRightEdgeesIntoLeftEdges>
+		<@LeftExpression :: "A">
+		<@RightExpression :: "B">
 
-### (?<LAST>)
+### LAST
 
-`(?<LAST>) :: <new vertex>`
+	<(?<LAST>) :: "new vertex">
 
 The meta of new current edge is the meta of last (previously) added edge. This is used in import definitions.
 
@@ -38,9 +40,9 @@ The meta of new current edge is the meta of last (previously) added edge. This i
 
 ### $KeywordGroupDefinition
 
-Defines keyword group.
+	<@$KeywordGroupDefinition :: "keyword group name">
 
-`$KeywordGroupDefinition :: <keyword group name>`
+Defines keyword group.
 
 ### $$KeywordGroup
 
@@ -55,6 +57,24 @@ Defines keyword group.
 ### $$NewVertexKeyword
 
 ### $$ForceNewVertex
+
+	<@$$ForceNewVertex :: @$Empty>
+
+Enforfces to create new vertex string and not link in graph-2-text. This special meta is used in case where `$IsAggregation ::` can not be used.
+
+	<@Keyword :: "attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>) <<(?<MinValue>):(?<MaxValue>)>>">
+		<@Attribte :: "(?<name>)">
+			<@$EdgeTarget :: @(?<type>)>
+			<@MinValue :: "(?<MinValue>)">
+				<@$$ForceNewVertex :: @$Empty>
+			<@MaxValue :: "(?<MaxValue>)">
+				<@$$ForceNewVertex :: @$Empty>
+			<@$MinCardinality :: "(?<MinCardinality>)">
+				<@$$ForceNewVertex :: @$Empty>
+			<@$MaxCardinality :: "(?<MaxCardinality>)">
+				<@$$ForceNewVertex :: @$Empty>
+			<@$IsAggregation :: @$Empty>
+			<@$Is :: @Attribute>
 
 ### $$LinkKeyword
 
