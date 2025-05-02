@@ -69,7 +69,7 @@ Defines keyword group.
 When the keyword string has `(* ... *)` section, there is a need to define what keyword edge will mach the `(* ... *)` section. The `$$KeywordManyRoot` special meta being present in given edge's child edge, makes given edge the `(* ... *)` section root. That means this edge will be present in the result graph as many times as there are `(* ... *)` section maches in the source text.
 
 Example:
-
+ 
 - Keyword definition:
 ```-0
 <@$Keyword :: "method (?<name>) (?<returnType>)((*(+, +)(?<paramType>) (?<paramName>)*))">
