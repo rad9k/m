@@ -48,6 +48,17 @@ Defines keyword group.
 
 ### $$KeywordManyRoot
 
+Example:
+
+	<@$Keyword :: "method (?<name>) (?<returnType>)((*(+, +)(?<paramType>) (?<paramName>)*))">
+		<@Method :: "(?<name>)">
+			<@$Is :: @Method>
+			<@Output :: "(?<returnType>)">
+			<@InputParameter :: "(?<paramName>)">
+				<$EdgeTarget :: "(?<paramType>)">
+				<@$$KeywordManyRoot :: @$Empty>
+
+
 ### $$LocalRoot
 
 ### $$StartInLocalRoot
