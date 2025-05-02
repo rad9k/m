@@ -2,7 +2,7 @@
 
 ## General flow
 
-source string + keyword definition -> result graph
+code source string + keyword definition -> result graph
 
 ## Keyword string
 
@@ -80,7 +80,7 @@ Example:
 			<$EdgeTarget :: "(?<paramType>)">
 			<@$$KeywordManyRoot :: @$Empty>
 ```
-- Input string:
+- Code source string:
 ```-0
 method "setName" (@String "name", @String "surname")
 ```
@@ -96,7 +96,81 @@ method "setName" (@String "name", @String "surname")
 
 ### $$LocalRoot
 
+In keyword definition, edge containing child `$$LocalRoot` defines _local root_. 
+The _local root_ is def
+`$$LocalRoot` child edge having edge in keyword definition
+
+Edges resulting from keyword definition containing edges that are having child edge with `$$StartInLocalRoot` as meta will be added to _local root_, instead of the _default root_.
+
+- _local root_ defining keyword
+```-0
+<@$Keyword :: "(?<value)">
+	<@$$EmptyKeyword :: @$Empty>
+	<@$$KeywordGroup :: XXX>
+	<@(?<ANY>) :: "(?<value>)">
+		<@$$StartInLocalRoot :: @$Empty>
+		<@$Is :: @Query>
+		<@NextExpression :: @$Empty>
+			<@LocalRoot :: "GROUP_NAME">
+```
+- `$$StartInLocalRoot` keyword
+```-0
+<@$Keyword :: "%<<(?<expr)>>">
+	<@$$KeywordGroup :: XXX>
+	<@(?<ANY>) :: @$Empty>
+		<@$$StartInLocalRoot :: @$Empty>
+		<@$Is :: @SetIndex>
+		<@Expression :: "(?<expr>)">
+```
+- Code source string
+```-0
+query<<"1">>
+```
+- Result graph
+```-0
+<@$Empty :: "a">
+	<@$Is :: @Query>
+	<@NextExpression :: @$Empty>
+		<@$Is :: @SetIndex>
+			<@Expression :: "5">
+```
+
 ### $$StartInLocalRoot
+
+Edges resulting from keyword definition containing edges that are having child edge with `$$StartInLocalRoot` as meta will be added to _local root_, instead of the _default root_.
+
+- _local root_ defining keyword
+```-0
+<@$Keyword :: "(?<value)">
+	<@$$EmptyKeyword :: @$Empty>
+	<@$$KeywordGroup :: XXX>
+	<@(?<ANY>) :: "(?<value>)">
+		<@$$StartInLocalRoot :: @$Empty>
+		<@$Is :: @Query>
+		<@NextExpression :: @$Empty>
+			<@LocalRoot :: "GROUP_NAME">
+```
+- `$$StartInLocalRoot` keyword
+```-0
+<@$Keyword :: "%<<(?<expr)>>">
+	<@$$KeywordGroup :: XXX>
+	<@(?<ANY>) :: @$Empty>
+		<@$$StartInLocalRoot :: @$Empty>
+		<@$Is :: @SetIndex>
+		<@Expression :: "(?<expr>)">
+```
+- Code source string
+```-0
+query<<"1">>
+```
+- Result graph
+```-0
+<@$Empty :: "a">
+	<@$Is :: @Query>
+	<@NextExpression :: @$Empty>
+		<@$Is :: @SetIndex>
+			<@Expression :: "5">
+```
 
 ### $$EmptyKeyword
 

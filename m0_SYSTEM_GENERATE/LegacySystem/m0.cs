@@ -1032,11 +1032,11 @@ namespace m0
 
             // create trigger
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Filter").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\ChangeTypeFilter").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(smzte, false, @"GraphChangeFilterEnum"));
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Query").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\ScopeQuery").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(smzt, false, @"String"));
 
@@ -1075,7 +1075,7 @@ namespace m0
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\CreateIn").AddEdge(isAggregation, Empty);
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Query").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\ScopeQuery").AddEdge(isAggregation, Empty);
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Listener").AddEdge(isAggregation, Empty);
 
@@ -2040,9 +2040,9 @@ namespace m0
             o_colon3_any_targetExpr.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$LocalRoot"), kgd_SlashMarkIndexMethod);
 
 
-            // _
+            // %
             //
-            //  _(?<expr>)
+            //  %(?<expr>)
 
             AddSingleOperator(k, smu, smb, keyword, any, "%(?<expr>)", "CopySet");
 
@@ -2568,7 +2568,7 @@ namespace m0
 
             IVertex o_trigger_query = k.AddVertex(keyword, "query (?<query>)");
 
-            IVertex o_trigger_query_base = o_trigger_query.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Query"), "(?<query>)");
+            IVertex o_trigger_query_base = o_trigger_query.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\ScopeQuery"), "(?<query>)");
 
             // trigger listener
 /*
