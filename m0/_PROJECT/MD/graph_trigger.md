@@ -2,12 +2,13 @@
 
 ## Graph 
 
-	<$GraphChangeTrigger :: "name string">
-		<@$Is :: @GraphChangeTrigger>		
-		<@ChangeTypeFilter :: @GraphChangeFilterEnum/value>
-		<@ScopeQuery :: "query">
-		<@Listener :: @ListenerFunction>
-
+```-0
+<$GraphChangeTrigger :: "name string">
+	<@$Is :: @GraphChangeTrigger>		
+	<@ChangeTypeFilter :: @GraphChangeFilterEnum/value>
+	<@ScopeQuery :: "query">
+	<@Listener :: @ListenerFunction>
+```
 
 ## GraphChangeFilterEnum
 
@@ -24,16 +25,20 @@
 
 ## create trigger Graph
 
-	<@CreateTrigger :: "name string">
-		<@$Is :: @CreateTrigger>
-		<@CreateIn :: "query">
-		<@ChangeTypeFilter :: @GraphChangeFilterEnum/value>
-		<@ScopeQuery :: "query">
-		<@Listener :: @ListenerFunction>
+```-0
+<@CreateTrigger :: "name string">
+	<@$Is :: @CreateTrigger>
+	<@CreateIn :: "query">
+	<@ChangeTypeFilter :: @GraphChangeFilterEnum/value>
+	<@ScopeQuery :: "query">
+	<@Listener :: @ListenerFunction>
+```
 
 ## create trigger Syntax
 
-	in <query> create trigger "<name string>"
-		trigger filter @<GraphChangeFilterEnum value>
-		trigger query "<string>"
-		trigger listener @listener_function
+```-0
+in <query> create trigger "<name string>"
+	trigger filter @<GraphChangeFilterEnum value>
+	trigger query "<string>"
+	trigger listener @listener_function
+```

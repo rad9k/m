@@ -42,23 +42,28 @@ __After the "Possible view definitions" evaluation we come to conclusion, that j
 
 ## Graph
 
-	<@$Empty :: "name string">
-		<@$Is :: @CreateView>
-		<@CreateIn :: expression>
-		<@Source :: >
-			<@TriggerQuery :: "query">
-			<@TransformFunction :: @function>
-		<@Target :: >
-			<@TriggerQuery :: "query">
-			<@TransformFunction :: @function>
+```-0
+<@$Empty :: "name string">
+	<@$Is :: @CreateView>
+	<@CreateIn :: expression>
+	<@Source :: >
+		<@TriggerQuery :: "query">
+		<@TransformFunction :: @function>
+	<@Target :: >
+		<@TriggerQuery :: "query">
+		<@TransformFunction :: @function>
+```
 
 ## Create Syntax
-	in <query> create view "<name string>"
-		view source
-			view query "<string>"
-			view query "<string>"
-			view function @source_function
-		view target
-			view query "<string>"
-			view query "<string>"
-			view function @target_function
+
+```-0
+in <query> create view "<name string>"
+	view source
+		view query "<string>"
+		view query "<string>"
+		view function @source_function
+	view target
+		view query "<string>"
+		view query "<string>"
+		view function @target_function
+```
