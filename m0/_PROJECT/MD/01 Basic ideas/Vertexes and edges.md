@@ -17,3 +17,17 @@ However in some important edge scenarios the _incoming edges_ are also necessary
 
 # How do we write about edges and vertexes?
 
+As precise desciprtion of vertex / edge shape and values, we refer in this documentation might be lenghty and hard to read, we are going to use some "shortcuts" - phrases that are shorter but not quite precise.	
+	
+Those are:
+
+- **"Vertex _X_ has meta edge _Y_"**. 
+
+	Precise description: _Outgoing edges_ set for _vertex_ X contains edge, that has _meta vertex_ pointing to _vertex_ with has a value of Y.
+
+- **"Vertex _X_ has meta edge _Y_ with a value _Z_"**
+
+	Precise description: _Outgoing edges_ set for _vertex_ X contains edge, that has:
+	- _meta vertex_ pointing to _vertex_ with has a value of Y.
+	- _target vertex_ has value of _Z_.
+
