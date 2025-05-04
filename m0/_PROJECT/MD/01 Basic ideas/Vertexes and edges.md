@@ -12,5 +12,8 @@ The _edge_ has following properties:
 - edge's _meta vertex_ that points to _vertex_
 - target _vertex_
 
-In most cases the _incoming edges_ are of less importance, and most of the graph alghoritms in _MinusZero_ use only _outcoming edges_. However in some important edge scenarios the _incoming edges_
+In most cases the _incoming edges_ are of less importance, and most of the graph alghoritms in _MinusZero_ use only _outcoming edges_. 
+However in some important edge scenarios the _incoming edges_ are also necessary to be known for given _vertex_, so this is a reason our model directly supports _incoming edges_.
+
+# How do we write about edges and vertexes?
 
