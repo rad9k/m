@@ -107,7 +107,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="_PROJECT\MD\formal_text_langage.md" />
+    <None Include="_PROJECT\MD\01 Basic ideas\Vertexes and edges.md" />
+    <None Include="_PROJECT\MD\02 Advanced ideas\Formal text langage.md" />
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -627,9 +628,9 @@
     <AppDesigner Include="Properties\" />
     <EmbeddedResource Include="ZeroCodeHighlighting.xshd" />
     <None Include="_PROJECT\diagrams.eap" />
-    <None Include="_PROJECT\MD\graph_trigger.md" />
+    <None Include="_PROJECT\MD\02 Advanced ideas\Graph trigger.md" />
     <None Include="_PROJECT\test\edgeonly.xlsx" />
-    <None Include="_PROJECT\MD\view.md" />
+    <None Include="_PROJECT\MD\02 Advanced ideas\View.md" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Untitled1.png" />
