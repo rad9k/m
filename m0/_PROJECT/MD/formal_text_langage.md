@@ -64,6 +64,19 @@ Defines keyword group.
 
 ### $$KeywordGroup
 
+Child edge with a `$$KeuwordGroup` meta in the keyword defining vertex, assigns given keyword definition to the given _group name_. The _group name_ is specified by the value of the vertex targeting the `$$KeywordGroup` edge. 
+
+Example:
+
+```-0
+<@$Keyword :: "%<<(?<expr)>>">
+	<@$$KeywordGroup :: "GROUP_NAME"_>
+	<@(?<ANY>) :: @$Empty>
+		<@$$StartInLocalRoot :: @$Empty>
+		<@$Is :: @SetIndex>
+		<@Expression :: "(?<expr>)">
+```
+
 ### $$KeywordManyRoot
 
 When the keyword string has `(* ... *)` section, there is a need to define what keyword edge will mach the `(* ... *)` section. The `$$KeywordManyRoot` special meta being present in given edge's child edge, makes given edge the `(* ... *)` section root. That means this edge will be present in the result graph as many times as there are `(* ... *)` section maches in the source text.
