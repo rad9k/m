@@ -98,7 +98,7 @@ method "setName" (@String "name", @String "surname")
 
 In keyword definition, edge containing child edge with the `$$LocalRoot` meta, defines _local root_. 
 
-The vertex value of
+The vale of vertex that is target of the `$$LocalRoot` defines the _group name_. The _group name_ needs to be mached by `$$KeywordGroup` edge target vertex value in the keyword that is supposed to start in the local root.
 
 Edges resulting from keyword definition containing edges that are having child edge with `$$StartInLocalRoot` as meta will be added to _local root_, instead of the _default root_.
 
