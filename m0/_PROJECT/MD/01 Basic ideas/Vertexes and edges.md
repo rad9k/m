@@ -25,9 +25,9 @@ Those are:
 
 	Precise description: _Outgoing edges_ set for _vertex_ X contains edge, that has _meta vertex_ pointing to _vertex_ with has a value of Y.
 
-- **"Vertex _X_ has meta edge _Y_ with a value _Z_"**
+- **"Vertex _X_ has meta edge _Y_ with the value of _Z_"**
 
 	Precise description: _Outgoing edges_ set for _vertex_ X contains edge, that has:
 	- _meta vertex_ pointing to _vertex_ with has a value of Y.
-	- _target vertex_ has value of _Z_.
+	- _target vertex_ that has value of _Z_.
 

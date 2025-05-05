@@ -2,7 +2,7 @@
 
 ## About
 
-View is defined as meta edge. When this meta edge is added to given vertex (the _given_ vertex will be called from now the **source** vertex), the view is created in the **target** vertex.
+View is defined as _meta edge_. When this _meta edge_ is added to given vertex (the _given_ vertex will be called from now the **source** vertex), the view is created in the **target** vertex.
 
 ## View abstract definition
 
