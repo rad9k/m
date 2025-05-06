@@ -60,11 +60,12 @@ The meta of new current edge is the meta of last (previously) added edge. This i
 <@$KeywordGroupDefinition :: "keyword group name">
 ```
 
-Defines keyword group.
+Defines keyword group with a given name.
 
 ### $$KeywordGroup
 
-Child edge with a `$$KeuwordGroup` meta in the keyword defining vertex, assigns given keyword definition to the given _group name_. The _group name_ is specified by the value of the vertex targeting the `$$KeywordGroup` edge. 
+`$$KeuwordGroup` meta edge in the keyword defining vertex, assigns given keyword definition to the given _group name_. 
+The _group name_ is specified by the value of the target vertex of the `$$KeywordGroup` meta edge. 
 
 Example:
 
