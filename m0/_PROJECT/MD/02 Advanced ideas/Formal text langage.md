@@ -65,7 +65,7 @@ Defines keyword group with a given name.
 ### $$KeywordGroup
 
 `$$KeuwordGroup` meta edge in the keyword defining vertex, assigns given keyword definition to the given _group name_. 
-The _group name_ is specified by the value of the target vertex of the `$$KeywordGroup` meta edge. 
+The _group name_ is specified by the value of the `$$KeywordGroup` meta edge. 
 
 Example:
 
@@ -80,7 +80,7 @@ Example:
 
 ### $$KeywordManyRoot
 
-When the keyword string has `(* ... *)` section, there is a need to define what keyword edge will mach the `(* ... *)` section. The `$$KeywordManyRoot` special meta being present in given edge's child edge, makes given edge the `(* ... *)` section root. That means this edge will be present in the result graph as many times as there are `(* ... *)` section maches in the source text.
+When the keyword string has `(* ... *)` section, there is a need to define what keyword edge will mach the `(* ... *)` section. If given vertex in the keyword definition contains the `$$KeywordManyRoot` meta edge, it makes given edge the `(* ... *)` section root. That means this edge will be present in the result graph as many times as there are `(* ... *)` section maches in the source text.
 
 Example:
  
@@ -110,16 +110,15 @@ method "setName" (@String "name", @String "surname")
 
 ### $$LocalRoot and $$StartInLocalRoot 
 
-In keyword definition, edge containing child edge with the `$$LocalRoot` meta, defines _local root_. 
+If vertex in keyword definition contains `$$LocalRoot` meta edge, the vertex is defined as _local root_. 
 
-The vale of vertex that is target of the `$$LocalRoot` defines the _group name_. The _group name_ needs to be mached by `$$KeywordGroup` edge target vertex value in the keyword that is supposed to start in the local root.
+The value of `$$LocalRoot` meta edge defines the _group name_. The _group name_ needs to be mached by value of the `$$KeywordGroup` meta edge in the keyword that is supposed to start in the local root.
 
-Edges resulting from keyword definition containing edges that are having child edge with `$$StartInLocalRoot` as meta will be added to _local root_, instead of the _default root_.
+Edges resulting from keyword definition containing `$$StartInLocalRoot` meta edge will be added to _local root_, instead of the _default root_.
 
 - _local root_ defining keyword
 ```-0
 <@$Keyword :: "(?<value)">
-	<@$$EmptyKeyword :: @$Empty>
 	<@(?<ANY>) :: "(?<value>)">
 		<@$$StartInLocalRoot :: @$Empty>
 		<@$Is :: @Query>
