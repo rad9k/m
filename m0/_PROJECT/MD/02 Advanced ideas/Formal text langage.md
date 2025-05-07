@@ -65,13 +65,13 @@ Defines keyword group with a given name.
 ### $$KeywordGroup
 
 `$$KeuwordGroup` meta edge in the keyword defining vertex, assigns given keyword definition to the given _group name_. 
-The _group name_ is specified by the value of the `$$KeywordGroup` meta edge. 
+The _group name_ has to be created with `$$KeywordGroupDefiniion` meta edge.
 
 Example:
 
 ```-0
 <@$Keyword :: "%<<(?<expr)>>">
-	<@$$KeywordGroup :: "GROUP_NAME"_>
+	<@$$KeywordGroup :: @GROUP_NAME>
 	<@(?<ANY>) :: "">
 		<@$$StartInLocalRoot :: @$Empty>
 		<@$Is :: @SetIndex>
@@ -112,7 +112,7 @@ method "setName" (@String "name", @String "surname")
 
 If vertex in keyword definition contains `$$LocalRoot` meta edge, the vertex is defined as _local root_. 
 
-The value of `$$LocalRoot` meta edge defines the _group name_. The _group name_ needs to be mached by value of the `$$KeywordGroup` meta edge in the keyword that is supposed to start in the local root.
+The `$$LocalRoot` meta edge points to _group name_. The _group name_ has to be created with `$$KeywordGroupDefiniion` meta edge. The _group name_ needs to be mached by value of the `$$KeywordGroup` meta edge in the keyword that is supposed to start in the local root.
 
 Edges resulting from keyword definition containing `$$StartInLocalRoot` meta edge will be added to _local root_, instead of the _default root_.
 
@@ -123,12 +123,12 @@ Edges resulting from keyword definition containing `$$StartInLocalRoot` meta edg
 		<@$$StartInLocalRoot :: @$Empty>
 		<@$Is :: @Query>
 		<@NextExpression :: "">
-			<@LocalRoot :: "GROUP_NAME">
+			<@$$LocalRoot :: @GROUP_NAME>
 ```
 - `$$StartInLocalRoot` keyword
 ```-0
 <@$Keyword :: "%<<(?<expr)>>">
-	<@$$KeywordGroup :: "GROUP_NAME"_>
+	<@$$KeywordGroup :: @GROUP_NAME>
 	<@(?<ANY>) :: "">
 		<@$$StartInLocalRoot :: @$Empty>
 		<@$Is :: @SetIndex>
@@ -156,7 +156,7 @@ Example:
 ```-0
 <@$Keyword :: "(?<value>)">
 	<@$$EmptyKeyword :: @$Empty>
-	<@$$KeywordGroup :: "Empty2Inner">
+	<@$$KeywordGroup :: @Empty2Inner>
 	<@(?<ANY>) :: "(?<value>)">
 		<@$Is :: @Query>
 		<@NextExpression :: "">
@@ -207,8 +207,8 @@ Example:
 
 ```-0
 <@$Keyword :: "@(?<value>)">
-	<@$$KeywordGroup :: "ColonEmptyInner2SlashMarkIndexMethodNewLink">
-	<@$$KeywordGroup :: "ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy">
+	<@$$KeywordGroup :: @ColonEmptyInner2SlashMarkIndexMethodNewLink>
+	<@$$KeywordGroup :: @ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>
 	<@$$LinkKeyword :: @$Empty>
 	<@(?<ANY>) :: "">
 		<@$Is :: @Link>
@@ -224,12 +224,12 @@ Example:
 ```-0
 <@$Keyword :: "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>) :: (?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)">
 	<@$$NonSelfRecursiveParameters :: @$Empty>
-	<@(?<ANY>) :: @$Empty>
+	<@(?<ANY>) :: "">
 		<@$Is :: DoubleColon>
 		<@LeftExpression :: "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)">
 		<@RightExpression :: "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)">
 		<@NextExpression :: "">
-			<@$$LocalRoot :: "InnerCreation">
+			<@$$LocalRoot :: @InnerCreation>
 ```
 
 ### $$Import
