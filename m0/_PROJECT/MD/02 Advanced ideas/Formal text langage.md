@@ -22,8 +22,8 @@ Example:
 
 ```-0
 <@$Keyword :: ""(?<left>) +<(?<SUB>) (?<right>)">
-	<@(?<ANY>) :: >
-		<@$Is :: AddRightEdgeesIntoLeftEdges>
+	<@(?<ANY>) :: "">
+		<@$Is :: @AddRightEdgeesIntoLeftEdges>
 		<@LeftExpression :: "(?<left>)">
 		<@RightExpression :: "(?<right>)">
 ```
@@ -72,7 +72,7 @@ Example:
 ```-0
 <@$Keyword :: "%<<(?<expr)>>">
 	<@$$KeywordGroup :: "GROUP_NAME"_>
-	<@(?<ANY>) :: @$Empty>
+	<@(?<ANY>) :: "">
 		<@$$StartInLocalRoot :: @$Empty>
 		<@$Is :: @SetIndex>
 		<@Expression :: "(?<expr>)">
@@ -101,7 +101,7 @@ method "setName" (@String "name", @String "surname")
 - Result graph:
 ```-0							
 <@Method :: "setName">
-	<@$Is :: Method>
+	<@$Is :: @Method>
 	<@InputParameter :: "name">
 		<@EdgeTarget :: @String>
 	<@InputParameter :: "surname">
@@ -122,14 +122,14 @@ Edges resulting from keyword definition containing `$$StartInLocalRoot` meta edg
 	<@(?<ANY>) :: "(?<value>)">
 		<@$$StartInLocalRoot :: @$Empty>
 		<@$Is :: @Query>
-		<@NextExpression :: @$Empty>
+		<@NextExpression :: "">
 			<@LocalRoot :: "GROUP_NAME">
 ```
 - `$$StartInLocalRoot` keyword
 ```-0
 <@$Keyword :: "%<<(?<expr)>>">
 	<@$$KeywordGroup :: "GROUP_NAME"_>
-	<@(?<ANY>) :: @$Empty>
+	<@(?<ANY>) :: "">
 		<@$$StartInLocalRoot :: @$Empty>
 		<@$Is :: @SetIndex>
 		<@Expression :: "(?<expr>)">
@@ -142,14 +142,38 @@ query<<"1">>
 ```-0
 <@$Empty :: "a">
 	<@$Is :: @Query>
-	<@NextExpression :: @$Empty>
+	<@NextExpression :: "">
 		<@$Is :: @SetIndex>
 			<@Expression :: "5">
 ```
 
 ### $$EmptyKeyword
 
+Keyword definition having `$$NewVertexKeyword` meta edge will result in keyword creting new vertex values keyword.
+
+Example:
+
+```-0
+<@$Keyword :: "(?<value>)">
+	<@$$EmptyKeyword :: @$Empty>
+	<@$$KeywordGroup :: "Empty2Inner">
+	<@(?<ANY>) :: "(?<value>)">
+		<@$Is :: @Query>
+		<@NextExpression :: "">
+			<@$$LocalRoot :: "Inner">
+```
+
 ### $$NewVertexKeyword
+
+Keyword definition having `$$NewVertexKeyword` meta edge will result in keyword creting new vertex values keyword.
+
+Example:
+
+```-0
+<@$Keyword :: "(?<value>)">
+	<@$$NewVertexKeyword :: @$Empty>
+	<@(?<ANY>) :: "(?<value>)">
+```
 
 ### $$ForceNewVertex
 
@@ -177,7 +201,36 @@ Enforfces to create new vertex string and not link in graph-2-text. This special
 
 ### $$LinkKeyword
 
+Keyword definition having `$$LinkKeyword` meta edge will result in keyword creting new vertex values keyword.
+
+Example:
+
+```-0
+<@$Keyword :: "@(?<value>)">
+	<@$$KeywordGroup :: "ColonEmptyInner2SlashMarkIndexMethodNewLink">
+	<@$$KeywordGroup :: "ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy">
+	<@$$LinkKeyword :: @$Empty>
+	<@(?<ANY>) :: "">
+		<@$Is :: @Link>
+		<@Target :: "(<?<value>)">
+```
+
 ### $$NonSelfRecursiveParameter
+
+[TBD What is it?]
+
+Example:
+
+```-0
+<@$Keyword :: "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>) :: (?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)">
+	<@$$NonSelfRecursiveParameters :: @$Empty>
+	<@(?<ANY>) :: @$Empty>
+		<@$Is :: DoubleColon>
+		<@LeftExpression :: "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)">
+		<@RightExpression :: "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)">
+		<@NextExpression :: "">
+			<@$$LocalRoot :: "InnerCreation">
+```
 
 ### $$Import
 
