@@ -2579,9 +2579,9 @@ namespace m0
 
             IVertex o_trigger_query_base = o_trigger_query.AddVertex(any, "(?<query>)");
 
-            o_trigger_query_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\ScopeQuery"));
-
             o_trigger_query_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$StartInLocalRoot"), "");
+
+            o_trigger_query_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\ScopeQuery"));            
 
             // trigger listener
             /*
