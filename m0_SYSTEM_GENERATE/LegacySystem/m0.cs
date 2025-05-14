@@ -498,7 +498,7 @@ namespace m0
                 ",EmptySet,Constant" +
                 ",Execute,Parse,ParseWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}},Generate,GenerateWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",CreateView{CreateIn,Source{TriggerQuery,TransformFunction},Target}" +
-                ",CreateTrigger{CreateIn,ScopeQuery,ChangeTypeFilter,Listener}" +
+                ",CreateTrigger{CreateIn,ScopeQuery,ChangeTypeFilter,Listener},InnerTrigger" +
                 ",this,Package{$InstanceCreationPriority:}" +
                 "}");            
 
@@ -796,6 +796,10 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smu, false, "CreateTrigger").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "ZeroOperator"));
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, "InnerTrigger").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "MultiOperator"));
 
             // rest inherits
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"Action").AddEdge(
@@ -1131,7 +1135,8 @@ namespace m0
             IVertex kgd_SlashMarkIndexMethod = k.AddVertex(keywordGroupDefinition, "SlashMarkIndexMethod");
             IVertex kgd_SlashMarkIndexMethodInner2 = k.AddVertex(keywordGroupDefinition, "SlashMarkIndexMethodInner2");
             IVertex kgd_Inner = k.AddVertex(keywordGroupDefinition, "Inner");
-            IVertex kgd_Trigger = k.AddVertex(keywordGroupDefinition, "Trigger");
+            IVertex kgd_TriggerInner = k.AddVertex(keywordGroupDefinition, "TriggerInner");
+            IVertex kgd_ViewInner = k.AddVertex(keywordGroupDefinition, "ViewInner");
 
             IVertex isAggregation = LegacySystem.Graph.EasyVertex.Get(root, false, @"System\Meta\Base\Vertex\$IsAggregation");
             //IVertex empty = LegacySystem.Graph.EasyVertex.Get(root, false, @"System\Meta\Base\$Empty");
@@ -2545,6 +2550,51 @@ namespace m0
 
             o_package_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Package"));
 
+
+            // trigger -> trigggerInner -> trigger scope query
+
+            // create trigger
+            //
+            // create trigger
+
+            IVertex o_create_trigger = k.AddVertex(keyword, "trigger");
+
+            //IVertex o_create_trigger_base = o_create_trigger.AddVertex(any, "(?<name>)");
+
+            IVertex o_create_trigger_base = o_create_trigger.AddVertex(any, "");
+
+            o_create_trigger_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger"));
+
+            o_create_trigger_base.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$LocalRoot"), kgd_TriggerInner);
+
+            // InnerTrigger
+            //
+            // {
+            // }
+            //
+            // {(*\r\n\t(?<expr>)*)\r\n}
+
+            IVertex o_InnerTrigger = k.AddVertex(keyword, "{(*\r\n\t(?<expr>)*)\r\n}");
+
+            o_InnerTrigger.AddEdge(keywordGroup, kgd_TriggerInner);
+
+            IVertex o_InnerTrigger_any = o_InnerTrigger.AddVertex(any, anyString);
+
+            o_InnerTrigger_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$StartInLocalRoot"), "");
+
+            o_InnerTrigger_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "InnerTrigger"));
+
+            IVertex o_InnerTrigger_any_param = o_InnerTrigger_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression"), "(?<expr>)");
+
+            o_InnerTrigger_any_param.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
+                Empty);
+
+
+
+
+
+            /*
             // create trigger
             //
             // create trigger
@@ -2575,7 +2625,7 @@ namespace m0
               IVertex o_trigger_filter = k.AddVertex(keyword, "trigger filter (?<filter>)");
 
               IVertex o_trigger_filter_base = o_trigger_filter.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Filter"), "(?<filter>)");
-            */
+            
             // trigger query
 
             IVertex o_trigger_query = k.AddVertex(keyword, "query (?<query>)");
