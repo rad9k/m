@@ -2557,6 +2557,28 @@ namespace m0
 
             // trigger -> trigggerInner -> trigger scope query
 
+
+            ///// V2
+
+            // create trigger
+            //
+            // create trigger
+
+            /*IVertex o_create_trigger = k.AddVertex(keyword, "trigger (?<name>){(*\r\n\t(?<expr_TriggerInner>)*)\r\n}");
+
+            IVertex o_create_trigger_base = o_create_trigger.AddVertex(any, "(?<name>)");
+
+            //IVertex o_create_trigger_base = o_create_trigger.AddVertex(any, "");
+
+            o_create_trigger_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger"));
+
+            IVertex o_create_trigger_base_param = o_create_trigger_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression"), "(?<expr_TriggerInner>)");
+
+            o_create_trigger_base_param.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"), Empty);*/
+
+            ///// V2
+
+
             // create trigger
             //
             // create trigger
