@@ -498,7 +498,7 @@ namespace m0
                 ",EmptySet,Constant" +
                 ",Execute,Parse,ParseWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}},Generate,GenerateWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",CreateView{CreateIn,Source{TriggerQuery,TransformFunction},Target}" +
-                ",CreateTrigger{CreateIn,ScopeQuery,ChangeTypeFilter,Listener},InnerTrigger" +
+                ",CreateTrigger{InnerTrigger},InnerTrigger{ScopeQuery,ChangeTypeFilter,Listener}" +
                 ",this,Package{$InstanceCreationPriority:}" +
                 "}");            
 
@@ -1036,15 +1036,19 @@ namespace m0
 
             // create trigger
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\ChangeTypeFilter").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\InnerTrigger").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, @"InnerTrigger"));
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"InnerTrigger\ChangeTypeFilter").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(smzte, false, @"GraphChangeFilterEnum"));
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\ScopeQuery").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"InnerTrigger\ScopeQuery").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(smzt, false, @"String"));
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Listener").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"InnerTrigger\Listener").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function"));
 
@@ -1077,11 +1081,11 @@ namespace m0
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger").AddEdge(isAggregation, Empty);
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\CreateIn").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\InnerTrigger").AddEdge(isAggregation, Empty);
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\ScopeQuery").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"InnerTrigger\ScopeQuery").AddEdge(isAggregation, Empty);
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Listener").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"InnerTrigger\Listener").AddEdge(isAggregation, Empty);
 
             //
 
@@ -2557,15 +2561,17 @@ namespace m0
             //
             // create trigger
 
-            IVertex o_create_trigger = k.AddVertex(keyword, "trigger");
+            IVertex o_create_trigger = k.AddVertex(keyword, "trigger (?<name>)");
 
-            //IVertex o_create_trigger_base = o_create_trigger.AddVertex(any, "(?<name>)");
+            IVertex o_create_trigger_base = o_create_trigger.AddVertex(any, "(?<name>)");
 
-            IVertex o_create_trigger_base = o_create_trigger.AddVertex(any, "");
+            //IVertex o_create_trigger_base = o_create_trigger.AddVertex(any, "");
 
             o_create_trigger_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger"));
 
-            o_create_trigger_base.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$LocalRoot"), kgd_TriggerInner);
+            IVertex o_create_trigger_triggerinner = o_create_trigger_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\InnerTrigger"), "");
+
+            o_create_trigger_triggerinner.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$LocalRoot"), kgd_TriggerInner);
 
             // InnerTrigger
             //
@@ -2574,7 +2580,7 @@ namespace m0
             //
             // {(*\r\n\t(?<expr>)*)\r\n}
 
-            IVertex o_InnerTrigger = k.AddVertex(keyword, "{(*\r\n\t(?<expr>)*)\r\n}");
+            IVertex o_InnerTrigger = k.AddVertex(keyword, "{(*\r\n\t(?<expr_TriggerInner>)*)\r\n}");
 
             o_InnerTrigger.AddEdge(keywordGroup, kgd_TriggerInner);
 
@@ -2582,13 +2588,35 @@ namespace m0
 
             o_InnerTrigger_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$StartInLocalRoot"), "");
 
-            o_InnerTrigger_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
-                LegacySystem.Graph.EasyVertex.Get(smu, false, "InnerTrigger"));
+            o_InnerTrigger_any.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, "InnerTrigger"));
 
             IVertex o_InnerTrigger_any_param = o_InnerTrigger_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression"), "(?<expr>)");
 
             o_InnerTrigger_any_param.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
                 Empty);
+
+
+            // trigger query
+
+            IVertex o_trigger_query = k.AddVertex(keyword, "query (?<query>)");
+
+            o_trigger_query.AddEdge(keywordGroup, kgd_TriggerInner);
+
+            //IVertex o_trigger_query_base = o_trigger_query.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\ScopeQuery"), "(?<query>)");
+
+            //IVertex o_trigger_query_base = o_trigger_query.AddVertex(any, "(?<query>)");
+
+            IVertex o_trigger_query_base = o_trigger_query.AddVertex(any, "");
+
+            //o_trigger_query_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$StartInLocalRoot"), "");
+
+            o_trigger_query_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"InnerTrigger\ScopeQuery"));
+
+            o_trigger_query_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression"), "(?<query>)");
+
+
+
+
 
 
 
