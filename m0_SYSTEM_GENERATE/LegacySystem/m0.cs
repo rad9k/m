@@ -2603,7 +2603,7 @@ namespace m0
 
             IVertex o_trigger_query = k.AddVertex(keyword, "query (?<query>)");
 
-            o_trigger_query.AddEdge(keywordGroup, kgd_TriggerInner);
+            o_trigger_query.AddEdge(keywordGroup, kgd_TriggerInner);            
 
             IVertex o_trigger_query_base = o_trigger_query.AddVertex(any, "");
 
@@ -2617,7 +2617,7 @@ namespace m0
 
             o_trigger_filter.AddEdge(keywordGroup, kgd_TriggerInner);
 
-            IVertex o_trigger_filter_base = o_trigger_query.AddVertex(any, "");
+            IVertex o_trigger_filter_base = o_trigger_filter.AddVertex(any, "");
 
             o_trigger_filter_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"InnerTrigger\Filter"));
 
