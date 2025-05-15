@@ -498,7 +498,7 @@ namespace m0
                 ",EmptySet,Constant" +
                 ",Execute,Parse,ParseWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}},Generate,GenerateWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",CreateView{CreateIn,Source{TriggerQuery,TransformFunction},Target}" +
-                ",CreateTrigger{Name,InnerTrigger},InnerTrigger{ScopeQuery,ChangeTypeFilter,Listener}" +
+                ",CreateTrigger{Name,TriggerInner},TriggerInner{ScopeQuery{Name},ChangeTypeFilter{Value},Listener{Target}}" +
                 ",this,Package{$InstanceCreationPriority:}" +
                 "}");            
 
@@ -797,7 +797,7 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "ZeroOperator"));
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, "InnerTrigger").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smu, false, "TriggerInner").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "MultiOperator"));
 
@@ -1040,19 +1040,19 @@ namespace m0
                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                LegacySystem.Graph.EasyVertex.Get(smzt, false, @"String"));
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\InnerTrigger").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\TriggerInner").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(smu, false, @"InnerTrigger"));
+                LegacySystem.Graph.EasyVertex.Get(smu, false, @"TriggerInner"));
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"InnerTrigger\ChangeTypeFilter").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"TriggerInner\ChangeTypeFilter\Value").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(smzte, false, @"GraphChangeFilterEnum"));
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"InnerTrigger\ScopeQuery").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"TriggerInner\ScopeQuery\Name").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(smzt, false, @"String"));
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"InnerTrigger\Listener").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"TriggerInner\Listener\Target").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function"));
 
@@ -1087,11 +1087,11 @@ namespace m0
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Name").AddEdge(isAggregation, Empty);
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\InnerTrigger").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\TriggerInner").AddEdge(isAggregation, Empty);
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"InnerTrigger\ScopeQuery").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"TriggerInner\ScopeQuery\Name").AddEdge(isAggregation, Empty);
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"InnerTrigger\Listener").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"TriggerInner\Listener\Target").AddEdge(isAggregation, Empty);
 
             //
 
@@ -2572,30 +2572,30 @@ namespace m0
             
             o_create_trigger_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Name"), "(?<name>)");
 
-            IVertex o_create_trigger_triggerinner = o_create_trigger_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\InnerTrigger"), "");
+            IVertex o_create_trigger_triggerinner = o_create_trigger_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\TriggerInner"), "");
 
             o_create_trigger_triggerinner.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$LocalRoot"), kgd_TriggerInner);
 
-            // InnerTrigger
+            // TriggerInner
             //
             // {
             // }
             //
             // {(*\r\n\t(?<expr>)*)\r\n}
 
-            IVertex o_InnerTrigger = k.AddVertex(keyword, "{(*\r\n\t(?<expr_TriggerInner>)*)\r\n}");
+            IVertex o_TriggerInner = k.AddVertex(keyword, "{(*\r\n\t(?<expr_TriggerInner>)*)\r\n}");
 
-            o_InnerTrigger.AddEdge(keywordGroup, kgd_TriggerInner);
+            o_TriggerInner.AddEdge(keywordGroup, kgd_TriggerInner);
 
-            IVertex o_InnerTrigger_any = o_InnerTrigger.AddVertex(any, anyString);
+            IVertex o_TriggerInner_any = o_TriggerInner.AddVertex(any, anyString);
 
-            o_InnerTrigger_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$StartInLocalRoot"), "");
+            o_TriggerInner_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$StartInLocalRoot"), "");
 
-            o_InnerTrigger_any.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, "InnerTrigger"));
+            o_TriggerInner_any.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, "TriggerInner"));
 
-            IVertex o_InnerTrigger_any_param = o_InnerTrigger_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression"), "(?<expr_TriggerInner>)");
+            IVertex o_TriggerInner_any_param = o_TriggerInner_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression"), "(?<expr_TriggerInner>)");
 
-            o_InnerTrigger_any_param.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
+            o_TriggerInner_any_param.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
                 Empty);
 
             
@@ -2607,9 +2607,9 @@ namespace m0
 
             IVertex o_trigger_query_base = o_trigger_query.AddVertex(any, "");
 
-            o_trigger_query_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"InnerTrigger\ScopeQuery"));
+            o_trigger_query_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"TriggerInner\ScopeQuery"));
 
-            o_trigger_query_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression"), "(?<query>)");
+            o_trigger_query_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"TriggerInner\ScopeQuery\Name"), "(?<query>)");
 
             // trigger filter
 
@@ -2619,9 +2619,21 @@ namespace m0
 
             IVertex o_trigger_filter_base = o_trigger_filter.AddVertex(any, "");
 
-            o_trigger_filter_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"InnerTrigger\Filter"));
+            o_trigger_filter_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"TriggerInner\ChangeTypeFilter"));
 
-            o_trigger_filter_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression"), "(?<filter>)");
+            o_trigger_filter_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"TriggerInner\ChangeTypeFilter\Value"), "(?<filter>)");
+
+            // trigger listener
+
+            IVertex o_trigger_listener = k.AddVertex(keyword, "filter (?<filter>)");
+
+            o_trigger_listener.AddEdge(keywordGroup, kgd_TriggerInner);
+
+            IVertex o_trigger_listener_base = o_trigger_filter.AddVertex(any, "");
+
+            o_trigger_listener_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"TriggerInner\ChangeTypeFilter"));
+
+            o_trigger_listener_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"TriggerInner\ChangeTypeFilter\Value"), "(?<filter>)");
 
 
 
