@@ -2583,7 +2583,9 @@ namespace m0
             //
             // {(*\r\n\t(?<expr>)*)\r\n}
 
-            IVertex o_TriggerInner = k.AddVertex(keyword, "{(*\r\n\t(?<expr_TriggerInner>)*)\r\n}");
+            //IVertex o_TriggerInner = k.AddVertex(keyword, "{(*\r\n\t(?<expr_TriggerInner>)*)\r\n}");
+
+            IVertex o_TriggerInner = k.AddVertex(keyword, "{(*\r\n\t(?<expr>)*)\r\n}");
 
             o_TriggerInner.AddEdge(keywordGroup, kgd_TriggerInner);
 
@@ -2593,7 +2595,9 @@ namespace m0
 
             o_TriggerInner_any.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, "TriggerInner"));
 
-            IVertex o_TriggerInner_any_param = o_TriggerInner_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression"), "(?<expr_TriggerInner>)");
+            //IVertex o_TriggerInner_any_param = o_TriggerInner_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression"), "(?<expr_TriggerInner>)");
+
+            IVertex o_TriggerInner_any_param = o_TriggerInner_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression"), "(?<expr>)");
 
             o_TriggerInner_any_param.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
                 Empty);
@@ -2625,15 +2629,15 @@ namespace m0
 
             // trigger listener
 
-            IVertex o_trigger_listener = k.AddVertex(keyword, "filter (?<filter>)");
+            IVertex o_trigger_listener = k.AddVertex(keyword, "listener (?<listener>)");
 
             o_trigger_listener.AddEdge(keywordGroup, kgd_TriggerInner);
 
-            IVertex o_trigger_listener_base = o_trigger_filter.AddVertex(any, "");
+            IVertex o_trigger_listener_base = o_trigger_listener.AddVertex(any, "");
 
-            o_trigger_listener_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"TriggerInner\ChangeTypeFilter"));
+            o_trigger_listener_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"TriggerInner\Listener"));
 
-            o_trigger_listener_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"TriggerInner\ChangeTypeFilter\Value"), "(?<filter>)");
+            o_trigger_listener_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"TriggerInner\Listener\Target"), "(?<listener>)");
 
 
 
