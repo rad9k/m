@@ -13,7 +13,7 @@ Those meta edges are used in keyword definition.
 ### ANY
 
 ```-0
-<(?<ANY>) :: <new vertex>>
+<(?<ANY>) :: "new vertex">
 ```
 
 The `(?<ANY>)` meta edge in keyword definition will match any meta edge to match this keyword in given edge. This is especially usefull when nesting expressions. 

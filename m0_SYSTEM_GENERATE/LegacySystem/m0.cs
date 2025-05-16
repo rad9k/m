@@ -498,7 +498,7 @@ namespace m0
                 ",EmptySet,Constant" +
                 ",Execute,Parse,ParseWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}},Generate,GenerateWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",CreateView{CreateIn,Source{TriggerQuery,TransformFunction},Target}" +
-                ",CreateTrigger{Name,TriggerInner},TriggerInner{ScopeQuery{Name},ChangeTypeFilter{Value},Listener{Target}}" +
+                ",CreateTrigger{Name,TriggerInner},TriggerInner{ScopeQuery{Query},ChangeTypeFilter{Value},Listener{Target}}" +
                 ",this,Package{$InstanceCreationPriority:}" +
                 "}");            
 
@@ -1048,7 +1048,7 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(smzte, false, @"GraphChangeFilterEnum"));
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"TriggerInner\ScopeQuery\Name").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"TriggerInner\ScopeQuery\Query").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(smzt, false, @"String"));
 
@@ -1089,9 +1089,7 @@ namespace m0
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\TriggerInner").AddEdge(isAggregation, Empty);
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"TriggerInner\ScopeQuery\Name").AddEdge(isAggregation, Empty);
-
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"TriggerInner\Listener\Target").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"TriggerInner\ScopeQuery\Query").AddEdge(isAggregation, Empty);
 
             //
 
@@ -2583,9 +2581,7 @@ namespace m0
             //
             // {(*\r\n\t(?<expr>)*)\r\n}
 
-            //IVertex o_TriggerInner = k.AddVertex(keyword, "{(*\r\n\t(?<expr_TriggerInner>)*)\r\n}");
-
-            IVertex o_TriggerInner = k.AddVertex(keyword, "{(*\r\n\t(?<expr>)*)\r\n}");
+            IVertex o_TriggerInner = k.AddVertex(keyword, "{(*\r\n\t(?<expr_TriggerInner>)*)\r\n}");
 
             o_TriggerInner.AddEdge(keywordGroup, kgd_TriggerInner);
 
@@ -2595,14 +2591,11 @@ namespace m0
 
             o_TriggerInner_any.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, "TriggerInner"));
 
-            //IVertex o_TriggerInner_any_param = o_TriggerInner_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression"), "(?<expr_TriggerInner>)");
-
-            IVertex o_TriggerInner_any_param = o_TriggerInner_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression"), "(?<expr>)");
+            IVertex o_TriggerInner_any_param = o_TriggerInner_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression"), "(?<expr_TriggerInner>)");
 
             o_TriggerInner_any_param.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
                 Empty);
-
-            
+          
             // trigger query
 
             IVertex o_trigger_query = k.AddVertex(keyword, "query (?<query>)");
@@ -2613,7 +2606,7 @@ namespace m0
 
             o_trigger_query_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"TriggerInner\ScopeQuery"));
 
-            o_trigger_query_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"TriggerInner\ScopeQuery\Name"), "(?<query>)");
+            o_trigger_query_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"TriggerInner\ScopeQuery\Query"), "(?<query>)");
 
             // trigger filter
 
@@ -2638,70 +2631,6 @@ namespace m0
             o_trigger_listener_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"TriggerInner\Listener"));
 
             o_trigger_listener_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"TriggerInner\Listener\Target"), "(?<listener>)");
-
-
-
-            /*
-            // create trigger
-            //
-            // create trigger
-
-            IVertex o_create_trigger = k.AddVertex(keyword, "trigger");
-
-            //IVertex o_create_trigger_base = o_create_trigger.AddVertex(any, "(?<name>)");
-
-            IVertex o_create_trigger_base = o_create_trigger.AddVertex(any, "");
-
-            o_create_trigger_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger"));
-
-
-
-
-            IVertex o_create_trigger_expr = o_create_trigger_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression"), "(?<expr>)");
-
-            //o_create_trigger_expr.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$LocalRoot"), kgd_Trigger);
-
-            
-
-
-
-            //   IVertex o_trigger_query_base2 = o_create_trigger_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Query"), "(?<query>)");
-
-            /*  // trigger filter
-
-              IVertex o_trigger_filter = k.AddVertex(keyword, "trigger filter (?<filter>)");
-
-              IVertex o_trigger_filter_base = o_trigger_filter.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Filter"), "(?<filter>)");
-            
-            // trigger query
-
-            IVertex o_trigger_query = k.AddVertex(keyword, "query (?<query>)");
-
-            // {(*\r\n\t(?<expr>)*)\r\n}
-
-            //o_trigger_query.AddEdge(keywordGroup, kgd_Trigger);
-
-            o_trigger_query.AddEdge(keywordGroup, kgd_Trigger);
-
-
-
-            //IVertex o_trigger_query_base = o_trigger_query.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\ScopeQuery"), "(?<query>)");
-
-            //IVertex o_trigger_query_base = o_trigger_query.AddVertex(any, "(?<query>)");
-
-            IVertex o_trigger_query_base = o_trigger_query.AddVertex(any, "");
-
-            //o_trigger_query_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$StartInLocalRoot"), "");
-
-            o_trigger_query_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\ScopeQuery"));
-
-            o_trigger_query_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression"), "(?<query>)");
-
-            // trigger listener
-            /*
-                        IVertex o_trigger_listener = k.AddVertex(keyword, "trigger listener (?<listener>)");
-
-                        IVertex o_trigger_listener_base = o_trigger_listener.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTrigger\Listener"), "(?<listener>)");*/
         }
 
         private static void AddDoubleOperator(IVertex k, IVertex smu, IVertex smb, IVertex keyword, IVertex any, string text, string _is)

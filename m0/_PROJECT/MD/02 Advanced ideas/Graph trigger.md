@@ -5,7 +5,7 @@
 ```-0
 <$GraphChangeTrigger :: "name string">
 	<@$Is :: @GraphChangeTrigger>		
-	<@ChangeTypeFilter :: @GraphChangeFilterEnum/value>
+	<@ChangeTypeFilter :: @GraphChangeFilterEnum\value>
 	<@ScopeQuery :: "query">
 	<@Listener :: @ListenerFunction>
 ```
@@ -26,19 +26,37 @@
 ## create trigger Graph
 
 ```-0
-<@CreateTrigger :: "name string">
-	<@$Is :: @CreateTrigger>
-	<@CreateIn :: "query">
-	<@ChangeTypeFilter :: @GraphChangeFilterEnum/value>
-	<@ScopeQuery :: "query">
-	<@Listener :: @ListenerFunction>
+<(?<ANY>) :: "">
+	<@$Is :: CreateTrigger>
+	<@Name :: "trigger name">
+	<@TriggerInner :: "">
+		<@Is :: @TriggerInner>
+		<@Expression :: "">
+			<@Is :: @ScopeQuery>
+			<@Query :: "query body">
+		<@Expression :: "">
+			<@Is :: @ChangeTypeFilter>
+			<@Value :: @ChangeTypeFilterEnum\value>
+		<@Expression :: "">
+			<@Is :: @Listener>
+			<@Target :: @ListenerFunction>
+
 ```
 
 ## create trigger Syntax
 
 ```-0
-in <query> create trigger "<name string>"
-	trigger filter @<GraphChangeFilterEnum value>
-	trigger query "<string>"
-	trigger listener @listener_function
+trigger "trigger name" {
+	filter @GraphChangeFilterEnum\value
+	query "query body"
+	listener @ListenerFunction
+}
+```
+
+above expression will create trigger at local stack, so that means it can be used in following way
+
+```-0
+AddHere +< trigger "trigger name"{
+	...
+}
 ```
