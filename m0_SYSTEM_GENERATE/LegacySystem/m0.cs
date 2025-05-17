@@ -2596,7 +2596,7 @@ namespace m0
 
             o_TriggerInner.AddEdge(keywordGroup, kgd_TriggerInner);
 
-            IVertex o_TriggerInner_any = o_TriggerInner.AddVertex(any, anyString);
+            IVertex o_TriggerInner_any = o_TriggerInner.AddVertex(any, "");
 
             o_TriggerInner_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$StartInLocalRoot"), "");
 
@@ -2676,7 +2676,7 @@ namespace m0
 
             o_ViewInner.AddEdge(keywordGroup, kgd_ViewInner);
 
-            IVertex o_ViewInner_any = o_TriggerInner.AddVertex(any, anyString);
+            IVertex o_ViewInner_any = o_ViewInner.AddVertex(any, "");
 
             o_ViewInner_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$StartInLocalRoot"), "");
 
@@ -2701,15 +2701,39 @@ namespace m0
 
             // trigger filter
 
-            IVertex o_trigger_filter = k.AddVertex(keyword, "to from transform (?<listener>)");
+            IVertex o_to_from_transform = k.AddVertex(keyword, "to from transform (?<listener>)");
 
-            o_trigger_filter.AddEdge(keywordGroup, kgd_TriggerInner);
+            o_to_from_transform.AddEdge(keywordGroup, kgd_TriggerInner);
 
-            IVertex o_trigger_filter_base = o_trigger_filter.AddVertex(any, "");
+            IVertex o_to_from_transform_base = o_to_from_transform.AddVertex(any, "");
 
-            o_trigger_filter_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"TriggerInner\ChangeTypeFilter"));
+            o_to_from_transform_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"ViewInner\ToFromTransformFunction"));
 
-            o_trigger_filter_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"TriggerInner\ChangeTypeFilter\Value"), "(?<listener>)");
+            o_to_from_transform_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ViewInner\ToFromTransformFunction\Target"), "(?<listener>)");
+
+            // from query
+
+            IVertex o_to_query = k.AddVertex(keyword, "to query (?<query>)");
+
+            o_to_query.AddEdge(keywordGroup, kgd_ViewInner);
+
+            IVertex o_to_query_base = o_from_query.AddVertex(any, "");
+
+            o_to_query_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"ViewInner\ToTriggerQuery"));
+
+            o_to_query_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ViewInner\ToTriggerQuery\Query"), "(?<query>)");
+
+            // trigger filter
+
+            IVertex o_from_to_transform = k.AddVertex(keyword, "from to transform (?<listener>)");
+
+            o_from_to_transform.AddEdge(keywordGroup, kgd_TriggerInner);
+
+            IVertex o_from_to_transform_base = o_from_to_transform.AddVertex(any, "");
+
+            o_from_to_transform_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"ViewInner\FromToTransformFunction"));
+
+            o_from_to_transform_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ViewInner\FromToTransformFunction\Target"), "(?<listener>)");
         }
 
         private static void AddDoubleOperator(IVertex k, IVertex smu, IVertex smb, IVertex keyword, IVertex any, string text, string _is)

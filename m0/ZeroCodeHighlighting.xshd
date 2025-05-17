@@ -68,12 +68,12 @@
       <Word>namedblock</Word>
       <Word>trigger</Word>
 	  <Word>filter</Word>
-	  <Word>query</Word>
-	  <Word>filter</Word>
+	  <Word>query</Word>	  
 	  <Word>listener</Word>
 	  <Word>view</Word>
-	  <Word>source</Word>
-	  <Word>target</Word>
+	  <Word>to</Word>
+	  <Word>from</Word>
+      <Word>transform</Word>
     </Keywords>
 
 
