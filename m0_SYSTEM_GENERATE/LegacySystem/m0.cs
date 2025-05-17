@@ -497,7 +497,7 @@ namespace m0
                 ",If{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},$InstanceCreationPriority:,$EmptyValueInstance:,$EmptyMetaInstance:},Test{Expression{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},Case{$MinCardinality:0,$MaxCardinality:-1,$IsAggregation:},Fallback{$MinCardinality:0,$MaxCardinality:1,$IsAggregation:},$InstanceCreationPriority:,$EmptyValueInstance:,$EmptyMetaInstance:},Case{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},$InstanceCreationPriority:,$EmptyValueInstance:},Fallback{$InstanceCreationPriority:,$EmptyValueInstance:}" +
                 ",EmptySet,Constant" +
                 ",Execute,Parse,ParseWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}},Generate,GenerateWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}" +
-                ",CreateView{CreateIn,Source{TriggerQuery,TransformFunction},Target}" +
+                ",CreateView{Name,ViewInner},ViewInner{FromTriggerQuery{Query},FromToTransformFunction{Target},ToTriggerQuery{Query},ToFromTransformFunction{Target}}" +
                 ",CreateTrigger{Name,TriggerInner},TriggerInner{ScopeQuery{Query},ChangeTypeFilter{Value},Listener{Target}}" +
                 ",this,Package{$InstanceCreationPriority:}" +
                 "}");            
@@ -793,6 +793,10 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "ZeroOperator"));
 
+            LegacySystem.Graph.EasyVertex.Get(smu, false, "ViewInner").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "MultiOperator"));
+
             LegacySystem.Graph.EasyVertex.Get(smu, false, "CreateTrigger").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "ZeroOperator"));
@@ -1018,21 +1022,30 @@ namespace m0
 
             // create_view
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\Source\TriggerQuery").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\Name").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(smzt, false, @"String"));
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\Source\TransformFunction").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\ViewInner").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, @"ViewInner"));
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"ViewInner\FromTriggerQuery\Query").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smzt, false, @"String"));
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"ViewInner\FromToTransformFunction\Target").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function"));
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\Target").AddEdge(
-               null,
-               LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\Source\TriggerQuery"));
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"ViewInner\ToTriggerQuery\Query").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smzt, false, @"String"));
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\Target").AddEdge(
-               null,
-               LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\Source\TransformFunction"));
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"ViewInner\ToFromTransformFunction\Target").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function"));
+
 
             // create trigger
 
@@ -1093,17 +1106,15 @@ namespace m0
 
             //
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView").AddEdge(isAggregation, Empty);            
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\CreateIn").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\Name").AddEdge(isAggregation, Empty);
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\Source").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\ViewInner").AddEdge(isAggregation, Empty);
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\Target").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"ViewInner\FromTriggerQuery\Query").AddEdge(isAggregation, Empty);
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\Source\TriggerQuery").AddEdge(isAggregation, Empty);
-
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\Source").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"ViewInner\ToTriggerQuery\Query").AddEdge(isAggregation, Empty);            
 
             // package
             IVertex package = LegacySystem.Graph.EasyVertex.Get(smu, false, "Package");
