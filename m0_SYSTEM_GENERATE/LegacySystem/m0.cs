@@ -2711,13 +2711,13 @@ namespace m0
 
             o_to_from_transform_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ViewInner\ToFromTransformFunction\Target"), "(?<listener>)");
 
-            // from query
+            // to query
 
             IVertex o_to_query = k.AddVertex(keyword, "to query (?<query>)");
 
             o_to_query.AddEdge(keywordGroup, kgd_ViewInner);
 
-            IVertex o_to_query_base = o_from_query.AddVertex(any, "");
+            IVertex o_to_query_base = o_to_query.AddVertex(any, "");
 
             o_to_query_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"ViewInner\ToTriggerQuery"));
 
