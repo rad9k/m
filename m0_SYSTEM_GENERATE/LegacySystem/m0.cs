@@ -2663,7 +2663,7 @@ namespace m0
 
             IVertex o_create_view_viewinner = o_create_view_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView\ViewInner"), "");
 
-            o_create_view_viewinner.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$LocalRoot"), kgd_TriggerInner);
+            o_create_view_viewinner.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$LocalRoot"), kgd_ViewInner);
 
             // ViewInner
             //
@@ -2684,7 +2684,7 @@ namespace m0
 
             IVertex o_ViewInner_any_param = o_ViewInner_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression"), "(?<expr_ViewInner>)");
 
-            o_TriggerInner_any_param.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
+            o_ViewInner_any_param.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
                 Empty);
 
             // from query
@@ -2699,11 +2699,11 @@ namespace m0
 
             o_from_query_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ViewInner\FromTriggerQuery\Query"), "(?<query>)");
 
-            // trigger filter
+            // to from transform (?<listener>)
 
             IVertex o_to_from_transform = k.AddVertex(keyword, "to from transform (?<listener>)");
 
-            o_to_from_transform.AddEdge(keywordGroup, kgd_TriggerInner);
+            o_to_from_transform.AddEdge(keywordGroup, kgd_ViewInner);
 
             IVertex o_to_from_transform_base = o_to_from_transform.AddVertex(any, "");
 
@@ -2723,11 +2723,11 @@ namespace m0
 
             o_to_query_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ViewInner\ToTriggerQuery\Query"), "(?<query>)");
 
-            // trigger filter
+            // from to transform (?<listener>)
 
             IVertex o_from_to_transform = k.AddVertex(keyword, "from to transform (?<listener>)");
 
-            o_from_to_transform.AddEdge(keywordGroup, kgd_TriggerInner);
+            o_from_to_transform.AddEdge(keywordGroup, kgd_ViewInner);
 
             IVertex o_from_to_transform_base = o_from_to_transform.AddVertex(any, "");
 

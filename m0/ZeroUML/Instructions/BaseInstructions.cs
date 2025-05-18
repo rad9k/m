@@ -2354,6 +2354,53 @@ namespace m0.ZeroUML.Instructions
         }
 
         #endregion
+
+        ////////////////////////////////////////////////////////////////
+        //
+        // create trigger & view
+        //
+        ////////////////////////////////////////////////////////////////   
+        
+
+        void x()
+        {
+            CreateTrigger();
+        }
+
+        private static INoInEdgeInOutVertexVertex CreateTrigger(LogicSingleOpertorEnum opetationType, ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        {
+            return localStack;
+
+            IVertex expression = GetExpression(instructionVertex);
+
+            if (expression == null)
+                return exe.Stack;
+
+            INoInEdgeInOutVertexVertex _executeResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, expression);
+
+            IList<IEdge> executeResult = _executeResult.OutEdges;
+
+            int toBeProcessedCount = executeResult.Count;
+
+            INoInEdgeInOutVertexVertex localStack = CreateStack();
+
+            for (int x = 0; x < toBeProcessedCount; x++)
+            {
+                bool logicalResult = false;
+
+                IVertex vertex = executeResult[x].To;
+
+                logicalResult = LogicSingleOperator_VertexLevel(vertex, opetationType);
+
+                if (logicalResult)
+                    localStack.AddVertex(null, "True");
+                else
+                    localStack.AddVertex(null, "False");
+
+            }
+
+            return localStack;
+        }
     }
 }
 
