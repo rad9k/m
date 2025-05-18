@@ -2422,7 +2422,7 @@ namespace m0.ZeroUML.Instructions
                         ChangeTypeFilters.Add(value);
                         break;
 
-                    case "Listeners":
+                    case "Listener":
                         IVertex target = GraphUtil.GetQueryOutFirst(e.To, "Target", null);
 
                         if (target == null)
