@@ -10,6 +10,7 @@ using m0.Util;
 using m0.Graph;
 using static m0.ZeroCode.Helpers.InstructionHelpers;
 using m0.ZeroTypes;
+using System.Drawing;
 
 namespace m0.ZeroUML.Instructions
 {
@@ -2364,12 +2365,73 @@ namespace m0.ZeroUML.Instructions
 
         void x()
         {
-            CreateTrigger();
+         //   CreateTrigger();
         }
 
-        private static INoInEdgeInOutVertexVertex CreateTrigger(LogicSingleOpertorEnum opetationType, ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static INoInEdgeInOutVertexVertex CreateTrigger(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
-            return localStack;
+            isStackFrameReturn = false;
+
+            IVertex nameVertex = GraphUtil.GetQueryOutFirst(instructionVertex, "Name", null);
+
+            if (nameVertex == null)
+                return exe.Stack;
+
+            string name = GraphUtil.GetStringValue(nameVertex);
+
+            IVertex innerVertex = GraphUtil.GetQueryOutFirst(instructionVertex, "TriggerInner", null);
+
+            if (innerVertex == null)
+                return exe.Stack;
+
+            IList<string> ScopeQueries = new List<string>();
+            IList<IVertex> ChangeTypeFilters = new List<IVertex>();
+            IList<IVertex> Listeners = new List<IVertex>();
+
+            foreach(IEdge e in innerVertex)
+            {
+                if (GraphUtil.GetStringValue(e.Meta) != "Expression")
+                    continue;
+
+                IVertex expressionIs = GraphUtil.GetQueryOutFirst(e.To, "$Is", null);
+
+                if (expressionIs == null)
+                    continue;
+
+                switch (GraphUtil.GetStringValue(expressionIs))
+                {
+                    case "ScopeQuery":
+                        IVertex query = GraphUtil.GetQueryOutFirst(e.To, "Query", null);
+
+                        if (query == null)
+                            continue;
+
+                        ScopeQueries.Add(GraphUtil.GetStringValue(query));
+                        break;
+
+                    case "ChangeTypeFilter":
+                        IVertex value = GraphUtil.GetQueryOutFirst(e.To, "Value", null);
+
+                        if (value == null)
+                            continue;
+
+                        ChangeTypeFilters.Add(value);
+                        break;
+
+                    case "Listeners":
+                        IVertex target = GraphUtil.GetQueryOutFirst(e.To, "Target", null);
+
+                        if (target == null)
+                            continue;
+
+                        ChangeTypeFilters.Add(value);
+                        break;
+                        break;
+                }
+            }
+
+            return exe.Stack;
+            //return localStack;
 
             IVertex expression = GetExpression(instructionVertex);
 
@@ -2390,7 +2452,7 @@ namespace m0.ZeroUML.Instructions
 
                 IVertex vertex = executeResult[x].To;
 
-                logicalResult = LogicSingleOperator_VertexLevel(vertex, opetationType);
+            //    logicalResult = LogicSingleOperator_VertexLevel(vertex, opetationType);
 
                 if (logicalResult)
                     localStack.AddVertex(null, "True");
