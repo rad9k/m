@@ -19,6 +19,10 @@ namespace m0.ZeroUML.Instructions
         static IVertex r = MinusZero.Instance.Root;
 
         static IVertex thisMeta = r.Get(false, @"System\Meta\ZeroUML\this");
+        static IVertex graphChangeTriggerMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger");
+        static IVertex graphChangeTrigger_ScopeQueryMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger\ScopeQuery");
+        static IVertex graphChangeTrigger_ChageTypeFilterMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger\ChageTypeFilter");
+        static IVertex graphChangeTrigger_EventTriggerMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger\EventTrigger");
 
 
         ////////////////////////////////////////////////////////////////
@@ -27,7 +31,7 @@ namespace m0.ZeroUML.Instructions
         //
         ////////////////////////////////////////////////////////////////
 
-#region Query
+        #region Query
 
         public static INoInEdgeInOutVertexVertex QueryOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex, out bool isStackFrameReturn)
         {
@@ -2424,44 +2428,25 @@ namespace m0.ZeroUML.Instructions
                         if (target == null)
                             continue;
 
-                        ChangeTypeFilters.Add(value);
-                        break;
-                        break;
+                        ChangeTypeFilters.Add(target);
+                        break;                        
                 }
             }
 
-            return exe.Stack;
-            //return localStack;
-
-            IVertex expression = GetExpression(instructionVertex);
-
-            if (expression == null)
-                return exe.Stack;
-
-            INoInEdgeInOutVertexVertex _executeResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, expression);
-
-            IList<IEdge> executeResult = _executeResult.OutEdges;
-
-            int toBeProcessedCount = executeResult.Count;
-
             INoInEdgeInOutVertexVertex localStack = CreateStack();
 
-            for (int x = 0; x < toBeProcessedCount; x++)
-            {
-                bool logicalResult = false;
+            IVertex trigger = localStack.AddVertex(graphChangeTriggerMeta, name);
 
-                IVertex vertex = executeResult[x].To;
+            foreach (string query in ScopeQueries)
+                trigger.AddVertex(graphChangeTrigger_ScopeQueryMeta, query);
 
-            //    logicalResult = LogicSingleOperator_VertexLevel(vertex, opetationType);
+            foreach (IVertex filter in ChangeTypeFilters)
+                trigger.AddEdge(graphChangeTrigger_ChageTypeFilterMeta, filter);
 
-                if (logicalResult)
-                    localStack.AddVertex(null, "True");
-                else
-                    localStack.AddVertex(null, "False");
 
-            }
 
-            return localStack;
+
+            return localStack;            
         }
     }
 }
