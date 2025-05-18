@@ -22,7 +22,7 @@ namespace m0.ZeroUML.Instructions
         static IVertex graphChangeTriggerMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger");
         static IVertex graphChangeTrigger_ScopeQueryMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger\ScopeQuery");
         static IVertex graphChangeTrigger_ChageTypeFilterMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger\ChageTypeFilter");
-        static IVertex graphChangeTrigger_EventTriggerMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger\EventTrigger");
+        static IVertex graphChangeTrigger_ListenerMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger\Listener");
 
 
         ////////////////////////////////////////////////////////////////
@@ -2443,7 +2443,8 @@ namespace m0.ZeroUML.Instructions
             foreach (IVertex filter in ChangeTypeFilters)
                 trigger.AddEdge(graphChangeTrigger_ChageTypeFilterMeta, filter);
 
-
+            foreach (IVertex listener in Listeners)
+                trigger.AddEdge(graphChangeTrigger_ListenerMeta, listener);
 
 
             return localStack;            
