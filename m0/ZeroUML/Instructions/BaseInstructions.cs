@@ -2428,7 +2428,7 @@ namespace m0.ZeroUML.Instructions
                         if (target == null)
                             continue;
 
-                        ChangeTypeFilters.Add(target);
+                        Listeners.Add(target);
                         break;                        
                 }
             }
