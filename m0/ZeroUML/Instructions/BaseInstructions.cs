@@ -19,9 +19,11 @@ namespace m0.ZeroUML.Instructions
         static IVertex r = MinusZero.Instance.Root;
 
         static IVertex thisMeta = r.Get(false, @"System\Meta\ZeroUML\this");
+        static IVertex isMeta = r.Get(false, @"System\Meta\Base\Vertex\$Is");
+        static IVertex dolarGraphChangeTriggerMeta = r.Get(false, @"System\Meta\Base\Vertex\$GraphChangeTrigger");
         static IVertex graphChangeTriggerMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger");
         static IVertex graphChangeTrigger_ScopeQueryMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger\ScopeQuery");
-        static IVertex graphChangeTrigger_ChageTypeFilterMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger\ChageTypeFilter");
+        static IVertex graphChangeTrigger_ChageTypeFilterMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger\ChangeTypeFilter");
         static IVertex graphChangeTrigger_ListenerMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger\Listener");
 
 
@@ -2435,7 +2437,9 @@ namespace m0.ZeroUML.Instructions
 
             INoInEdgeInOutVertexVertex localStack = CreateStack();
 
-            IVertex trigger = localStack.AddVertex(graphChangeTriggerMeta, name);
+            IVertex trigger = localStack.AddVertex(dolarGraphChangeTriggerMeta, name);
+
+            trigger.AddEdge(isMeta, graphChangeTriggerMeta);
 
             foreach (string query in ScopeQueries)
                 trigger.AddVertex(graphChangeTrigger_ScopeQueryMeta, query);

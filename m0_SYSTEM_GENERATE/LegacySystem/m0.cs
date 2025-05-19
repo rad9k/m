@@ -500,7 +500,9 @@ namespace m0
                 ",CreateView{Name,ViewInner},ViewInner{FromTriggerQuery{Query},FromToTransformFunction{Target},ToTriggerQuery{Query},ToFromTransformFunction{Target}}" +
                 ",CreateTrigger{Name,TriggerInner},TriggerInner{ScopeQuery{Query},ChangeTypeFilter{Value},Listener{Target}}" +
                 ",this,Package{$InstanceCreationPriority:}" +
-                "}");            
+                "}");  
+            
+
 
             // Link
 
@@ -606,6 +608,7 @@ namespace m0
 
 
             ////////////////////////////////////////////////////////////////////////
+            
 
             // method
             IVertex method = LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class").AddVertex(null, "Method");
