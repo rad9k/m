@@ -43,7 +43,7 @@
 
 ```
 
-## create trigger Syntax
+## create trigger syntax
 
 ```-0
 trigger "trigger name" {

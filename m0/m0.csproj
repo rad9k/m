@@ -130,6 +130,7 @@
     <Compile Include="Graph\ExecutionFlow\NonTransactedEvent.cs" />
     <Compile Include="Graph\ExecutionFlow\TransacionAtom.cs" />
     <Compile Include="Graph\ExecutionFlow\Transaction.cs" />
+    <Compile Include="Graph\ExecutionFlow\View.cs" />
     <Compile Include="Graph\IImplementedVertex.cs" />
     <Compile Include="Graph\Internal\EdgeDictionaries.cs" />
     <Compile Include="Graph\Internal\MetaInList.cs" />

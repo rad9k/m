@@ -40,30 +40,44 @@ __After the "Possible view definitions" evaluation we come to conclusion, that j
 |updatable target to source    |updatable      |target to source|NO                  |NO                       |YES                 |YES                      |
 |updatable both                |updatable      |both            |YES                 |YES                      |YES                 |YES                      |
 
-## Graph
+## create trigger Graph
 
 ```-0
-<@$Empty :: "name string">
-	<@$Is :: @CreateView>
-	<@CreateIn :: expression>
-	<@Source :: >
-		<@TriggerQuery :: "query">
-		<@TransformFunction :: @function>
-	<@Target :: >
-		<@TriggerQuery :: "query">
-		<@TransformFunction :: @function>
+<(?<ANY>) :: "">
+	<@$Is :: CreateView>
+	<@Name :: "view name">
+	<@ViewInner :: "">
+		<@Is :: @ViewInner>
+		<@Expression :: "">
+			<@Is :: @FromTriggerQuery>
+			<@Query :: "query body">
+		<@Expression :: "">
+			<@Is :: @FromToTransformFunction>
+			<@Target :: @ListenerFunction>
+		<@Expression :: "">
+			<@Is :: @ToTriggerQuery>
+			<@Query :: "query body">
+		<@Expression :: "">
+			<@Is :: @ToFromTransformFunction>
+			<@Target :: @ListenerFunction>
+
 ```
 
-## Create Syntax
+## create view syntax
 
 ```-0
-in <query> create view "<name string>"
-	view source
-		view query "<string>"
-		view query "<string>"
-		view function @source_function
-	view target
-		view query "<string>"
-		view query "<string>"
-		view function @target_function
+view "trigger name" {
+	from query "query body"
+	from to transform @TransformFunction
+	to query "query body"
+	to from transform @TransformFunction
+}
+```
+
+above expression will create view at local stack, so that means it can be used in following way
+
+```-0
+AddHere +< view "view name"{
+	...
+}
 ```

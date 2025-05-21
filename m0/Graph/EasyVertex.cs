@@ -50,6 +50,11 @@ namespace m0.Graph
 
                 //FireChange(new VertexChangeEventArgs(VertexChangeType.ValueChanged, null));
 
+                if (_Value.ToString() == "piesek")
+                {
+                    int x = 0;
+                }
+
                 if (CanEmitGraphChangeEvents)
                     ExecutionFlowHelper.AddTransactionAtom(new GraphChangeTransactionAtom(
                         this,
