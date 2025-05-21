@@ -11,6 +11,7 @@ using m0.Graph;
 using static m0.ZeroCode.Helpers.InstructionHelpers;
 using m0.ZeroTypes;
 using System.Drawing;
+using m0.Graph.ExecutionFlow;
 
 namespace m0.ZeroUML.Instructions
 {
@@ -2451,6 +2452,20 @@ namespace m0.ZeroUML.Instructions
         public static INoInEdgeInOutVertexVertex CreateView(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
+
+            INoInEdgeInOutVertexVertex localStack = CreateStack();
+
+            ChangeTypeFilter = new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.OnlyNonTransactedRootVertexEvents,
+                     GraphChangeFilterEnum.MetaEdgeAdded};
+
+            GraphChangeTrigger.AddTrigger(localStack,
+                ScopeQueries,
+                ChangeTypeFilter,
+                "CreateView");
+
+            return localStack;
+
+
 
             IVertex nameVertex = GraphUtil.GetQueryOutFirst(instructionVertex, "Name", null);
 
