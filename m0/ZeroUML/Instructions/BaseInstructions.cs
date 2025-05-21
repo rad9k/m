@@ -2455,102 +2455,14 @@ namespace m0.ZeroUML.Instructions
 
             INoInEdgeInOutVertexVertex localStack = CreateStack();
 
-            ChangeTypeFilter = new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.OnlyNonTransactedRootVertexEvents,
-                     GraphChangeFilterEnum.MetaEdgeAdded};
-
-            GraphChangeTrigger.AddTrigger(localStack,
-                ScopeQueries,
-                ChangeTypeFilter,
+            IEdge createViewTriggerEdge = GraphChangeTrigger.AddTrigger(localStack,
+                new List<string>(),
+                new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.OnlyNonTransactedRootVertexEvents,
+                     GraphChangeFilterEnum.MetaEdgeAdded},
                 "CreateView");
 
-            return localStack;
+            ExecutionFlowHelper.AddListener_DotNetDelegate(createViewTriggerEdge.To, m0.Graph.ExecutionFlow.View.CreateView_MetaEdgeAdded, "CreateViewMetaEdgeAdded");
 
-
-
-            IVertex nameVertex = GraphUtil.GetQueryOutFirst(instructionVertex, "Name", null);
-
-            if (nameVertex == null)
-                return exe.Stack;
-
-            string name = GraphUtil.GetStringValue(nameVertex);
-
-            IVertex innerVertex = GraphUtil.GetQueryOutFirst(instructionVertex, "ViewInner", null);
-
-            if (innerVertex == null)
-                return exe.Stack;
-
-            IList<string> FromTriggerQueries = new List<string>();
-            IList<IVertex> FromToTransformFunctions = new List<IVertex>();
-            IList<string> ToTriggerQueries = new List<string>();
-            IList<IVertex> ToFromTransformFunctions = new List<IVertex>();
-
-            foreach (IEdge e in innerVertex)
-            {
-                if (GraphUtil.GetStringValue(e.Meta) != "Expression")
-                    continue;
-
-                IVertex expressionIs = GraphUtil.GetQueryOutFirst(e.To, "$Is", null);
-
-                if (expressionIs == null)
-                    continue;
-
-                switch (GraphUtil.GetStringValue(expressionIs))
-                {
-                    case "FromTriggerQuery":
-                        IVertex query = GraphUtil.GetQueryOutFirst(e.To, "Query", null);
-
-                        if (query == null)
-                            continue;
-
-                        FromTriggerQueries.Add(GraphUtil.GetStringValue(query));
-                        break;
-
-                    case "FromToTransformFunction":
-                        IVertex target = GraphUtil.GetQueryOutFirst(e.To, "Target", null);
-
-                        if (target == null)
-                            continue;
-
-                        FromToTransformFunctions.Add(target);
-                        break;
-
-                    case "ToTriggerQuery":
-                        IVertex query2 = GraphUtil.GetQueryOutFirst(e.To, "Query", null);
-
-                        if (query2 == null)
-                            continue;
-
-                        ToTriggerQueries.Add(GraphUtil.GetStringValue(query2));
-                        break;
-
-                    case "ToFromTransformFunction":
-                        IVertex target2 = GraphUtil.GetQueryOutFirst(e.To, "Target", null);
-
-                        if (target2 == null)
-                            continue;
-
-                        ToFromTransformFunctions.Add(target2);
-                        break;
-
-                }
-            }
-
-            INoInEdgeInOutVertexVertex localStack = CreateStack();
-            /*
-            IVertex trigger = localStack.AddVertex(dolarGraphChangeTriggerMeta, name);
-
-            trigger.AddEdge(isMeta, graphChangeTriggerMeta);
-
-            foreach (string query in ScopeQueries)
-                trigger.AddVertex(graphChangeTrigger_ScopeQueryMeta, query);
-
-            foreach (IVertex filter in ChangeTypeFilters)
-                trigger.AddEdge(graphChangeTrigger_ChageTypeFilterMeta, filter);
-
-            foreach (IVertex listener in Listeners)
-                trigger.AddEdge(graphChangeTrigger_ListenerMeta, listener);
-
-            */
             return localStack;
         }
 

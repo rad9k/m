@@ -9,9 +9,9 @@ namespace m0.Graph.ExecutionFlow
 {
     class View
     {
-        public virtual INoInEdgeInOutVertexVertex CreateView_MetaEdgeAdded(IExecution exe)
+        public static INoInEdgeInOutVertexVertex CreateView_MetaEdgeAdded(IExecution exe)
         {
-
+            return null;
         }
     }
 }
