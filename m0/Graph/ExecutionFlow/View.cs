@@ -8,50 +8,18 @@ using System.Threading.Tasks;
 
 namespace m0.Graph.ExecutionFlow
 {
-    class View
+    class ViewProperties
     {
-        public static INoInEdgeInOutVertexVertex CreateView_MetaEdgeAdded(IExecution exe)
-        {
-            foreach (IEdge e in GraphUtil.GetQueryOut(exe.Stack, "event", null))
-            {
-                IVertex triggerVertex = GraphUtil.GetQueryOutFirst(e.To, "Trigger", null);
+        public IList<string> FromTriggerQueries = new List<string>();
+        public IVertex FromToTransformFunction;
+        public IList<string> ToTriggerQueries = new List<string>();
+        public IVertex ToFromTransformFunction;
 
-                if (GraphUtil.GetStringValueOrNull(triggerVertex) == "CreateView")
-                    ProcessCreateViewEvent(e);
-            }
-
-            return exe.Stack;
-        }
-
-        private static void ProcessCreateViewEvent(IEdge eventEdge)
-        {
-            IVertex eventVertex, edge, edgeFrom, edgeMeta, edgeTo, trigger, createView;
-
-            eventVertex = eventEdge.To;
-
-            edge = GraphUtil.GetQueryOutFirst(eventVertex, "Edge", null);
-
-            edgeFrom = GraphUtil.GetQueryOutFirst(edge, "From", null);
-
-            edgeMeta = GraphUtil.GetQueryOutFirst(edge, "Meta", null);
-
-            edgeTo = GraphUtil.GetQueryOutFirst(edge, "To", null);
-
-            trigger = GraphUtil.GetQueryOutFirst(eventVertex, "Trigger", null);
-
-            createView = GraphUtil.GetQueryOutFirst(edgeMeta, "CreateView", null);
-
-            //
-
-            IVertex innerVertex = GraphUtil.GetQueryOutFirst(createView, "ViewInner", null);
+        public ViewProperties(IVertex createViewVertex) {
+            IVertex innerVertex = GraphUtil.GetQueryOutFirst(createViewVertex, "ViewInner", null);
 
             if (innerVertex == null)
                 return;
-
-            IList<string> FromTriggerQueries = new List<string>();
-            IList<IVertex> FromToTransformFunctions = new List<IVertex>();
-            IList<string> ToTriggerQueries = new List<string>();
-            IList<IVertex> ToFromTransformFunctions = new List<IVertex>();
 
             foreach (IEdge e in innerVertex)
             {
@@ -75,12 +43,8 @@ namespace m0.Graph.ExecutionFlow
                         break;
 
                     case "FromToTransformFunction":
-                        IVertex target = GraphUtil.GetQueryOutFirst(e.To, "Target", null);
+                        FromToTransformFunction = GraphUtil.GetQueryOutFirst(e.To, "Target", null);
 
-                        if (target == null)
-                            continue;
-
-                        FromToTransformFunctions.Add(target);
                         break;
 
                     case "ToTriggerQuery":
@@ -93,19 +57,54 @@ namespace m0.Graph.ExecutionFlow
                         break;
 
                     case "ToFromTransformFunction":
-                        IVertex target2 = GraphUtil.GetQueryOutFirst(e.To, "Target", null);
+                        ToFromTransformFunction = GraphUtil.GetQueryOutFirst(e.To, "Target", null);
 
-                        if (target2 == null)
-                            continue;
-
-                        ToFromTransformFunctions.Add(target2);
                         break;
-
                 }
-
-                int x = 0;
-
             }
+        }
+
+
+    }
+
+    class View
+    {
+        public static INoInEdgeInOutVertexVertex CreateView_MetaEdgeAdded(IExecution exe)
+        {
+            foreach (IEdge e in GraphUtil.GetQueryOut(exe.Stack, "event", null))
+            {
+                IVertex triggerVertex = GraphUtil.GetQueryOutFirst(e.To, "Trigger", null);
+
+                if (GraphUtil.GetStringValueOrNull(triggerVertex) == "CreateView")
+                    ProcessCreateViewEvent(e);
+            }
+
+            return exe.Stack;
+        }
+
+        
+
+        private static void ProcessCreateViewEvent(IEdge eventEdge)
+        {
+            IVertex eventVertex, edge, edgeFrom, edgeMeta, edgeTo, trigger, createView;
+
+            eventVertex = eventEdge.To;
+
+            edge = GraphUtil.GetQueryOutFirst(eventVertex, "Edge", null);
+
+            edgeFrom = GraphUtil.GetQueryOutFirst(edge, "From", null);
+
+            edgeMeta = GraphUtil.GetQueryOutFirst(edge, "Meta", null);
+
+            edgeTo = GraphUtil.GetQueryOutFirst(edge, "To", null);
+
+            trigger = GraphUtil.GetQueryOutFirst(eventVertex, "Trigger", null);
+
+            createView = GraphUtil.GetQueryOutFirst(edgeMeta, "CreateView", null);
+
+            //
+
+            
         }
     }
 }
