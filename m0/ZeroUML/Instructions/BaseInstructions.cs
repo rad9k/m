@@ -28,6 +28,8 @@ namespace m0.ZeroUML.Instructions
         static IVertex graphChangeTrigger_ChageTypeFilterMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger\ChangeTypeFilter");
         static IVertex graphChangeTrigger_ListenerMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger\Listener");
 
+        static IVertex createViewMeta = r.Get(false, @"System\Meta\ZeroUML\CreateView");
+
         ////////////////////////////////////////////////////////////////
         //
         // query 
@@ -2462,6 +2464,8 @@ namespace m0.ZeroUML.Instructions
                 "CreateView");
 
             ExecutionFlowHelper.AddListener_DotNetDelegate(createViewTriggerEdge.To, m0.Graph.ExecutionFlow.View.CreateView_MetaEdgeAdded, "CreateViewMetaEdgeAdded");
+
+            localStack.AddEdge(createViewMeta, instructionVertex);
 
             return localStack;
         }
