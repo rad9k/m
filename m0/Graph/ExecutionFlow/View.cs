@@ -64,7 +64,15 @@ namespace m0.Graph.ExecutionFlow
             }
         }
 
+        public void CallFromToTransformFunction(IVertex events, IVertex from, IVertex to)
+        {
 
+        }
+
+        public void CallToFromTransformFunction(IVertex events, IVertex from, IVertex to)
+        {
+
+        }
     }
 
     class View
