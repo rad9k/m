@@ -1,5 +1,7 @@
 ﻿using ICSharpCode.AvalonEdit.Rendering;
 using m0.Foundation;
+using m0.ZeroCode;
+using m0.ZeroCode.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,14 +10,20 @@ using System.Threading.Tasks;
 
 namespace m0.Graph.ExecutionFlow
 {
-    class ViewProperties
+    class ViewHolder
     {
+        static IVertex r = MinusZero.Instance.Root;
+
+        static IVertex viewGenericTransformFunction_eventMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\ViewGenericTransformFunction\event");
+        static IVertex viewGenericTransformFunction_fromMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\ViewGenericTransformFunction\from");
+        static IVertex viewGenericTransformFunction_toMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\ViewGenericTransformFunction\to");
+
         public IList<string> FromTriggerQueries = new List<string>();
         public IVertex FromToTransformFunction;
         public IList<string> ToTriggerQueries = new List<string>();
         public IVertex ToFromTransformFunction;
 
-        public ViewProperties(IVertex createViewVertex) {
+        public ViewHolder(IVertex createViewVertex) {
             IVertex innerVertex = GraphUtil.GetQueryOutFirst(createViewVertex, "ViewInner", null);
 
             if (innerVertex == null)
@@ -64,14 +72,30 @@ namespace m0.Graph.ExecutionFlow
             }
         }
 
-        public void CallFromToTransformFunction(IVertex events, IVertex from, IVertex to)
+        public void ExecuteFromToTransformFunction(IVertex events, IVertex from, IVertex to)
         {
+            IVertex parameters = InstructionHelpers.CreateStack();
 
+            if (events != null)
+                parameters.AddEdge(viewGenericTransformFunction_eventMeta, events);
+
+            parameters.AddEdge(viewGenericTransformFunction_fromMeta, from);
+            parameters.AddEdge(viewGenericTransformFunction_toMeta, to);
+
+            ZeroCodeExecutonUtil.FuncionCall(FromToTransformFunction, parameters);
         }
 
-        public void CallToFromTransformFunction(IVertex events, IVertex from, IVertex to)
+        public void ExecuteToFromTransformFunction(IVertex events, IVertex from, IVertex to)
         {
+            IVertex parameters = InstructionHelpers.CreateStack();
 
+            if (events != null)
+                parameters.AddEdge(viewGenericTransformFunction_eventMeta, events);
+
+            parameters.AddEdge(viewGenericTransformFunction_fromMeta, from);
+            parameters.AddEdge(viewGenericTransformFunction_toMeta, to);
+
+            ZeroCodeExecutonUtil.FuncionCall(ToFromTransformFunction, parameters);
         }
     }
 
@@ -88,9 +112,7 @@ namespace m0.Graph.ExecutionFlow
             }
 
             return exe.Stack;
-        }
-
-        
+        }  
 
         private static void ProcessCreateViewEvent(IEdge eventEdge)
         {
@@ -112,7 +134,17 @@ namespace m0.Graph.ExecutionFlow
 
             //
 
-            
+            ViewHolder vh = new ViewHolder(createView);
+
+            if (vh.ToFromTransformFunction != null && vh.FromToTransformFunction != null)
+                vh.ExecuteFromToTransformFunction(null, edgeFrom, edgeTo);
+            else {
+                if (vh.FromToTransformFunction != null)
+                    vh.ExecuteFromToTransformFunction(null, edgeFrom, edgeTo);
+
+                if (vh.ToFromTransformFunction != null)
+                    vh.ExecuteToFromTransformFunction(null, edgeFrom, edgeTo);
+            }
         }
     }
 }

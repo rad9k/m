@@ -26,8 +26,8 @@ __After the "Possible view definitions" evaluation we come to conclusion, that j
 
 ### transform function parameters
 
-- events @Vertex
-	- if events == ~00 than transform function is expected to generate whole source/target (so this is not a _transform_ function but a _generate_)
+- event @Vertex
+	- if event == ~00 than transform function is expected to generate whole source/target (so this is not a _transform_ function but a _generate_)
 - from @Vertex
 - to @Vertex
 

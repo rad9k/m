@@ -29,13 +29,6 @@ namespace m0.ZeroCode
             endPoint.Execute(exe);            
         }
 
-        public static void CreateExecutionAndVertexExecute(IVertex endPoint, IVertex toBeStackVertex)
-        {
-            IExecution exe = new ZeroCodeExecution(toBeStackVertex);
-
-            endPoint.Execute(exe);            
-        }
-
         public static void MethodCall(IExecution exe, IVertex endPoint, IVertex theObject, IVertex paramtersStack)
         {
             exe.AddStackFrame(theObject); // ENTER NEW STACK
@@ -46,6 +39,15 @@ namespace m0.ZeroCode
 
             exe.RemoveStackFrame();
             exe.RemoveStackFrame(); // LEAVE NEW STACK
+        }
+
+        public static void FuncionCall(IVertex endPoint, IVertex paramtersStack)
+        {
+            IExecution exe = new ZeroCodeExecution();
+
+            exe.AddStackFrame(paramtersStack);
+
+            endPoint.Execute(exe);
         }
 
         public static void FuncionCall(IExecution exe, IVertex endPoint, IVertex paramtersStack)
