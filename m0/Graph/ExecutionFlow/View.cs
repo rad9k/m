@@ -145,6 +145,11 @@ namespace m0.Graph.ExecutionFlow
                 if (vh.ToFromTransformFunction != null)
                     vh.ExecuteToFromTransformFunction(null, edgeFrom, edgeTo);
             }
+
+            if (vh.FromToTransformFunction != null || vh.ToFromTransformFunction != null)
+            {
+
+            }
         }
     }
 }
