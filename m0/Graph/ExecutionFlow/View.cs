@@ -112,7 +112,17 @@ namespace m0.Graph.ExecutionFlow
             }
 
             return exe.Stack;
-        }  
+        }
+
+        public static INoInEdgeInOutVertexVertex CreateView_FromListener(IExecution exe)
+        {
+            return exe.Stack;
+        }
+
+        public static INoInEdgeInOutVertexVertex CreateView_ToListener(IExecution exe)
+        {
+            return exe.Stack;
+        }
 
         private static void ProcessCreateViewEvent(IEdge eventEdge)
         {
@@ -146,7 +156,19 @@ namespace m0.Graph.ExecutionFlow
                     vh.ExecuteToFromTransformFunction(null, edgeFrom, edgeTo);
             }
 
-            if (vh.FromToTransformFunction != null || vh.ToFromTransformFunction != null)
+            if (vh.FromToTransformFunction != null)
+            {
+                IEdge createViewTriggerEdge = GraphChangeTrigger.AddTrigger(edgeFrom,
+                vh.FromTriggerQueries,
+                new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.InputEdgeAdded,
+                     GraphChangeFilterEnum.MetaEdgeAdded},
+                "CreateView");
+
+                ExecutionFlowHelper.AddListener_DotNetDelegate(createViewTriggerEdge.To, m0.Graph.ExecutionFlow.View.CreateView_MetaEdgeAdded, "CreateViewMetaEdgeAdded");
+
+            }
+
+            if (vh.ToFromTransformFunction != null)
             {
 
             }
