@@ -2711,6 +2711,18 @@ namespace m0
 
             o_from_query_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ViewInner\FromTriggerQuery\Query"), "(?<query>)");
 
+            // from filter
+
+            IVertex o_from_trigger_filter = k.AddVertex(keyword, "from filter (?<filter>)");
+
+            o_from_trigger_filter.AddEdge(keywordGroup, kgd_ViewInner);
+
+            IVertex o_from_trigger_filter_base = o_from_trigger_filter.AddVertex(any, "");
+
+            o_from_trigger_filter_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"ViewInner\FromLitenerFilter"));
+
+            o_from_trigger_filter_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ViewInner\FromLitener\Value"), "(?<filter>)");
+
             // to from transform (?<listener>)
 
             IVertex o_to_from_transform = k.AddVertex(keyword, "to from transform (?<listener>)");
@@ -2734,6 +2746,18 @@ namespace m0
             o_to_query_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"ViewInner\ToTriggerQuery"));
 
             o_to_query_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ViewInner\ToTriggerQuery\Query"), "(?<query>)");
+
+            // to filter
+
+            IVertex o_to_trigger_filter = k.AddVertex(keyword, "to filter (?<filter>)");
+
+            o_to_trigger_filter.AddEdge(keywordGroup, kgd_ViewInner);
+
+            IVertex o_to_trigger_filter_base = o_to_trigger_filter.AddVertex(any, "");
+
+            o_to_trigger_filter_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"ViewInner\FromLitenerFilter"));
+
+            o_to_trigger_filter_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ViewInner\FromLitener\Value"), "(?<filter>)");
 
             // from to transform (?<listener>)
 
