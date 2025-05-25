@@ -20,7 +20,7 @@ namespace m0.Graph.ExecutionFlow
         MetaEdgeRemoved, 
         OutputEdgeDisposed };
 
-    class CodeRepresentationEnumHelper
+    class GraphChangeFilterEnumHelper
     {
         static IVertex OnlyNonTransactedRootVertexEvents_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\OnlyNonTransactedRootVertexEvents");
         static IVertex FilterOutRootVertexEvents_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum\FilterOutRootVertexEvents");
@@ -65,8 +65,7 @@ namespace m0.Graph.ExecutionFlow
                 case GraphChangeFilterEnum.InputEdgeRemoved: return InputEdgeRemoved_meta;
                 case GraphChangeFilterEnum.MetaEdgeAdded: return MetaEdgeAdded_meta;
                 case GraphChangeFilterEnum.MetaEdgeRemoved: return MetaEdgeRemoved_meta;
-                case GraphChangeFilterEnum.: return _meta;
-
+                case GraphChangeFilterEnum.OutputEdgeDisposed: return OutputEdgeDisposed_meta;
             }
 
             return null;

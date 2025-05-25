@@ -58,7 +58,7 @@ namespace m0.Graph.ExecutionFlow
                         if (value == null)
                             continue;
 
-                        FromFilters.Add(GraphChangeFilterEnum_Helper.);
+                        FromFilters.Add(GraphChangeFilterEnumHelper.GetEnum(value));
                         break;
 
                     case "FromToTransformFunction":
@@ -81,7 +81,7 @@ namespace m0.Graph.ExecutionFlow
                         if (value2 == null)
                             continue;
 
-                        ToFilters.Add(value2);
+                        ToFilters.Add(GraphChangeFilterEnumHelper.GetEnum(value2));
                         break;
 
                     case "ToFromTransformFunction":
@@ -193,17 +193,31 @@ namespace m0.Graph.ExecutionFlow
 
                 IEdge createViewTriggerEdge = GraphChangeTrigger.AddTrigger(edgeFrom,
                 vh.FromTriggerQueries,
-                new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.InputEdgeAdded,
-                     GraphChangeFilterEnum.MetaEdgeAdded},
-                "CreateView");
+                filtersToUse,
+                "View");
 
-                ExecutionFlowHelper.AddListener_DotNetDelegate(createViewTriggerEdge.To, m0.Graph.ExecutionFlow.View.CreateView_MetaEdgeAdded, "CreateViewMetaEdgeAdded");
-
+                ExecutionFlowHelper.AddListener_DotNetDelegate(createViewTriggerEdge.To, 
+                    m0.Graph.ExecutionFlow.View.CreateView_FromListener,
+                    "CreateViewFromListener");
             }
 
             if (vh.ToFromTransformFunction != null)
             {
+                IList<GraphChangeFilterEnum> filtersToUse;
 
+                if (vh.ToFilters.Count > 0)
+                    filtersToUse = vh.ToFilters;
+                else
+                    filtersToUse = valueAndOutputFilter;
+
+                IEdge createViewTriggerEdge = GraphChangeTrigger.AddTrigger(edgeTo,
+                vh.ToTriggerQueries,
+                filtersToUse,
+                "View");
+
+                ExecutionFlowHelper.AddListener_DotNetDelegate(createViewTriggerEdge.To,
+                    m0.Graph.ExecutionFlow.View.CreateView_ToListener,
+                    "CreateViewToListener");
             }
         }
     }
