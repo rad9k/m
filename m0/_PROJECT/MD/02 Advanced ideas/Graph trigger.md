@@ -36,7 +36,7 @@
 			<@Query :: "query body">
 		<@Expression :: "">
 			<@Is :: @ChangeTypeFilter>
-			<@Value :: @ChangeTypeFilterEnum\value>
+			<@Value :: @ChangeTypeFilterEnum\Value>
 		<@Expression :: "">
 			<@Is :: @Listener>
 			<@Target :: @ListenerFunction>

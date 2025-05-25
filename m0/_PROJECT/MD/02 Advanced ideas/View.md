@@ -17,9 +17,11 @@ View is defined as _meta edge_. When this _meta edge_ is added to given vertex (
 		- both
 - **source**
 	- trigger query
+	- trigger filters
 	- transform function
 - **target**	
 	- trigger query
+	- trigger filters
 	- transform function
 
 __After the "Possible view definitions" evaluation we come to conclusion, that just trigger queries and transform function are enough to express above.__
@@ -52,11 +54,17 @@ __After the "Possible view definitions" evaluation we come to conclusion, that j
 			<@Is :: @FromTriggerQuery>
 			<@Query :: "query body">
 		<@Expression :: "">
+			<@Is :: @FromTriggerFilter>
+			<@Value :: @ChangeTypeFilterEnum\Value>
+		<@Expression :: "">
 			<@Is :: @FromToTransformFunction>
 			<@Target :: @ListenerFunction>
 		<@Expression :: "">
 			<@Is :: @ToTriggerQuery>
 			<@Query :: "query body">
+		<@Expression :: "">
+			<@Is :: @ToTriggerFilter>
+			<@Value :: @ChangeTypeFilterEnum\Value>
 		<@Expression :: "">
 			<@Is :: @ToFromTransformFunction>
 			<@Target :: @ListenerFunction>
@@ -68,8 +76,10 @@ __After the "Possible view definitions" evaluation we come to conclusion, that j
 ```-0
 view "trigger name" {
 	from query "query body"
+	from filter @GraphChangeFilterEnum\value
 	from to transform @TransformFunction
 	to query "query body"
+	to filter @GraphChangeFilterEnum\value
 	to from transform @TransformFunction
 }
 ```

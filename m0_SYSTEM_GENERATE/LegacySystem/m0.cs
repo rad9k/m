@@ -16,6 +16,7 @@ using System.Security.Claims;
 using System.Threading;
 using System.Xml.Linq;
 using System.Runtime.InteropServices;
+using m0.LegacySystem;
 
 namespace m0
 {
@@ -497,7 +498,7 @@ namespace m0
                 ",If{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},$InstanceCreationPriority:,$EmptyValueInstance:,$EmptyMetaInstance:},Test{Expression{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},Case{$MinCardinality:0,$MaxCardinality:-1,$IsAggregation:},Fallback{$MinCardinality:0,$MaxCardinality:1,$IsAggregation:},$InstanceCreationPriority:,$EmptyValueInstance:,$EmptyMetaInstance:},Case{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},$InstanceCreationPriority:,$EmptyValueInstance:},Fallback{$InstanceCreationPriority:,$EmptyValueInstance:}" +
                 ",EmptySet,Constant" +
                 ",Execute,Parse,ParseWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}},Generate,GenerateWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}" +
-                ",CreateView{Name,ViewInner},ViewInner{FromTriggerQuery{Query},FromToTransformFunction{Target},ToTriggerQuery{Query},ToFromTransformFunction{Target}}" +
+                ",CreateView{Name,ViewInner},ViewInner{FromTriggerQuery{Query},FromTriggerFilter{Value},FromToTransformFunction{Target},ToTriggerQuery{Query},ToTriggerFilter{Value},ToFromTransformFunction{Target}}" +
                 ",CreateTrigger{Name,TriggerInner},TriggerInner{ScopeQuery{Query},ChangeTypeFilter{Value},Listener{Target}}" +
                 ",this,Package{$InstanceCreationPriority:}" +
                 "}");  
@@ -1037,6 +1038,10 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(smzt, false, @"String"));
 
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"ViewInner\FromTriggerFilter\Value").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smzte, false, @"GraphChangeFilterEnum"));
+
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"ViewInner\FromToTransformFunction\Target").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function"));
@@ -1044,6 +1049,10 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"ViewInner\ToTriggerQuery\Query").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(smzt, false, @"String"));
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"ViewInner\ToTriggerFilter\Value").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smzte, false, @"GraphChangeFilterEnum"));
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"ViewInner\ToFromTransformFunction\Target").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
