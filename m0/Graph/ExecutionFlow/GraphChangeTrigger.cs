@@ -7,9 +7,7 @@ using m0.ZeroTypes;
 using System.Collections.Generic;
 
 namespace m0.Graph.ExecutionFlow
-{
-    public enum GraphChangeFilterEnum { OnlyNonTransactedRootVertexEvents, FilterOutRootVertexEvents, ValueChange, OutputEdgeAdded, OutputEdgeRemoved, InputEdgeAdded, InputEdgeRemoved, MetaEdgeAdded, MetaEdgeRemoved, OutputEdgeDisposed };
-
+{    
     public class GraphChangeTrigger
     {
         static IVertex graphChangeTrigger_meta;

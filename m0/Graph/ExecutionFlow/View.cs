@@ -19,8 +19,10 @@ namespace m0.Graph.ExecutionFlow
         static IVertex viewGenericTransformFunction_toMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\ViewGenericTransformFunction\to");
 
         public IList<string> FromTriggerQueries = new List<string>();
+        public IList<GraphChangeFilterEnum> FromFilters = new List<GraphChangeFilterEnum>();
         public IVertex FromToTransformFunction;
         public IList<string> ToTriggerQueries = new List<string>();
+        public IList<GraphChangeFilterEnum> ToFilters = new List<GraphChangeFilterEnum>();
         public IVertex ToFromTransformFunction;
 
         public ViewHolder(IVertex createViewVertex) {
@@ -50,6 +52,15 @@ namespace m0.Graph.ExecutionFlow
                         FromTriggerQueries.Add(GraphUtil.GetStringValue(query));
                         break;
 
+                    case "FromTriggerFilter":
+                        IVertex value = GraphUtil.GetQueryOutFirst(e.To, "Value", null);
+
+                        if (value == null)
+                            continue;
+
+                        FromFilters.Add(GraphChangeFilterEnum_Helper.);
+                        break;
+
                     case "FromToTransformFunction":
                         FromToTransformFunction = GraphUtil.GetQueryOutFirst(e.To, "Target", null);
 
@@ -62,6 +73,15 @@ namespace m0.Graph.ExecutionFlow
                             continue;
 
                         ToTriggerQueries.Add(GraphUtil.GetStringValue(query2));
+                        break;
+
+                    case "ToTriggerFilter":
+                        IVertex value2 = GraphUtil.GetQueryOutFirst(e.To, "Value", null);
+
+                        if (value2 == null)
+                            continue;
+
+                        ToFilters.Add(value2);
                         break;
 
                     case "ToFromTransformFunction":
@@ -156,8 +176,21 @@ namespace m0.Graph.ExecutionFlow
                     vh.ExecuteToFromTransformFunction(null, edgeFrom, edgeTo);
             }
 
+            IList<GraphChangeFilterEnum> valueAndOutputFilter = new List<GraphChangeFilterEnum>() { 
+                GraphChangeFilterEnum.ValueChange,
+                GraphChangeFilterEnum.OutputEdgeAdded,
+                GraphChangeFilterEnum.OutputEdgeRemoved,
+                GraphChangeFilterEnum.OutputEdgeDisposed};
+
             if (vh.FromToTransformFunction != null)
             {
+                IList<GraphChangeFilterEnum> filtersToUse;
+
+                if (vh.FromFilters.Count > 0)
+                    filtersToUse = vh.FromFilters;
+                else
+                    filtersToUse = valueAndOutputFilter;
+
                 IEdge createViewTriggerEdge = GraphChangeTrigger.AddTrigger(edgeFrom,
                 vh.FromTriggerQueries,
                 new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.InputEdgeAdded,

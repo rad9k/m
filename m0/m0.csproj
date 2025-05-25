@@ -124,6 +124,7 @@
     <Compile Include="Foundation\ITransactionAtom.cs" />
     <Compile Include="Foundation\IUserInteraction.cs" />
     <Compile Include="Graph\ExecutionFlow\ExecutionFlowHelper.cs" />
+    <Compile Include="Graph\ExecutionFlow\GraphChangeFilterEnum.cs" />
     <Compile Include="Graph\ExecutionFlow\GraphChangeTransactionAtom.cs" />
     <Compile Include="Graph\ExecutionFlow\GraphChangeTrigger.cs" />
     <Compile Include="Graph\ExecutionFlow\GraphChangeTriggerWatcher.cs" />

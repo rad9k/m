@@ -71,6 +71,16 @@ __After the "Possible view definitions" evaluation we come to conclusion, that j
 
 ```
 
+### case of filter not present
+
+In case when there is no any `FromTriggerFilter` or `ToTriggerFilter` defined, the _value and output filter_ set is used for _from_ or _to_ vertex listeners.
+
+The _value and output filter_ set is:
+- ValueChange
+- OutputEdgeAdded
+- OutputEdgeRemoved
+- OutputEdgeDisposed
+
 ## create view syntax
 
 ```-0
