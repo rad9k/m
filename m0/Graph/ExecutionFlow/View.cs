@@ -95,7 +95,7 @@ namespace m0.Graph.ExecutionFlow
             }
         }
 
-        public void ExecuteFromToTransformFunction(IList<IEdge> events, IVertex from, IVertex meta, IVertex to)
+        public void ExecuteFromToTransformFunction(IExecution exe, IList<IEdge> events, IVertex from, IVertex meta, IVertex to)
         {
             IVertex parameters = InstructionHelpers.CreateStack();
 
@@ -106,10 +106,10 @@ namespace m0.Graph.ExecutionFlow
             parameters.AddEdge(viewGenericTransformFunction_metaMeta, meta);
             parameters.AddEdge(viewGenericTransformFunction_toMeta, to);
 
-            ZeroCodeExecutonUtil.FuncionCall(FromToTransformFunction, parameters);
+            ZeroCodeExecutonUtil.FuncionCall(exe, FromToTransformFunction, parameters);
         }
 
-        public void ExecuteToFromTransformFunction(IList<IEdge> events, IVertex from, IVertex meta, IVertex to)
+        public void ExecuteToFromTransformFunction(IExecution exe, IList<IEdge> events, IVertex from, IVertex meta, IVertex to)
         {
             IVertex parameters = InstructionHelpers.CreateStack();
 
@@ -120,7 +120,7 @@ namespace m0.Graph.ExecutionFlow
             parameters.AddEdge(viewGenericTransformFunction_metaMeta, meta);
             parameters.AddEdge(viewGenericTransformFunction_toMeta, to);
 
-            ZeroCodeExecutonUtil.FuncionCall(ToFromTransformFunction, parameters);
+            ZeroCodeExecutonUtil.FuncionCall(exe, ToFromTransformFunction, parameters);
         }
     }
 
@@ -133,7 +133,7 @@ namespace m0.Graph.ExecutionFlow
                 IVertex triggerVertex = GraphUtil.GetQueryOutFirst(e.To, "Trigger", null);
 
                 if (GraphUtil.GetStringValueOrNull(triggerVertex) == "CreateView")
-                    ProcessCreateViewEvent(e);
+                    ProcessCreateViewEvent(exe, e);
             }
 
             return exe.Stack;
@@ -170,7 +170,8 @@ namespace m0.Graph.ExecutionFlow
 
             ViewHolder vh = new ViewHolder(createView);
 
-            vh.ExecuteFromToTransformFunction(viewEvents,
+            vh.ExecuteFromToTransformFunction(exe,
+                viewEvents,
                 GraphUtil.GetQueryOutFirst(viewEdge, "From", null),
                 metaVertex,
                 GraphUtil.GetQueryOutFirst(viewEdge, "To", null));
@@ -191,7 +192,8 @@ namespace m0.Graph.ExecutionFlow
 
             ViewHolder vh = new ViewHolder(createView);
 
-            vh.ExecuteToFromTransformFunction(viewEvents,
+            vh.ExecuteToFromTransformFunction(exe,
+                viewEvents,
                 GraphUtil.GetQueryOutFirst(viewEdge, "From", null),
                 metaVertex,
                 GraphUtil.GetQueryOutFirst(viewEdge, "To", null));
@@ -199,7 +201,7 @@ namespace m0.Graph.ExecutionFlow
             return exe.Stack;
         }
 
-        private static void ProcessCreateViewEvent(IEdge eventEdge)
+        private static void ProcessCreateViewEvent(IExecution exe, IEdge eventEdge)
         {
             IVertex eventVertex, edge, edgeFrom, edgeMeta, edgeTo, trigger, createView;
 
@@ -222,13 +224,13 @@ namespace m0.Graph.ExecutionFlow
             ViewHolder vh = new ViewHolder(createView);
 
             if (vh.ToFromTransformFunction != null && vh.FromToTransformFunction != null)
-                vh.ExecuteFromToTransformFunction(null, edgeFrom, edgeTo);
+                vh.ExecuteFromToTransformFunction(exe, null, edgeFrom, edgeMeta, edgeTo);
             else {
                 if (vh.FromToTransformFunction != null)
-                    vh.ExecuteFromToTransformFunction(null, edgeFrom, edgeTo);
+                    vh.ExecuteFromToTransformFunction(exe, null, edgeFrom, edgeMeta, edgeTo);
 
                 if (vh.ToFromTransformFunction != null)
-                    vh.ExecuteToFromTransformFunction(null, edgeFrom, edgeTo);
+                    vh.ExecuteToFromTransformFunction(exe, null, edgeFrom, edgeMeta, edgeTo);
             }
 
             IList<GraphChangeFilterEnum> valueAndOutputFilter = new List<GraphChangeFilterEnum>() { 
