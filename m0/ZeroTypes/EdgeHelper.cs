@@ -91,16 +91,21 @@ namespace m0.ZeroTypes
             return ev;
         }
 
-        static public IVertex AddEdgeVertex(IVertex baseVertex, IVertex fromEdge, IVertex metaEdge, IVertex toVertex)
+        static public IVertex AddEdgeVertex(IVertex baseVertex, IVertex fromVertex, IVertex metaVertex, IVertex toVertex)
+        {
+            return AddEdgeVertex(baseVertex, fromVertex, metaVertex, toVertex, null);
+        }
+
+        static public IVertex AddEdgeVertex(IVertex baseVertex, IVertex fromVertex, IVertex metaVertex, IVertex toVertex, string name)
         {
             IVertex r = MinusZero.Instance.Root;
 
-            IVertex ev = baseVertex.AddVertex(EdgeMeta, null);
+            IVertex ev = baseVertex.AddVertex(EdgeMeta, name);
 
             ev.AddEdge(vIs, EdgeMeta);
 
-            ev.AddEdge(FromMeta, fromEdge);
-            ev.AddEdge(MetaMeta, metaEdge);
+            ev.AddEdge(FromMeta, fromVertex);
+            ev.AddEdge(MetaMeta, metaVertex);
             ev.AddEdge(ToMeta, toVertex);
 
             return ev;

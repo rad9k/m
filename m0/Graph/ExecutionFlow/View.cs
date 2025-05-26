@@ -1,7 +1,9 @@
 ﻿using ICSharpCode.AvalonEdit.Rendering;
 using m0.Foundation;
+using m0.Util;
 using m0.ZeroCode;
 using m0.ZeroCode.Helpers;
+using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +18,7 @@ namespace m0.Graph.ExecutionFlow
 
         static IVertex viewGenericTransformFunction_eventMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\ViewGenericTransformFunction\event");
         static IVertex viewGenericTransformFunction_fromMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\ViewGenericTransformFunction\from");
+        static IVertex viewGenericTransformFunction_metaMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\ViewGenericTransformFunction\meta");
         static IVertex viewGenericTransformFunction_toMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\ViewGenericTransformFunction\to");
 
         public IList<string> FromTriggerQueries = new List<string>();
@@ -92,27 +95,29 @@ namespace m0.Graph.ExecutionFlow
             }
         }
 
-        public void ExecuteFromToTransformFunction(IVertex events, IVertex from, IVertex to)
+        public void ExecuteFromToTransformFunction(IList<IEdge> events, IVertex from, IVertex meta, IVertex to)
         {
             IVertex parameters = InstructionHelpers.CreateStack();
 
-            if (events != null)
-                parameters.AddEdge(viewGenericTransformFunction_eventMeta, events);
+            foreach (IEdge e in events)
+                parameters.AddEdge(viewGenericTransformFunction_eventMeta, e.To);
 
             parameters.AddEdge(viewGenericTransformFunction_fromMeta, from);
+            parameters.AddEdge(viewGenericTransformFunction_metaMeta, meta);
             parameters.AddEdge(viewGenericTransformFunction_toMeta, to);
 
             ZeroCodeExecutonUtil.FuncionCall(FromToTransformFunction, parameters);
         }
 
-        public void ExecuteToFromTransformFunction(IVertex events, IVertex from, IVertex to)
+        public void ExecuteToFromTransformFunction(IList<IEdge> events, IVertex from, IVertex meta, IVertex to)
         {
             IVertex parameters = InstructionHelpers.CreateStack();
 
-            if (events != null)
-                parameters.AddEdge(viewGenericTransformFunction_eventMeta, events);
+            foreach (IEdge e in events)
+                parameters.AddEdge(viewGenericTransformFunction_eventMeta, e.To);
 
             parameters.AddEdge(viewGenericTransformFunction_fromMeta, from);
+            parameters.AddEdge(viewGenericTransformFunction_metaMeta, meta);
             parameters.AddEdge(viewGenericTransformFunction_toMeta, to);
 
             ZeroCodeExecutonUtil.FuncionCall(ToFromTransformFunction, parameters);
@@ -134,13 +139,63 @@ namespace m0.Graph.ExecutionFlow
             return exe.Stack;
         }
 
-        public static INoInEdgeInOutVertexVertex CreateView_FromListener(IExecution exe)
+        public static void GetViewEventsAndEdge(IExecution exe, out IList<IEdge> viewEvents, out IVertex viewEdge)
         {
+            viewEvents = new List<IEdge>();
+            viewEdge = null;
+
+            foreach (IEdge e in GraphUtil.GetQueryOut(exe.Stack, "event", null))
+            {
+                IVertex triggerVertex = GraphUtil.GetQueryOutFirst(e.To, "Trigger", null);
+
+                if (GeneralUtil.CompareStrings(triggerVertex.Value, "View"))
+                {
+                    viewEvents.Add(e);
+
+                    viewEdge = GraphUtil.GetQueryOutFirst(e.To, "ViewEdge", null);
+                }
+            }
+        }
+
+        public static INoInEdgeInOutVertexVertex CreateView_FromToListener(IExecution exe)
+        {
+            IList<IEdge> viewEvents;
+            IVertex viewEdge;
+
+            GetViewEventsAndEdge(exe, out viewEvents, out viewEdge);
+
+            IVertex metaVertex = GraphUtil.GetQueryOutFirst(viewEdge, "Meta", null);
+
+            IVertex createView = GraphUtil.GetQueryOutFirst(metaVertex, "CreateView", null);
+
+            ViewHolder vh = new ViewHolder(createView);
+
+            vh.ExecuteFromToTransformFunction(viewEvents,
+                GraphUtil.GetQueryOutFirst(viewEdge, "From", null),
+                metaVertex,
+                GraphUtil.GetQueryOutFirst(viewEdge, "To", null));
+
             return exe.Stack;
         }
 
-        public static INoInEdgeInOutVertexVertex CreateView_ToListener(IExecution exe)
+        public static INoInEdgeInOutVertexVertex CreateView_ToFromListener(IExecution exe)
         {
+            IList<IEdge> viewEvents;
+            IVertex viewEdge;
+
+            GetViewEventsAndEdge(exe, out viewEvents, out viewEdge);
+
+            IVertex metaVertex = GraphUtil.GetQueryOutFirst(viewEdge, "Meta", null);
+
+            IVertex createView = GraphUtil.GetQueryOutFirst(metaVertex, "CreateView", null);
+
+            ViewHolder vh = new ViewHolder(createView);
+
+            vh.ExecuteToFromTransformFunction(viewEvents,
+                GraphUtil.GetQueryOutFirst(viewEdge, "From", null),
+                metaVertex,
+                GraphUtil.GetQueryOutFirst(viewEdge, "To", null));
+
             return exe.Stack;
         }
 
@@ -196,9 +251,13 @@ namespace m0.Graph.ExecutionFlow
                 filtersToUse,
                 "View");
 
-                ExecutionFlowHelper.AddListener_DotNetDelegate(createViewTriggerEdge.To, 
-                    m0.Graph.ExecutionFlow.View.CreateView_FromListener,
+                IVertex createViewTriggerVertex = createViewTriggerEdge.To;
+
+                ExecutionFlowHelper.AddListener_DotNetDelegate(createViewTriggerVertex, 
+                    m0.Graph.ExecutionFlow.View.CreateView_FromToListener,
                     "CreateViewFromListener");
+
+                EdgeHelper.AddEdgeVertex(createViewTriggerVertex, edgeFrom, edgeMeta, edgeTo, "ViewEdge");
             }
 
             if (vh.ToFromTransformFunction != null)
@@ -215,9 +274,13 @@ namespace m0.Graph.ExecutionFlow
                 filtersToUse,
                 "View");
 
-                ExecutionFlowHelper.AddListener_DotNetDelegate(createViewTriggerEdge.To,
-                    m0.Graph.ExecutionFlow.View.CreateView_ToListener,
+                IVertex createViewTriggerVertex = createViewTriggerEdge.To;
+
+                ExecutionFlowHelper.AddListener_DotNetDelegate(createViewTriggerVertex,
+                    m0.Graph.ExecutionFlow.View.CreateView_ToFromListener,
                     "CreateViewToListener");
+
+                EdgeHelper.AddEdgeVertex(createViewTriggerVertex, edgeFrom, edgeMeta, edgeTo, "ViewEdge");
             }
         }
     }
