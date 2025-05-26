@@ -2893,6 +2893,8 @@ namespace m0
 
             di.AddEdge(DirectMeta, LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes"));
 
+            di.AddEdge(DirectMeta, LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\ExecutionFlow"));
+
             di.AddEdge(DirectMeta, Root); // ROOT
 
             //
@@ -3488,17 +3490,17 @@ namespace m0
 
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\ViewGenericTransformFunction").AddVertex(
                  LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method\InputParameter"),
-                 "event");
+                 "viewEvent");
 
-            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\ViewGenericTransformFunction\event").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\ViewGenericTransformFunction\viewEvent").AddEdge(
               LegacySystem.Graph.EasyVertex.Get(smz, false, "*$EdgeTarget"),
               LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\Event"));
 
-            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\ViewGenericTransformFunction\event").AddVertex(
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\ViewGenericTransformFunction\viewEvent").AddVertex(
                 LegacySystem.Graph.EasyVertex.Get(smz, false, "*$MinCardinality"),
                 "0");
 
-            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\ViewGenericTransformFunction\event").AddVertex(
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\ViewGenericTransformFunction\viewEvent").AddVertex(
               LegacySystem.Graph.EasyVertex.Get(smz, false, "*$MaxCardinality"),
               "-1");
 

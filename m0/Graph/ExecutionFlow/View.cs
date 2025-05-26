@@ -16,10 +16,10 @@ namespace m0.Graph.ExecutionFlow
     {
         static IVertex r = MinusZero.Instance.Root;
 
-        static IVertex viewGenericTransformFunction_eventMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\ViewGenericTransformFunction\event");
-        static IVertex viewGenericTransformFunction_fromMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\ViewGenericTransformFunction\from");
-        static IVertex viewGenericTransformFunction_metaMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\ViewGenericTransformFunction\meta");
-        static IVertex viewGenericTransformFunction_toMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\ViewGenericTransformFunction\to");
+        static IVertex viewGenericTransformFunction_viewEventMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\ViewGenericTransformFunction\'viewEvent'");
+        static IVertex viewGenericTransformFunction_fromMeta =  r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\ViewGenericTransformFunction\from");
+        static IVertex viewGenericTransformFunction_metaMeta =  r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\ViewGenericTransformFunction\'meta'");
+        static IVertex viewGenericTransformFunction_toMeta =    r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\ViewGenericTransformFunction\to");
 
         public IList<string> FromTriggerQueries = new List<string>();
         public IList<GraphChangeFilterEnum> FromFilters = new List<GraphChangeFilterEnum>();
@@ -100,7 +100,7 @@ namespace m0.Graph.ExecutionFlow
             IVertex parameters = InstructionHelpers.CreateStack();
 
             foreach (IEdge e in events)
-                parameters.AddEdge(viewGenericTransformFunction_eventMeta, e.To);
+                parameters.AddEdge(viewGenericTransformFunction_viewEventMeta, e.To);
 
             parameters.AddEdge(viewGenericTransformFunction_fromMeta, from);
             parameters.AddEdge(viewGenericTransformFunction_metaMeta, meta);
@@ -114,7 +114,7 @@ namespace m0.Graph.ExecutionFlow
             IVertex parameters = InstructionHelpers.CreateStack();
 
             foreach (IEdge e in events)
-                parameters.AddEdge(viewGenericTransformFunction_eventMeta, e.To);
+                parameters.AddEdge(viewGenericTransformFunction_viewEventMeta, e.To);
 
             parameters.AddEdge(viewGenericTransformFunction_fromMeta, from);
             parameters.AddEdge(viewGenericTransformFunction_metaMeta, meta);
@@ -152,7 +152,7 @@ namespace m0.Graph.ExecutionFlow
                 {
                     viewEvents.Add(e);
 
-                    viewEdge = GraphUtil.GetQueryOutFirst(e.To, "ViewEdge", null);
+                    viewEdge = GraphUtil.GetQueryOutFirst(triggerVertex, "Edge", "ViewEdge");
                 }
             }
         }
@@ -227,10 +227,10 @@ namespace m0.Graph.ExecutionFlow
                 vh.ExecuteFromToTransformFunction(exe, null, edgeFrom, edgeMeta, edgeTo);
             else {
                 if (vh.FromToTransformFunction != null)
-                    vh.ExecuteFromToTransformFunction(exe, null, edgeFrom, edgeMeta, edgeTo);
+                    vh.ExecuteFromToTransformFunction(exe, new List<IEdge>(), edgeFrom, edgeMeta, edgeTo);
 
                 if (vh.ToFromTransformFunction != null)
-                    vh.ExecuteToFromTransformFunction(exe, null, edgeFrom, edgeMeta, edgeTo);
+                    vh.ExecuteToFromTransformFunction(exe, new List<IEdge>(), edgeFrom, edgeMeta, edgeTo);
             }
 
             IList<GraphChangeFilterEnum> valueAndOutputFilter = new List<GraphChangeFilterEnum>() { 
