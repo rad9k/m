@@ -2,48 +2,40 @@
 
 ## About
 
-View is defined as _meta edge_. When this _meta edge_ is added to given vertex (the _given_ vertex will be called from now the **source** vertex), the view is created in the **target** vertex.
+_View_ is defined as _meta edge_. When this _meta edge_ is added to given vertex (the given vertex will be called from now the _source_ vertex), the _view_ is created in the _target_ vertex.
 
 ## View abstract definition
 
-- **view**
+- _**view**_
 	- type:
 		- fire and forget (_> no triggers_)		
 			- The view is generated when edge is added.
 		- updatable (_> has to have triggers_)
 	- direction:
-		- source to target
-		- target to source
+		- _source_ to _target_
+		- _target_ to _source_
 		- both
-- **source**
-	- trigger query
-	- trigger filters
-	- transform function
-- **target**	
-	- trigger query
-	- trigger filters
-	- transform function
+- _**source**_
+	- trigger query _(0..*)_
+	- trigger filters _(0..*)_
+	- transform function _(0..1)_
+- _**target**_
+	- trigger query _(0..*)_
+	- trigger filters _(0..*)_
+	- transform function _(0..1)_
 
-__After the "Possible view definitions" evaluation we come to conclusion, that just trigger queries and transform function are enough to express above.__
-
-### transform function parameters
-
-- event @Vertex
-	- if event == ~00 than transform function is expected to generate whole source/target (so this is not a _transform_ function but a _generate_)
-- from @Vertex
-- meta @Vertex
-- to @Vertex
+__After the "Possible view definitions" table (below) evaluation we come to conclusion, that just trigger queries and transform function are enough to express above.__
 
 ## Possible view definitions
 
-|comment                       |type           |direction       |source trigger query|source transform function|target trigger query|target transform function|
-|:-----------------------------|:--------------|:---------------|:-------------------|:------------------------|:-------------------|:------------------------|
-|one time from source to target|fire and forget|source to target|NO                  |YES                      |NO                  |NO                       |
-|updatable source to target    |updatable      |source to target|YES                 |YES                      |NO                  |NO                       |
-|updatable target to source    |updatable      |target to source|NO                  |NO                       |YES                 |YES                      |
-|updatable both                |updatable      |both            |YES                 |YES                      |YES                 |YES                      |
+|comment                       |type           |direction       |source trigger|source transform function|target trigger|target transform function|
+|:-----------------------------|:--------------|:---------------|:-------------|:------------------------|:-------------|:------------------------|
+|one time from source to target|fire and forget|source to target|NO            |YES                      |NO            |NO                       |
+|updatable source to target    |updatable      |source to target|YES           |YES                      |NO            |NO                       |
+|updatable target to source    |updatable      |target to source|NO            |NO                       |YES           |YES                      |
+|updatable both                |updatable      |both            |YES           |YES                      |YES           |YES                      |
 
-## create trigger Graph
+## Create trigger Graph
 
 ```-0
 <(?<ANY>) :: "">
@@ -69,18 +61,26 @@ __After the "Possible view definitions" evaluation we come to conclusion, that j
 		<@Expression :: "">
 			<@Is :: @ToFromTransformFunction>
 			<@Target :: @ListenerFunction>
-
 ```
 
-### case of filter not present
+## Transform function parameters
 
-In case when there is no any `FromTriggerFilter` or `ToTriggerFilter` defined, the _value and output filter_ set is used for _from_ or _to_ vertex listeners.
+- event @Vertex
+	- if event == ~00 than transform function is expected to generate whole source/target (so this is not a _transform_ function but a _generate_)
+- from @Vertex
+- meta @Vertex
+- to @Vertex
 
-The _value and output filter_ set is:
-- ValueChange
-- OutputEdgeAdded
-- OutputEdgeRemoved
-- OutputEdgeDisposed
+## How to define source / target trigger
+
+For the _source_ / _target_ trigger to be defined, it is enough to define trigger filter respectively for the _source_ or _target_.
+So it means that there:
+- should be at last one `FromTriggerFilter` present to define _source_ trigger.
+- should be at last one `ToTriggerFilter` present to define _target_ trigger.
+
+> Please note that lack of existence of `FromTriggerQuery` or `ToTriggerQuery` does not make _source_ / _target_ trigger to be not defined.
+>
+> In case trigger queries are not defined, it means that only _source_ or _target_ vertex are the view triggering events source.
 
 ## create view syntax
 
