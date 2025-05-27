@@ -2,7 +2,7 @@
 	+ MultiContainer
 	+ CodeBlock
 	+ CodeBlock for MultiContainer?
-	- ZeroCode <> diagram (template)
+	+ ZeroCode <> diagram (template)
 
 2) Selected View
 	+ Form on right
@@ -17,8 +17,8 @@
 	+ m0x support
 
 4) View support in ZeroCode
-	- view creation language support
-	- update creation language support
+	+ view creation language support
+	+ update creation language support
 
 5) HTTP Server
 	- REST API consumption

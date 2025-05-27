@@ -1,0 +1,35 @@
+"Y"
+	variable "a" @Vertex
+	variable "b" @Vertex
+	function "f" (@Event "viewEvent", @Vertex "from", @Vertex "meta", @Vertex "to")
+		to +< :: "pozdro"
+		to +< :: 'viewEvent'<>
+		foreach x in from\
+			to +< @@System :: x
+	a = "edg"
+	a +< view{
+		from to transform @f
+		from filter @GraphChangeEnum\OutputEdgeAdded
+	}
+	b = "b"
+	b +< "kotek"
+	b +< "piesek"
+	b +< a :: "docel"
+
+
+"Y"
+	variable "a" @Vertex
+	variable "b" @Vertex
+	function "f" (@Event "viewEvent", @Vertex "from", @Vertex "meta", @Vertex "to")
+		from +< :: "pozdro"
+		from +< :: 'viewEvent'<>
+		foreach x in to\
+			from +< @@System :: x
+	a = "edg"
+	a +< view{
+		to from transform @f
+		to filter @GraphChangeEnum\OutputEdgeAdded
+	}
+	b = "b"
+	b +< a :: "docel"
+	b\:docel +< :: "domek"

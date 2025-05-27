@@ -233,24 +233,11 @@ namespace m0.Graph.ExecutionFlow
                     vh.ExecuteToFromTransformFunction(exe, new List<IEdge>(), edgeFrom, edgeMeta, edgeTo);
             }
 
-            IList<GraphChangeFilterEnum> valueAndOutputFilter = new List<GraphChangeFilterEnum>() { 
-                GraphChangeFilterEnum.ValueChange,
-                GraphChangeFilterEnum.OutputEdgeAdded,
-                GraphChangeFilterEnum.OutputEdgeRemoved,
-                GraphChangeFilterEnum.OutputEdgeDisposed};
-
-            if (vh.FromToTransformFunction != null)
+            if (vh.FromToTransformFunction != null && vh.FromFilters.Count > 0)
             {
-                IList<GraphChangeFilterEnum> filtersToUse;
-
-                if (vh.FromFilters.Count > 0)
-                    filtersToUse = vh.FromFilters;
-                else
-                    filtersToUse = valueAndOutputFilter;
-
                 IEdge createViewTriggerEdge = GraphChangeTrigger.AddTrigger(edgeFrom,
                 vh.FromTriggerQueries,
-                filtersToUse,
+                vh.FromFilters,
                 "View");
 
                 IVertex createViewTriggerVertex = createViewTriggerEdge.To;
@@ -262,18 +249,11 @@ namespace m0.Graph.ExecutionFlow
                 EdgeHelper.AddEdgeVertex(createViewTriggerVertex, edgeFrom, edgeMeta, edgeTo, "ViewEdge");
             }
 
-            if (vh.ToFromTransformFunction != null)
+            if (vh.ToFromTransformFunction != null && vh.ToFilters.Count > 0)
             {
-                IList<GraphChangeFilterEnum> filtersToUse;
-
-                if (vh.ToFilters.Count > 0)
-                    filtersToUse = vh.ToFilters;
-                else
-                    filtersToUse = valueAndOutputFilter;
-
                 IEdge createViewTriggerEdge = GraphChangeTrigger.AddTrigger(edgeTo,
                 vh.ToTriggerQueries,
-                filtersToUse,
+                vh.ToFilters,
                 "View");
 
                 IVertex createViewTriggerVertex = createViewTriggerEdge.To;

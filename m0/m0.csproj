@@ -416,7 +416,7 @@
     <Compile Include="ZeroTypes\VertexOperations.cs" />
     <Compile Include="ZeroUML\Instructions\ZeroUMLInstructionHelpers - Copy.cs" />
     <Compile Include="ZeroUML\Instructions\ZeroUMLInstructionHelpers.cs" />
-    <Compile Include="_PROJECT\Legacy Code\AutoTest.cs" />
+    <Compile Include="_PROJECT\_OLD\Legacy Code\AutoTest.cs" />
     <Page Include="m0Main.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -629,46 +629,46 @@
     </None>
     <AppDesigner Include="Properties\" />
     <EmbeddedResource Include="ZeroCodeHighlighting.xshd" />
-    <None Include="_PROJECT\diagrams.eap" />
+    <None Include="_PROJECT\_OLD\diagrams.eap" />
     <None Include="_PROJECT\MD\02 Advanced ideas\Graph trigger.md" />
-    <None Include="_PROJECT\test\edgeonly.xlsx" />
+    <None Include="_PROJECT\_OLD\test\edgeonly.xlsx" />
     <None Include="_PROJECT\MD\02 Advanced ideas\View.md" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Untitled1.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="_PROJECT\test\obsolete\test.txt" />
+    <Resource Include="_PROJECT\_OLD\test\obsolete\test.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="_PROJECT\test\querytest.txt" />
+    <Resource Include="_PROJECT\_OLD\test\querytest.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="_PROJECT\test\test.txt" />
+    <Resource Include="_PROJECT\_OLD\test\test.txt" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="_PROJECT\theory\montevideo_principles.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="_PROJECT\I_S_S_U_E_S.txt" />
+    <Resource Include="_PROJECT\_OLD\I_S_S_U_E_S.txt" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="_PROJECT\theory\montevideo_principles 2.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="_PROJECT\test\new_test.txt" />
+    <Resource Include="_PROJECT\_OLD\test\new_test.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="_PROJECT\test\obsolete\EXPRESSIO.txt" />
+    <Resource Include="_PROJECT\_OLD\test\obsolete\EXPRESSIO.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="_PROJECT\test\first_oo.txt" />
+    <Resource Include="_PROJECT\_OLD\test\first_oo.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="_PROJECT\keywords.txt" />
+    <Resource Include="_PROJECT\_OLD\keywords.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="_PROJECT\midi.txt" />
+    <Resource Include="_PROJECT\_OLD\midi.txt" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="_RESOURCES\basic\extend.png" />
@@ -720,10 +720,10 @@
     <Resource Include="_RESOURCES\basic\mute-speaker.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="_PROJECT\test\generator.txt" />
+    <Resource Include="_PROJECT\_OLD\test\generator.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="_PROJECT\architecture\_EVENT.txt" />
+    <Resource Include="_PROJECT\_OLD\architecture\_EVENT.txt" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="_RESOURCES\basic\extend_down.png" />
@@ -740,10 +740,10 @@
     <Resource Include="UIWpf\Controls\AnimatedHideArea.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="_PROJECT\bug_and_test\" />
+    <Resource Include="_PROJECT\view.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="_PROJECT\CODE_RESEARCH\UXItemTemplate.txt" />
+    <Resource Include="_PROJECT\_OLD\CODE_RESEARCH\UXItemTemplate.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

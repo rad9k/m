@@ -453,6 +453,7 @@ namespace m0.UIWpf.Controls
             }
 
             editor.SyntaxHighlighting = customHighlighting;
+            editor.TextArea.TextView.NonPrintableCharacterBrush = new SolidColorBrush(Colors.Black);
         }
 
         void UpdateFoldings()
