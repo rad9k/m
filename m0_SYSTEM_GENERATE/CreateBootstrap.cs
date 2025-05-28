@@ -20,7 +20,7 @@ namespace m0_SYSTEM_GENERATE
 
             JsonSerializationStore store = new JsonSerializationStore(fileName, m0.MinusZero.Instance.root.Store.StoreUniverse, new AccessLevelEnum[] { });
 
-            IVertex r = store.Root;            
+            IVertex r = store.Root;
 
             IVertex system = r.AddVertex(null, "System");
             system.AddVertex(null, "system.m0j");
@@ -39,6 +39,12 @@ namespace m0_SYSTEM_GENERATE
 
             IVertex lib_sys = r.AddVertex(null, "System\\Lib\\Sys");
             lib_sys.AddVertex(null, "lib_sys.m0j");
+
+            IVertex lib_stdui = r.AddVertex(null, "System\\Lib\\StdUI");
+            lib_stdui.AddVertex(null, "lib_stdui.m0j");
+
+            IVertex lib_net = r.AddVertex(null, "System\\Lib\\Net");
+            lib_net.AddVertex(null, "lib_net.m0j");
 
             if (music)
             {

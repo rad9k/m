@@ -15,9 +15,6 @@ namespace m0_SYSTEM_GENERATE.Lib
 {
     public class CreateLib
     {
-        public static IVertex LibStd;
-        public static IVertex LibSys;
-
         public static void CreateLibStd()
         {
             print("* creating Lib\\Std");
@@ -26,7 +23,7 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             IVertex lib = root.Get(false, "System").AddVertex(null, "Lib");
 
-            LibStd = lib.AddVertex(null, "Std");
+            IVertex LibStd = lib.AddVertex(null, "Std");
 
             string type = "m0.Lib.Std, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
@@ -75,7 +72,7 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             IVertex lib = root.Get(false, "System").AddVertex(null, "Lib");
 
-            LibSys = lib.AddVertex(null, "Sys");
+            IVertex LibSys = lib.AddVertex(null, "Sys");
 
             string type = "m0.Lib.Sys, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
@@ -84,7 +81,45 @@ namespace m0_SYSTEM_GENERATE.Lib
             AddFunction(LibSys, "RollbackTransaction", type, "RollbackTransaction", null, new TypeName[] { });
         }
 
-            public static void Save(IEnumerable<IVertex> systemSubGraphWithLinks, Dictionary<string, StoreId> storeOverride)
+        public static void CreateLibStdUI()
+        {
+            print("* creating Lib\\StdUI");
+
+            IVertex root = m0.MinusZero.Instance.root;
+
+            IVertex lib = root.Get(false, "System").AddVertex(null, "Lib");
+
+            IVertex LibStdUI = lib.AddVertex(null, "StdUI");
+
+            string type = "m0.Lib.StdUI, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+
+            AddFunction(LibStdUI, "OutputDialog", type, "OutputDialog", null, new TypeName[] { new TypeName("output", "String", 1, 1) });
+            AddFunction(LibStdUI, "InputDialog", type, "InputDialog", "String", new TypeName[] { new TypeName("output", "String", 1, 1) });
+            AddFunction(LibStdUI, "SelectDialog", type, "SelectDialog", "VertexType", new TypeName[] { new TypeName("output", "String", 0, 1), new TypeName("option", "String", 0, -1) });
+            AddFunction(LibStdUI, "SelectButtonDialog", type, "SelectButtonDialog", "VertexType", new TypeName[] { new TypeName("output", "String", 0, 1), new TypeName("option", "String", 0, -1) });
+            AddFunction(LibStdUI, "OpenDefaultVisualiser", type, "OpenDefaultVisualiser", null, new TypeName[] { new TypeName("output", "String", 0, 1) });
+            AddFunction(LibStdUI, "OpenVisualiser", type, "OpenVisualiser", null, new TypeName[] { new TypeName("baseEdge", "Edge", 1, 1), new TypeName("visualiser", "VertexType", 1, 1) });
+            AddFunction(LibStdUI, "OpenFormVisualiser", type, "OpenFormVisualiser", null, new TypeName[] { new TypeName("baseEdge", "Edge", 1, 1) });
+            AddFunction(LibStdUI, "OpenCodeVisualiser", type, "OpenCodeVisualiser", null, new TypeName[] { new TypeName("baseEdge", "Edge", 1, 1) });
+        }
+
+        public static void CreateLibNet()
+        {
+            print("* creating Lib\\Net");
+
+            IVertex root = m0.MinusZero.Instance.root;
+
+            IVertex lib = root.Get(false, "System").AddVertex(null, "Lib");
+
+            IVertex LibNet = lib.AddVertex(null, "Net");
+
+            string type = "m0.Lib.Net, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+
+            AddFunction(LibNet, "StartTransaction", type, "StartTransaction", null, new TypeName[] { });
+
+        }
+
+        public static void Save(IEnumerable<IVertex> systemSubGraphWithLinks, Dictionary<string, StoreId> storeOverride)
         {            
             print("* saving Lib\\Std");
 

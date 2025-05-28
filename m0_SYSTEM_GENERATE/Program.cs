@@ -26,8 +26,8 @@ namespace m0_SYSTEM_GENERATE
             //GraphChangeTrigger.Initialize();
             ExecutionFlowHelper.Initialize();
             //GraphChangeTransactionAtom.Initialize();
-           // Transaction.Initialize();
-           //AtomVisualiserHelper.Initialize();
+            // Transaction.Initialize();
+            //AtomVisualiserHelper.Initialize();
         }
 
         static void MinusZeroInstanceFix() // fpr ZeroCodeView
@@ -72,7 +72,7 @@ namespace m0_SYSTEM_GENERATE
 
             //
 
-            CreateExamples.CreateTestData();            
+            CreateExamples.CreateTestData();
 
             IVertex root = LegacySystem_MinusZero.Instance.Root;
             IVertex SystemVertex = root.Get(false, "System");
@@ -82,7 +82,7 @@ namespace m0_SYSTEM_GENERATE
             IVertex examples = root.Get(false, "examples");
 
             print("* saving System to \"system.m0j\"");
-            
+
             IVertex system = GeneralUtil.CreateM0JAndMoveEdgesIntoIt(@"system.m0j", SystemVertex, 1);
 
             LegacySystem_MinusZero.Instance.AddFastAccessVertexes(); // after save need to update
@@ -98,7 +98,7 @@ namespace m0_SYSTEM_GENERATE
 
             //
 
-            IEnumerable<IVertex> systemSubGraphWithLinks = GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(system);  
+            IEnumerable<IVertex> systemSubGraphWithLinks = GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(system);
 
             //            
 
@@ -113,9 +113,9 @@ namespace m0_SYSTEM_GENERATE
 
             //
 
-            print("* saving User to \"user.m0j\"");            
+            print("* saving User to \"user.m0j\"");
 
-            GeneralUtil.CreateM0JAndMoveEdgesIntoIt_IncludeEverythingBesidesList("user.m0j", User, new HashSet<IVertex>(systemSubGraphWithLinks), storeOverride);            
+            GeneralUtil.CreateM0JAndMoveEdgesIntoIt_IncludeEverythingBesidesList("user.m0j", User, new HashSet<IVertex>(systemSubGraphWithLinks), storeOverride);
 
             print("* User saved to \"user.m0j\"");
 
@@ -146,6 +146,14 @@ namespace m0_SYSTEM_GENERATE
             print("* filling Lib::Sys");
 
             Lib.CreateLib.CreateLibSys();
+
+            print("* filling Lib::StdUI");
+
+            Lib.CreateLib.CreateLibStdUI();
+
+            print("* filling Lib::Net");
+
+            Lib.CreateLib.CreateLibNet();
 
             LegacySystem_MinusZero.Instance.DefaultFormalTextLanguageVertexSetup(); // system.m0 instead of $-0$ROOT$STORE$
 
@@ -178,7 +186,7 @@ namespace m0_SYSTEM_GENERATE
 
             //System.Diagnostics.Process.Start("c:\\Users\\radoslaw.tereszczuk\\Source\\Repos\\m\\m0_SYSTEM_GENERATE\\bin\\Debug\\xx.bat");
 
-             System.Diagnostics.Process.Start("c:\\Users\\teres\\source\\repos\\m\\m0_SYSTEM_GENERATE\\bin\\Debug\\a.bat");
+            System.Diagnostics.Process.Start("c:\\Users\\teres\\source\\repos\\m\\m0_SYSTEM_GENERATE\\bin\\Debug\\a.bat");
         }
     }
 }

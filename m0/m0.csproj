@@ -141,7 +141,9 @@
     <Compile Include="Graph\OLD\EasyEdge - Copy.cs" />
     <Compile Include="Graph\OLD\EasyVertex - OldVersion.cs" />
     <Compile Include="Lib\LibUtil.cs" />
+    <Compile Include="Lib\Net.cs" />
     <Compile Include="Lib\Std.cs" />
+    <Compile Include="Lib\StdUI.cs" />
     <Compile Include="Lib\Sys.cs" />
     <Compile Include="Store\Binary\BinaryStore.cs" />
     <Compile Include="Store\Text\TextStore.cs" />
