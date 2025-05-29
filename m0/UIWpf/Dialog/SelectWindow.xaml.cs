@@ -44,7 +44,12 @@ namespace m0.UIWpf.Dialog
 
                 Info.Content = info.Value;
 
-                List.ItemsSource = options;
+                IList<IVertex> list = new List<IVertex>();
+
+                foreach (IEdge e in options)
+                    list.Add(e.To);
+
+                List.ItemsSource = list;
 
                 if (firstSelected)
                     List.SelectedIndex = 0;
