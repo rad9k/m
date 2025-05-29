@@ -284,6 +284,15 @@ namespace m0
             layoutContent.Close();
         }
 
+        public void ShowInfo(string info)
+        {
+            m0.UIWpf.Dialog.InfoWindow i = new UIWpf.Dialog.InfoWindow();
+
+            i.Text = info;
+
+            i.ShowDialog();
+        }
+
         public void ShowException(IVertex exception)
         {
             m0.UIWpf.Dialog.ExceptionInfoWindow i = new UIWpf.Dialog.ExceptionInfoWindow();
@@ -302,7 +311,7 @@ namespace m0
             i.ShowDialog();
         }
 
-        public IVertex SelectDialog(IVertex info, IVertex options, bool firstSelected, Point? position)
+        public IVertex SelectDialog(IVertex info, IList<IEdge> options, bool firstSelected, Point? position)
         {
             SelectWindow d = new SelectWindow(info, options, firstSelected, position);
 

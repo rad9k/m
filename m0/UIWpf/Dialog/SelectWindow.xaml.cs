@@ -28,7 +28,7 @@ namespace m0.UIWpf.Dialog
             WpfUtil.SetWindowPosition(this, _mousePosition);
         }
 
-        public SelectWindow(IVertex info, IVertex options, bool firstSelected, Point? position)
+        public SelectWindow(IVertex info, IList<IEdge> options, bool firstSelected, Point? position)
         {            
             if (options.Count() > 1)
             {

@@ -1,5 +1,8 @@
 ﻿using m0.Foundation;
+using m0.Graph;
+using m0.ZeroCode.Helpers;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +15,16 @@ namespace m0.Lib
         // @String "output"
         public static INoInEdgeInOutVertexVertex OutputDialog(IExecution exe)
         {
-            return null;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
+
+            IVertex output = GraphUtil.GetQueryOutFirst(stack, "output", null);
+
+            if (output == null)
+                return exe.Stack;
+
+            m0Main.Instance.ShowInfo(GraphUtil.GetStringValue(output));
+
+            return exe.Stack;
         }
 
         // @String "output"
@@ -21,7 +33,23 @@ namespace m0.Lib
         // @String
         public static INoInEdgeInOutVertexVertex InputDialog(IExecution exe)
         {
-            return null;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
+
+            IVertex output = GraphUtil.GetQueryOutFirst(stack, "output", null);
+
+            if (output == null)
+                return exe.Stack;
+
+            string input = m0Main.Instance.StringQuestionDialog(GraphUtil.GetStringValue(output), null);
+
+            if (input == null)
+                return exe.Stack;
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            newStack.AddVertex(null, input);
+
+            return newStack;
         }
 
         // @String "output"
@@ -31,7 +59,25 @@ namespace m0.Lib
         // @Vertex
         public static INoInEdgeInOutVertexVertex SelectDialog(IExecution exe)
         {
-            return null;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
+
+            IVertex output = GraphUtil.GetQueryOutFirst(stack, "output", null);
+
+            IList<IEdge> option = GraphUtil.GetQueryOut(stack, "option", null);
+
+            if (output == null || option.Count==0)
+                return exe.Stack;
+
+            IVertex selection = m0Main.Instance.SelectDialog(output, option, false, null);
+
+            if (selection == null)
+                return exe.Stack;
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            newStack.AddEdge(null, selection);
+
+            return newStack;
         }
 
         // @String "output"

@@ -1946,7 +1946,7 @@ namespace m0.UIWpf.UX
             }
 
             if (DoCreateDiagramLine_Edge_toUse == null)
-                selected = MinusZero.Instance.DefaultUserInteraction.SelectDialog(info, v, true, mousePosition);
+                selected = MinusZero.Instance.DefaultUserInteraction.SelectDialog(info, v.OutEdges, true, mousePosition);
 
             if (selected != null || DoCreateDiagramLine_Edge_toUse != null)
             {
