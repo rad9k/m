@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using m0.Foundation;
+﻿using m0.Foundation;
+using m0.Store;
+using m0.Store.Text;
 using m0.Util;
-using m0.ZeroTypes;
 using m0.ZeroCode;
 using m0.ZeroCode.Helpers;
-using m0.Store;
+using m0.ZeroTypes;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.RightsManagement;
+using System.Text;
 
 namespace m0.Graph
 {
@@ -141,7 +141,7 @@ namespace m0.Graph
             return vList;
         }
 
-        public static void LoadAndParse(string fileName, IVertex baseVertex)
+        public static void LoadAndParseTXT(string fileName, IVertex baseVertex)
         {
             string text = System.IO.File.ReadAllText(fileName);
 
@@ -149,11 +149,18 @@ namespace m0.Graph
             MinusZero.Instance.DefaultFormalTextParser.Parse(new EdgeBase(null, null, baseVertex), text, m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new);
         }
 
+        public static void LoadAndParse(string fileName, IVertex baseVertex)
+        {
+            TextStore TextStore = (TextStore)baseVertex.Store.StoreUniverse.GetStore("m0.Store.Text.TextStore, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", fileName);
+
+            GraphUtil.DeepCopyByVertex(TextStore.Root, baseVertex);
+        }
+
         public static void LoadParseAndMove(string fileName, IVertex baseVertex, string vertexName)
         {
             IEdge tmp = baseVertex.AddVertexAndReturnEdge(null, null);
 
-            LoadAndParse(fileName, tmp.To);
+            LoadAndParseTXT(fileName, tmp.To);
 
             IEdge e = tmp.To.GetAll(false, vertexName).First();
 

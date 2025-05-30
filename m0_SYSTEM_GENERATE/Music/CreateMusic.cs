@@ -768,7 +768,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             IVertex Chord = Music.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Package"), "Chord");
 
-            GraphUtil.LoadAndParse(@"_RES\Chord\BasicChords.txt", Chord);
+            GraphUtil.LoadAndParseTXT(@"_RES\Chord\BasicChords.txt", Chord);
 
             IEdge toDelete1 = Chord.OutEdges[0];
             IEdge toDelete2 = Chord.OutEdges[1];
