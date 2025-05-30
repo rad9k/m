@@ -25,7 +25,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             IVertex edgeVertex = EdgeHelper.CreateTempEdgeVertex(BaseEdge.To.GetAll(false, @"Sequence:").FirstOrDefault());
 
-            BaseCommands.Open(edgeVertex, null);
+            BaseCommands.Open(edgeVertex, false);
         }
 
         public void OpenFormVisualiser()
@@ -35,7 +35,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             IVertex edgeVertex = EdgeHelper.CreateTempEdgeVertex(BaseEdge.To.GetAll(false, @"Sequence:").FirstOrDefault());
 
-            BaseCommands.OpenFormVisualiser(edgeVertex);
+            BaseCommands.OpenFormVisualiser(edgeVertex, false);
         }
 
         Canvas Canvas;

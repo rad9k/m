@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.UIWpf.Commands;
 using m0.ZeroCode.Helpers;
 using System;
 using System.Collections;
@@ -87,32 +88,88 @@ namespace m0.Lib
         // @Vertex
         public static INoInEdgeInOutVertexVertex SelectButtonDialog(IExecution exe)
         {
-            return null;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
+
+            IVertex output = GraphUtil.GetQueryOutFirst(stack, "output", null);
+
+            IList<IEdge> option = GraphUtil.GetQueryOut(stack, "option", null);
+
+            if (output == null || option.Count == 0)
+                return exe.Stack;
+
+            IVertex selection = m0Main.Instance.SelectButtonDialog(output, option, null);
+
+            if (selection == null)
+                return exe.Stack;
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            newStack.AddEdge(null, selection);
+
+            return newStack;
         }
 
         // @Edge "baseEdge"
         public static INoInEdgeInOutVertexVertex OpenDefaultVisualiser(IExecution exe)
         {
-            return null;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
+
+            IVertex baseEdge = GraphUtil.GetQueryOutFirst(stack, "baseEdge", null);
+
+            if (baseEdge == null)
+                return exe.Stack;
+
+            BaseCommands.Open(baseEdge, true);
+
+            return exe.Stack;
         }
 
         // @Edge "baseEdge"
         // @UXItem "visualiser"
         public static INoInEdgeInOutVertexVertex OpenVisualiser(IExecution exe)
         {
-            return null;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
+
+            IVertex baseEdge = GraphUtil.GetQueryOutFirst(stack, "baseEdge", null);
+
+            if (baseEdge == null)
+                return exe.Stack;
+
+            BaseCommands.Open(baseEdge, true);
+
+            return exe.Stack;
         }
 
         // @Edge "baseEdge"
         public static INoInEdgeInOutVertexVertex OpenFormVisualiser(IExecution exe)
         {
-            return null;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
+
+            IVertex baseEdge = GraphUtil.GetQueryOutFirst(stack, "baseEdge", null);
+
+            if (baseEdge == null)
+                return exe.Stack;
+
+            BaseCommands.OpenFormVisualiser(baseEdge, true);
+
+            return exe.Stack;
         }
 
         // @Edge "baseEdge"
         public static INoInEdgeInOutVertexVertex OpenCodeVisualiser(IExecution exe)
         {
-            return null;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
+
+            IVertex baseEdge = GraphUtil.GetQueryOutFirst(stack, "baseEdge", null);
+
+            if (baseEdge == null)
+                return exe.Stack;
+
+            IVertex codeVis = MinusZero.Instance.root.Get(false, @"System\Meta\Visualiser\Code");
+
+            BaseCommands.OpenVisualiser(baseEdge, codeVis, true);
+
+            return exe.Stack;
         }
     }
 }

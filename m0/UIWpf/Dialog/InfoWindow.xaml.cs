@@ -21,6 +21,8 @@ namespace m0.UIWpf.Dialog
         public InfoWindow()
         {
             InitializeComponent();
+
+            Owner = m0Main.Instance;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

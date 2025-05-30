@@ -921,7 +921,7 @@ namespace m0.UIWpf.UX
             IVertex optionUnderlyingVertexDelete = options.AddVertex(null, "Underlying Vertex remove from repository");
             IVertex optionCancel = options.AddVertex(null, "Cancel");
 
-            IVertex option = MinusZero.Instance.DefaultUserInteraction.SelectDialogButton(info, options, null);
+            IVertex option = MinusZero.Instance.DefaultUserInteraction.SelectButtonDialog(info, options.OutEdges, null);
 
             if (option == null || option == optionCancel)
                 return;
@@ -991,7 +991,7 @@ namespace m0.UIWpf.UX
           
             IVertex optionCancel = options.AddVertex(null, "Cancel");
 
-            IVertex option = MinusZero.Instance.DefaultUserInteraction.SelectDialogButton(info, options, null);
+            IVertex option = MinusZero.Instance.DefaultUserInteraction.SelectButtonDialog(info, options.OutEdges, null);
 
             if (option == optionCancel || option == null)
                 return;

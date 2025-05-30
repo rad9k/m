@@ -28,7 +28,7 @@ namespace m0.UIWpf.Dialog
             WpfUtil.SetWindowPosition(this, _mousePosition);
         }
 
-        public SelectWindowButton(IVertex info, IVertex options, Point? position)
+        public SelectWindowButton(IVertex info, IList<IEdge> options, Point? position)
         {            
             if (options.Count() > 1)
             {
@@ -69,7 +69,7 @@ namespace m0.UIWpf.Dialog
             Keyboard.Focus(b);
         }
 
-        private void AddButtons(IVertex options)
+        private void AddButtons(IList<IEdge> options)
         {
             foreach(IEdge e in options)
             {

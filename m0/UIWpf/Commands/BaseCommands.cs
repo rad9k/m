@@ -234,7 +234,7 @@ namespace m0.UIWpf.Commands
 
           
 
-            IVertex option = MinusZero.Instance.DefaultUserInteraction.SelectDialogButton(info, options, null);
+            IVertex option = MinusZero.Instance.DefaultUserInteraction.SelectButtonDialog(info, options.OutEdges, null);
 
             bool allEdgesDelete = false;
 
@@ -282,7 +282,7 @@ namespace m0.UIWpf.Commands
             return null;
         }
 
-        public static IVertex Open(IVertex baseVertex, IVertex inputVertex)
+        public static IVertex Open(IVertex baseVertex, bool isFloating)
         {
             IVertex DefaultVis;
 
@@ -306,14 +306,14 @@ namespace m0.UIWpf.Commands
             IVertex toReturn = null; 
 
             if (GeneralUtil.CompareStrings(DefaultVis.Value, "Diagram"))
-                toReturn =  OpenDiagram(baseVertex, DefaultVis);
+                toReturn =  OpenDiagram(baseVertex, DefaultVis, isFloating);
             else
-                toReturn =  OpenVisualiser(baseVertex, DefaultVis);
+                toReturn =  OpenVisualiser(baseVertex, DefaultVis, isFloating);
 
             return toReturn;
         }
 
-        public static IVertex OpenFormVisualiser(IVertex baseVertex)
+        public static IVertex OpenFormVisualiser(IVertex baseVertex, bool isFloating)
         {
             IVertex toReturn;
 
@@ -321,7 +321,7 @@ namespace m0.UIWpf.Commands
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
 
-            toReturn = OpenVisualiser(baseVertex, MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Form"));
+            toReturn = OpenVisualiser(baseVertex, MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Form"), isFloating);
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
@@ -330,7 +330,7 @@ namespace m0.UIWpf.Commands
             return toReturn;
         }
 
-        public static IVertex OpenDiagram(IVertex baseVertex, IVertex inputVertex)
+        public static IVertex OpenDiagram(IVertex baseVertex, IVertex inputVertex, bool isFloating)
         {
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
@@ -343,7 +343,10 @@ namespace m0.UIWpf.Commands
 
             //GraphUtil.ReplaceEdge(sv.Vertex, "BaseEdge", baseVertex);
 
-            MinusZero.Instance.DefaultUserInteraction.ShowContent(sv);
+            if (isFloating)
+                MinusZero.Instance.DefaultUserInteraction.ShowContentFloating(sv, FloatingWindowSize.Medium);
+            else
+                MinusZero.Instance.DefaultUserInteraction.ShowContent(sv);
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
@@ -352,7 +355,7 @@ namespace m0.UIWpf.Commands
             return null;
         }
 
-        public static IVertex OpenVisualiser(IVertex baseVertex, IVertex inputVertex)
+        public static IVertex OpenVisualiser(IVertex baseVertex, IVertex inputVertex, bool isFloating)
         {
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
@@ -362,7 +365,10 @@ namespace m0.UIWpf.Commands
             
             //Edge.CopyAndReplaceEdgeVertexByEdgeVertex(sv.Vertex, "BaseEdge", baseVertex);
 
-            MinusZero.Instance.DefaultUserInteraction.ShowContent(sv);
+            if (isFloating)
+                MinusZero.Instance.DefaultUserInteraction.ShowContentFloating(sv, FloatingWindowSize.Medium);
+            else
+                MinusZero.Instance.DefaultUserInteraction.ShowContent(sv);
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();

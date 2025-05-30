@@ -30,7 +30,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             IVertex edgeVertex = EdgeHelper.CreateTempEdgeVertex(BaseEdge);
 
-            BaseCommands.OpenFormVisualiser(edgeVertex);
+            BaseCommands.OpenFormVisualiser(edgeVertex, false);
         }
 
 

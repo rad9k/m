@@ -79,7 +79,7 @@ namespace m0.UIWpf.Visualisers.Controls
                     EdgeHelper.AddEdgeVertexEdges(v2, BaseEdge);
 
                     //BaseCommands.Open(v2,null); // want Form Visuliser always
-                    BaseCommands.OpenFormVisualiser(v2);
+                    BaseCommands.OpenFormVisualiser(v2, false);
                 }
             }
             else            

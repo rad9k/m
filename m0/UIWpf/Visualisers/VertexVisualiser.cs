@@ -159,7 +159,7 @@ namespace m0.UIWpf.Visualisers
                 }
                 else
                     //BaseCommands.Open(Vertex.Get(false, "BaseEdge:"), null); // want Form visualiser
-                    BaseCommands.OpenFormVisualiser(Vertex.Get(false, "BaseEdge:"));
+                    BaseCommands.OpenFormVisualiser(Vertex.Get(false, "BaseEdge:"), false);
                 
             }
         }

@@ -318,7 +318,7 @@ namespace m0
             return d.SelectedOption;
         }
 
-        public IVertex SelectDialogButton(IVertex info, IVertex options, Point? position)
+        public IVertex SelectButtonDialog(IVertex info, IList<IEdge> options, Point? position)
         {
             SelectWindowButton d = new SelectWindowButton(info, options, position);
 

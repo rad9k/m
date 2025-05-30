@@ -476,7 +476,7 @@ namespace m0.UIWpf.Controls
 
         void OnOpen(object sender, System.Windows.RoutedEventArgs e)
         {
-            BaseCommands.Open(this.EdgeVertex, null);
+            BaseCommands.Open(this.EdgeVertex, false);
         }
 
         void OnExecute(object sender, System.Windows.RoutedEventArgs e)
@@ -486,7 +486,7 @@ namespace m0.UIWpf.Controls
 
         void OnOpenVisualiser(object sender, System.Windows.RoutedEventArgs e)
         {            
-            BaseCommands.OpenVisualiser(this.EdgeVertex, ((IVertex)((MenuItem)sender).Tag));
+            BaseCommands.OpenVisualiser(this.EdgeVertex, ((IVertex)((MenuItem)sender).Tag), false);
         }
 
         void OnOpenMetaVisualiser(object sender, System.Windows.RoutedEventArgs e)

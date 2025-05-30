@@ -22,7 +22,7 @@ namespace m0.Foundation
 
         IVertex SelectDialog(IVertex info, IList<IEdge> options, bool firstSelected, Point? position);
 
-        IVertex SelectDialogButton(IVertex info, IVertex options, Point? position);
+        IVertex SelectButtonDialog(IVertex info, IList<IEdge> options, Point? position);
 
         void Edit(IVertex baseVertex, Point? position);
 
