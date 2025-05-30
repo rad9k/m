@@ -145,6 +145,8 @@
     <Compile Include="Lib\Std.cs" />
     <Compile Include="Lib\StdUI.cs" />
     <Compile Include="Lib\Sys.cs" />
+    <Compile Include="Runtime\code.cs" />
+    <Compile Include="Runtime\FilesystemLoader.cs" />
     <Compile Include="Store\Binary\BinaryStore.cs" />
     <Compile Include="Store\Text\TextStore.cs" />
     <Compile Include="UIWpf\Controls\AnimatedHideArea_HorizontalDown.xaml.cs">
