@@ -500,7 +500,7 @@ namespace m0
                 ",Execute,Parse,ParseWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}},Generate,GenerateWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",CreateView{CreateViewInner},CreateViewInner{FromTriggerQuery{Query},FromTriggerFilter{Value},FromToTransformFunction{Target},ToTriggerQuery{Query},ToTriggerFilter{Value},ToFromTransformFunction{Target}}" +
                 ",CreateTrigger{Name,CreateTriggerInner},CreateTriggerInner{ScopeQuery{Query},ChangeTypeFilter{Value},Listener{Target}}" +
-                ",CreateHttpMapping{HttpMappingInner},"
+                ",CreateHttpMapping{HttpMappingInner},HttpMappingInner{HttpMapping{Action,PathMask,Handler}}" +
                 ",this,Package{$InstanceCreationPriority:}" +
                 "}");  
             
@@ -608,9 +608,13 @@ namespace m0
 
             AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "CreateTrigger"), "CreateTrigger");
 
+            // create http mapping
+
+            AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "CreateHttpMapping"), "CreateHttpMapping");
+
 
             ////////////////////////////////////////////////////////////////////////
-            
+
 
             // method
             IVertex method = LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class").AddVertex(null, "Method");
@@ -807,6 +811,14 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "ZeroOperator"));
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, "CreateTriggerInner").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "MultiOperator"));
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, "CreateHttpMapping").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "ZeroOperator"));
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, "CreateHttpMapping").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "MultiOperator"));
 
