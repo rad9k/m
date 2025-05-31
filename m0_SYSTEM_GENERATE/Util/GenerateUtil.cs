@@ -73,7 +73,7 @@ namespace m0_SYSTEM_GENERATE.Util
             {
                 IVertex ip = f.AddVertex(zu.Get(false, "Function\\InputParameter"), tn.Name);
 
-                if(tn.Type !=null)
+                if (tn.Type !=null)
                     ip.AddEdge(bv.Get(false, "$VertexTarget"), zt.Get(false, tn.Type));
                 else
                     ip.AddEdge(bv.Get(false, "$VertexTarget"), tn.TypeVertex);

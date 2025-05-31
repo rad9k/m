@@ -29,7 +29,7 @@ namespace m0.Graph.ExecutionFlow
         public IVertex ToFromTransformFunction;
 
         public ViewHolder(IVertex createViewVertex) {
-            IVertex innerVertex = GraphUtil.GetQueryOutFirst(createViewVertex, "ViewInner", null);
+            IVertex innerVertex = GraphUtil.GetQueryOutFirst(createViewVertex, "CreateViewInner", null);
 
             if (innerVertex == null)
                 return;

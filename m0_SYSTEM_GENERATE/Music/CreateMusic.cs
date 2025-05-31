@@ -391,11 +391,11 @@ namespace m0_SYSTEM_GENERATE.Music
         static string MidiDeviceTypeString = "m0_COMPOSER.Lib.MidiDevice, m0_COMPOSER, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
         static string SongTypeString = "m0_COMPOSER.Lib.Song, m0_COMPOSER, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
-        static IVertex String = r.Get(false, @"System\Meta\ZeroTypes\String");
-        static IVertex Integer = r.Get(false, @"System\Meta\ZeroTypes\Integer");
-        static IVertex Boolean = r.Get(false, @"System\Meta\ZeroTypes\Boolean");
-        static IVertex Float = r.Get(false, @"System\Meta\ZeroTypes\Float");
-        static IVertex Color = r.Get(false, @"System\Meta\ZeroTypes\UX\Color");
+        static IVertex StringMeta = r.Get(false, @"System\Meta\ZeroTypes\String");
+        static IVertex IntegerMeta = r.Get(false, @"System\Meta\ZeroTypes\Integer");
+        static IVertex BooleanMeta = r.Get(false, @"System\Meta\ZeroTypes\Boolean");
+        static IVertex FloatMeta = r.Get(false, @"System\Meta\ZeroTypes\Float");
+        static IVertex ColorMeta = r.Get(false, @"System\Meta\ZeroTypes\UX\Color");
 
         static IVertex Note;
         static IVertex Pitch;
@@ -428,14 +428,14 @@ namespace m0_SYSTEM_GENERATE.Music
 
             HasLength = GraphUtil.AddClass(Music, "HasLength");
 
-            GraphUtil.AddAttribute(HasLength, "Length", Integer, 0, 1);
+            GraphUtil.AddAttribute(HasLength, "Length", IntegerMeta, 0, 1);
             GraphUtil.AddAssociation(HasLength, "TimeSpan", TimeSpanLevel, 0, 1);
 
             // EVENT
 
             Event = GraphUtil.AddClass(Music, "Event");
 
-            GraphUtil.AddAttribute(Event, "TriggerTime", Integer, 1, 1);
+            GraphUtil.AddAttribute(Event, "TriggerTime", IntegerMeta, 1, 1);
 
             // HISTORY
 
@@ -449,8 +449,8 @@ namespace m0_SYSTEM_GENERATE.Music
 
             ControlChange = GraphUtil.AddClass(Music, "ControlChange");
 
-            GraphUtil.AddAttribute(ControlChange, "Number", Integer, 1, 1);
-            GraphUtil.AddAttribute(ControlChange, "Value", Integer, 1, 1);
+            GraphUtil.AddAttribute(ControlChange, "Number", IntegerMeta, 1, 1);
+            GraphUtil.AddAttribute(ControlChange, "Value", IntegerMeta, 1, 1);
 
             // CONTROLCHANGEEVENT
 
@@ -463,8 +463,8 @@ namespace m0_SYSTEM_GENERATE.Music
 
             ControlChangeDescription = GraphUtil.AddClass(Music, "ControlChangeDescription");
 
-            GraphUtil.AddAttribute(ControlChangeDescription, "Number", Integer, 1, 1);
-            GraphUtil.AddAttribute(ControlChangeDescription, "Description", String, 1, 1);
+            GraphUtil.AddAttribute(ControlChangeDescription, "Number", IntegerMeta, 1, 1);
+            GraphUtil.AddAttribute(ControlChangeDescription, "Description", StringMeta, 1, 1);
             GraphUtil.AddAssociation(ControlChangeDescription, "Type", ControlChangeDescriptionTypeEnum, 0, 1);
 
             // CONTROLCHANGEDESCRIPTIONSET
@@ -477,17 +477,17 @@ namespace m0_SYSTEM_GENERATE.Music
 
             Pitch = GraphUtil.AddClass(Music, "Pitch");
 
-            GraphUtil.AddAttribute(Pitch, "Octave", Integer, 1, 1);
-            GraphUtil.AddAttribute(Pitch, "Note", Integer, 1, 1);
+            GraphUtil.AddAttribute(Pitch, "Octave", IntegerMeta, 1, 1);
+            GraphUtil.AddAttribute(Pitch, "Note", IntegerMeta, 1, 1);
 
             // VISULISEDPICH
 
             VisualisedPitch = GraphUtil.AddClass(Music, "VisualisedPitch");
 
             GraphUtil.AddInherits(VisualisedPitch, Pitch);
-            GraphUtil.AddAttribute(VisualisedPitch, "Name", String, 1, 1);
-            GraphUtil.AddAssociation(VisualisedPitch, "PitchColor", Color, 1, 1);
-            GraphUtil.AddAssociation(VisualisedPitch, "NoteBackgroundColor", Color, 0, 1);
+            GraphUtil.AddAttribute(VisualisedPitch, "Name", StringMeta, 1, 1);
+            GraphUtil.AddAssociation(VisualisedPitch, "PitchColor", ColorMeta, 1, 1);
+            GraphUtil.AddAssociation(VisualisedPitch, "NoteBackgroundColor", ColorMeta, 0, 1);
 
             // PICHSET
 
@@ -509,7 +509,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             GraphUtil.AddInherits(Note, Pitch);
 
-            GraphUtil.AddAttribute(Note, "Velocity", Integer, 1, 1);
+            GraphUtil.AddAttribute(Note, "Velocity", IntegerMeta, 1, 1);
 
             // NOTEEVENT
 
@@ -526,8 +526,8 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddInherits(Sequence, HasLength);
             GraphUtil.AddInherits(Sequence, History);
 
-            GraphUtil.AddAttribute(Sequence, "IsDrum", Boolean, 0, 1);
-            GraphUtil.AddAttribute(Sequence, "ExtendTimeLength", Integer, 1, 1, 16 * m0_COMPOSER.Midi.Standard.MidiTicksPerSixteen);
+            GraphUtil.AddAttribute(Sequence, "IsDrum", BooleanMeta, 0, 1);
+            GraphUtil.AddAttribute(Sequence, "ExtendTimeLength", IntegerMeta, 1, 1, 16 * m0_COMPOSER.Midi.Standard.MidiTicksPerSixteen);
             GraphUtil.AddAssociation(Sequence, "PitchSet", PitchSet, 0, 1);
             GraphUtil.AddAssociation(Sequence, "ControlChangeDescriptionSet", ControlChangeDescriptionSet, 0, 1);
 
@@ -551,11 +551,11 @@ namespace m0_SYSTEM_GENERATE.Music
             //GraphUtil.AddAttribute(Track, "Name", String, 0, 1);
             //GraphUtil.AddAttribute(Track, "Color", Color, 0, 1);
             GraphUtil.AddAssociation(Track, "Output", NoteOutput, 0, 1);
-            GraphUtil.AddAttribute(Track, "IsDrum", Boolean, 0, 1);
-            GraphUtil.AddAttribute(Track, "IsMuted", Boolean, 0, 1);
-            GraphUtil.AddAttribute(Track, "IsSolo", Boolean, 0, 1);
-            GraphUtil.AddAttribute(Track, "ProgramChange", Integer, 0, 1, 0, 0, 127);
-            GraphUtil.AddAttribute(Track, "BankSelect", Integer, 0, 1, 0, 0, 127);
+            GraphUtil.AddAttribute(Track, "IsDrum", BooleanMeta, 0, 1);
+            GraphUtil.AddAttribute(Track, "IsMuted", BooleanMeta, 0, 1);
+            GraphUtil.AddAttribute(Track, "IsSolo", BooleanMeta, 0, 1);
+            GraphUtil.AddAttribute(Track, "ProgramChange", IntegerMeta, 0, 1, 0, 0, 127);
+            GraphUtil.AddAttribute(Track, "BankSelect", IntegerMeta, 0, 1, 0, 0, 127);
             GraphUtil.AddAggregation(Track, "SequenceEvent", SequenceEvent, 0, -1);
 
             // SONG
@@ -564,16 +564,16 @@ namespace m0_SYSTEM_GENERATE.Music
 
             GraphUtil.AddInherits(Song, HasLength);
 
-            GraphUtil.AddAttribute(Song, "ExtendTimeLength", Float, 1, 1, 1.0);
+            GraphUtil.AddAttribute(Song, "ExtendTimeLength", FloatMeta, 1, 1, 1.0);
             //GraphUtil.AddAttribute(Song, "Name", String, 0, 1);
             GraphUtil.AddAggregation(Song, "Track", Track, 0, -1);
             GraphUtil.AddAttribute(Song, "Input", NoteInput, 0, 1);
             GraphUtil.AddAssociation(Song, "RecordingTrack", Track, 0, 1);
-            GraphUtil.AddAttribute(Song, "Tempo", Float, 1, 1, (double)125.0, (double)10.0, (double)250.0);
-            GraphUtil.AddAttribute(Song, "Position", Integer, 1, 1, 0);
-            GraphUtil.AddAttribute(Song, "LoopBeg", Integer, 0, 1);
-            GraphUtil.AddAttribute(Song, "LoopEnd", Integer, 0, 1);
-            GraphUtil.AddAttribute(Song, "IsRepeat", Boolean, 0, 1);
+            GraphUtil.AddAttribute(Song, "Tempo", FloatMeta, 1, 1, (double)125.0, (double)10.0, (double)250.0);
+            GraphUtil.AddAttribute(Song, "Position", IntegerMeta, 1, 1, 0);
+            GraphUtil.AddAttribute(Song, "LoopBeg", IntegerMeta, 0, 1);
+            GraphUtil.AddAttribute(Song, "LoopEnd", IntegerMeta, 0, 1);
+            GraphUtil.AddAttribute(Song, "IsRepeat", BooleanMeta, 0, 1);
 
             AddMethod(Song, "Record", SongTypeString, "Record", null, new TypeName[] { });
             AddMethod(Song, "Play", SongTypeString, "Play", null, new TypeName[] { });
@@ -601,20 +601,20 @@ namespace m0_SYSTEM_GENERATE.Music
 
             IVertex MidiDevice = GraphUtil.AddClass(Music, "MidiDevice");
 
-            GraphUtil.AddAttribute(MidiDevice, "Name", String, 1, 1);
+            GraphUtil.AddAttribute(MidiDevice, "Name", StringMeta, 1, 1);
 
             GraphUtil.AddAggregation(MidiDevice, "Output", MidiOutput, 0, -1);            
 
-            GraphUtil.AddAttribute(MidiDevice, "DeviceNumber", Integer, 0, 1);
+            GraphUtil.AddAttribute(MidiDevice, "DeviceNumber", IntegerMeta, 0, 1);
 
-            GraphUtil.AddAttribute(MidiDevice, "Mid", String, 0, 1);
-            GraphUtil.AddAttribute(MidiDevice, "Pid", String, 0, 1);
-            GraphUtil.AddAttribute(MidiDevice, "DriverVersion", String, 0, 1);
-            GraphUtil.AddAttribute(MidiDevice, "Technology", String, 0, 1);
-            GraphUtil.AddAttribute(MidiDevice, "Voices", String, 0, 1);
-            GraphUtil.AddAttribute(MidiDevice, "Notes", String, 0, 1);
-            GraphUtil.AddAttribute(MidiDevice, "ChannelMask", String, 0, 1);
-            GraphUtil.AddAttribute(MidiDevice, "Support", String, 0, 1);            
+            GraphUtil.AddAttribute(MidiDevice, "Mid", StringMeta, 0, 1);
+            GraphUtil.AddAttribute(MidiDevice, "Pid", StringMeta, 0, 1);
+            GraphUtil.AddAttribute(MidiDevice, "DriverVersion", StringMeta, 0, 1);
+            GraphUtil.AddAttribute(MidiDevice, "Technology", StringMeta, 0, 1);
+            GraphUtil.AddAttribute(MidiDevice, "Voices", StringMeta, 0, 1);
+            GraphUtil.AddAttribute(MidiDevice, "Notes", StringMeta, 0, 1);
+            GraphUtil.AddAttribute(MidiDevice, "ChannelMask", StringMeta, 0, 1);
+            GraphUtil.AddAttribute(MidiDevice, "Support", StringMeta, 0, 1);            
 
             AddMethod(MidiDevice, "Reset", MidiDeviceTypeString, "Reset", null, new TypeName[] { });
             AddMethod(MidiDevice, "TimingClock", MidiDeviceTypeString, "TimingClock", null, new TypeName[] { });
@@ -627,16 +627,16 @@ namespace m0_SYSTEM_GENERATE.Music
             GraphUtil.AddInherits(MidiOutput, NoteOutput);
 
             GraphUtil.AddAssociation(MidiOutput, "Device", MidiDevice, 1, 1);
-            GraphUtil.AddAttribute(MidiOutput, "Name", String, 1, 1);
-            GraphUtil.AddAttribute(MidiOutput, "Channel", Integer, 1, 1);
+            GraphUtil.AddAttribute(MidiOutput, "Name", StringMeta, 1, 1);
+            GraphUtil.AddAttribute(MidiOutput, "Channel", IntegerMeta, 1, 1);
 
             // MIDI IN
 
             GraphUtil.AddInherits(MidiInput, NoteInput);
 
             GraphUtil.AddAssociation(MidiInput, "Device", MidiDevice, 1, 1);
-            GraphUtil.AddAttribute(MidiInput, "Name", String, 1, 1);
-            GraphUtil.AddAttribute(MidiInput, "Channel", Integer, 1, 1);
+            GraphUtil.AddAttribute(MidiInput, "Name", StringMeta, 1, 1);
+            GraphUtil.AddAttribute(MidiInput, "Channel", IntegerMeta, 1, 1);
         }
 
         public static void AddGenerator()
@@ -659,7 +659,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             IVertex MelodyFlowQuant = GraphUtil.AddClass(MusicGenerator, "MelodyFlowQuant");
             GraphUtil.AddInherits(MelodyFlowQuant, Note);            
-            GraphUtil.AddAttribute(MelodyFlowQuant, "Velocity", Integer, 0, 1);
+            GraphUtil.AddAttribute(MelodyFlowQuant, "Velocity", IntegerMeta, 0, 1);
             GraphUtil.AddAttribute(MelodyFlowQuant, "QuantType", MelodyFlowQuantTypeEnum, 1, 1);
 
 
@@ -672,7 +672,7 @@ namespace m0_SYSTEM_GENERATE.Music
             // MELODYFLOW
 
             MelodyFlow = GraphUtil.AddClass(MusicGenerator, "MelodyFlow");
-            GraphUtil.AddAttribute(MelodyFlow, "IsDrum", Boolean, 0, 1);
+            GraphUtil.AddAttribute(MelodyFlow, "IsDrum", BooleanMeta, 0, 1);
             GraphUtil.AddAssociation(MelodyFlow, "PitchSet", PitchSet, 0, 1);
             GraphUtil.AddAggregation(MelodyFlow, "Step", MelodyFlowStep, 0, -1);            
 
@@ -683,14 +683,14 @@ namespace m0_SYSTEM_GENERATE.Music
             IVertex Trigger = GraphUtil.AddClass(MusicGenerator, "Trigger");
             GraphUtil.AddInherits(Trigger, Event);
             GraphUtil.AddInherits(Trigger, HasLength);
-            GraphUtil.AddAttribute(Trigger, "Velocity", Integer, 0, 1);
+            GraphUtil.AddAttribute(Trigger, "Velocity", IntegerMeta, 0, 1);
             GraphUtil.AddAggregation(Trigger, "ControlChange", ControlChange, 0, -1);
 
             // TRIGGERSET
 
             TriggerSet = GraphUtil.AddClass(MusicGenerator, "TriggerSet");
             GraphUtil.AddInherits(TriggerSet, HasLength);
-            GraphUtil.AddAttribute(TriggerSet, "IsDrum", Boolean, 0, 1);
+            GraphUtil.AddAttribute(TriggerSet, "IsDrum", BooleanMeta, 0, 1);
             GraphUtil.AddAggregation(TriggerSet, "Trigger", Trigger, 0, -1);
 
             TriggerSet.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$DefaultOpenVisualiser"), r.Get(false, @"System\Meta\Visualiser\TriggerSet"));

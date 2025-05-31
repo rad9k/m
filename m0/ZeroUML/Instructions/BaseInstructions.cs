@@ -2383,7 +2383,7 @@ namespace m0.ZeroUML.Instructions
 
             string name = GraphUtil.GetStringValue(nameVertex);
 
-            IVertex innerVertex = GraphUtil.GetQueryOutFirst(instructionVertex, "TriggerInner", null);
+            IVertex innerVertex = GraphUtil.GetQueryOutFirst(instructionVertex, "CreateTriggerInner", null);
 
             if (innerVertex == null)
                 return exe.Stack;

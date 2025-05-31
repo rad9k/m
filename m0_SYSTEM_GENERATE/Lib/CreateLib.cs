@@ -1,20 +1,28 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.Lib;
+using m0.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using m0.Util;
-
-using static m0_SYSTEM_GENERATE.Util.GenerateUtil;
-
 using static m0_SYSTEM_GENERATE.Program;
+using static m0_SYSTEM_GENERATE.Util.GenerateUtil;
 
 namespace m0_SYSTEM_GENERATE.Lib
 {
     public class CreateLib
     {
+        static IVertex r = m0.MinusZero.Instance.root;
+
+        static IVertex StringMeta = r.Get(false, @"System\Meta\ZeroTypes\String");
+        static IVertex IntegerMeta = r.Get(false, @"System\Meta\ZeroTypes\Integer");
+        static IVertex BooleanMeta = r.Get(false, @"System\Meta\ZeroTypes\Boolean");
+        static IVertex FloatMeta = r.Get(false, @"System\Meta\ZeroTypes\Float");
+        static IVertex ColorMeta = r.Get(false, @"System\Meta\ZeroTypes\UX\Color");
+        static IVertex ExecutableMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\Executable");
+
         static IVertex LibStd;
         static IVertex LibSys;
         static IVertex LibStdUI;
@@ -119,6 +127,22 @@ namespace m0_SYSTEM_GENERATE.Lib
             LibNet = lib.AddVertex(null, "Net");
 
             string type = "m0.Lib.Net, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+
+            IVertex HttpActionEnumVertex = GraphUtil.AddEnum(LibNet, "HttpActionEnum", new string[] { "GET", "PUT", "POST", "DELETE", "PATCH", "HEADOPTIONS", "TRACE" });
+
+
+            IVertex httpMapingVertex = GraphUtil.AddClass(LibNet, "HttpMapping");
+
+            GraphUtil.AddAttribute(httpMapingVertex, "Action", HttpActionEnumVertex, 1, 1);
+            GraphUtil.AddAttribute(httpMapingVertex, "PathMask", StringMeta, 1, 1);
+            GraphUtil.AddAttribute(httpMapingVertex, "Handler", ExecutableMeta, 1, 1);
+
+            IVertex httpServerVertex = GraphUtil.AddClass(LibNet, "HttpServer");
+
+            AddMethod(httpServerVertex, "Init", type, "Init", null, new TypeName[] { new TypeName("mapping", httpMapingVertex, 0, -1), new TypeName("port", "Integer", 0, 1) });
+            AddMethod(httpServerVertex, "Start", type, "Start", null, new TypeName[] {});
+            AddMethod(httpServerVertex, "Stop", type, "Stop", null, new TypeName[] {});
+
 
             //AddFunction(LibNet, "StartTransaction", type, "StartTransaction", null, new TypeName[] { });
 

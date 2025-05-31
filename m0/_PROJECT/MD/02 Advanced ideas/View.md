@@ -41,8 +41,8 @@ __After the "Possible view definitions" table (below) evaluation we come to conc
 <(?<ANY>) :: "">
 	<@$Is :: CreateView>
 	<@Name :: "view name">
-	<@ViewInner :: "">
-		<@Is :: @ViewInner>
+	<@CreateViewInner :: "">
+		<@Is :: @CreateViewInner>
 		<@Expression :: "">
 			<@Is :: @FromTriggerQuery>
 			<@Query :: "query body">

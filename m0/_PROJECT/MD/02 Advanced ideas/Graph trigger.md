@@ -29,8 +29,8 @@
 <(?<ANY>) :: "">
 	<@$Is :: CreateTrigger>
 	<@Name :: "trigger name">
-	<@TriggerInner :: "">
-		<@Is :: @TriggerInner>
+	<@CreateTriggerInner :: "">
+		<@Is :: @CreateTriggerInner>
 		<@Expression :: "">
 			<@Is :: @ScopeQuery>
 			<@Query :: "query body">
