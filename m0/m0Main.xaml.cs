@@ -115,6 +115,10 @@ namespace m0
             // Attach our WndProc handler to this Window
             HwndSource source = HwndSource.FromHwnd(this.Handle);
             source.AddHook(new HwndSourceHook(WndProc));
+
+            //
+
+            MinusZero.Instance.Initialize_AfterUXInitialized();
         }
 
         static m0Main this_static;

@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace m0.Runtime
+namespace m0.Bootstrap
 {
     class LoadFromBootstrap
     {

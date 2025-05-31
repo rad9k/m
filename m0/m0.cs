@@ -1,8 +1,8 @@
-﻿using m0.Runtime;
-using m0.FormalTextLanguage;
+﻿using m0.FormalTextLanguage;
 using m0.Foundation;
 using m0.Graph;
 using m0.Graph.ExecutionFlow;
+using m0.Bootstrap;
 using m0.Store;
 using m0.Store.FileSystem;
 using m0.Store.Json;
@@ -14,6 +14,7 @@ using m0.ZeroUML.Instructions;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -420,6 +421,29 @@ namespace m0
             AtomVisualiserHelper.Initialize();
         }
 
+        void LoadFromFileSystem()
+        {
+            string currentDirectory = Directory.GetCurrentDirectory();
+            
+            string autostartPath = Path.Combine(currentDirectory, "autostart");
+
+            FileSystemLoader fsl = new FileSystemLoader(autostartPath);
+
+            IVertex autostartVertex = root.AddVertex(null, "Autostart");
+
+            fsl.Load(autostartVertex);        
+        }
+
+        void Autostart()
+        {
+            IVertex autostartVertex = root.Get(false, "Autostart");
+
+            IExecution exe = new ZeroCodeExecution();
+
+            foreach (IEdge e in autostartVertex)
+                e.To.Execute(exe);
+        }
+
         public void Initialize()
         {
             if (IsInitialized)
@@ -450,18 +474,30 @@ namespace m0
 
             AddHardware();
 
-            AddDrives();
-
+            
 
             UIWpf.WpfUtil.InitializeUIWpf();
 
             StaticMetaInitialize();
+
+            LoadFromFileSystem();
+
+
+
+            AddDrives();
+
+
 
             ExecutionFlowHelper.CommitTransaction();
 
             IsInitialized = true;
 
             ExecutionFlowHelper.StartTransaction();
+        }
+
+        public void Initialize_AfterUXInitialized()
+        {
+            Autostart();
         }
     }
 }

@@ -141,7 +141,7 @@ namespace m0.Graph
             return vList;
         }
 
-        public static void LoadAndParseTXT(string fileName, IVertex baseVertex)
+        public static void LoadTXTAndParse(string fileName, IVertex baseVertex)
         {
             string text = System.IO.File.ReadAllText(fileName);
 
@@ -156,11 +156,11 @@ namespace m0.Graph
             GraphUtil.DeepCopyByVertex(TextStore.Root, baseVertex);
         }
 
-        public static void LoadParseAndMove(string fileName, IVertex baseVertex, string vertexName)
+        public static void LoadTXTParseAndMove(string fileName, IVertex baseVertex, string vertexName)
         {
             IEdge tmp = baseVertex.AddVertexAndReturnEdge(null, null);
 
-            LoadAndParseTXT(fileName, tmp.To);
+            LoadTXTAndParse(fileName, tmp.To);
 
             IEdge e = tmp.To.GetAll(false, vertexName).First();
 
@@ -1191,7 +1191,7 @@ namespace m0.Graph
             GraphIterator i = new GraphIterator(value);
 
             return DeepIterator(findRoot, i.CompareMeta, true, false, canGoIntoLinks).FirstOrDefault();
-        }        
+        }
 
         static public IEnumerable<IVertex> DeepIterator(IVertex iterationRoot, GraphIteratorIterate iterate, bool isSingleResult, bool canModifyOutEdges, bool canGoIntoLinks)
         {

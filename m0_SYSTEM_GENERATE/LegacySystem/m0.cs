@@ -6407,7 +6407,7 @@ namespace m0
 
             IVertex sdut = sdu.AddVertex(null, "Templates");                        
 
-            GraphUtil.LoadParseAndMove(@"_RES\UXTemplate\ZeroUML.txt",
+            GraphUtil.LoadTXTParseAndMove(@"_RES\UXTemplate\ZeroUML.txt",
                 sdut, 
                 "ZeroUML");
         }

@@ -113,7 +113,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="Runtime\LoadFromBootstrap.cs" />
+    <Compile Include="Bootstrap\LoadFromBootstrap.cs" />
     <Compile Include="DotNetIntegration\CallableEndPointDictionary_INIEIOV_ZCE_IV_IV_B.cs" />
     <Compile Include="Foundation\ICommintBeforeGlobalDetachStore.cs" />
     <Compile Include="Foundation\IExecution.cs" />
@@ -145,8 +145,7 @@
     <Compile Include="Lib\Std.cs" />
     <Compile Include="Lib\StdUI.cs" />
     <Compile Include="Lib\Sys.cs" />
-    <Compile Include="Runtime\code.cs" />
-    <Compile Include="Runtime\FilesystemLoader.cs" />
+    <Compile Include="Bootstrap\FileSystemLoader.cs" />
     <Compile Include="Store\Binary\BinaryStore.cs" />
     <Compile Include="Store\Text\TextStore.cs" />
     <Compile Include="UIWpf\Controls\AnimatedHideArea_HorizontalDown.xaml.cs">
@@ -750,7 +749,6 @@
     <Resource Include="_PROJECT\_OLD\CODE_RESEARCH\UXItemTemplate.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Bootstrap\" />
     <Folder Include="Network\Server\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

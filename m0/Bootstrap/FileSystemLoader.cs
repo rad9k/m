@@ -1,4 +1,6 @@
 ﻿using m0.Foundation;
+using m0.Graph;
+using m0.Store.FileSystem;
 using m0.Util;
 using System;
 using System.Collections.Generic;
@@ -7,15 +9,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace m0.Runtime
+namespace m0.Bootstrap
 {
-    public class FilesystemLoader
+    public class FileSystemLoader
     {
         static IVertex packageMeta = m0.MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroUML\Package");
+        static IVertex isMeta = m0.MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex\$Is");
 
         string startPath;
 
-        public FilesystemLoader(string _startPath)
+        public FileSystemLoader(string _startPath)
         {
             startPath = _startPath;
         }
@@ -37,6 +40,8 @@ namespace m0.Runtime
                 {
                     string vertexValue = Path.GetFileNameWithoutExtension(file);
                     IVertex fileVertex = baseVertex.AddVertex(packageMeta, vertexValue);
+
+                    fileVertex.AddEdge(isMeta, packageMeta);
                     
                     ProcessFile(fileVertex, file);
                 }
@@ -47,7 +52,10 @@ namespace m0.Runtime
                 // Rekurencyjnie przetwórz każdy podkatalog
                 foreach (string subdirectory in subdirectories)
                 {
-                    IVertex directoryVertex = baseVertex.AddVertex(packageMeta, subdirectory);
+                    IVertex directoryVertex = baseVertex.AddVertex(packageMeta, Path.GetFileName(subdirectory));
+
+                    directoryVertex.AddEdge(isMeta, packageMeta);
+
                     Load_Reccursive(directoryVertex, subdirectory);
                 }
             }
@@ -57,9 +65,9 @@ namespace m0.Runtime
             }
         }
 
-        void ProcessFile(IVertex baseVertex, string filePath)
+        void ProcessFile(IVertex baseVertex, string fileName)
         {
-
+            GraphUtil.LoadAndParse(fileName, baseVertex);
         }
 
     }
