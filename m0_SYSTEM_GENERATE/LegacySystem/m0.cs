@@ -500,7 +500,7 @@ namespace m0
                 ",Execute,Parse,ParseWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}},Generate,GenerateWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",CreateView{CreateViewInner},CreateViewInner{FromTriggerQuery{Query},FromTriggerFilter{Value},FromToTransformFunction{Target},ToTriggerQuery{Query},ToTriggerFilter{Value},ToFromTransformFunction{Target}}" +
                 ",CreateTrigger{Name,CreateTriggerInner},CreateTriggerInner{ScopeQuery{Query},ChangeTypeFilter{Value},Listener{Target}}" +
-                ",CreateHttpMapping{HttpMappingInner},HttpMappingInner{HttpMapping{Action,PathMask,Handler}}" +
+                ",CreateHttpMapping{CreateHttpMappingInner},CreateHttpMappingInner{HttpMapping{Action,PathMask,Handler}}" +
                 ",this,Package{$InstanceCreationPriority:}" +
                 "}");  
             
@@ -1053,7 +1053,7 @@ namespace m0
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateViewInner\FromToTransformFunction\Target").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function"));
+                LegacySystem.Graph.EasyVertex.Get(smzte, false, @"Executable"));
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateViewInner\ToTriggerQuery\Query").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
@@ -1065,7 +1065,7 @@ namespace m0
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateViewInner\ToFromTransformFunction\Target").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function"));
+                LegacySystem.Graph.EasyVertex.Get(smzte, false, @"Executable"));
 
 
             // create trigger
@@ -1088,7 +1088,27 @@ namespace m0
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTriggerInner\Listener\Target").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function"));
+                LegacySystem.Graph.EasyVertex.Get(smzte, false, @"Executable"));
+
+
+            // create http mapping
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMapping\CreateHttpMappingInner").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner"));
+            
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMapping\Action").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smzt, false, @"VertexType"));
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMapping\Path").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smzt, false, @"String"));
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMapping\Handler").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smzte, false, @"Executable"));
 
             //
 
@@ -1133,7 +1153,16 @@ namespace m0
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateViewInner\FromTriggerQuery\Query").AddEdge(isAggregation, Empty);
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateViewInner\ToTriggerQuery\Query").AddEdge(isAggregation, Empty);            
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateViewInner\ToTriggerQuery\Query").AddEdge(isAggregation, Empty);
+
+            //
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMapping").AddEdge(isAggregation, Empty);
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMapping\CreateHttpMappingInner").AddEdge(isAggregation, Empty);
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMapping\Path").AddEdge(isAggregation, Empty);
+
 
             // package
             IVertex package = LegacySystem.Graph.EasyVertex.Get(smu, false, "Package");
