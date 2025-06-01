@@ -1102,7 +1102,7 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(smzt, false, @"VertexType"));
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMapping\Path").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMapping\PathMask").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(smzt, false, @"String"));
 
