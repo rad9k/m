@@ -2372,6 +2372,19 @@ namespace m0.ZeroUML.Instructions
         //
         ////////////////////////////////////////////////////////////////   
         
+        public static IVertex ExecuteInstructionAndReturnFirstVertex(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        {            
+            INoInEdgeInOutVertexVertex _executeResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, instructionVertex);
+            
+
+            IList<IEdge> ExecuteResult = _executeResult.OutEdges;
+
+            if (ExecuteResult.Count == 0)
+                return null;
+
+            return ExecuteResult[0].To;                        
+        }
+
         public static INoInEdgeInOutVertexVertex CreateTrigger(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
@@ -2405,12 +2418,14 @@ namespace m0.ZeroUML.Instructions
                 switch (GraphUtil.GetStringValue(expressionIs))
                 {
                     case "ScopeQuery":
-                        IVertex query = GraphUtil.GetQueryOutFirst(e.To, "Query", null);
+                        IVertex queryInstruction = GraphUtil.GetQueryOutFirst(e.To, "Query", null);
 
-                        if (query == null)
+                        if (queryInstruction == null)
                             continue;
 
-                        ScopeQueries.Add(GraphUtil.GetStringValue(query));
+                        IVertex queryExecution = ExecuteInstructionAndReturnFirstVertex(exe, inputStack, queryInstruction);
+
+                        ScopeQueries.Add(GraphUtil.GetStringValue(queryExecution));
                         break;
 
                     case "ChangeTypeFilter":
