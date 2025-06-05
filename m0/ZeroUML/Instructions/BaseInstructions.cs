@@ -2372,17 +2372,11 @@ namespace m0.ZeroUML.Instructions
         //
         ////////////////////////////////////////////////////////////////   
         
-        public static IList<IEdge> ExecuteInstructionAndReturnFirstVertex(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static IList<IEdge> ExecuteInstruction(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {            
-            INoInEdgeInOutVertexVertex _executeResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, instructionVertex);
-            
+            INoInEdgeInOutVertexVertex _executeResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, instructionVertex);            
 
-            IList<IEdge> ExecuteResult = _executeResult.OutEdges;
-
-            if (ExecuteResult.Count == 0)
-                return null;
-
-            return ExecuteResult[0].To;                        
+            return _executeResult.OutEdges;
         }
 
         public static INoInEdgeInOutVertexVertex CreateTrigger(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
@@ -2423,12 +2417,9 @@ namespace m0.ZeroUML.Instructions
                         if (queryInstruction == null)
                             continue;
 
-                        IVertex queryExecution = ExecuteInstructionAndReturnFirstVertex(exe, inputStack, queryInstruction);
-
-                        if (queryExecution == null)
-                            continue;
-
-                        ScopeQueries.Add(GraphUtil.GetStringValue(queryExecution));
+                        foreach(IEdge executeEdge in exe.ExecuteInstructionByMontevideoPrinciples(inputStack, queryInstruction).OutEdges)
+                            ScopeQueries.Add(GraphUtil.GetStringValue(executeEdge.To));
+                        
                         break;
 
                     case "ChangeTypeFilter":
@@ -2437,21 +2428,20 @@ namespace m0.ZeroUML.Instructions
                         if (valueInstruction == null)
                             continue;
 
-                        IVertex valueExecution = ExecuteInstructionAndReturnFirstVertex(exe, inputStack, valueInstruction);
+                        foreach (IEdge executeEdge in exe.ExecuteInstructionByMontevideoPrinciples(inputStack, valueInstruction).OutEdges)
+                            ChangeTypeFilters.Add(executeEdge.To);
 
-                        if (valueExecution == null)
-                            continue;
-
-                        ChangeTypeFilters.Add(valueExecution);
                         break;
 
                     case "Listener":
-                        IVertex target = GraphUtil.GetQueryOutFirst(e.To, "Target", null);
+                        IVertex targetInstrucion = GraphUtil.GetQueryOutFirst(e.To, "Target", null);
 
-                        if (target == null)
+                        if (targetInstrucion == null)
                             continue;
 
-                        Listeners.Add(target);
+                        foreach (IEdge executeEdge in exe.ExecuteInstructionByMontevideoPrinciples(inputStack, targetInstrucion).OutEdges)
+                            Listeners.Add(executeEdge.To);
+
                         break;                        
                 }
             }
