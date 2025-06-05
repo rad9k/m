@@ -1145,6 +1145,10 @@ namespace m0
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTriggerInner\ScopeQuery\Query").AddEdge(isAggregation, Empty);
 
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTriggerInner\ChangeTypeFilter\Value").AddEdge(isAggregation, Empty);
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateTriggerInner\Listener\Target").AddEdge(isAggregation, Empty);
+
             //
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateView").AddEdge(isAggregation, Empty);                        

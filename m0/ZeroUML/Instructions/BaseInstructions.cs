@@ -2372,7 +2372,7 @@ namespace m0.ZeroUML.Instructions
         //
         ////////////////////////////////////////////////////////////////   
         
-        public static IVertex ExecuteInstructionAndReturnFirstVertex(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
+        public static IList<IEdge> ExecuteInstructionAndReturnFirstVertex(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {            
             INoInEdgeInOutVertexVertex _executeResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, instructionVertex);
             
@@ -2425,16 +2425,24 @@ namespace m0.ZeroUML.Instructions
 
                         IVertex queryExecution = ExecuteInstructionAndReturnFirstVertex(exe, inputStack, queryInstruction);
 
+                        if (queryExecution == null)
+                            continue;
+
                         ScopeQueries.Add(GraphUtil.GetStringValue(queryExecution));
                         break;
 
                     case "ChangeTypeFilter":
-                        IVertex value = GraphUtil.GetQueryOutFirst(e.To, "Value", null);
+                        IVertex valueInstruction = GraphUtil.GetQueryOutFirst(e.To, "Value", null);
 
-                        if (value == null)
+                        if (valueInstruction == null)
                             continue;
 
-                        ChangeTypeFilters.Add(value);
+                        IVertex valueExecution = ExecuteInstructionAndReturnFirstVertex(exe, inputStack, valueInstruction);
+
+                        if (valueExecution == null)
+                            continue;
+
+                        ChangeTypeFilters.Add(valueExecution);
                         break;
 
                     case "Listener":
