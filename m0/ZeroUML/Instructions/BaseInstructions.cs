@@ -2490,11 +2490,11 @@ namespace m0.ZeroUML.Instructions
             localStack.AddEdge(createViewMeta, instructionVertex);
 
             IList<string> FromTriggerQueries = new List<string>();
-            IList<GraphChangeFilterEnum> FromFilters = new List<GraphChangeFilterEnum>();
-            IList<IVertex> FromToTransformFunctions;
+            IList<IVertex> FromTriggerFilters = new List<IVertex>();
+            IList<IVertex> FromToTransformFunctions = new List<IVertex>(); 
             IList<string> ToTriggerQueries = new List<string>();
-            IList<GraphChangeFilterEnum> ToFilters = new List<GraphChangeFilterEnum>();
-            IList<IVertex> ToFromTransformFunctions;
+            IList<IVertex> ToTriggerFilters = new List<IVertex>();
+            IList<IVertex> ToFromTransformFunctions = new List<IVertex>();
 
             IVertex innerVertex = GraphUtil.GetQueryOutFirst(instructionVertex, "CreateViewInner", null);
     
@@ -2531,34 +2531,52 @@ namespace m0.ZeroUML.Instructions
                         if (valueInstruction == null)
                             continue;
 
-                        FromFilters.Add(GraphChangeFilterEnumHelper.GetEnum(valueInstruction));
+                        foreach (IEdge executeEdge in exe.ExecuteInstructionByMontevideoPrinciples(inputStack, valueInstruction).OutEdges)
+                            FromTriggerFilters.Add(executeEdge.To);
+                        
                         break;
 
                     case "FromToTransformFunction":
-                        FromToTransformFunction = GraphUtil.GetQueryOutFirst(e.To, "Target", null);
+                        IVertex targetInstruction = GraphUtil.GetQueryOutFirst(e.To, "Target", null);
+
+                        if (targetInstruction == null)
+                            continue;
+
+                        foreach (IEdge executeEdge in exe.ExecuteInstructionByMontevideoPrinciples(inputStack, targetInstruction).OutEdges)
+                            FromToTransformFunctions.Add(executeEdge.To);
 
                         break;
 
                     case "ToTriggerQuery":
-                        IVertex query2 = GraphUtil.GetQueryOutFirst(e.To, "Query", null);
+                        IVertex queryInstruction2 = GraphUtil.GetQueryOutFirst(e.To, "Query", null);
 
-                        if (query2 == null)
+                        if (queryInstruction2 == null)
                             continue;
 
-                        ToTriggerQueries.Add(GraphUtil.GetStringValue(query2));
+                        foreach (IEdge executeEdge in exe.ExecuteInstructionByMontevideoPrinciples(inputStack, queryInstruction2).OutEdges)
+                            ToTriggerQueries.Add(GraphUtil.GetStringValue(executeEdge.To));
+
                         break;
 
                     case "ToTriggerFilter":
-                        IVertex value2 = GraphUtil.GetQueryOutFirst(e.To, "Value", null);
+                        IVertex valueInstruction2 = GraphUtil.GetQueryOutFirst(e.To, "Value", null);
 
-                        if (value2 == null)
+                        if (valueInstruction2 == null)
                             continue;
 
-                        ToFilters.Add(GraphChangeFilterEnumHelper.GetEnum(value2));
+                        foreach (IEdge executeEdge in exe.ExecuteInstructionByMontevideoPrinciples(inputStack, valueInstruction2).OutEdges)
+                            ToTriggerFilters.Add(executeEdge.To);
+
                         break;
 
                     case "ToFromTransformFunction":
-                        ToFromTransformFunction = GraphUtil.GetQueryOutFirst(e.To, "Target", null);
+                        IVertex targetInstruction2 = GraphUtil.GetQueryOutFirst(e.To, "Target", null);
+
+                        if (targetInstruction2 == null)
+                            continue;
+
+                        foreach (IEdge executeEdge in exe.ExecuteInstructionByMontevideoPrinciples(inputStack, targetInstruction2).OutEdges)
+                            ToFromTransformFunctions.Add(executeEdge.To);
 
                         break;
                 }
