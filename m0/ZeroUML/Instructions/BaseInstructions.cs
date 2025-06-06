@@ -1,18 +1,19 @@
 ﻿using m0.Foundation;
+using m0.Graph;
+using m0.Graph.ExecutionFlow;
+using m0.Util;
+using m0.ZeroCode;
+using m0.ZeroCode.Helpers;
+using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
-using m0.ZeroCode.Helpers;
-using m0.ZeroCode;
-using m0.Util;
-using m0.Graph;
+using System.Xml.Linq;
 using static m0.ZeroCode.Helpers.InstructionHelpers;
-using m0.ZeroTypes;
-using System.Drawing;
-using m0.Graph.ExecutionFlow;
-using System.Security.Cryptography.X509Certificates;
 
 namespace m0.ZeroUML.Instructions
 {
@@ -32,10 +33,10 @@ namespace m0.ZeroUML.Instructions
         static IVertex viewMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View");
         static IVertex viewFromTriggerQueryMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\FromTriggerQuery");
         static IVertex viewFromTriggerFilterMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\FromFilterQuery");
-        static IVertex viewFromToTransformFuncionMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\FromToTransformFuncion");
+        static IVertex viewFromToTransformFunctionMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\FromToTransformFuncion");
         static IVertex viewToTriggerQueryMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\ToTriggerQuery");
         static IVertex viewToTriggerFilterMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\ToFilterQuery");
-        static IVertex viewToFromTransformFuncionMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\ToFromTransformFuncion");
+        static IVertex viewToFromTransformFunctionMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\ToFromTransformFuncion");
 
         ////////////////////////////////////////////////////////////////
         //
@@ -2487,8 +2488,6 @@ namespace m0.ZeroUML.Instructions
 
             //
 
-            localStack.AddEdge(createViewMeta, instructionVertex);
-
             IList<string> FromTriggerQueries = new List<string>();
             IList<IVertex> FromTriggerFilters = new List<IVertex>();
             IList<IVertex> FromToTransformFunctions = new List<IVertex>(); 
@@ -2582,7 +2581,28 @@ namespace m0.ZeroUML.Instructions
                 }
             }
 
-            //
+
+            IVertex view = localStack.AddVertex(viewMeta, "");
+
+            view.AddEdge(isMeta, viewMeta);
+            
+            foreach (string query in FromTriggerQueries)
+                view.AddVertex(viewFromTriggerQueryMeta, query);
+
+            foreach (IVertex filter in FromTriggerFilters)
+                view.AddEdge(viewFromTriggerFilterMeta, filter);
+
+            foreach (IVertex function in FromToTransformFunctions)
+                view.AddEdge(viewFromToTransformFunctionMeta, function);
+
+            foreach (string query in ToTriggerQueries)
+                view.AddVertex(viewToTriggerQueryMeta, query);
+
+            foreach (IVertex filter in ToTriggerFilters)
+                view.AddEdge(viewToTriggerFilterMeta, filter);
+
+            foreach (IVertex function in ToFromTransformFunctions)
+                view.AddEdge(viewToFromTransformFunctionMeta, function);
 
             return localStack;
         }        
