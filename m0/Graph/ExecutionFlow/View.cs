@@ -19,14 +19,7 @@ namespace m0.Graph.ExecutionFlow
         static IVertex viewGenericTransformFunction_viewEventMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\ViewGenericTransformFunction\'viewEvent'");
         static IVertex viewGenericTransformFunction_fromMeta =  r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\ViewGenericTransformFunction\from");
         static IVertex viewGenericTransformFunction_metaMeta =  r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\ViewGenericTransformFunction\'meta'");
-        static IVertex viewGenericTransformFunction_toMeta =    r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\ViewGenericTransformFunction\to");
-
-        static IVertex viewFromTriggerQueryMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\FromTriggerQuery");
-        static IVertex viewFromTriggerFilterMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\FromFilterQuery");
-        static IVertex viewFromToTransformFuncionMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\FromToTransformFuncion");
-        static IVertex viewToTriggerQueryMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\ToTriggerQuery");
-        static IVertex viewToTriggerFilterMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\ToFilterQuery");
-        static IVertex viewToFromTransformFuncionMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\ToFromTransformFuncion");
+        static IVertex viewGenericTransformFunction_toMeta =    r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\ViewGenericTransformFunction\to");        
 
         public IList<string> FromTriggerQueries = new List<string>();
         public IList<GraphChangeFilterEnum> FromFilters = new List<GraphChangeFilterEnum>();
@@ -187,28 +180,6 @@ namespace m0.Graph.ExecutionFlow
         }
 
         public static INoInEdgeInOutVertexVertex CreateView_ToFromListener(IExecution exe)
-        {
-            IList<IEdge> viewEvents;
-            IVertex viewEdge;
-
-            GetViewEventsAndEdge(exe, out viewEvents, out viewEdge);
-
-            IVertex metaVertex = GraphUtil.GetQueryOutFirst(viewEdge, "Meta", null);
-
-            IVertex createView = GraphUtil.GetQueryOutFirst(metaVertex, "CreateView", null);
-
-            ViewHolder vh = new ViewHolder(createView);
-
-            vh.ExecuteToFromTransformFunction(exe,
-                viewEvents,
-                GraphUtil.GetQueryOutFirst(viewEdge, "From", null),
-                metaVertex,
-                GraphUtil.GetQueryOutFirst(viewEdge, "To", null));
-
-            return exe.Stack;
-        }
-
-        public static INoInEdgeInOutVertexVertex _CreateView_ToFromListener(IExecution exe)
         {
             IList<IEdge> viewEvents;
             IVertex viewEdge;
