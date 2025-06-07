@@ -1157,7 +1157,15 @@ namespace m0
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateViewInner\FromTriggerQuery\Query").AddEdge(isAggregation, Empty);
 
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateViewInner\FromTriggerFilter\Value").AddEdge(isAggregation, Empty);
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateViewInner\FromToTransformFunction\Target").AddEdge(isAggregation, Empty);
+
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateViewInner\ToTriggerQuery\Query").AddEdge(isAggregation, Empty);
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateViewInner\ToTriggerFilter\Value").AddEdge(isAggregation, Empty);
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateViewInner\ToFromTransformFunction\Target").AddEdge(isAggregation, Empty);
 
             //
 
@@ -1165,7 +1173,11 @@ namespace m0
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMapping\CreateHttpMappingInner").AddEdge(isAggregation, Empty);
 
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMapping\Action").AddEdge(isAggregation, Empty);
+
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMapping\PathMask").AddEdge(isAggregation, Empty);
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMapping\Handler").AddEdge(isAggregation, Empty);
 
 
             // package

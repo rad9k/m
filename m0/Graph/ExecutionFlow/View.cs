@@ -22,74 +22,45 @@ namespace m0.Graph.ExecutionFlow
         static IVertex viewGenericTransformFunction_toMeta =    r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\ViewGenericTransformFunction\to");        
 
         public IList<string> FromTriggerQueries = new List<string>();
-        public IList<GraphChangeFilterEnum> FromFilters = new List<GraphChangeFilterEnum>();
-        public IVertex FromToTransformFunction;
+        public IList<GraphChangeFilterEnum> FromTriggerFilters = new List<GraphChangeFilterEnum>();
+        public IList<IVertex> FromToTransformFunctions = new List<IVertex>();
         public IList<string> ToTriggerQueries = new List<string>();
-        public IList<GraphChangeFilterEnum> ToFilters = new List<GraphChangeFilterEnum>();
-        public IVertex ToFromTransformFunction;
+        public IList<GraphChangeFilterEnum> ToTriggerFilters = new List<GraphChangeFilterEnum>();
+        public IList<IVertex> ToFromTransformFunctions = new List<IVertex>();
 
-        public ViewHolder(IVertex createViewVertex) {
-            IVertex innerVertex = GraphUtil.GetQueryOutFirst(createViewVertex, "CreateViewInner", null);
-
-            if (innerVertex == null)
-                return;
-
-            foreach (IEdge e in innerVertex)
-            {
-                if (GraphUtil.GetStringValue(e.Meta) != "Expression")
-                    continue;
-
-                IVertex expressionIs = GraphUtil.GetQueryOutFirst(e.To, "$Is", null);
-
-                if (expressionIs == null)
-                    continue;
-
-                switch (GraphUtil.GetStringValue(expressionIs))
+        public ViewHolder(IVertex viewVertex) {
+            foreach (IEdge e in viewVertex)
+            {                
+                switch (GraphUtil.GetStringValue(e.Meta))
                 {
-                    case "FromTriggerQuery":
-                        IVertex query = GraphUtil.GetQueryOutFirst(e.To, "Query", null);
+                    case "FromTriggerQuery":                        
 
-                        if (query == null)
-                            continue;
-
-                        FromTriggerQueries.Add(GraphUtil.GetStringValue(query));
+                        FromTriggerQueries.Add(GraphUtil.GetStringValue(e.To));
                         break;
 
-                    case "FromTriggerFilter":
-                        IVertex value = GraphUtil.GetQueryOutFirst(e.To, "Value", null);
+                    case "FromTriggerFilter":                        
 
-                        if (value == null)
-                            continue;
-
-                        FromFilters.Add(GraphChangeFilterEnumHelper.GetEnum(value));
+                        FromTriggerFilters.Add(GraphChangeFilterEnumHelper.GetEnum(e.To));
                         break;
 
                     case "FromToTransformFunction":
-                        FromToTransformFunction = GraphUtil.GetQueryOutFirst(e.To, "Target", null);
+                        FromToTransformFunctions.Add(e.To);
 
                         break;
 
-                    case "ToTriggerQuery":
-                        IVertex query2 = GraphUtil.GetQueryOutFirst(e.To, "Query", null);
+                    case "ToTriggerQuery":                        
 
-                        if (query2 == null)
-                            continue;
-
-                        ToTriggerQueries.Add(GraphUtil.GetStringValue(query2));
+                        ToTriggerQueries.Add(GraphUtil.GetStringValue(e.To));
                         break;
 
-                    case "ToTriggerFilter":
-                        IVertex value2 = GraphUtil.GetQueryOutFirst(e.To, "Value", null);
+                    case "ToTriggerFilter":                        
 
-                        if (value2 == null)
-                            continue;
-
-                        ToFilters.Add(GraphChangeFilterEnumHelper.GetEnum(value2));
+                        ToTriggerFilters.Add(GraphChangeFilterEnumHelper.GetEnum(e.To));
                         break;
 
                     case "ToFromTransformFunction":
-                        ToFromTransformFunction = GraphUtil.GetQueryOutFirst(e.To, "Target", null);
 
+                        ToFromTransformFunctions.Add(e.To);
                         break;
                 }
             }
@@ -106,7 +77,8 @@ namespace m0.Graph.ExecutionFlow
             parameters.AddEdge(viewGenericTransformFunction_metaMeta, meta);
             parameters.AddEdge(viewGenericTransformFunction_toMeta, to);
 
-            ZeroCodeExecutonUtil.FuncionCall(exe, FromToTransformFunction, parameters);
+            foreach (IVertex function in FromToTransformFunctions)
+                ZeroCodeExecutonUtil.FuncionCall(exe, function, parameters);
         }
 
         public void ExecuteToFromTransformFunction(IExecution exe, IList<IEdge> events, IVertex from, IVertex meta, IVertex to)
@@ -120,7 +92,8 @@ namespace m0.Graph.ExecutionFlow
             parameters.AddEdge(viewGenericTransformFunction_metaMeta, meta);
             parameters.AddEdge(viewGenericTransformFunction_toMeta, to);
 
-            ZeroCodeExecutonUtil.FuncionCall(exe, ToFromTransformFunction, parameters);
+            foreach (IVertex function in ToFromTransformFunctions)
+                ZeroCodeExecutonUtil.FuncionCall(exe, function, parameters);
         }
     }
 
@@ -203,7 +176,7 @@ namespace m0.Graph.ExecutionFlow
 
         private static void ProcessCreateViewEvent(IExecution exe, IEdge eventEdge)
         {
-            IVertex eventVertex, edge, edgeFrom, edgeMeta, edgeTo, trigger, createView;
+            IVertex eventVertex, edge, edgeFrom, edgeMeta, edgeTo, trigger, view;
 
             eventVertex = eventEdge.To;
 
@@ -217,27 +190,27 @@ namespace m0.Graph.ExecutionFlow
 
             trigger = GraphUtil.GetQueryOutFirst(eventVertex, "Trigger", null);
 
-            createView = GraphUtil.GetQueryOutFirst(edgeMeta, "CreateView", null);
+            view = GraphUtil.GetQueryOutFirst(edgeMeta, "View", null);
 
             //
 
-            ViewHolder vh = new ViewHolder(createView);
+            ViewHolder vh = new ViewHolder(view);
 
-            if (vh.ToFromTransformFunction != null && vh.FromToTransformFunction != null)
+            if (vh.ToFromTransformFunctions.Count > 0 && vh.FromToTransformFunctions.Count > 0)
                 vh.ExecuteFromToTransformFunction(exe, null, edgeFrom, edgeMeta, edgeTo);
             else {
-                if (vh.FromToTransformFunction != null)
+                if (vh.FromToTransformFunctions.Count > 0)
                     vh.ExecuteFromToTransformFunction(exe, new List<IEdge>(), edgeFrom, edgeMeta, edgeTo);
 
-                if (vh.ToFromTransformFunction != null)
+                if (vh.ToFromTransformFunctions.Count > 0)
                     vh.ExecuteToFromTransformFunction(exe, new List<IEdge>(), edgeFrom, edgeMeta, edgeTo);
             }
 
-            if (vh.FromToTransformFunction != null && vh.FromFilters.Count > 0)
+            if (vh.FromToTransformFunctions.Count > 0 && vh.FromTriggerFilters.Count > 0)
             {
                 IEdge createViewTriggerEdge = GraphChangeTrigger.AddTrigger(edgeFrom,
                 vh.FromTriggerQueries,
-                vh.FromFilters,
+                vh.FromTriggerFilters,
                 "View");
 
                 IVertex createViewTriggerVertex = createViewTriggerEdge.To;
@@ -249,11 +222,11 @@ namespace m0.Graph.ExecutionFlow
                 EdgeHelper.AddEdgeVertex(createViewTriggerVertex, edgeFrom, edgeMeta, edgeTo, "ViewEdge");
             }
 
-            if (vh.ToFromTransformFunction != null && vh.ToFilters.Count > 0)
+            if (vh.ToFromTransformFunctions.Count > 0 && vh.ToTriggerFilters.Count > 0)
             {
                 IEdge createViewTriggerEdge = GraphChangeTrigger.AddTrigger(edgeTo,
                 vh.ToTriggerQueries,
-                vh.ToFilters,
+                vh.ToTriggerFilters,
                 "View");
 
                 IVertex createViewTriggerVertex = createViewTriggerEdge.To;

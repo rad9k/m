@@ -32,11 +32,11 @@ namespace m0.ZeroUML.Instructions
 
         static IVertex viewMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View");
         static IVertex viewFromTriggerQueryMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\FromTriggerQuery");
-        static IVertex viewFromTriggerFilterMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\FromFilterQuery");
-        static IVertex viewFromToTransformFunctionMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\FromToTransformFuncion");
+        static IVertex viewFromTriggerFilterMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\FromTriggerFilter");
+        static IVertex viewFromToTransformFunctionMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\FromToTransformFunction");
         static IVertex viewToTriggerQueryMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\ToTriggerQuery");
-        static IVertex viewToTriggerFilterMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\ToFilterQuery");
-        static IVertex viewToFromTransformFunctionMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\ToFromTransformFuncion");
+        static IVertex viewToTriggerFilterMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\ToTriggerFilter");
+        static IVertex viewToFromTransformFunctionMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\ToFromTransformFunction");
 
         ////////////////////////////////////////////////////////////////
         //
