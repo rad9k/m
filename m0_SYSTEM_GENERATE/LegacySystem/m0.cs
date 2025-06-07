@@ -2834,7 +2834,7 @@ namespace m0
 
             o_create_http_mapping_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMapping\Name"), "(?<name>)");
 
-            IVertex o_create_http_mapping_CreateHttpMappingInner = o_create_view_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMapping\CreateHttpMappingInner"), "");
+            IVertex o_create_http_mapping_CreateHttpMappingInner = o_create_http_mapping_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMapping\CreateHttpMappingInner"), "");
 
             o_create_http_mapping_CreateHttpMappingInner.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$LocalRoot"), kgd_CreateHttpMappingInner);
 
@@ -2845,7 +2845,7 @@ namespace m0
             //
             // {(*\r\n\t(?<expr>)*)\r\n}
 
-            IVertex o_CreateHttpMappingInner = k.AddVertex(keyword, "{(*\r\n\t(?<expr_CreateViewInner>)*)\r\n}");
+            IVertex o_CreateHttpMappingInner = k.AddVertex(keyword, "{(*\r\n\t(?<expr_CreateHttpMappingInner>)*)\r\n}");
 
             o_CreateHttpMappingInner.AddEdge(keywordGroup, kgd_CreateHttpMappingInner);
 
@@ -2862,7 +2862,7 @@ namespace m0
 
             // http mapping
 
-            IVertex o_http_mapping = k.AddVertex(keyword, "(?<action>) (?<pathmask>) (?<handler>)");
+            IVertex o_http_mapping = k.AddVertex(keyword, "mapping (?<action>) (?<pathmask>) (?<handler>)");            
 
             o_http_mapping.AddEdge(keywordGroup, kgd_CreateHttpMappingInner);
 

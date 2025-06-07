@@ -77,8 +77,10 @@
 	  <Word>from to transform</Word>
 	  <Word>to query</Word>
 	  <Word>to filter</Word>
-	  <Word>to from transform</Word>	  
-    </Keywords>
+	  <Word>to from transform</Word>
+	  <Word>create http mapping</Word>
+	  <Word>mapping</Word>
+	</Keywords>
     
     <Rule color="Operator">
 		\#|&lt;&gt;|&lt;\+&gt;|&lt;-&gt;|&lt;-|\+&lt;|=|\+=|~=|-&lt;|~&lt;|&lt;-|&lt;\+&lt;|&lt;&lt;&lt;|&lt;&lt;|&gt;&gt;|~00|\+|-|\*|/|==|===|====|!=|!|\&amp;|\||&gt;=|&lt;=|::|:|%|`|\[|\]|\(|\)|\\|\?|\{|\}|\.|,|\+&lt;|&lt;|&gt;
