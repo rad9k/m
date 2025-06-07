@@ -500,7 +500,7 @@ namespace m0
                 ",Execute,Parse,ParseWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}},Generate,GenerateWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",CreateView{CreateViewInner},CreateViewInner{FromTriggerQuery{Query},FromTriggerFilter{Value},FromToTransformFunction{Target},ToTriggerQuery{Query},ToTriggerFilter{Value},ToFromTransformFunction{Target}}" +
                 ",CreateTrigger{Name,CreateTriggerInner},CreateTriggerInner{ScopeQuery{Query},ChangeTypeFilter{Value},Listener{Target}}" +
-                ",CreateHttpMapping{CreateHttpMappingInner},CreateHttpMappingInner{HttpMapping{Action,PathMask,Handler}}" +
+                ",CreateHttpMapping{Name,CreateHttpMappingInner},CreateHttpMappingInner{HttpMapping{Action,PathMask,Handler}}" +
                 ",this,Package{$InstanceCreationPriority:}" +
                 "}");  
             
@@ -1220,6 +1220,7 @@ namespace m0
             IVertex kgd_Inner = k.AddVertex(keywordGroupDefinition, "Inner");
             IVertex kgd_CreateTriggerInner = k.AddVertex(keywordGroupDefinition, "CreateTriggerInner");
             IVertex kgd_CreateViewInner = k.AddVertex(keywordGroupDefinition, "CreateViewInner");
+            IVertex kgd_CreateHttpMappingInner = k.AddVertex(keywordGroupDefinition, "CreateHttpMappingInner");
 
             IVertex isAggregation = LegacySystem.Graph.EasyVertex.Get(root, false, @"System\Meta\Base\Vertex\$IsAggregation");
             //IVertex empty = LegacySystem.Graph.EasyVertex.Get(root, false, @"System\Meta\Base\$Empty");
@@ -2820,6 +2821,60 @@ namespace m0
             o_to_from_transform_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateViewInner\ToFromTransformFunction"));
 
             o_to_from_transform_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateViewInner\ToFromTransformFunction\Target"), "(?<listener>)");
+
+            // create http mapping
+            //
+            // create http mapping (?<name>)
+
+            IVertex o_create_http_mapping = k.AddVertex(keyword, "create http mapping (?<name>)");
+
+            IVertex o_create_http_mapping_base = o_create_http_mapping.AddVertex(any, "");
+
+            o_create_http_mapping_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMapping"));
+
+            o_create_http_mapping_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMapping\Name"), "(?<name>)");
+
+            IVertex o_create_http_mapping_CreateHttpMappingInner = o_create_view_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMapping\CreateHttpMappingInner"), "");
+
+            o_create_http_mapping_CreateHttpMappingInner.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$LocalRoot"), kgd_CreateHttpMappingInner);
+
+            // CreateHttpMapping
+            //
+            // {
+            // }
+            //
+            // {(*\r\n\t(?<expr>)*)\r\n}
+
+            IVertex o_CreateHttpMappingInner = k.AddVertex(keyword, "{(*\r\n\t(?<expr_CreateViewInner>)*)\r\n}");
+
+            o_CreateHttpMappingInner.AddEdge(keywordGroup, kgd_CreateHttpMappingInner);
+
+            IVertex o_CreateHttpMappingInner_any = o_CreateHttpMappingInner.AddVertex(any, "");
+
+            o_CreateHttpMappingInner_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$StartInLocalRoot"), "");
+
+            o_CreateHttpMappingInner_any.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, "CreateHttpMappingInner"));
+
+            IVertex o_CreateHttpMappingInner_any_param = o_CreateHttpMappingInner_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression"), "(?<expr_CreateHttpMappingInner>)");
+
+            o_CreateHttpMappingInner_any_param.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
+                Empty);
+
+            // http mapping
+
+            IVertex o_http_mapping = k.AddVertex(keyword, "(?<action>) (?<pathmask>) (?<handler>)");
+
+            o_http_mapping.AddEdge(keywordGroup, kgd_CreateHttpMappingInner);
+
+            IVertex o_http_mapping_base = o_http_mapping.AddVertex(any, "");
+
+            o_http_mapping_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMapping"));
+
+            o_http_mapping_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMapping\Action"), "(?<action>)");
+
+            o_http_mapping_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMapping\PathMask"), "(?<pathmask>)");
+
+            o_http_mapping_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMapping\Handler"), "(?<handler>)");
         }
 
         private static void AddDoubleOperator(IVertex k, IVertex smu, IVertex smb, IVertex keyword, IVertex any, string text, string _is)
