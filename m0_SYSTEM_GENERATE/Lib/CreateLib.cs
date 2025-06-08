@@ -133,9 +133,9 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             IVertex httpMapingVertex = GraphUtil.AddClass(LibNet, "HttpMapping");
 
-            GraphUtil.AddAttribute(httpMapingVertex, "Action", HttpActionEnumVertex, 1, 1);
+            GraphUtil.AddAssociation(httpMapingVertex, "Action", HttpActionEnumVertex, 1, 1);
             GraphUtil.AddAttribute(httpMapingVertex, "PathMask", StringMeta, 1, 1);
-            GraphUtil.AddAttribute(httpMapingVertex, "Handler", ExecutableMeta, 1, 1);
+            GraphUtil.AddAssociation(httpMapingVertex, "Handler", ExecutableMeta, 1, 1);
 
             IVertex httpServerVertex = GraphUtil.AddClass(LibNet, "HttpServer");
 
