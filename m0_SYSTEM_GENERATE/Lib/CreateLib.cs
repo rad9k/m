@@ -124,6 +124,8 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             IVertex lib = root.Get(false, "System").AddVertex(null, "Lib");
 
+            IVertex IntegerType = root.Get(false, @"System\Meta\ZeroTypes\Integer");
+
             LibNet = lib.AddVertex(null, "Net");
 
             string type = "m0.Lib.Net, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
@@ -140,11 +142,13 @@ namespace m0_SYSTEM_GENERATE.Lib
             IVertex httpServerVertex = GraphUtil.AddClass(LibNet, "HttpServer");
 
             GraphUtil.AddAttribute(httpServerVertex, "Mapping", httpMapingVertex, 0, 1);
-            GraphUtil.AddAttribute(httpServerVertex, "Port", 
+            GraphUtil.AddAttribute(httpServerVertex, "Port", IntegerType, 0, 1);
 
             AddMethod(httpServerVertex, "Init", type, "Init", null, new TypeName[] { new TypeName("mapping", httpMapingVertex, 0, -1), new TypeName("port", "Integer", 0, 1) });
             AddMethod(httpServerVertex, "Start", type, "Start", null, new TypeName[] {});
             AddMethod(httpServerVertex, "Stop", type, "Stop", null, new TypeName[] {});
+
+
 
 
             //AddFunction(LibNet, "StartTransaction", type, "StartTransaction", null, new TypeName[] { });
