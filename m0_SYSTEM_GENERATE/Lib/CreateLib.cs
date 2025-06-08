@@ -139,6 +139,9 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             IVertex httpServerVertex = GraphUtil.AddClass(LibNet, "HttpServer");
 
+            GraphUtil.AddAttribute(httpServerVertex, "Mapping", httpMapingVertex, 0, 1);
+            GraphUtil.AddAttribute(httpServerVertex, "Port", 
+
             AddMethod(httpServerVertex, "Init", type, "Init", null, new TypeName[] { new TypeName("mapping", httpMapingVertex, 0, -1), new TypeName("port", "Integer", 0, 1) });
             AddMethod(httpServerVertex, "Start", type, "Start", null, new TypeName[] {});
             AddMethod(httpServerVertex, "Stop", type, "Stop", null, new TypeName[] {});
