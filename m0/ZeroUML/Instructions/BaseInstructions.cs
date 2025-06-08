@@ -4,15 +4,9 @@ using m0.Graph.ExecutionFlow;
 using m0.Util;
 using m0.ZeroCode;
 using m0.ZeroCode.Helpers;
-using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using static m0.ZeroCode.Helpers.InstructionHelpers;
 
 namespace m0.ZeroUML.Instructions
@@ -33,13 +27,15 @@ namespace m0.ZeroUML.Instructions
         static IVertex viewMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View");
         static IVertex view_FromTriggerQueryMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\FromTriggerQuery");
         static IVertex view_FromTriggerFilterMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\FromTriggerFilter");
-        static IVertex viewFromToTransformFunctionMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\FromToTransformFunction");
-        static IVertex viewToTriggerQueryMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\ToTriggerQuery");
-        static IVertex viewToTriggerFilterMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\ToTriggerFilter");
-        static IVertex viewToFromTransformFunctionMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\ToFromTransformFunction");
+        static IVertex view_FromToTransformFunctionMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\FromToTransformFunction");
+        static IVertex view_ToTriggerQueryMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\ToTriggerQuery");
+        static IVertex view_ToTriggerFilterMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\ToTriggerFilter");
+        static IVertex view_ToFromTransformFunctionMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\ToFromTransformFunction");
 
         static IVertex httpMappingMeta = r.Get(false, @"System\Lib\Net\HttpMapping");
-        //static IVertex httpMappingMeta = r.Get(false, @"System\Lib\Net\HttpMapping\");
+        static IVertex httpMapping_ActionMeta = r.Get(false, @"System\Lib\Net\HttpMapping\Action");
+        static IVertex httpMapping_PathMaskMeta = r.Get(false, @"System\Lib\Net\HttpMapping\PathMask");
+        static IVertex httpMapping_HandlerMeta = r.Get(false, @"System\Lib\Net\HttpMapping\Handler");
 
 
         ////////////////////////////////////////////////////////////////
@@ -2597,16 +2593,16 @@ namespace m0.ZeroUML.Instructions
                 view.AddEdge(view_FromTriggerFilterMeta, filter);
 
             foreach (IVertex function in FromToTransformFunctions)
-                view.AddEdge(viewFromToTransformFunctionMeta, function);
+                view.AddEdge(view_FromToTransformFunctionMeta, function);
 
             foreach (string query in ToTriggerQueries)
-                view.AddVertex(viewToTriggerQueryMeta, query);
+                view.AddVertex(view_ToTriggerQueryMeta, query);
 
             foreach (IVertex filter in ToTriggerFilters)
-                view.AddEdge(viewToTriggerFilterMeta, filter);
+                view.AddEdge(view_ToTriggerFilterMeta, filter);
 
             foreach (IVertex function in ToFromTransformFunctions)
-                view.AddEdge(viewToFromTransformFunctionMeta, function);
+                view.AddEdge(view_ToFromTransformFunctionMeta, function);
 
             return localStack;
         }
@@ -2626,10 +2622,10 @@ namespace m0.ZeroUML.Instructions
 
             if (innerVertex == null)
                 return exe.Stack;
-
-            IList<string> ScopeQueries = new List<string>();
-            IList<IVertex> ChangeTypeFilters = new List<IVertex>();
-            IList<IVertex> Listeners = new List<IVertex>();
+            
+            IList<IVertex> Actions = new List<IVertex>();
+            IList<string> PathMasks = new List<string>();
+            IList<IVertex> Handlers = new List<IVertex>();
 
             foreach (IEdge e in innerVertex)
             {
@@ -2643,56 +2639,53 @@ namespace m0.ZeroUML.Instructions
 
                 switch (GraphUtil.GetStringValue(expressionIs))
                 {
-                    case "ScopeQuery":
-                        IVertex queryInstruction = GraphUtil.GetQueryOutFirst(e.To, "Query", null);
+                    case "HttpMapping":
+                        IVertex action = GraphUtil.GetQueryOutFirst(e.To, "Action", null);
 
-                        if (queryInstruction == null)
+                        if (action == null)
                             continue;
 
-                        foreach (IEdge executeEdge in exe.ExecuteInstructionByMontevideoPrinciples(inputStack, queryInstruction).OutEdges)
-                            ScopeQueries.Add(GraphUtil.GetStringValue(executeEdge.To));
+                        foreach (IEdge executeEdge in exe.ExecuteInstructionByMontevideoPrinciples(inputStack, action).OutEdges)
+                            Actions.Add(executeEdge.To);
 
-                        break;
+                        //
 
-                    case "ChangeTypeFilter":
-                        IVertex valueInstruction = GraphUtil.GetQueryOutFirst(e.To, "Value", null);
+                        IVertex pathMask = GraphUtil.GetQueryOutFirst(e.To, "PathMask", null);
 
-                        if (valueInstruction == null)
+                        if (pathMask == null)
                             continue;
 
-                        foreach (IEdge executeEdge in exe.ExecuteInstructionByMontevideoPrinciples(inputStack, valueInstruction).OutEdges)
-                            ChangeTypeFilters.Add(executeEdge.To);
+                        foreach (IEdge executeEdge in exe.ExecuteInstructionByMontevideoPrinciples(inputStack, pathMask).OutEdges)
+                            PathMasks.Add(GraphUtil.GetStringValue(executeEdge.To));
 
-                        break;
+                        //
 
-                    case "Listener":
-                        IVertex targetInstrucion = GraphUtil.GetQueryOutFirst(e.To, "Target", null);
+                        IVertex handler = GraphUtil.GetQueryOutFirst(e.To, "Handler", null);
 
-                        if (targetInstrucion == null)
+                        if (handler == null)
                             continue;
 
-                        foreach (IEdge executeEdge in exe.ExecuteInstructionByMontevideoPrinciples(inputStack, targetInstrucion).OutEdges)
-                            Listeners.Add(executeEdge.To);
+                        foreach (IEdge executeEdge in exe.ExecuteInstructionByMontevideoPrinciples(inputStack, action).OutEdges)
+                            Handlers.Add(executeEdge.To);
 
-                        break;
+                        break;                    
                 }
             }
 
             INoInEdgeInOutVertexVertex localStack = CreateStack();
 
-            IVertex trigger = localStack.AddVertex(dolarGraphChangeTriggerMeta, name);
+            IVertex mapping = localStack.AddVertex(httpMappingMeta, name);
 
-            trigger.AddEdge(isMeta, graphChangeTriggerMeta);
+            mapping.AddEdge(isMeta, httpMappingMeta);
 
-            foreach (string query in ScopeQueries)
-                trigger.AddVertex(graphChangeTrigger_ScopeQueryMeta, query);
+            foreach (IVertex action in Actions)
+                mapping.AddEdge(httpMapping_ActionMeta, action);
 
-            foreach (IVertex filter in ChangeTypeFilters)
-                trigger.AddEdge(graphChangeTrigger_ChageTypeFilterMeta, filter);
+            foreach (string pathMask in PathMasks)
+                mapping.AddVertex(httpMapping_PathMaskMeta, pathMask);            
 
-            foreach (IVertex listener in Listeners)
-                trigger.AddEdge(graphChangeTrigger_ListenerMeta, listener);
-
+            foreach (IVertex handler in Handlers)
+                mapping.AddEdge(httpMapping_HandlerMeta, handler);
 
             return localStack;
         }
