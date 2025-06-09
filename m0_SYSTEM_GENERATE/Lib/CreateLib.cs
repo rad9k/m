@@ -128,7 +128,7 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             LibNet = lib.AddVertex(null, "Net");
 
-            string type = "m0.Lib.Net, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+            string type = "m0.Lib.Net.Net, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
             IVertex HttpActionEnumVertex = GraphUtil.AddEnum(LibNet, "HttpActionEnum", new string[] { "GET", "PUT", "POST", "DELETE", "PATCH", "HEADOPTIONS", "TRACE" });
 
@@ -144,7 +144,11 @@ namespace m0_SYSTEM_GENERATE.Lib
             GraphUtil.AddAttribute(httpServerVertex, "Mapping", httpMapingVertex, 0, 1);
             GraphUtil.AddAttribute(httpServerVertex, "Port", IntegerType, 0, 1);
 
-            AddMethod(httpServerVertex, "Init", type, "Init", null, new TypeName[] { new TypeName("mapping", httpMapingVertex, 0, -1), new TypeName("port", "Integer", 0, 1) });
+            IVertex httpServer_InitVertex = AddMethod(httpServerVertex, "Init", null, new TypeName[] { new TypeName("p_mapping", httpMapingVertex, 0, -1), new TypeName("p_port", "Integer", 0, 1) });
+
+            //GraphUtil.LoadTXTParseAndMove(@"_RES\Lib\Net\HttpServer_Init.txt", httpServer_InitVertex, "Init");
+            GraphUtil.LoadAndParse(@"_RES\Lib\Net\HttpServer_Init.m0t", httpServer_InitVertex);
+
             AddMethod(httpServerVertex, "Start", type, "Start", null, new TypeName[] {});
             AddMethod(httpServerVertex, "Stop", type, "Stop", null, new TypeName[] {});
 

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace m0.Lib
+namespace m0.Lib.Net
 {
     public class Net
     {
