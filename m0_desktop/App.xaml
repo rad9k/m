@@ -1,7 +1,7 @@
 ﻿<Application x:Class="m0_RUN.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:m0_RUN"             
+             xmlns:local="clr-namespace:m0_desktop"             
             StartupUri="StartWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
