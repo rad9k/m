@@ -41,7 +41,7 @@ namespace m0
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {            
-            m0_RUN.Main.Run();
+            //m0_RUN.Main.Run();
 
           //  LovFlov.LovFlov.Execute();
 
