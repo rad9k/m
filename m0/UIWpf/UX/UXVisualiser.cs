@@ -921,7 +921,7 @@ namespace m0.UIWpf.UX
             IVertex optionUnderlyingVertexDelete = options.AddVertex(null, "Underlying Vertex remove from repository");
             IVertex optionCancel = options.AddVertex(null, "Cancel");
 
-            IVertex option = MinusZero.Instance.DefaultUserInteraction.SelectButtonDialog(info, options.OutEdges, null);
+            IVertex option = MinusZero.Instance.DefaultUserInteraction.InteractionSelectButton(info, options.OutEdges, null);
 
             if (option == null || option == optionCancel)
                 return;
@@ -991,7 +991,7 @@ namespace m0.UIWpf.UX
           
             IVertex optionCancel = options.AddVertex(null, "Cancel");
 
-            IVertex option = MinusZero.Instance.DefaultUserInteraction.SelectButtonDialog(info, options.OutEdges, null);
+            IVertex option = MinusZero.Instance.DefaultUserInteraction.InteractionSelectButton(info, options.OutEdges, null);
 
             if (option == optionCancel || option == null)
                 return;
@@ -1839,7 +1839,7 @@ namespace m0.UIWpf.UX
                       newVertex.Value = ndi.InstanceValue;
 
                       if (ndi.UXTemplate.ForceShowEditForm)
-                          MinusZero.Instance.DefaultUserInteraction.Edit(newVertex, WpfUtil.GetMousePositionDnd(e));
+                          MinusZero.Instance.DefaultUserInteraction.EditEdge(newVertex, WpfUtil.GetMousePositionDnd(e));
 
                     IVertex newEdgeVertex = EdgeHelper.CreateTempEdgeVertex(/*ve.From*/null, ve.Meta, ve.To);
 
@@ -1946,7 +1946,7 @@ namespace m0.UIWpf.UX
             }
 
             if (DoCreateDiagramLine_Edge_toUse == null)
-                selected = MinusZero.Instance.DefaultUserInteraction.SelectDialog(info, v.OutEdges, true, mousePosition);
+                selected = MinusZero.Instance.DefaultUserInteraction.InteractionSelect(info, v.OutEdges, true, mousePosition);
 
             if (selected != null || DoCreateDiagramLine_Edge_toUse != null)
             {

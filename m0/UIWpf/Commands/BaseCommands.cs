@@ -95,7 +95,7 @@ namespace m0.UIWpf.Commands
                 v = VertexOperations.AddInstance(Vertex, MetaVertex);
 
             if (VertexOperations.GetChildEdges(MetaVertex).Count() > 0)
-                MinusZero.Instance.DefaultUserInteraction.Edit(v, null);
+                MinusZero.Instance.DefaultUserInteraction.EditEdge(v, null);
             else
             {
                 NewVertexBySchema d = new NewVertexBySchema(v, MetaVertex);
@@ -142,7 +142,7 @@ namespace m0.UIWpf.Commands
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////
 
-            MinusZero.Instance.DefaultUserInteraction.Edit(dv, null);           
+            MinusZero.Instance.DefaultUserInteraction.EditEdge(dv, null);           
 
             return null;
         }
@@ -159,7 +159,7 @@ namespace m0.UIWpf.Commands
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////
 
-            MinusZero.Instance.DefaultUserInteraction.Edit(Visualiser_Vertex, null);
+            MinusZero.Instance.DefaultUserInteraction.EditEdge(Visualiser_Vertex, null);
 
             return null;
         }
@@ -234,7 +234,7 @@ namespace m0.UIWpf.Commands
 
           
 
-            IVertex option = MinusZero.Instance.DefaultUserInteraction.SelectButtonDialog(info, options.OutEdges, null);
+            IVertex option = MinusZero.Instance.DefaultUserInteraction.InteractionSelectButton(info, options.OutEdges, null);
 
             bool allEdgesDelete = false;
 

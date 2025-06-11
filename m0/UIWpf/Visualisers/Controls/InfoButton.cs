@@ -83,7 +83,7 @@ namespace m0.UIWpf.Visualisers.Controls
                 }
             }
             else            
-                MinusZero.Instance.DefaultUserInteraction.Edit(BaseEdge.To, null);                       
+                MinusZero.Instance.DefaultUserInteraction.EditEdge(BaseEdge.To, null);                       
         }                
     }
 }

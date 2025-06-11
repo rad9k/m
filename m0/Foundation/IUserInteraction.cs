@@ -16,16 +16,20 @@ namespace m0.Foundation
 
         void CloseWindowByContent(object obj);
 
-        void ShowException(IVertex exception);
+        //
 
-        void ShowInfo(string info);
+        void EditEdge(IVertex baseVertex, Point? position);
 
-        IVertex SelectDialog(IVertex info, IList<IEdge> options, bool firstSelected, Point? position);
+        //
 
-        IVertex SelectButtonDialog(IVertex info, IList<IEdge> options, Point? position);
+        void InteractionOutputException(IVertex exception);
 
-        void Edit(IVertex baseVertex, Point? position);
+        void InteractionOutput(string info);
 
-        string StringQuestionDialog(string question, Point? position);
+        IVertex InteractionSelect(IVertex info, IList<IEdge> options, bool firstSelected, Point? position);
+
+        IVertex InteractionSelectButton(IVertex info, IList<IEdge> options, Point? position);
+
+        string InteractionInput(string question, Point? position);
     }
 }

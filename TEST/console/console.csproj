@@ -12,6 +12,13 @@
   <ItemGroup>
     <PackageReference Include="Jil" Version="2.17.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1-Preview.1" />
+    <PackageReference Include="Sigil" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="GOLD Engine">
+      <HintPath>..\..\m0_SYSTEM_GENERATE\bin\Debug\GOLD Engine.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

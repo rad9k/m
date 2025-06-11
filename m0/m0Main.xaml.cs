@@ -288,7 +288,7 @@ namespace m0
             layoutContent.Close();
         }
 
-        public void ShowInfo(string info)
+        public void InteractionOutput(string info)
         {
             m0.UIWpf.Dialog.InfoWindow i = new UIWpf.Dialog.InfoWindow();
 
@@ -297,7 +297,7 @@ namespace m0
             i.ShowDialog();
         }
 
-        public void ShowException(IVertex exception)
+        public void InteractionOutputException(IVertex exception)
         {
             m0.UIWpf.Dialog.ExceptionInfoWindow i = new UIWpf.Dialog.ExceptionInfoWindow();
 
@@ -315,26 +315,26 @@ namespace m0
             i.ShowDialog();
         }
 
-        public IVertex SelectDialog(IVertex info, IList<IEdge> options, bool firstSelected, Point? position)
+        public IVertex InteractionSelect(IVertex info, IList<IEdge> options, bool firstSelected, Point? position)
         {
             SelectWindow d = new SelectWindow(info, options, firstSelected, position);
 
             return d.SelectedOption;
         }
 
-        public IVertex SelectButtonDialog(IVertex info, IList<IEdge> options, Point? position)
+        public IVertex InteractionSelectButton(IVertex info, IList<IEdge> options, Point? position)
         {
             SelectWindowButton d = new SelectWindowButton(info, options, position);
 
             return d.SelectedOption;
         }
 
-        public void Edit(IVertex baseVertex, Point? position)
+        public void EditEdge(IVertex baseVertex, Point? position)
         {
             ShowContentFloating_withSize( new Edit(baseVertex, position),500,550);
         }
 
-        public string StringQuestionDialog(String question, Point? position)
+        public string InteractionInput(String question, Point? position)
         {
             return new StringQuestionWindow(question, position).Answer;
         }

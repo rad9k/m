@@ -182,7 +182,7 @@ namespace m0_SYSTEM_GENERATE
 
             print("execution succesfull finish");
 
-            // System.Diagnostics.Process.Start("c:\\Users\\rad9k\\Source\\Repos\\m\\m0_SYSTEM_GENERATE\\bin\\Debug\\x.bat");
+            //System.Diagnostics.Process.Start("c:\\Users\\rad9k\\Source\\Repos\\m\\m0_SYSTEM_GENERATE\\bin\\Debug\\x.bat");
 
             //System.Diagnostics.Process.Start("c:\\Users\\radoslaw.tereszczuk\\Source\\Repos\\m\\m0_SYSTEM_GENERATE\\bin\\Debug\\xx.bat");
 

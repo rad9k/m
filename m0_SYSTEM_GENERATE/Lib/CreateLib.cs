@@ -106,10 +106,10 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             string type = "m0.Lib.StdUI, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
-            AddFunction(LibStdUI, "OutputDialog", type, "OutputDialog", null, new TypeName[] { new TypeName("output", "String", 1, 1) });
-            AddFunction(LibStdUI, "InputDialog", type, "InputDialog", "String", new TypeName[] { new TypeName("output", "String", 1, 1) });
-            AddFunction(LibStdUI, "SelectDialog", type, "SelectDialog", "VertexType", new TypeName[] { new TypeName("output", "String", 0, 1), new TypeName("option", "VertexType", 0, -1) });
-            AddFunction(LibStdUI, "SelectButtonDialog", type, "SelectButtonDialog", "VertexType", new TypeName[] { new TypeName("output", "String", 0, 1), new TypeName("option", "VertexType", 0, -1) });
+            AddFunction(LibStdUI, "InteractionOutput", type, "InteractionOutput", null, new TypeName[] { new TypeName("output", "String", 1, 1) });
+            AddFunction(LibStdUI, "InteractionInput", type, "InteractionInput", "String", new TypeName[] { new TypeName("output", "String", 1, 1) });
+            AddFunction(LibStdUI, "InteractionSelect", type, "InteractionSelect", "VertexType", new TypeName[] { new TypeName("output", "String", 0, 1), new TypeName("option", "VertexType", 0, -1) });
+            AddFunction(LibStdUI, "InteractionSelectButton", type, "InteractionSelectButton", "VertexType", new TypeName[] { new TypeName("output", "String", 0, 1), new TypeName("option", "VertexType", 0, -1) });
             AddFunction(LibStdUI, "OpenDefaultVisualiser", type, "OpenDefaultVisualiser", null, new TypeName[] { new TypeName("baseEdge", "Edge", 0, 1) });
             AddFunction(LibStdUI, "OpenVisualiser", type, "OpenVisualiser", null, new TypeName[] { new TypeName("baseEdge", "Edge", 1, 1), new TypeName("visualiser", "VertexType", 1, 1) });
             AddFunction(LibStdUI, "OpenFormVisualiser", type, "OpenFormVisualiser", null, new TypeName[] { new TypeName("baseEdge", "Edge", 1, 1) });

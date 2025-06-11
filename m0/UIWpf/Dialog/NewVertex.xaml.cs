@@ -85,7 +85,7 @@ namespace m0.UIWpf.Dialog
                 v.Value = this.Content.Text;
 
                 if (VertexOperations.GetChildEdges(meta).Count() > 0)
-                    MinusZero.Instance.DefaultUserInteraction.Edit(v, null);
+                    MinusZero.Instance.DefaultUserInteraction.EditEdge(v, null);
             }
 
             ////////////////////////////////////////

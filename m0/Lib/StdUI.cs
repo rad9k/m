@@ -14,7 +14,7 @@ namespace m0.Lib
     public class StdUI
     {
         // @String "output"
-        public static INoInEdgeInOutVertexVertex OutputDialog(IExecution exe)
+        public static INoInEdgeInOutVertexVertex InteractionOutput(IExecution exe)
         {
             INoInEdgeInOutVertexVertex stack = exe.Stack;
 
@@ -23,7 +23,7 @@ namespace m0.Lib
             if (output == null)
                 return exe.Stack;
 
-            m0Main.Instance.ShowInfo(GraphUtil.GetStringValue(output));
+            m0Main.Instance.InteractionOutput(GraphUtil.GetStringValue(output));
 
             return exe.Stack;
         }
@@ -32,7 +32,7 @@ namespace m0.Lib
         //
         // returns:
         // @String
-        public static INoInEdgeInOutVertexVertex InputDialog(IExecution exe)
+        public static INoInEdgeInOutVertexVertex InteractionInput(IExecution exe)
         {
             INoInEdgeInOutVertexVertex stack = exe.Stack;
 
@@ -41,7 +41,7 @@ namespace m0.Lib
             if (output == null)
                 return exe.Stack;
 
-            string input = m0Main.Instance.StringQuestionDialog(GraphUtil.GetStringValue(output), null);
+            string input = m0Main.Instance.InteractionInput(GraphUtil.GetStringValue(output), null);
 
             if (input == null)
                 return exe.Stack;
@@ -58,7 +58,7 @@ namespace m0.Lib
         //
         // returns:
         // @Vertex
-        public static INoInEdgeInOutVertexVertex SelectDialog(IExecution exe)
+        public static INoInEdgeInOutVertexVertex InteractionSelect(IExecution exe)
         {
             INoInEdgeInOutVertexVertex stack = exe.Stack;
 
@@ -69,7 +69,7 @@ namespace m0.Lib
             if (output == null || option.Count==0)
                 return exe.Stack;
 
-            IVertex selection = m0Main.Instance.SelectDialog(output, option, false, null);
+            IVertex selection = m0Main.Instance.InteractionSelect(output, option, false, null);
 
             if (selection == null)
                 return exe.Stack;
@@ -86,7 +86,7 @@ namespace m0.Lib
         //
         // returns:
         // @Vertex
-        public static INoInEdgeInOutVertexVertex SelectButtonDialog(IExecution exe)
+        public static INoInEdgeInOutVertexVertex InteractionSelectButton(IExecution exe)
         {
             INoInEdgeInOutVertexVertex stack = exe.Stack;
 
@@ -97,7 +97,7 @@ namespace m0.Lib
             if (output == null || option.Count == 0)
                 return exe.Stack;
 
-            IVertex selection = m0Main.Instance.SelectButtonDialog(output, option, null);
+            IVertex selection = m0Main.Instance.InteractionSelectButton(output, option, null);
 
             if (selection == null)
                 return exe.Stack;
