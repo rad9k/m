@@ -31,5 +31,11 @@ namespace m0.Foundation
         IVertex InteractionSelectButton(IVertex info, IList<IEdge> options, Point? position);
 
         string InteractionInput(string question, Point? position);
+
+        //
+
+        IVertex OpenVisualiser(IVertex baseVertex, IVertex inputVertex, bool isFloating);
+
+        IVertex OpenFormVisualiser(IVertex baseVertex, bool isFloating);
     }
 }

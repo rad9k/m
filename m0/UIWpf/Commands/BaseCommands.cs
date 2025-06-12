@@ -282,7 +282,7 @@ namespace m0.UIWpf.Commands
             return null;
         }
 
-        public static IVertex Open(IVertex baseVertex, bool isFloating)
+        public static IVertex OpenVisualiser(IVertex baseVertex, bool isFloating)
         {
             IVertex DefaultVis;
 

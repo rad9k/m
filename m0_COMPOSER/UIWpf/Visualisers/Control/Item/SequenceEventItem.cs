@@ -25,7 +25,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
 
             IVertex edgeVertex = EdgeHelper.CreateTempEdgeVertex(BaseEdge.To.GetAll(false, @"Sequence:").FirstOrDefault());
 
-            BaseCommands.Open(edgeVertex, false);
+            BaseCommands.OpenVisualiser(edgeVertex, false);
         }
 
         public void OpenFormVisualiser()

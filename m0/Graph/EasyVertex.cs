@@ -15,7 +15,6 @@ using m0.DotNetIntegration;
 using m0.Graph.Internal;
 using m0.Graph.ExecutionFlow;
 using static m0.Graph.GraphUtil;
-using m0.UIWpf.Visualisers;
 using m0.ZeroTypes;
 
 namespace m0.Graph

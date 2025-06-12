@@ -93,7 +93,7 @@ namespace m0.UIWpf.Visualisers
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
             if (e.ClickCount == 2)
-                BaseCommands.Open(EdgeHelper.CreateTempEdgeVertex(GetEdge()), false);            
+                BaseCommands.OpenVisualiser(EdgeHelper.CreateTempEdgeVertex(GetEdge()), false);            
         }
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs a)

@@ -27,6 +27,7 @@ using Xceed.Wpf.AvalonDock.Controls;
 using m0.UIWpf.Dialog;
 using m0.Store;
 using m0.Store.Json;
+using m0.UIWpf.Commands;
 
 namespace m0
 {
@@ -332,6 +333,16 @@ namespace m0
         public void EditEdge(IVertex baseVertex, Point? position)
         {
             ShowContentFloating_withSize( new Edit(baseVertex, position),500,550);
+        }
+
+        public IVertex OpenVisualiser(IVertex baseVertex, IVertex inputVertex, bool isFloating)
+        {
+            return BaseCommands.OpenVisualiser(baseVertex, inputVertex, isFloating);
+        }
+
+        public IVertex OpenFormVisualiser(IVertex baseVertex, bool isFloating)
+        {
+            return BaseCommands.OpenFormVisualiser(baseVertex, isFloating);
         }
 
         public string InteractionInput(String question, Point? position)

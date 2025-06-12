@@ -149,6 +149,9 @@
     <Compile Include="Bootstrap\FileSystemLoader.cs" />
     <Compile Include="Store\Binary\BinaryStore.cs" />
     <Compile Include="Store\Text\TextStore.cs" />
+    <Compile Include="UIWpf\Commands\BaseCommands.cs" />
+    <Compile Include="UIWpf\Commands\Dnd.cs" />
+    <Compile Include="UIWpf\Commands\ExtraCommandHook.cs" />
     <Compile Include="UIWpf\Controls\AnimatedHideArea_HorizontalDown.xaml.cs">
       <DependentUpon>AnimatedHideArea_HorizontalDown.xaml</DependentUpon>
     </Compile>
@@ -158,16 +161,134 @@
     <Compile Include="UIWpf\Controls\AnimatedHideArea_VerticalRight.xaml.cs">
       <DependentUpon>AnimatedHideArea_VerticalRight.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UIWpf\Controls\ArrowEnds.cs" />
+    <Compile Include="UIWpf\Controls\ArrowLine.cs" />
+    <Compile Include="UIWpf\Controls\ArrowLineBase.cs" />
+    <Compile Include="UIWpf\Controls\ArrowPolyline.cs" />
     <Compile Include="UIWpf\Controls\CodeControl.cs" />
     <Compile Include="UIWpf\Controls\DashedBorder.cs" />
+    <Compile Include="UIWpf\Controls\Fast\ArrowEnds.cs" />
+    <Compile Include="UIWpf\Controls\Fast\ArrowLine.cs" />
+    <Compile Include="UIWpf\Controls\Fast\ArrowLineBase.cs" />
+    <Compile Include="UIWpf\Controls\Fast\ArrowPolyline.cs" />
     <Compile Include="UIWpf\Controls\IHasScrollViewer.cs" />
     <Compile Include="UIWpf\Controls\IMouseWheelHandler.cs" />
+    <Compile Include="UIWpf\Controls\m0ContextMenu.cs" />
     <Compile Include="UIWpf\Controls\MultiplyConverter.cs" />
+    <Compile Include="UIWpf\Controls\SelectionArea.cs" />
+    <Compile Include="UIWpf\Controls\SliderWithStopDragging.cs" />
+    <Compile Include="UIWpf\Dialog\Edit.xaml.cs">
+      <DependentUpon>Edit.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UIWpf\Dialog\ExceptionInfoWindow.xaml.cs">
       <DependentUpon>ExceptionInfoWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UIWpf\Dialog\ExecuteDialog.xaml.cs">
+      <DependentUpon>ExecuteDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIWpf\Dialog\InfoWindow.xaml.cs">
+      <DependentUpon>InfoWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIWpf\Dialog\NewEdge.xaml.cs">
+      <DependentUpon>NewEdge.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIWpf\Dialog\NewEdgeBySchema.xaml.cs">
+      <DependentUpon>NewEdgeBySchema.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIWpf\Dialog\NewVertex.xaml.cs">
+      <DependentUpon>NewVertex.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIWpf\Dialog\NewVertexBySchema.xaml.cs">
+      <DependentUpon>NewVertexBySchema.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIWpf\Dialog\QueryDialog.xaml.cs">
+      <DependentUpon>QueryDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIWpf\Dialog\SelectWindow.xaml.cs">
+      <DependentUpon>SelectWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIWpf\Dialog\SelectWindowButton.xaml.cs">
+      <DependentUpon>SelectWindowButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIWpf\Dialog\StringQuestionWindow.xaml.cs">
+      <DependentUpon>StringQuestionWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIWpf\ExecutableVisualiserFactory.cs" />
+    <Compile Include="UIWpf\Forms\About.xaml.cs">
+      <DependentUpon>About.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIWpf\Forms\Transaction.xaml.cs">
+      <DependentUpon>transaction.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIWpf\Foundation\IHasLocalizableEdges.cs" />
+    <Compile Include="UIWpf\Foundation\IHasSelectableItems.cs" />
+    <Compile Include="UIWpf\Geometry2D.cs" />
+    <Compile Include="UIWpf\ICentered.cs" />
+    <Compile Include="UIWpf\PlatformClassSimpleWrapper.xaml.cs">
+      <DependentUpon>PlatformClassSimpleWrapper.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIWpf\UX\NewUXItem.xaml.cs">
+      <DependentUpon>NewUXItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UIWpf\UX\UXVisualiser.cs" />
+    <Compile Include="UIWpf\VisualiserEditWrapper.cs" />
+    <Compile Include="UIWpf\Visualisers\BooleanVisualiser.cs" />
+    <Compile Include="UIWpf\Visualisers\ClassVisualiser.cs" />
+    <Compile Include="UIWpf\Visualisers\CodeVisualiser.cs" />
+    <Compile Include="UIWpf\Visualisers\Code\TabFoldingStrategy.cs" />
+    <Compile Include="UIWpf\Visualisers\Controls\DeleteButton.cs" />
+    <Compile Include="UIWpf\Visualisers\Controls\InfoButton.cs" />
+    <Compile Include="UIWpf\Visualisers\Controls\NewButton.cs" />
+    <Compile Include="UIWpf\Visualisers\DebugVisualiser.cs" />
+    <Compile Include="UIWpf\Visualisers\DecimalVisualiser.cs" />
+    <Compile Include="UIWpf\Visualisers\Diagram\Diagram.cs" />
+    <Compile Include="UIWpf\Visualisers\Diagram\DiagramImageItem.xaml.cs">
+      <DependentUpon>DiagramImageItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIWpf\Visualisers\Diagram\DiagramItemBase.cs" />
+    <Compile Include="UIWpf\Visualisers\Diagram\DiagramLine.cs" />
+    <Compile Include="UIWpf\Visualisers\Diagram\DiagramLineBase.cs" />
+    <Compile Include="UIWpf\Visualisers\Diagram\DiagramMetaExtendedLine.cs" />
+    <Compile Include="UIWpf\Visualisers\Diagram\DiagramOvalItem.xaml.cs">
+      <DependentUpon>DiagramOvalItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIWpf\Visualisers\Diagram\DiagramRectangleItem.xaml.cs">
+      <DependentUpon>DiagramRectangleItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIWpf\Visualisers\Diagram\DiagramRectangleItemBase.cs" />
+    <Compile Include="UIWpf\Visualisers\Diagram\DiagramRhombusItem.xaml.cs">
+      <DependentUpon>DiagramRhombusItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIWpf\Visualisers\Diagram\NewDiagramItem.xaml.cs">
+      <DependentUpon>NewDiagramItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIWpf\Visualisers\EdgeVisualiser.cs" />
+    <Compile Include="UIWpf\Visualisers\EnumVisualiser.cs" />
+    <Compile Include="UIWpf\Visualisers\FloatVisualiser.cs" />
+    <Compile Include="UIWpf\Visualisers\FormVisualiser.cs" />
+    <Compile Include="UIWpf\Visualisers\GraphVisualiser.cs" />
+    <Compile Include="UIWpf\Visualisers\Helper\AtomVisualiserHelper.cs" />
+    <Compile Include="UIWpf\Visualisers\Helper\IListVisualiser.cs" />
+    <Compile Include="UIWpf\Visualisers\Helper\IVisualiser.cs" />
+    <Compile Include="UIWpf\Visualisers\Helper\ListVisualiserHelper.cs" />
+    <Compile Include="UIWpf\Visualisers\Helper\VisualisersList.cs" />
+    <Compile Include="UIWpf\Visualisers\Helper\VisualiserUtil.cs" />
     <Compile Include="UIWpf\Visualisers\INoDownVisualiser.cs" />
+    <Compile Include="UIWpf\Visualisers\IntegerVisualiser.cs" />
+    <Compile Include="UIWpf\Visualisers\IOwnScrolling.cs" />
+    <Compile Include="UIWpf\Visualisers\ListVisualiser.cs" />
+    <Compile Include="UIWpf\Visualisers\Method\VoidVoidMethodVisualiser.cs" />
+    <Compile Include="UIWpf\Visualisers\NumberVisualiser.cs" />
+    <Compile Include="UIWpf\Visualisers\StringViewVisualiser.cs" />
+    <Compile Include="UIWpf\Visualisers\StringVisualiser.cs" />
+    <Compile Include="UIWpf\Visualisers\TableFastVisualiser.cs" />
+    <Compile Include="UIWpf\Visualisers\TableVisualiser.cs" />
+    <Compile Include="UIWpf\Visualisers\TestVisualiser.cs" />
+    <Compile Include="UIWpf\Visualisers\TreeVisualiser.cs" />
+    <Compile Include="UIWpf\Visualisers\VertexVisualiser.cs" />
+    <Compile Include="UIWpf\Visualisers\WrapVisualiser.cs" />
+    <Compile Include="UIWpf\VisualiserViewWrapper.cs" />
+    <Compile Include="UIWpf\WpfUtil.cs" />
     <Compile Include="Util\ZString.cs" />
     <Compile Include="ZeroCode\Helpers\DictionariesForFormalTextLanguageFactory.cs" />
     <Compile Include="ZeroCode\Helpers\MultiLineString.cs" />
@@ -188,25 +309,8 @@
     </Compile>
     <Compile Include="ZeroTypes\UX\IItem.cs" />
     <Compile Include="ZeroTypes\UX\ILineDecoratorBase.cs" />
-    <Compile Include="UIWpf\UX\NewUXItem.xaml.cs">
-      <DependentUpon>NewUXItem.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Util\MathUtil.cs" />
     <Compile Include="Store\FileSystem\AbstractFileSystemVertex.cs" />
-    <Compile Include="UIWpf\Commands\ExtraCommandHook.cs" />
-    <Compile Include="UIWpf\Dialog\StringQuestionWindow.xaml.cs">
-      <DependentUpon>StringQuestionWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UIWpf\ExecutableVisualiserFactory.cs" />
-    <Compile Include="UIWpf\Visualisers\Helper\AtomVisualiserHelper.cs" />
-    <Compile Include="UIWpf\Visualisers\Helper\IListVisualiser.cs" />
-    <Compile Include="UIWpf\Visualisers\Helper\IVisualiser.cs" />
-    <Compile Include="UIWpf\Visualisers\Helper\ListVisualiserHelper.cs" />
-    <Compile Include="UIWpf\Visualisers\Helper\VisualisersList.cs" />
-    <Compile Include="UIWpf\Visualisers\Helper\VisualiserUtil.cs" />
-    <Compile Include="UIWpf\Visualisers\Method\VoidVoidMethodVisualiser.cs" />
-    <Compile Include="UIWpf\Visualisers\DebugVisualiser.cs" />
-    <Compile Include="UIWpf\Visualisers\TestVisualiser.cs" />
     <Compile Include="User\Clipboard.cs" />
     <Compile Include="User\Process\UX\Interaction.cs" />
     <Compile Include="User\Process\UX\NonAtomProcess.cs" />
@@ -243,112 +347,6 @@
     <Compile Include="FormalTextLanguage\IFormalTextParser.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UIWpf\Commands\BaseCommands.cs" />
-    <Compile Include="UIWpf\Commands\Dnd.cs" />
-    <Compile Include="UIWpf\Controls\ArrowEnds.cs" />
-    <Compile Include="UIWpf\Controls\ArrowLine.cs" />
-    <Compile Include="UIWpf\Controls\ArrowLineBase.cs" />
-    <Compile Include="UIWpf\Controls\ArrowPolyline.cs" />
-    <Compile Include="UIWpf\Controls\Fast\ArrowEnds.cs" />
-    <Compile Include="UIWpf\Controls\Fast\ArrowLine.cs" />
-    <Compile Include="UIWpf\Controls\Fast\ArrowLineBase.cs" />
-    <Compile Include="UIWpf\Controls\Fast\ArrowPolyline.cs" />
-    <Compile Include="UIWpf\Controls\m0ContextMenu.cs" />
-    <Compile Include="UIWpf\Controls\SelectionArea.cs" />
-    <Compile Include="UIWpf\Controls\SliderWithStopDragging.cs" />
-    <Compile Include="UIWpf\Dialog\ExecuteDialog.xaml.cs">
-      <DependentUpon>ExecuteDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UIWpf\Dialog\Edit.xaml.cs">
-      <DependentUpon>Edit.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UIWpf\Dialog\InfoWindow.xaml.cs">
-      <DependentUpon>InfoWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UIWpf\Dialog\NewEdge.xaml.cs">
-      <DependentUpon>NewEdge.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UIWpf\Dialog\NewEdgeBySchema.xaml.cs">
-      <DependentUpon>NewEdgeBySchema.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UIWpf\Dialog\SelectWindowButton.xaml.cs">
-      <DependentUpon>SelectWindowButton.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UIWpf\Dialog\SelectWindow.xaml.cs">
-      <DependentUpon>SelectWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UIWpf\Forms\About.xaml.cs">
-      <DependentUpon>About.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UIWpf\Forms\Transaction.xaml.cs">
-      <DependentUpon>Transaction.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UIWpf\Geometry2D.cs" />
-    <Compile Include="UIWpf\ICentered.cs" />
-    <Compile Include="UIWpf\Visualisers\ClassVisualiser.cs" />
-    <Compile Include="UIWpf\Visualisers\Code\TabFoldingStrategy.cs" />
-    <Compile Include="UIWpf\Visualisers\Controls\NewButton.cs" />
-    <Compile Include="UIWpf\Visualisers\Controls\InfoButton.cs" />
-    <Compile Include="UIWpf\Visualisers\Controls\DeleteButton.cs" />
-    <Compile Include="UIWpf\Visualisers\Diagram\DiagramMetaExtendedLine.cs" />
-    <Compile Include="UIWpf\Visualisers\Diagram\DiagramImageItem.xaml.cs">
-      <DependentUpon>DiagramImageItem.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UIWpf\Visualisers\Diagram\DiagramOvalItem.xaml.cs">
-      <DependentUpon>DiagramOvalItem.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UIWpf\Visualisers\Diagram\DiagramRhombusItem.xaml.cs">
-      <DependentUpon>DiagramRhombusItem.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UIWpf\Visualisers\FormVisualiser.cs" />
-    <Compile Include="UIWpf\Visualisers\CodeVisualiser.cs" />
-    <Compile Include="UIWpf\Visualisers\IOwnScrolling.cs" />
-    <Compile Include="UIWpf\Visualisers\TableFastVisualiser.cs" />
-    <Compile Include="UIWpf\Visualisers\VertexVisualiser.cs" />
-    <Compile Include="UIWpf\Visualisers\TableVisualiser.cs" />
-    <Compile Include="UIWpf\Visualisers\Diagram\DiagramItemBase.cs" />
-    <Compile Include="UIWpf\Visualisers\Diagram\DiagramLine.cs" />
-    <Compile Include="UIWpf\Visualisers\Diagram\DiagramLineBase.cs" />
-    <Compile Include="UIWpf\Visualisers\Diagram\DiagramRectangleItem.xaml.cs">
-      <DependentUpon>DiagramRectangleItem.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UIWpf\Dialog\NewVertexBySchema.xaml.cs">
-      <DependentUpon>NewVertexBySchema.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UIWpf\Dialog\NewVertex.xaml.cs">
-      <DependentUpon>NewVertex.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UIWpf\Dialog\QueryDialog.xaml.cs">
-      <DependentUpon>QueryDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UIWpf\Foundation\IHasLocalizableEdges.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="UIWpf\Foundation\IHasSelectableItems.cs" />
-    <Compile Include="UIWpf\PlatformClassSimpleWrapper.xaml.cs">
-      <DependentUpon>PlatformClassSimpleWrapper.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UIWpf\Visualisers\BooleanVisualiser.cs" />
-    <Compile Include="UIWpf\Visualisers\DecimalVisualiser.cs" />
-    <Compile Include="UIWpf\Visualisers\Diagram\Diagram.cs" />
-    <Compile Include="UIWpf\Visualisers\Diagram\DiagramRectangleItemBase.cs" />
-    <Compile Include="UIWpf\Visualisers\Diagram\NewDiagramItem.xaml.cs">
-      <DependentUpon>NewDiagramItem.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UIWpf\Visualisers\EdgeVisualiser.cs" />
-    <Compile Include="UIWpf\Visualisers\EnumVisualiser.cs" />
-    <Compile Include="UIWpf\Visualisers\FloatVisualiser.cs" />
-    <Compile Include="UIWpf\Visualisers\GraphVisualiser.cs" />
-    <Compile Include="UIWpf\Visualisers\IntegerVisualiser.cs" />
-    <Compile Include="UIWpf\Visualisers\NumberVisualiser.cs" />
-    <Compile Include="UIWpf\Visualisers\ListVisualiser.cs" />
-    <Compile Include="UIWpf\Visualisers\StringViewVisualiser.cs" />
-    <Compile Include="UIWpf\Visualisers\StringVisualiser.cs" />
-    <Compile Include="UIWpf\Visualisers\WrapVisualiser.cs" />
-    <Compile Include="UIWpf\WpfUtil.cs" />
-    <Compile Include="UIWpf\Visualisers\TreeVisualiser.cs" />
-    <Compile Include="UIWpf\VisualiserEditWrapper.cs" />
-    <Compile Include="UIWpf\VisualiserViewWrapper.cs" />
     <Compile Include="DotNetIntegration\CallableEndPointDictionary_INIEIOV_ZCE.cs" />
     <Compile Include="Util\VertexDebugDB.cs" />
     <Compile Include="Util\DictionaryList.cs" />
@@ -479,8 +477,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="UIWpf\Controls\AnimatedHideArea_HorizontalDown.xaml">
+      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="UIWpf\Controls\AnimatedHideArea_HorizontalUp.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -490,11 +488,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UIWpf\Dialog\ExceptionInfoWindow.xaml">
+    <Page Include="UIWpf\Dialog\Edit.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UIWpf\Dialog\StringQuestionWindow.xaml">
+    <Page Include="UIWpf\Dialog\ExceptionInfoWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -502,13 +500,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UIWpf\Dialog\Edit.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="UIWpf\Dialog\InfoWindow.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UIWpf\Dialog\NewEdge.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -518,43 +512,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UIWpf\Dialog\SelectWindowButton.xaml">
+    <Page Include="UIWpf\Dialog\NewVertex.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UIWpf\Dialog\SelectWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UIWpf\Forms\About.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UIWpf\Forms\Transaction.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UIWpf\UX\NewUXItem.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UIWpf\Visualisers\Diagram\DiagramImageItem.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UIWpf\Visualisers\Diagram\DiagramOvalItem.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UIWpf\Visualisers\Diagram\DiagramRectangleItem.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UIWpf\Dialog\NewVertexBySchema.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UIWpf\Dialog\NewVertex.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -562,17 +524,53 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UIWpf\PlatformClassSimpleWrapper.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="UIWpf\Dialog\SelectWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UIWpf\Dialog\SelectWindowButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UIWpf\Dialog\StringQuestionWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UIWpf\Forms\About.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UIWpf\Forms\transaction.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UIWpf\PlatformClassSimpleWrapper.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UIWpf\UX\NewUXItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UIWpf\Visualisers\Diagram\DiagramImageItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UIWpf\Visualisers\Diagram\DiagramOvalItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UIWpf\Visualisers\Diagram\DiagramRectangleItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UIWpf\Visualisers\Diagram\DiagramRhombusItem.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UIWpf\Visualisers\Diagram\NewDiagramItem.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="ZeroTypes\UX\MultiContainerSubItem.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -741,9 +739,6 @@
     <Resource Include="_PROJECT\new_hope.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="UIWpf\Controls\AnimatedHideArea.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="_PROJECT\view.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -751,6 +746,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Network\Server\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="UIWpf\Controls\AnimatedHideArea.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

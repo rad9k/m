@@ -1,6 +1,5 @@
 ﻿using m0.Foundation;
 using m0.Graph;
-using m0.UIWpf.Commands;
 using m0.ZeroCode.Helpers;
 using System;
 using System.Collections;
@@ -8,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using m0.UIWpf.Commands;
 
 namespace m0.Lib
 {
@@ -119,7 +119,7 @@ namespace m0.Lib
             if (baseEdge == null)
                 return exe.Stack;
 
-            BaseCommands.Open(baseEdge, true);
+            BaseCommands.OpenVisualiser(baseEdge, true);
 
             return exe.Stack;
         }
@@ -135,7 +135,7 @@ namespace m0.Lib
             if (baseEdge == null)
                 return exe.Stack;
 
-            BaseCommands.Open(baseEdge, true);
+            BaseCommands.OpenVisualiser(baseEdge, true);
 
             return exe.Stack;
         }
