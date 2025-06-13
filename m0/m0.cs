@@ -25,9 +25,14 @@ namespace m0
 {
     public class MinusZero : IStoreUniverse, IDisposable
     {
-        public IEnumerable<IVertex> BootstrapVertexes;
+        public IUserInteraction UserInteraction
+        {
+            get { return userInteraction; }
+        }
 
-        public bool AllowBug = true;
+        private IUserInteraction userInteraction;
+
+        public IEnumerable<IVertex> BootstrapVertexes;
 
         public static MinusZero Instance = new MinusZero();
 
@@ -442,6 +447,11 @@ namespace m0
 
             foreach (IEdge e in autostartVertex)
                 e.To.Execute(exe);
+        }
+
+        public void SetUserInteraction(IUserInteraction _userInteraction)
+        {
+            userInteraction = _userInteraction;
         }
 
         public void Initialize()

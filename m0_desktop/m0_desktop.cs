@@ -4,19 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using m0;
-
-namespace m0_desktop
+namespace m0.desktop
 {
-    public class Main
+    public class m0_desktop
     {
-        public static void Run()
+        public static void RUN()
         {
+            MinusZero.Instance.Initialize();
+
             m0Main m = new m0Main();
 
             m0_COMPOSER.Runtime.Initialisation.Execute();
 
-            m.Show();            
+            m.Show();
+
+            m0Main.mainTree.BaseEdgeToUpdated();
         }
     }
 }

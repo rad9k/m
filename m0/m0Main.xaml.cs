@@ -48,7 +48,7 @@ namespace m0
 
             InitializeComponent();
 
-            MinusZero.Instance.Initialize();
+            //MinusZero.Instance.Initialize();
 
             IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, null, MinusZero.Instance.Root);
 
