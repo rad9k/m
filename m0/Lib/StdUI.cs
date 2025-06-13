@@ -23,7 +23,7 @@ namespace m0.Lib
             if (output == null)
                 return exe.Stack;
 
-            m0Main.Instance.InteractionOutput(GraphUtil.GetStringValue(output));
+            m0.MinusZero.Instance.UserInteraction.InteractionOutput(GraphUtil.GetStringValue(output));
 
             return exe.Stack;
         }
@@ -41,7 +41,7 @@ namespace m0.Lib
             if (output == null)
                 return exe.Stack;
 
-            string input = m0Main.Instance.InteractionInput(GraphUtil.GetStringValue(output), null);
+            string input = m0.MinusZero.Instance.UserInteraction.InteractionInput(GraphUtil.GetStringValue(output), null);
 
             if (input == null)
                 return exe.Stack;
@@ -69,7 +69,7 @@ namespace m0.Lib
             if (output == null || option.Count==0)
                 return exe.Stack;
 
-            IVertex selection = m0Main.Instance.InteractionSelect(output, option, false, null);
+            IVertex selection = m0.MinusZero.Instance.UserInteraction.InteractionSelect(output, option, false, null);
 
             if (selection == null)
                 return exe.Stack;
@@ -97,7 +97,7 @@ namespace m0.Lib
             if (output == null || option.Count == 0)
                 return exe.Stack;
 
-            IVertex selection = m0Main.Instance.InteractionSelectButton(output, option, null);
+            IVertex selection = m0.MinusZero.Instance.UserInteraction.InteractionSelectButton(output, option, null);
 
             if (selection == null)
                 return exe.Stack;

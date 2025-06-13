@@ -25,13 +25,6 @@ namespace m0
 {
     public class MinusZero : IStoreUniverse, IDisposable
     {
-        public IUserInteraction UserInteraction
-        {
-            get { return userInteraction; }
-        }
-
-        private IUserInteraction userInteraction;
-
         public IEnumerable<IVertex> BootstrapVertexes;
 
         public static MinusZero Instance = new MinusZero();
@@ -73,9 +66,9 @@ namespace m0
         public IVertex Dolar { get { return dolar; } }
 
 
-        IUserInteraction _DefaultUserInteraction;
+        IUserInteraction _UserInteraction;
 
-        public IUserInteraction DefaultUserInteraction { get { return _DefaultUserInteraction; } }
+        public IUserInteraction UserInteraction { get { return _UserInteraction; } }
 
 
         public IFormalTextParser _DefaultFormalTextParser; // need this public hack for LegacySystem_m0 based generation in m0_SYSTEM_GENERATE
@@ -163,11 +156,6 @@ namespace m0
             emptystore.Root.AddEdge(null, empty);
 
             tempRoot = TempStore.Root;
-        }
-
-        void Init()
-        {
-            _DefaultUserInteraction = m0Main.Instance;
         }
 
         void Init_AfterZeroCodeDefintionCreated()
@@ -449,9 +437,9 @@ namespace m0
                 e.To.Execute(exe);
         }
 
-        public void SetUserInteraction(IUserInteraction _userInteraction)
+        public void SetUserInteraction(IUserInteraction userInteraction)
         {
-            userInteraction = _userInteraction;
+            _UserInteraction = userInteraction;
         }
 
         public void Initialize()
@@ -471,8 +459,6 @@ namespace m0
 
             ExecutionFlowHelper.StartTransaction();            
 
-
-            Init();
 
             LoadFromBootstrap.Execute();
 

@@ -60,7 +60,7 @@ namespace m0.UIWpf.Dialog
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////
 
-            MinusZero.Instance.DefaultUserInteraction.CloseWindowByContent(this);
+            MinusZero.Instance.UserInteraction.CloseWindowByContent(this);
         }
     }
 }

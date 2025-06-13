@@ -12,11 +12,13 @@ namespace m0.desktop
         {
             MinusZero.Instance.Initialize();
 
-            m0Main m = new m0Main();
+            m0Main mainWindow = new m0Main();
+
+            MinusZero.Instance.SetUserInteraction(mainWindow);
 
             m0_COMPOSER.Runtime.Initialisation.Execute();
 
-            m.Show();
+            mainWindow.Show();
 
             m0Main.mainTree.BaseEdgeToUpdated();
         }

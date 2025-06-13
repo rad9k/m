@@ -63,7 +63,7 @@ namespace m0.UIWpf.Commands
         {
             ExecuteDialog e = new ExecuteDialog(baseVertex);
 
-            MinusZero.Instance.DefaultUserInteraction.ShowContentFloating(e, FloatingWindowSize.Medium);
+            MinusZero.Instance.UserInteraction.ShowContentFloating(e, FloatingWindowSize.Medium);
 
             return null;
         }
@@ -71,7 +71,7 @@ namespace m0.UIWpf.Commands
        public static IVertex NewVertex(IVertex baseVertex,IVertex inputVertex){
             NewVertex d = new NewVertex(baseVertex.Get(false, "To:"));
 
-            MinusZero.Instance.DefaultUserInteraction.ShowContentFloating(d, FloatingWindowSize.Micro);
+            MinusZero.Instance.UserInteraction.ShowContentFloating(d, FloatingWindowSize.Micro);
 
             return null;
         }
@@ -95,12 +95,12 @@ namespace m0.UIWpf.Commands
                 v = VertexOperations.AddInstance(Vertex, MetaVertex);
 
             if (VertexOperations.GetChildEdges(MetaVertex).Count() > 0)
-                MinusZero.Instance.DefaultUserInteraction.EditEdge(v, null);
+                MinusZero.Instance.UserInteraction.EditEdge(v, null);
             else
             {
                 NewVertexBySchema d = new NewVertexBySchema(v, MetaVertex);
 
-                MinusZero.Instance.DefaultUserInteraction.ShowContentFloating(d, FloatingWindowSize.Micro);
+                MinusZero.Instance.UserInteraction.ShowContentFloating(d, FloatingWindowSize.Micro);
             }
 
             ////////////////////////////////////////
@@ -114,7 +114,7 @@ namespace m0.UIWpf.Commands
         {
             NewEdge d = new NewEdge(baseVertex.Get(false, "To:"));
 
-            MinusZero.Instance.DefaultUserInteraction.ShowContentFloating(d, FloatingWindowSize.Micro);
+            MinusZero.Instance.UserInteraction.ShowContentFloating(d, FloatingWindowSize.Micro);
 
             return null;
         }
@@ -123,7 +123,7 @@ namespace m0.UIWpf.Commands
         {
             NewEdgeBySchema d = new NewEdgeBySchema(baseVertex.Get(false, "To:"), inputVertex);
 
-            MinusZero.Instance.DefaultUserInteraction.ShowContentFloating(d, FloatingWindowSize.Micro);
+            MinusZero.Instance.UserInteraction.ShowContentFloating(d, FloatingWindowSize.Micro);
 
             return null;
         }
@@ -142,7 +142,7 @@ namespace m0.UIWpf.Commands
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////
 
-            MinusZero.Instance.DefaultUserInteraction.EditEdge(dv, null);           
+            MinusZero.Instance.UserInteraction.EditEdge(dv, null);           
 
             return null;
         }
@@ -159,7 +159,7 @@ namespace m0.UIWpf.Commands
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////
 
-            MinusZero.Instance.DefaultUserInteraction.EditEdge(Visualiser_Vertex, null);
+            MinusZero.Instance.UserInteraction.EditEdge(Visualiser_Vertex, null);
 
             return null;
         }
@@ -234,7 +234,7 @@ namespace m0.UIWpf.Commands
 
           
 
-            IVertex option = MinusZero.Instance.DefaultUserInteraction.InteractionSelectButton(info, options.OutEdges, null);
+            IVertex option = MinusZero.Instance.UserInteraction.InteractionSelectButton(info, options.OutEdges, null);
 
             bool allEdgesDelete = false;
 
@@ -277,7 +277,7 @@ namespace m0.UIWpf.Commands
         {
             QueryDialog d = new QueryDialog(baseVertex.Get(false, "To:"));
 
-            MinusZero.Instance.DefaultUserInteraction.ShowContentFloating(d, FloatingWindowSize.Small);
+            MinusZero.Instance.UserInteraction.ShowContentFloating(d, FloatingWindowSize.Small);
 
             return null;
         }
@@ -344,9 +344,9 @@ namespace m0.UIWpf.Commands
             //GraphUtil.ReplaceEdge(sv.Vertex, "BaseEdge", baseVertex);
 
             if (isFloating)
-                MinusZero.Instance.DefaultUserInteraction.ShowContentFloating(sv, FloatingWindowSize.Medium);
+                MinusZero.Instance.UserInteraction.ShowContentFloating(sv, FloatingWindowSize.Medium);
             else
-                MinusZero.Instance.DefaultUserInteraction.ShowContent(sv);
+                MinusZero.Instance.UserInteraction.ShowContent(sv);
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
@@ -366,9 +366,9 @@ namespace m0.UIWpf.Commands
             //Edge.CopyAndReplaceEdgeVertexByEdgeVertex(sv.Vertex, "BaseEdge", baseVertex);
 
             if (isFloating)
-                MinusZero.Instance.DefaultUserInteraction.ShowContentFloating(sv, FloatingWindowSize.Medium);
+                MinusZero.Instance.UserInteraction.ShowContentFloating(sv, FloatingWindowSize.Medium);
             else
-                MinusZero.Instance.DefaultUserInteraction.ShowContent(sv);
+                MinusZero.Instance.UserInteraction.ShowContent(sv);
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
@@ -389,7 +389,7 @@ namespace m0.UIWpf.Commands
 
             //GraphUtil.ReplaceEdge(sv.Vertex.Get(false, "BaseEdge:"), "To", baseVertex.Get(false, "Meta:"));            
 
-            MinusZero.Instance.DefaultUserInteraction.ShowContent(sv);
+            MinusZero.Instance.UserInteraction.ShowContent(sv);
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
@@ -410,7 +410,7 @@ namespace m0.UIWpf.Commands
 
             //Edge.CopyAndReplaceEdgeVertexByEdgeVertex(pc.Vertex, "BaseEdge", baseVertex);
 
-            MinusZero.Instance.DefaultUserInteraction.ShowContentFloating(pc, FloatingWindowSize.Medium);
+            MinusZero.Instance.UserInteraction.ShowContentFloating(pc, FloatingWindowSize.Medium);
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
@@ -440,7 +440,7 @@ namespace m0.UIWpf.Commands
             if (firstSelectedVertex != null)
                 GraphUtil.ReplaceEdge(pc.Vertex, "BaseEdge", firstSelectedVertex);
 
-            MinusZero.Instance.DefaultUserInteraction.ShowContent(pc);
+            MinusZero.Instance.UserInteraction.ShowContent(pc);
 
             return null;     
         }
@@ -453,7 +453,7 @@ namespace m0.UIWpf.Commands
 
             GraphUtil.ReplaceEdge(pc.Vertex, "SelectedEdges", inputVertex.Get(false, @"SynchronisedVisualiser:\SelectedEdges:"));
 
-            MinusZero.Instance.DefaultUserInteraction.ShowContent(pc);
+            MinusZero.Instance.UserInteraction.ShowContent(pc);
 
             return null;     
         }

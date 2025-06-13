@@ -66,7 +66,7 @@ namespace m0.UIWpf.Dialog
 
         void FinishDialog()
         {
-            MinusZero.Instance.DefaultUserInteraction.CloseWindowByContent(this);
+            MinusZero.Instance.UserInteraction.CloseWindowByContent(this);
 
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
@@ -85,7 +85,7 @@ namespace m0.UIWpf.Dialog
                 v.Value = this.Content.Text;
 
                 if (VertexOperations.GetChildEdges(meta).Count() > 0)
-                    MinusZero.Instance.DefaultUserInteraction.EditEdge(v, null);
+                    MinusZero.Instance.UserInteraction.EditEdge(v, null);
             }
 
             ////////////////////////////////////////

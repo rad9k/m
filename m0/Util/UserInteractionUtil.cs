@@ -25,13 +25,13 @@ namespace m0.Util
 
             //return o.Get(false, @"\").Value.ToString();
 
-            return MinusZero.Instance.DefaultUserInteraction.InteractionInput(question, null);
+            return MinusZero.Instance.UserInteraction.InteractionInput(question, null);
 
         }
 
         public static void ShowError(object where, string what)
         {
-            MinusZero.Instance.DefaultUserInteraction.InteractionOutputException(
+            MinusZero.Instance.UserInteraction.InteractionOutputException(
                 UserInteractionUtil.CreateErrorVertex(where, what));
         }
         
