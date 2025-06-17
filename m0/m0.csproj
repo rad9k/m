@@ -206,6 +206,7 @@
     <Compile Include="ZeroTypes\TypedEdge.cs" />
     <Compile Include="ZeroTypes\Edge.cs" />
     <Compile Include="ZeroTypes\UX\CodeRepresentationEnum.cs" />
+    <Compile Include="ZeroTypes\UX\OrientationEnum.cs" />
     <Compile Include="ZeroUML\ClassVertex.cs" />
     <Compile Include="Util\GeneralUtil.cs">
       <SubType>Code</SubType>

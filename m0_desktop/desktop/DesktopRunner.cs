@@ -16,7 +16,7 @@ namespace m0.desktop
 
             MinusZero.Instance.SetUserInteraction(mainWindow);
 
-            m0_COMPOSER.Runtime.Initialisation.Execute();
+            //m0_COMPOSER.Runtime.Initialisation.Execute();
 
             mainWindow.Show();
 

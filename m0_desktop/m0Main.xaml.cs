@@ -359,7 +359,7 @@ namespace m0
             return new StringQuestionWindow(question, WpfUtil.GetMousePosition()).Answer;
         }
 
-        void UserInteractionInitialize()
+        public void UserInteractionInitialize()
         {
             UIWpf.WpfUtil.InitializeUIWpf();
         }

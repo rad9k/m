@@ -9,7 +9,7 @@ namespace m0.ZeroTypes.UX
 {
     public enum CodeRepresentationEnum { EdgeOneLine, LinearizedManyLines, ManyLinesExcludingParent, VertexAndManyLines, EdgeAndManyLines }
 
-    class CodeRepresentationEnumHelper
+    public class CodeRepresentationEnumHelper
     {
         static IVertex OneLine_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\CodeRepresentationEnum\OneLine");
         static IVertex EdgeOneLine_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\CodeRepresentationEnum\EdgeOneLine");

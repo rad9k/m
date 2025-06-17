@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:m0_COMPOSER.UIWpf.Visualisers.Control"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
-             xmlns:m="clr-namespace:m0.UIWpf.Controls;assembly=m0">
+             xmlns:m="clr-namespace:m0.UIWpf.Controls;assembly=m0_desktop">
     <Grid>
         <ScrollViewer x:Name="ScrollViewer"  
                       HorizontalScrollBarVisibility="Visible" 
