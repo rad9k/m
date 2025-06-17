@@ -96,6 +96,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="desktop\DesktopRunner.cs" />
+    <Compile Include="desktop\m0Main.xaml.cs">
+      <DependentUpon>m0Main.xaml</DependentUpon>
+    </Compile>
     <Compile Include="desktop\StartWindow.xaml.cs">
       <DependentUpon>StartWindow.xaml</DependentUpon>
     </Compile>
@@ -103,6 +106,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="desktop\m0Main.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="iOSStyleToggleButton.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

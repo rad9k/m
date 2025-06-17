@@ -29,7 +29,7 @@ using m0.Store;
 using m0.Store.Json;
 using m0.UIWpf.Commands;
 
-namespace m0
+namespace m0.desktop
 {
 
 
