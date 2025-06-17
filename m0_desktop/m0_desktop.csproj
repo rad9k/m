@@ -482,10 +482,6 @@
       <Project>{a8a00ded-611c-4ff5-8b12-5ecc14242b23}</Project>
       <Name>m0</Name>
     </ProjectReference>
-    <ProjectReference Include="..\m0_COMPOSER\m0_COMPOSER.csproj">
-      <Project>{f581bd3e-ca8c-4ca6-abc7-40d06a152e96}</Project>
-      <Name>m0_COMPOSER</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="UIWpf\Controls\AnimatedHideArea.txt" />

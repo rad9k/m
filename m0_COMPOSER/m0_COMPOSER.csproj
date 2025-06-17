@@ -168,5 +168,15 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\m0\m0.csproj">
+      <Project>{a8a00ded-611c-4ff5-8b12-5ecc14242b23}</Project>
+      <Name>m0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\m0_desktop\m0_desktop.csproj">
+      <Project>{b5856cf1-5a38-47ab-8483-6ff252efcc12}</Project>
+      <Name>m0_desktop</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
