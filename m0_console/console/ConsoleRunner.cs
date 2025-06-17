@@ -1,4 +1,5 @@
 ﻿using m0;
+using m0_console.console;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +14,7 @@ namespace m0.console
         {
             MinusZero.Instance.Initialize();
 
-
-
-           // MinusZero.Instance.SetUserInteraction(mainWindow);
+            MinusZero.Instance.SetUserInteraction(new ConsoleUserInteraction());
 
             MinusZero.Instance.Initialize_AfterUXInitialized();
         }
