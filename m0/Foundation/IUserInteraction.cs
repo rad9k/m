@@ -47,5 +47,9 @@ namespace m0.Foundation
         void UserInteractionInitialize();
 
         void UserInteractionFinalize();
+
+        //
+
+        bool TypedEdge_Get_Test(Type[] interfacesInToCreateType);
     }
 }

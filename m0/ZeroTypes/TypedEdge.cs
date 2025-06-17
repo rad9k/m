@@ -1,6 +1,5 @@
 ﻿using m0.Foundation;
 using m0.Graph;
-using m0.UIWpf.Visualisers.Helper;
 using m0.Util;
 using m0.ZeroTypes.UX;
 using System;
@@ -127,7 +126,7 @@ namespace m0.ZeroTypes
 
                 Type[] interfacesInToCreateType = toCreateType.GetInterfaces();
 
-                if (interfacesInToCreateType.Contains(typeof(IVisualiser)) && !interfacesInToCreateType.Contains(typeof(IUXVisualiser)))
+                if (m0.MinusZero.Instance.UserInteraction.TypedEdge_Get_Test(interfacesInToCreateType))
                     toCreateType = typeof(Edge);
 
                 object obj = Activator.CreateInstance(toCreateType, edge);

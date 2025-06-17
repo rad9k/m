@@ -152,23 +152,6 @@
     <Compile Include="Util\ZString.cs" />
     <Compile Include="ZeroCode\Helpers\DictionariesForFormalTextLanguageFactory.cs" />
     <Compile Include="ZeroCode\Helpers\MultiLineString.cs" />
-    <Compile Include="ZeroTypes\UX\CodeRepresentationEnum.cs" />
-    <Compile Include="ZeroTypes\UX\IUXMultiContainerItem.cs" />
-    <Compile Include="ZeroTypes\UX\IUXMultiContainerSubItem.cs" />
-    <Compile Include="ZeroTypes\UX\IUXDecorator.cs" />
-    <Compile Include="ZeroTypes\UX\LabeledItem.cs" />
-    <Compile Include="ZeroTypes\UX\UXContainer_RectangleItem_LabeledItem.cs" />
-    <Compile Include="ZeroTypes\UX\RectangleItem_LabeledItem.cs" />
-    <Compile Include="ZeroTypes\UX\RectangleItem.cs" />
-    <Compile Include="ZeroTypes\UX\MultiContainerSubItem.xaml.cs">
-      <DependentUpon>MultiContainerSubItem.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ZeroTypes\UX\OrientationEnum.cs" />
-    <Compile Include="ZeroTypes\UX\MultiContainerItem.xaml.cs">
-      <DependentUpon>MultiContainerItem.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ZeroTypes\UX\IItem.cs" />
-    <Compile Include="ZeroTypes\UX\ILineDecoratorBase.cs" />
     <Compile Include="Util\MathUtil.cs" />
     <Compile Include="Store\FileSystem\AbstractFileSystemVertex.cs" />
     <Compile Include="User\Clipboard.cs" />
@@ -222,41 +205,7 @@
     <Compile Include="ZeroTypes\ITypedEdge.cs" />
     <Compile Include="ZeroTypes\TypedEdge.cs" />
     <Compile Include="ZeroTypes\Edge.cs" />
-    <Compile Include="ZeroTypes\UX\IUXContainer.cs" />
-    <Compile Include="ZeroTypes\UX\MetaExtendedLineDecorator.cs" />
-    <Compile Include="ZeroTypes\UX\LineEndEnum.cs" />
-    <Compile Include="ZeroTypes\UX\ContainerItem.xaml.cs">
-      <DependentUpon>ContainerItem.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ZeroTypes\UX\OvalItem.xaml.cs">
-      <DependentUpon>OvalItem.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ZeroTypes\UX\ImageItem.xaml.cs">
-      <DependentUpon>ImageItem.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ZeroTypes\UX\CodeItem.xaml.cs">
-      <DependentUpon>CodeItem.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ZeroTypes\UX\RhombusItem.xaml.cs">
-      <DependentUpon>RhombusItem.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ZeroTypes\UX\RectangleVisualiserItem.xaml.cs">
-      <DependentUpon>RectangleVisualiserItem.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ZeroTypes\UX\InstanceCreationEnum.cs" />
-    <Compile Include="ZeroTypes\UX\LineDecoratorBase.cs" />
-    <Compile Include="ZeroTypes\UX\LineDecorator.cs" />
-    <Compile Include="ZeroTypes\UX\Item.cs" />
-    <Compile Include="ZeroTypes\UX\Color.cs" />
-    <Compile Include="ZeroTypes\UX\LayoutTypeEnum.cs" />
-    <Compile Include="ZeroTypes\UX\Position.cs" />
-    <Compile Include="ZeroTypes\UX\Size.cs" />
-    <Compile Include="ZeroTypes\UX\IUXVisualiser.cs" />
-    <Compile Include="ZeroTypes\UX\UXDecoratorTemplate .cs" />
-    <Compile Include="ZeroTypes\UX\IUXItem.cs" />
-    <Compile Include="ZeroTypes\UX\UXTemplate.cs" />
-    <Compile Include="ZeroTypes\UX\UXContainer.cs" />
-    <Compile Include="ZeroTypes\UX\UXItem.cs" />
+    <Compile Include="ZeroTypes\UX\CodeRepresentationEnum.cs" />
     <Compile Include="ZeroUML\ClassVertex.cs" />
     <Compile Include="Util\GeneralUtil.cs">
       <SubType>Code</SubType>
@@ -328,38 +277,6 @@
     <Compile Include="m0.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="ZeroTypes\UX\MultiContainerSubItem.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ZeroTypes\UX\MultiContainerItem.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ZeroTypes\UX\ContainerItem.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ZeroTypes\UX\OvalItem.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ZeroTypes\UX\ImageItem.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ZeroTypes\UX\CodeItem.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ZeroTypes\UX\RhombusItem.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ZeroTypes\UX\RectangleVisualiserItem.xaml">
-      <SubType>Designer</SubType>
-      <Generator>XamlIntelliSenseFileGenerator</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -486,9 +403,6 @@
     <Resource Include="_RESOURCES\basic\extend_down.png" />
     <Resource Include="_RESOURCES\basic\extend_left.png" />
     <Resource Include="_RESOURCES\basic\extend_up.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="ZeroTypes\UX\UX.txt" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="_PROJECT\new_hope.txt" />

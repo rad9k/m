@@ -139,12 +139,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\m0\m0.csproj">
-      <Project>{a8a00ded-611c-4ff5-8b12-5ecc14242b23}</Project>
-      <Name>m0</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Page Include="UIWpf\Visualisers\Control\ZoomScrollView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

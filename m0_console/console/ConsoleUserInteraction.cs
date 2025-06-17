@@ -74,7 +74,9 @@ namespace m0_console.console
 
         }
 
-        void UserInteractionInitialize()
+        //
+
+        public void UserInteractionInitialize()
         {
 
         }
@@ -82,6 +84,13 @@ namespace m0_console.console
         public void UserInteractionFinalize()
         {
 
+        }
+
+        //
+
+        public bool TypedEdge_Get_Test(Type[] interfacesInToCreateType)
+        {
+            return false;
         }
     }
 }

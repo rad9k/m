@@ -9,6 +9,7 @@ using m0.UIWpf.Visualisers;
 using m0.UIWpf.Visualisers.Helper;
 using m0.Util;
 using m0.ZeroTypes;
+using m0.ZeroTypes.UX;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -366,6 +367,14 @@ namespace m0
         public void UserInteractionFinalize()
         {
             VisualisersList.RemoveAllVisualisers();
+        }
+
+        public bool TypedEdge_Get_Test(Type[] interfacesInToCreateType)
+        {
+            if (interfacesInToCreateType.Contains(typeof(IVisualiser)) && !interfacesInToCreateType.Contains(typeof(IUXVisualiser)))
+                return true;
+            else
+                return false;
         }
 
         private void Window_Closed(object sender, EventArgs e)
