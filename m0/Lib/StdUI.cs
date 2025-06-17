@@ -41,7 +41,7 @@ namespace m0.Lib
             if (output == null)
                 return exe.Stack;
 
-            string input = m0.MinusZero.Instance.UserInteraction.InteractionInput(GraphUtil.GetStringValue(output), null);
+            string input = m0.MinusZero.Instance.UserInteraction.InteractionInput(GraphUtil.GetStringValue(output));
 
             if (input == null)
                 return exe.Stack;
@@ -69,7 +69,7 @@ namespace m0.Lib
             if (output == null || option.Count==0)
                 return exe.Stack;
 
-            IVertex selection = m0.MinusZero.Instance.UserInteraction.InteractionSelect(output, option, false, null);
+            IVertex selection = m0.MinusZero.Instance.UserInteraction.InteractionSelect(output, option, false);
 
             if (selection == null)
                 return exe.Stack;
@@ -97,7 +97,7 @@ namespace m0.Lib
             if (output == null || option.Count == 0)
                 return exe.Stack;
 
-            IVertex selection = m0.MinusZero.Instance.UserInteraction.InteractionSelectButton(output, option, null);
+            IVertex selection = m0.MinusZero.Instance.UserInteraction.InteractionSelectButton(output, option);
 
             if (selection == null)
                 return exe.Stack;
@@ -119,7 +119,7 @@ namespace m0.Lib
             if (baseEdge == null)
                 return exe.Stack;
 
-            BaseCommands.OpenVisualiser(baseEdge, true);
+            m0.MinusZero.Instance.UserInteraction.OpenDefaultVisualiser(baseEdge, false);
 
             return exe.Stack;
         }
@@ -135,7 +135,12 @@ namespace m0.Lib
             if (baseEdge == null)
                 return exe.Stack;
 
-            BaseCommands.OpenVisualiser(baseEdge, true);
+            IVertex visualiser = GraphUtil.GetQueryOutFirst(stack, "visualiser", null);
+
+            if (visualiser == null)
+                return exe.Stack;
+
+            m0.MinusZero.Instance.UserInteraction.OpenVisualiser(baseEdge, visualiser, true);
 
             return exe.Stack;
         }
@@ -150,7 +155,7 @@ namespace m0.Lib
             if (baseEdge == null)
                 return exe.Stack;
 
-            BaseCommands.OpenFormVisualiser(baseEdge, true);
+            m0.MinusZero.Instance.UserInteraction.OpenFormVisualiser(baseEdge, true);
 
             return exe.Stack;
         }
@@ -167,7 +172,7 @@ namespace m0.Lib
 
             IVertex codeVis = MinusZero.Instance.root.Get(false, @"System\Meta\Visualiser\Code");
 
-            BaseCommands.OpenVisualiser(baseEdge, codeVis, true);
+            m0.MinusZero.Instance.UserInteraction.OpenVisualiser(baseEdge, codeVis, true);
 
             return exe.Stack;
         }

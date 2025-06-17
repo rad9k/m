@@ -476,7 +476,7 @@ namespace m0.UIWpf.Controls
 
         void OnOpen(object sender, System.Windows.RoutedEventArgs e)
         {
-            BaseCommands.OpenVisualiser(this.EdgeVertex, false);
+            BaseCommands.OpenDefaultVisualiser(this.EdgeVertex, false);
         }
 
         void OnExecute(object sender, System.Windows.RoutedEventArgs e)

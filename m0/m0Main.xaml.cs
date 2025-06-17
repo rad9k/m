@@ -316,38 +316,50 @@ namespace m0
             i.ShowDialog();
         }
 
-        public IVertex InteractionSelect(IVertex info, IList<IEdge> options, bool firstSelected, Point? position)
+        public IVertex InteractionSelect(IVertex info, IList<IEdge> options, bool firstSelected)
         {
-            SelectWindow d = new SelectWindow(info, options, firstSelected, position);
+            SelectWindow d = new SelectWindow(info, options, firstSelected, WpfUtil.GetMousePosition());
 
             return d.SelectedOption;
         }
 
-        public IVertex InteractionSelectButton(IVertex info, IList<IEdge> options, Point? position)
+        public IVertex InteractionSelectButton(IVertex info, IList<IEdge> options)
         {
-            SelectWindowButton d = new SelectWindowButton(info, options, position);
+            SelectWindowButton d = new SelectWindowButton(info, options, WpfUtil.GetMousePosition());
 
             return d.SelectedOption;
         }
 
-        public void EditEdge(IVertex baseVertex, Point? position)
+        public void EditEdge(IVertex baseVertex)
         {
-            ShowContentFloating_withSize( new Edit(baseVertex, position),500,550);
+            ShowContentFloating_withSize( new Edit(baseVertex),500,550);
         }
 
-        public IVertex OpenVisualiser(IVertex baseVertex, IVertex inputVertex, bool isFloating)
+        public void OpenDefaultVisualiser(IVertex baseVertex, bool isFloating)
         {
-            return BaseCommands.OpenVisualiser(baseVertex, inputVertex, isFloating);
+            BaseCommands.OpenDefaultVisualiser(baseVertex, isFloating);
         }
 
-        public IVertex OpenFormVisualiser(IVertex baseVertex, bool isFloating)
+        public void OpenVisualiser(IVertex baseVertex, IVertex inputVertex, bool isFloating)
         {
-            return BaseCommands.OpenFormVisualiser(baseVertex, isFloating);
+            BaseCommands.OpenVisualiser(baseVertex, inputVertex, isFloating);
         }
 
-        public string InteractionInput(String question, Point? position)
+        public void OpenCodeVisualiser(IVertex baseVertex, bool isFloating)
         {
-            return new StringQuestionWindow(question, position).Answer;
+            IVertex codeVis = MinusZero.Instance.root.Get(false, @"System\Meta\Visualiser\Code");
+
+            BaseCommands.OpenVisualiser(baseVertex, codeVis, true);
+        }
+
+        public void OpenFormVisualiser(IVertex baseVertex, bool isFloating)
+        {
+            BaseCommands.OpenFormVisualiser(baseVertex, isFloating);
+        }
+
+        public string InteractionInput(String question)
+        {
+            return new StringQuestionWindow(question, WpfUtil.GetMousePosition()).Answer;
         }
 
         private void Window_Closed(object sender, EventArgs e)

@@ -59,24 +59,20 @@ namespace m0.UIWpf.Commands
 
     public class BaseCommands
     {
-        public static IVertex Execute(IVertex baseVertex, IVertex inputVertex)
+        public static void Execute(IVertex baseVertex, IVertex inputVertex)
         {
             ExecuteDialog e = new ExecuteDialog(baseVertex);
 
             MinusZero.Instance.UserInteraction.ShowContentFloating(e, FloatingWindowSize.Medium);
-
-            return null;
         }
 
-       public static IVertex NewVertex(IVertex baseVertex,IVertex inputVertex){
+       public static void NewVertex(IVertex baseVertex,IVertex inputVertex){
             NewVertex d = new NewVertex(baseVertex.Get(false, "To:"));
 
             MinusZero.Instance.UserInteraction.ShowContentFloating(d, FloatingWindowSize.Micro);
-
-            return null;
         }
 
-        public static IVertex NewVertexBySchema(IVertex baseVertex, IVertex inputVertex)
+        public static void NewVertexBySchema(IVertex baseVertex, IVertex inputVertex)
         {
             IVertex Vertex = baseVertex.Get(false, "To:");
             IVertex MetaVertex = inputVertex;
@@ -95,7 +91,7 @@ namespace m0.UIWpf.Commands
                 v = VertexOperations.AddInstance(Vertex, MetaVertex);
 
             if (VertexOperations.GetChildEdges(MetaVertex).Count() > 0)
-                MinusZero.Instance.UserInteraction.EditEdge(v, null);
+                MinusZero.Instance.UserInteraction.EditEdge(v);
             else
             {
                 NewVertexBySchema d = new NewVertexBySchema(v, MetaVertex);
@@ -106,29 +102,23 @@ namespace m0.UIWpf.Commands
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////
-
-            return null;
         }
 
-        public static IVertex NewEdge(IVertex baseVertex, IVertex inputVertex)
+        public static void NewEdge(IVertex baseVertex, IVertex inputVertex)
         {
             NewEdge d = new NewEdge(baseVertex.Get(false, "To:"));
 
             MinusZero.Instance.UserInteraction.ShowContentFloating(d, FloatingWindowSize.Micro);
-
-            return null;
         }
 
-        public static IVertex NewEdgeBySchema(IVertex baseVertex, IVertex inputVertex)
+        public static void NewEdgeBySchema(IVertex baseVertex, IVertex inputVertex)
         {
             NewEdgeBySchema d = new NewEdgeBySchema(baseVertex.Get(false, "To:"), inputVertex);
 
             MinusZero.Instance.UserInteraction.ShowContentFloating(d, FloatingWindowSize.Micro);
-
-            return null;
         }
 
-        public static IVertex NewDiagram(IVertex baseVertex, IVertex inputVertex)
+        public static void NewDiagram(IVertex baseVertex, IVertex inputVertex)
         {
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
@@ -142,12 +132,10 @@ namespace m0.UIWpf.Commands
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////
 
-            MinusZero.Instance.UserInteraction.EditEdge(dv, null);           
-
-            return null;
+            MinusZero.Instance.UserInteraction.EditEdge(dv);           
         }
 
-        public static IVertex NewUX(IVertex baseVertex, IVertex inputVertex)
+        public static void NewUX(IVertex baseVertex, IVertex inputVertex)
         {
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
@@ -159,25 +147,21 @@ namespace m0.UIWpf.Commands
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////
 
-            MinusZero.Instance.UserInteraction.EditEdge(Visualiser_Vertex, null);
-
-            return null;
+            MinusZero.Instance.UserInteraction.EditEdge(Visualiser_Vertex);
         }
 
         protected static IList<IVertex> CutPasteStore = new List<IVertex>();
 
         protected static bool DoCut;
  
-        public static IVertex Cut(IVertex baseVertex, IVertex inputVertex)
+        public static void Cut(IVertex baseVertex, IVertex inputVertex)
         {
             Copy(baseVertex, inputVertex);
             
             DoCut = true;
-
-            return null;
         }
 
-        public static IVertex Copy(IVertex baseVertex, IVertex inputVertex)
+        public static void Copy(IVertex baseVertex, IVertex inputVertex)
         {
             DoCut = false;
 
@@ -196,11 +180,9 @@ namespace m0.UIWpf.Commands
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////
-
-            return null;
         }
 
-        public static IVertex Paste(IVertex baseVertex, IVertex inputVertex)
+        public static void Paste(IVertex baseVertex, IVertex inputVertex)
         {
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
@@ -217,11 +199,9 @@ namespace m0.UIWpf.Commands
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////
-
-            return null;
         }
 
-        public static IVertex Delete(IVertex baseVertex, IVertex inputVertex)
+        public static void Delete(IVertex baseVertex, IVertex inputVertex)
         {
             IVertex info = m0.MinusZero.Instance.CreateTempVertex();
             info.Value = "DELETE vertex";
@@ -232,15 +212,13 @@ namespace m0.UIWpf.Commands
             options.AddVertex(null, "Remove from repository");
             options.AddVertex(null, "Cancel");
 
-          
-
-            IVertex option = MinusZero.Instance.UserInteraction.InteractionSelectButton(info, options.OutEdges, null);
+            IVertex option = MinusZero.Instance.UserInteraction.InteractionSelectButton(info, options.OutEdges);
 
             bool allEdgesDelete = false;
 
 
             if (option == null || GeneralUtil.CompareStrings(option.Value, "Cancel"))
-                return null;
+                return;
 
             if (GeneralUtil.CompareStrings(option.Value, "Remove from repository"))
                 allEdgesDelete = true;
@@ -269,20 +247,16 @@ namespace m0.UIWpf.Commands
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////
-
-            return null;
         }
 
-        public static IVertex Query(IVertex baseVertex, IVertex inputVertex)
+        public static void Query(IVertex baseVertex, IVertex inputVertex)
         {
             QueryDialog d = new QueryDialog(baseVertex.Get(false, "To:"));
 
             MinusZero.Instance.UserInteraction.ShowContentFloating(d, FloatingWindowSize.Small);
-
-            return null;
         }
 
-        public static IVertex OpenVisualiser(IVertex baseVertex, bool isFloating)
+        public static void OpenDefaultVisualiser(IVertex baseVertex, bool isFloating)
         {
             IVertex DefaultVis;
 
@@ -303,17 +277,13 @@ namespace m0.UIWpf.Commands
             if (DefaultVis == null)
                 DefaultVis = MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Form");
 
-            IVertex toReturn = null; 
-
             if (GeneralUtil.CompareStrings(DefaultVis.Value, "Diagram"))
-                toReturn =  OpenDiagram(baseVertex, DefaultVis, isFloating);
+                OpenDiagram(baseVertex, DefaultVis, isFloating);
             else
-                toReturn =  OpenVisualiser(baseVertex, DefaultVis, isFloating);
-
-            return toReturn;
+                OpenVisualiser(baseVertex, DefaultVis, isFloating);
         }
 
-        public static IVertex OpenFormVisualiser(IVertex baseVertex, bool isFloating)
+        public static void OpenFormVisualiser(IVertex baseVertex, bool isFloating)
         {
             IVertex toReturn;
 
@@ -321,16 +291,14 @@ namespace m0.UIWpf.Commands
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
 
-            toReturn = OpenVisualiser(baseVertex, MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Form"), isFloating);
+            OpenVisualiser(baseVertex, MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Form"), isFloating);
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////
-
-            return toReturn;
         }
 
-        public static IVertex OpenDiagram(IVertex baseVertex, IVertex inputVertex, bool isFloating)
+        public static void OpenDiagram(IVertex baseVertex, IVertex inputVertex, bool isFloating)
         {
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
@@ -351,11 +319,9 @@ namespace m0.UIWpf.Commands
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////
-
-            return null;
         }
 
-        public static IVertex OpenVisualiser(IVertex baseVertex, IVertex inputVertex, bool isFloating)
+        public static void OpenVisualiser(IVertex baseVertex, IVertex inputVertex, bool isFloating)
         {
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
@@ -372,12 +338,10 @@ namespace m0.UIWpf.Commands
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
-            ////////////////////////////////////////
-
-            return null;            
+            ////////////////////////////////////////        
         }
 
-        public static IVertex OpenMetaVisualiser(IVertex baseVertex, IVertex inputVertex)
+        public static void OpenMetaVisualiser(IVertex baseVertex, IVertex inputVertex)
         {
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
@@ -394,11 +358,9 @@ namespace m0.UIWpf.Commands
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////
-
-            return null;
         }
 
-        public static IVertex OpenVisualiserFloating(IVertex baseVertex, IVertex inputVertex)
+        public static void OpenVisualiserFloating(IVertex baseVertex, IVertex inputVertex)
         {
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
@@ -415,11 +377,9 @@ namespace m0.UIWpf.Commands
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////
-
-            return null;
         }
 
-        public static IVertex OpenVisualiserSelectedBase(IVertex baseVertex, IVertex inputVertex)
+        public static void OpenVisualiserSelectedBase(IVertex baseVertex, IVertex inputVertex)
         {
             IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, baseVertex.Get(false, "Meta:"), baseVertex.Get(false, "To:"));
 
@@ -441,11 +401,9 @@ namespace m0.UIWpf.Commands
                 GraphUtil.ReplaceEdge(pc.Vertex, "BaseEdge", firstSelectedVertex);
 
             MinusZero.Instance.UserInteraction.ShowContent(pc);
-
-            return null;     
         }
 
-        public static IVertex OpenVisualiserSelectedSelected(IVertex baseVertex, IVertex inputVertex)
+        public static void OpenVisualiserSelectedSelected(IVertex baseVertex, IVertex inputVertex)
         {
             IPlatformClass pc = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex.Get(false, "VisualiserClass:"), baseVertex);
 
@@ -453,11 +411,7 @@ namespace m0.UIWpf.Commands
 
             GraphUtil.ReplaceEdge(pc.Vertex, "SelectedEdges", inputVertex.Get(false, @"SynchronisedVisualiser:\SelectedEdges:"));
 
-            MinusZero.Instance.UserInteraction.ShowContent(pc);
-
-            return null;     
+            MinusZero.Instance.UserInteraction.ShowContent(pc); 
         }
-
-
     }
 }

@@ -27,7 +27,7 @@ namespace m0.desktop
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-            m0_desktop.RUN();
+            DesktopRunner.RUN();
 
             Close();
         }

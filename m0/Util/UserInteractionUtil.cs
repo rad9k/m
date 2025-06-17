@@ -25,7 +25,7 @@ namespace m0.Util
 
             //return o.Get(false, @"\").Value.ToString();
 
-            return MinusZero.Instance.UserInteraction.InteractionInput(question, null);
+            return MinusZero.Instance.UserInteraction.InteractionInput(question);
 
         }
 

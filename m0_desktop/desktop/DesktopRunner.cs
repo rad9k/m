@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace m0.desktop
 {
-    public class m0_desktop
+    public class DesktopRunner
     {
         public static void RUN()
         {

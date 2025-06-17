@@ -18,7 +18,7 @@ namespace m0.Foundation
 
         //
 
-        void EditEdge(IVertex baseVertex, Point? position);
+        void EditEdge(IVertex baseVertex);
 
         //
 
@@ -26,16 +26,20 @@ namespace m0.Foundation
 
         void InteractionOutput(string info);
 
-        IVertex InteractionSelect(IVertex info, IList<IEdge> options, bool firstSelected, Point? position);
+        IVertex InteractionSelect(IVertex info, IList<IEdge> options, bool firstSelected);
 
-        IVertex InteractionSelectButton(IVertex info, IList<IEdge> options, Point? position);
+        IVertex InteractionSelectButton(IVertex info, IList<IEdge> options);
 
-        string InteractionInput(string question, Point? position);
+        string InteractionInput(string question);
 
         //
 
-        IVertex OpenVisualiser(IVertex baseVertex, IVertex inputVertex, bool isFloating);
+        void OpenDefaultVisualiser(IVertex baseVertex, bool isFloating);
 
-        IVertex OpenFormVisualiser(IVertex baseVertex, bool isFloating);
+        void OpenVisualiser(IVertex baseVertex, IVertex inputVertex, bool isFloating);
+
+        void OpenCodeVisualiser(IVertex baseVertex,  bool isFloating);
+
+        void OpenFormVisualiser(IVertex baseVertex, bool isFloating);
     }
 }

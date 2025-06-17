@@ -223,7 +223,7 @@ namespace m0.ZeroTypes
             return null;
         }
 
-        public static IEdge AddEdgeOrVertexByMeta(IVertex baseVertex, IVertex metaVertex, IVertex toVertex, Point position, bool CreateEdgeOnly, bool ForceShowEditForm)
+        public static IEdge AddEdgeOrVertexByMeta(IVertex baseVertex, IVertex metaVertex, IVertex toVertex, bool CreateEdgeOnly, bool ForceShowEditForm)
         {
             if (GraphUtil.ExistQueryOut(metaVertex,"$VertexTarget", null)
                 && !CreateEdgeOnly
@@ -236,7 +236,7 @@ namespace m0.ZeroTypes
                 n.AddEdge(MinusZero.Instance.EdgeTarget, toVertex);
 
                 if (ForceShowEditForm == true)
-                    MinusZero.Instance.UserInteraction.EditEdge(e.To, position);
+                    MinusZero.Instance.UserInteraction.EditEdge(e.To);
 
                 return e;
             }

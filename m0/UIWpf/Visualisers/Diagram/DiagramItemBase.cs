@@ -369,7 +369,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                 
             Point mousePosition=WpfUtil.GetMousePosition();
 
-            IVertex a = MinusZero.Instance.UserInteraction.InteractionSelect(info, v.OutEdges, false, mousePosition);
+            IVertex a = MinusZero.Instance.UserInteraction.InteractionSelect(info, v.OutEdges, false);
 
                 if (a != null){
                     IVertex test = VertexOperations.TestIfNewEdgeValid(Vertex.Get(false, @"BaseEdge:\To:"), a.Get(false, "OptionEdge:"), toEdge.Get(false, "To:"));
@@ -394,7 +394,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
 
                         CanAutomaticallyAddEdges = false; // for VertexChange
-                        IEdge edge = VertexOperations.AddEdgeOrVertexByMeta(Vertex.Get(false, @"BaseEdge:\To:"), a.Get(false, "OptionEdge:"), toEdge.Get(false, "To:"), mousePosition, CreateEdgeOnly, ForceShowEditForm);
+                        IEdge edge = VertexOperations.AddEdgeOrVertexByMeta(Vertex.Get(false, @"BaseEdge:\To:"), a.Get(false, "OptionEdge:"), toEdge.Get(false, "To:"), CreateEdgeOnly, ForceShowEditForm);
                         CanAutomaticallyAddEdges = true; 
 
                         AddDiagramLineVertex(edge, a.Get(false, @"OptionDiagramLineDefinition:"), toItem);

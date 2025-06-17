@@ -40,7 +40,7 @@ namespace m0.UIWpf.Dialog
 
         FormVisualiser FormVisualiser;
 
-        public Edit(IVertex _baseVertex, Point? position)
+        public Edit(IVertex _baseVertex)
         {
             baseVertex = _baseVertex;
 
@@ -56,25 +56,11 @@ namespace m0.UIWpf.Dialog
 
             Wrap.SetContent(FormVisualiser);
 
-            //GraphUtil.ReplaceEdge(FormVisualiser.Vertex.Get(false, "BaseEdge:"), "To", baseVertex);
-
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////
 
             this.Loaded += new RoutedEventHandler(OnLoad);
-
-            /*this.Title = baseVertex.Value + " edit / new";
-
-            if (position!=null)
-            {
-                _mousePosition =(Point) position;
-                this.Loaded += new RoutedEventHandler(OnLoad);
-            }
-            else
-                Owner = m0Main.Instance;
-
-            ShowDialog();*/
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

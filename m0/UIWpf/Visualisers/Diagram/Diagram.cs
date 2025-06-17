@@ -546,7 +546,7 @@ namespace m0.UIWpf.Visualisers.Diagram
             IVertex optionAllEdgesDelete = options.AddVertex(null, "Remove from repository");
             IVertex optionCancel = options.AddVertex(null, "Cancel");
 
-            IVertex option = MinusZero.Instance.UserInteraction.InteractionSelectButton(info, options.OutEdges, null);
+            IVertex option = MinusZero.Instance.UserInteraction.InteractionSelectButton(info, options.OutEdges);
 
             if (option == null || option == optionCancel)
                 return;
@@ -611,7 +611,7 @@ namespace m0.UIWpf.Visualisers.Diagram
           
             IVertex optionCancel = options.AddVertex(null, "Cancel");
 
-            IVertex option = MinusZero.Instance.UserInteraction.InteractionSelectButton(info, options.OutEdges, null);
+            IVertex option = MinusZero.Instance.UserInteraction.InteractionSelectButton(info, options.OutEdges);
 
             if (option == optionCancel)
                 return;
@@ -1202,7 +1202,7 @@ namespace m0.UIWpf.Visualisers.Diagram
                     }
 
                     if (ForceShowEditForm.HasValue == true && ForceShowEditForm == true)
-                        MinusZero.Instance.UserInteraction.EditEdge(ve.To, WpfUtil.GetMousePositionDnd(e));
+                        MinusZero.Instance.UserInteraction.EditEdge(ve.To);
 
                   
                     AddDiagramItem(x,
