@@ -73,5 +73,15 @@ namespace m0_console.console
         {
 
         }
+
+        void UserInteractionInitialize()
+        {
+
+        }
+
+        public void UserInteractionFinalize()
+        {
+
+        }
     }
 }

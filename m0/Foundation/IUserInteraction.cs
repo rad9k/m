@@ -41,5 +41,11 @@ namespace m0.Foundation
         void OpenCodeVisualiser(IVertex baseVertex,  bool isFloating);
 
         void OpenFormVisualiser(IVertex baseVertex, bool isFloating);
+
+        //
+
+        void UserInteractionInitialize();
+
+        void UserInteractionFinalize();
     }
 }

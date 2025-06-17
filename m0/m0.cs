@@ -6,7 +6,6 @@ using m0.Bootstrap;
 using m0.Store;
 using m0.Store.FileSystem;
 using m0.Store.Json;
-using m0.UIWpf.Visualisers.Helper;
 using m0.Util;
 using m0.ZeroCode;
 using m0.ZeroTypes;
@@ -293,7 +292,8 @@ namespace m0
 
         void Finalize()
         {
-            VisualisersList.RemoveAllVisualisers();
+            UserInteraction.UserInteractionFinalize();
+            
 
             GraphChangeTriggerWatcher.RemoveAllGraphChangeTriggers();
 
@@ -301,6 +301,8 @@ namespace m0
 
             CommitTransaction();
         }
+
+        
 
         public void Refresh()
         {
@@ -411,7 +413,7 @@ namespace m0
             ExecutionFlowHelper.Initialize();
             GraphChangeTransactionAtom.Initialize();
             Transaction.Initialize();
-            AtomVisualiserHelper.Initialize();
+            //AtomVisualiserHelper.Initialize();
         }
 
         void LoadFromFileSystem()
@@ -470,9 +472,9 @@ namespace m0
 
             AddHardware();
 
-            
 
-            UIWpf.WpfUtil.InitializeUIWpf();
+            UserInteraction.UserInteractionInitialize();
+            
 
             StaticMetaInitialize();
 

@@ -1,38 +1,34 @@
-﻿using System;
+﻿using m0.Foundation;
+using m0.Graph;
+using m0.Store;
+using m0.Store.Json;
+using m0.UIWpf;
+using m0.UIWpf.Commands;
+using m0.UIWpf.Dialog;
+using m0.UIWpf.Visualisers;
+using m0.UIWpf.Visualisers.Helper;
+using m0.Util;
+using m0.ZeroTypes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Runtime.InteropServices;
-using System.Windows.Interop;
-
-using m0.UIWpf;
-using m0.Graph;
-
-using Xceed.Wpf.AvalonDock.Layout;
-using m0.Foundation;
-
-using m0.UIWpf.Visualisers;
-using m0.ZeroTypes;
-using m0.Util;
 using Xceed.Wpf.AvalonDock.Controls;
-using m0.UIWpf.Dialog;
-using m0.Store;
-using m0.Store.Json;
-using m0.UIWpf.Commands;
+using Xceed.Wpf.AvalonDock.Layout;
 
-namespace m0.desktop
+namespace m0
 {
-
-
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -360,6 +356,16 @@ namespace m0.desktop
         public string InteractionInput(String question)
         {
             return new StringQuestionWindow(question, WpfUtil.GetMousePosition()).Answer;
+        }
+
+        void UserInteractionInitialize()
+        {
+            UIWpf.WpfUtil.InitializeUIWpf();
+        }
+
+        public void UserInteractionFinalize()
+        {
+            VisualisersList.RemoveAllVisualisers();
         }
 
         private void Window_Closed(object sender, EventArgs e)

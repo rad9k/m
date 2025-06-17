@@ -49,7 +49,9 @@ namespace m0.UIWpf.Visualisers.Helper
 
         public IVertex baseEdgeVertex;
 
-        static IVertex baseEdge_meta;
+        static IVertex r = m0.MinusZero.Instance.root;        
+
+        static IVertex baseEdge_meta = r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge");
 
         public delegate INoInEdgeInOutVertexVertex CustomVertexChangeHandler(IExecution exe);
 

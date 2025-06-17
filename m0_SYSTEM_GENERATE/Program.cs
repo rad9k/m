@@ -3,7 +3,6 @@ using m0.Foundation;
 using m0.Graph;
 using m0.Graph.ExecutionFlow;
 using m0.Store.Json;
-using m0.UIWpf.Visualisers.Helper;
 using m0.Util;
 using System;
 using System.Collections.Generic;
@@ -182,11 +181,11 @@ namespace m0_SYSTEM_GENERATE
 
             print("execution succesfull finish");
 
-            //System.Diagnostics.Process.Start("c:\\Users\\rad9k\\Source\\Repos\\m\\m0_SYSTEM_GENERATE\\bin\\Debug\\x.bat");
+            System.Diagnostics.Process.Start("c:\\Users\\rad9k\\Source\\Repos\\m\\m0_SYSTEM_GENERATE\\bin\\Debug\\x.bat");
 
             //System.Diagnostics.Process.Start("c:\\Users\\radoslaw.tereszczuk\\Source\\Repos\\m\\m0_SYSTEM_GENERATE\\bin\\Debug\\xx.bat");
 
-            System.Diagnostics.Process.Start("c:\\Users\\teres\\source\\repos\\m\\m0_SYSTEM_GENERATE\\bin\\Debug\\a.bat");
+           // System.Diagnostics.Process.Start("c:\\Users\\teres\\source\\repos\\m\\m0_SYSTEM_GENERATE\\bin\\Debug\\a.bat");
         }
     }
 }
