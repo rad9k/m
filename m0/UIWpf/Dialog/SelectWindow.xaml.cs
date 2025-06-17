@@ -71,7 +71,7 @@ namespace m0.UIWpf.Dialog
         {
              if (List.SelectedItem != null)
                 {
-                    SelectedOption = ((IEdge)List.SelectedItem).To;
+                    SelectedOption = (IVertex)List.SelectedItem;
 
                     Close();
                 }
