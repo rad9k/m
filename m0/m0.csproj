@@ -149,6 +149,7 @@
     <Compile Include="Bootstrap\FileSystemLoader.cs" />
     <Compile Include="Store\Binary\BinaryStore.cs" />
     <Compile Include="Store\Text\TextStore.cs" />
+    <Compile Include="Util\DynamicMethodInvoker.cs" />
     <Compile Include="Util\ZString.cs" />
     <Compile Include="ZeroCode\Helpers\DictionariesForFormalTextLanguageFactory.cs" />
     <Compile Include="ZeroCode\Helpers\MultiLineString.cs" />
