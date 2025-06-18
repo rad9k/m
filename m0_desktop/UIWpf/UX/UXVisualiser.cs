@@ -1946,7 +1946,11 @@ namespace m0.UIWpf.UX
             }
 
             if (DoCreateDiagramLine_Edge_toUse == null)
+            {
+                m0Main.Instance.PositionForUserInteraction = WpfUtil.GetMousePosition();
+
                 selected = MinusZero.Instance.UserInteraction.InteractionSelect(info, v.OutEdges, true);
+            }
 
             if (selected != null || DoCreateDiagramLine_Edge_toUse != null)
             {

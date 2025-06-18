@@ -310,23 +310,29 @@ namespace m0
             i.ShowDialog();
         }
 
+        public Point? PositionForUserInteraction = null;
+
         public IVertex InteractionSelect(IVertex info, IList<IEdge> options, bool firstSelected)
         {
-            SelectWindow d = new SelectWindow(info, options, firstSelected, WpfUtil.GetMousePosition());
+            SelectWindow d = new SelectWindow(info, options, firstSelected, PositionForUserInteraction);
+
+            PositionForUserInteraction = null;
 
             return d.SelectedOption;
         }
 
         public IVertex InteractionSelectButton(IVertex info, IList<IEdge> options)
         {
-            SelectWindowButton d = new SelectWindowButton(info, options, WpfUtil.GetMousePosition());
+            SelectWindowButton d = new SelectWindowButton(info, options, PositionForUserInteraction);
+
+            PositionForUserInteraction = null;
 
             return d.SelectedOption;
         }
 
         public void EditEdge(IVertex baseVertex)
         {
-            ShowContentFloating_withSize( new Edit(baseVertex),500,550);
+            ShowContentFloating_withSize( new Edit(baseVertex), 500, 550);
         }
 
         public void OpenDefaultVisualiser(IVertex baseVertex, bool isFloating)
@@ -353,7 +359,11 @@ namespace m0
 
         public string InteractionInput(String question)
         {
-            return new StringQuestionWindow(question, WpfUtil.GetMousePosition()).Answer;
+            string answer = new StringQuestionWindow(question, PositionForUserInteraction).Answer;
+
+            PositionForUserInteraction = null;
+
+            return answer;
         }
 
         public void UserInteractionInitialize()
