@@ -1,0 +1,10 @@
+System\FormalTextLanguage\ZeroCode
+""
+	import @System\Lib\StdUI direct meta
+	variable "a" @VertexType
+	a = @InteractionInput["type something"]
+	@InteractionOutput[a]
+	a = @InteractionSelect["select something", :System\]
+	@InteractionOutput[a]
+	a = @InteractionSelectButton["select something", :System\]
+	@InteractionOutput[a]

@@ -10,11 +10,13 @@ namespace m0.desktop
     {
         public static void RUN()
         {
-            MinusZero.Instance.Initialize();
-
             m0Main mainWindow = new m0Main();
 
             MinusZero.Instance.SetUserInteraction(mainWindow);
+
+            MinusZero.Instance.Initialize();
+
+            mainWindow.Init();
 
             //m0_COMPOSER.Runtime.Initialisation.Execute();
 

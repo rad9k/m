@@ -45,21 +45,18 @@ namespace m0
 
             InitializeComponent();
 
-            //MinusZero.Instance.Initialize();
+            this.Loaded += new RoutedEventHandler(m0Main_Loaded);
 
+            this_static = this;
+        }
+
+        public void Init()
+        {
             IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, null, MinusZero.Instance.Root);
 
             mainTree = new TreeVisualiser(baseEdgeVertex, null, false);
 
-            //GraphUtil.ReplaceEdge(stv.Vertex.Get(false, "BaseEdge:"), "To", MinusZero.Instance.Root);                                    
-            
-            this.root.Content=mainTree;
-
-
-            this.Loaded += new RoutedEventHandler(m0Main_Loaded);
-
-            this_static = this;
-
+            this.root.Content = mainTree;
         }
 
 

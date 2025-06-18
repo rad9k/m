@@ -12,9 +12,9 @@ namespace m0.console
     {
         public static void RUN()
         {
-            MinusZero.Instance.Initialize();
-
             MinusZero.Instance.SetUserInteraction(new ConsoleUserInteraction());
+
+            MinusZero.Instance.Initialize();
 
             MinusZero.Instance.Initialize_AfterUXInitialized();
         }
