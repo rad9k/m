@@ -168,7 +168,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                 IVertex colorVertex = segment.BaseVertex.Get(false, "PitchColor:");
 
                 if (colorVertex != null)
-                    segment.Color = ColorHelper.GetColorFromColorVertex(colorVertex);
+                    segment.Color = ColorHelper_desktop.GetColorFromColorVertex(colorVertex);
 
                 //
 
@@ -177,7 +177,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
                 if (noteBackgroundColorVertex != null)
                 {
                     segment.UseBackgroundColor = true;
-                    segment.BackgroundColor = ColorHelper.GetColorFromColorVertex(noteBackgroundColorVertex);
+                    segment.BackgroundColor = ColorHelper_desktop.GetColorFromColorVertex(noteBackgroundColorVertex);
                 }
 
 

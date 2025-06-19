@@ -248,6 +248,7 @@
     <Compile Include="UIWpf\Visualisers\WrapVisualiser.cs" />
     <Compile Include="UIWpf\VisualiserViewWrapper.cs" />
     <Compile Include="UIWpf\WpfUtil.cs" />
+    <Compile Include="ZeroTypes\ColorHelper_desktop.cs" />
     <Compile Include="ZeroTypes\UX\CodeItem.xaml.cs">
       <DependentUpon>CodeItem.xaml</DependentUpon>
     </Compile>

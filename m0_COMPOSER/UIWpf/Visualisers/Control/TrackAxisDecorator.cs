@@ -310,7 +310,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
                 if (colorVertex != null)
                 {
-                    segment.Color = ColorHelper.GetColorFromColorVertex(colorVertex);
+                    segment.Color = ColorHelper_desktop.GetColorFromColorVertex(colorVertex);
 
                     //segment.UseBackgroundColor = true;
 

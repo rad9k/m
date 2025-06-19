@@ -106,7 +106,7 @@ namespace m0.ZeroTypes.UX
 
         public System.Windows.Media.Color GetColor()
         {
-            return ColorHelper.GetColorFromColorVertex(Vertex);
+            return ColorHelper_desktop.GetColorFromColorVertex(Vertex);
         }
 
         public Brush GetBrush()

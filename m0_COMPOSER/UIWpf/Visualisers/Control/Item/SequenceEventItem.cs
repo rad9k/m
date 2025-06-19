@@ -124,7 +124,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control.Item
                 if (colorVertex == null)
                     return (Brush)WpfUtil.FindResource("0BackgroundBrush");
 
-                TrackColor = ColorHelper.GetColorFromColorVertex(colorVertex);
+                TrackColor = ColorHelper_desktop.GetColorFromColorVertex(colorVertex);
 
                 return new SolidColorBrush(TrackColor);
             }

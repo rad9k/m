@@ -306,7 +306,7 @@ namespace m0.UIWpf
 
         public static Brush GetBrushFromColorVertex(IVertex colorVertex)
         {
-            return new SolidColorBrush(ColorHelper.GetColorFromColorVertex(colorVertex));
+            return new SolidColorBrush(ColorHelper_desktop.GetColorFromColorVertex(colorVertex));
         }
 
         public static double GetHorizontalSizeOfCharacterString(int Characters)
