@@ -1,0 +1,383 @@
+﻿"STORE"
+	import @System\Data\UX\Colors direct meta
+	import @System\Lib\Music direct meta
+	<@PitchSet :: "XBase09_mode_2_PitchSet">
+		<@$Is :: @PitchSet>
+		<@VisualisedPitch :: "Bass Drum 1">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Bass Drum 1">
+			<@Octave :: "2">
+			<@Note\Note :: "0">
+			<@PitchColor :: @VeryLightRed>
+			<@NoteBackgroundColor :: @VeryVeryLightRed>
+		<@VisualisedPitch :: "Bass Drum 2">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Bass Drum 2">
+			<@Octave :: "2">
+			<@Note\Note :: "1">
+			<@PitchColor :: @VeryLightRed>
+			<@NoteBackgroundColor :: @VeryVeryLightRed>
+		<@VisualisedPitch :: "Bass Drum 3">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Bass Drum 3">
+			<@Octave :: "2">
+			<@Note\Note :: "2">
+			<@PitchColor :: @VeryLightRed>
+			<@NoteBackgroundColor :: @VeryVeryLightRed>
+		<@VisualisedPitch :: "Bass Drum 4">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Bass Drum 4">
+			<@Octave :: "2">
+			<@Note\Note :: "3">
+			<@PitchColor :: @VeryLightRed>
+			<@NoteBackgroundColor :: @VeryVeryLightRed>
+		<@VisualisedPitch :: "Bass Drum 5">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Bass Drum 5">
+			<@Octave :: "2">
+			<@Note :: "4">
+			<@PitchColor :: @VeryLightRed>
+			<@NoteBackgroundColor :: @VeryVeryLightRed>
+		<@VisualisedPitch :: "Bass Drum 6">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Bass Drum 6">
+			<@Octave :: "2">
+			<@Note\Note :: "5">
+			<@PitchColor :: @VeryLightRed>
+			<@NoteBackgroundColor :: @VeryVeryLightRed>
+		<@VisualisedPitch :: "Bass Drum 7">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Bass Drum 7">
+			<@Octave :: "2">
+			<@Note\Note :: "6">
+			<@PitchColor :: @VeryLightRed>
+			<@NoteBackgroundColor :: @VeryVeryLightRed>
+		<@VisualisedPitch :: "Bass Drum 8">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Bass Drum 8">
+			<@Octave :: "2">
+			<@Note\Note :: "7">
+			<@PitchColor :: @VeryLightRed>
+			<@NoteBackgroundColor :: @VeryVeryLightRed>
+		<@VisualisedPitch :: "Bass Drum 9">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Bass Drum 9">
+			<@Octave :: "2">
+			<@Note :: "8">
+			<@PitchColor :: @VeryLightRed>
+			<@NoteBackgroundColor :: @VeryVeryLightRed>
+		<@VisualisedPitch :: "Bass Drum 10">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Bass Drum 10">
+			<@Octave :: "2">
+			<@Note\Note :: "9">
+			<@PitchColor :: @VeryLightRed>
+			<@NoteBackgroundColor :: @VeryVeryLightRed>
+		<@VisualisedPitch :: "Bass Drum 11">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Bass Drum 11">
+			<@Octave :: "2">
+			<@Note\Note :: "10">
+			<@PitchColor :: @VeryLightRed>
+			<@NoteBackgroundColor :: @VeryVeryLightRed>
+		<@VisualisedPitch :: "Bass Drum 12">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Bass Drum 12">
+			<@Octave :: "2">
+			<@Note :: "11">
+			<@PitchColor :: @VeryLightRed>
+			<@NoteBackgroundColor :: @VeryVeryLightRed>
+		<@VisualisedPitch :: "Bass Drum 13">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Bass Drum 13">
+			<@Octave :: "3">
+			<@Note\Note :: "0">
+			<@PitchColor :: @VeryLightRed>
+			<@NoteBackgroundColor :: @VeryVeryLightRed>
+		<@VisualisedPitch :: "Bass Drum 14">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Bass Drum 14">
+			<@Octave :: "3">
+			<@Note\Note :: "1">
+			<@PitchColor :: @VeryLightRed>
+			<@NoteBackgroundColor :: @VeryVeryLightRed>
+		<@VisualisedPitch :: "Bass Drum 15">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Bass Drum 15">
+			<@Octave :: "3">
+			<@Note\Note :: "2">
+			<@PitchColor :: @VeryLightRed>
+			<@NoteBackgroundColor :: @VeryVeryLightRed>
+		<@VisualisedPitch :: "Bass Drum 16">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Bass Drum 16">
+			<@Octave :: "3">
+			<@Note :: "3">
+			<@PitchColor :: @VeryLightRed>
+			<@NoteBackgroundColor :: @VeryVeryLightRed>
+		<@VisualisedPitch :: "Snare Drum 1">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Snare Drum 1">
+			<@Octave :: "3">
+			<@Note\Note :: "11">
+			<@PitchColor :: @VeryLightGreen>
+			<@NoteBackgroundColor :: @VeryVeryLightGreen>
+		<@VisualisedPitch :: "Snare Drum 2">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Snare Drum 2">
+			<@Octave :: "4">
+			<@Note\Note :: "0">
+			<@PitchColor :: @VeryLightGreen>
+			<@NoteBackgroundColor :: @VeryVeryLightGreen>
+		<@VisualisedPitch :: "Snare Drum 3">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Snare Drum 3">
+			<@Octave :: "4">
+			<@Note\Note :: "1">
+			<@PitchColor :: @VeryLightGreen>
+			<@NoteBackgroundColor :: @VeryVeryLightGreen>
+		<@VisualisedPitch :: "Snare Drum 4">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Snare Drum 4">
+			<@Octave :: "4">
+			<@Note\Note :: "2">
+			<@PitchColor :: @VeryLightGreen>
+			<@NoteBackgroundColor :: @VeryVeryLightGreen>
+		<@VisualisedPitch :: "Snare Drum 5">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Snare Drum 5">
+			<@Octave :: "4">
+			<@Note :: "3">
+			<@PitchColor :: @VeryLightGreen>
+			<@NoteBackgroundColor :: @VeryVeryLightGreen>
+		<@VisualisedPitch :: "Snare Drum 6">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Snare Drum 6">
+			<@Octave :: "4">
+			<@Note\Note :: "4">
+			<@PitchColor :: @VeryLightGreen>
+			<@NoteBackgroundColor :: @VeryVeryLightGreen>
+		<@VisualisedPitch :: "Snare Drum 7">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Snare Drum 7">
+			<@Octave :: "4">
+			<@Note\Note :: "5">
+			<@PitchColor :: @VeryLightGreen>
+			<@NoteBackgroundColor :: @VeryVeryLightGreen>
+		<@VisualisedPitch :: "Snare Drum 8">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Snare Drum 8">
+			<@Octave :: "4">
+			<@Note\Note :: "6">
+			<@PitchColor :: @VeryLightGreen>
+			<@NoteBackgroundColor :: @VeryVeryLightGreen>
+		<@VisualisedPitch :: "Snare Drum 9">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Snare Drum 9">
+			<@Octave :: "4">
+			<@Note\Note :: "7">
+			<@PitchColor :: @VeryLightGreen>
+			<@NoteBackgroundColor :: @VeryVeryLightGreen>
+		<@VisualisedPitch :: "Closed Hi Hat 1">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Closed Hi Hat 1">
+			<@Octave :: "4">
+			<@Note\Note :: "8">
+			<@PitchColor :: @VeryLightBlue>
+			<@NoteBackgroundColor :: @VeryVeryLightBlue>
+		<@VisualisedPitch :: "Closed Hi Hat 2">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Closed Hi Hat 2">
+			<@Octave :: "4">
+			<@Note\Note :: "9">
+			<@PitchColor :: @VeryLightBlue>
+			<@NoteBackgroundColor :: @VeryVeryLightBlue>
+		<@VisualisedPitch :: "Closed Hi Hat 3">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Closed Hi Hat 3">
+			<@Octave :: "4">
+			<@Note :: "10">
+			<@PitchColor :: @VeryLightBlue>
+			<@NoteBackgroundColor :: @VeryVeryLightBlue>
+		<@VisualisedPitch :: "Closed Hi Hat 4">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Closed Hi Hat 4">
+			<@Octave :: "4">
+			<@Note\Note :: "11">
+			<@PitchColor :: @VeryLightBlue>
+			<@NoteBackgroundColor :: @VeryVeryLightBlue>
+		<@VisualisedPitch :: "Closed Hi Hat 5">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Closed Hi Hat 5">
+			<@Octave :: "5">
+			<@Note :: "0">
+			<@PitchColor :: @VeryLightBlue>
+			<@NoteBackgroundColor :: @VeryVeryLightBlue>
+		<@VisualisedPitch :: "Closed Hi Hat 6">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Closed Hi Hat 6">
+			<@Octave :: "5">
+			<@Note\Note :: "1">
+			<@PitchColor :: @VeryLightBlue>
+			<@NoteBackgroundColor :: @VeryVeryLightBlue>
+		<@VisualisedPitch :: "Closed Hi Hat 7">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Closed Hi Hat 7">
+			<@Octave :: "5">
+			<@Note\Note :: "2">
+			<@PitchColor :: @VeryLightBlue>
+			<@NoteBackgroundColor :: @VeryVeryLightBlue>
+		<@VisualisedPitch :: "Closed Hi Hat 8">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Closed Hi Hat 8">
+			<@Octave :: "5">
+			<@Note\Note :: "3">
+			<@PitchColor :: @VeryLightBlue>
+			<@NoteBackgroundColor :: @VeryVeryLightBlue>
+		<@VisualisedPitch :: "Closed Hi Hat 9">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Closed Hi Hat 9">
+			<@Octave :: "5">
+			<@Note\Note :: "4">
+			<@PitchColor :: @VeryLightBlue>
+			<@NoteBackgroundColor :: @VeryVeryLightBlue>
+		<@VisualisedPitch :: "Closed Hi Hat 10">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Closed Hi Hat 10">
+			<@Octave :: "5">
+			<@Note\Note :: "5">
+			<@PitchColor :: @VeryLightBlue>
+			<@NoteBackgroundColor :: @VeryVeryLightBlue>
+		<@VisualisedPitch :: "Closed Hi Hat 11">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Closed Hi Hat 11">
+			<@Octave :: "5">
+			<@Note\Note :: "6">
+			<@PitchColor :: @VeryLightBlue>
+			<@NoteBackgroundColor :: @VeryVeryLightBlue>
+		<@VisualisedPitch :: "Closed Hi Hat 12">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Closed Hi Hat 12">
+			<@Octave :: "5">
+			<@Note\Note :: "7">
+			<@PitchColor :: @VeryLightBlue>
+			<@NoteBackgroundColor :: @VeryVeryLightBlue>
+		<@VisualisedPitch :: "Closed Hi Hat 13">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Closed Hi Hat 13">
+			<@Octave :: "5">
+			<@Note\Note :: "8">
+			<@PitchColor :: @VeryLightBlue>
+			<@NoteBackgroundColor :: @VeryVeryLightBlue>
+		<@VisualisedPitch :: "Closed Hi Hat 14">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Closed Hi Hat 14">
+			<@Octave :: "5">
+			<@Note\Note :: "9">
+			<@PitchColor :: @VeryLightBlue>
+			<@NoteBackgroundColor :: @VeryVeryLightBlue>
+		<@VisualisedPitch :: "Closed Hi Hat 15">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Closed Hi Hat 15">
+			<@Octave :: "5">
+			<@Note\Note :: "10">
+			<@PitchColor :: @VeryLightBlue>
+			<@NoteBackgroundColor :: @VeryVeryLightBlue>
+		<@VisualisedPitch :: "Closed Hi Hat 16">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Closed Hi Hat 16">
+			<@Octave :: "5">
+			<@Note\Note :: "11">
+			<@PitchColor :: @VeryLightBlue>
+			<@NoteBackgroundColor :: @VeryVeryLightBlue>
+		<@VisualisedPitch :: "Open Hi Hat 1">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Open Hi Hat 1">
+			<@Octave :: "6">
+			<@Note\Note :: "0">
+			<@PitchColor :: @VeryLightOrange>
+			<@NoteBackgroundColor :: @VeryVeryLightOrange>
+		<@VisualisedPitch :: "Open Hi Hat 2">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Open Hi Hat 2">
+			<@Octave :: "6">
+			<@Note\Note :: "1">
+			<@PitchColor :: @VeryLightOrange>
+			<@NoteBackgroundColor :: @VeryVeryLightOrange>
+		<@VisualisedPitch :: "Open Hi Hat 3">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Open Hi Hat 3">
+			<@Octave :: "6">
+			<@Note\Note :: "2">
+			<@PitchColor :: @VeryLightOrange>
+			<@NoteBackgroundColor :: @VeryVeryLightOrange>
+		<@VisualisedPitch :: "Open Hi Hat 4">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Open Hi Hat 4">
+			<@Octave :: "6">
+			<@Note\Note :: "3">
+			<@PitchColor :: @VeryLightOrange>
+			<@NoteBackgroundColor :: @VeryVeryLightOrange>
+		<@VisualisedPitch :: "Open Hi Hat 5">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Open Hi Hat 5">
+			<@Octave :: "6">
+			<@Note :: "4">
+			<@PitchColor :: @VeryLightOrange>
+			<@NoteBackgroundColor :: @VeryVeryLightOrange>
+		<@VisualisedPitch :: "Open Hi Hat 6">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Open Hi Hat 6">
+			<@Octave :: "6">
+			<@Note\Note :: "5">
+			<@PitchColor :: @VeryLightOrange>
+			<@NoteBackgroundColor :: @VeryVeryLightOrange>
+		<@VisualisedPitch :: "Open Hi Hat 7">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Open Hi Hat 7">
+			<@Octave :: "6">
+			<@Note :: "6">
+			<@PitchColor :: @VeryLightOrange>
+			<@NoteBackgroundColor :: @VeryVeryLightOrange>
+		<@VisualisedPitch :: "Open Hi Hat 8">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Open Hi Hat 8">
+			<@Octave :: "6">
+			<@Note\Note :: "7">
+			<@PitchColor :: @VeryLightOrange>
+			<@NoteBackgroundColor :: @VeryVeryLightOrange>
+		<@VisualisedPitch :: "Open Hi Hat 9">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Open Hi Hat 9">
+			<@Octave :: "6">
+			<@Note\Note :: "8">
+			<@PitchColor :: @VeryLightOrange>
+			<@NoteBackgroundColor :: @VeryVeryLightOrange>
+		<@VisualisedPitch :: "Open Hi Hat 10">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Open Hi Hat 10">
+			<@Octave :: "6">
+			<@Note\Note :: "9">
+			<@PitchColor :: @VeryLightOrange>
+			<@NoteBackgroundColor :: @VeryVeryLightOrange>
+		<@VisualisedPitch :: "Open Hi Hat 11">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Open Hi Hat 11">
+			<@Octave :: "6">
+			<@Note\Note :: "10">
+			<@PitchColor :: @VeryLightOrange>
+			<@NoteBackgroundColor :: @VeryVeryLightOrange>
+		<@VisualisedPitch :: "Open Hi Hat 12">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Open Hi Hat 12">
+			<@Octave :: "6">
+			<@Note\Note :: "11">
+			<@PitchColor :: @VeryLightOrange>
+			<@NoteBackgroundColor :: @VeryVeryLightOrange>
+		<@VisualisedPitch :: "Open Hi Hat 13">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Open Hi Hat 13">
+			<@Octave :: "7">
+			<@Note\Note :: "0">
+			<@PitchColor :: @VeryLightOrange>
+			<@NoteBackgroundColor :: @VeryVeryLightOrange>

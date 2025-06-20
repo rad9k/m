@@ -1,0 +1,290 @@
+﻿"Y"
+	import @System\Lib\Std direct meta
+	variable "In" @VertexType
+	In = "raz"
+	In = @@Substring[In, "2", "2"]
+
+"Y"
+	variable "a" @Vertex
+	variable "b" @String
+	variable "c" @Vertex
+	a = @@System
+	b = "Class"
+	b += "AtomType"
+	c = a\:Meta\:ZeroTypes\'{b}'
+
+"Y"
+	variable "a" @Vertex
+	variable "b" @String
+	variable "c" @Vertex
+	a = @@System
+	b = "HasFilter"
+	b += "HasColor"
+	c = a\:Meta\:ZeroTypes\Class:'{b}'
+
+
+"Y"
+	variable "ap" @Vertex
+	variable "b" @Vertex
+	variable "c" @Vertex
+	ap = Drive:C\:m0\:'a.m0'\$Store\:per
+	b = Drive:C\:m0\:'b.m0'\$Store
+	c = Drive:C\:m0\:'c.m0'\$Store
+	c <<< ap
+
+
+"Y"
+	variable "s" @VertexType
+	s = @@System\Lib\Std
+	variable "out" @String
+	variable "In" @VertexType
+	In = "r"
+	In += "dw a"
+	In += "12345"
+	out = s\:Substring[In, "1", "4"]
+
+"Y"
+	variable "s" @VertexType
+	import @System\Lib\Std direct meta
+	variable "out" @String
+	variable "In" @VertexType
+	In = "r"
+	In += "dw a"
+	In += "12345"
+	out = @@Substring[In, "1", "4"]
+
+"Y"
+	import @System\Meta\Store\FileSystem direct meta
+	"o" ::
+	o = Drive:C\:m0
+	o +< @@File :: "x.m0"
+	"oo" ::
+	oo = Drive:C\:m0\:'x.m0'\$Store
+	oo <- "siema"
+
+"Y"
+	import @System\Lib\Std direct meta
+	import @System\Meta\Store\FileSystem direct meta
+	"o" ::
+	o = Drive:C\:m0
+	o +< @@File :: "x.m0"
+	"oo" ::
+	oo = Drive:C\:m0\:'x.m0'\$Store
+	oo <- "siema"{
+		foreach "x" in @@Sequence["1", "10"]
+	}
+
+
+
+"Y"
+	variable "a" @Vertex
+	a = :C\:m0\:t.m0\$Store:
+	a <+< "testA" :: "testAA"{
+		"B" :: "BB"
+		"C" :: "CC"{
+			"D" :: "DD"
+		}
+	}
+
+"Y"
+	import @System\Lib\Std direct meta
+	import @System\Meta\Store\FileSystem direct meta
+	"o" ::
+	o = Drive:C\:m0
+	o +< @@File :: "x.m0"
+	"oo" ::
+	oo = Drive:C\:m0\:'x.m0'\$Store
+	oo <+< :: "siemaX"{
+		foreach "x" in @@Sequence["1", "10"]
+			:: x{
+				foreach "y" in @@Sequence["1", "10"]
+					:: y{
+						foreach "z" in @@Sequence["1", "10"]
+							:: z{
+								foreach "v" in @@Sequence["1", "10"]
+									@@System\Meta :: v
+							}
+					}
+			}
+	}
+
+"Y"
+	variable "mis" @Boolean
+	if ("1" + "2") == "3"
+		mis = "True"
+	function "t" @String(@String "m")
+		test "4"
+			case "1"
+				return "raz"
+			case "2"
+				return "dwa"
+			case "3"
+				return "trzy"
+			fallback
+				return "def"
+			case "4"
+				if m == "True"
+					return "cztery"
+		return "kupa"
+	variable "a" @String
+	a = @t[mis]
+
+"Y"
+	a::b{
+		if "True"
+			foreach "X" in a\b\c
+				a=b+c
+		test x
+			case "True"
+				t
+				a
+				b
+				c
+			case "False"
+				f
+				a
+				b
+				c
+			fallback
+				d
+				a
+				b
+				c
+	}
+	
+"Y"
+	a +< a::B{
+		"c"::"d"{
+			e::"f"{
+				b13 + b14
+				while "False"
+					x=x+1
+			}
+		}
+	}
+
+<"Y">
+	::"A"{
+		::"A"{
+		}
+	}
+
+<"Y">
+	a\b\c
+	a:aa\b\c:cc
+	a{}:aa{}\b\c{}:cc{}
+	a{}:aa{}\b\c{}:cc{}::d{}:d{}\e\f{}:ff{}
+	::d{}:d{}\e\f{}:ff{}
+	a{}:aa{}\b\c{}:cc{}::
+	a: ::
+	:: :b
+	a{}
+	a{}\
+	{}\{}
+	{}\
+	a{x:xx,y{z:zz}:y}:aa{x,y}\b\c{x:xx,y{z:zz}:y}:cc{x,y}
+	a{x:xx,y{z:zz}:y}:aa{x,y}\b\c{x:xx,y{z:zz}:y}:cc{x,y}::d{x:xx,y{z:zz}:y}:d{x,y}\e\f{x:xx,y{z:zz}:y}:ff{x,y}
+	::d{x:xx,y{z:zz}:y}:d{x,y}\e\f{x:xx,y{z:zz}:y}:ff{x,y}
+	a{x:xx,y{z:zz}:y}:aa{x,y}\b\c{x:xx,y{z:zz}:y}:cc{x,y}::	
+	a{x:xx,y{z:zz}:y}
+	a{x:xx,y{z:zz}:y}\
+	{x:xx,y{z:zz}:y}\{x,y}
+	{x:xx,y{z:zz}:y}\
+	{}:{}::{}:{}
+	{}::
+	::{}
+	{}::{}
+	{}:
+	:{}
+	{}:\
+	:{}\
+
+________________________
+"Y"
+	((a:a + b) + c) + d
+	(((a:a + b) + c) + d) + e
+	((((a:a + b) + c) + d) + e) + f
+	(((((a:a + b:bb) + c) + d) + e) + f) + g
+	(a + (((((((x))))))) + b)
+	(a + b / c * (d - (e - (f))) + g)
+	(a \ b \ c + (d \ e - e \ f \ g))
+	(a + b / c * (d - (e + (f / (ff * (fff + fff2 - (x / v)))))) + g)
+___________
+<"Y">
+	::"A"{
+		::"a"
+		::"b"{
+			::"b2"{
+				::b11
+				::"b12"
+				"b13" + "b14"
+			}
+			::"b2"{
+				::b11
+				::"b12"
+				::(b13 + b14)
+			}
+		}
+		::"c"{
+			::c1
+			::c2
+		}
+	}
+
+<"Y">
+	(((((a:aa + b:bb) + c) + d) + e) + f) + g
+	(a + b / c * (d - (e - (f))) + g)
+	(a \ b \ c + (d \ e - e \ f \ g))
+	attribute "a" @a "1":"2" <<"3":"4">>
+		attribute "aa" @a "1":"2"
+			attribute "a" @a <<"3":"4">>
+				attribute "aaa" @a
+			association "b" @a "1":"2"
+				association "b" @a
+			aggregation "c" @a "1":"2"
+				aggregation "c" @a
+	function "f" @String()
+	function "f2" @String(@a "s", @a "ss")
+		function "f3" (@a "s", @a "ss")
+			function "f4" ()
+				# "desc"
+	while "kupa"
+		@f[]
+		@@f[]
+		@f[]+@@f[]+"2"+f[]
+
+	
+	
+_____
+
+<"Y">
+	attribute "a" @a "1":"2" <"3":"4">
+	
+	
+		attribute "aa" @a "1":"2"
+		
+			attribute "a" @a <"3":"4">
+			
+			
+				attribute "aaa" @a
+				
+			association "b" @b "1":"2"
+			
+				association "b" @b
+				
+				
+			aggregation "c" @b "1":"2"
+			
+			
+			
+				aggregation "c" @b	
+				a
+
+
+
+
+____________________________
+
+
+aggregation "c" @b
+	

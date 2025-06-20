@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "grguFbeiEOo=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\rad9k\\.nuget\\packages\\jil\\2.17.0\\jil.2.17.0.nupkg.sha512",
+    "C:\\Users\\rad9k\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
+    "C:\\Users\\rad9k\\.nuget\\packages\\sigil\\5.0.0\\sigil.5.0.0.nupkg.sha512",
+    "C:\\Users\\rad9k\\.nuget\\packages\\system.data.datasetextensions\\4.5.0\\system.data.datasetextensions.4.5.0.nupkg.sha512"
+  ],
+  "logs": []
+}

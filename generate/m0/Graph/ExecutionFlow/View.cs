@@ -1,4 +1,5 @@
-﻿using m0.Foundation;
+﻿using ICSharpCode.AvalonEdit.Rendering;
+using m0.Foundation;
 using m0.Util;
 using m0.ZeroCode;
 using m0.ZeroCode.Helpers;

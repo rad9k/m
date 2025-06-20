@@ -1,0 +1,36 @@
+﻿"STORE"
+	import @System\Lib\Music direct meta
+	class "SimpleTransformer"
+		association "Input" @Sequence "0":"1"
+		association "Output" @Sequence "0":"1"
+		association "tst" @Vertex "1":"1"
+		method "Process" ()
+			Output\ExtendTimeLength = _Input\ExtendTimeLength
+			if Output\Length === ~00
+				Output +< @@HasLength\Length :: _"0"
+			Output\Length = _Input\Length
+			if Output\IsDrum === ~00
+				Output +< @@Sequence\IsDrum :: _"False"
+			if Input\IsDrum<> == "1"
+				Output\IsDrum = _Input\IsDrum
+			tst = Output#Sequence:
+			this\tst <+< @@Sequence ;; Output
+			this\tst ~< @@Sequence ;; Output
+
+
+this\tst -< @@Sequence ;; Output x
+this\tst -< @@Sequence :: Output x
+this\tst -< Output x
+
+this\tst ~< @@Sequence ;; Output x
+this\tst ~< @@Sequence :: Output
+this\tst ~< Output x
+
+
+this\tst -< @@Sequence ;; this\Output -
+this\tst -< @@Sequence :: this\Output x
+this\tst -< this\Output x
+
+this\tst ~< @@Sequence ;; this\Output -
+this\tst ~< @@Sequence :: this\Output x
+this\tst ~< this\Output -

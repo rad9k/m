@@ -1,0 +1,110 @@
+﻿"STORE"
+	import @System\Data\UX\Colors direct meta
+	import @System\Lib\Music direct meta
+	<@PitchSet :: "MFB522_PitchSet">
+		<@$Is :: @PitchSet>
+		<@VisualisedPitch :: "BD short">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "BD short">
+			<@Octave :: "1">
+			<@Note\Note :: "11">
+			<@PitchColor :: @VeryLightRed>
+			<@NoteBackgroundColor :: @VeryVeryLightRed>
+		<@VisualisedPitch :: "BD long">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "BD long">
+			<@Octave :: "2">
+			<@Note\Note :: "0">
+			<@PitchColor :: @VeryLightRed>
+			<@NoteBackgroundColor :: @VeryVeryLightRed>
+		<@VisualisedPitch :: "Rimshot">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Rimshot">
+			<@Octave :: "2">
+			<@Note\Note :: "1">
+			<@PitchColor :: @VeryLightGreen>
+			<@NoteBackgroundColor :: @VeryVeryLightGreen>
+		<@VisualisedPitch :: "SD">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "SD">
+			<@Octave :: "2">
+			<@Note\Note :: "2">
+			<@PitchColor :: @VeryLightGreen>
+			<@NoteBackgroundColor :: @VeryVeryLightGreen>
+		<@VisualisedPitch :: "Clap short">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Clap short">
+			<@Octave :: "2">
+			<@Note\Note :: "3">
+			<@PitchColor :: @VeryLightCitron>
+			<@NoteBackgroundColor :: @VeryVeryLightCitron>
+		<@VisualisedPitch :: "Clap long">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Clap long">
+			<@Octave :: "2">
+			<@Note\Note :: "4">
+			<@PitchColor :: @VeryLightCitron>
+			<@NoteBackgroundColor :: @VeryVeryLightCitron>
+		<@VisualisedPitch :: "Low Tom/Conga">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Low Tom/Conga">
+			<@Octave :: "2">
+			<@Note\Note :: "9">
+			<@PitchColor :: @VeryLightLimeGreen>
+			<@NoteBackgroundColor :: @VeryVeryLightLimeGreen>
+		<@VisualisedPitch :: "Mid Tom/Conga">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Mid Tom/Conga">
+			<@Octave :: "2">
+			<@Note\Note :: "11">
+			<@PitchColor :: @VeryLightLimeGreen>
+			<@NoteBackgroundColor :: @VeryVeryLightLimeGreen>
+		<@VisualisedPitch :: "Hi Tom/Conga">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Hi Tom/Conga">
+			<@Octave :: "3">
+			<@Note\Note :: "0">
+			<@PitchColor :: @VeryLightLimeGreen>
+			<@NoteBackgroundColor :: @VeryVeryLightLimeGreen>
+		<@VisualisedPitch :: "Top Tom/Conga">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Top Tom/Conga">
+			<@Octave :: "3">
+			<@Note\Note :: "2">
+			<@PitchColor :: @VeryLightLimeGreen>
+			<@NoteBackgroundColor :: @VeryVeryLightLimeGreen>
+		<@VisualisedPitch :: "Cowbell">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Cowbell">
+			<@Octave :: "2">
+			<@Note\Note :: "5">
+			<@PitchColor :: @VeryLightOrange>
+			<@NoteBackgroundColor :: @VeryVeryLightOrange>
+		<@VisualisedPitch :: "Clave">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Clave">
+			<@Octave :: "2">
+			<@Note\Note :: "7">
+			<@PitchColor :: @VeryLightOrange>
+			<@NoteBackgroundColor :: @VeryVeryLightOrange>
+		<@VisualisedPitch :: "Cymbal">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Cymbal">
+			<@Octave :: "3">
+			<@Note\Note :: "1">
+			<@PitchColor :: @VeryLightVioletBlue>
+			<@NoteBackgroundColor :: @VeryVeryLightVioletBlue>
+		<@VisualisedPitch :: "Hi-hat">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Hi-hat">
+			<@Octave :: "2">
+			<@Note\Note :: "8">
+			<@PitchColor :: @VeryLightAzure>
+			<@NoteBackgroundColor :: @VeryVeryLightAzure>
+		<@VisualisedPitch :: "Open Hi-hat">
+			<@$Is :: @VisualisedPitch>
+			<@Name :: "Open Hi-hat">
+			<@Octave :: "2">
+			<@Note\Note :: "10">
+			<@PitchColor :: @VeryLightAzure>
+			<@NoteBackgroundColor :: @VeryVeryLightAzure>

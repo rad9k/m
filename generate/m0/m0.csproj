@@ -1,31 +1,289 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>8.0</LangVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A8A00DED-611C-4FF5-8B12-5ECC14242B23}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <UseWindowsForms>false</UseWindowsForms>
-    <UseWPF>false</UseWPF>
-    <ImportWindowsDesktopTargets>false</ImportWindowsDesktopTargets>
-    <StartupObject />
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>m0</RootNamespace>
+    <AssemblyName>m0</AssemblyName>
+	<TargetFramework>net48</TargetFramework>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>    
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
     <Optimize>false</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Jil, Version=2.17.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Jil.2.17.0\lib\net45\Jil.dll</HintPath>
+    </Reference>
+    <Reference Include="Sigil, Version=5.0.0.0, Culture=neutral, PublicKeyToken=2d06c3494341c8ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sigil.5.0.0\lib\net461\Sigil.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="_PROJECT\MD\01 Basic ideas\Vertexes and edges.md" />
+    <None Include="_PROJECT\MD\02 Advanced ideas\Formal text langage.md" />
+    <Page Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="Bootstrap\LoadFromBootstrap.cs" />
+    <Compile Include="DotNetIntegration\CallableEndPointDictionary_INIEIOV_ZCE_IV_IV_B.cs" />
+    <Compile Include="Foundation\ICommintBeforeGlobalDetachStore.cs" />
+    <Compile Include="Foundation\IExecution.cs" />
+    <Compile Include="Foundation\INoInEdgeInOutVertexVertex.cs" />
+    <Compile Include="Foundation\IPlatformClass.cs" />
+    <Compile Include="Foundation\ISecondStageCommit.cs" />
+    <Compile Include="Foundation\ITransaction.cs" />
+    <Compile Include="Foundation\ITransactionAtom.cs" />
+    <Compile Include="Foundation\IUserInteraction.cs" />
+    <Compile Include="Graph\ExecutionFlow\ExecutionFlowHelper.cs" />
+    <Compile Include="Graph\ExecutionFlow\GraphChangeFilterEnum.cs" />
+    <Compile Include="Graph\ExecutionFlow\GraphChangeTransactionAtom.cs" />
+    <Compile Include="Graph\ExecutionFlow\GraphChangeTrigger.cs" />
+    <Compile Include="Graph\ExecutionFlow\GraphChangeTriggerWatcher.cs" />
+    <Compile Include="Graph\ExecutionFlow\NonTransactedEvent.cs" />
+    <Compile Include="Graph\ExecutionFlow\TransacionAtom.cs" />
+    <Compile Include="Graph\ExecutionFlow\Transaction.cs" />
+    <Compile Include="Graph\ExecutionFlow\View.cs" />
+    <Compile Include="Graph\IImplementedVertex.cs" />
+    <Compile Include="Graph\Internal\EdgeDictionaries.cs" />
+    <Compile Include="Graph\Internal\MetaInList.cs" />
+    <Compile Include="Graph\Internal\InList.cs" />
+    <Compile Include="Graph\Internal\OutList.cs" />
+    <Compile Include="Graph\Internal\VertexHelper.cs" />
+    <Compile Include="Graph\OLD\EasyEdge - Copy.cs" />
+    <Compile Include="Graph\OLD\EasyVertex - OldVersion.cs" />
+    <Compile Include="Lib\LibUtil.cs" />
+    <Compile Include="Lib\Net\Net.cs" />
+    <Compile Include="Lib\Net\Server.cs" />
+    <Compile Include="Lib\Std.cs" />
+    <Compile Include="Lib\StdUI.cs" />
+    <Compile Include="Lib\Sys.cs" />
+    <Compile Include="Bootstrap\FileSystemLoader.cs" />
+    <Compile Include="Store\Binary\BinaryStore.cs" />
+    <Compile Include="Store\Text\TextStore.cs" />
+    <Compile Include="Util\DynamicMethodInvoker.cs" />
+    <Compile Include="Util\ZString.cs" />
+    <Compile Include="ZeroCode\Helpers\DictionariesForFormalTextLanguageFactory.cs" />
+    <Compile Include="ZeroCode\Helpers\MultiLineString.cs" />
+    <Compile Include="Util\MathUtil.cs" />
+    <Compile Include="Store\FileSystem\AbstractFileSystemVertex.cs" />
+    <Compile Include="User\Clipboard.cs" />
+    <Compile Include="User\Process\UX\Interaction.cs" />
+    <Compile Include="User\Process\UX\NonAtomProcess.cs" />
+    <Compile Include="Store\BinarySerializationStore.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Store\FileSystem\DirectoryVertex.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Store\FileSystem\FileContentVertex.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Store\FileSystem\FileSystemStore.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Store\FileSystem\FileSystemUtil.cs" />
+    <Compile Include="Store\FileSystem\FileVertex.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Store\Json\JsonSerializationStore.cs" />
+    <Compile Include="Store\Json\JsonSerializationData.cs" />
+    <Compile Include="Store\MemoryStore.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Store\StoreBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FormalTextLanguage\IExecuter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FormalTextLanguage\IFormalTextGenerator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FormalTextLanguage\IFormalTextParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DotNetIntegration\CallableEndPointDictionary_INIEIOV_ZCE.cs" />
+    <Compile Include="Util\VertexDebugDB.cs" />
+    <Compile Include="Util\DictionaryList.cs" />
+    <Compile Include="Util\ExtandableDictionaryListAsList.cs" />
+    <Compile Include="Util\ExtandableHashSetAsList.cs" />
+    <Compile Include="Util\ExtandableList.cs" />
+    <Compile Include="ZeroCode\Helpers\FormalTextLanguageDictinaries.cs" />
+    <Compile Include="ZeroCode\Helpers\EdgeKey_FromMeta.cs" />
+    <Compile Include="ZeroCode\Helpers\EdgeKey_MetaTo.cs" />
+    <Compile Include="ZeroCode\ZeroCodeExecutonUtil.cs" />
+    <Compile Include="ZeroCode\ZeroCodeView.cs" />
+    <Compile Include="ZeroTypes\ColorHelper.cs" />
+    <Compile Include="ZeroTypes\ITypedEdge.cs" />
+    <Compile Include="ZeroTypes\TypedEdge.cs" />
+    <Compile Include="ZeroTypes\Edge.cs" />
+    <Compile Include="ZeroTypes\UX\CodeRepresentationEnum.cs" />
+    <Compile Include="ZeroTypes\UX\OrientationEnum.cs" />
+    <Compile Include="ZeroUML\ClassVertex.cs" />
+    <Compile Include="Util\GeneralUtil.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\UserInteractionUtil.cs" />
+    <Compile Include="ZeroCode\Helpers\InstructionHelpers.cs" />
+    <Compile Include="ZeroUML\Instructions\BaseInstructions.cs" />
+    <Compile Include="ZeroCode\Text2GraphProcessing.cs" />
+    <Compile Include="Graph\ToVertexMock.cs" />
+    <Compile Include="ZeroCode\ZeroCodeCommon.cs" />
+    <Compile Include="ZeroCode\ZeroCodeEngine.cs" />
+    <Compile Include="ZeroCode\ZeroCodeExecuter.cs" />
+    <Compile Include="ZeroCode\ZeroCodeExecution.cs" />
+    <Compile Include="ZeroCode\Graph2TextProcessing.cs" />
+    <Compile Include="ZeroCode\ZeroCodeUtil.cs" />
+    <Compile Include="ZeroTypes\DateTime.cs" />
+    <Compile Include="ZeroTypes\EdgeHelper.cs" />
+    <Compile Include="ZeroTypes\PlatformClass.cs" />
+    <Compile Include="ZeroTypes\VertexOperations.cs" />
+    <Compile Include="ZeroUML\Instructions\ZeroUMLInstructionHelpers - Copy.cs" />
+    <Compile Include="ZeroUML\Instructions\ZeroUMLInstructionHelpers.cs" />
+    <Compile Include="_PROJECT\_OLD\Legacy Code\AutoTest.cs" />
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Foundation\Enum.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Foundation\IDetachableEdge.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Foundation\IEdge.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Foundation\IStore.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Foundation\IStoreUniverse.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Foundation\ITransactionRoot.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Foundation\IVertex.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\EasyEdge.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\EasyVertex.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\EdgeBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GraphUtil.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\IdentifiedVertex.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\NoInEdgeInOutVertexVertex.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\VertexBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="m0.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
     <AppDesigner Include="Properties\" />
-    <PackageReference Include="Jil" Version="2.17.0" />
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Sigil" Version="5.0.0" />
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+    <None Include="_PROJECT\_OLD\diagrams.eap" />
+    <None Include="_PROJECT\MD\02 Advanced ideas\Graph trigger.md" />
+    <None Include="_PROJECT\_OLD\test\edgeonly.xlsx" />
+    <None Include="_PROJECT\MD\02 Advanced ideas\View.md" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Untitled1.png" />
@@ -135,4 +393,12 @@
   <ItemGroup>
     <Folder Include="Network\Server\" />
   </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
 </Project>
