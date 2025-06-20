@@ -1,0 +1,97 @@
+﻿0) Definitions:
+ - value subgraph ("") - a subgraph, starting with one vertex, characterized by $Is:{$ExecutableEndPoint:} == 00
+ - executable subgraph - a subgraph, starting with one vertex, characterized by $Is:{$ExecutableEndPoint:} != 00
+   execution of it may result in a set of edges
+ - code view time graph query (@) - a @ starting a query, that performs on the code graph in the code view time.
+   by @ definition, it points to only one vertex
+ - code view time graph query link expression (@@) - special link keyword (@). it's "Target" edge points to vertex, 
+   that in code is displayed as the code view time graph query (@)
+   by @ definition, it points to only one vertex
+
+1) In the unified grammar graph representation, any expression can be: 
+ - value subgraph (""). newly created stack returned has edge pointing to subgraph root vertex. 
+   the edge has $Empty meta
+ - executable subgraph. subgraph is executed and the execution stack is returned
+ - code view time query (@). depending on the query target
+ - code view time graph query link expression (@@). depending on the query target
+
+2) In the case expression being code view time query (@) or code view time graph query link expression (@@), 
+   depending on the query target vertex:
+ - value subgraph (""). newly created stack returned has edge pointing to subgraph root vertex.
+   the edge has $Empty meta
+ - executable subgraph. sub-graph is executed and the execution stack is returned
+
+3) The code view time graph query link expression (@@) needs to be introduced as grammar's keyword definition
+   subgraph edges does not have to be links, thus in code view will containt it's target vertexes subgraphs and 
+   not code view time queries, as expected. This is especially a case when target vertexes subgraph is 
+   not part of code view subgraph.
+
+4) For executable subgraph queries, at the beginning of code graph execution,
+   special variable (named $) is added to the stack bottom. The $ variable points to code graph execution root.
+
+_______________________________________________
+
+"Code"
+	"X"
+	"TEST"
+		<@X :: "5">
+		"10"
+	variable "A" @String
+	A = "1" + @TEST\5 + $ \ |TEST \ |10 + @@TEST\5
+
+_______________________________________________
+
+"Code"
+	"X"
+		"2" * ("2" + "1")
+	variable "A" @String
+	A = "1" + @X\ + execute($ \ |X \)  + @@X\
+_______________________________________________
+
+"Code" !!!!!!!!!!!!!!!!!
+	"10"
+	variable "Atom" @String
+	Atom = @10
+	Atom := Atom + "1"
+	"20"
+		<@$Is :: @Class>
+		# "not atom"
+	variable "NotAtom" @String
+	NotAtom = @20
+	NotAtom := NotAtom + "1"
+
+_______________________________________________
+
+"Code"
+	"10"
+	variable "Atom" @String
+	Atom = @@10
+	Atom := Atom + "1"
+	"20"
+		<@$Is :: @Class>
+		# "not atom"
+	variable "NotAtom" @String
+	NotAtom = @@20
+	NotAtom := NotAtom + "1"
+_______________________________________________
+
+"Code"
+	"TEST"
+		function "X" (@Integer "a")
+			return a + "1"
+	variable "cvtq" @Vertex
+	variable "rtq" @Vertex
+	cvtq = @TEST\X["1"]
+	rtq = $ \ |TEST \ |X["2"]
+
+_______________________________________________
+ADDITIONAL
+_______________________________________________
+
+
+
+
+"Code"
+	function "X" ()
+	@X[]
+	a+b

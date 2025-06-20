@@ -1,0 +1,92 @@
+﻿"STORE"
+	import @System\Lib\Music direct meta
+	<@ControlChangeDescriptionSet :: "XBase09_ControlChangeDescriptionSet">
+		<@$Is :: @ControlChangeDescriptionSet>
+		<@ControlChangeDescription :: "">
+			<@$Is :: @ControlChangeDescription>
+			<@Number :: "-1">
+			<@Description :: "Velocity">
+		<@ControlChangeDescription :: "">
+			<@$Is :: @ControlChangeDescription>
+			<@Number :: "7">
+			<@Description :: "Global Volume">
+		<@ControlChangeDescription :: "">
+			<@$Is :: @ControlChangeDescription>
+			<@Number :: "100">
+			<@Description :: "BD Tune">
+		<@ControlChangeDescription :: "">
+			<@$Is :: @ControlChangeDescription>
+			<@Number :: "101">
+			<@Description :: "BD Pitch">
+		<@ControlChangeDescription :: "">
+			<@$Is :: @ControlChangeDescription>
+			<@Number :: "102">
+			<@Description :: "BD Decay">
+		<@ControlChangeDescription :: "">
+			<@$Is :: @ControlChangeDescription>
+			<@Number :: "103">
+			<@Description :: "BD Harmonics">
+		<@ControlChangeDescription :: "">
+			<@$Is :: @ControlChangeDescription>
+			<@Number :: "104">
+			<@Description :: "BD Pulse">
+		<@ControlChangeDescription :: "">
+			<@$Is :: @ControlChangeDescription>
+			<@Number :: "105">
+			<@Description :: "BD Noise">
+		<@ControlChangeDescription :: "">
+			<@$Is :: @ControlChangeDescription>
+			<@Number :: "106">
+			<@Description :: "BD Attack">
+		<@ControlChangeDescription :: "">
+			<@$Is :: @ControlChangeDescription>
+			<@Number :: "107">
+			<@Description :: "BD EQ">
+		<@ControlChangeDescription :: "">
+			<@$Is :: @ControlChangeDescription>
+			<@Number :: "108">
+			<@Description :: "SD Tune">
+		<@ControlChangeDescription :: "">
+			<@$Is :: @ControlChangeDescription>
+			<@Number :: "109">
+			<@Description :: "SD Xsnapp">
+		<@ControlChangeDescription :: "">
+			<@$Is :: @ControlChangeDescription>
+			<@Number :: "110">
+			<@Description :: "SD Decay">
+		<@ControlChangeDescription :: "">
+			<@$Is :: @ControlChangeDescription>
+			<@Number :: "111">
+			<@Description :: "SD Detune">
+		<@ControlChangeDescription :: "">
+			<@$Is :: @ControlChangeDescription>
+			<@Number :: "112">
+			<@Description :: "SD Noise Tune">
+		<@ControlChangeDescription :: "">
+			<@$Is :: @ControlChangeDescription>
+			<@Number :: "113">
+			<@Description :: "HH Tune">
+		<@ControlChangeDescription :: "">
+			<@$Is :: @ControlChangeDescription>
+			<@Number :: "114">
+			<@Description :: "HH Balance">
+		<@ControlChangeDescription :: "">
+			<@$Is :: @ControlChangeDescription>
+			<@Number :: "115">
+			<@Description :: "HH CH Decay">
+		<@ControlChangeDescription :: "">
+			<@$Is :: @ControlChangeDescription>
+			<@Number :: "116">
+			<@Description :: "HH OH Decay">
+		<@ControlChangeDescription :: "">
+			<@$Is :: @ControlChangeDescription>
+			<@Number :: "117">
+			<@Description :: "BD Level">
+		<@ControlChangeDescription :: "">
+			<@$Is :: @ControlChangeDescription>
+			<@Number :: "118">
+			<@Description :: "SD Level">
+		<@ControlChangeDescription :: "">
+			<@$Is :: @ControlChangeDescription>
+			<@Number :: "119">
+			<@Description :: "HH Level">

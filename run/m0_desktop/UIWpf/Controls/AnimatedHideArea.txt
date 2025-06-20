@@ -1,0 +1,28 @@
+﻿Expander -> Template="{DynamicResource StretchyExpanderTemp}" 
+
+AnimatedExpanderButtonTemp  TargetType="{x:Type ToggleButton}">
+	<Ellipse Name="Circle"
+	<Path x:Name="Arrow"
+	-> IsChecked
+		EnterActions : Storyboard.TargetName="Arrow"
+				Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
+                                                 To="180"
+		ExitActions: Storyboard.TargetName="Arrow"
+				Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
+                                                 To="0"
+	-> IsMouseOver
+	-> IsPressed
+
+"StretchyExpanderTemp" TargetType="{x:Type Expander}">
+	ToggleButton x:Name="ExpanderButton"
+		Template="{StaticResource AnimatedExpanderButtonTemp}"
+	ContentPresenter x:Name="ExpanderContent"
+	-> IsExpanded
+		EnterActions : Storyboard.TargetName="ExpanderContent"
+				(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleY)"                                                 
+                                                 To="1"
+		ExitActions : Storyboard.TargetName="ExpanderContent"
+				(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleY)"
+                                                 To="0"
+
+<ControlTemplate x:Key="RevealExpanderTemp" TargetType="{x:Type Expander}">

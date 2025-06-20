@@ -1,0 +1,207 @@
+﻿event
+- source
+- parameters
+- listeners
+
+
+life cycle:
+type definition > parameters
+event source instance
+adding listeners
+event fired
+removing listeners
+
+need to have:
+- structure to hold event's parameters
+
+- instance that has "Fire" executable
+- intance that agregates the listeners
+
+Fire need event vertex to be passed
+
+
+_________________
+
+class EventTrigger
+	method "Fire"[@Event "event"]
+	association "Listener" @Executable "0" : "-1"
+
+class Event
+- association "Trigger" @EventTrigger "1" : "1"
+- association "Source" @Vertex "0" : "1"
+
+class $GraphChangeTrigger:EventTrigger
+	attribute "ScopeQuery" @String "0" : "-1"
+
+enum GraphChangeEnum{ValueChange, OutputEdgeAdded, OutputEdgeRemoved, InputEdgeAdded, InputEdgeRemoved} 
+
+class GraphChangeEvent : Event
+	attribute "ChangedVertex" @Vertex "1" : "1"
+	attribute "Type" @GraphChangeEnum "1" : "1"
+	attribute "OldValue" @Vertex "0" : "1"
+	attribute "NewValue" @Vertex "0" : "1"
+	attribute "Edge" @Edge "0" : "1" 
+
+
+GenericEventHandler
+
+_______________________________________
+
+attribute "SubVertexQuery" @String
+
+
+
+
+
+
+
+
+
+
+for given Vertex
+- add gc listener
+- remove gc listener
+
+
+listener:
+- ScopeQuery
+- <exe>
+
+
+
+
+
+<exe>
+- sequentially
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+________________________________________
+
+
+graph change
+
+vertex value change
+- subject vertex
+- old vertex value
+- new vertex value
+
+output edge added
+- added edge (as Edge)
+
+output edge removed
+- removed edge (as Edge) 
+
+input edge added
+- added edge (as Edge)
+
+input edge removed
+- removed edge (as Edge)
+
+
+
+
+_____________________________________________
+
+
+
+StartTransaction
+
+CommitTransaction
+
+RollbackTransaction
+
+
+
+
+________________________________________________
+
+CallableEndPoint
+
+
+DotNetEndPoint > DotNetStaticMethod
+
+TypeName > DotNetTypeName
+
+MethodName > DotNetMethodName
+
+
+<exe>
+
+- InstructionSequence
+
+ExecutionFlow
+
+- DotNetStaticMethod : Executable
+	attribute "DotNetTypeName" @String "1" : "1"
+	attribute "DotNetMethodName" @String "1" : "1"
+- DotNetDelegate : Executable
+	attribute "DotNetDelegatePointer" @Vertex "1" : "1"
+- Delegate : Executable
+	attribute "Object" @Vertex "1" : "1"
+	attribute "Method" @Vertex "1" : "1"
+
+
+
+
+
+
+
+
+
+----START
+
+--------START
+
+--------COMMIT
+
+--------START
+
+--------COMMIT
+
+----COMMIT
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

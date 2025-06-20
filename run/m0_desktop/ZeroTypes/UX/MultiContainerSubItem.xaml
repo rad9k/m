@@ -1,0 +1,21 @@
+﻿<my:UXItem x:Class="m0.ZeroTypes.UX.MultiContainerSubItem"
+             xmlns:my="clr-namespace:m0.ZeroTypes.UX"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             SizeChanged="UserControl_SizeChanged">
+
+    <DockPanel x:Name="Panel" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch">
+        <DockPanel x:Name="TopPane" DockPanel.Dock="Top" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" LastChildFill="False">
+            <TextBlock Name="Label" DockPanel.Dock="Left" Margin="1,0,0,0"/>
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                <ToggleButton Name="CodeToggle" Height="7" Click="CodeToggle_Click"/>
+                <TextBlock Name="CodeLabel" FontSize="8" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,1,0">code</TextBlock>
+            </StackPanel>
+        </DockPanel>
+        <Border x:Name="Content"/>
+    </DockPanel>
+        
+</my:UXItem>

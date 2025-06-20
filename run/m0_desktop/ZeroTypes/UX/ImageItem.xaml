@@ -1,0 +1,25 @@
+﻿<my:RectangleItem_LabeledItem x:Class="m0.ZeroTypes.UX.ImageItem"
+             xmlns:my="clr-namespace:m0.ZeroTypes.UX"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             >
+
+    <Border x:Name="Frame"  BorderBrush="{StaticResource 0ForegroundBrush}" BorderThickness="1" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch">
+        <Grid Name="TheGrid">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="17"/>
+            </Grid.RowDefinitions>
+            <Image Name="Image" Stretch="Fill" Grid.Row="0"></Image>
+            <Border Grid.Row="1" x:Name="LabelContainer" Padding="3,0,3,0"/>
+
+            <!-- Margin="0,2,0,0" on TextBlock / seems not needed -->
+        </Grid>
+
+    </Border>
+
+
+</my:RectangleItem_LabeledItem>

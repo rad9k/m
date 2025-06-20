@@ -1,0 +1,41 @@
+﻿"Y"
+	a||b{
+		test x
+			case "True"
+				t
+				a
+				b
+				c
+			case "False"
+				f
+				a
+				b
+				c
+			default
+				d
+				a
+				b
+				c
+	}
+
+"Y"
+	a||{
+		"a"
+			"b"
+				"c"
+			"d"
+				"e"
+	}
+
+
+"Y"
+	"a"
+		"1"
+		"2"
+		"3"
+	@@String || "kupa"{
+		foreach "x" in $\|a\
+			(x+"10") || (x+"100"){
+				"co" || (x+"1000")
+			}
+	}

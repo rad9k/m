@@ -1,0 +1,132 @@
+﻿"Y"
+	a +< a || "m"{
+		c||"x"{
+			z||"x"{
+			}
+		}
+	}
+
+<"Y">
+	"A"{
+		{
+		}
+	}
+
+<"Y">
+	a\b\c
+	a|aa\b\c|cc
+	a{}|aa{}\b\c{}|cc{}
+	a{}|aa{}\b\c{}|cc{}||d{}|d{}\e\f{}|ff{}
+	||d{}|d{}\e\f{}|ff{}
+	a{}|aa{}\b\c{}|cc{}||
+	a| ||
+	|| |b
+	a{}
+	a{}\
+	{}\{}
+	{}\
+	a{x|xx,y{z|zz}|y}|aa{x,y}\b\c{x|xx,y{z|zz}|y}|cc{x,y}
+	a{x|xx,y{z|zz}|y}|aa{x,y}\b\c{x|xx,y{z|zz}|y}|cc{x,y}||d{x|xx,y{z|zz}|y}|d{x,y}\e\f{x|xx,y{z|zz}|y}|ff{x,y}
+	||d{x|xx,y{z|zz}|y}|d{x,y}\e\f{x|xx,y{z|zz}|y}|ff{x,y}
+	a{x|xx,y{z|zz}|y}|aa{x,y}\b\c{x|xx,y{z|zz}|y}|cc{x,y}||	
+	a{x|xx,y{z|zz}|y}
+	a{x|xx,y{z|zz}|y}\
+	{x|xx,y{z|zz}|y}\{x,y}
+	{x|xx,y{z|zz}|y}\
+	{}|{}||{}|{}
+	{}||
+	||{}
+	{}||{}
+	{}|
+	|{}
+	{}|\
+	|{}\
+
+________________________
+c0: (a + b) + c
+c1: (a|aa + b) + c
+c1b:(aaaa + b) + c
+c2: 
+((a|a + b) + c) + d
+(((a|a + b) + c) + d) + e
+((((a|a + b) + c) + d) + e) + f
+(((((a|a + b|bb) + c) + d) + e) + f) + g
+(a + (((((((x))))))) + b)
+(a + b / c * (d - (e - (f))) + g)
+(a \ b \ c + (d \ e - e \ f \ g))
+(a + b / c * (d - (e + (f / (ff * (fff + fff2 - (x / v)))))) + g)
+___________
+<"Y">
+	"A"{
+		"a"
+		"b"{
+			{
+				b11
+				"b12"
+				"b13" + "b14"
+			}
+			"b2"{
+				b11
+				"b12"
+				"b13" + "b14"
+			}
+		}
+		"c"{
+			c1
+			c2
+		}
+	}
+
+<"Y">
+	(((((a|aa + b|bb) + c) + d) + e) + f) + g
+	(a + b / c * (d - (e - (f))) + g)
+	(a \ b \ c + (d \ e - e \ f \ g))
+	attribute "a" @a "1":"2" <"3":"4">
+		attribute "aa" @a "1":"2"
+			attribute "a" @a <"3":"4">
+				attribute "aaa" @a
+			association "b" @a "1":"2"
+				association "b" @a
+			aggregation "c" @a "1":"2"
+				aggregation "c" @a
+	function "f" @String[]
+	function "f2" @String[@a "s", @a "ss"]
+		function "f3" [@a "s", @a "ss"]
+			function "f4" []
+				# "desc"
+	while "kupa"
+	
+	
+_____
+
+<"Y">
+	attribute "a" @a "1":"2" <"3":"4">
+	
+	
+		attribute "aa" @a "1":"2"
+		
+			attribute "a" @a <"3":"4">
+			
+			
+				attribute "aaa" @a
+				
+			association "b" @b "1":"2"
+			
+				association "b" @b
+				
+				
+			aggregation "c" @b "1":"2"
+			
+			
+			
+				aggregation "c" @b	
+				a
+
+
+
+
+____________________________
+
+
+aggregation "c" @b
+	

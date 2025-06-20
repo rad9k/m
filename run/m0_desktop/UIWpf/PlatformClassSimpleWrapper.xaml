@@ -1,0 +1,120 @@
+﻿<UserControl x:Class="m0.UIWpf.PlatformClassSimpleWrapper"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    mc:Ignorable="d" 
+    d:DesignHeight="300" d:DesignWidth="300"
+    xmlns:local ="clr-namespace:m0.UIWpf"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"  
+    xmlns:m="clr-namespace:m0.UIWpf.Controls">
+    <DockPanel Background="{StaticResource 0BackgroundBrush}" Name="ParentCont"
+        MouseLeave="MouseLeave_Hard">
+
+        <m:AnimatedHideArea_HorizontalUp DockPanel.Dock="Top"
+            x:Name="Expander_Top" 
+            IsExpanded="False"
+            MouseEnter="MouseLeave_Hard">
+            <DockPanel>
+                <ContentPresenter DockPanel.Dock="Top"/>
+                <Border DockPanel.Dock="Bottom" BorderBrush="{StaticResource 0VeryLightForegroundBrush}" BorderThickness="1"/>
+            </DockPanel>
+        </m:AnimatedHideArea_HorizontalUp>
+
+        <Grid DockPanel.Dock="Bottom" x:Name="VerticalGrid">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="0"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" x:Name="HorizontalGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="0"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Name="MainContent_NoScroll" 
+                    Grid.Column="0"/>
+
+                <ScrollViewer Grid.Column="0" 
+                    Name="MainContent" 
+                    Foreground="{StaticResource 0ForegroundBrush}" 
+                    VerticalScrollBarVisibility="Auto" 
+                    HorizontalScrollBarVisibility="Auto"  
+                    PreviewMouseWheel="ListViewScrollViewer_PreviewMouseWheel"
+            
+                    MouseMove="MouseMove_All" 
+                    MouseUp="MouseUp_All"/>
+
+                <Border Name="Grip_Right" 
+                    Grid.Column="1" 
+                    Width="5" 
+                    HorizontalAlignment="Stretch" 
+                    Background="{StaticResource 0GripBrush}" 
+                    MouseEnter="MouseEnter_Right" 
+                    MouseLeave="MouseLeave_Right" 
+                    MouseDown="MouseDown_Right" 
+                    MouseMove="MouseMove_Right" 
+                    MouseUp="MouseUp_Right">
+                    <StackPanel VerticalAlignment="Center" Orientation="Vertical">
+                        <Ellipse Height="3" Width="3" Fill="Black" Margin="0,1,0,1"/>
+                        <Ellipse Height="3" Width="3" Fill="Black" Margin="0,1,0,1"/>
+                        <Ellipse Height="3" Width="3" Fill="Black" Margin="0,1,0,1"/>
+                    </StackPanel>
+                </Border>
+
+                <m:AnimatedHideArea_VerticalRight Grid.Column="2"
+                    x:Name="Expander_Right" 
+                    MouseMove="MouseMove_Right" 
+                    MouseUp="MouseUp_Right" 
+                    Expanded="Expanded_Right" 
+                    Collapsed="Collapsed_Right" 
+                    IsExpanded="False">
+                    <ScrollViewer  
+                        Foreground="{StaticResource 0ForegroundBrush}" 
+                        VerticalScrollBarVisibility="Auto" 
+                        HorizontalScrollBarVisibility="Auto"  
+                        PreviewMouseWheel="ListViewScrollViewer_PreviewMouseWheel"/>
+                </m:AnimatedHideArea_VerticalRight>
+
+            </Grid>
+
+            <Border Name="Grip_Down" 
+                Grid.Row="1" 
+                Height="5" 
+                HorizontalAlignment="Stretch" 
+                Background="{StaticResource 0GripBrush}" 
+                MouseEnter="MouseEnter_Down" 
+                MouseLeave="MouseLeave_Down" 
+                MouseDown="MouseDown_Down" 
+                MouseMove="MouseMove_Down" 
+                MouseUp="MouseUp_Down">
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                    <Ellipse Height="3" Width="3" Fill="Black" Margin="1,0,1,0"/>
+                    <Ellipse Height="3" Width="3" Fill="Black" Margin="1,0,1,0"/>
+                    <Ellipse Height="3" Width="3" Fill="Black" Margin="1,0,1,0"/>
+                </StackPanel>
+            </Border>
+
+            <m:AnimatedHideArea_HorizontalDown Grid.Row="2"
+                x:Name="Expander_Down" 
+                MouseMove="MouseMove_Down" 
+                MouseUp="MouseUp_Down" 
+                Expanded="Expanded_Down" 
+                Collapsed="Collapsed_Down" 
+                IsExpanded="False">
+                <ScrollViewer  
+                    Foreground="{StaticResource 0ForegroundBrush}" 
+                    VerticalScrollBarVisibility="Auto" 
+                    HorizontalScrollBarVisibility="Auto"  
+                    PreviewMouseWheel="ListViewScrollViewer_PreviewMouseWheel"/>
+            </m:AnimatedHideArea_HorizontalDown>
+
+            </Grid>
+    
+    </DockPanel>
+    
+    
+</UserControl>

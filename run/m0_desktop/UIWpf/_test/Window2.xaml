@@ -1,0 +1,9 @@
+﻿<Window x:Class="m0.UIWpf._test.Window2"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Window2" Height="300" Width="300" xmlns:my="clr-namespace:m0.UIWpf.Visualisers">
+    <Grid>
+        <my:ListVisualiser AutoGenerateColumns="False"  x:Name="ListVisualiser1"  />
+        <Button Content="Button" Height="45" HorizontalAlignment="Left" Margin="222,71,0,0" Name="button1" VerticalAlignment="Top" Width="28" Click="button1_Click" />
+    </Grid>
+</Window>

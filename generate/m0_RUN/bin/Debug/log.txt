@@ -1,0 +1,2 @@
+7:20:42 PM:128[0]: InitializeLog: START
+19:21:31:249[0]: DisposeLog: STOP

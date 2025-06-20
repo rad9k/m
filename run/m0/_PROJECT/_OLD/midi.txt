@@ -1,0 +1,19 @@
+﻿"midiTest"
+	import @System\Lib\Music direct meta
+	import @System\Lib\Std direct meta
+	"midiOut" :: = @@Hardware\LocalComputer:\MidiDevice:\Output:<<"1">>
+	foreach "octaveCount" in @@Sequence["5","1"]
+		foreach "noteCount" in @@Sequence["0","11"]
+			"note" :: = new @@Note
+			note\Octave = octaveCount
+			note\Note = noteCount
+			note\Velocity = "127"
+			midiOut.NoteOn[note]
+			@@Sleep["10"]
+
+"seqPerf"	
+	import @System\Lib\Std direct meta
+	variable "X" @VertexType
+	foreach "x" in @@Sequence["0","10000"]
+		X +< x
+	

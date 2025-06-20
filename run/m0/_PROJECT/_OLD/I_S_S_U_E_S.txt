@@ -1,0 +1,244 @@
+﻿!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TO DO:
+
+95. access to object in its methods. current  exe.AddStackFrame(theObject); // ENTER NEW STACK does not support adding new edges, also
+class "X"
+	attribute "a" @String
+	method "x"()
+		a = "val"
+		... = a  << will not return val becouse stack holds reference to old a edge. need to use this\a instead. 
+		also vertex not found by identifier might be connected with it
+96. do the exe.stack = InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(_toBeStackVertex);
+
+            exe.newVertexCreationSpace = exe.stack;
+
+            ZeroCodeExecuter.AddRootToStack(exe);
+
+TWO times and you have the if (de.To.Store!=this||(de.Meta!=null&&de.Meta.Store!=this))
+
+remove ZeroCodeExecuter.AddRootToStack(exe); and ther is no. can be checked by "ZeroCodeExecuter.AddRootToStack(exe); error" commit 2021-03-14
+
+??????
+
+59. copy $Empty? [11] 
+60. copy from Graph error [59]
+98. links in string2graph when having more than one meaning are made shorter in wrong way, for example:
+"X09PitchSet"
+	<@$Is :: @PitchSet>
+	<@System\Lib\Music\VisualisedPitch :: "C 2">
+		<@$Is :: @VisualisedPitch>
+		<@Name :: "C 1">
+		<@Note :: "1">
+		<@Octave :: "2">
+		<@Color[HERE] :: @System\Data\UX\Colors\LightRose>
+99. $Inherits in code visualier when poiting to outside vertex will populate the vertex in the code view
+100. "STORE"
+	import @System\Lib\Music direct meta
+	class "SimpleTransformer"
+		association "Input" @Sequence "0":"1"
+		association "Output" @Sequence "0":"1"
+		method "Process" ()
+			Output +< "dupa"
+
+a lot of "dupa" here :(
+101. remove tab in the end of string line
+102. variable octave proper parsing, wrong graph2string
+"STORE"
+	import @System\Lib\Music direct meta
+	class "SimpleTransformer"
+		association "Input" @Sequence "0":"1"
+		association "Output" @Sequence "0":"1"
+		attribute "OctaveShift" @Integer "0":"1" <<"-8":"8">>
+		method "CopyAtomAttributes" ()
+			<@System\Meta\Presentation\$Hide :: @$Empty>
+			Output\ExtendTimeLength = _Input\ExtendTimeLength
+			if Output\Length === ~00
+				Output +< @@HasLength\Length :: _"0"
+			Output\Length = _Input\Length
+			if Output\IsDrum === ~00
+				Output +< @@Sequence\IsDrum :: _"False"
+			if Input\IsDrum<> == "1"
+				Output\IsDrum = _Input\IsDrum
+		method "DoOctaveShift" (@Vertex "octave")
+			return "5"
+		method "CopyEvents" ()
+			<@System\Meta\Presentation\$Hide :: @$Empty>
+			Output -< Output\Event:
+			foreach e in Input\Event:
+				Output +< @@History\Event :: e{
+					variable "octave" @Integer
+					octave = this.'DoOctaveShift'[e\Octave]
+					@@$Is :: @@NoteEvent
+					@@Event\TriggerTime :: _e\TriggerTime
+					@@HasLength\Length :: _e\Length
+					@@Pitch\Note :: _e\Note
+					@@Pitch\Octave :: octave
+					@@Note\Velocity :: _e\Velocity
+				}
+		method "PutIntoStore" ()
+			<@System\Meta\Presentation\$Hide :: @$Empty>
+			variable "parentVertex" @Vertex
+			parentVertex = Output#Sequence:
+			parentVertex <+< @@Sequence ;; Output
+			parentVertex -< @@Sequence ;; this\Output
+		method "Process" ()
+			this.CopyAtomAttributes[]
+			this.CopyEvents[]
+			this.PutIntoStore[]
+
+<><><> FUTURE 0.5
+
+86. inheritance supprort in class keyword
+88. enum keyword
+87. $IsAggregation for $EdgeTaret we want to be inplace
+89. two times
+	class "DotNetStaticMethod"
+		attribute "TypeName" @String
+		attribute "MethodName" @String
+		<@$Inherits :: @CallableEndPoint>
+		<@$Inherits :: @CallableEndPoint>
+	class "Edge"
+		association "From" @VertexType "0":"1"
+		association "Meta" @VertexType "1":"1"
+		association "To" @VertexType "1":"1"
+		<@$DefaultViewVisualiser :: @Edge\$DefaultViewVisualiser:Edge>
+		<@$DefaultEditVisualiser :: @Edge\$DefaultViewVisualiser:Edge>
+		<@$DefaultViewVisualiser :: @Edge\$DefaultViewVisualiser:Edge>
+		<@$DefaultEditVisualiser :: @Edge\$DefaultViewVisualiser:Edge>
+90. generation / parse working for ZeroTypes (all the attributes / assoc / agreg and everything!)
+91. enum visualiser check
+92. context menu better (for example if there are multiple specyfic visualisers)
+82. method / dedicated class form hidding support ???
+64. child vertex short names support in ||{}/ X+<||{} for @@ 
+36. ZeroUML diagramming update
+37. pre/post text processing + if/test/case/default nextout?
+
+<><><> FUTURE 0.9
+
+12. parse / generate check
+34. Query dialog box refactoring
+40. <<a..b>> ??? we have Std\Sequence
+56. table optimisation
+
+<><><> FUTURE 1
+
+93. icons
+85. X +< 'in'
+84. "a"::{
+		"b":: = "X"
+	}
+83. @@.[] calls
+80. proper work for UIWpf.SetWindowPosition on second monitor
+78."Y"
+	"A"
+	<@$Empty::@A> >> "A"/ now @Empty ????
+79. escape sequences in import regexpes
+77. ZeroCodeCommon.IsSpecialCharacter might relay on allKeywordsSubstringsDictionary also (now it is turned off)
+68. $Empty in edges in parse / generate. is it ok?
+10. $Empty bug
+<@BaseEdge :: ""> [4] [11]
+					<@From :: @kupa\TEST\TestDiagram\Item:<4>\\> ??? from where
+					<@Meta :: @> ???
+					<@To :: @TEST\Person4>
+70. garbage collector?
+71. csv support
+73. dot net object graph integration
+74. json REST existing end-points integration
+75. exposing as json REST end-points
+67. variables / other operators support in Query
+3. exception handling throught custom meta code
+12. execution stop / continuation / stack copy?
+19. [] / .[] / execute / () as begginning of Query
+20. different import keywords support
+21. [] / execute / without () as || parameter
+28. other quantifiers in queries
+29. meta string support in queries - going to stack and comparing with stack
+30. |a / a| / a|b +< {} support AND ()+<{} DOES NOT WORK AS IT WAS SUPPOSED TO WORK WTF. BUT A\elo:mordy +< worx!
+35. sub support
+38. child vertex short names support in ||{}/ X+<||{} for run time queries?
+41. . as attribute / other $Is and not existing access
+42. $Is context of left operands to create new edges by incomplete meta
+45. new => constructor with parameters
+47. how are edges added to stack (AddEdgeForNoInEdgeInOutVertexVertex ?) and the store implications (possible bug)
+48. in edges in queries support
+44. & / | > and or [49]
+49. double keywords definition - required spaces / generated spaces
+50. views
+55. "2a"||@@System{} (have to use ||(@@){} instead)
+61. Form reset after ".m0" for File:
+62. _ not displaying in tree view
+104. FastMode in GraphView hangs
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ISSUES KNOWN:
+
+52. "Y"
+	variable "a" @Vertex
+	variable "b" @Vertex
+	a +< @@$Inherits || @@System
+	b +< a\
+
+	comment: edge duplicates in b
+53. BeenList as Edge. if no IsAggregation ??? what does it mean
+63. {Filename}: not returning Drives. when first level of a query is $Is!=Query and is {}, the stack travel by $StackFrameInherits works as not expected
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Done:
+
+1. @System || "new"
+6. @@
+5. root level queries on "stack root -1"   
+13. common implementation of montevideo principles
+9. [] as subexpression
+18. <> operator
+26. a[x;"2"\] - WHAT WAS IT???
+20. GetIdentyfyingQuerySubString_ImportMeta not workin <> queries
+21. IsMetaAndToVertexEnoughToIdentifyEdge and IsToVertexEnoughToIdentifyEdge
+16. _ operator 
+17. ` operator
+14. add () to ||
+15. add _ to || [16]
+34. "Y"
+	{
+		while "False"
+			"a"
+	}
+31. imperative expressions in {}
+25. ====
+23. if / test
+24. new / class / method
+43. :=
+54. ;; and || mod
+22. <+< or something similar for base
+53. < :: <> ????
+2. can not create Files
+63. query bug - queryTest
+50. files rename HACK
+7. basic perf check
+27. key added error on exit
+8. Get/GetAll switch [7]
+58. root export / import [8]
+66. $Is Class in system.m0 [65]
+65. bootstrap.m0 [58]
+57. editor text prev
+39. colors in editor
+69. execute throught Execute in IVertex
+33. standard base library / method / func [58]
+66. reference dict.allKeywordsSubstringsDictionary in ZeroCodeCommmon 291
+32. language definition correction to support languages inheritence
+76. escape string not working in @@ parsing
+4. escape sequences in rtq support by keywords [8] and especially \"
+72. import / import direct correction
+76. "o" :: = "test"
+46. forms for Person bug
+11. Diagram perf update [8]
+81. # initiates variable
+82. object\Name = "raz" moves Name to stack
+80. disapearing code from m0
+83. IVerted.delete
+82. simple garbage collection in code parser [83]
+83. 'LocalComputer:my'
+84. foreach "noteCount" in @@Sequence["0","11"]
+			"note" :: new @@Note
+81. decimal support in jsonstore
+94. initial m0 files seems to be to big and contain too much
+51. transactions
+97. removevertex listeners in tree.dispose for each leaf
+103. SimpleTransformer referns to anther ZeroUML in root store, with ids > 4000. this is becouse of parsing in the m0_generate

@@ -1,0 +1,31 @@
+﻿<Window x:Class="m0.UIWpf.Forms.Transaction"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:m0.UIWpf.Forms"
+        mc:Ignorable="d"
+        Title="transaction" Height="379.65" Width="404" WindowStyle="ToolWindow" ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterOwner">
+    <Grid>
+        <GroupBox Header="store universe" HorizontalAlignment="Left" Height="86" Margin="10,10,0,0" VerticalAlignment="Top" Width="187">
+            <Grid>
+                <Button x:Name="universe_begin" Content="begin" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="Universe_start_Click"/>
+                <Button x:Name="universe_commit" Content="commit" HorizontalAlignment="Left" Margin="90,10,0,0" VerticalAlignment="Top" Width="75" Click="Universe_commit_Click"/>
+                <Button x:Name="universe_refresh" Content="refresh" HorizontalAlignment="Left" Margin="91,35,0,0" VerticalAlignment="Top" Width="74" Click="Universe_refresh_Click"/>
+                <Button x:Name="universe_rollback" Content="rollback" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" Width="75" Click="Universe_rollback_Click"/>
+
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="stores list" Margin="9,96,10.333,47.667">
+            <Grid >
+                <ListBox x:Name="stores" Margin="10,10,101,10.333" SelectionChanged="Stores_SelectionChanged"/>
+                <Button x:Name="store_begin" Content="begin" Margin="0,10,11,0" VerticalAlignment="Top" IsEnabled="False" HorizontalAlignment="Right" Width="75" Click="Store_begin_Click"/>
+                <Button x:Name="store_commit" Content="commit" Margin="0,35,11,0" VerticalAlignment="Top" IsEnabled="False" HorizontalAlignment="Right" Width="75" Click="Store_commit_Click"/>
+                <Button x:Name="store_rollback" Content="rollback" Margin="0,59,11,0" VerticalAlignment="Top" IsEnabled="False" HorizontalAlignment="Right" Width="75" Click="Store_rollback_Click"/>
+                <Button x:Name="store_refresh" Content="refresh" Margin="0,84,11,0" VerticalAlignment="Top" IsEnabled="False" HorizontalAlignment="Right" Width="75" Click="Store_refresh_Click"/>
+            </Grid>
+        </GroupBox>
+        <Button Content="OK" Margin="0,0,10.333,14.667" HorizontalAlignment="Right" Width="75" Height="20" VerticalAlignment="Bottom" Click="Button_Click"/>
+
+    </Grid>
+</Window>

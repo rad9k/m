@@ -1,0 +1,183 @@
+﻿************************************  Diagram
+-public Dictionary<IVertex, List<DiagramItemBase>> GetItemsDictionary
+- public double LineSelectionDelta { get; }
+- public void AddEdgesFromDefintion(IVertex baseVertex, IVertex definitionEdges)
+-public void SetFocus()
+-public void UnselectAllSelectedEdges()
+
+public class MetaToPair
+
+Dictionary<IVertex, List<DiagramItemBase>> ItemsDictionary 
+
+void AddToItems(DiagramItemBase item)
+void RemoveFromItems(DiagramItemBase item)
+void ClearItems()
+void RebuidItemsDictionary()
+()
+
+public void RemoveItem(DiagramItemBase item)
+protected List<DiagramItemBase> GetItemsByBaseEdge(IVertex to)
+
+protected void AddItem(IVertex ItemVertex)
+public void AddLineObjects()
+
+public DiagramItemBase GetToDiagramItemFromLineVertex(IVertex lineVertex)
+public List<DiagramItemBase> GetToDiagramItemFromEdge(IEdge edge)
+
+void SelectItemsBySelectionArea()
+
+public void PaintDiagram()
+
+public void OnLoad(object sender, RoutedEventArgs e)
+
+private void Diagram_KeyDown(object sender, KeyEventArgs e)
+
+private void DeleteSelectedItems()
+
+private void DeleteLine()
+
+protected void MouseButtonDownHandler(object sender, MouseButtonEventArgs e)
+
+protected void CreateAndUpdateDiagramLine(double ToX, double ToY)
+
+void AddOrMoveMultiSelectionMovingSprites(double x,double y)
+
+void RemoveMultiSelectionMovingSprites(double x, double y)
+
+protected void MouseMoveHandler(object sender, MouseEventArgs e)
+
+private void CheckIfLineNeedsSelection(Point p)
+
+protected void MouseLeaveHandler(object sender, MouseEventArgs e)
+protected void MouseButtonUpHandler(object sender, MouseButtonEventArgs e)
+protected void MouseUpOrLeave(bool IsUp, MouseEventArgs e)
+
+public void ScaleChange()
+
+protected void UnselectAll()
+
+public void SelectedVerticesUpdated()
+
+protected void SelectWrappersForSelectedVertices()
+
+
+
+//
+
+private void AddDiagramItemDialog(double x, double y, IVertex vv, bool isSet, DragEventArgs e)
+
+private IVertex AddDiagramItem_Base(double x,double y, IVertex DiagramItemDefinition){
+
+public void AddDiagramItem(double x,double y, IVertex DiagramItemDefinition, IVertex BaseEdge){
+
+public void AddDiagramItem(double x, double y, IVertex DiagramItemDefinition, IVertex metaVertex,IVertex newVertex)
+
+public void CheckAndUpdateDiagramLines()
+
+- public void CheckAndUpdateDiagramLinesForItem(DiagramItemBase item)
+
+protected List<DiagramItemBase> GetItemsByBaseEdgeTo_ForLines(IEdge toEdge)
+
+public IVertex GetLineDefinition(IEdge e,IVertex Vertex, DiagramItemBase toItem){
+
+
+
+
+
+**************************************** DiagramItemBase
+
+-public Diagram Diagram;
+-public virtual IVertex Vertex { get; set; }
+-public List<DiagramLineBase> DiagramLines = new List<DiagramLineBase>();
+-public virtual void VertexSetedUp()
+-public void Dispose()
+- public Dictionary<IVertex, List<DiagramLineBase>> GetDiagramLinesBaseEdgeToDictionary()
+
+-public void RemoveFromCanvas()
+-public virtual void DoCreateDiagramLine(DiagramItemBase toItem)
+-public void AddDiagramLineVertex(IEdge edge, IVertex diagramLineDefinition, DiagramItemBase toItem)
+-public void AddDiagramLineObject(DiagramItemBase toItem, IVertex l)
+-public void RemoveDiagramLine(DiagramLineBase line)
+-public virtual void Select()
+-public virtual void Unselect()
+-public virtual void Highlight()
+-public virtual void Unhighlight()
+
+-public void MoveItem(double x, double y)
+-public void MoveAndResizeItem(double left, double top, double width, double height)
+-public void AddToSelectedEdges()
+
+public List<FrameworkElement> Anchors;
+
+protected List<DiagramLineBase> DiagramToLines = new List<DiagramLineBase>();
+
+protected List<DiagramLineBase> DiagramToAsMetaLines = new List<DiagramLineBase>();
+
+protected virtual INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
+
+Dictionary<IVertex, List<DiagramLineBase>> DiagramLinesToDiagramItemDictionary = new Dictionary<IVertex, List<DiagramLineBase>>();
+Dictionary<IVertex, List<DiagramLineBase>> DiagramLinesBaseEdgeToDictionary = new Dictionary<IVertex, List<DiagramLineBase>>();
+
+void AddToDiagramLines(DiagramLineBase line)
+void ClearDiagramLines()
+void RemoveFromDiagramLines(DiagramLineBase toRemove)
+void RebuidDiagramLinesDictionary()
+public Dictionary<IVertex, List<DiagramLineBase>> GetDiagramLinesToDiagramItemDictionary()
+public void AddAsToMetaLine(DiagramLineBase line)
+public virtual void VisualiserUpdate()
+
+public virtual void SetBackAndForeground()
+public virtual Point GetLineAnchorLocation(DiagramItemBase toItem, Point toPoint, int toItemDiagramLinesCount, int toItemDiagramLinesNumber, bool isSelfStart)
+
+private static void AddNewLineOption(IVertex v, IEdge def, IEdge e)
+
+IEdge GetLineEdgeFromLineObject(DiagramLineBase line)
+
+protected void RemoveToLine(DiagramLineBase line)
+
+protected void UpdateDiagramLines(DiagramItemBase toItem)
+protected void UpdateDiagramLines()
+public void HighlightThisAndAllConectedByDiagramLine()
+public void UnhighlightThisAndAllConectedByDiagramLine()
+
+private void DiagramItemBase_MouseLeave(object sender, MouseEventArgs e)
+private void DiagramItemBase_MouseEnter(object sender, MouseEventArgs e)
+protected void DiagramItemBase_SizeChanged(object sender, SizeChangedEventArgs e)
+
+
+public void RemoveFromSelectedEdges()
+
+protected void MouseLeftButtonDownHandler(object sender, MouseButtonEventArgs e)
+protected void UpdateAnchor(ClickTargetEnum anchorType, double left, double top)
+protected FrameworkElement AddAnchor(ClickTargetEnum anchorType, double left, double top)
+public void AnchorMouseButtonDown(object sender, MouseButtonEventArgs e)
+private void UpdateAnchors(double left, double top, double width, double height)
+
+
+**************************************** DiagramLineBase
+
+- public virtual IVertex Vertex { get; set; }
+
+-public Diagram Diagram;
+
+-public DiagramItemBase FromDiagramItem;
+
+-public DiagramItemBase ToDiagramItem;
+
+-public virtual void SetPosition(double FromX, double FromY, double ToX, double ToY, bool isSelfRelation, double selfRelationX, double selfRelationY)
+
+-public virtual double GetMouseDistance(Point p)
+
+-public virtual void UpdateMetaPosition()
+
+-public virtual void AddToCanvas()
+
+-public virtual void RemoveFromCanvas()
+
+-public virtual void Highlight()
+
+-public virtual void Unhighlight()
+
+-public virtual void Dispose()
+
+

@@ -1,0 +1,14 @@
+C:\Users\rad9k\Source\Repos\m\m0_console\obj\Debug\netstandard2.0\m0_console.csproj.AssemblyReference.cache
+C:\Users\rad9k\Source\Repos\m\m0_console\obj\Debug\netstandard2.0\m0_console.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\rad9k\Source\Repos\m\m0_console\obj\Debug\netstandard2.0\m0_console.AssemblyInfoInputs.cache
+C:\Users\rad9k\Source\Repos\m\m0_console\obj\Debug\netstandard2.0\m0_console.AssemblyInfo.cs
+C:\Users\rad9k\Source\Repos\m\m0_console\obj\Debug\netstandard2.0\m0_console.csproj.CoreCompileInputs.cache
+C:\Users\rad9k\Source\Repos\m\m0_console\obj\Debug\netstandard2.0\m0_console.sourcelink.json
+C:\Users\rad9k\Source\Repos\m\m0_console\bin\Debug\netstandard2.0\m0_console.deps.json
+C:\Users\rad9k\Source\Repos\m\m0_console\bin\Debug\netstandard2.0\m0_console.dll
+C:\Users\rad9k\Source\Repos\m\m0_console\bin\Debug\netstandard2.0\m0_console.pdb
+C:\Users\rad9k\Source\Repos\m\m0_console\bin\Debug\netstandard2.0\m0.dll
+C:\Users\rad9k\Source\Repos\m\m0_console\bin\Debug\netstandard2.0\m0.pdb
+C:\Users\rad9k\Source\Repos\m\m0_console\obj\Debug\netstandard2.0\m0_console.csproj.Up2Date
+C:\Users\rad9k\Source\Repos\m\m0_console\obj\Debug\netstandard2.0\m0_console.dll
+C:\Users\rad9k\Source\Repos\m\m0_console\obj\Debug\netstandard2.0\m0_console.pdb

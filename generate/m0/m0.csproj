@@ -1,0 +1,138 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>8.0</LangVersion>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <OutputType>Library</OutputType>
+    <UseWindowsForms>false</UseWindowsForms>
+    <UseWPF>false</UseWPF>
+    <ImportWindowsDesktopTargets>false</ImportWindowsDesktopTargets>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <AppDesigner Include="Properties\" />
+    <PackageReference Include="Jil" Version="2.17.0" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Sigil" Version="5.0.0" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Untitled1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_PROJECT\_OLD\test\obsolete\test.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_PROJECT\_OLD\test\querytest.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_PROJECT\_OLD\test\test.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_PROJECT\theory\montevideo_principles.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_PROJECT\_OLD\I_S_S_U_E_S.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_PROJECT\theory\montevideo_principles 2.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_PROJECT\_OLD\test\new_test.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_PROJECT\_OLD\test\obsolete\EXPRESSIO.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_PROJECT\_OLD\test\first_oo.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_PROJECT\_OLD\keywords.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_PROJECT\_OLD\midi.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_RESOURCES\basic\extend.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_RESOURCES\basic\delete.png" />
+    <Resource Include="_RESOURCES\basic\details.png" />
+    <Resource Include="_RESOURCES\basic\pen.png" />
+    <Resource Include="_RESOURCES\basic\selection.png" />
+    <Resource Include="_RESOURCES\basic\zoom-in.png" />
+    <Resource Include="_RESOURCES\basic\zoom-out.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_RESOURCES\basic\pointer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_RESOURCES\basic\eraser.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_RESOURCES\basic\eraser.cur" />
+    <Resource Include="_RESOURCES\basic\pen.cur" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_RESOURCES\basic\rewind.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_RESOURCES\basic\play.png" />
+    <Resource Include="_RESOURCES\basic\record.png" />
+    <Resource Include="_RESOURCES\basic\stop.png" />
+    <Resource Include="_RESOURCES\basic\truncate.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_RESOURCES\basic\repeat.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_RESOURCES\basic\glue.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_RESOURCES\basic\copy.png" />
+    <Resource Include="_RESOURCES\basic\cut.png" />
+    <Resource Include="_RESOURCES\basic\paste.png" />
+    <Resource Include="_RESOURCES\basic\razor.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_RESOURCES\basic\glue.cur" />
+    <Resource Include="_RESOURCES\basic\razor.cur" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_RESOURCES\basic\mute-speaker.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_PROJECT\_OLD\test\generator.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_PROJECT\_OLD\architecture\_EVENT.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_RESOURCES\basic\extend_down.png" />
+    <Resource Include="_RESOURCES\basic\extend_left.png" />
+    <Resource Include="_RESOURCES\basic\extend_up.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_PROJECT\new_hope.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_PROJECT\view.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="_PROJECT\_OLD\CODE_RESEARCH\UXItemTemplate.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Network\Server\" />
+  </ItemGroup>
+</Project>

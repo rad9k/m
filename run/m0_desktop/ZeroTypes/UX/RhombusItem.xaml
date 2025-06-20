@@ -1,0 +1,16 @@
+﻿<my:LabeledItem x:Class="m0.ZeroTypes.UX.RhombusItem"
+             xmlns:my="clr-namespace:m0.ZeroTypes.UX"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             >
+
+    <Grid>
+        <Path x:Name="Rhombus" Data="M50,0L100,50 50,100 0,50z"  Stretch="Fill" Margin="0" HorizontalAlignment="Left"  VerticalAlignment="Top"/>
+        <Border x:Name="LabelContainer" BorderThickness="10"/>
+    </Grid>
+
+
+</my:LabeledItem>

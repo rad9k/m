@@ -1,0 +1,103 @@
+﻿<?xml version="1.0"?>
+<SyntaxDefinition name="Custom Highlighting" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+<!--  <Color name="keyword" fontWeight="bold" foreground="#4F608F" />
+  <Color name="Keyword" fontWeight="bold" foreground="#2F4172" />
+  <Color name="DolarKeyword" foreground="#897BAF" />
+  <Color name="String" fontWeight="bold" foreground="#417C81" />
+  <Color name="Operator" fontWeight="bold" foreground="#AA8639" />
+  <Color name="DoubleColon" fontWeight="bold" foreground="#D4B26A" />-->
+
+  <Color name="grey"  foreground="#999999" />
+  <Color name="keyword" fontWeight="bold" foreground="#00C2CF" />
+  <Color name="DolarKeyword" foreground="#00008F" />
+  <Color name="String" fontWeight="bold" foreground="#6733D5" />
+  <Color name="Operator" fontWeight="bold" foreground="#FF0000" />
+  <Color name="DoubleColon" fontWeight="bold" foreground="#255867" />
+  <Color name="Monkey" foreground="#6BD1EF" />
+  <Color name="Escape" foreground="#4BB1CF" />
+
+  
+
+  <!-- This is the main ruleset. -->
+  <RuleSet>
+
+    <Span color="String">
+      <Begin>"</Begin>
+      <End>"</End>
+      <RuleSet>
+        <!-- nested span for escape sequences -->
+        <Span begin="\\" end="." />
+      </RuleSet>
+    </Span>
+
+    <Span color="Escape">
+      <Begin>'</Begin>
+      <End>'</End>
+      <RuleSet>
+        <!-- nested span for escape sequences -->
+        <Span begin="\\" end="." />
+      </RuleSet>
+    </Span>
+
+    <Keywords color="keyword">
+      <Word>package</Word>
+      <Word>import</Word>
+      <Word>meta</Word>
+      <Word>direct</Word>
+      <Word>default</Word>
+      <Word>class</Word>
+      <Word>attribute</Word>
+      <Word>variable</Word>
+      <Word>association</Word>
+      <Word>aggregation</Word>
+      <Word>method</Word>
+      <Word>function</Word>
+      <Word>return</Word>
+      <Word>foreach</Word>
+      <Word>while</Word>
+      <Word>if</Word>
+      <Word>test</Word>
+      <Word>case</Word>
+      <Word>fallback</Word>
+      <Word>execute</Word>
+      <Word>parse</Word>
+      <Word>generate</Word>
+      <Word>new</Word>
+      <Word>in</Word>
+      <Word>this</Word>
+      <Word>block</Word>
+      <Word>namedblock</Word>
+      <Word>create trigger</Word>
+      <Word>query</Word>
+	  <Word>filter</Word>	  
+	  <Word>listener</Word>
+	  <Word>create view</Word>
+	  <Word>from query</Word>
+	  <Word>from filter</Word>
+	  <Word>from to transform</Word>
+	  <Word>to query</Word>
+	  <Word>to filter</Word>
+	  <Word>to from transform</Word>
+	  <Word>create http mapping</Word>
+	  <Word>mapping</Word>
+	</Keywords>
+    
+    <Rule color="Operator">
+		\#|&lt;&gt;|&lt;\+&gt;|&lt;-&gt;|&lt;-|\+&lt;|=|\+=|~=|-&lt;|~&lt;|&lt;-|&lt;\+&lt;|&lt;&lt;&lt;|&lt;&lt;|&gt;&gt;|~00|\+|-|\*|/|==|===|====|!=|!|\&amp;|\||&gt;=|&lt;=|::|:|%|`|\[|\]|\(|\)|\\|\?|\{|\}|\.|,|\+&lt;|&lt;|&gt;
+    </Rule>
+
+
+    <Rule color="grey">
+      \^
+    </Rule>
+
+    <Rule color="DolarKeyword">
+      \$[a-zA-Z]+
+    </Rule>
+
+    <Rule color="Monkey">
+      @
+    </Rule>
+
+  </RuleSet>
+</SyntaxDefinition>

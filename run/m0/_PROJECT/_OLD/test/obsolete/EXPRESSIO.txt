@@ -1,0 +1,50 @@
+﻿"Y"
+	a +< a || "m"{
+		c||"x"{
+		}
+	}
+
+"Y"
+	a +< a || "m"{
+		c||"x"{
+			z||"x"{
+			}
+		}
+	}
+
+1
+
+isNested: 
+CRLF: 
+ContainLocalRoot:
+ContainStartInLocal:
+isStartInLocalRoot:
+tabTimesForRootVertex:
+
+2
+
+isNested: T
+CRLF: F
+ContainLocalRoot:T
+ContainStartInLocal:T
+isStartInLocalRoot:T
+tabTimesForRootVertex:0
+
+3
+
+isNested: T
+CRLF: F
+ContainLocalRoot:T
+ContainStartInLocal: F
+isStartInLocalRoot: F
+tabTimesForRootVertex: 0
+
+4
+
+isNested: T
+CRLF: F
+ContainLocalRoot: T
+ContainStartInLocal: T
+isStartInLocalRoot: T
+tabTimesForRootVertex: 0
+
