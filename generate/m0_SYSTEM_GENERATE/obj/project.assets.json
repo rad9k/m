@@ -82,6 +82,7 @@
       "m0_COMPOSER/1.0.0": {
         "type": "project",
         "dependencies": {
+          "m0": "1.0.0",
           "m0_desktop": "1.0.0"
         },
         "compile": {
@@ -94,7 +95,8 @@
       "m0_desktop/1.0.0": {
         "type": "project",
         "dependencies": {
-          "LovFlov": "1.0.0"
+          "LovFlov": "1.0.0",
+          "m0": "1.0.0"
         },
         "compile": {
           "bin/placeholder/m0_desktop.dll": {}

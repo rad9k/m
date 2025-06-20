@@ -169,6 +169,9 @@
         "frameworks": {
           "net48": {
             "projectReferences": {
+              "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0\\m0.csproj": {
+                "projectPath": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0\\m0.csproj"
+              },
               "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_desktop\\m0_desktop.csproj": {
                 "projectPath": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_desktop\\m0_desktop.csproj"
               }
@@ -191,6 +194,9 @@
             "projectReferences": {
               "C:\\Users\\rad9k\\source\\repos\\m\\generate\\LoveFlow\\LovFlov.csproj": {
                 "projectPath": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\LoveFlow\\LovFlov.csproj"
+              },
+              "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0\\m0.csproj": {
+                "projectPath": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0\\m0.csproj"
               }
             }
           }
