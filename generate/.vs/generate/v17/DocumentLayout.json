@@ -1,13 +1,10 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\",
+  "WorkspaceRootPath": "C:\\temp\\generate\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|c:\\users\\rad9k\\source\\repos\\m\\generate\\m0_system_generate\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|c:\\temp\\generate\\m0_system_generate\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|solutionrelative:m0_system_generate\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{00000000-0000-0000-0000-000000000000}|\u003CSolution\u003E|m0||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
     }
   ],
   "DocumentGroupContainers": [
@@ -35,25 +32,13 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\Program.cs",
+              "DocumentMoniker": "C:\\temp\\generate\\m0_SYSTEM_GENERATE\\Program.cs",
               "RelativeDocumentMoniker": "m0_SYSTEM_GENERATE\\Program.cs",
-              "ToolTip": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\Program.cs*",
-              "RelativeToolTip": "m0_SYSTEM_GENERATE\\Program.cs*",
-              "ViewState": "AgIAAK8AAAAAAAAAAAAAALcAAABcAAAAAAAAAA==",
+              "ToolTip": "C:\\temp\\generate\\m0_SYSTEM_GENERATE\\Program.cs",
+              "RelativeToolTip": "m0_SYSTEM_GENERATE\\Program.cs",
+              "ViewState": "AgIAACIAAAAAAAAAAAASwCwAAAAYAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-20T20:40:10.145Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "m0",
-              "DocumentMoniker": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0\\m0.csproj",
-              "RelativeDocumentMoniker": "m0\\m0.csproj",
-              "ToolTip": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0\\m0.csproj",
-              "RelativeToolTip": "m0\\m0.csproj",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-06-20T20:36:55.779Z",
+              "WhenOpened": "2025-06-21T23:40:43.063Z",
               "EditorCaption": ""
             }
           ]

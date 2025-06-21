@@ -1,6 +1,0 @@
-C:\Users\rad9k\source\repos\m\generate\m0_SYSTEM_GENERATE\obj\Debug\net9.0\m0_SYSTEM_GENERATE.csproj.AssemblyReference.cache
-C:\Users\rad9k\source\repos\m\generate\m0_SYSTEM_GENERATE\obj\Debug\net9.0\m0_SYSTEM_GENERATE.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\rad9k\source\repos\m\generate\m0_SYSTEM_GENERATE\obj\Debug\net9.0\m0_SYSTEM_GENERATE.AssemblyInfoInputs.cache
-C:\Users\rad9k\source\repos\m\generate\m0_SYSTEM_GENERATE\obj\Debug\net9.0\m0_SYSTEM_GENERATE.AssemblyInfo.cs
-C:\Users\rad9k\source\repos\m\generate\m0_SYSTEM_GENERATE\obj\Debug\net9.0\m0_SYSTEM_GENERATE.csproj.CoreCompileInputs.cache
-C:\Users\rad9k\source\repos\m\generate\m0_SYSTEM_GENERATE\obj\Debug\net9.0\m0_SYSTEM_GENERATE.sourcelink.json

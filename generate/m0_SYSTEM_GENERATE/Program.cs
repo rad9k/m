@@ -42,7 +42,7 @@ namespace m0_SYSTEM_GENERATE
 
         static void Main(string[] args)
         {
-            print("m0 SYSTEM GENERATE");
+            print("-zero SYSTEM GENERATE");
             print("version 1.0");
             print("SYSTEM / USER / EXAMPLES m0j files generator");
 
@@ -181,11 +181,11 @@ namespace m0_SYSTEM_GENERATE
 
             print("execution succesfull finish");
 
-            System.Diagnostics.Process.Start("c:\\Users\\rad9k\\Source\\Repos\\m\\generate\\m0_SYSTEM_GENERATE\\bin\\Debug\\x.bat");
+             //System.Diagnostics.Process.Start("c:\\Users\\rad9k\\Source\\Repos\\m\\m0_SYSTEM_GENERATE\\bin\\Debug\\x.bat");
 
             //System.Diagnostics.Process.Start("c:\\Users\\radoslaw.tereszczuk\\Source\\Repos\\m\\m0_SYSTEM_GENERATE\\bin\\Debug\\xx.bat");
 
-            //System.Diagnostics.Process.Start("c:\\Users\\teres\\source\\repos\\m\\m0_SYSTEM_GENERATE\\bin\\Debug\\a.bat");
+            System.Diagnostics.Process.Start("c:\\Users\\teres\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\bin\\Debug\\a.bat");
         }
     }
 }

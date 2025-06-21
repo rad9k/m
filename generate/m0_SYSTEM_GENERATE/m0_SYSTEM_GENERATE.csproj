@@ -88,12 +88,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\m0\m0.csproj">
-      <Project>{a8a00ded-611c-4ff5-8b12-5ecc14242b23}</Project>
-      <Name>m0</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="_RES\Generator\HarmonyMelodyTimeGenerator.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -125,13 +119,15 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="_RES\Instrument\MFB522\MFB522_PitchSet.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="_RES\Instrument\MFB522\MFB522_PitchSet.txt" />
     <Content Include="_RES\UXTemplate\from_m0.txt" />
-    <Content Include="_RES\UXTemplate\ZeroUML.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="_RES\UXTemplate\ZeroUML.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\m0\m0.csproj">
+      <Project>{a8a00ded-611c-4ff5-8b12-5ecc14242b23}</Project>
+      <Name>m0</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

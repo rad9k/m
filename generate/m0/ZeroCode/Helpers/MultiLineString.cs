@@ -1,5 +1,4 @@
-﻿ using ICSharpCode.AvalonEdit.Document;
-using m0.ZeroTypes.UX;
+﻿using m0.ZeroTypes.UX;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;

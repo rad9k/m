@@ -4,17 +4,17 @@
 library
 C#
 .cs
-C:\Users\rad9k\source\repos\m\generate\m0\obj\x86\Debug\
+C:\temp\generate\m0\obj\x86\Debug\
 m0
 none
 false
 DEBUG;TRACE
 
-1509281679
+9609015368
 
-115247677300
-1272012918053
-App.xaml;
+150-360986843
+23-1101132850
+App.xaml;ZeroTypes\UX\MultiContainerSubItem.xaml;ZeroTypes\UX\MultiContainerItem.xaml;ZeroTypes\UX\ContainerItem.xaml;ZeroTypes\UX\OvalItem.xaml;ZeroTypes\UX\ImageItem.xaml;ZeroTypes\UX\CodeItem.xaml;ZeroTypes\UX\RhombusItem.xaml;ZeroTypes\UX\RectangleVisualiserItem.xaml;
 
 False
 

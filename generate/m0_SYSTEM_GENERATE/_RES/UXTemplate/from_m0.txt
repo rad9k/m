@@ -1,0 +1,248 @@
+"VeryVeryLightRose"
+"VeryVeryLightVioletBlue"
+"VeryVeryLightAzure"
+"VeryVeryLightBlueGreen"
+"VeryVeryLightLimeGreen"
+"VeryVeryLightOrange"
+
+
+"Templates"
+	import @System\Meta\ZeroTypes\UX direct meta
+	<@UXTemplate :: "ZeroUML">
+		<@$Is :: @UXTemplate>
+		<@UXTemplate :: "Object">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:{$Is:Class}}">
+			<@MetaVertexTestQuery :: "{$Is: Class}">
+			<@ItemClass :: @RectangleItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+				<@RectangleItem\ShowMeta :: "False">
+				<@RectangleItem\VisualiserClass :: @System\Meta\Visualiser\List>
+				<@RectangleItem\VisualiserVertex :: "">
+					<@HasFilter\FilterQuery :: "{$Is:Attribute}:">
+					<@System\Meta\Visualiser\Table\ShowHeader :: "False">
+			<@UXDecoratorTemplate :: "Association instance">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:{$Is:Class}\Association:">
+				<@ToDiagramItemTestQuery :: "UXTemplate:Object">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\IsDashed :: "True">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+			<@UXDecoratorTemplate :: "Aggregation instance">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:{$Is:Class}\Aggregation:">
+				<@ToDiagramItemTestQuery :: "UXTemplate:Object">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\IsDashed :: "True">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Diamond>
+
+
+
+"Templates"
+	import @System\Meta\ZeroTypes\UX direct meta
+	<@UXTemplate :: "ZeroUML">
+		<@$Is :: @UXTemplate>
+		<@UXTemplate :: "DoubleOperator TEST">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{{$Inherits:DoubleOperator}}">
+			<@MetaVertexTestQuery :: "{$Inherits:DoubleOperator}">
+			<@ItemClass :: @MultiContainerItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+				<@MultiContainerItem\ShowMeta :: "False">
+				<@MultiContainerItem\Orientation :: "Horizontal">
+			<@UXTemplate :: "">
+				<@$Is :: @UXTemplate>
+				<@Name :: "Left">
+				<@ContainerEdgeMetaVertex :: @UX>
+				<@BaseEdgeQuery :: "LeftExpression:">
+				<@ItemVertex :: "">
+					<@Size :: "">
+						<@$Is :: @Size>
+						<@Width :: "0">
+						<@Height :: "10">
+				<@UXDecoratorTemplate :: "edge">
+					<@$Is :: @UXDecoratorTemplate>
+					<@EdgeTestQuery :: "">
+					<@ToDiagramItemTestQuery :: "">
+					<@DecoratorClass :: @LineDecorator>
+					<@DecoratorVertex :: "">
+						<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+			<@UXTemplate :: "">
+				<@$Is :: @UXTemplate>
+				<@Name :: "Right">
+				<@ContainerEdgeMetaVertex :: @UX>
+				<@BaseEdgeQuery :: "RightExpression:">
+				<@ItemVertex :: "">
+					<@Size :: "">
+						<@$Is :: @Size>
+						<@Width :: "0">
+						<@Height :: "20">
+			<@UXDecoratorTemplate :: "edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+		<@UXTemplate :: "DoubleOperator">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{{$Inherits:DoubleOperator}}">
+			<@MetaVertexTestQuery :: "{$Inherits:DoubleOperator}">
+			<@ItemClass :: @MultiContainerItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+				<@MultiContainerItem\ShowMeta :: "False">
+				<@MultiContainerItem\Orientation :: "Vertical">
+			<@UXTemplate :: "">
+				<@$Is :: @UXTemplate>
+				<@Name :: "Left">
+				<@ContainerEdgeMetaVertex :: @UX>
+				<@BaseEdgeQuery :: "LeftExpression:">
+				<@ItemVertex :: "">
+					<@Size :: "">
+						<@$Is :: @Size>
+						<@Width :: "10">
+						<@Height :: "0">
+				<@UXDecoratorTemplate :: "edge">
+					<@$Is :: @UXDecoratorTemplate>
+					<@EdgeTestQuery :: "">
+					<@ToDiagramItemTestQuery :: "">
+					<@DecoratorClass :: @LineDecorator>
+					<@DecoratorVertex :: "">
+						<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+			<@UXTemplate :: "">
+				<@$Is :: @UXTemplate>
+				<@Name :: "Right">
+				<@ContainerEdgeMetaVertex :: @UX>
+				<@BaseEdgeQuery :: "RightExpression:">
+				<@ItemVertex :: "">
+					<@Size :: "">
+						<@$Is :: @Size>
+						<@Width :: "20">
+						<@Height :: "0">
+				<@UXDecoratorTemplate :: "edge">
+					<@$Is :: @UXDecoratorTemplate>
+					<@EdgeTestQuery :: "">
+					<@ToDiagramItemTestQuery :: "">
+					<@DecoratorClass :: @LineDecorator>
+					<@DecoratorVertex :: "">
+						<@LineDecorator\EndAnchor :: @LineEndEnum\FilledTriangle>
+			<@UXDecoratorTemplate :: "edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+		<@UXTemplate :: "Vertex">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@MetaVertexTestQuery :: "">
+			<@ItemClass :: @RectangleItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+			<@UXDecoratorTemplate :: "VERTEX EDGE">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @MetaExtendedLineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+		<@UXTemplate :: "Image">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@ItemClass :: @ImageItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+				<@ImageItem\Filename :: "prezes.jpg">
+				<@ImageItem\ShowName :: "False">
+				<@UXItem\BorderSize :: "0">
+		<@UXTemplate :: "Oval">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@ItemClass :: @OvalItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+			<@UXDecoratorTemplate :: "edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+		<@UXTemplate :: "Code hidden">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@ItemClass :: @CodeItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+				<@CodeItem\HideHeader :: "true">
+				<@CodeItem\ShowScrollBars :: "true">
+			<@UXDecoratorTemplate :: "any edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+		<@UXTemplate :: "Code">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@ItemClass :: @CodeItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+		<@UXTemplate :: "Rhombus">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@ItemClass :: @RhombusItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+			<@UXDecoratorTemplate :: "edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+		<@UXTemplate :: "Vertex RectangleItem LIST">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@ItemClass :: @RectangleItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+				<@RectangleItem\ShowMeta :: "False">
+				<@RectangleItem\VisualiserClass :: @System\Meta\Visualiser\List>
+		<@UXTemplate :: "Vertex RectangleItem">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@ItemClass :: @RectangleItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+				<@RectangleItem\ShowMeta :: "False">
+			<@UXDecoratorTemplate :: "edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+		<@UXTemplate :: "Vertex ContainerItem">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@ItemClass :: @ContainerItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+				<@ContainerItem\ShowMeta :: "False">
+				<@UXContainer\NewItemUXTemplate :: @ZeroUML>
+			<@ContainerEdgeMetaVertex :: @UX>
+			<@UXDecoratorTemplate :: "any edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
