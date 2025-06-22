@@ -1,1 +1,0 @@
-copy c:\\Users\\rad9k\\Source\\Repos\\m\\m0_SYSTEM_GENERATE\\bin\\Debug\\*.m0j c:\\Users\\rad9k\\Source\\Repos\\m\\m0_RUN\bin\Debug

@@ -181,11 +181,11 @@ namespace m0_SYSTEM_GENERATE
 
             print("execution succesfull finish");
 
-             //System.Diagnostics.Process.Start("c:\\Users\\rad9k\\Source\\Repos\\m\\m0_SYSTEM_GENERATE\\bin\\Debug\\x.bat");
+             System.Diagnostics.Process.Start("c:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\bin\\Debug\\m0j_copy_rad9k.bat");
 
-            //System.Diagnostics.Process.Start("c:\\Users\\radoslaw.tereszczuk\\Source\\Repos\\m\\m0_SYSTEM_GENERATE\\bin\\Debug\\xx.bat");
+            //System.Diagnostics.Process.Start("c:\\Users\\radoslaw.tereszczuk\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\bin\\Debug\\m0j_copy_radoslaw.bat");
 
-            System.Diagnostics.Process.Start("c:\\Users\\teres\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\bin\\Debug\\a.bat");
+            //System.Diagnostics.Process.Start("c:\\Users\\teres\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\bin\\Debug\\m0j_copy_teres.bat");
         }
     }
 }
