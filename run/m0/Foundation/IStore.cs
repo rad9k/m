@@ -8,9 +8,9 @@ namespace m0.Foundation
 {
     public class StoreId
     {
-        public string TypeName;
+        public string TypeName { get; set; }
 
-        public string Identifier;
+        public string Identifier { get; set; }
 
         public StoreId(string _TypeName, string _Identifier)
         {

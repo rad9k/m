@@ -45,7 +45,7 @@ namespace m0
 
             InitializeComponent();
 
-            this.Loaded += new RoutedEventHandler(m0Main_Loaded);
+            this.Loaded += new RoutedEventHandler(m0Main_Loaded);            
 
             this_static = this;
         }
@@ -296,7 +296,8 @@ namespace m0
         {
             m0.UIWpf.Dialog.ExceptionInfoWindow i = new UIWpf.Dialog.ExceptionInfoWindow();
 
-            i.Owner = this;
+            if (IsLoaded)
+                i.Owner = this;
 
             if (exception.Get(false, "Type:") != null)
                 i.Type = exception.Get(false, "Type:").Value.ToString();
