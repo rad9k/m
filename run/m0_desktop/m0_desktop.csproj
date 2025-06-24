@@ -36,5 +36,33 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ZeroTypes\UX\UX.txt" />
+    <Resource Include="_RESOURCES\basic\copy.png" />
+    <Resource Include="_RESOURCES\basic\cut.png" />
+    <Resource Include="_RESOURCES\basic\delete.png" />
+    <Resource Include="_RESOURCES\basic\details.png" />
+    <Resource Include="_RESOURCES\basic\eraser.cur" />
+    <Resource Include="_RESOURCES\basic\eraser.png" />
+    <Resource Include="_RESOURCES\basic\extend.png" />
+    <Resource Include="_RESOURCES\basic\extend_down.png" />
+    <Resource Include="_RESOURCES\basic\extend_left.png" />
+    <Resource Include="_RESOURCES\basic\extend_up.png" />
+    <Resource Include="_RESOURCES\basic\glue.cur" />
+    <Resource Include="_RESOURCES\basic\glue.png" />
+    <Resource Include="_RESOURCES\basic\mute-speaker.png" />
+    <Resource Include="_RESOURCES\basic\paste.png" />
+    <Resource Include="_RESOURCES\basic\pen.cur" />
+    <Resource Include="_RESOURCES\basic\pen.png" />
+    <Resource Include="_RESOURCES\basic\play.png" />
+    <Resource Include="_RESOURCES\basic\pointer.png" />
+    <Resource Include="_RESOURCES\basic\razor.cur" />
+    <Resource Include="_RESOURCES\basic\razor.jpg" />
+    <Resource Include="_RESOURCES\basic\record.png" />
+    <Resource Include="_RESOURCES\basic\repeat.png" />
+    <Resource Include="_RESOURCES\basic\rewind.png" />
+    <Resource Include="_RESOURCES\basic\selection.png" />
+    <Resource Include="_RESOURCES\basic\stop.png" />
+    <Resource Include="_RESOURCES\basic\truncate.png" />
+    <Resource Include="_RESOURCES\basic\zoom-in.png" />
+    <Resource Include="_RESOURCES\basic\zoom-out.png" />
   </ItemGroup>
 </Project>
