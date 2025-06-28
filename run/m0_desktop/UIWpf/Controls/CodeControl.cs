@@ -440,7 +440,7 @@ namespace m0.UIWpf.Controls
 
            
             IHighlightingDefinition customHighlighting;
-            using (Stream s = typeof(m0.MinusZero).Assembly.GetManifestResourceStream("m0.ZeroCodeHighlighting.xshd"))
+            using (Stream s = typeof(m0.UIWpf.WpfUtil).Assembly.GetManifestResourceStream("m0.ZeroCodeHighlighting.xshd"))
             {
                 if (s == null)
                     throw new InvalidOperationException("Could not find embedded resource");
