@@ -35,7 +35,7 @@ namespace m0.UIWpf.Visualisers.Controls
         public InfoButton()
         {
             Image i = new Image();
-            BitmapImage b = new BitmapImage(new Uri(@"pack://application:,,/m0;Component/_resources/basic/details.png", UriKind.RelativeOrAbsolute));
+            BitmapImage b = new BitmapImage(new Uri(@"pack://application:,,/m0_desktop;Component/_resources/basic/details.png", UriKind.RelativeOrAbsolute));
             int q = b.PixelHeight; // will not load without this
             i.Source = b;
             

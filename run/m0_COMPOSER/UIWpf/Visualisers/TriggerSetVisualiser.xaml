@@ -12,19 +12,19 @@
             <ToolBar>
                 <ToggleButton Name="ArrowButton_Instance" ToolTip="Select multiple notes" Click="ArrowButton_Click">
                     <StackPanel Orientation="Horizontal">
-                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/pointer.png" Width="15" Height="15"/>
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0_desktop;Component/_resources/basic/pointer.png" Width="15" Height="15"/>
                         <TextBlock Margin="3,0,0,0">Select</TextBlock>
                     </StackPanel>
                 </ToggleButton>
                 <ToggleButton Name="PenButton_Instance" ToolTip="Add new note" Click="PenButton_Click">
                     <StackPanel Orientation="Horizontal">
-                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/pen.png" Width="15" Height="15"/>
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0_desktop;Component/_resources/basic/pen.png" Width="15" Height="15"/>
                         <TextBlock Margin="3,0,0,0">New</TextBlock>
                     </StackPanel>
                 </ToggleButton>
                 <ToggleButton Name="EraseButton_Instance" ToolTip="Erase note" Click="EraseButton_Click">
                     <StackPanel Orientation="Horizontal">
-                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/eraser.png" Width="15" Height="15"/>
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0_desktop;Component/_resources/basic/eraser.png" Width="15" Height="15"/>
                         <TextBlock Margin="3,0,0,0">Erase</TextBlock>
                     </StackPanel>
                 </ToggleButton>
@@ -33,19 +33,19 @@
 
                 <Button Name="CutButton_Instance" ToolTip="Cut notes" Click="CutButton_Click">
                     <StackPanel Orientation="Horizontal">
-                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/cut.png" Width="15" Height="15"/>
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0_desktop;Component/_resources/basic/cut.png" Width="15" Height="15"/>
                         <TextBlock Margin="3,0,0,0">Cut</TextBlock>
                     </StackPanel>
                 </Button>
                 <Button Name="CopyButton_Instance" ToolTip="Copy notes" Click="CopyButton_Click">
                     <StackPanel Orientation="Horizontal">
-                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/copy.png" Width="15" Height="15"/>
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0_desktop;Component/_resources/basic/copy.png" Width="15" Height="15"/>
                         <TextBlock Margin="3,0,0,0">Copy</TextBlock>
                     </StackPanel>
                 </Button>
                 <Button Name="PasteButton_Instance" ToolTip="Paste notes" Click="PasteButton_Click">
                     <StackPanel Orientation="Horizontal">
-                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/paste.png" Width="15" Height="15"/>
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0_desktop;Component/_resources/basic/paste.png" Width="15" Height="15"/>
                         <TextBlock Margin="3,0,0,0">Paste</TextBlock>
                     </StackPanel>
                 </Button>
@@ -54,13 +54,13 @@
                 
                 <Button Name="TruncateButton_Instance" ToolTip="Truncate the sequence length" Click="TruncateButton_Click">
                     <StackPanel Orientation="Horizontal">
-                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/truncate.png" Width="15" Height="15"/>
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0_desktop;Component/_resources/basic/truncate.png" Width="15" Height="15"/>
                         <TextBlock Margin="3,0,0,0">Truncate</TextBlock>
                     </StackPanel>
                 </Button>
                 <Button Name="ExtendButton_Instance" ToolTip="Extend the sequence length" Click="ExtendButton_Click">
                     <StackPanel Orientation="Horizontal">
-                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0;Component/_resources/basic/extend.png" Width="15" Height="15"/>
+                        <Image RenderOptions.BitmapScalingMode="HighQuality" Source="pack://application:,,/m0_desktop;Component/_resources/basic/extend.png" Width="15" Height="15"/>
                         <TextBlock Margin="3,0,0,0">Extend</TextBlock>
                     </StackPanel>
                 </Button>
