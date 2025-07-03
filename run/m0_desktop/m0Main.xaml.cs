@@ -47,7 +47,7 @@ namespace m0
 
             this.Loaded += new RoutedEventHandler(m0Main_Loaded);            
 
-            this_static = this;
+            this_static = this;            
         }
 
         public void Init()

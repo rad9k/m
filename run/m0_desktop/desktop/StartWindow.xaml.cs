@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 
-namespace m0.desktop
+namespace m0.Desktop
 {
     /// <summary>
     /// Interaction logic for StartWindow.xaml
@@ -19,10 +19,10 @@ namespace m0.desktop
         public StartWindow()
         {
             InitializeComponent();
-
-            //m0_desktop.RUN();
-
-            //Close();            
+            
+            DesktopRunner.RUN();
+            
+            Close();
         }
 
         private void button1_Click(object sender, RoutedEventArgs e)

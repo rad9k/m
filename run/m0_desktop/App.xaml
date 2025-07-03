@@ -1,8 +1,8 @@
 ﻿<Application x:Class="m0_RUN.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:m0.desktop"             
-            StartupUri="desktop\StartWindow.xaml">
+             xmlns:local="clr-namespace:m0.Desktop"             
+            StartupUri="Desktop\StartWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

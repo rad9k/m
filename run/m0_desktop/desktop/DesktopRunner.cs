@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using m0.Util;
 
-namespace m0.desktop
+namespace m0.Desktop
 {
     public class DesktopRunner
     {
