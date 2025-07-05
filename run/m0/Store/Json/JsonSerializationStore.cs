@@ -208,7 +208,7 @@ namespace m0.Store.Json
                     else
                     { // load graph from store
                         string jsonContent = readStream.ReadToEnd();
-                        JsonSerializationData data = JsonSerializer.Deserialize<JsonSerializationData>(jsonContent, GetJsonSerializerOptions());
+                        JsonSerializationData data = JsonSerializer.Deserialize<JsonSerializationData>(jsonContent, FastJsonContext.Default.JsonSerializationData);
 
                         //readStream.Close();
 
@@ -244,22 +244,7 @@ namespace m0.Store.Json
                 root.IsRoot = true;
             }
 
-        }
-
-        private JsonSerializerOptions GetJsonSerializerOptions()
-        {
-            return new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = null,
-                WriteIndented = false,
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                PropertyNameCaseInsensitive = false,
-                IncludeFields = false,
-                IgnoreReadOnlyFields = true,
-                IgnoreReadOnlyProperties = true,
-                NumberHandling = JsonNumberHandling.Strict
-            };
-        }
+        }    
 
         internal void VertexIdentifierCompensate(long vertexIdentifierCompensate)
         {
@@ -279,7 +264,6 @@ namespace m0.Store.Json
                 }
                 else // can not compensate
                     VertexIdentifiersDictionary.Add(kvp.Key, kvp.Value);
-
             }
 
             VertexIdentifierCount += vertexIdentifierCompensate;
@@ -432,7 +416,7 @@ namespace m0.Store.Json
                                 storeId.TypeName = kvp.Value.TypeName;
                             }
 
-                string jsonString = JsonSerializer.Serialize(data, GetJsonSerializerOptions());
+                string jsonString = JsonSerializer.Serialize(data, FastJsonContext.Default.JsonSerializationData);
                 writeStream.Write(jsonString);
             }
 
