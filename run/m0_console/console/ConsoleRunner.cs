@@ -17,6 +17,8 @@ namespace m0.console
             MinusZero.Instance.Initialize();
 
             MinusZero.Instance.Initialize_AfterUXInitialized();
+
+            MinusZero.Instance.Dispose();
         }
     }
 }
