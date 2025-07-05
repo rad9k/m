@@ -22,9 +22,7 @@
   </PropertyGroup>
   <ItemGroup>
     <AppDesigner Include="Properties\" />
-    <PackageReference Include="Jil" Version="3.0.0-alpha2" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Sigil" Version="5.0.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>

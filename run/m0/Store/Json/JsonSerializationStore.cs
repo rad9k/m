@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using m0.Foundation;
@@ -14,6 +11,11 @@ using m0.Store.FileSystem;
 
 namespace m0.Store.Json
 {
+    [JsonSerializable(typeof(JsonSerializationData))]    
+    public partial class FastJsonContext : JsonSerializerContext
+    {
+    }
+
     public class JsonSerializationData
     {
         public Dictionary<int, StoreId> StoreIdDictionary { get; set; } = new Dictionary<int, StoreId>();
@@ -248,10 +250,14 @@ namespace m0.Store.Json
         {
             return new JsonSerializerOptions
             {
-                PropertyNamingPolicy = null, // Użyj oryginalnych nazw właściwości
-                WriteIndented = true,
+                PropertyNamingPolicy = null,
+                WriteIndented = false,
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                PropertyNameCaseInsensitive = true
+                PropertyNameCaseInsensitive = false,
+                IncludeFields = false,
+                IgnoreReadOnlyFields = true,
+                IgnoreReadOnlyProperties = true,
+                NumberHandling = JsonNumberHandling.Strict
             };
         }
 
@@ -454,9 +460,7 @@ namespace m0.Store.Json
                 {
                     if (v.Value is string)
                         jv.ValueString = (string)v.Value;
-                    //else
-                    //  jv.ValueDouble = Convert.ToDouble(v.Value); // :)
-
+                    
                     if (v.Value is double)
                         jv.ValueDouble = (double)v.Value;
 
@@ -559,8 +563,7 @@ namespace m0.Store.Json
             _DetachState = DetachStateEnum.Detaching;
 
             foreach (IVertex v in VertexIdentifiersDictionary.Values)
-            {
-                //foreach (IEdge e in v.OutEdges)
+            {                
                 foreach (IEdge e in v.OutEdgesRaw.ToList())
                     if (e is IDetachableEdge)
                     {

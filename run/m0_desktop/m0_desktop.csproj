@@ -20,8 +20,7 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <PackageReference Include="AvalonEdit" Version="6.3.1.120" />
-    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.6.1" />
-    <PackageReference Include="Jil" Version="3.0.0-alpha2" />
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.7.25104.5739" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
   </ItemGroup>

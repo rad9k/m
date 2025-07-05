@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\m0\m0.csproj" />
     <ProjectReference Include="..\m0_desktop\m0_desktop.csproj" />
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.7.25104.5739" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
   </ItemGroup>
