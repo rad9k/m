@@ -21,18 +21,6 @@ namespace m0.Store.Json
     [JsonSerializable(typeof(List<JsonVertex>))]
     [JsonSerializable(typeof(List<JsonEdge>))]
     [JsonSerializable(typeof(StoreId))]
-    // Dodaj wszystkie możliwe typy dla właściwości object
-    [JsonSerializable(typeof(string))]
-    [JsonSerializable(typeof(long))]
-    [JsonSerializable(typeof(int))]
-    [JsonSerializable(typeof(double))]
-    [JsonSerializable(typeof(decimal))]
-    [JsonSerializable(typeof(bool))]
-    [JsonSerializable(typeof(long?))]
-    [JsonSerializable(typeof(int?))]
-    [JsonSerializable(typeof(double?))]
-    [JsonSerializable(typeof(decimal?))]
-    [JsonSerializable(typeof(bool?))]
     [JsonSourceGenerationOptions(
         GenerationMode = JsonSourceGenerationMode.Default,
         PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,

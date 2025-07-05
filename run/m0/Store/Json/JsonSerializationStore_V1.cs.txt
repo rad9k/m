@@ -4,184 +4,65 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using m0.Foundation;
 using m0.Graph;
+using Jil;
 using m0.Util;
 using m0.Store.FileSystem;
 
 namespace m0.Store.Json
 {
-    [JsonSerializable(typeof(JsonSerializationData))]
-    [JsonSerializable(typeof(JsonVertex))]
-    [JsonSerializable(typeof(JsonEdge))]
-    [JsonSerializable(typeof(Dictionary<int, StoreId>))]
-    [JsonSerializable(typeof(List<JsonVertex>))]
-    [JsonSerializable(typeof(List<JsonEdge>))]
-    [JsonSerializable(typeof(StoreId))]
-    // Dodaj wszystkie możliwe typy dla właściwości object
-    [JsonSerializable(typeof(string))]
-    [JsonSerializable(typeof(long))]
-    [JsonSerializable(typeof(int))]
-    [JsonSerializable(typeof(double))]
-    [JsonSerializable(typeof(decimal))]
-    [JsonSerializable(typeof(bool))]
-    [JsonSerializable(typeof(long?))]
-    [JsonSerializable(typeof(int?))]
-    [JsonSerializable(typeof(double?))]
-    [JsonSerializable(typeof(decimal?))]
-    [JsonSerializable(typeof(bool?))]
-    [JsonSourceGenerationOptions(
-        GenerationMode = JsonSourceGenerationMode.Default,
-        PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-        WriteIndented = true)]
-    public partial class JsonSerializationContext : JsonSerializerContext
-    {
-    }
-
     public class JsonSerializationData
     {
-        public Dictionary<int, StoreId> StoreIdDictionary { get; set; } = new();
-        public List<JsonVertex> Vertices { get; set; } = new();
+        public Dictionary<int, StoreId> StoreIdDictionary;
+        public List<JsonVertex> Vertices;
     }
 
     public class JsonVertex
     {
-        [JsonPropertyName("Id")]
-        public object Id { get; set; }
+        [JilDirective(Name = "Id", IsUnion = true)]
+        public string IdString;
 
-        [JsonPropertyName("Value")]
-        public object Value { get; set; }
+        [JilDirective(Name = "Id", IsUnion = true)]
+        public long IdLong;
 
-        [JsonPropertyName("ValueDouble")]
-        public double? ValueDouble { get; set; }
+        
+        [JilDirective(Name = "Value", IsUnion = true)]
+        public string ValueString;
 
-        [JsonPropertyName("ValueDecimal")]
-        public decimal? ValueDecimal { get; set; }
+        [JilDirective(Name = "Value", IsUnion = true)]
+        public int? ValueInt;
 
-        public List<JsonEdge> Edges { get; set; } = new();
+        [JilDirective(Name = "ValueDouble")]
+        public double? ValueDouble;
 
-        // Helper properties for backward compatibility
-        [JsonIgnore]
-        public string IdString
-        {
-            get => Id switch
-            {
-                string s => s,
-                JsonElement je when je.ValueKind == JsonValueKind.String => je.GetString(),
-                _ => null
-            };
-            set => Id = value;
-        }
+        [JilDirective(Name = "ValueDecimal")]
+        public decimal? ValueDecimal;
+        
 
-        [JsonIgnore]
-        public long? IdLong
-        {
-            get => Id switch
-            {
-                long l => l,
-                int i => i,
-                JsonElement je when je.ValueKind == JsonValueKind.Number && je.TryGetInt64(out long val) => val,
-                JsonElement je when je.ValueKind == JsonValueKind.String && long.TryParse(je.GetString(), out long val) => val,
-                _ => null
-            };
-            set => Id = value;
-        }
-
-        [JsonIgnore]
-        public string ValueString
-        {
-            get => Value switch
-            {
-                string s => s,
-                JsonElement je when je.ValueKind == JsonValueKind.String => je.GetString(),
-                _ => null
-            };
-            set => Value = value;
-        }
-
-        [JsonIgnore]
-        public int? ValueInt
-        {
-            get => Value switch
-            {
-                int i => i,
-                JsonElement je when je.ValueKind == JsonValueKind.Number && je.TryGetInt32(out int val) => val,
-                JsonElement je when je.ValueKind == JsonValueKind.String && int.TryParse(je.GetString(), out int val) => val,
-                _ => null
-            };
-            set => Value = value;
-        }
+        public List<JsonEdge> Edges;
     }
 
     public class JsonEdge
     {
-        public int MetaStoreId { get; set; }
+        public int MetaStoreId;
 
-        [JsonPropertyName("MetaId")]
-        public object MetaId { get; set; }
+        [JilDirective(Name = "MetaId", IsUnion = true)]
+        public string MetaIdString;
 
-        public int ToStoreId { get; set; }
+        [JilDirective(Name = "MetaId", IsUnion = true)]
+        public long MetaIdLong;
 
-        [JsonPropertyName("ToId")]
-        public object ToId { get; set; }
+        public int ToStoreId;
 
-        // Helper properties for backward compatibility
-        [JsonIgnore]
-        public string MetaIdString
-        {
-            get => MetaId switch
-            {
-                string s => s,
-                JsonElement je when je.ValueKind == JsonValueKind.String => je.GetString(),
-                _ => null
-            };
-            set => MetaId = value;
-        }
+        [JilDirective(Name = "ToId", IsUnion = true)]
+        public string ToIdString;
 
-        [JsonIgnore]
-        public long? MetaIdLong
-        {
-            get => MetaId switch
-            {
-                long l => l,
-                int i => i,
-                JsonElement je when je.ValueKind == JsonValueKind.Number && je.TryGetInt64(out long val) => val,
-                JsonElement je when je.ValueKind == JsonValueKind.String && long.TryParse(je.GetString(), out long val) => val,
-                _ => null
-            };
-            set => MetaId = value;
-        }
-
-        [JsonIgnore]
-        public string ToIdString
-        {
-            get => ToId switch
-            {
-                string s => s,
-                JsonElement je when je.ValueKind == JsonValueKind.String => je.GetString(),
-                _ => null
-            };
-            set => ToId = value;
-        }
-
-        [JsonIgnore]
-        public long? ToIdLong
-        {
-            get => ToId switch
-            {
-                long l => l,
-                int i => i,
-                JsonElement je when je.ValueKind == JsonValueKind.Number && je.TryGetInt64(out long val) => val,
-                JsonElement je when je.ValueKind == JsonValueKind.String && long.TryParse(je.GetString(), out long val) => val,
-                _ => null
-            };
-            set => ToId = value;
-        }
+        [JilDirective(Name = "ToId", IsUnion = true)]
+        public long ToIdLong;
     }
+
 
     public class JsonSerializationStore : StoreBase
     {
@@ -189,53 +70,51 @@ namespace m0.Store.Json
 
         private StoreId RootStore;
 
-        // Use source-generated context for maximum performance
-        private static readonly JsonSerializationContext JsonContext = new();
-
         void Load()
         {
             if (File.Exists(Identifier))
-            {
-                try
+            {            
+                using (StreamReader readStream = new StreamReader(Identifier))
                 {
-                    ReadOnlySpan<byte> jsonBytes = File.ReadAllBytes(Identifier);
-
-                    if (jsonBytes.Length == 0)
+                    //try
+                    //{
+                    if (readStream.EndOfStream)
                     { // create new sub graph
                         EasyVertex __root = new EasyVertex(this);
+
                         root = __root;
-                        root.IsRoot = true;
+
+                        root.IsRoot = true;                        
                     }
                     else
                     { // load graph from store
-                        JsonSerializationData data = JsonSerializer.Deserialize(jsonBytes, JsonContext.JsonSerializationData);
+                        JsonSerializationData data = JSON.Deserialize<JsonSerializationData>(readStream);
+
+                        //readStream.Close();
 
                         ReconstructVerticesFromSerialisationData(data);
 
+
                         root = GetVertexByIdentifier(GetRootIdentifier());
+
                         root.IsRoot = true;
+                        
 
                         Attach();
                     }
+                    
                 }
-                catch (Exception ex)
-                {
-                    canWrite = false;
-                    UserInteractionUtil.ShowError("Json Deserialization from " + Identifier,
-                        "Failed to load file: " + ex.Message);
 
-                    // Fallback to creating new
-                    EasyVertex __root = new EasyVertex(this);
-                    root = __root;
-                    root.IsRoot = true;
-                }
             }
             else
             { // create new
-                EasyVertex __root = new EasyVertex(this);
+                EasyVertex __root = new EasyVertex(this);                
+
                 root = __root;
-                root.IsRoot = true;
+
+                root.IsRoot = true;                
             }
+            
         }
 
         internal void VertexIdentifierCompensate(long vertexIdentifierCompensate)
@@ -244,7 +123,7 @@ namespace m0.Store.Json
 
             VertexIdentifiersDictionary = new Dictionary<object, IVertex>();
 
-            foreach (KeyValuePair<object, IVertex> kvp in oldVertexIdentifiersDictionary)
+            foreach(KeyValuePair<object, IVertex> kvp in oldVertexIdentifiersDictionary)
             {
                 if (kvp.Value.Identifier is long && kvp.Value is EasyVertex)
                 {
@@ -256,6 +135,7 @@ namespace m0.Store.Json
                 }
                 else // can not compensate
                     VertexIdentifiersDictionary.Add(kvp.Key, kvp.Value);
+                
             }
 
             VertexIdentifierCount += vertexIdentifierCompensate;
@@ -273,8 +153,8 @@ namespace m0.Store.Json
                 {
                     toBeIdentifier = jv.IdLong;
 
-                    if (toBeIdentifier is long longId && longId > maxVertexIdentifierCount)
-                        maxVertexIdentifierCount = longId;
+                    if ((long)toBeIdentifier > maxVertexIdentifierCount)
+                        maxVertexIdentifierCount = (long)toBeIdentifier;
                 }
                 else
                     toBeIdentifier = jv.IdString;
@@ -295,7 +175,7 @@ namespace m0.Store.Json
 
                 v._Store = this;
 
-                foreach (JsonEdge je in jv.Edges)
+                foreach(JsonEdge je in jv.Edges)
                 {
                     object MetaId;
                     object ToId;
@@ -317,8 +197,9 @@ namespace m0.Store.Json
                     else
                     {
                         if (!data.StoreIdDictionary.ContainsKey(je.MetaStoreId))
-                        {
+                        {                            
                             UserInteractionUtil.ShowError("Json Deserialisation from " + Identifier, "MetaStoreId " + je.MetaStoreId + " not found in StoreIdDictionary");
+
                             return;
                         }
                         else
@@ -330,7 +211,7 @@ namespace m0.Store.Json
                     if (je.ToStoreId == 0)
                         ToStoreId = new StoreId(this.TypeName, this.Identifier);
                     else
-                    if (je.ToStoreId == -1)
+                    if(je.ToStoreId == -1)
                     {
                         ToStoreId = RootStore;
                         ToId = MinusZero.Instance.root.Identifier;
@@ -338,13 +219,14 @@ namespace m0.Store.Json
                     else
                     {
                         if (!data.StoreIdDictionary.ContainsKey(je.ToStoreId))
-                        {
+                        {                            
                             UserInteractionUtil.ShowError("Json Deserialisation from " + Identifier, "ToStoreId " + je.ToStoreId + " not found in StoreIdDictionary");
+
                             return;
                         }
                         else
                             ToStoreId = data.StoreIdDictionary[je.ToStoreId];
-                    }
+                    }                    
 
                     EasyEdge e = new EasyEdge(MetaStoreId.TypeName, MetaStoreId.Identifier, MetaId,
                         ToStoreId.TypeName, ToStoreId.Identifier, ToId);
@@ -353,10 +235,11 @@ namespace m0.Store.Json
 
                     e._from = v;
 
-                    v.OutEdgesRaw.Add(e);
+                    v.OutEdgesRaw.Add(e);                    
                 }
             }
 
+            //if (maxVertexIdentifierCount > 0)
             VertexIdentifierCount = maxVertexIdentifierCount + 1;
         }
 
@@ -382,30 +265,35 @@ namespace m0.Store.Json
         }
 
         public void CommitTransaction(string fileName, bool checkIfIsDetached)
-        {
+        {            
             if (!canWrite)
             {
-                UserInteractionUtil.ShowError("Json Serialisation to " + fileName, "As json serialisation file " + fileName + " has not been properly loaded, commit (saving) is disabled for the file. This will protect existing file content.");
+                UserInteractionUtil.ShowError("Json Serlialisation to " + fileName, "As json serialisation file " + fileName + " has not been properly loaded, commit (saving) is disabled for the file. This will protect existing file content.");
                 return;
             }
 
             if (checkIfIsDetached && DetachState != DetachStateEnum.Detached)
                 throw new Exception("Store not Detached");
 
+            StreamWriter writeStream = new StreamWriter(fileName);
+
             JsonSerializationData data = GetJsonSerializationData();
 
-            if (storeOverride != null)
+            if(storeOverride!=null)
                 foreach (StoreId storeId in data.StoreIdDictionary.Values)
-                    foreach (KeyValuePair<string, StoreId> kvp in storeOverride)
-                        if (kvp.Key == storeId.Identifier)
+                    foreach(KeyValuePair<string, StoreId> kvp in storeOverride)
+                        if(kvp.Key == storeId.Identifier)
                         {
                             storeId.Identifier = kvp.Value.Identifier;
                             storeId.TypeName = kvp.Value.TypeName;
                         }
 
-            // Use source generation for maximum performance
-            byte[] jsonBytes = JsonSerializer.SerializeToUtf8Bytes(data, JsonContext.JsonSerializationData);
-            File.WriteAllBytes(fileName, jsonBytes);
+            Options o = new Options(false, true, false, DateTimeFormat.MicrosoftStyleMillisecondsSinceUnixEpoch, false);                
+            
+            JSON.Serialize<JsonSerializationData>(data, writeStream, o);
+            
+
+            writeStream.Close();
 
             base.CommitTransaction();
         }
@@ -425,20 +313,22 @@ namespace m0.Store.Json
                 if (v.Identifier is string)
                     jv.IdString = (string)v.Identifier;
                 else
-                    jv.IdLong = (long)v.Identifier;
+                    jv.IdLong = (long)v.Identifier; // :)
 
                 if (v.Value != null)
                 {
-                    if (v.Value is string)
-                        jv.ValueString = (string)v.Value;
+                    if (v.Value is string)                    
+                        jv.ValueString = (string)v.Value;                                            
+                    //else
+                    //  jv.ValueDouble = Convert.ToDouble(v.Value); // :)
 
-                    if (v.Value is double)
-                        jv.ValueDouble = (double)v.Value;
+                    if (v.Value is double)                    
+                        jv.ValueDouble = (double)v.Value;                                            
 
-                    if (v.Value is int)
-                        jv.ValueInt = (int)v.Value;
+                    if (v.Value is int)                   
+                        jv.ValueInt = (int)v.Value;                                            
 
-                    if (v.Value is decimal)
+                    if (v.Value is decimal)                    
                         jv.ValueDecimal = (decimal)v.Value;
 
                     if (v.Value is bool)
@@ -452,8 +342,8 @@ namespace m0.Store.Json
 
                 jv.Edges = new List<JsonEdge>();
 
-                foreach (IEdge e in v.OutEdgesRaw)
-                    if (e is IDetachableEdge)
+                foreach(IEdge e in v.OutEdgesRaw)
+                   if(e is IDetachableEdge)
                     {
                         IDetachableEdge de = (IDetachableEdge)e;
 
@@ -466,7 +356,7 @@ namespace m0.Store.Json
                             if (de.MetaIdentifier is string)
                                 je.MetaIdString = (string)de.MetaIdentifier;
                             else
-                                je.MetaIdLong = (long)de.MetaIdentifier;
+                                je.MetaIdLong = (long)de.MetaIdentifier; // :)
                         }
 
                         je.ToStoreId = GetStoreId(data, de.ToStoreTypeName, de.ToStoreIdentifier, de.ToIdentifier);
@@ -474,7 +364,7 @@ namespace m0.Store.Json
                         if (de.ToIdentifier is string)
                             je.ToIdString = (string)de.ToIdentifier;
                         else
-                            je.ToIdLong = (long)de.ToIdentifier;
+                            je.ToIdLong = (long)de.ToIdentifier; // :)                        
 
                         jv.Edges.Add(je);
                     }
@@ -491,7 +381,7 @@ namespace m0.Store.Json
             if (StoreIdentifier == "$-0$ROOT$STORE$" && vertexIdentifier is long && (long)vertexIdentifier == 0)
                 return -1;
 
-            foreach (KeyValuePair<int, StoreId> sid in data.StoreIdDictionary)
+            foreach (KeyValuePair<int,StoreId> sid in data.StoreIdDictionary)
                 if (sid.Value.TypeName == StoreTypeName && sid.Value.Identifier == StoreIdentifier)
                     return sid.Key;
 
@@ -503,7 +393,7 @@ namespace m0.Store.Json
         }
 
         public bool RefreshOnRollback { get; set; }
-
+        
         public override void RollbackTransaction()
         {
             if (RefreshOnRollback)
@@ -513,17 +403,17 @@ namespace m0.Store.Json
         }
 
         public override void UpdateDetachStateData()
-        {
+        {                        
             foreach (IVertex v in VertexIdentifiersDictionary.Values.ToList())
-            {
+            {                
                 foreach (IEdge e in v.OutEdgesRaw)
                     if (e is IDetachableEdge)
                     {
                         IDetachableEdge de = (IDetachableEdge)e;
 
-                        de.UpdateDetachStateData();
+                        de.UpdateDetachStateData();                
                     }
-            }
+            }         
         }
 
         public override void Detach()
@@ -534,23 +424,25 @@ namespace m0.Store.Json
             _DetachState = DetachStateEnum.Detaching;
 
             foreach (IVertex v in VertexIdentifiersDictionary.Values)
-            {
+            {                
+                //foreach (IEdge e in v.OutEdges)
                 foreach (IEdge e in v.OutEdgesRaw.ToList())
                     if (e is IDetachableEdge)
                     {
                         IDetachableEdge de = (IDetachableEdge)e;
-
+                        
                         de.Detach();
                     }
             }
 
             _DetachState = DetachStateEnum.Detached;
-        }
+        }        
 
         public JsonSerializationStore(String identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList)
             : base(identifier, storeUniverse, accessLeveList)
         {
             RootStore = new StoreId(MinusZero.Instance.root.Store.TypeName, MinusZero.Instance.root.Store.Identifier);
+
 
             RefreshOnRollback = false;
 
@@ -565,6 +457,7 @@ namespace m0.Store.Json
             {
                 UpdateDetachStateData();
 
+
                 string fileName = FileSystemUtil.getFileName(Identifier);
 
                 string extension = FileSystemUtil.getExtension(Identifier);
@@ -572,6 +465,7 @@ namespace m0.Store.Json
                 string pathPart = FileSystemUtil.getPathPart(Identifier);
 
                 string backupFileName = pathPart + fileName + "." + extension + ".backup";
+
 
                 CommitTransaction(backupFileName, false);
             }
