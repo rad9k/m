@@ -98,13 +98,11 @@ namespace m0_console.console
             if (line.Contains("[EXCEPTION]"))
                 coloredLine = "\u001b[31m\u001b[1m" + line + Reset; // Red
             else if (line.Contains("[USER]"))
-                coloredLine = "\u001b[38;5;214m\u001b[1m" + line + Reset; // Orange (bez tła)
-            // Zmieniono: usunięto 40; (czarne tło)
+                coloredLine = "\u001b[38;5;214m\u001b[1m" + line + Reset; // Orange
             else if (line.Contains("[INFO]"))
                 coloredLine = "\u001b[38;5;75m" + line + Reset; // Cyan
             else if (line.Contains("[SYSTEM]"))
-                coloredLine = "\u001b[92m" + line + Reset; // Green (bez tła)
-            // Zmieniono: usunięto 40; (czarne tło)
+                coloredLine = "\u001b[92m" + line + Reset; // Green
             else if (line.Contains("[LINK]"))
             {
                 string pattern = @"(https?://[^\s]+)";                
