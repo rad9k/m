@@ -29,11 +29,9 @@ namespace m0_console.console
         public static void EnableAnsiSupport()
         {
             // On Linux/macOS ANSI is enabled by default
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                Console.WriteLine("ANSI support is already enabled on this platform.");
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))            
                 return;
-            }
+            
 
             // Windows - enable ANSI support
             try
