@@ -1,11 +1,12 @@
-﻿using System;
+﻿using m0.Network.Server;
+using m0.Util;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using m0.Util;
 
 namespace m0.Desktop
 {
@@ -20,6 +21,12 @@ namespace m0.Desktop
 
         public static void RUN()
         {
+            var server = new HttpServer();
+
+            server.StartAsync("http://localhost:5000");
+
+            //
+
             m0Main mainWindow = new m0Main();
 
             MinusZero.Instance.SetUserInteraction(mainWindow);

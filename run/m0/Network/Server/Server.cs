@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace m0.Network.Server { 
 
-    public class HttpServerLibrary
+    public class HttpServer
     {
         private WebApplication? _app;
         private CancellationTokenSource? _cancellationTokenSource;

@@ -13,9 +13,11 @@ namespace m0.console
     {
         public static void RUN() // Marking the method as async and changing return type to Task
         {
-            var server = new HttpServerLibrary();
+            var server = new HttpServer();
 
             server.StartAsync("http://localhost:5000");
+
+            //
 
             MinusZero.Instance.SetUserInteraction(new ConsoleUserInteraction());
 
