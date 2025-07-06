@@ -22,7 +22,10 @@
   </PropertyGroup>
   <ItemGroup>
     <AppDesigner Include="Properties\" />
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.6" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>
@@ -129,8 +132,5 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="_PROJECT\_OLD\CODE_RESEARCH\UXItemTemplate.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Network\Server\" />
   </ItemGroup>
 </Project>
