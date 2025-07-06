@@ -13,21 +13,98 @@ namespace m0_console.console
 {
     public class ConsoleUserInteraction : IUserInteraction
     {
+        private bool IsAnsiSupported = false;
+
         private void WriteLine(string line)
         {
-            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            if (IsAnsiSupported)
+                WriteLine_Ansi(line);
+            else
+                WriteLine_Colors(line);
+        }
 
+        private void WriteLine_Colors(string line)
+        {
+            ConsoleColor originalColor = Console.ForegroundColor;
+
+            try
+            {
+                if (line.Contains("[EXCEPTION]"))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(line);
+                }
+                else if (line.Contains("[USER]"))
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkYellow; // Closest to orange
+                    Console.WriteLine(line);
+                }
+                else if (line.Contains("[INFO]"))
+                {
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine(line);
+                }
+                else if (line.Contains("[SYSTEM]"))
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine(line);
+                }
+                else if (line.Contains("[LINK]"))
+                {
+                    // Handle links with regex - color the URLs differently
+                    string pattern = @"(https?://[^\s]+)";
+                    if (Regex.IsMatch(line, pattern))
+                    {
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        
+                        string[] parts = Regex.Split(line, pattern);
+                        for (int i = 0; i < parts.Length; i++)
+                        {
+                            if (Regex.IsMatch(parts[i], pattern))
+                            {
+                                Console.ForegroundColor = ConsoleColor.Blue;
+                                Console.Write(parts[i]);
+                                Console.ForegroundColor = ConsoleColor.Blue;
+                            }
+                            else
+                            {
+                                Console.Write(parts[i]);
+                            }
+                        }
+                        Console.WriteLine();
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.WriteLine(line);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine(line);
+                }
+            }
+            finally
+            {
+                Console.ForegroundColor = originalColor;
+            }
+        }
+
+        private void WriteLine_Ansi(string line)
+        {
             const string Reset = "\u001b[0m";
             string coloredLine;
 
             if (line.Contains("[EXCEPTION]"))
                 coloredLine = "\u001b[31m\u001b[1m" + line + Reset; // Red
             else if (line.Contains("[USER]"))
-                coloredLine = "\u001b[40;38;5;214m\u001b[1m" + line + Reset; // HERKULES CRT PANY                
+                coloredLine = "\u001b[38;5;214m\u001b[1m" + line + Reset; // Orange (bez tła)
+            // Zmieniono: usunięto 40; (czarne tło)
             else if (line.Contains("[INFO]"))
                 coloredLine = "\u001b[38;5;75m" + line + Reset; // Cyan
             else if (line.Contains("[SYSTEM]"))
-                coloredLine = "\u001b[40;92m" + line + Reset; // Green
+                coloredLine = "\u001b[92m" + line + Reset; // Green (bez tła)
+            // Zmieniono: usunięto 40; (czarne tło)
             else if (line.Contains("[LINK]"))
             {
                 string pattern = @"(https?://[^\s]+)";                
@@ -167,6 +244,9 @@ namespace m0_console.console
 
         public void UserInteractionInitialize()
         {
+            AnsiConsole.EnableAnsiSupport();
+            IsAnsiSupported = AnsiConsole.IsAnsiSupported();
+
             WriteLine("[SYSTEM] -zero, version 0.98");
             WriteLine("[SYSTEM] public domain software by radek@tereszczuk.com");
             WriteLine("[LINK]   http://tereszczuk.com");
