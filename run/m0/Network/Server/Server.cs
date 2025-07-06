@@ -40,7 +40,7 @@ namespace m0.Network.Server {
             ConfigureEndpoints(_app);
 
             // Uruchomienie serwera w osobnym tasku
-            _serverTask = _app.RunAsync(_cancellationTokenSource.Token);         
+            _serverTask = _app.RunAsync(_cancellationTokenSource.Token);
         }
 
         public async Task StopAsync()
@@ -62,7 +62,11 @@ namespace m0.Network.Server {
                 }
             }
 
-            //_app?.Dispose();
+            // Corrected: DisposeAsync should be used instead of Dispose
+            if (_app != null)
+            {
+                await _app.DisposeAsync();
+            }
 
             _cancellationTokenSource?.Dispose();
 
@@ -82,7 +86,7 @@ namespace m0.Network.Server {
             // Endpoint przyjmujący POST
             app.MapPost("/api/data", (DataModel data) =>
             {
-              //  return Results.Ok(new { Message = "Dane otrzymane", ReceivedData = data });
+                //  return Results.Ok(new { Message = "Dane otrzymane", ReceivedData = data });
             });
 
             // Endpoint z parametrem
