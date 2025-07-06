@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 
@@ -14,7 +15,32 @@ namespace m0_console.console
     {
         private void WriteLine(string line)
         {
-            System.Console.WriteLine(line);
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+            const string Reset = "\u001b[0m";
+            string coloredLine;
+
+            if (line.Contains("[EXCEPTION]"))
+                coloredLine = "\u001b[31m\u001b[1m" + line + Reset; // Red
+            else if (line.Contains("[USER]"))
+                coloredLine = "\u001b[40;38;5;214m\u001b[1m" + line + Reset; // HERKULES CRT PANY                
+            else if (line.Contains("[INFO]"))
+                coloredLine = "\u001b[38;5;75m" + line + Reset; // Cyan
+            else if (line.Contains("[SYSTEM]"))
+                coloredLine = "\u001b[40;92m" + line + Reset; // Green
+            else if (line.Contains("[LINK]"))
+            {
+                string pattern = @"(https?://[^\s]+)";                
+                string Purple = "\u001b[38;5;99m";
+                string Underline = "\u001b[4m";
+
+                coloredLine = Purple + Regex.Replace(line, pattern, match =>
+                    Underline + match.Value + Reset + Purple) + Reset;
+            }
+            else
+                coloredLine = line;
+
+            System.Console.WriteLine(coloredLine);
         }
 
         private string ReadLine()
@@ -35,7 +61,7 @@ namespace m0_console.console
 
         public string InteractionInput(string question)
         {
-            WriteLine(question);
+            WriteLine("[USER] " + question);
 
             return ReadLine();
         }
@@ -56,23 +82,21 @@ namespace m0_console.console
         }
 
         public void InteractionOutputException(IVertex exception)
-        {
-            System.Console.WriteLine("[EXCEPTION]");
-
-            ConsoleWriteIfMetaEdgeExist(exception, "Type", "   Type : ");
-            ConsoleWriteIfMetaEdgeExist(exception, "Where", "   Where : ");            
-            ConsoleWriteIfMetaEdgeExist(exception, "What", "   What : ");
-            ConsoleWriteIfMetaEdgeExist(exception, "CodeEdge", "   CodeEdge : ");
-            ConsoleWriteIfMetaEdgeExist(exception, "DataEdge", "   DataEdge : ");            
+        {            
+            ConsoleWriteIfMetaEdgeExist(exception, "Type", "[EXCEPTION]   Type : ");
+            ConsoleWriteIfMetaEdgeExist(exception, "Where", "[EXCEPTION]   Where : ");            
+            ConsoleWriteIfMetaEdgeExist(exception, "What", "[EXCEPTION]   What : ");
+            ConsoleWriteIfMetaEdgeExist(exception, "CodeEdge", "[EXCEPTION]   CodeEdge : ");
+            ConsoleWriteIfMetaEdgeExist(exception, "DataEdge", "[EXCEPTION]   DataEdge : ");            
         }
 
         public IVertex InteractionSelect(IVertex info, IList<IEdge> options, bool firstSelected)
         {
-            WriteLine(GraphUtil.GetStringValue(info));  
+            WriteLine("[INFO] " + GraphUtil.GetStringValue(info));  
             
             if (options.Count == 0)
             {
-                WriteLine("[No options available]");
+                WriteLine("[INFO] No options available.");
                 return null;
             }
 
@@ -86,14 +110,17 @@ namespace m0_console.console
                     cnt++;
                 }
 
-                WriteLine("[Type number in 1 - " + cnt + " range and press enter]");
+                WriteLine("[USER] Type number in 1 - " + cnt + " range and press enter");
 
                 string input = ReadLine();
 
-                if (int.TryParse(input, out int selectedIndex) && selectedIndex > 0 && selectedIndex <= options.Count)                
-                    return options[selectedIndex - 1].To;                    
-                else 
-                    WriteLine("[Invalid selection. Please try again]");                
+                if (int.TryParse(input, out int selectedIndex) && selectedIndex > 0 && selectedIndex <= options.Count)
+                    return options[selectedIndex - 1].To;
+                else
+                {
+                    WriteLine("[INFO] " + GraphUtil.GetStringValue(info));
+                    WriteLine("[INFO] Invalid selection. Please try again");
+                }
             }
 
             return null;
@@ -140,12 +167,18 @@ namespace m0_console.console
 
         public void UserInteractionInitialize()
         {
-            WriteLine("[SYSTEM] UserInteractionInitialize called. ConsoleUserInteraction initialized.");
+            WriteLine("[SYSTEM] -zero, version 0.98");
+            WriteLine("[SYSTEM] public domain software by radek@tereszczuk.com");
+            WriteLine("[LINK]   http://tereszczuk.com");
+            //WriteLine("[SYSTEM] UserInteractionInitialize called. ConsoleUserInteraction initialized.");
+            WriteLine("[SYSTEM] you will die. someday. remember");
         }
 
         public void UserInteractionFinalize()
         {
-            WriteLine("[SYSTEM] UserInteractionFinalize called. ConsoleUserInteraction finalized.");
+            //WriteLine("[SYSTEM] UserInteractionFinalize called. ConsoleUserInteraction finalized.");
+            WriteLine("[SYSTEM] -zero sucesfull exit");
+            WriteLine("[SYSTEM] be gracefull");
         }
 
         //
