@@ -192,13 +192,22 @@ namespace m0.Store.Json
         // Use source-generated context for maximum performance
         private static readonly JsonSerializationContext JsonContext = new();
 
+        string GetIdentifierToUse(){
+            if (Identifier.Contains(System.IO.Path.DirectorySeparatorChar.ToString()))
+                return Identifier;
+            else
+                return MinusZero.Instance.m0DllPath + System.IO.Path.DirectorySeparatorChar + Identifier;
+        }
+
         void Load()
         {
-            if (File.Exists(Identifier))
+            string IdentifierToUse = GetIdentifierToUse();
+
+            if (File.Exists(IdentifierToUse))
             {
                 try
                 {
-                    ReadOnlySpan<byte> jsonBytes = File.ReadAllBytes(Identifier);
+                    ReadOnlySpan<byte> jsonBytes = File.ReadAllBytes(IdentifierToUse);
 
                     if (jsonBytes.Length == 0)
                     { // create new sub graph
@@ -378,7 +387,7 @@ namespace m0.Store.Json
 
         public override void CommitTransaction()
         {
-            CommitTransaction(Identifier, true);
+            CommitTransaction(GetIdentifierToUse(), true);
         }
 
         public void CommitTransaction(string fileName, bool checkIfIsDetached)

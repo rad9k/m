@@ -24,6 +24,8 @@ namespace m0
 {
     public class MinusZero : IStoreUniverse, IDisposable
     {
+        public string m0DllPath;
+
         public IEnumerable<IVertex> BootstrapVertexes;
 
         public static MinusZero Instance = new MinusZero();
@@ -231,7 +233,7 @@ namespace m0
 
         public MinusZero()
         {
-            //Initialize();
+            
         }
 
         private System.IO.StreamWriter logFile;
@@ -412,15 +414,12 @@ namespace m0
             GraphChangeTrigger.Initialize();
             ExecutionFlowHelper.Initialize();
             GraphChangeTransactionAtom.Initialize();
-            Transaction.Initialize();
-            //AtomVisualiserHelper.Initialize();
+            Transaction.Initialize();            
         }
 
         void LoadFromFileSystem()
-        {
-            string currentDirectory = Directory.GetCurrentDirectory();
-            
-            string autostartPath = Path.Combine(currentDirectory, "autostart");
+        {            
+            string autostartPath = Path.Combine(m0DllPath, "autostart");
 
             FileSystemLoader fsl = new FileSystemLoader(autostartPath);
 
@@ -450,6 +449,8 @@ namespace m0
                 return;
 
             LogLevel = 2;
+
+            m0DllPath = Path.GetDirectoryName(typeof(MinusZero).Assembly.Location);            
 
             InitializeLog();
 
