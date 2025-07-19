@@ -146,8 +146,7 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             IVertex httpServer_InitVertex = AddMethod(httpServerVertex, "Init", null, new TypeName[] { new TypeName("p_mapping", httpMapingVertex, 0, -1), new TypeName("p_port", "Integer", 0, 1) });
 
-            //GraphUtil.LoadTXTParseAndMove(@"_RES\Lib\Net\HttpServer_Init.txt", httpServer_InitVertex, "Init");
-            GraphUtil.LoadAndParse(@"_RES\Lib\Net\HttpServer_Init.m0t", httpServer_InitVertex);
+            GraphUtil.LoadTXTParseAndMove_ChildEdges(@"_RES\Lib\Net\HttpServer_Init.txt", httpServer_InitVertex);
 
             AddMethod(httpServerVertex, "Start", type, "Start", null, new TypeName[] {});
             AddMethod(httpServerVertex, "Stop", type, "Stop", null, new TypeName[] {});

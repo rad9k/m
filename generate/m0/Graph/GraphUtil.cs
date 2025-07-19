@@ -166,7 +166,19 @@ namespace m0.Graph
             baseVertex.AddEdge(e.Meta, e.To);
 
             baseVertex.DeleteEdge(tmp);
-        }        
+        }
+
+        public static void LoadTXTParseAndMove_ChildEdges(string fileName, IVertex baseVertex)
+        {
+            IEdge tmp = baseVertex.AddVertexAndReturnEdge(null, null);
+
+            LoadTXTAndParse(fileName, tmp.To);
+
+            foreach (IEdge e in tmp.To)
+                baseVertex.AddEdge(e.Meta, e.To);
+
+            baseVertex.DeleteEdge(tmp);
+        }
 
         public static IVertex AddEnum(IVertex baseVertex, string enumName, string[] values)
         {

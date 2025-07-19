@@ -1,8 +1,0 @@
-System\FormalTextLanguage\ZeroCode
-"Init"
-	Mapping = p_mapping
-	Port = p_port
-	"bolek"
-		"Init"
-			Mapping = p_mapping
-			Port = p_port

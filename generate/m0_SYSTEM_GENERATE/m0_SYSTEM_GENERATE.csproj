@@ -86,9 +86,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="_RES\Lib\Net\HttpServer_Init.m0t">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="_RES\Generator\HarmonyMelodyTimeGenerator.txt">
@@ -123,6 +120,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="_RES\Instrument\MFB522\MFB522_PitchSet.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_RES\Lib\Net\HttpServer_Init.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="_RES\UXTemplate\from_m0.txt" />
