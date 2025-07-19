@@ -21,7 +21,7 @@ namespace m0.Store.FileSystem
                 if (((string)Identifier).Length == 3 && ((string)Identifier)[1] == ':' && ((string)Identifier)[2] == '\\')
                     return ((string)Identifier)[0].ToString();
 
-                return FileSystemUtil.getFileNamePart((string)Identifier);
+                return FileSystemUtil.GetFileNamePart((string)Identifier);
             }
             set
             {
@@ -31,14 +31,14 @@ namespace m0.Store.FileSystem
                 {
                     oldValue = _Value;
 
-                    string newFileName = FileSystemUtil.getFileNamePart((string)value);
+                    string newFileName = FileSystemUtil.GetFileNamePart((string)value);
 
                     if (newFileName == "")
                         return;
                     
-                    string DI_DirectoryName = DI.FullName.Substring(0, DI.FullName.LastIndexOf('\\'));
+                    string DI_DirectoryName = DI.FullName.Substring(0, DI.FullName.LastIndexOf(Path.DirectorySeparatorChar));
 
-                    newFileName = DI_DirectoryName + "\\" + newFileName.Trim();
+                    newFileName = DI_DirectoryName + Path.DirectorySeparatorChar + newFileName.Trim();
 
                     if (newFileName[newFileName.Length - 1] == '.')
                         newFileName = newFileName.Substring(0, newFileName.Length - 1);
@@ -46,7 +46,7 @@ namespace m0.Store.FileSystem
                     if (newFileName != DI.FullName)
                     {
                         while (System.IO.Directory.Exists(newFileName) || System.IO.Directory.Exists(newFileName))
-                            newFileName = FileSystemUtil.addNew(newFileName);
+                            newFileName = FileSystemUtil.AddNew(newFileName);
 
                         _Identifier = newFileName;
 
@@ -124,7 +124,7 @@ namespace m0.Store.FileSystem
             string name = val.ToString();
 
             while (this.Get(false, "File:'" + name+"'") != null || this.Get(false, "Directory:'" + name+"'") != null)
-                name = FileSystemUtil.addNew(name);
+                name = FileSystemUtil.AddNew(name);
 
             if (GraphUtil.GetValueAndCompareStrings(metaVertex, "Directory"))
             {
@@ -137,11 +137,11 @@ namespace m0.Store.FileSystem
 
             if (GraphUtil.GetValueAndCompareStrings(metaVertex, "File"))
             {
-                FileInfo fi = new FileInfo(this.Identifier + "\\" + name);
+                FileInfo fi = new FileInfo(this.Identifier.ToString() + Path.DirectorySeparatorChar + name);
 
                 fi.Create().Dispose();
 
-                IVertex FileVertex = new FileVertex(this.Store, this.Identifier + "\\" + name);
+                IVertex FileVertex = new FileVertex(this.Store, this.Identifier.ToString() + Path.DirectorySeparatorChar + name);
 
                 return base.AddEdge(metaVertex, FileVertex);
             }
@@ -157,7 +157,7 @@ namespace m0.Store.FileSystem
                 UserInteractionUtil.ShowError(Identifier + " file", "tried to delete file");
                 return;// not sure if there will be not unwanted file deletion
 
-                FileInfo fi= new FileInfo(Identifier + "\\" + edge.To.Value);
+                FileInfo fi= new FileInfo(Identifier.ToString() + Path.DirectorySeparatorChar + edge.To.Value);
 
                 fi.Delete();
             }
@@ -167,7 +167,7 @@ namespace m0.Store.FileSystem
                 UserInteractionUtil.ShowError(Identifier + " directory", "tried to delete directory");
                 return;// not sure if there will be not unwanted file deletion
 
-                DirectoryInfo di = new DirectoryInfo(Identifier + "\\" + edge.To.Value);
+                DirectoryInfo di = new DirectoryInfo(Identifier.ToString() + Path.DirectorySeparatorChar + edge.To.Value);
 
                 di.Delete();
             }

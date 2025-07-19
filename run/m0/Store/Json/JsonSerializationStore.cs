@@ -574,11 +574,11 @@ namespace m0.Store.Json
             {
                 UpdateDetachStateData();
 
-                string fileName = FileSystemUtil.getFileName(Identifier);
+                string fileName = FileSystemUtil.GetFileName(Identifier);
 
-                string extension = FileSystemUtil.getExtension(Identifier);
+                string extension = FileSystemUtil.GetExtension(Identifier);
 
-                string pathPart = FileSystemUtil.getPathPart(Identifier);
+                string pathPart = FileSystemUtil.GetPathPart(Identifier);
 
                 string backupFileName = pathPart + fileName + "." + extension + ".backup";
 

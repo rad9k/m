@@ -2,6 +2,7 @@
 using m0.ZeroCode;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -11,15 +12,25 @@ namespace m0.Store.FileSystem
 {
     public class FileSystemUtil
     {
-        public static string addNew(string fileName)
+        public static void CreateDirectoryIfNotExist(string baseDirectory, string toBePossiblyCreatedDirectory)
         {
-            string pathPart = getPathPart(fileName);
-            string fileNamePart = getFileName(fileName);
-            string extension = getExtension(fileName);
+            string fullPath = Path.Combine(baseDirectory, toBePossiblyCreatedDirectory);
+
+            if (!Directory.Exists(fullPath))
+            {
+                Directory.CreateDirectory(fullPath);
+            }
+        }
+
+        public static string AddNew(string fileName)
+        {
+            string pathPart = GetPathPart(fileName);
+            string fileNamePart = GetFileName(fileName);
+            string extension = GetExtension(fileName);
 
             string pre, num;
 
-            getPreNumFromFileNamePart(fileNamePart, out pre, out num);
+            GetPreNumFromFileNamePart(fileNamePart, out pre, out num);
 
             if (num != null)
             {
@@ -45,7 +56,7 @@ namespace m0.Store.FileSystem
             }           
         }
 
-        private static void getPreNumFromFileNamePart(string fileNamePart, out string pre, out string num)
+        private static void GetPreNumFromFileNamePart(string fileNamePart, out string pre, out string num)
         {
             Regex rgx = new Regex("(?<PRE>.+)[(](?<NUM>\\d+)[)]");
 
@@ -59,9 +70,9 @@ namespace m0.Store.FileSystem
             }
         }
 
-        public static string getPathPart(string fileName)
+        public static string GetPathPart(string fileName)
         {
-            int slashpos = fileName.LastIndexOf('\\');
+            int slashpos = fileName.LastIndexOf(Path.DirectorySeparatorChar);
 
             if (slashpos == -1)
                 return "";
@@ -69,9 +80,9 @@ namespace m0.Store.FileSystem
             return fileName.Substring(0, slashpos+1);
         }
 
-        public static string getFileNamePart(string fileName)
+        public static string GetFileNamePart(string fileName)
         {
-            int slashpos = fileName.LastIndexOf('\\');
+            int slashpos = fileName.LastIndexOf(Path.DirectorySeparatorChar);
 
             if (slashpos == -1)
                 return fileName;
@@ -79,9 +90,9 @@ namespace m0.Store.FileSystem
             return fileName.Substring(slashpos + 1);
         }
 
-        public static string getExtension(string fileName)
+        public static string GetExtension(string fileName)
         {
-            string fileNamePart = getFileNamePart(fileName);
+            string fileNamePart = GetFileNamePart(fileName);
 
             int dotpos = fileNamePart.LastIndexOf('.');
 
@@ -91,9 +102,9 @@ namespace m0.Store.FileSystem
             return fileNamePart.Substring(dotpos+1);
         }
 
-        public static string getFileName(string fileName)
+        public static string GetFileName(string fileName)
         {
-            string fileNamePart = getFileNamePart(fileName);
+            string fileNamePart = GetFileNamePart(fileName);
 
             int dotpos = fileNamePart.LastIndexOf('.');
 

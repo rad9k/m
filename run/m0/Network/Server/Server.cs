@@ -21,7 +21,7 @@ namespace m0.Network.Server {
         public void StartAsync(string url = "http://localhost:5000")
         {
             if (IsRunning)
-                throw new InvalidOperationException("Serwer już działa");
+                throw new InvalidOperationException("Server allready running");
 
             BaseUrl = url;
             _cancellationTokenSource = new CancellationTokenSource();
@@ -38,6 +38,8 @@ namespace m0.Network.Server {
 
             // Konfiguracja endpointów
             ConfigureEndpoints(_app);
+
+            //_app.MapGet("/", );
 
             // Uruchomienie serwera w osobnym tasku
             _serverTask = _app.RunAsync(_cancellationTokenSource.Token);

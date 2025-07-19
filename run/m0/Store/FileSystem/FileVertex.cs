@@ -40,25 +40,25 @@ namespace m0.Store.FileSystem
 
                     oldValue = _Value;
 
-                    string newFileName = FileSystemUtil.getFileNamePart((string)value);
+                    string newFileName = FileSystemUtil.GetFileNamePart((string)value);
 
                     if (newFileName == "")
                         return;
 
-                    newFileName = FI.DirectoryName + "\\" + newFileName.Trim();
+                    newFileName = FI.DirectoryName + Path.DirectorySeparatorChar + newFileName.Trim();
 
                     if (newFileName[newFileName.Length - 1] == '.')
                         newFileName = newFileName.Substring(0, newFileName.Length - 1);
 
                     if (newFileName != FI.FullName){
                         while (System.IO.File.Exists(newFileName) || System.IO.Directory.Exists(newFileName))
-                            newFileName = FileSystemUtil.addNew(newFileName);
+                            newFileName = FileSystemUtil.AddNew(newFileName);
                         
                         FI.MoveTo(newFileName);
 
                         _Identifier = newFileName;                        
 
-                        string extension = FileSystemUtil.getExtension(newFileName).ToLower();
+                        string extension = FileSystemUtil.GetExtension(newFileName).ToLower();
                         if (extension == "m0j" || extension == "m0t" || extension == "m0x")
 
                         {

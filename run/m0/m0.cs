@@ -418,7 +418,9 @@ namespace m0
         }
 
         void LoadFromFileSystem()
-        {            
+        {
+            FileSystemUtil.CreateDirectoryIfNotExist(m0DllPath, "autostart");
+
             string autostartPath = Path.Combine(m0DllPath, "autostart");
 
             FileSystemLoader fsl = new FileSystemLoader(autostartPath);

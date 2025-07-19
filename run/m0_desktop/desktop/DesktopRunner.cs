@@ -21,12 +21,6 @@ namespace m0.Desktop
 
         public static void RUN()
         {
-            var server = new HttpServer();
-
-            server.StartAsync("http://localhost:5000");
-
-            //
-
             m0Main mainWindow = new m0Main();
 
             MinusZero.Instance.SetUserInteraction(mainWindow);
