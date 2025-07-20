@@ -32,24 +32,10 @@ namespace m0.Bootstrap
         {
             try
             {
-                // Pobierz wszystkie pliki w bieżącym katalogu
                 string[] files = Directory.GetFiles(directoryPath, "*.m0t");
 
-                // Uruchom funkcję f dla każdego pliku
-                foreach (string file in files)
-                {
-                    string vertexValue = Path.GetFileNameWithoutExtension(file);
-                    IVertex fileVertex = baseVertex.AddVertex(packageMeta, vertexValue);
-
-                    fileVertex.AddEdge(isMeta, packageMeta);
-                    
-                    ProcessFile(fileVertex, file);
-                }
-
-                // Pobierz wszystkie podkatalogi
                 string[] subdirectories = Directory.GetDirectories(directoryPath);
 
-                // Rekurencyjnie przetwórz każdy podkatalog
                 foreach (string subdirectory in subdirectories)
                 {
                     IVertex directoryVertex = baseVertex.AddVertex(packageMeta, Path.GetFileName(subdirectory));
@@ -57,6 +43,16 @@ namespace m0.Bootstrap
                     directoryVertex.AddEdge(isMeta, packageMeta);
 
                     Load_Reccursive(directoryVertex, subdirectory);
+                }
+
+                foreach (string file in files)
+                {
+                    string vertexValue = Path.GetFileNameWithoutExtension(file);
+                    IVertex fileVertex = baseVertex.AddVertex(packageMeta, vertexValue);
+
+                    fileVertex.AddEdge(isMeta, packageMeta);
+
+                    ProcessFile(fileVertex, file);
                 }
             }
             catch (Exception e)

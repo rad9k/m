@@ -1592,24 +1592,6 @@ namespace m0
             f2fip.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
                 Empty);
 
-            // function
-            //
-            // funct (?<name>) [(*(+, +)(?<paramType>) (?<paramName>)*)]
-
-            IVertex function3 = k.AddVertex(keyword, "funct (?<name>) ((*(+, +)(?<paramType>) (?<paramName>)*))");
-
-            IVertex function3_function = function3.AddVertex(any, "(?<name>)");
-
-            function3_function.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
-                LegacySystem.Graph.EasyVertex.Get(smu, false, "Function"));
-
-            IVertex f3fip = function3_function.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function\InputParameter"), "(?<paramName>)");
-
-            f3fip.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$EdgeTarget"), "(?<paramType>)");
-
-            f3fip.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
-                Empty);
-
             /////////////////////////////////////////////////////////
             //
             // graph algebra operators
