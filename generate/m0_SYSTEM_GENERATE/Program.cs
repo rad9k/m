@@ -136,6 +136,13 @@ namespace m0_SYSTEM_GENERATE
 
             //
 
+            // system.m0 instead of $-0$ROOT$STORE$ BEG
+
+            LegacySystem_MinusZero.Instance.DefaultFormalTextLanguageVertexSetup();
+            LegacySystem_MinusZero.Instance.Init_AfterZeroCodeDefintionCreated();
+
+            // system.m0 instead of $-0$ROOT$STORE$ END
+
             StaticMetaInitialize();
 
             print("* filling Lib::Std");
@@ -153,8 +160,6 @@ namespace m0_SYSTEM_GENERATE
             print("* filling Lib::Net");
 
             Lib.CreateLib.CreateLibNet();
-
-            LegacySystem_MinusZero.Instance.DefaultFormalTextLanguageVertexSetup(); // system.m0 instead of $-0$ROOT$STORE$
 
             print("* filling Lib::Music");
             Music.CreateMusic.CreateLibMusic();

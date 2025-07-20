@@ -154,7 +154,7 @@ namespace m0
             _DefaultUserInteraction = null;
         }
 
-        void Init_AfterZeroCodeDefintionCreated()
+        public void Init_AfterZeroCodeDefintionCreated()
         {
             ZeroCode.ZeroCodeEngine zeroCodeEngine = new ZeroCode.ZeroCodeEngine();
 

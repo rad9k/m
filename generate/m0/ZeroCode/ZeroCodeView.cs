@@ -36,6 +36,10 @@ namespace m0.ZeroCode
 
         static public void LinearExecutionForm_to_NextBasedExecutionForm_ProcessGraph(IVertex v)
         {
+            // for generate BEG
+            dict = DictionariesForFormalTextLanguageFactory.Get(MinusZero.Instance.Root.Get(false, @"System\FormalTextLanguage\ZeroCode"));
+            // for generate END
+
             IList<IEdge> edgeMetaHavingNext = new List<IEdge>();
 
             foreach (IEdge e in v)
@@ -51,9 +55,14 @@ namespace m0.ZeroCode
                         metaHasNextEdge = true;
                         break;
                     }
-                
+                    else
+                    {
+                        if (e_is.To.Identifier is long && ((long)e_is.To.Identifier) >500)
+                            MinusZero.Instance.Log(-2, "10000", e_is.To.ToString() + " " + e_is.To.Identifier);
+                    }
+
                 if (metaHasNextEdge)
-                    edgeMetaHavingNext.Add(e);
+                        edgeMetaHavingNext.Add(e);
             }
 
             IEdge addingBase = null;

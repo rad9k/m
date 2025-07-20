@@ -110,7 +110,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             IVertex lib = r.Get(false, @"System\Lib");
 
-            Music = lib.AddVertex(null, "Music");            
+            Music = lib.AddVertex(null, "Music");
 
             AddMusicBasicClasses();
 
