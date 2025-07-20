@@ -14,6 +14,8 @@ namespace m0.Store
     {
         protected IStoreUniverse _StoreUniverse;
 
+        public bool ReadOnly { get; set; }
+
         public virtual IStoreUniverse StoreUniverse
         {
             get { return _StoreUniverse; }

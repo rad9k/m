@@ -67,7 +67,7 @@ namespace m0.Bootstrap
 
         void ProcessFile(IVertex baseVertex, string fileName)
         {
-            GraphUtil.LoadAndParse(fileName, baseVertex);
+            GraphUtil.LoadAndParse(fileName, baseVertex, true);
         }
 
     }

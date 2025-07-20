@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace m0.Foundation
 {
-    public interface ICommintBeforeGlobalDetachStore
+    public interface ICommitBeforeGlobalDetachStore
     {
     }
 }

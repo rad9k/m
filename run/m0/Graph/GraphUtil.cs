@@ -148,9 +148,11 @@ namespace m0.Graph
             MinusZero.Instance.DefaultFormalTextParser.Parse(new EdgeBase(null, null, baseVertex), text, m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new);
         }
 
-        public static void LoadAndParse(string fileName, IVertex baseVertex)
+        public static void LoadAndParse(string fileName, IVertex baseVertex, bool ReadOnly)
         {
             TextStore TextStore = (TextStore)baseVertex.Store.StoreUniverse.GetStore("m0.Store.Text.TextStore, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", fileName);
+
+            TextStore.ReadOnly = ReadOnly;
 
             GraphUtil.DeepCopyByVertex(TextStore.Root, baseVertex);
         }

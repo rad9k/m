@@ -14,9 +14,9 @@ using static System.Net.WebRequestMethods;
 
 namespace m0.Store.Text
 {
-    public class TextStore : StoreBase, ICommintBeforeGlobalDetachStore
+    public class TextStore : StoreBase, ICommitBeforeGlobalDetachStore
     {
-        bool canWrite = true;
+        bool properlyLoaded = true;
 
         string pathToLanguageDefinition = null;
         string body = null;
@@ -56,7 +56,7 @@ namespace m0.Store.Text
                         IVertex errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(formalTextLanguageVertex, new EdgeBase(null, null, root), body, m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new);
 
                         if (errorList.OutEdges.Count > 0)
-                            canWrite = false;
+                            properlyLoaded = false;
 
                         root.IsRoot = true; 
                     }
@@ -83,11 +83,14 @@ namespace m0.Store.Text
 
         public void CommitTransaction(string fileName)
         {            
-            if (!canWrite)
+            if (!properlyLoaded)
             {
                 UserInteractionUtil.ShowError("Text serlialisation to " + fileName, "As text file " + fileName + " has not been properly loaded, commit (saving) is disabled for the file. This will protect existing file content.");
                 return;
             }
+
+            if (ReadOnly)
+                return;
 
             bool wasDetached = false;
 

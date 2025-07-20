@@ -398,6 +398,9 @@ namespace m0.Store.Json
                 return;
             }
 
+            if (ReadOnly)
+                return;
+
             if (checkIfIsDetached && DetachState != DetachStateEnum.Detached)
                 throw new Exception("Store not Detached");
 
