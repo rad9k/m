@@ -965,6 +965,11 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression").AddEdge(isAggregation, Empty);
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"FunctionCall\Target").AddEdge(isAggregation, Empty); // XXX
+            // 2025.07.21 comment:
+            // as we want to have an alignment between FunctionCall and New - we need to have the @@ target specification option
+            // that is why we enabled isAggregation here
+            //
+            // legacy comment:
             // leaving above as it was there for more than 5 years. obviously it is wrong as generation function code
             // in the call place WTF?????
 
