@@ -128,4 +128,7 @@
   <ItemGroup>
     <Resource Include="_PROJECT\_OLD\CODE_RESEARCH\UXItemTemplate.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="_PROJECT\MD\04 Web Server\" />
+  </ItemGroup>
 </Project>

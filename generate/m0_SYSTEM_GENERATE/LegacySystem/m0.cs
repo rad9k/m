@@ -499,11 +499,13 @@ namespace m0
                 ",Execute,Parse,ParseWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}},Generate,GenerateWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",CreateView{CreateViewInner},CreateViewInner{FromTriggerQuery{Query},FromTriggerFilter{Value},FromToTransformFunction{Target},ToTriggerQuery{Query},ToTriggerFilter{Value},ToFromTransformFunction{Target}}" +
                 ",CreateTrigger{Name,CreateTriggerInner},CreateTriggerInner{ScopeQuery{Query},ChangeTypeFilter{Value},Listener{Target}}" +
-                ",CreateHttpMapping{Name,CreateHttpMappingInner},CreateHttpMappingInner{HttpMapping{Action,PathMask,Handler}}" +
+                ",CreateHttpMapping{Name,CreateHttpMappingInner},CreateHttpMappingInner{HttpMappingEntry{Action,PathMask,Handler}},HttpMapping" +
                 ",this,Package{$InstanceCreationPriority:}" +
-                "}");  
-            
+                "}");
 
+            // HttpMapping
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"HttpMapping").AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, @"HttpMappingEntry"));
 
             // Link
 
@@ -1102,15 +1104,15 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner"));
             
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMapping\Action").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMappingEntry\Action").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(smzt, false, @"VertexType"));
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMapping\PathMask").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMappingEntry\PathMask").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(smzt, false, @"String"));
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMapping\Handler").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMappingEntry\Handler").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(smzte, false, @"Executable"));
 
@@ -1177,11 +1179,11 @@ namespace m0
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMapping\CreateHttpMappingInner").AddEdge(isAggregation, Empty);
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMapping\Action").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMappingEntry\Action").AddEdge(isAggregation, Empty);
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMapping\PathMask").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMappingEntry\PathMask").AddEdge(isAggregation, Empty);
 
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMapping\Handler").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMappingEntry\Handler").AddEdge(isAggregation, Empty);
 
 
             // package
@@ -2825,7 +2827,7 @@ namespace m0
 
             o_create_http_mapping_CreateHttpMappingInner.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$LocalRoot"), kgd_CreateHttpMappingInner);
 
-            // CreateHttpMapping
+            // CreateHttpMappingInner
             //
             // {
             // }
@@ -2857,11 +2859,11 @@ namespace m0
 
             o_http_mapping_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMapping"));
 
-            o_http_mapping_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMapping\Action"), "(?<action>)");
+            o_http_mapping_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMappingEntry\Action"), "(?<action>)");
 
-            o_http_mapping_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMapping\PathMask"), "(?<pathmask>)");
+            o_http_mapping_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMappingEntry\PathMask"), "(?<pathmask>)");
 
-            o_http_mapping_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMapping\Handler"), "(?<handler>)");
+            o_http_mapping_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMappingEntry\Handler"), "(?<handler>)");
         }
 
         private static void AddDoubleOperator(IVertex k, IVertex smu, IVertex smb, IVertex keyword, IVertex any, string text, string _is)

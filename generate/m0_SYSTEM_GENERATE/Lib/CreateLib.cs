@@ -132,12 +132,15 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             IVertex HttpActionEnumVertex = GraphUtil.AddEnum(LibNet, "HttpActionEnum", new string[] { "GET", "PUT", "POST", "DELETE", "PATCH", "HEADOPTIONS", "TRACE" });
 
-
             IVertex httpMapingVertex = GraphUtil.AddClass(LibNet, "HttpMapping");
 
-            GraphUtil.AddAssociation(httpMapingVertex, "Action", HttpActionEnumVertex, 1, 1);
-            GraphUtil.AddAttribute(httpMapingVertex, "PathMask", StringMeta, 1, 1);
-            GraphUtil.AddAssociation(httpMapingVertex, "Handler", ExecutableMeta, 1, 1);
+            IVertex httpMapingEntryVertex = GraphUtil.AddClass(LibNet, "HttpMappingEntry");
+
+            GraphUtil.AddAggregation(httpMapingVertex, "HttpMappingEntry", httpMapingEntryVertex, 1, -1);
+
+            GraphUtil.AddAssociation(httpMapingEntryVertex, "Action", HttpActionEnumVertex, 1, 1);
+            GraphUtil.AddAttribute(httpMapingEntryVertex, "PathMask", StringMeta, 1, 1);
+            GraphUtil.AddAssociation(httpMapingEntryVertex, "Handler", ExecutableMeta, 1, 1);
 
             IVertex httpServerVertex = GraphUtil.AddClass(LibNet, "HttpServer");
 

@@ -2639,7 +2639,7 @@ namespace m0.ZeroUML.Instructions
 
                 switch (GraphUtil.GetStringValue(expressionIs))
                 {
-                    case "HttpMapping":
+                    case "HttpMappingEntry":
                         IVertex action = GraphUtil.GetQueryOutFirst(e.To, "Action", null);
 
                         if (action == null)
