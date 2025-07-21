@@ -4,6 +4,7 @@ using m0.Graph.ExecutionFlow;
 using m0.Util;
 using m0.ZeroCode;
 using m0.ZeroCode.Helpers;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,9 +34,10 @@ namespace m0.ZeroUML.Instructions
         static IVertex view_ToFromTransformFunctionMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\View\ToFromTransformFunction");
 
         static IVertex httpMappingMeta = r.Get(false, @"System\Lib\Net\HttpMapping");
-        static IVertex httpMapping_ActionMeta = r.Get(false, @"System\Lib\Net\HttpMapping\Action");
-        static IVertex httpMapping_PathMaskMeta = r.Get(false, @"System\Lib\Net\HttpMapping\PathMask");
-        static IVertex httpMapping_HandlerMeta = r.Get(false, @"System\Lib\Net\HttpMapping\Handler");
+        static IVertex httpMappingEntryMeta = r.Get(false, @"System\Lib\Net\HttpMappingEntry");
+        static IVertex httpMappingEntry_ActionMeta = r.Get(false, @"System\Lib\Net\HttpMappingEntry\Action");
+        static IVertex httpMappingEntry_PathMaskMeta = r.Get(false, @"System\Lib\Net\HttpMappingEntry\PathMask");
+        static IVertex httpMappingEntry_HandlerMeta = r.Get(false, @"System\Lib\Net\HttpMappingEntry\Handler");
 
 
         ////////////////////////////////////////////////////////////////
@@ -2622,10 +2624,12 @@ namespace m0.ZeroUML.Instructions
 
             if (innerVertex == null)
                 return exe.Stack;
-            
-            IList<IVertex> Actions = new List<IVertex>();
-            IList<string> PathMasks = new List<string>();
-            IList<IVertex> Handlers = new List<IVertex>();
+
+            INoInEdgeInOutVertexVertex localStack = CreateStack();
+
+            IVertex mapping = localStack.AddVertex(httpMappingMeta, name);
+
+            mapping.AddEdge(isMeta, httpMappingMeta);
 
             foreach (IEdge e in innerVertex)
             {
@@ -2640,13 +2644,20 @@ namespace m0.ZeroUML.Instructions
                 switch (GraphUtil.GetStringValue(expressionIs))
                 {
                     case "HttpMappingEntry":
+                        IVertex Action = null;
+                        string PathMask = null;
+                        IVertex Handler = null;
+
                         IVertex action = GraphUtil.GetQueryOutFirst(e.To, "Action", null);
 
                         if (action == null)
                             continue;
 
                         foreach (IEdge executeEdge in exe.ExecuteInstructionByMontevideoPrinciples(inputStack, action).OutEdges)
-                            Actions.Add(executeEdge.To);
+                        {
+                            Action = executeEdge.To;
+                            break;
+                        }
 
                         //
 
@@ -2656,7 +2667,10 @@ namespace m0.ZeroUML.Instructions
                             continue;
 
                         foreach (IEdge executeEdge in exe.ExecuteInstructionByMontevideoPrinciples(inputStack, pathMask).OutEdges)
-                            PathMasks.Add(GraphUtil.GetStringValue(executeEdge.To));
+                        {
+                            PathMask = GraphUtil.GetStringValue(executeEdge.To);
+                            break;
+                        }
 
                         //
 
@@ -2665,27 +2679,27 @@ namespace m0.ZeroUML.Instructions
                         if (handler == null)
                             continue;
 
-                        foreach (IEdge executeEdge in exe.ExecuteInstructionByMontevideoPrinciples(inputStack, action).OutEdges)
-                            Handlers.Add(executeEdge.To);
+                        foreach (IEdge executeEdge in exe.ExecuteInstructionByMontevideoPrinciples(inputStack, handler).OutEdges)
+                        {
+                            Handler = executeEdge.To;
+                            break;
+                        }
+
+                        IVertex entry = mapping.AddVertex(httpMappingEntryMeta, null);
+
+                        entry.AddEdge(isMeta, httpMappingEntryMeta);
+
+                        entry.AddEdge(httpMappingEntry_ActionMeta, Action);
+
+                        entry.AddVertex(httpMappingEntry_PathMaskMeta, PathMask);
+
+                        entry.AddEdge(httpMappingEntry_HandlerMeta, Handler);
 
                         break;                    
                 }
             }
 
-            INoInEdgeInOutVertexVertex localStack = CreateStack();
-
-            IVertex mapping = localStack.AddVertex(httpMappingMeta, name);
-
-            mapping.AddEdge(isMeta, httpMappingMeta);
-
-            foreach (IVertex action in Actions)
-                mapping.AddEdge(httpMapping_ActionMeta, action);
-
-            foreach (string pathMask in PathMasks)
-                mapping.AddVertex(httpMapping_PathMaskMeta, pathMask);            
-
-            foreach (IVertex handler in Handlers)
-                mapping.AddEdge(httpMapping_HandlerMeta, handler);
+            
 
             return localStack;
         }

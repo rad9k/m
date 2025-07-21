@@ -499,13 +499,9 @@ namespace m0
                 ",Execute,Parse,ParseWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}},Generate,GenerateWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",CreateView{CreateViewInner},CreateViewInner{FromTriggerQuery{Query},FromTriggerFilter{Value},FromToTransformFunction{Target},ToTriggerQuery{Query},ToTriggerFilter{Value},ToFromTransformFunction{Target}}" +
                 ",CreateTrigger{Name,CreateTriggerInner},CreateTriggerInner{ScopeQuery{Query},ChangeTypeFilter{Value},Listener{Target}}" +
-                ",CreateHttpMapping{Name,CreateHttpMappingInner},CreateHttpMappingInner{HttpMappingEntry{Action,PathMask,Handler}},HttpMapping" +
+                ",CreateHttpMapping{Name,CreateHttpMappingInner},CreateHttpMappingInner{HttpMappingEntry{Action,PathMask,Handler}}" +
                 ",this,Package{$InstanceCreationPriority:}" +
                 "}");
-
-            // HttpMapping
-
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"HttpMapping").AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, @"HttpMappingEntry"));
 
             // Link
 
@@ -2857,7 +2853,7 @@ namespace m0
 
             IVertex o_http_mapping_base = o_http_mapping.AddVertex(any, "");
 
-            o_http_mapping_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMapping"));
+            o_http_mapping_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMappingEntry"));
 
             o_http_mapping_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMappingEntry\Action"), "(?<action>)");
 
