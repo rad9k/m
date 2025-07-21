@@ -1745,12 +1745,14 @@ namespace m0.ZeroUML.Instructions
             isStackFrameReturn = false;
 
             IVertex target = GraphUtil.GetQueryOutFirst(instructionVertex, "Target", null);
-            //instructionVertex.Get(false, "Target:");
 
             if (!CheckIfIs(target, "Function"))
             {
                 INoInEdgeInOutVertexVertex targetExpressionExecution = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, target);
-                if (targetExpressionExecution.Count() > 0)
+
+                // currently only one target BUT we can have set! of targets. to support this need to implement
+                // name based call params passing instead of only index based
+                if (targetExpressionExecution.Count() > 0) 
                     target = targetExpressionExecution.OutEdges[0].To;
             }
 
@@ -1760,9 +1762,7 @@ namespace m0.ZeroUML.Instructions
             exe.AddStackFrame(); // ENTER NEW STACK
 
             IList<IEdge> expressions = GraphUtil.GetQueryOut(instructionVertex, "Expression", null);
-            //instructionVertex.GetAll(false, "Expression:");
             IList<IEdge> inputParameters = GraphUtil.GetQueryOut(target, "InputParameter", null);
-            //target.GetAll(false, "InputParameter:");
 
             int minParameters = Math.Min(expressions.Count(), inputParameters.Count());
 
