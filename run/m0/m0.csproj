@@ -27,9 +27,6 @@
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Untitled1.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="_PROJECT\_OLD\test\obsolete\test.txt" />
   </ItemGroup>
   <ItemGroup>
