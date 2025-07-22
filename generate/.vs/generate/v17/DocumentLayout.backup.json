@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\radoslaw.tereszczuk\\source\\repos\\m\\generate\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|c:\\users\\radoslaw.tereszczuk\\source\\repos\\m\\generate\\m0_system_generate\\legacysystem\\m0.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|solutionrelative:m0_system_generate\\legacysystem\\m0.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|c:\\users\\radoslaw.tereszczuk\\source\\repos\\m\\generate\\m0_system_generate\\lib\\createlib.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|solutionrelative:m0_system_generate\\lib\\createlib.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
@@ -39,12 +43,25 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "m0.cs",
+              "DocumentMoniker": "C:\\Users\\radoslaw.tereszczuk\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\LegacySystem\\m0.cs",
+              "RelativeDocumentMoniker": "m0_SYSTEM_GENERATE\\LegacySystem\\m0.cs",
+              "ToolTip": "C:\\Users\\radoslaw.tereszczuk\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\LegacySystem\\m0.cs",
+              "RelativeToolTip": "m0_SYSTEM_GENERATE\\LegacySystem\\m0.cs",
+              "ViewState": "AgIAABsLAAAAAAAAAAAkwCcLAACEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-21T21:55:10.682Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "CreateLib.cs",
               "DocumentMoniker": "C:\\Users\\radoslaw.tereszczuk\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs",
               "RelativeDocumentMoniker": "m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs",
               "ToolTip": "C:\\Users\\radoslaw.tereszczuk\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs",
               "RelativeToolTip": "m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs",
-              "ViewState": "AgIAAH4AAAAAAAAAAAAiwIgAAABYAAAAAAAAAA==",
+              "ViewState": "AgIAAIQAAAAAAAAAAAAiwIgAAABYAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-07-21T17:34:09.812Z",
               "EditorCaption": ""

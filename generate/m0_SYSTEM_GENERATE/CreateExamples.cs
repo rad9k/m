@@ -203,7 +203,7 @@ namespace m0_SYSTEM_GENERATE
             "\r\n\t\tB=imie" +
             "\r\n\t\tA=B" +
             "\r\n\t\tB=\"main b\"" +
-            "\r\n\t@X[\"Radek\"]", m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new
+            "\r\n\t@@X[\"Radek\"]", m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new
             );
 
             IEdge code4 = code.AddVertexAndReturnEdge(null, null);
@@ -255,7 +255,7 @@ namespace m0_SYSTEM_GENERATE
           "\r\n\tvariable \"D\" @String" +
           "\r\n\tfunction \"Add\" @Integer(@Integer \"x\")" +
           "\r\n\t\treturn x+\"1\"" +
-          "\r\n\tA = @Add[\"3\"]", m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new
+          "\r\n\tA = @@Add[\"3\"]", m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new
           );
 
             IEdge code7 = code.AddVertexAndReturnEdge(null, null);
@@ -385,7 +385,7 @@ namespace m0_SYSTEM_GENERATE
     "\r\n\t\t\t\t\treturn \"cztery\"" +
     "\r\n\t\treturn \"kupa\"" +
     "\r\n\tvariable \"a\" @String" +
-    "\r\n\ta = @t[mis]", m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new);
+    "\r\n\ta = @@t[mis]", m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new);
 
             //MinusZero.Instance.NewDefaultParser.Parse(code, "\"Code\"\r\n\tvariable \"Magunia\" @String 5:10\r\n\tvariable \"Radek\" @String 2:2\r\n\tRadek += \"Koha\"\r\n\tMagunia=Radek\r\n\tMagunia ~= Radek:Koha");
 
@@ -474,10 +474,10 @@ namespace m0_SYSTEM_GENERATE
             "\"parsetest\"" +
 "\r\n\twhile \"3\" == \"4\"" +
 "\r\n\t\tfunction \"Cin\"()" +
-"\r\n\t\t@\\Cin[]" +
+"\r\n\t\t@@\\Cin[]" +
 "\r\n\tfunction \"B\"()" +
 "\r\n\t\tfunction \"Bin\"()" +
-"\r\n\t\t @B\\Bin[]" +
+"\r\n\t\t @@B\\Bin[]" +
 "\r\n\tfunction \"A\"()" +
 "\r\n\t\tforeach \"X\" in x" +
 "\r\n\t\t\tforeach \"Y\" in y" +
