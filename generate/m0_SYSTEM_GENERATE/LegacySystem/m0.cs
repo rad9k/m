@@ -481,7 +481,7 @@ namespace m0
                 ",MultiOperator{Expression{$MinCardinality:0,$MaxCardinality:-1}}" +
                 ",Query" +
                 ",FunctionCall{Target{$MinCardinality:1,$MaxCardinality:1}}" +
-                ",MethodCall{Target{$MinCardinality:1,$MaxCardinality:1}},New" +
+                ",MethodCall{Target{$MinCardinality:1,$MaxCardinality:1}},New{Target{$MinCardinality:1,$MaxCardinality:1}}" +
                 ",SetIndex,SetCount" +
                 ",\"{}\",InnerCreation,EdgeSetAdd,EdgeSetSubstract,+,-,Mul,/,?,\"\\ \",InEdgesSlash,Colon,DoubleColon,DoubleSemicolon,CopySet,MetaToTo,()"+
                 ",RedirectLeftEdgesToRightVertices,AddLeftEdgesToRightVertices,AddRightEdgesIntoLeftEdges,DeleteRightVertices,DeleteRightEdgesFromLeftEdges,DeleteRightVerticesFromLeftEdges" +
@@ -680,7 +680,7 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "MultiOperator"));
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"New").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
-                LegacySystem.Graph.EasyVertex.Get(smu, false, "SingleOperator"));
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "MultiOperator"));
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"EdgeSetAdd").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
@@ -814,10 +814,6 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smu, false, "CreateHttpMapping").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "ZeroOperator"));
-
-            LegacySystem.Graph.EasyVertex.Get(smu, false, "CreateHttpMapping").AddEdge(
-                LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
-                LegacySystem.Graph.EasyVertex.Get(smu, false, "MultiOperator"));
 
             // rest inherits
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"Action").AddEdge(
@@ -972,6 +968,8 @@ namespace m0
             // in the call place WTF?????
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"MethodCall\Target").AddEdge(isAggregation, Empty); // XXX
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"New\Target").AddEdge(isAggregation, Empty); // XXX
 
             //rest edges
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"Return\Expression").AddEdge(
