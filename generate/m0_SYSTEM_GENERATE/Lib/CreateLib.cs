@@ -147,12 +147,12 @@ namespace m0_SYSTEM_GENERATE.Lib
             GraphUtil.AddAttribute(httpServerVertex, "Mapping", httpMapingVertex, 0, 1);
             GraphUtil.AddAttribute(httpServerVertex, "Port", IntegerType, 0, 1);
 
-            IVertex httpServer_InitVertex = AddMethod(httpServerVertex, "Init", null, new TypeName[] { new TypeName("p_mapping", httpMapingVertex, 0, -1), new TypeName("p_port", "Integer", 0, 1) });
+            IVertex httpServer_InitVertex = AddMethod(httpServerVertex, "HttpServer", null, new TypeName[] { new TypeName("p_mapping", httpMapingVertex, 0, -1), new TypeName("p_port", "Integer", 0, 1) });
 
             GraphUtil.LoadTXTParseAndMove_ChildEdges(@"_RES\Lib\Net\HttpServer_Init.txt", httpServer_InitVertex);
 
-            AddMethod(httpServerVertex, "Start", type, "Start", null, new TypeName[] {});
-            AddMethod(httpServerVertex, "Stop", type, "Stop", null, new TypeName[] {});
+            AddMethod(httpServerVertex, "Start", type, "HttpServer_Start", null, new TypeName[] {});
+            AddMethod(httpServerVertex, "Stop", type, "HttpServer_Stop", null, new TypeName[] {});
 
 
 

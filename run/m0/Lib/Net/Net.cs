@@ -11,12 +11,12 @@ namespace m0.Lib.Net
     {
         public static INoInEdgeInOutVertexVertex HttpServer_Start(IExecution exe)
         {
-            return null;
+            return exe.Stack;
         }
 
         public static INoInEdgeInOutVertexVertex HttpServer_Stop(IExecution exe)
         {
-            return null;
+            return exe.Stack;
         }
     }
 }

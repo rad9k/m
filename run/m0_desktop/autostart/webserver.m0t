@@ -1,0 +1,16 @@
+System\FormalTextLanguage\ZeroCode
+"webserver"
+	import @System\Lib\Net direct meta
+	
+	variable "v_map" @VertexType
+	variable "server" @HttpServer
+	
+	function "handler"(@String "url")
+		return "elo"
+		
+	v_map +< create http mapping "map"{
+		mapping @@HttpActionEnum\GET "\\" @@handler
+	}
+	
+	server = new @@HttpServer[v_map\map, "5000"]
+	server.Start[]

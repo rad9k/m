@@ -2550,7 +2550,7 @@ namespace m0
             //
             // new (?<expr>))
 
-            IVertex o_new = k.AddVertex(keyword, "new (?<target_ColonEmptyInner2SlashMarkIndexMethodNewLink>) [(*(+, +)(?<expr>)*)]");
+            IVertex o_new = k.AddVertex(keyword, "new (?<target_ColonEmptyInner2SlashMarkIndexMethodNewLink>)[(*(+, +)(?<expr>)*)]");
 
             IVertex o_new_any = o_new.AddVertex(any, "");
 
