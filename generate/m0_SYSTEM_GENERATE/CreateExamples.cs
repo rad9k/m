@@ -360,7 +360,7 @@ namespace m0_SYSTEM_GENERATE
         "\r\n\t\t\treturn Name" +
     "\r\n\tvariable \"person\" @Person" +
     "\r\n\tvariable \"name\" @String" +
-    "\r\n\tperson = new @@Person" +
+    "\r\n\tperson = new @@Person[]" +
     "\r\n\tperson.setName[\"Rad9k\"]" +
     "\r\n\tname = person.getName[]", m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new);
 

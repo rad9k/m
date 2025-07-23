@@ -2310,14 +2310,25 @@ namespace m0.ZeroUML.Instructions
             if (objectIs == null)
                 return CreateStack();
 
-            IVertex methodBody = Get(false, objectIs, targetExpression);
+            //IVertex methodBody = Get(false, objectIs, targetExpression); // interesting but slow
+            IVertex methodBody = GraphUtil.GetQueryOutFirst(objectIs, "Method", targetExpression.Value.ToString());
 
             if (methodBody == null) // not found
                 return CreateStack();
 
-            if (methodBody != null && !CheckIfIsOrInherits_WRONG(methodBody, "Method")) // not a method
-                return CreateStack();
+            //if (methodBody != null && !CheckIfIsOrInherits_WRONG(methodBody, "Method")) // not a method
+            //    return CreateStack();
 
+            INoInEdgeInOutVertexVertex toReturnStack = MethodCallForOneObject_Internal(theObject, exe, parameterExpressions, methodBody);
+
+            //if (local_isStackFrameReturn)
+            return toReturnStack;
+            //else
+            //  return CreateStack();
+        }
+
+        private static INoInEdgeInOutVertexVertex MethodCallForOneObject_Internal(IVertex theObject, ZeroCodeExecution exe, IList<IEdge> parameterExpressions, IVertex methodBody)
+        {
             IList<IEdge> inputParameters = GraphUtil.GetQueryOut(methodBody, "InputParameter", null);
 
             int minParameters = Math.Min(parameterExpressions.Count(), inputParameters.Count());
@@ -2346,29 +2357,36 @@ namespace m0.ZeroUML.Instructions
 
             exe.RemoveStackFrame();
             exe.RemoveStackFrame(); // LEAVE NEW STACK
-
-            //if (local_isStackFrameReturn)
             return toReturnStack;
-            //else
-            //  return CreateStack();
         }
 
         public static INoInEdgeInOutVertexVertex New(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
 
-            IVertex expression = GraphUtil.GetQueryOutFirst(instructionVertex, "Expression", null);
+            IVertex target = GraphUtil.GetQueryOutFirst(instructionVertex, "Target", null);
 
-            if (expression == null)
+            if (target == null)
                 return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
 
-            INoInEdgeInOutVertexVertex expressionExecution = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, expression);
+            IList<IEdge> parameterExpressions = GraphUtil.GetQueryOut(instructionVertex, "Expression", null);
+
+            INoInEdgeInOutVertexVertex targetExecution = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, target);
 
             INoInEdgeInOutVertexVertex localStack = CreateStack();
 
-            foreach (IEdge e in expressionExecution)
-                if (CheckIfIsOrInherits_WRONG(e.To, "Class"))
-                    ZeroUMLInstructionHelpers.AddInstance(localStack, e.To);
+            foreach (IEdge oneTarget in targetExecution)
+                if (CheckIfIsOrInherits_WRONG(oneTarget.To, "Class"))
+                {
+                    IVertex classVertex = oneTarget.To;
+
+                    IVertex theObject = ZeroUMLInstructionHelpers.AddInstance(localStack, oneTarget.To);
+
+                    IVertex methodBody = GraphUtil.GetQueryOutFirst(classVertex, "Method", classVertex.Value.ToString());
+
+                    if (methodBody != null)
+                        MethodCallForOneObject_Internal(theObject, exe, parameterExpressions, methodBody);
+                }
 
             return localStack;
         }
