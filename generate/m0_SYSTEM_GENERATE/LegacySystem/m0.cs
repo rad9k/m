@@ -2547,15 +2547,18 @@ namespace m0
             //
             // new (?<expr>))
 
-            IVertex o_new = k.AddVertex(keyword, "new (?<expr>)");
+            IVertex o_new = k.AddVertex(keyword, "new (?<target>)[(*(+, +)(?<expr>)*)]");
 
             IVertex o_new_any = o_new.AddVertex(any, "");
 
             o_new_any.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"New"));
 
-            o_new_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"SingleOperator\Expression"), "(?<expr>)");
+            o_new_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"New\Target"), "(?<target>)");
 
+            IVertex o_new_any_param = o_new_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression"), "(?<expr>)");
 
+            o_new_any_param.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
+                Empty);
 
             // .[]
             //
