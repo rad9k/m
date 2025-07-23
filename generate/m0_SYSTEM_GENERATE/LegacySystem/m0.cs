@@ -986,10 +986,13 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"MethodCall\Target").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, @"Atom")); // XXX
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"New\Target").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, @"Atom")); // XXX
 
             //LegacySystem.Graph.EasyVertex.Get(smu, false, @"StackFrameCreator\Do").AddEdge(
-                //LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                //LegacySystem.Graph.EasyVertex.Get(smu, false, @"Atom"));
+            //LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+            //LegacySystem.Graph.EasyVertex.Get(smu, false, @"Atom"));
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"Variable").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$VertexTarget"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, @"Type"));
@@ -2547,18 +2550,17 @@ namespace m0
             //
             // new (?<expr>))
 
-            IVertex o_new = k.AddVertex(keyword, "new (?<target>)[(*(+, +)(?<expr>)*)]");
+            IVertex o_new = k.AddVertex(keyword, "new (?<target_ColonEmptyInner2SlashMarkIndexMethodNewLink>) [(*(+, +)(?<expr>)*)]");
 
             IVertex o_new_any = o_new.AddVertex(any, "");
 
             o_new_any.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"New"));
 
-            o_new_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"New\Target"), "(?<target>)");
+            o_new_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"New\Target"), "(?<target_ColonEmptyInner2SlashMarkIndexMethodNewLink>)");
 
             IVertex o_new_any_param = o_new_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"MultiOperator\Expression"), "(?<expr>)");
 
-            o_new_any_param.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
-                Empty);
+            o_new_any_param.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"), Empty);
 
             // .[]
             //
