@@ -12,5 +12,5 @@ System\FormalTextLanguage\ZeroCode
 		mapping @@HttpActionEnum\GET "\\" @@handler
 	}
 	
-	server = new @@HttpServer[v_map\map, "5000"]
+	server = new @@HttpServer[v_map\:map, "5000"]
 	server.Start[]
