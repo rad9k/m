@@ -1,0 +1,42 @@
+"xxx"
+
+	variable "a0" @String "0":"1"
+	variable "a1" @String
+	variable "b0" @String "0":"1"
+	variable "b1" @String
+	variable "c0" @String "0":"1"
+	variable "c1" @String
+	variable "d0" @String "0":"1"
+	variable "d1" @String
+
+	variable "v" @c
+
+	class "c"
+		attribute "a0" @String "0":"1"
+		attribute "a1" @String
+		attribute "b0" @String "0":"1"
+		attribute "b1" @String
+		attribute "c0" @String "0":"1"
+		attribute "c1" @String
+		attribute "d0" @String "0":"1"
+		attribute "d1" @String
+
+	a0 = "xxx"
+	a1 = "xxx"
+	b0 +< "xxx"
+	b1 +< "xxx"
+	c0 <- "xxx"
+	c1 <- "xxx"
+	d0 += "xxx"
+	d1 += "xxx"
+
+	v = new @@c[]
+
+	v\a0 = "xxx"
+	v\a1 = "xxx"
+	v\b0 +< "xxx"
+	v\b1 +< "xxx"
+	v\c0 <- "xxx"
+	v\c1 <- "xxx"
+	v\d0 += "xxx"
+	v\d1 += "xxx"

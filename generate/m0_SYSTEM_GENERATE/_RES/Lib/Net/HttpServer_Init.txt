@@ -1,4 +1,3 @@
 "STORE"
-	Mapping = "kotek"
-	Mapping = p_mapping
-	Port = p_port
+	this\Mapping = p_mapping
+	this\Port = p_port
