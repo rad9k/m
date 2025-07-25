@@ -21,29 +21,54 @@ namespace m0.Lib.Net
             if (thisVertex == null)
                 return exe.Stack;
 
+            HttpServer server = GetServer(thisVertex);
+
+            IVertex portVertex = GraphUtil.GetQueryOutFirst(thisVertex, "Port", null);
+
+            int port = GraphUtil.GetIntegerValueOr0(portVertex);
+
+            server.StartAsync("http://localhost:" + port);
+
+            return exe.Stack;
+        }
+
+        private static HttpServer GetServer(IVertex thisVertex)
+        {
             HttpServer server = null;
 
             if (ServerInstances.ContainsKey(thisVertex))
                 server = ServerInstances[thisVertex];
             else
             {
-                server = CreateServer();
+                IVertex mappingVertex = GraphUtil.GetQueryOutFirst(thisVertex, "Mapping", null);
+
+                if (mappingVertex == null)
+                    return null;
+
+                server = CreateServer(mappingVertex);
 
                 ServerInstances.Add(thisVertex, server);
             }
 
-            server.StartAsync();
-
-            return exe.Stack;
+            return server;
         }
 
-        private static HttpServer CreateServer()
+        private static HttpServer CreateServer(IVertex mappingVertex)
         {
-            return new HttpServer();
+            return new HttpServer(mappingVertex);
         }
 
         public static INoInEdgeInOutVertexVertex HttpServer_Stop(IExecution exe)
         {
+            IVertex thisVertex = GraphUtil.GetQueryOutFirst(exe.Stack, "this", null);
+
+            if (thisVertex == null)
+                return exe.Stack;
+
+            HttpServer server = GetServer(thisVertex);
+
+            //server.StopAsync();
+
             return exe.Stack;
         }
     }
