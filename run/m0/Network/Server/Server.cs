@@ -63,15 +63,46 @@ namespace m0.Network.Server {
             {
                 IVertex actionVertex = GraphUtil.GetQueryOutFirst(e.To, "Action", null);
 
+                if (actionVertex == null)
+                    continue;
+
                 if (!GraphUtil.GetValueAndCompareStrings(actionVertex, actionVertexRequested))
                     continue;
 
-                
+                IVertex pathMaskVertex = GraphUtil.GetQueryOutFirst(e.To, "PathMask", null);
 
+                if (pathMaskVertex == null)
+                    continue;
+
+                string pathMask = GraphUtil.GetStringValue(pathMaskVertex);
+
+                if (!isPathMatch(pathMask, url))
+                    continue;
+
+                IVertex handlerVertex
             }
 
 
             return "404";
+        }
+
+        private bool isPathMatch(string pathMask, string url)
+        {
+            if (pathMask.Contains("*"))
+            {
+                string startsWith = pathMask.Substring(0, pathMask.IndexOf('*'));
+
+                if (url.StartsWith(startsWith))
+                    return true;
+                else
+                    return false;
+            }
+            else {
+                if (pathMask == url)
+                    return true;
+                else
+                    return false;
+            }
         }
 
         private string ExecuteHandler(IVertex httpMappingVertex)
