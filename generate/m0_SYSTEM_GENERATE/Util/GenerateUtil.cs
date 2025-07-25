@@ -82,7 +82,8 @@ namespace m0_SYSTEM_GENERATE.Util
               //  ip.AddVertex(bv.Get(false, "$MaxCardinality"), tn.MaxCardinality);
             }
 
-            ExecutionFlowHelper.DecorateWithDotNetStaticMethod(f, typeName, methodName);
+            if (methodName != null)
+                ExecutionFlowHelper.DecorateWithDotNetStaticMethod(f, typeName, methodName);
         }
 
         public static IVertex AddMethod(IVertex baseVertex, string name, string typeName, string methodName, string ret, IList<TypeName> pars)

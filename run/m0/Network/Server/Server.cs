@@ -2,6 +2,7 @@
 using m0.Graph;
 using m0.Lib.Net;
 using m0.Util;
+using m0.ZeroCode;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -76,17 +77,22 @@ namespace m0.Network.Server {
 
                 string pathMask = GraphUtil.GetStringValue(pathMaskVertex);
 
-                if (!isPathMatch(pathMask, url))
+                if (!IsPathMatch(pathMask, url))
                     continue;
 
-                IVertex handlerVertex
+                IVertex handlerVertex = GraphUtil.GetQueryOutFirst(e.To, "Handler", null);
+
+                if (handlerVertex == null)
+                    continue;
+
+                ZeroCodeExecutonUtil.FuncionCall()
             }
 
 
             return "404";
         }
 
-        private bool isPathMatch(string pathMask, string url)
+        private bool IsPathMatch(string pathMask, string url)
         {
             if (pathMask.Contains("*"))
             {
@@ -104,6 +110,8 @@ namespace m0.Network.Server {
                     return false;
             }
         }
+
+        private string Call
 
         private string ExecuteHandler(IVertex httpMappingVertex)
         {
