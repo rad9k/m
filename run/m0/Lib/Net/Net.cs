@@ -26,9 +26,20 @@ namespace m0.Lib.Net
             if (ServerInstances.ContainsKey(thisVertex))
                 server = ServerInstances[thisVertex];
             else
-                server = CreateNamedPipeServerStreamContext()
+            {
+                server = CreateServer();
 
-                return exe.Stack;
+                ServerInstances.Add(thisVertex, server);
+            }
+
+            server.StartAsync();
+
+            return exe.Stack;
+        }
+
+        private static HttpServer CreateServer()
+        {
+            return new HttpServer();
         }
 
         public static INoInEdgeInOutVertexVertex HttpServer_Stop(IExecution exe)
