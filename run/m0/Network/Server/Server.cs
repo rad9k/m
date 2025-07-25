@@ -1,5 +1,7 @@
 ﻿using m0.Foundation;
+using m0.Graph;
 using m0.Lib.Net;
+using m0.Util;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -50,14 +52,30 @@ namespace m0.Network.Server {
                 default: action = HttpActionEnum.GET; break;
             }
             
-            return Results.Text(DoHttp(url, HttpActionEnumHelper.GetVertex(action)));
+            return Results.Text(DoHttpMapping(url, HttpActionEnumHelper.GetVertex(action)));
         }
 
-        private string DoHttp(string url, IVertex actionVertex)
+        private string DoHttpMapping(string url, IVertex actionVertexRequested)
         {
-            IList<IEdge> mappingsForAction = null;
+            IList<IEdge> mappings = GraphUtil.GetQueryOut(mappingVertex, "HttpMapping", null);
+
+            foreach (IEdge e in mappings)
+            {
+                IVertex actionVertex = GraphUtil.GetQueryOutFirst(e.To, "Action", null);
+
+                if (!GraphUtil.GetValueAndCompareStrings(actionVertex, actionVertexRequested))
+                    continue;
+
+                
+
+            }
 
 
+            return "404";
+        }
+
+        private string ExecuteHandler(IVertex httpMappingVertex)
+        {
             return "kotek";
         }
 
