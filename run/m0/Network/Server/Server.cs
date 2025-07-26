@@ -97,6 +97,7 @@ namespace m0.Network.Server {
                 {
                     if (_logWriter == null)
                     {
+
                         string logFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, logFilename);
                         _logWriter = new StreamWriter(logFilePath, true);
                     }
