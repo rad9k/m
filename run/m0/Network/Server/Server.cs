@@ -7,6 +7,7 @@ using m0.ZeroCode.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -23,7 +24,7 @@ namespace m0.Network.Server {
     {
         private IVertex url_meta = MinusZero.Instance.Root.Get(false, @"System\Lib\Net\HttpHandler\url");
 
-        public IVertex mappingVertex = null;
+        public IVertex thisVertex = null;
 
         private WebApplication? _app;
         private CancellationTokenSource? _cancellationTokenSource;
@@ -34,9 +35,9 @@ namespace m0.Network.Server {
         public string BaseUrl { get; private set; }
         public bool IsRunning => _app != null && _serverTask != null && !_serverTask.IsCompleted;
 
-        public HttpServer(IVertex _mapingVertex)
+        public HttpServer(IVertex _thisVertex)
         {
-            mappingVertex = _mapingVertex;
+            thisVertex = _thisVertex;
         }
 
         // New method handling every HTTP request
@@ -67,13 +68,36 @@ namespace m0.Network.Server {
 
         private void LogHttpRequest(HttpContext context, string method, string url)
         {
+            bool doLog = true;
+            string logFilename = "";
+
+            IVertex doLogVertex = GraphUtil.GetQueryOutFirst(thisVertex, "DoLog", null);
+
+            if (doLogVertex != null)
+                doLog = GraphUtil.GetBooleanValueOrFalse(doLogVertex);
+
+            IVertex logFilenameVertex = GraphUtil.GetQueryOutFirst(thisVertex, "LogFilename", null);
+
+            if (logFilenameVertex != null)
+                logFilename = GraphUtil.GetStringValueOrNull(logFilenameVertex);
+
+            if (logFilename == "")
+            {
+                IVertex portVertex = GraphUtil.GetQueryOutFirst(thisVertex, "Port", null);
+
+                int port = GraphUtil.GetIntegerValueOr0(portVertex);
+
+                logFilename = "http_server_" + port + ".log";
+            }
+
+
             try
             {
                 lock (_logLock)
                 {
                     if (_logWriter == null)
                     {
-                        string logFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "http_server.log");
+                        string logFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, logFilename);
                         _logWriter = new StreamWriter(logFilePath, true);
                     }
 
@@ -99,6 +123,11 @@ namespace m0.Network.Server {
 
         private string DoHttpMapping(string url, IVertex actionVertexRequested)
         {
+            IVertex mappingVertex = GraphUtil.GetQueryOutFirst(thisVertex, "Mapping", null);
+
+            if (mappingVertex == null)
+                return null;
+
             IList<IEdge> mappings = GraphUtil.GetQueryOut(mappingVertex, "HttpMappingEntry", null);
 
             foreach (IEdge e in mappings)
@@ -163,11 +192,6 @@ namespace m0.Network.Server {
                 return ret.OutEdges[0].To.ToString();
             else
                 return "[null]";
-        }
-
-        private string ExecuteHandler(IVertex httpMappingVertex)
-        {
-            return "kotek";
         }
 
         // Remove ConfigureEndpoints and map all HTTP methods to HandleRequest

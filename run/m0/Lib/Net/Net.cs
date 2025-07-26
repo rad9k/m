@@ -45,7 +45,7 @@ namespace m0.Lib.Net
                 if (mappingVertex == null)
                     return null;
 
-                server = CreateServer(mappingVertex);
+                server = CreateServer(thisVertex);
 
                 ServerInstances.Add(thisVertex, server);
             }
@@ -53,9 +53,9 @@ namespace m0.Lib.Net
             return server;
         }
 
-        private static HttpServer CreateServer(IVertex mappingVertex)
+        private static HttpServer CreateServer(IVertex thisVertex)
         {
-            return new HttpServer(mappingVertex);
+            return new HttpServer(thisVertex);
         }
 
         public static INoInEdgeInOutVertexVertex HttpServer_Stop(IExecution exe)
