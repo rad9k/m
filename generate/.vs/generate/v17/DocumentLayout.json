@@ -7,7 +7,7 @@
       "RelativeMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|solutionrelative:m0_system_generate\\lib\\createlib.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|c:\\users\\radoslaw.tereszczuk\\source\\repos\\m\\generate\\m0_system_generate\\util\\generateutil.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|C:\\Users\\radoslaw.tereszczuk\\source\\repos\\m\\generate\\m0_system_generate\\util\\generateutil.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|solutionrelative:m0_system_generate\\util\\generateutil.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -54,8 +54,7 @@
               "RelativeToolTip": "m0_SYSTEM_GENERATE\\Util\\GenerateUtil.cs",
               "ViewState": "AgIAAF4AAAAAAAAAAAAvwDgAAABXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-25T21:17:23.082Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-25T21:17:23.082Z"
             },
             {
               "$type": "Document",
@@ -77,7 +76,7 @@
               "RelativeDocumentMoniker": "m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs",
               "ToolTip": "C:\\Users\\radoslaw.tereszczuk\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs*",
               "RelativeToolTip": "m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs*",
-              "ViewState": "AgIAAI4AAAAAAAAAAAAqwJwAAABlAAAAAAAAAA==",
+              "ViewState": "AgIAAJEAAAAAAAAAAAAqwJwAAABlAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-07-23T21:50:52.012Z",
               "EditorCaption": ""

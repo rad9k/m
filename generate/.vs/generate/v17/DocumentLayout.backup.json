@@ -25,19 +25,6 @@
           "SelectedChildIndex": 7,
           "Children": [
             {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "GenerateUtil.cs",
-              "DocumentMoniker": "C:\\Users\\radoslaw.tereszczuk\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\Util\\GenerateUtil.cs",
-              "RelativeDocumentMoniker": "m0_SYSTEM_GENERATE\\Util\\GenerateUtil.cs",
-              "ToolTip": "C:\\Users\\radoslaw.tereszczuk\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\Util\\GenerateUtil.cs*",
-              "RelativeToolTip": "m0_SYSTEM_GENERATE\\Util\\GenerateUtil.cs*",
-              "ViewState": "AgIAAF4AAAAAAAAAAAAvwDgAAABXAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-25T21:17:23.082Z",
-              "EditorCaption": ""
-            },
-            {
               "$type": "Bookmark",
               "Name": "ST:129:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
             },
@@ -59,6 +46,19 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "GenerateUtil.cs",
+              "DocumentMoniker": "C:\\Users\\radoslaw.tereszczuk\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\Util\\GenerateUtil.cs",
+              "RelativeDocumentMoniker": "m0_SYSTEM_GENERATE\\Util\\GenerateUtil.cs",
+              "ToolTip": "C:\\Users\\radoslaw.tereszczuk\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\Util\\GenerateUtil.cs",
+              "RelativeToolTip": "m0_SYSTEM_GENERATE\\Util\\GenerateUtil.cs",
+              "ViewState": "AgIAAF4AAAAAAAAAAAAvwDgAAABXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-25T21:17:23.082Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 2,
               "Title": "m0.cs",
               "DocumentMoniker": "C:\\Users\\radoslaw.tereszczuk\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\LegacySystem\\m0.cs",
@@ -75,9 +75,9 @@
               "Title": "CreateLib.cs",
               "DocumentMoniker": "C:\\Users\\radoslaw.tereszczuk\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs",
               "RelativeDocumentMoniker": "m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs",
-              "ToolTip": "C:\\Users\\radoslaw.tereszczuk\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs*",
-              "RelativeToolTip": "m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs*",
-              "ViewState": "AgIAAIkAAAAAAAAAAAAkwJwAAAB3AAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\radoslaw.tereszczuk\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs",
+              "RelativeToolTip": "m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs",
+              "ViewState": "AgIAAI4AAAAAAAAAAAAqwJwAAABlAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-07-23T21:50:52.012Z",
               "EditorCaption": ""

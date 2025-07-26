@@ -154,7 +154,7 @@ namespace m0_SYSTEM_GENERATE.Lib
             AddMethod(httpServerVertex, "Start", type, "HttpServer_Start", null, new TypeName[] {});
             AddMethod(httpServerVertex, "Stop", type, "HttpServer_Stop", null, new TypeName[] {});
 
-            AddFunction(LibNet, "HttpHandler", null, null, "String", new TypeName[] { new TypeName("Url", "String") });
+            AddFunction(LibNet, "HttpHandler", null, null, "String", new TypeName[] { new TypeName("url", "String") });
 
         }
 
