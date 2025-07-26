@@ -41,22 +41,24 @@ namespace m0.ZeroCode
             exe.RemoveStackFrame(); // LEAVE NEW STACK
         }
 
-        public static void FuncionCall(IVertex endPoint, IVertex paramtersStack)
+        public static INoInEdgeInOutVertexVertex FuncionCall(IVertex endPoint, IVertex paramtersStack)
         {
             IExecution exe = new ZeroCodeExecution();
 
             exe.AddStackFrame(paramtersStack);
 
-            endPoint.Execute(exe);
+            return endPoint.Execute(exe);
         }
 
-        public static void FuncionCall(IExecution exe, IVertex endPoint, IVertex paramtersStack)
+        public static INoInEdgeInOutVertexVertex FuncionCall(IExecution exe, IVertex endPoint, IVertex paramtersStack)
         { 
             exe.AddStackFrame(paramtersStack); // ENTER NEW STACK
 
-            endPoint.Execute(exe);
+            INoInEdgeInOutVertexVertex ret = endPoint.Execute(exe);
 
             exe.RemoveStackFrame(); // LEAVE NEW STACK
+
+            return ret;
         }
 
 

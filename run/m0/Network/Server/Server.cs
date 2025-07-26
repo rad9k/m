@@ -3,6 +3,7 @@ using m0.Graph;
 using m0.Lib.Net;
 using m0.Util;
 using m0.ZeroCode;
+using m0.ZeroCode.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -19,6 +20,8 @@ namespace m0.Network.Server {
 
     public class HttpServer
     {
+        public IVertex url_meta = MinusZero.Instance.Root.Get(false, @"System\Lib\Net\HttpHandler\Url");
+
         public IVertex mappingVertex = null;
 
         private WebApplication? _app;
@@ -58,7 +61,7 @@ namespace m0.Network.Server {
 
         private string DoHttpMapping(string url, IVertex actionVertexRequested)
         {
-            IList<IEdge> mappings = GraphUtil.GetQueryOut(mappingVertex, "HttpMapping", null);
+            IList<IEdge> mappings = GraphUtil.GetQueryOut(mappingVertex, "HttpMappingEntry", null);
 
             foreach (IEdge e in mappings)
             {
@@ -85,11 +88,10 @@ namespace m0.Network.Server {
                 if (handlerVertex == null)
                     continue;
 
-                ZeroCodeExecutonUtil.FuncionCall()
+                return CallHandler(handlerVertex, url);
             }
 
-
-            return "404";
+            return "[404]";
         }
 
         private bool IsPathMatch(string pathMask, string url)
@@ -111,7 +113,19 @@ namespace m0.Network.Server {
             }
         }
 
-        private string Call
+        private string CallHandler(IVertex handlerVertex, string url)
+        {
+            IVertex parameters = InstructionHelpers.CreateStack();
+
+            parameters.AddVertex(url_meta, url);
+
+            INoInEdgeInOutVertexVertex ret = ZeroCodeExecutonUtil.FuncionCall(handlerVertex, parameters);
+
+            if (ret.OutEdges.Count > 0)
+                return ret.OutEdges[0].To.ToString();
+            else
+                return "[null]";
+        }
 
         private string ExecuteHandler(IVertex httpMappingVertex)
         {

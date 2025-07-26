@@ -78,7 +78,7 @@ namespace m0_SYSTEM_GENERATE.Util
                 else
                     ip.AddEdge(bv.Get(false, "$EdgeTarget"), tn.TypeVertex);
 
-              //  ip.AddVertex(bv.Get(false, "$MinCardinality"), tn.MinCardinality);
+              //  ip.AddVertex(bv.Get(false, "$MinCardinality"), tn.MinCardinality); // must be a reson for not using those now
               //  ip.AddVertex(bv.Get(false, "$MaxCardinality"), tn.MaxCardinality);
             }
 
@@ -110,11 +110,11 @@ namespace m0_SYSTEM_GENERATE.Util
                 else
                     ip.AddEdge(bv.Get(false, "EdgeTarget"), tn.TypeVertex);
 
-                //ip.AddVertex(bv.Get(false, "$MinCardinality"), tn.MinCardinality);
-               // ip.AddVertex(bv.Get(false, "$MaxCardinality"), tn.MaxCardinality);
+                //ip.AddVertex(bv.Get(false, "$MinCardinality"), tn.MinCardinality); // must be a reson for not using those now
+                // ip.AddVertex(bv.Get(false, "$MaxCardinality"), tn.MaxCardinality);
             }
 
-            if(typeName != null)
+            if (typeName != null)
                 ExecutionFlowHelper.DecorateWithDotNetStaticMethod(f, typeName, methodName);
 
             return methodVertex;
