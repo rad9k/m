@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,13 +21,15 @@ namespace m0.Network.Server {
 
     public class HttpServer
     {
-        public IVertex url_meta = MinusZero.Instance.Root.Get(false, @"System\Lib\Net\HttpHandler\url");
+        private IVertex url_meta = MinusZero.Instance.Root.Get(false, @"System\Lib\Net\HttpHandler\url");
 
         public IVertex mappingVertex = null;
 
         private WebApplication? _app;
         private CancellationTokenSource? _cancellationTokenSource;
         private Task? _serverTask;
+        private StreamWriter? _logWriter;
+        private readonly object _logLock = new object();
 
         public string BaseUrl { get; private set; }
         public bool IsRunning => _app != null && _serverTask != null && !_serverTask.IsCompleted;
@@ -56,7 +59,42 @@ namespace m0.Network.Server {
                 default: action = HttpActionEnum.GET; break;
             }
             
+            // Log the HTTP request
+            LogHttpRequest(context, method, url);
+            
             return Results.Text(DoHttpMapping(url, HttpActionEnumHelper.GetVertex(action)));
+        }
+
+        private void LogHttpRequest(HttpContext context, string method, string url)
+        {
+            try
+            {
+                lock (_logLock)
+                {
+                    if (_logWriter == null)
+                    {
+                        string logFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "http_server.log");
+                        _logWriter = new StreamWriter(logFilePath, true);
+                    }
+
+                    // Standard HTTP log format: IP - - [timestamp] "METHOD /path HTTP/1.1" status_code response_size
+                    string remoteIp = context.Connection.RemoteIpAddress?.ToString() ?? "-";
+                    string timestamp = DateTime.Now.ToString("dd/MMM/yyyy:HH:mm:ss zzz");
+                    string userAgent = context.Request.Headers["User-Agent"].ToString() ?? "-";
+                    string referer = context.Request.Headers["Referer"].ToString() ?? "-";
+                    
+                    // Log in Common Log Format (CLF)
+                    string logEntry = $"{remoteIp} - - [{timestamp}] \"{method} {url} HTTP/{context.Request.Protocol}\" - - \"{referer}\" \"{userAgent}\"";
+                    
+                    _logWriter.WriteLine(logEntry);
+                    _logWriter.Flush();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Silently handle logging errors to not break the server
+                Console.WriteLine($"Logging error: {ex.Message}");
+            }
         }
 
         private string DoHttpMapping(string url, IVertex actionVertexRequested)
@@ -184,6 +222,14 @@ namespace m0.Network.Server {
             }
 
             _cancellationTokenSource?.Dispose();
+
+            // Close and dispose the log writer
+            lock (_logLock)
+            {
+                _logWriter?.Close();
+                _logWriter?.Dispose();
+                _logWriter = null;
+            }
 
             _app = null;
             _serverTask = null;

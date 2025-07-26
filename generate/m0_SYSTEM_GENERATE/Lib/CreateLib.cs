@@ -125,12 +125,20 @@ namespace m0_SYSTEM_GENERATE.Lib
             IVertex lib = root.Get(false, "System").AddVertex(null, "Lib");
 
             IVertex IntegerType = root.Get(false, @"System\Meta\ZeroTypes\Integer");
+            IVertex BooleanType = root.Get(false, @"System\Meta\ZeroTypes\Boolean");
+            IVertex StringType = root.Get(false, @"System\Meta\ZeroTypes\String");
+
+            IVertex default_meta = root.Get(false, @"System\Meta\Base\Vertex\$DefaultValue");
 
             LibNet = lib.AddVertex(null, "Net");
 
             string type = "m0.Lib.Net.Net, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
+            // HttpActionEnum
+
             IVertex HttpActionEnumVertex = GraphUtil.AddEnum(LibNet, "HttpActionEnum", new string[] { "GET", "PUT", "POST", "DELETE", "PATCH", "HEADOPTIONS", "TRACE" });
+
+            // HttpMappig
 
             IVertex httpMapingVertex = GraphUtil.AddClass(LibNet, "HttpMapping");
 
@@ -142,10 +150,18 @@ namespace m0_SYSTEM_GENERATE.Lib
             GraphUtil.AddAttribute(httpMapingEntryVertex, "PathMask", StringMeta, 1, 1);
             GraphUtil.AddAssociation(httpMapingEntryVertex, "Handler", ExecutableMeta, 1, 1);
 
+            // HttpServer
+
             IVertex httpServerVertex = GraphUtil.AddClass(LibNet, "HttpServer");
 
             GraphUtil.AddAttribute(httpServerVertex, "Mapping", httpMapingVertex, 1, 1);
             GraphUtil.AddAttribute(httpServerVertex, "Port", IntegerType, 1, 1);
+
+            IVertex doLogAttributeVertex = GraphUtil.AddAttribute(httpServerVertex, "DoLog", BooleanType, 1, 1);
+            doLogAttributeVertex.AddVertex(default_meta, "True");
+
+            IVertex logFilenameVertex = GraphUtil.AddAttribute(httpServerVertex, "LogFilename", BooleanType, 1, 1);
+            logFilenameVertex.AddVertex(default_meta, "");
 
             IVertex httpServer_InitVertex = AddMethod(httpServerVertex, "HttpServer", null, new TypeName[] { new TypeName("p_mapping", httpMapingVertex, 0, -1), new TypeName("p_port", "Integer", 0, 1) });
 
