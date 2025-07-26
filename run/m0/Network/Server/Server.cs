@@ -20,7 +20,7 @@ namespace m0.Network.Server {
 
     public class HttpServer
     {
-        public IVertex url_meta = MinusZero.Instance.Root.Get(false, @"System\Lib\Net\HttpHandler\Url");
+        public IVertex url_meta = MinusZero.Instance.Root.Get(false, @"System\Lib\Net\HttpHandler\url");
 
         public IVertex mappingVertex = null;
 
