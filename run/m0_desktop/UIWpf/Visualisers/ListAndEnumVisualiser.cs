@@ -18,13 +18,13 @@ using m0.User.Process.UX;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class EnumVisualiser : ComboBox, IVisualiser, ITypedEdge
+    public class ListAndEnumVisualiser : ComboBox, IVisualiser, ITypedEdge
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }
 
         // TypedEdge START
 
-        public EnumVisualiser(IEdge _edge)
+        public ListAndEnumVisualiser(IEdge _edge)
         {
             Edge = _edge;
 
@@ -34,12 +34,12 @@ namespace m0.UIWpf.Visualisers
         public IEdge Edge { get; set; }
         // TypedEdge END
 
-        public EnumVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile)
+        public ListAndEnumVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile)
         {            
             new AtomVisualiserHelper(
                parentVisualiser,
                isVolatile,
-               MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Enum"),
+               MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\ListAndEnum"),
                this,
                "EnumVisualiser",
                this,

@@ -4244,7 +4244,7 @@ namespace m0
                 "Class:TableFast{Attribute:ToShowEdgesMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:IsAllVisualisersEdit{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowHeader{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Association:GridStyle{$MinCardinality:1,$MaxCardinality:1},Attribute:AlternatingRows{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:Tree," +
                 "Class:Graph{Attribute:VisualiserCircleSize{$MinCardinality:1,$MaxCardinality:1},Attribute:NumberOfCircles{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd:},Attribute:ShowOutEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowInEdges{$MinCardinality:1,$MaxCardinality:1},Attribute:FastMode{$MinCardinality:1,$MaxCardinality:1},Attribute:MetaLabels{$MinCardinality:1,$MaxCardinality:1}}," +
-                "Class:Class,Class:String,Class:StringView,Class:Vertex,Class:Edge,Class:Integer,Class:Decimal,Class:Float,Class:Boolean,Class:Enum,Class:Debug," +
+                "Class:Class,Class:String,Class:StringView,Class:Vertex,Class:Edge,Class:Integer,Class:Decimal,Class:Float,Class:Boolean,Class:ListAndEnum,Class:Debug," +
                 "Class:Diagram{Attribute:SizeX{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd:},Attribute:SizeY{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd},Attribute:Item{$MinCardinality:0,$MaxCardinality:-1,$Hide:0},Association:CreationPool{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:Wrap,"+
                 "Class:List{Attribute:IsMetaRightAlign{$MinCardinality:1,$MaxCardinality:1},Attribute:IsAllVisualisersEdit{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowMeta{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Association:GridStyle{$MinCardinality:1,$MaxCardinality:1}}," +
@@ -4421,11 +4421,11 @@ namespace m0
             sm.Get(false, @"ZeroTypes\Boolean").AddEdge(sm.Get(false, "ZeroUML?$DefaultViewVisualiser"), sm.Get(false, @"Visualiser\Boolean"));
             sm.Get(false, @"Visualiser\Boolean").AddEdge(sm.Get(false, @"Visualiser\BaseEdgeTarget"), sm.Get(false, @"Visualiser\BaseEdgeTarget\Any"));
 
-            sm.Get(false, @"Visualiser\Enum").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\UX\UXItem"));            
-            sm.Get(false, @"Visualiser\Enum").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.UIWpf.Visualisers.EnumVisualiser, m0_desktop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            sm.Get(false, @"Visualiser\Enum").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
-            sm.Get(false, @"ZeroTypes\EnumBase").AddEdge(sm.Get(false, "ZeroUML?$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\Enum"));
-            sm.Get(false, @"Visualiser\Enum").AddEdge(sm.Get(false, @"Visualiser\BaseEdgeTarget"), sm.Get(false, @"Visualiser\BaseEdgeTarget\Specyfic"));
+            sm.Get(false, @"Visualiser\ListAndEnum").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\UX\UXItem"));            
+            sm.Get(false, @"Visualiser\ListAndEnum").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.UIWpf.Visualisers.ListAndEnumVisualiser, m0_desktop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+            sm.Get(false, @"Visualiser\ListAndEnum").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
+            sm.Get(false, @"ZeroTypes\EnumBase").AddEdge(sm.Get(false, "ZeroUML?$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\ListAndEnum"));
+            sm.Get(false, @"Visualiser\ListAndEnum").AddEdge(sm.Get(false, @"Visualiser\BaseEdgeTarget"), sm.Get(false, @"Visualiser\BaseEdgeTarget\Specyfic"));
 
             sm.Get(false, @"Visualiser\Debug").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\UX\UXItem"));            
             sm.Get(false, @"Visualiser\Debug").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.UIWpf.Visualisers.DebugVisualiser, m0_desktop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
