@@ -1,6 +1,7 @@
 ﻿using m0.Foundation;
 using m0.Graph;
 using m0.Lib.Net;
+using m0.Store.FileSystem;
 using m0.Util;
 using m0.ZeroCode;
 using m0.ZeroCode.Helpers;
@@ -87,7 +88,9 @@ namespace m0.Network.Server {
 
                 int port = GraphUtil.GetIntegerValueOr0(portVertex);
 
-                logFilename = "http_server_" + port + ".log";
+                string timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+
+                logFilename = "http_server_" + port + "_" + timestamp + ".log";
             }
 
 
@@ -97,15 +100,18 @@ namespace m0.Network.Server {
                 {
                     if (_logWriter == null)
                     {
+                        FileSystemUtil.CreateDirectoryIfNotExist(MinusZero.Instance.m0DllPath, "http");
 
-                        string logFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, logFilename);
+                        string httpPath = Path.Combine(MinusZero.Instance.m0DllPath, "http");
+
+                        string logFilePath = Path.Combine(httpPath, logFilename);
                         _logWriter = new StreamWriter(logFilePath, true);
                     }
 
                     // Standard HTTP log format: IP - - [timestamp] "METHOD /path HTTP/1.1" status_code response_size
                     string remoteIp = context.Connection.RemoteIpAddress?.ToString() ?? "-";
-                    string timestamp = DateTime.Now.ToString("dd/MMM/yyyy:HH:mm:ss zzz");
-                    string userAgent = context.Request.Headers["User-Agent"].ToString() ?? "-";
+                    string timestamp = DateTime.Now.ToString(@"dd\/MM\/yyyy:HH:mm:ss zzz");
+                    string userAgent = context.Request.Headers["User-AMgent"].ToString() ?? "-";
                     string referer = context.Request.Headers["Referer"].ToString() ?? "-";
                     
                     // Log in Common Log Format (CLF)
