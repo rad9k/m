@@ -53,12 +53,9 @@ namespace m0.UIWpf
             if (defvis == null)
                 defvis = e.Meta.Get(false, @"$EdgeTarget:\$DefaultEditVisualiser:");
 
-            if (defvis == null)
-            {
-                //if (e.Meta.Get(false, @"$EdgeTarget:\$TargetQuery") != null)
-                  //  defvis = 
-            }
-
+            if (defvis == null && e.Meta.Get(false, @"$TargetQuery:") != null)
+                defvis = MinusZero.Instance.root.Get(false, @"System\Meta\Visualiser\ListAndEnum");
+            
            // if (defvis == null)
              //   defvis = e.Meta.Get(false, @"$VertexTarget:\$DefaultEditVisualiser:");
              //

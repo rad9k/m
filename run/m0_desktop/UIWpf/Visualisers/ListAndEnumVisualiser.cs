@@ -124,38 +124,38 @@ namespace m0.UIWpf.Visualisers
                 return;
 
             metav = bev.Get(false, "Meta:");
+
+            //
+
+            bool hasTargetQuery = false;
+            string targetQuery = null;
+
+            IVertex targetQueryVertex = GraphUtil.GetQueryOutFirst(metav, "$TargetQuery", null);
+
+            targetQuery = GraphUtil.GetStringValueOrNull(targetQueryVertex);
+
+            if (targetQuery != null)
+                hasTargetQuery = true;
+
+            //
+
             tov = fromv.Get(false, metav.Value.ToString()+":");
             
-            if (fromv!=null && metav!=null /*&& tov!=null*/){                           
+            if (fromv != null && metav != null /*&& tov!=null*/)
+            {
                 CanProceedUIUpdateEvent = false;
 
-                int cnt = 0;
                 int ToBeSelectedIndex = -1;
 
                 List<ComboBoxItem> valuesList = new List<ComboBoxItem>();
 
-                ComboBoxItem ToBeComboBoxItem=null;
+                ComboBoxItem ToBeComboBoxItem = null;
                 string ToBeString = null;
 
-                foreach (IEdge e in metav.GetAll(false, @"$EdgeTarget:\EnumValue:"))
-                {
-                    string value = e.To.Value.ToString();
-
-                    ComboBoxItem i = new ComboBoxItem();
-                    i.Content = value;
-                    i.Tag = e.To;                   
-                   
-                    valuesList.Add(i);
-
-                    if (tov != null && tov.Value.ToString() == value)
-                    {
-                        ToBeSelectedIndex = cnt;
-                        ToBeComboBoxItem = i;
-                        ToBeString = value;
-                    }
-
-                    cnt++;                        
-                }
+                if (hasTargetQuery)
+                    GetListValuesFromTargetQuery(targetQuery, tov, ref ToBeSelectedIndex, valuesList, ref ToBeComboBoxItem, ref ToBeString);
+                else
+                    GetListValuesFromEnum(metav, tov, ref ToBeSelectedIndex, valuesList, ref ToBeComboBoxItem, ref ToBeString);
 
                 this.ItemsSource = valuesList;
 
@@ -170,11 +170,59 @@ namespace m0.UIWpf.Visualisers
                     this.IsEditable = false;
                 }
 
-                
-                
                 CanProceedUIUpdateEvent = true;
             }
 
+        }
+
+        private static void GetListValuesFromEnum(IVertex metav, IVertex tov, ref int ToBeSelectedIndex, List<ComboBoxItem> valuesList, ref ComboBoxItem ToBeComboBoxItem, ref string ToBeString)
+        {
+            int cnt = 0;
+
+            foreach (IEdge e in metav.GetAll(false, @"$EdgeTarget:\EnumValue:"))
+            {
+                string value = e.To.Value.ToString();
+
+                ComboBoxItem i = new ComboBoxItem();
+                i.Content = value;
+                i.Tag = e.To;
+
+                valuesList.Add(i);
+
+                if (tov != null && tov.Value.ToString() == value)
+                {
+                    ToBeSelectedIndex = cnt;
+                    ToBeComboBoxItem = i;
+                    ToBeString = value;
+                }
+
+                cnt++;
+            }
+        }
+
+        private static void GetListValuesFromTargetQuery(string targetQuery, IVertex tov, ref int ToBeSelectedIndex, List<ComboBoxItem> valuesList, ref ComboBoxItem ToBeComboBoxItem, ref string ToBeString)
+        {
+            int cnt = 0;
+
+            foreach (IEdge e in MinusZero.Instance.root.GetAll(false, targetQuery))
+            {
+                string value = e.To.Value.ToString();
+
+                ComboBoxItem i = new ComboBoxItem();
+                i.Content = value;
+                i.Tag = e.To;
+
+                valuesList.Add(i);
+
+                if (tov != null && tov.Value.ToString() == value)
+                {
+                    ToBeSelectedIndex = cnt;
+                    ToBeComboBoxItem = i;
+                    ToBeString = value;
+                }
+
+                cnt++;
+            }
         }
 
         public IVertex Vertex
