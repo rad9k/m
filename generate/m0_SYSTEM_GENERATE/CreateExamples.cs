@@ -532,6 +532,7 @@ namespace m0_SYSTEM_GENERATE
             tr.Get(false, @"TEST\Person").AddEdge(r.Get(false, @"System\Meta?$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
             tr.Get(false, @"TEST\PersonB").AddEdge(r.Get(false, @"System\Meta?$Is"), r.Get(false, @"System\Meta\ZeroUML\Class"));
 
+            tr.Get(false, @"TEST\Person\Spouse").AddVertex(r.Get(false, @"System\Meta\Base\Vertex\$TargetQuery"), @"examples\TEST\Person:");
 
             ///
 
