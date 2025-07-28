@@ -553,8 +553,8 @@ namespace m0.UIWpf.Visualisers
                             AddLine(vPoint, eToPoint,e.Meta);                            
                         }
 
-                    if(ShowInEdges)
-                    foreach (IEdge e in v.InEdges)
+                    if (ShowInEdges)
+                    foreach (IEdge e in v.InEdges.ToList())
                         if (!DisplayedVerticesUIElements.ContainsKey(e.From) || DisplayedVerticesUIElements[e.From] == dummyPointIn)
                         {
                             if (CanAddEdge(e))
