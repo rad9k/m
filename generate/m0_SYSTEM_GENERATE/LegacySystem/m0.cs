@@ -3051,6 +3051,19 @@ namespace m0
 
         }
 
+        void AddFormalTextLanguageProcessing(string parserClass, string generatorClass, IVertex firstParameter, IVertex secondParameter)
+        {
+            IVertex ftl = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\FormalTextLanguage");
+        }
+
+        void CreateFormalTextLanguageProcessing()
+        {
+            IVertex zc = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\FormalTextLanguage\ZeroCode");
+
+            AddFormalTextLanguageProcessing("")
+
+        }
+
         void AddAttribute(IVertex baseVertex, string name, int MinCardinality, int MaxCardinality, IVertex edgeTarget)
         {
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
@@ -3269,19 +3282,19 @@ namespace m0
 
             // FormalTextLanguageProceeing
 
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\FormalTextLanguageProcesing\ParserClass").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\FormalTextLanguageProcessing\ParserClass").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\String"));
 
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\FormalTextLanguageProcesing\GeneratorClass").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\FormalTextLanguageProcessing\GeneratorClass").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\String"));
 
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\FormalTextLanguageProcesing\FormalTextLanguageParameterFirst").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\FormalTextLanguageProcessing\LanguageParameterFirst").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\VertexType"));
 
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\FormalTextLanguageProcesing\FormalTextLanguageParameterSecond").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\FormalTextLanguageProcessing\LanguageParameterSecond").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\VertexType"));
         }
@@ -7040,6 +7053,8 @@ namespace m0
             CreateSystemFormalTextLanguageZeroCodeBase();
 
             CreateSystemFormalTextLanguageZeroCode();
+
+            CreateFormalTextLanguageProcessing();
 
 
             CreateSystemFormalTextLanguegeZeroCode_Keywords();
