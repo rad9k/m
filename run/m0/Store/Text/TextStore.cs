@@ -11,6 +11,7 @@ using m0.Util;
 using m0.Store.FileSystem;
 using m0.Store.Json;
 using static System.Net.WebRequestMethods;
+using m0.ZeroTypes;
 
 namespace m0.Store.Text
 {
@@ -53,7 +54,7 @@ namespace m0.Store.Text
                         root = new EasyVertex(this);
 
                         IEdge baseEdge_new;
-                        IVertex errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(formalTextLanguageVertex, new EdgeBase(null, null, root), body, m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new);
+                        IVertex errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(formalTextLanguageVertex, new EdgeBase(null, null, root), body, CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new);
 
                         if (errorList.OutEdges.Count > 0)
                             properlyLoaded = false;
@@ -116,7 +117,7 @@ namespace m0.Store.Text
 
             EasyEdge e = new EasyEdge(MinusZero.Instance.Empty, null, root);
 
-            string generated = MinusZero.Instance.DefaultFormalTextGenerator.Generate(formalTextLanguageVertex, e, ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
+            string generated = MinusZero.Instance.DefaultFormalTextGenerator.Generate(formalTextLanguageVertex, e, CodeRepresentationEnum.VertexAndManyLines);
 
             writeStream.Write(generated);
 

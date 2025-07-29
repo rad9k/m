@@ -13,7 +13,6 @@ using System.Windows.Shapes;
 
 using m0.Graph;
 using m0.Foundation;
-using m0.ZeroTypes;
 using m0.Util;
 using m0.UIWpf;
 using System.Windows.Media.Media3D;

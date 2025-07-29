@@ -1,7 +1,7 @@
 ﻿using m0.Foundation;
 using m0.Graph;
 using m0.Util;
-using m0.ZeroTypes.UX;
+using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;

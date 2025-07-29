@@ -3,7 +3,6 @@ using m0.Graph;
 using m0.Util;
 using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
-using m0.ZeroTypes.UX;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -2896,7 +2895,7 @@ namespace m0.ZeroCode
             this.L1009_right = _l1009_right;
 
             IEdge baseEdge_new;
-            return Process(new EdgeBase(null, null, _baseVertex), _text, m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new);
+            return Process(new EdgeBase(null, null, _baseVertex), _text, CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new);
         }
 
         private bool ProcessToVertexMocksToLinks_Delegate(IEdge edge)

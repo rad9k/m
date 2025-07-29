@@ -5,18 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace m0.ZeroTypes.UX
+namespace m0.ZeroTypes
 {
     public enum CodeRepresentationEnum { EdgeOneLine, LinearizedManyLines, ManyLinesExcludingParent, VertexAndManyLines, EdgeAndManyLines }
 
     public class CodeRepresentationEnumHelper
     {
-        static IVertex OneLine_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\CodeRepresentationEnum\OneLine");
-        static IVertex EdgeOneLine_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\CodeRepresentationEnum\EdgeOneLine");
-        static IVertex LinearizedManyLines_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\CodeRepresentationEnum\LinearizedManyLines");
-        static IVertex ManyLinesExcludingParent_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\CodeRepresentationEnum\ManyLinesExcludingParent");
-        static IVertex VertexAndManyLines_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\CodeRepresentationEnum\VertexAndManyLines");
-        static IVertex EdgeAndManyLines_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\CodeRepresentationEnum\EdgeAndManyLines");
+        static IVertex OneLine_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\CodeRepresentationEnum\OneLine");
+        static IVertex EdgeOneLine_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\CodeRepresentationEnum\EdgeOneLine");
+        static IVertex LinearizedManyLines_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\CodeRepresentationEnum\LinearizedManyLines");
+        static IVertex ManyLinesExcludingParent_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\CodeRepresentationEnum\ManyLinesExcludingParent");
+        static IVertex VertexAndManyLines_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\CodeRepresentationEnum\VertexAndManyLines");
+        static IVertex EdgeAndManyLines_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\CodeRepresentationEnum\EdgeAndManyLines");
 
         public static CodeRepresentationEnum GetEnum(IVertex v)
         {

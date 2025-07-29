@@ -99,7 +99,7 @@ namespace m0
 
         public IVertex CreateTempVertex()
         {
-            return new EasyVertex(this.tempstore);
+            return new m0.Graph.EasyVertex(this.tempstore);
         }
 
         public IVertex tempRoot;
@@ -3065,7 +3065,7 @@ namespace m0
             IVertex firstParameter,
             IVertex secondParameter)
         {
-            IVertex ftl = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\FormalTextLanguage");
+            IVertex ftl = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\FormalTextLanguage");
 
             IVertex ftlp_v = ftl.AddVertex(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\FormalTextLanguageProcessing"),
                 name);
@@ -3091,16 +3091,16 @@ namespace m0
 
         void CreateFormalTextLanguageProcessing()
         {
-            IVertex zc = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\FormalTextLanguage\ZeroCode");
+            IVertex zc = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\FormalTextLanguage\ZeroCode");
 
-            // foreach (IEdge e in )
-
-            /* AddFormalTextLanguageProcessing("ZeroCode",
-                 "m0.ZeroCode.ZCodeRepresentationEnumeroCodeEngine, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
-                 "Parse",
-                 "m0.ZeroCode.ZeroCodeEngine, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
-                 "Generate",
-                 zc);*/
+            foreach (IEdge e in LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\CodeRepresentationEnum"))
+                AddFormalTextLanguageProcessing("ZeroCode " + e.To.ToString(),
+                     "m0.ZeroCode.ZCodeRepresentationEnumeroCodeEngine, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                     "Parse",
+                     "m0.ZeroCode.ZeroCodeEngine, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                     "Generate",
+                     zc,
+                     e.To);
 
         }
 
@@ -3148,7 +3148,7 @@ namespace m0
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
 
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, sm, "{ZeroTypes{AtomType:String,AtomType:Integer,AtomType:Decimal,AtomType:Float,AtomType:Boolean,Type:VertexType,Class:Edge{Association:From{$MinCardinality:0,$MaxCardinality:1},Association:Meta{$MinCardinality:1,$MaxCardinality:1},Association:To{$MinCardinality:1,$MaxCardinality:1}},Class:DateTime{Attribute:Year{$MinCardinality:1,$MaxCardinality:1},Attribute:Month{$MinCardinality:1,$MaxCardinality:1},Attribute:Day{$MinCardinality:1,$MaxCardinality:1},Attribute:Hour{$MinCardinality:1,$MaxCardinality:1},Attribute:Minute{$MinCardinality:1,$MaxCardinality:1},Attribute:Second{$MinCardinality:1,$MaxCardinality:1},Attribute:Millisecond{$MinCardinality:0,$MaxCardinality:1}},Class:FormalTextLanguage,Enum:EnumBase,Class:HasBaseEdge{Attribute:BaseEdge{$MinCardinality:1,$MaxCardinality:1}},Class:HasSelectedEdges{Attribute:SelectedEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:},Attribute:ShowSelectedEdgesBaseEdge{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False}},Class:HasFilter{Attribute:FilterQuery{$MinCardinality:0,$MaxCardinality:1}},Class:HasExecutableVertex{Attribute:ExecutableVertex{$MinCardinality:1,$MaxCardinality:1}},Class:Exception{Attribute:CodeEdge{$MinCardinality:0,$MaxCardinality:1},Attribute:DataEdge{$MinCardinality:0,$MaxCardinality:-1},Attribute:Where{$MinCardinality:0,$MaxCardinality:1},Attribute:Type{$MinCardinality:0,$MaxCardinality:1},Attribute:What{$MinCardinality:1,$MaxCardinality:1}},Class:FormalTextLanguageProcessing{Attribute:ParserHandler{$MinCardinality:0,$MaxCardinality:1},Attribute:GeneratorHandler{$MinCardinality:0,$MaxCardinality:1},Aggregation:LanguageParameterFirst{$MinCardinality:0,$MaxCardinality:1},Aggregation:LanguageParameterSecond{$MinCardinality:0,$MaxCardinality:1}},Enum:ExceptionTypeEnum{EnumValue:Error,EnumValue:Warning,EnumValue:Info},Enum:CodeRepresentationEnum{EnumValue:EdgeOneLine,EnumValue:LinearizedManyLines,EnumValue:ManyLinesExcludingParent,EnumValue:VertexAndManyLines,EnumValue:EdgeAndManyLines}}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, sm, "{ZeroTypes{AtomType:String,AtomType:Integer,AtomType:Decimal,AtomType:Float,AtomType:Boolean,Type:VertexType,Class:Edge{Association:From{$MinCardinality:0,$MaxCardinality:1},Association:Meta{$MinCardinality:1,$MaxCardinality:1},Association:To{$MinCardinality:1,$MaxCardinality:1}},Class:DateTime{Attribute:Year{$MinCardinality:1,$MaxCardinality:1},Attribute:Month{$MinCardinality:1,$MaxCardinality:1},Attribute:Day{$MinCardinality:1,$MaxCardinality:1},Attribute:Hour{$MinCardinality:1,$MaxCardinality:1},Attribute:Minute{$MinCardinality:1,$MaxCardinality:1},Attribute:Second{$MinCardinality:1,$MaxCardinality:1},Attribute:Millisecond{$MinCardinality:0,$MaxCardinality:1}},Class:FormalTextLanguage,Enum:EnumBase,Class:HasBaseEdge{Attribute:BaseEdge{$MinCardinality:1,$MaxCardinality:1}},Class:HasSelectedEdges{Attribute:SelectedEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:},Attribute:ShowSelectedEdgesBaseEdge{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False}},Class:HasFilter{Attribute:FilterQuery{$MinCardinality:0,$MaxCardinality:1}},Class:HasExecutableVertex{Attribute:ExecutableVertex{$MinCardinality:1,$MaxCardinality:1}},Class:Exception{Attribute:CodeEdge{$MinCardinality:0,$MaxCardinality:1},Attribute:DataEdge{$MinCardinality:0,$MaxCardinality:-1},Attribute:Where{$MinCardinality:0,$MaxCardinality:1},Attribute:Type{$MinCardinality:0,$MaxCardinality:1},Attribute:What{$MinCardinality:1,$MaxCardinality:1}},Class:FormalTextLanguageProcessing{Attribute:ParserHandler{$MinCardinality:0,$MaxCardinality:1},Attribute:GeneratorHandler{$MinCardinality:0,$MaxCardinality:1},Aggregation:LanguageParameterFirst{$MinCardinality:0,$MaxCardinality:1},Aggregation:LanguageParameterSecond{$MinCardinality:0,$MaxCardinality:1}},Enum:ExceptionTypeEnum{EnumValue:Error,EnumValue:Warning,EnumValue:Info},Enum:CodeRepresentationEnum{EnumValue:EdgeOneLine,EnumValue:LinearizedManyLines,EnumValue:ManyLinesExcludingParent,EnumValue:VertexAndManyLines,EnumValue:EdgeAndManyLines}}}");
 
             IVertex FormalTextLanguage = LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\FormalTextLanguage");
 

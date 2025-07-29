@@ -4,6 +4,7 @@ using m0.Graph.ExecutionFlow;
 using m0.Util;
 using m0.ZeroCode;
 using m0.ZeroCode.Helpers;
+using m0.ZeroTypes;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -2231,7 +2232,7 @@ namespace m0.ZeroUML.Instructions
                 IEdge newEdge = newStack.AddVertexAndReturnEdge(null, "");
 
                 IEdge baseEdge_new;
-                MinusZero.Instance.DefaultFormalTextParser.Parse(language, newEdge, e.To.Value.ToString(), m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new);
+                MinusZero.Instance.DefaultFormalTextParser.Parse(language, newEdge, e.To.Value.ToString(), CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new);
             }
 
             return newStack;
@@ -2261,7 +2262,7 @@ namespace m0.ZeroUML.Instructions
 
             foreach (IEdge e in expressionResult)
             {
-                string parsed = MinusZero.Instance.DefaultFormalTextGenerator.Generate(language, e, ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines);
+                string parsed = MinusZero.Instance.DefaultFormalTextGenerator.Generate(language, e, CodeRepresentationEnum.VertexAndManyLines);
 
                 newStack.AddVertex(null, parsed);
             }
