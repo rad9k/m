@@ -1,4 +1,4 @@
-System\FormalTextLanguage\ZeroCode
+System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 "webserver"
 	import @System\Lib\Net direct meta
 	
@@ -6,10 +6,10 @@ System\FormalTextLanguage\ZeroCode
 	variable "server" @HttpServer
 	
 	function "handler"(@String "url")
-		return "elo"
+		return url
 		
 	v_map +< create http mapping "map"{
-		mapping @@HttpActionEnum\GET "\\" @@handler
+		mapping @@HttpActionEnum\GET "/*" @@handler
 	}
 	
 	server = new @@HttpServer[v_map\:map, "5000"]

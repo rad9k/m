@@ -3094,7 +3094,7 @@ namespace m0
             IVertex zc = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\FormalTextLanguage\ZeroCode");
 
             foreach (IEdge e in LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\CodeRepresentationEnum"))
-                AddFormalTextLanguageProcessing("ZeroCode " + e.To.ToString(),
+                AddFormalTextLanguageProcessing("ZeroCode_" + e.To.ToString(),
                      "m0.ZeroCode.ZCodeRepresentationEnumeroCodeEngine, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
                      "Parse",
                      "m0.ZeroCode.ZeroCodeEngine, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",

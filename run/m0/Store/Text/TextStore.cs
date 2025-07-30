@@ -12,6 +12,7 @@ using m0.Store.FileSystem;
 using m0.Store.Json;
 using static System.Net.WebRequestMethods;
 using m0.ZeroTypes;
+using m0.FormalTextLanguage;
 
 namespace m0.Store.Text
 {
@@ -19,9 +20,11 @@ namespace m0.Store.Text
     {
         bool properlyLoaded = true;
 
-        string pathToLanguageDefinition = null;
+        static string defaultFormalTextLanguageProcessing_Query = @"System\FormalTextLanguage\ZeroCode_VertexAndManyLines";
+
+        string formalTextLanguageProcessing_Query = null;
         string body = null;
-        IVertex formalTextLanguageVertex = null;
+        IVertex formalTextLanguageProcessing_Vertex = null;
 
         void Load()
         {
@@ -40,21 +43,25 @@ namespace m0.Store.Text
                     else
                     { // load graph from store
 
-                        pathToLanguageDefinition = readStream.ReadLine();
+                        formalTextLanguageProcessing_Query = readStream.ReadLine();
                         body = readStream.ReadToEnd();
 
-                        if (pathToLanguageDefinition != null && pathToLanguageDefinition != "")
-                            formalTextLanguageVertex = MinusZero.Instance.Root.Get(false, pathToLanguageDefinition);
-                        else
-                            pathToLanguageDefinition = @"System\FormalTextLanguage\ZeroCode";
+                        if (formalTextLanguageProcessing_Query == null || formalTextLanguageProcessing_Query != "")
+                            formalTextLanguageProcessing_Query = defaultFormalTextLanguageProcessing_Query;
 
-                        if (formalTextLanguageVertex == null)
-                            formalTextLanguageVertex = MinusZero.Instance.Root.Get(false, @"System\FormalTextLanguage\ZeroCode");
-
+                        formalTextLanguageProcessing_Vertex = MinusZero.Instance.Root.Get(false, formalTextLanguageProcessing_Query);
+                      
                         root = new EasyVertex(this);
 
                         IEdge baseEdge_new;
-                        IVertex errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(formalTextLanguageVertex, new EdgeBase(null, null, root), body, CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new);
+
+                        IVertex errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(formalTextLanguageProcessing_Vertex, new EdgeBase(null, null, root), body, CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new);
+
+                      //  IVertex errorList = ZeroCodeProcessingHelper.Parse(formalTextLanguageProcessing_Vertex,
+                        //    new EdgeBase(null, null, root),
+                        //    body,
+                        //    out baseEdge_new);
+                            
 
                         if (errorList.OutEdges.Count > 0)
                             properlyLoaded = false;
@@ -68,8 +75,8 @@ namespace m0.Store.Text
             { // create new
                 EasyVertex __root = new EasyVertex(this);
 
-                pathToLanguageDefinition = @"System\FormalTextLanguage\ZeroCode";
-                formalTextLanguageVertex = MinusZero.Instance.Root.Get(false, @"System\FormalTextLanguage\ZeroCode");
+                formalTextLanguageProcessing_Query = defaultFormalTextLanguageProcessing_Query;
+                formalTextLanguageProcessing_Vertex = MinusZero.Instance.Root.Get(false, formalTextLanguageProcessing_Query);
 
                 root = __root;
 
@@ -103,21 +110,21 @@ namespace m0.Store.Text
 
             //
 
-            if (pathToLanguageDefinition == null)
-                pathToLanguageDefinition = @"System\FormalTextLanguage\ZeroCode";
+            if (formalTextLanguageProcessing_Query == null)
+                formalTextLanguageProcessing_Query = defaultFormalTextLanguageProcessing_Query;
 
-            if (formalTextLanguageVertex == null)
-                formalTextLanguageVertex = MinusZero.Instance.Root.Get(false, @"System\FormalTextLanguage\ZeroCode");
+            if (formalTextLanguageProcessing_Vertex == null)
+                formalTextLanguageProcessing_Vertex = MinusZero.Instance.Root.Get(false, formalTextLanguageProcessing_Query);
 
             //
 
             StreamWriter writeStream = new StreamWriter(fileName);
 
-            writeStream.WriteLine(pathToLanguageDefinition);
+            writeStream.WriteLine(formalTextLanguageProcessing_Query);
 
             EasyEdge e = new EasyEdge(MinusZero.Instance.Empty, null, root);
 
-            string generated = MinusZero.Instance.DefaultFormalTextGenerator.Generate(formalTextLanguageVertex, e, CodeRepresentationEnum.VertexAndManyLines);
+            string generated = MinusZero.Instance.DefaultFormalTextGenerator.Generate(formalTextLanguageProcessing_Vertex, e, CodeRepresentationEnum.VertexAndManyLines);
 
             writeStream.Write(generated);
 
