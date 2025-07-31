@@ -2924,6 +2924,7 @@ namespace m0
         void CreateSystemFormalTextLanguageZeroCodeBase()
         {
             IVertex ftl = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\FormalTextLanguage");
+            IVertex dftlp = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\FormalTextLanguage").AddVertex(null, "DefaultFormalTextLanguageProcessing");
 
             IVertex zcb = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\FormalTextLanguage").AddVertex(ftl, "ZeroCodeBase");
 
@@ -3092,6 +3093,9 @@ namespace m0
         void CreateFormalTextLanguageProcessing()
         {
             IVertex zc = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\FormalTextLanguage\ZeroCode");
+            IVertex dftlp = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\FormalTextLanguage\DefaultFormalTextLanguageProcessing");
+
+            IVertex ftl = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\FormalTextLanguage");
 
             foreach (IEdge e in LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\CodeRepresentationEnum"))
                 AddFormalTextLanguageProcessing("ZeroCode_" + e.To.ToString(),
@@ -3102,6 +3106,7 @@ namespace m0
                      zc,
                      e.To);
 
+            ftl.AddEdge(dftlp, LegacySystem.Graph.EasyVertex.Get(ftl, false, "ZeroCode_VertexAndManyLines"));
         }
 
         void AddAttribute(IVertex baseVertex, string name, int MinCardinality, int MaxCardinality, IVertex edgeTarget)
