@@ -3076,7 +3076,7 @@ namespace m0
 
             AddDotNetStaticMethodAsExecutableEndpoint(generate_v, generatorTypeName, generatorMethod);
 
-            IVertex parse_v = ftlp_v.AddVertex(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\FormalTextLanguageProcessing\GeneratorHandler"),
+            IVertex parse_v = ftlp_v.AddVertex(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\FormalTextLanguageProcessing\ParserHandler"),
                "Parse");
 
             AddDotNetStaticMethodAsExecutableEndpoint(parse_v, parserTypeName, parserMethod);
@@ -3100,9 +3100,9 @@ namespace m0
             foreach (IEdge e in LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\CodeRepresentationEnum"))
                 AddFormalTextLanguageProcessing("ZeroCode_" + e.To.ToString(),
                      "m0.ZeroCode.ZCodeRepresentationEnumeroCodeEngine, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
-                     "Parse",
+                     "Parse2",
                      "m0.ZeroCode.ZeroCodeEngine, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
-                     "Generate",
+                     "Generate2",
                      zc,
                      e.To);
 

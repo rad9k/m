@@ -1,2 +1,1 @@
-16:34:22:631[0]: InitializeLog: START
-16:36:03:321[0]: DisposeLog: STOP
+22:32:18:414[0]: InitializeLog: START
