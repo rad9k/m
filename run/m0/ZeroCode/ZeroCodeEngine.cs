@@ -36,13 +36,16 @@ namespace m0.ZeroCode
             return Parse(MinusZero.Instance.DefaultFormalTextLanguage, rootEdge, text, codeRepresentation, out rootEdge_new);                
         }
 
-        public IVertex Parse2(IVertex formalTextLanguage, IEdge rootEdge, string text, CodeRepresentationEnum codeRepresentation, out IEdge rootEdge_new)
+        public static IVertex Parse2(IVertex formalTextLanguage, IEdge rootEdge, string text, CodeRepresentationEnum codeRepresentation, out IEdge rootEdge_new)
         {
             rootEdge_new = null;
             return null;
         }
 
-        public string Generate(IVertex formalTextLanguage, IEdge graphBaseEdge, CodeRepresentationEnum codeRepresentation)
+        public static string Generate2(IVertex formalTextLanguage, IEdge graphBaseEdge, CodeRepresentationEnum codeRepresentation)
+        {
+            return null;
+        }
 
 
 
