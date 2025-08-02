@@ -16,6 +16,12 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="UIWpf\Visualisers\Diagram\**" />
+    <EmbeddedResource Remove="UIWpf\Visualisers\Diagram\**" />
+    <None Remove="UIWpf\Visualisers\Diagram\**" />
+    <Page Remove="UIWpf\Visualisers\Diagram\**" />
+  </ItemGroup>
+  <ItemGroup>
     <Page Update="iOSStyleToggleButton.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

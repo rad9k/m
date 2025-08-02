@@ -3099,16 +3099,15 @@ namespace m0
 
             foreach (IEdge e in LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\CodeRepresentationEnum"))
                 AddFormalTextLanguageProcessing("ZeroCode_" + e.To.ToString(),
-                     "m0.ZeroCode.ZCodeRepresentationEnumeroCodeEngine, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
-                     "Parse2",
                      "m0.ZeroCode.ZeroCodeEngine, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
-                     "Generate2",
+                     "Parse_Processing",
+                     "m0.ZeroCode.ZeroCodeEngine, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                     "Generate_Processing",
                      zc,
                      e.To);
 
             ftl.AddEdge(dftlp, LegacySystem.Graph.EasyVertex.Get(ftl, false, "ZeroCode_VertexAndManyLines"));
         }
-
         void AddAttribute(IVertex baseVertex, string name, int MinCardinality, int MaxCardinality, IVertex edgeTarget)
         {
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
@@ -3346,7 +3345,7 @@ namespace m0
             //
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\CodeRepresentationEnum").AddEdge(
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"?$Inherits"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\EnumBase"));
         }
 
@@ -4103,7 +4102,7 @@ namespace m0
                 "Enum:OrientationEnum{EnumValue:Horizontal,EnumValue:Vertical}," +
                 "Class:MultiContainerItem{Attribute:Orientation{$MinCardinality:0,$MaxCardinality:1},Attribute:SubFontSize{$MinCardinality:0,$MaxCardinality:1,$DefaultValue:12,MinValue:1,MaxValue:40,$DisplayLarger:},Attribute:SubBackgroundColor{$MinCardinality:0,$MaxCardinality:1},,Attribute:SubForegroundColor{$MinCardinality:0,$MaxCardinality:1}}," +
                 "Class:MultiContainerSubItem{Attribute:NotExistingContentQueryEdge{$MinCardinality:0,$MaxCardinality:1}}," +
-                "Class:CodeView{Attribute:ContentQuery{$MinCardinality:0,$MaxCardinality:1},Attribute:FontSize{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:12,MinValue:1,MaxValue:40,$DisplayLarger:},Attribute:CodeRepresentation{$MinCardinality:0,$MaxCardinality:1},Attribute:FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}" +
+                "Class:CodeView{Attribute:ContentQuery{$MinCardinality:0,$MaxCardinality:1},Attribute:FontSize{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:12,MinValue:1,MaxValue:40,$DisplayLarger:},Attribute:FormalTextLanguageProcessing{$MinCardinality:0,$MaxCardinality:1}}" +
                 "}");
 
 
@@ -4301,9 +4300,9 @@ namespace m0
 
             smzu.Get(false, @"CodeView\ContentQuery").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
             smzu.Get(false, @"CodeView\FontSize").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Float"));
-            smzu.Get(false, @"CodeView\FormalTextLanguage").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\VertexType"));
-            smzu.Get(false, @"CodeView\CodeRepresentation").AddEdge(sm.Get(false, @"?$EdgeTarget"), smz.Get(false, @"CodeRepresentationEnum"));
-            smzu.Get(false, @"CodeView\CodeRepresentation").AddEdge(sm.Get(false, @"?$DefaultValue"), smz.Get(false, @"CodeRepresentationEnum\VertexAndManyLines"));
+            smzu.Get(false, @"CodeView\FormalTextLanguageProcessing").AddEdge(sm.Get(false, @"?$EdgeTarget"), smz.Get(false, @"FormalTextLanguageProcessing"));
+            smzu.Get(false, @"CodeView\FormalTextLanguageProcessing").AddVertex(sm.Get(false, @"?$TargetQuery"), @"System\FormalTextLanguage\FormalTextLanguageProcessing:");
+            smzu.Get(false, @"CodeView\FormalTextLanguageProcessing").AddEdge(sm.Get(false, @"?$DefaultValue"), Root.Get(false, @"System\FormalTextLanguage\ZeroCode_VertexAndManyLines"));
 
 
         }
@@ -4319,7 +4318,7 @@ namespace m0
                 "Enum:SongSnapToGridEnum{EnumValue:1 bar,EnumValue:1/2 bar,EnumValue:1/4 bar,EnumValue:1/8 bar,EnumValue:1/16 bar,EnumValue:1/32 bar,EnumValue:no snap}," +
                 "Enum:SnapToGridEnum{EnumValue:1/16 bar,EnumValue:1/32 bar,EnumValue:1/64 bar,EnumValue:1/128 bar,EnumValue:1/256 bar,EnumValue:1/512 bar,EnumValue:no snap}," +
                 "Class:Form{Attribute:ExpertMode{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ColumnNumber{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:1},Attribute:MetaOnLeft{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:MetaAlignLeft{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:SectionsAsTabs{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False}}," +
-                "Class:Code{Attribute:ShowWhiteSpace{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowLineNumbers{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:HighlightedLine{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowFolding{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1},Attribute:TextMemoryCurrent{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:0},Attribute:TextMemoryMax{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:0}}," +
+                "Class:Code{Attribute:ShowWhiteSpace{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowLineNumbers{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:HighlightedLine{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowFolding{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:TextMemoryCurrent{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:0},Attribute:TextMemoryMax{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:0}}," +
                 "Class:Table{Attribute:ToShowEdgesMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:ExpertMode{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:IsAllVisualisersEdit{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowHeader{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Association:GridStyle{$MinCardinality:1,$MaxCardinality:1},Attribute:AlternatingRows{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:TableFast{Attribute:ToShowEdgesMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:IsAllVisualisersEdit{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowHeader{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Association:GridStyle{$MinCardinality:1,$MaxCardinality:1},Attribute:AlternatingRows{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:Tree," +
@@ -4365,7 +4364,6 @@ namespace m0
             sm.Get(false, @"Visualiser\Code\HighlightedLine").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             sm.Get(false, @"Visualiser\Code\ShowFolding").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
 
-            sm.Get(false, @"Visualiser\Code\FormalTextLanguage").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\VertexType"));
             sm.Get(false, @"Visualiser\Code\TextMemoryCurrent").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Integer"));
             sm.Get(false, @"Visualiser\Code\TextMemoryMax").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Integer"));
             sm.Get(false, @"Visualiser\Code").AddEdge(sm.Get(false, @"Visualiser\BaseEdgeTarget"), sm.Get(false, @"Visualiser\BaseEdgeTarget\Any"));
@@ -7126,9 +7124,9 @@ namespace m0
 
             CreateSystemData();
 
-            CreateSystemDataVisualiserDiagram(); // out
+           // CreateSystemDataVisualiserDiagram(); // out
 
-            CreateSystemDataVisualiserDiagram_ZeroUML(); // out
+            // CreateSystemDataVisualiserDiagram_ZeroUML(); // out
 
             CreateSystemMetaStoreFileSystem();
 

@@ -1,7 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
 using m0.UIWpf.Controls;
-using m0.UIWpf.Visualisers.Diagram;
 using m0.ZeroCode.Helpers;
 using System;
 using System.Collections.Generic;

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace m0.FormalTextLanguage
 {
@@ -25,6 +26,27 @@ namespace m0.FormalTextLanguage
 
         public static string Generate(IVertex formalTextLanguageProcessing, IEdge graphBaseEdge)
         {
+            IVertex GeneratorHandler = GraphUtil.GetQueryOutFirst(formalTextLanguageProcessing, "GeneratorHandler", null);
+            
+            //
+
+            IVertex GeneratorExecutableEndPoint = GraphUtil.GetQueryOutFirst(GeneratorHandler, "$ExecutableEndPoint", null);
+
+            string generator_type = GraphUtil.GetStringValueOrNull(GraphUtil.GetQueryOutFirst(GeneratorExecutableEndPoint, "DotNetTypeName", null));
+            string generator_methodName = GraphUtil.GetStringValueOrNull(GraphUtil.GetQueryOutFirst(GeneratorExecutableEndPoint, "DotNetMethodName", null));
+
+            // Call the generate method
+            Type generatorType = Type.GetType(generator_type);
+            if (generatorType != null)
+            {
+                var generatorMethod = generatorType.GetMethod(generator_methodName);
+                if (generatorMethod != null && generatorMethod.IsStatic)
+                {
+                    object[] parameters = new object[] { formalTextLanguageProcessing, graphBaseEdge };
+                    return (string) generatorMethod.Invoke(null, parameters);
+                }
+            }
+
             return null;
         }
 
@@ -32,16 +54,13 @@ namespace m0.FormalTextLanguage
         {
             rootEdge_new = null;
 
-            IVertex GeneratorHandler = GraphUtil.GetQueryOutFirst(formalTextLanguageProcessing, "GeneratorHandler", null);
             IVertex ParserHandler = GraphUtil.GetQueryOutFirst(formalTextLanguageProcessing, "ParserHandler", null);
-            IVertex LanguageParameterFirst = GraphUtil.GetQueryOutFirst(formalTextLanguageProcessing, "LanguageParameterFirst", null);
-            IVertex LanguageParameterSecond = GraphUtil.GetQueryOutFirst(formalTextLanguageProcessing, "LanguageParameterSecond", null);
-
+        
             //
 
-            IVertex ParserExecutableEndPoint = GraphUtil.GetQueryOutFirst(ParserHandler, "$ExecutableEndpoint", null);
+            IVertex ParserExecutableEndPoint = GraphUtil.GetQueryOutFirst(ParserHandler, "$ExecutableEndPoint", null);
 
-            string parser_type = GraphUtil.GetStringValueOrNull(GraphUtil.GetQueryOutFirst(ParserExecutableEndPoint, "DotNetTypename", null));
+            string parser_type = GraphUtil.GetStringValueOrNull(GraphUtil.GetQueryOutFirst(ParserExecutableEndPoint, "DotNetTypeName", null));
             string parser_methodName = GraphUtil.GetStringValueOrNull(GraphUtil.GetQueryOutFirst(ParserExecutableEndPoint, "DotNetMethodName", null));
 
             // Call the parser method
@@ -51,19 +70,12 @@ namespace m0.FormalTextLanguage
                 var parserMethod = parserType.GetMethod(parser_methodName);
                 if (parserMethod != null && parserMethod.IsStatic)
                 {
-                    object[] parameters = new object[] { rootEdge, text, null };
+                    object[] parameters = new object[] { formalTextLanguageProcessing, rootEdge, text, null };
                     object result = parserMethod.Invoke(null, parameters);
-                    rootEdge_new = parameters[2] as IEdge;
+                    rootEdge_new = parameters[3] as IEdge;
                     return result as IVertex;
                 }
             }
-
-            //
-
-            IVertex GeneratorExecutableEndPoint = GraphUtil.GetQueryOutFirst(GeneratorHandler, "$ExecutableEndpoint", null);
-
-            string generator_type = GraphUtil.GetStringValueOrNull(GraphUtil.GetQueryOutFirst(GeneratorExecutableEndPoint, "DotNetTypename", null));
-            string generator_methodName = GraphUtil.GetStringValueOrNull(GraphUtil.GetQueryOutFirst(GeneratorExecutableEndPoint, "DotNetMethodName", null));
 
             return null;
         }

@@ -55,12 +55,12 @@ namespace m0.Store.Text
 
                         IEdge baseEdge_new;
 
-                        IVertex errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(formalTextLanguageProcessing_Vertex, new EdgeBase(null, null, root), body, CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new);
+                        //IVertex errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(formalTextLanguageProcessing_Vertex, new EdgeBase(null, null, root), body, CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new);
 
-                      //  IVertex errorList = ZeroCodeProcessingHelper.Parse(formalTextLanguageProcessing_Vertex,
-                        //    new EdgeBase(null, null, root),
-                        //    body,
-                        //    out baseEdge_new);
+                        IVertex errorList = ZeroCodeProcessingHelper.Parse(formalTextLanguageProcessing_Vertex,
+                            new EdgeBase(null, null, root),
+                            body,
+                            out baseEdge_new);
                             
 
                         if (errorList.OutEdges.Count > 0)
