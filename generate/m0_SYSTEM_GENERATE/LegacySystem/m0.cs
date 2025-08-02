@@ -3098,6 +3098,10 @@ namespace m0
             IVertex ftl = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\FormalTextLanguage");
 
             foreach (IEdge e in LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\CodeRepresentationEnum"))
+            {
+                if (e.Meta.Value.ToString() != "EnumValue")
+                    continue;
+
                 AddFormalTextLanguageProcessing("ZeroCode_" + e.To.ToString(),
                      "m0.ZeroCode.ZeroCodeEngine, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
                      "Parse_Processing",
@@ -3105,6 +3109,7 @@ namespace m0
                      "Generate_Processing",
                      zc,
                      e.To);
+            }
 
             ftl.AddEdge(dftlp, LegacySystem.Graph.EasyVertex.Get(ftl, false, "ZeroCode_VertexAndManyLines"));
         }

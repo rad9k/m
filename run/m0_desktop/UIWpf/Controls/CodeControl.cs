@@ -1,35 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Controls;
-using m0.Foundation;
-using m0.ZeroUML;
-using m0.ZeroTypes;
-using m0.Graph;
-using m0.Util;
-using System.Windows.Input;
-using System.Windows.Media;
-using m0.UIWpf.Foundation;
-using m0.UIWpf.Controls;
-using m0.UIWpf.Commands;
-using System.Windows;
-using ICSharpCode.AvalonEdit;
+﻿using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Folding;
-using m0.UIWpf.Visualisers.Code;
-using System.Windows.Threading;
 using ICSharpCode.AvalonEdit.Highlighting;
-using System.IO;
-using System.Xml;
+using m0.FormalTextLanguage;
+using m0.Foundation;
+using m0.Graph;
+using m0.Graph.ExecutionFlow;
+using m0.UIWpf.Commands;
+using m0.UIWpf.Controls;
+using m0.UIWpf.Dialog;
+using m0.UIWpf.Foundation;
+using m0.UIWpf.Visualisers.Code;
 using m0.UIWpf.Visualisers.Helper;
 using m0.User.Process.UX;
+using m0.Util;
 using m0.ZeroCode;
-using Xceed.Wpf.Toolkit.Core.Converters;
-using ICSharpCode.AvalonEdit.Editing;
-using System.Threading;
-using m0.UIWpf.Dialog;
+using m0.ZeroTypes;
+using m0.ZeroUML;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using m0.Graph.ExecutionFlow;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Threading;
+using System.Xml;
+using Xceed.Wpf.Toolkit.Core.Converters;
+using static System.Net.WebRequestMethods;
 
 namespace m0.UIWpf.Controls
 {
@@ -226,7 +228,7 @@ namespace m0.UIWpf.Controls
 
                 IEdge BaseEdge = GetBaseEdge();
 
-                IVertex ftl = GraphUtil.GetQueryOutFirst(Vertex, "FormalTextLanguage", null);
+                IVertex ftlp = GraphUtil.GetQueryOutFirst(Vertex, "FormalTextLanguageProcessing", null);
 
                 //
 
@@ -241,10 +243,17 @@ namespace m0.UIWpf.Controls
 
                 IEdge baseEdge_new = null;
 
-                if (ftl == null)
-                    errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(BaseEdge, editor_Text, GetCodeRepresentation(), out baseEdge_new);
+                //if (ftl == null)
+                //  errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(BaseEdge, editor_Text, GetCodeRepresentation(), out baseEdge_new);
+                //else
+                //  errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(ftl, BaseEdge, editor_Text, GetCodeRepresentation(), out baseEdge_new);
+
+                if (ftlp == null)
+                    errorList = ZeroCodeProcessingHelper.Parse(ftlp, BaseEdge, editor_Text, out baseEdge_new);
                 else
-                    errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(ftl, BaseEdge, editor_Text, GetCodeRepresentation(), out baseEdge_new);
+                    errorList = ZeroCodeProcessingHelper.Parse(BaseEdge, editor_Text, out baseEdge_new);
+                
+
 
                 if (baseEdge_new != null)
                     SetBaseEdgeFinal(baseEdge_new);
