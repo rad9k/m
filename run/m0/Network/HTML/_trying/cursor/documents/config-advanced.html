@@ -1,0 +1,59 @@
+<h1>Zaawansowana konfiguracja</h1>
+<p>Zaawansowana konfiguracja pozwala na dostosowanie wszystkich aspektów systemu.</p>
+
+<h2>Opcje zaawansowane</h2>
+<ul>
+    <li>Konfiguracja bazy danych</li>
+    <li>Ustawienia bezpieczeństwa</li>
+    <li>Konfiguracja cache</li>
+    <li>Ustawienia logowania</li>
+    <li>Konfiguracja SSL/TLS</li>
+    <li>Ustawienia proxy</li>
+</ul>
+
+<h2>Przykład zaawansowanej konfiguracji</h2>
+<pre>{
+  "server": {
+    "port": 3000,
+    "host": "localhost",
+    "ssl": {
+      "enabled": true,
+      "cert": "/path/to/cert.pem",
+      "key": "/path/to/key.pem"
+    }
+  },
+  "database": {
+    "type": "postgresql",
+    "host": "localhost",
+    "port": 5432,
+    "name": "nasz_system",
+    "user": "admin",
+    "password": "secret"
+  },
+  "security": {
+    "jwtSecret": "your-secret-key",
+    "bcryptRounds": 12,
+    "sessionTimeout": 3600
+  },
+  "cache": {
+    "enabled": true,
+    "type": "redis",
+    "host": "localhost",
+    "port": 6379
+  },
+  "logging": {
+    "level": "debug",
+    "file": "/var/log/nasz-system.log",
+    "maxSize": "10MB",
+    "maxFiles": 5
+  }
+}</pre>
+
+<h2>Konfiguracja bazy danych</h2>
+<p>System obsługuje różne typy baz danych:</p>
+<ul>
+    <li>SQLite (domyślnie)</li>
+    <li>PostgreSQL</li>
+    <li>MySQL</li>
+    <li>MongoDB</li>
+</ul> 

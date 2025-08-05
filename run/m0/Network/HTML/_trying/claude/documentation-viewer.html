@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Przeglądarka Dokumentacji</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        
+        .sidebar {
+            width: 300px;
+            background-color: #f5f5f5;
+            border-right: 1px solid #ddd;
+            position: relative;
+            transition: margin-left 0.3s ease;
+        }
+        
+        .sidebar.hidden {
+            margin-left: -280px;
+        }
+        
+        .sidebar-header {
+            padding: 10px;
+            background-color: #e9e9e9;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .toggle-btn {
+            position: absolute;
+            top: 10px;
+            right: -25px;
+            width: 25px;
+            height: 25px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            z-index: 1000;
+        }
+        
+        .control-buttons {
+            margin-bottom: 10px;
+        }
+        
+        .control-buttons button {
+            margin-right: 5px;
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .control-buttons button:hover {
+            background-color: #0056b3;
+        }
+        
+        .tree-container {
+            padding: 10px;
+            overflow-y: auto;
+            height: calc(100% - 80px);
+        }
+        
+        .tree-item {
+            margin-left: 0;
+            user-select: none;
+        }
+        
+        .tree-node {
+            padding: 3px 0;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .tree-node:hover {
+            background-color: #e9e9e9;
+        }
+        
+        .tree-node.selected {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        .tree-toggle {
+            display: inline-block;
+            width: 12px;
+            text-align: center;
+            margin-right: 5px;
+            font-size: 10px;
+        }
+        
+        .tree-children {
+            margin-left: 20px;
+            display: none;
+        }
+        
+        .tree-children.expanded {
+            display: block;
+        }
+        
+        .resizer {
+            width: 5px;
+            background-color: #ddd;
+            cursor: col-resize;
+            position: relative;
+        }
+        
+        .resizer:hover {
+            background-color: #007bff;
+        }
+        
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: white;
+        }
+        
+        .content h1 {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar" id="sidebar">
+            <button class="toggle-btn" id="toggleBtn">‹</button>
+            <div class="sidebar-header">
+                <div class="control-buttons">
+                    <button onclick="expandAll()">Expand All</button>
+                    <button onclick="collapseAll()">Collapse All</button>
+                </div>
+            </div>
+            <div class="tree-container" id="treeContainer">
+                <!-- Drzewiasta struktura będzie wygenerowana przez JavaScript -->
+            </div>
+        </div>
+        
+        <div class="resizer" id="resizer"></div>
+        
+        <div class="content" id="content">
+            <h1>Dokumentacja</h1>
+            <p>Wybierz pozycję z spisu treści aby załadować dokument.</p>
+        </div>
+    </div>
+
+    <script>
+        // Przykładowe dane dokumentacji
+        const documentationData = {
+            "1": {
+                title: "Wprowadzenie",
+                children: {
+                    "1.1": {
+                        title: "Przegląd systemu",
+                        children: {
+                            "1.1.1": {
+                                title: "Architektura",
+                                children: {
+                                    "1.1.1.1": {
+                                        title: "Komponenty główne",
+                                        content: "doc_1_1_1_1.html"
+                                    }
+                                },
+                                content: "doc_1_1_1.html"
+                            },
+                            "1.1.2": {
+                                title: "Wymagania systemowe",
+                                content: "doc_1_1_2.html"
+                            }
+                        },
+                        content: "doc_1_1.html"
+                    },
+                    "1.2": {
+                        title: "Instalacja",
+                        children: {
+                            "1.2.1": {
+                                title: "Konfiguracja środowiska",
+                                children: {
+                                    "1.2.1.1": {
+                                        title: "Zmienne środowiskowe",
+                                        content: "doc_1_2_1_1.html"
+                                    }
+                                },
+                                content: "doc_1_2_1.html"
+                            }
+                        },
+                        content: "doc_1_2.html"
+                    }
+                },
+                content: "doc_1.html"
+            },
+            "2": {
+                title: "Przewodnik użytkownika",
+                children: {
+                    "2.1": {
+                        title: "Pierwsze kroki",
+                        children: {
+                            "2.1.1": {
+                                title: "Rejestracja",
+                                children: {
+                                    "2.1.1.1": {
+                                        title: "Tworzenie konta",
+                                        content: "doc_2_1_1_1.html"
+                                    }
+                                },
+                                content: "doc_2_1_1.html"
+                            }
+                        },
+                        content: "doc_2_1.html"
+                    },
+                    "2.2": {
+                        title: "Funkcje podstawowe",
+                        content: "doc_2_2.html"
+                    }
+                },
+                content: "doc_2.html"
+            },
+            "3": {
+                title: "API Reference",
+                children: {
+                    "3.1": {
+                        title: "Endpoints",
+                        children: {
+                            "3.1.1": {
+                                title: "User Management",
+                                children: {
+                                    "3.1.1.1": {
+                                        title: "GET /users",
+                                        content: "doc_3_1_1_1.html"
+                                    }
+                                },
+                                content: "doc_3_1_1.html"
+                            }
+                        },
+                        content: "doc_3_1.html"
+                    }
+                },
+                content: "doc_3.html"
+            },
+            "4": {
+                title: "FAQ",
+                children: {
+                    "4.1": {
+                        title: "Częste problemy",
+                        children: {
+                            "4.1.1": {
+                                title: "Błędy logowania",
+                                children: {
+                                    "4.1.1.1": {
+                                        title: "Zapomniałem hasła",
+                                        content: "doc_4_1_1_1.html"
+                                    }
+                                },
+                                content: "doc_4_1_1.html"
+                            }
+                        },
+                        content: "doc_4_1.html"
+                    }
+                },
+                content: "doc_4.html"
+            }
+        };
+
+        // Przykładowe dokumenty
+        const documents = {
+            "doc_1.html": `
+                <h1>Wprowadzenie</h1>
+                <p>Witamy w dokumentacji naszego systemu. Ten dokument zawiera podstawowe informacje o produkcie.</p>
+                <h2>Cel dokumentacji</h2>
+                <p>Celem tej dokumentacji jest dostarczenie pełnych informacji o funkcjonalnościach systemu.</p>
+                <ul>
+                    <li>Przegląd systemu</li>
+                    <li>Instrukcje instalacji</li>
+                    <li>Przewodnik użytkownika</li>
+                    <li>Dokumentacja API</li>
+                </ul>
+            `,
+            "doc_1_1.html": `
+                <h1>Przegląd systemu</h1>
+                <p>System został zaprojektowany z myślą o skalowalności i wydajności.</p>
+                <h2>Główne cechy</h2>
+                <ul>
+                    <li>Modularna architektura</li>
+                    <li>Wysoka dostępność</li>
+                    <li>Bezpieczeństwo danych</li>
+                    <li>Łatwość użytkowania</li>
+                </ul>
+            `,
+            "doc_1_1_1.html": `
+                <h1>Architektura</h1>
+                <p>System wykorzystuje architekturę mikroserwisów opartą na kontenerach Docker.</p>
+                <h2>Główne komponenty:</h2>
+                <ul>
+                    <li>Frontend (React)</li>
+                    <li>API Gateway</li>
+                    <li>Serwisy biznesowe</li>
+                    <li>Baza danych</li>
+                </ul>
+            `,
+            "doc_1_1_1_1.html": `
+                <h1>Komponenty główne</h1>
+                <p>Szczegółowy opis głównych komponentów systemu.</p>
+                <h2>Frontend</h2>
+                <p>Aplikacja webowa napisana w React z TypeScript.</p>
+                <h2>Backend</h2>
+                <p>Zestaw mikroserwisów napisanych w Node.js i Python.</p>
+            `,
+            "doc_1_1_2.html": `
+                <h1>Wymagania systemowe</h1>
+                <h2>Minimalne wymagania:</h2>
+                <ul>
+                    <li>CPU: 2 rdzenie</li>
+                    <li>RAM: 4 GB</li>
+                    <li>Dysk: 10 GB wolnego miejsca</li>
+                    <li>System: Linux/Windows/macOS</li>
+                </ul>
+            `,
+            "doc_1_2.html": `
+                <h1>Instalacja</h1>
+                <p>Proces instalacji systemu jest prosty i składa się z kilku kroków.</p>
+                <h2>Kroki instalacji:</h2>
+                <ol>
+                    <li>Pobierz pakiet instalacyjny</li>
+                    <li>Skonfiguruj środowisko</li>
+                    <li>Uruchom instalator</li>
+                    <li>Wykonaj konfigurację początkową</li>
+                </ol>
+            `,
+            "doc_1_2_1.html": `
+                <h1>Konfiguracja środowiska</h1>
+                <p>Przed instalacją należy prawidłowo skonfigurować środowisko.</p>
+                <h2>Wymagane narzędzia:</h2>
+                <ul>
+                    <li>Docker</li>
+                    <li>Docker Compose</li>
+                    <li>Node.js 16+</li>
+                </ul>
+            `,
+            "doc_1_2_1_1.html": `
+                <h1>Zmienne środowiskowe</h1>
+                <p>Lista wymaganych zmiennych środowiskowych:</p>
+                <table border="1">
+                    <tr><th>Zmienna</th><th>Opis</th><th>Przykład</th></tr>
+                    <tr><td>DB_HOST</td><td>Adres bazy danych</td><td>localhost</td></tr>
+                    <tr><td>DB_PORT</td><td>Port bazy danych</td><td>5432</td></tr>
+                    <tr><td>API_KEY</td><td>Klucz API</td><td>abc123</td></tr>
+                </table>
+            `,
+            "doc_2.html": `
+                <h1>Przewodnik użytkownika</h1>
+                <p>Ten przewodnik pomoże Ci rozpocząć pracę z systemem.</p>
+                <h2>Co znajdziesz w tym przewodniku:</h2>
+                <ul>
+                    <li>Pierwsze kroki</li>
+                    <li>Funkcje podstawowe</li>
+                    <li>Funkcje zaawansowane</li>
+                    <li>Rozwiązywanie problemów</li>
+                </ul>
+            `
+        };
+
+        let selectedNode = null;
+
+        // Funkcja do generowania drzewa
+        function generateTree(data, container, level = 0) {
+            for (const [key, item] of Object.entries(data)) {
+                const treeItem = document.createElement('div');
+                treeItem.className = 'tree-item';
+                
+                const treeNode = document.createElement('div');
+                treeNode.className = 'tree-node';
+                treeNode.setAttribute('data-id', key);
+                
+                const toggle = document.createElement('span');
+                toggle.className = 'tree-toggle';
+                
+                if (item.children) {
+                    toggle.textContent = '▶';
+                    toggle.onclick = (e) => {
+                        e.stopPropagation();
+                        toggleNode(treeItem);
+                    };
+                } else {
+                    toggle.textContent = '•';
+                }
+                
+                const title = document.createElement('span');
+                title.textContent = item.title;
+                
+                treeNode.appendChild(toggle);
+                treeNode.appendChild(title);
+                
+                treeNode.onclick = () => {
+                    selectNode(treeNode, key, item);
+                };
+                
+                treeItem.appendChild(treeNode);
+                
+                if (item.children) {
+                    const childrenContainer = document.createElement('div');
+                    childrenContainer.className = 'tree-children';
+                    generateTree(item.children, childrenContainer, level + 1);
+                    treeItem.appendChild(childrenContainer);
+                }
+                
+                container.appendChild(treeItem);
+            }
+        }
+
+        // Funkcja do przełączania węzła
+        function toggleNode(treeItem) {
+            const children = treeItem.querySelector('.tree-children');
+            const toggle = treeItem.querySelector('.tree-toggle');
+            
+            if (children) {
+                if (children.classList.contains('expanded')) {
+                    children.classList.remove('expanded');
+                    toggle.textContent = '▶';
+                } else {
+                    children.classList.add('expanded');
+                    toggle.textContent = '▼';
+                }
+            }
+        }
+
+        // Funkcja do wybierania węzła
+        function selectNode(node, id, item) {
+            if (selectedNode) {
+                selectedNode.classList.remove('selected');
+            }
+            
+            selectedNode = node;
+            node.classList.add('selected');
+            
+            // Ładowanie dokumentu
+            if (item.content && documents[item.content]) {
+                document.getElementById('content').innerHTML = documents[item.content];
+            } else {
+                document.getElementById('content').innerHTML = `
+                    <h1>${item.title}</h1>
+                    <p>Dokument nie został jeszcze przygotowany.</p>
+                `;
+            }
+        }
+
+        // Funkcja do rozwijania wszystkich węzłów
+        function expandAll() {
+            const allChildren = document.querySelectorAll('.tree-children');
+            const allToggles = document.querySelectorAll('.tree-toggle');
+            
+            allChildren.forEach(child => child.classList.add('expanded'));
+            allToggles.forEach(toggle => {
+                if (toggle.textContent === '▶') {
+                    toggle.textContent = '▼';
+                }
+            });
+        }
+
+        // Funkcja do zwijania wszystkich węzłów (oprócz pierwszego poziomu)
+        function collapseAll() {
+            const allChildren = document.querySelectorAll('.tree-children');
+            const allToggles = document.querySelectorAll('.tree-toggle');
+            
+            allChildren.forEach(child => child.classList.remove('expanded'));
+            allToggles.forEach(toggle => {
+                if (toggle.textContent === '▼') {
+                    toggle.textContent = '▶';
+                }
+            });
+        }
+
+        // Obsługa przyciska ukrywania panelu
+        const toggleBtn = document.getElementById('toggleBtn');
+        const sidebar = document.getElementById('sidebar');
+        
+        toggleBtn.onclick = () => {
+            if (sidebar.classList.contains('hidden')) {
+                sidebar.classList.remove('hidden');
+                toggleBtn.textContent = '‹';
+            } else {
+                sidebar.classList.add('hidden');
+                toggleBtn.textContent = '›';
+            }
+        };
+
+        // Obsługa zmiany rozmiaru panelu
+        let isResizing = false;
+        
+        document.getElementById('resizer').addEventListener('mousedown', (e) => {
+            isResizing = true;
+            document.addEventListener('mousemove', handleResize);
+            document.addEventListener('mouseup', () => {
+                isResizing = false;
+                document.removeEventListener('mousemove', handleResize);
+            });
+        });
+        
+        function handleResize(e) {
+            if (!isResizing) return;
+            
+            const newWidth = e.clientX;
+            if (newWidth >= 200 && newWidth <= 600) {
+                sidebar.style.width = newWidth + 'px';
+            }
+        }
+
+        // Inicjalizacja
+        document.addEventListener('DOMContentLoaded', () => {
+            generateTree(documentationData, document.getElementById('treeContainer'));
+        });
+    </script>
+</body>
+</html>

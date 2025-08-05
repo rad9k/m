@@ -1,0 +1,36 @@
+<h1>Konfiguracja</h1>
+<p>Po instalacji należy skonfigurować system według własnych potrzeb.</p>
+
+<h2>Plik konfiguracyjny</h2>
+<p>Główny plik konfiguracyjny znajduje się w <code>/etc/nasz-system/config.json</code></p>
+
+<h2>Podstawowe ustawienia</h2>
+<p>Minimalna konfiguracja wymaga ustawienia:</p>
+<ul>
+    <li>Port serwera</li>
+    <li>Adres hosta</li>
+    <li>Tryb debugowania</li>
+    <li>Ścieżka do bazy danych</li>
+</ul>
+
+<h2>Przykład konfiguracji</h2>
+<pre>{
+  "server": {
+    "port": 3000,
+    "host": "localhost"
+  },
+  "database": {
+    "path": "/var/lib/nasz-system/db.sqlite"
+  },
+  "debug": false,
+  "logLevel": "info"
+}</pre>
+
+<h2>Konfiguracja przez interfejs</h2>
+<p>Możesz skonfigurować system przez interfejs webowy:</p>
+<ol>
+    <li>Uruchom system</li>
+    <li>Otwórz przeglądarkę</li>
+    <li>Przejdź do <code>http://localhost:3000/admin</code></li>
+    <li>Wypełnij formularz konfiguracyjny</li>
+</ol> 

@@ -1,0 +1,39 @@
+<h1>GET /api/users</h1>
+<p>Pobiera listę wszystkich użytkowników.</p>
+
+<h2>Parametry</h2>
+<ul>
+    <li><code>page</code> (opcjonalny): Numer strony (domyślnie 1)</li>
+    <li><code>limit</code> (opcjonalny): Liczba elementów na stronę (domyślnie 10)</li>
+    <li><code>search</code> (opcjonalny): Fraza do wyszukiwania</li>
+    <li><code>sort</code> (opcjonalny): Sortowanie (name, email, created_at)</li>
+    <li><code>order</code> (opcjonalny): Kolejność (asc, desc)</li>
+</ul>
+
+<h2>Przykład żądania</h2>
+<pre>GET /api/users?page=1&limit=20&search=jan&sort=name&order=asc</pre>
+
+<h2>Odpowiedź</h2>
+<pre>{
+  "users": [
+    {
+      "id": 1,
+      "name": "Jan Kowalski",
+      "email": "jan@example.com",
+      "role": "user",
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-01-01T00:00:00Z"
+    }
+  ],
+  "total": 100,
+  "page": 1,
+  "limit": 20,
+  "pages": 5
+}</pre>
+
+<h2>Kody odpowiedzi</h2>
+<ul>
+    <li><strong>200</strong> - Sukces</li>
+    <li><strong>401</strong> - Brak autoryzacji</li>
+    <li><strong>403</strong> - Brak uprawnień</li>
+</ul> 

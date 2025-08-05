@@ -1,0 +1,28 @@
+<h1>Podstawowa konfiguracja</h1>
+<p>Podstawowa konfiguracja zawiera najważniejsze ustawienia.</p>
+
+<h2>Parametry</h2>
+<ul>
+    <li><strong>port</strong>: Port na którym działa serwer (domyślnie 3000)</li>
+    <li><strong>host</strong>: Adres hosta (domyślnie localhost)</li>
+    <li><strong>debug</strong>: Tryb debugowania (domyślnie false)</li>
+    <li><strong>logLevel</strong>: Poziom logowania (domyślnie info)</li>
+</ul>
+
+<h2>Przykład podstawowej konfiguracji</h2>
+<pre>{
+  "server": {
+    "port": 3000,
+    "host": "localhost"
+  },
+  "debug": false,
+  "logLevel": "info"
+}</pre>
+
+<h2>Uruchomienie z podstawową konfiguracją</h2>
+<p>System można uruchomić z domyślnymi ustawieniami:</p>
+<pre>nasz-system start</pre>
+
+<h2>Zmiana portu</h2>
+<p>Aby zmienić port serwera:</p>
+<pre>nasz-system start --port 8080</pre> 

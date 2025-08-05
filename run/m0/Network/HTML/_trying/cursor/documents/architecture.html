@@ -1,0 +1,37 @@
+<h1>Architektura</h1>
+<p>Architektura systemu opiera się na wzorcu MVC (Model-View-Controller).</p>
+
+<h2>Warstwy systemu</h2>
+<ul>
+    <li><strong>Warstwa prezentacji</strong>: Interfejs użytkownika</li>
+    <li><strong>Warstwa logiki biznesowej</strong>: Kontrolery i serwisy</li>
+    <li><strong>Warstwa danych</strong>: Modele i repozytoria</li>
+</ul>
+
+<h2>Wzorzec MVC</h2>
+<h3>Model</h3>
+<p>Reprezentuje dane i logikę biznesową. Modele definiują strukturę danych i metody do ich manipulacji.</p>
+
+<h3>View</h3>
+<p>Odpowiada za prezentację danych użytkownikowi. W naszym przypadku to interfejs webowy.</p>
+
+<h3>Controller</h3>
+<p>Obsługuje żądania użytkownika, koordynuje między modelem a widokiem.</p>
+
+<h2>Modułowość</h2>
+<p>System jest podzielony na moduły:</p>
+<ul>
+    <li><strong>Core</strong> - podstawowe funkcjonalności</li>
+    <li><strong>Auth</strong> - autoryzacja i uwierzytelnianie</li>
+    <li><strong>API</strong> - interfejs programistyczny</li>
+    <li><strong>Admin</strong> - panel administracyjny</li>
+    <li><strong>Plugins</strong> - rozszerzenia systemu</li>
+</ul>
+
+<h2>Komunikacja między modułami</h2>
+<p>Moduły komunikują się przez:</p>
+<ul>
+    <li>Interfejsy (interfaces)</li>
+    <li>Eventy (events)</li>
+    <li>Dependency injection</li>
+</ul> 

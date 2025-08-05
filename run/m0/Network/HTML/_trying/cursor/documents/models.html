@@ -1,0 +1,44 @@
+<h1>Modele danych</h1>
+<p>Modele danych definiują strukturę informacji w systemie.</p>
+<p>Wszystkie modele są walidowane przed zapisem do bazy danych.</p>
+
+<h2>Struktura modelu</h2>
+<p>Każdy model zawiera:</p>
+<ul>
+    <li>Definicję pól i ich typów</li>
+    <li>Reguły walidacji</li>
+    <li>Relacje z innymi modelami</li>
+    <li>Metody do manipulacji danymi</li>
+</ul>
+
+<h2>Dostępne modele</h2>
+<ul>
+    <li><strong>User</strong> - użytkownicy systemu</li>
+    <li><strong>Product</strong> - produkty w systemie</li>
+    <li><strong>Document</strong> - dokumenty</li>
+    <li><strong>Category</strong> - kategorie</li>
+    <li><strong>Order</strong> - zamówienia</li>
+</ul>
+
+<h2>Walidacja</h2>
+<p>Wszystkie modele są automatycznie walidowane:</p>
+<ul>
+    <li>Wymagane pola</li>
+    <li>Format danych</li>
+    <li>Unikalność wartości</li>
+    <li>Relacje między modelami</li>
+</ul>
+
+<h2>Przykład definicji modelu</h2>
+<pre>class User {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  createdAt: Date;
+  updatedAt: Date;
+  
+  validate() {
+    // Logika walidacji
+  }
+}</pre> 

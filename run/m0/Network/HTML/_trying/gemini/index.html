@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serwer Dokumentacji</title>
+    <style>
+        /* Style dla podstawowego layoutu - nie dla tekstu */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: sans-serif;
+            overflow: hidden;
+        }
+        .main-container {
+            display: flex;
+            height: 100vh;
+        }
+        #nav-panel {
+            background-color: #f0f0f0;
+            height: 100%;
+            overflow-y: auto;
+            padding: 15px;
+            box-sizing: border-box;
+            position: relative;
+            /* Domyślna szerokość startowa */
+            width: 300px;
+            min-width: 20px; /* Szerokość po zwinięciu */
+        }
+        #resizer {
+            width: 5px;
+            height: 100%;
+            background: #ccc;
+            cursor: col-resize;
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+        #content-area {
+            flex-grow: 1;
+            padding: 25px;
+            height: 100%;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+        #nav-toggle-button {
+            position: absolute;
+            top: 10px;
+            right: -28px;
+            z-index: 100;
+            cursor: pointer;
+            background: #ccc;
+            border: 1px solid #aaa;
+            border-left: none;
+            border-radius: 0 5px 5px 0;
+            padding: 8px 5px;
+            font-size: 14px;
+            line-height: 1;
+        }
+        #nav-content.hidden {
+            display: none;
+        }
+        /* Style dla funkcjonalności drzewka */
+        #table-of-contents ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+        #table-of-contents li {
+            margin: 3px 0;
+        }
+        .toggler {
+            cursor: pointer;
+            user-select: none; /* Zapobiega zaznaczaniu tekstu */
+            display: inline-block;
+            width: 1em;
+        }
+        .nested {
+            display: none; /* Domyślnie ukryte */
+        }
+        .active {
+            display: block; /* Pokazywane po kliknięciu */
+        }
+        .nav-item {
+            cursor: pointer;
+        }
+        .nav-item:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <div id="nav-panel">
+        <div id="nav-content">
+            <div style="margin-bottom: 10px;">
+                <button id="expand-all">Rozwiń wszystko</button>
+                <button id="collapse-all">Zwiń wszystko</button>
+            </div>
+            <ul id="table-of-contents">
+                <li>
+                    <span class="toggler">►</span><span class="nav-item" data-src="wprowadzenie.html">1. Wprowadzenie do Systemu</span>
+                    <ul class="nested">
+                        <li>
+                            <span class="toggler">►</span><span class="nav-item" data-src="historia.html">1.1. Historia i Ewolucja</span>
+                            <ul class="nested">
+                                <li>
+                                    <span class="toggler">►</span><span class="nav-item" data-src="cele.html">1.1.1. Główne cele</span>
+                                    <ul class="nested">
+                                        <li><span class="nav-item" data-src="cele.html#cel1">1.1.1.1. Cel krótkoterminowy</span></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <span class="toggler">►</span><span class="nav-item" data-src="instalacja.html">2. Instalacja i Konfiguracja</span>
+                    <ul class="nested">
+                        <li><span class="nav-item" data-src="wymagania.html">2.1. Wymagania Sprzętowe</span></li>
+                    </ul>
+                </li>
+                <li><span class="nav-item" data-src="">3. Podręcznik Użytkownika</span></li>
+                <li><span class="nav-item" data-src="">4. API i Integracje</span></li>
+            </ul>
+        </div>
+        <div id="resizer"></div>
+        <button id="nav-toggle-button">«</button>
+    </div>
+    <main id="content-area">
+        <h1>Witaj!</h1>
+        <p>Wybierz temat z menu po lewej stronie, aby załadować treść dokumentacji.</p>
+    </main>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const navPanel = document.getElementById('nav-panel');
+    const resizer = document.getElementById('resizer');
+    const navContent = document.getElementById('nav-content');
+    const toggleButton = document.getElementById('nav-toggle-button');
+    let isResizing = false;
+    let isNavCollapsed = false;
+    let lastNavWidth = navPanel.offsetWidth;
+
+    // Funkcjonalność zmiany rozmiaru panelu
+    resizer.addEventListener('mousedown', function (e) {
+        isResizing = true;
+        document.addEventListener('mousemove', resizeNav);
+        document.addEventListener('mouseup', () => {
+            isResizing = false;
+            document.removeEventListener('mousemove', resizeNav);
+        }, { once: true });
+    });
+
+    function resizeNav(e) {
+        if (isResizing) {
+            const newWidth = e.clientX;
+            if (newWidth > 50 && newWidth < window.innerWidth - 100) {
+                navPanel.style.width = newWidth + 'px';
+            }
+        }
+    }
+
+    // Funkcjonalność chowania/pokazywania panelu
+    toggleButton.addEventListener('click', () => {
+        isNavCollapsed = !isNavCollapsed;
+        if (isNavCollapsed) {
+            lastNavWidth = navPanel.offsetWidth > 20 ? navPanel.offsetWidth : 300;
+            navPanel.style.width = '20px';
+            navContent.classList.add('hidden');
+            toggleButton.textContent = '»';
+        } else {
+            navPanel.style.width = lastNavWidth + 'px';
+            navContent.classList.remove('hidden');
+            toggleButton.textContent = '«';
+        }
+    });
+
+    // Funkcjonalność drzewka (rozwijanie/zwijanie)
+    const toc = document.getElementById('table-of-contents');
+    toc.addEventListener('click', function (e) {
+        // Rozwijanie/zwijanie gałęzi
+        if (e.target.classList.contains('toggler')) {
+            const nestedList = e.target.parentElement.querySelector('.nested');
+            if (nestedList) {
+                nestedList.classList.toggle('active');
+                e.target.textContent = nestedList.classList.contains('active') ? '▼' : '►';
+            }
+        }
+        // Dynamiczne ładowanie treści
+        if (e.target.classList.contains('nav-item')) {
+            const source = e.target.getAttribute('data-src');
+            if (source) {
+                loadContent(source);
+            }
+        }
+    });
+
+    // Przyciski "Rozwiń/Zwiń wszystko"
+    document.getElementById('expand-all').addEventListener('click', () => toggleAll(true));
+    document.getElementById('collapse-all').addEventListener('click', () => toggleAll(false));
+
+    function toggleAll(expand) {
+        toc.querySelectorAll('li').forEach(li => {
+            const nestedList = li.querySelector('.nested');
+            if (nestedList) {
+                const toggler = li.querySelector('.toggler');
+                if (expand) {
+                    nestedList.classList.add('active');
+                    toggler.textContent = '▼';
+                } else {
+                    // Zwijamy wszystko oprócz pierwszego poziomu
+                    if (li.parentElement.id !== 'table-of-contents') {
+                        nestedList.classList.remove('active');
+                        toggler.textContent = '►';
+                    }
+                }
+            }
+        });
+    }
+
+    // Funkcja do ładowania treści
+    function loadContent(url) {
+        const contentArea = document.getElementById('content-area');
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(data => {
+                contentArea.innerHTML = data;
+            })
+            .catch(error => {
+                console.error('Błąd ładowania treści:', error);
+                contentArea.innerHTML = `<p style="color:red;">Wystąpił błąd podczas ładowania dokumentu: ${url}</p>`;
+            });
+    }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+<h1>Drugi tutorial</h1>
+<p>Ten tutorial skupia się na zaawansowanych funkcjach systemu.</p>
+
+<h2>Tematy</h2>
+<ul>
+    <li>Konfiguracja bazy danych</li>
+    <li>Tworzenie własnych endpointów</li>
+    <li>Zarządzanie uprawnieniami</li>
+    <li>Optymalizacja wydajności</li>
+</ul>
+
+<h2>Wymagany czas</h2>
+<p>Około 60 minut</p>
+
+<h2>Wymagania wstępne</h2>
+<ul>
+    <li>Ukończenie Tutorial 1</li>
+    <li>Podstawowa znajomość JavaScript</li>
+    <li>Znajomość SQL (opcjonalnie)</li>
+</ul>
+
+<h2>Krok 1: Konfiguracja bazy danych</h2>
+<p>Skonfiguruj PostgreSQL zamiast domyślnego SQLite:</p>
+<pre>{
+  "database": {
+    "type": "postgresql",
+    "host": "localhost",
+    "port": 5432,
+    "name": "nasz_system",
+    "user": "admin",
+    "password": "secret"
+  }
+}</pre>
+
+<h2>Krok 2: Własne endpointy</h2>
+<p>Utwórz własny endpoint API:</p>
+<pre>app.get('/api/custom', (req, res) => {
+  res.json({ message: 'Własny endpoint!' });
+});</pre>
+
+<h2>Krok 3: Uprawnienia</h2>
+<p>Skonfiguruj role i uprawnienia użytkowników.</p>
+
+<h2>Krok 4: Optymalizacja</h2>
+<p>Włącz cache i zoptymalizuj zapytania do bazy danych.</p> 

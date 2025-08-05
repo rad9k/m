@@ -1,0 +1,48 @@
+<h1>Pytania techniczne</h1>
+
+<h2>Jak zmienić port serwera?</h2>
+<p>Edytuj plik konfiguracyjny i zmień parametr "port" w sekcji "server". Możesz też użyć flagi --port przy uruchamianiu:</p>
+<pre>nasz-system start --port 8080</pre>
+
+<h2>Jak włączyć tryb debugowania?</h2>
+<p>Ustaw parametr "debug" na true w konfiguracji lub użyj flagi --debug:</p>
+<pre>nasz-system start --debug</pre>
+
+<h2>Jak zresetować hasło administratora?</h2>
+<p>Użyj komendy:</p>
+<pre>npm run reset-admin</pre>
+
+<h2>Jak skonfigurować SSL/TLS?</h2>
+<p>Dodaj sekcję SSL do konfiguracji:</p>
+<pre>{
+  "server": {
+    "ssl": {
+      "enabled": true,
+      "cert": "/path/to/cert.pem",
+      "key": "/path/to/key.pem"
+    }
+  }
+}</pre>
+
+<h2>Jak włączyć cache Redis?</h2>
+<p>Dodaj konfigurację cache do pliku konfiguracyjnego:</p>
+<pre>{
+  "cache": {
+    "enabled": true,
+    "type": "redis",
+    "host": "localhost",
+    "port": 6379
+  }
+}</pre>
+
+<h2>Jak zrobić backup bazy danych?</h2>
+<p>Użyj komendy backup:</p>
+<pre>nasz-system backup --output backup.sql</pre>
+
+<h2>Jak zaktualizować system?</h2>
+<p>Zaktualizuj system używając NPM:</p>
+<pre>npm update -g nasz-system</pre>
+
+<h2>Jak sprawdzić logi systemu?</h2>
+<p>Logi są zapisywane w pliku określonym w konfiguracji. Możesz też użyć:</p>
+<pre>nasz-system logs</pre> 

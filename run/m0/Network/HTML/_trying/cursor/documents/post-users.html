@@ -1,0 +1,45 @@
+<h1>POST /api/users</h1>
+<p>Tworzy nowego użytkownika.</p>
+
+<h2>Body</h2>
+<pre>{
+  "name": "Jan Kowalski",
+  "email": "jan@example.com",
+  "password": "securePassword123",
+  "role": "user"
+}</pre>
+
+<h2>Parametry</h2>
+<ul>
+    <li><code>name</code> (wymagany): Imię i nazwisko użytkownika</li>
+    <li><code>email</code> (wymagany): Adres email (unikalny)</li>
+    <li><code>password</code> (wymagany): Hasło (min. 8 znaków)</li>
+    <li><code>role</code> (opcjonalny): Rola użytkownika (user, admin)</li>
+</ul>
+
+<h2>Odpowiedź</h2>
+<pre>{
+  "id": 123,
+  "name": "Jan Kowalski",
+  "email": "jan@example.com",
+  "role": "user",
+  "createdAt": "2024-01-01T00:00:00Z",
+  "updatedAt": "2024-01-01T00:00:00Z"
+}</pre>
+
+<h2>Kody odpowiedzi</h2>
+<ul>
+    <li><strong>201</strong> - Użytkownik utworzony</li>
+    <li><strong>400</strong> - Błędne dane</li>
+    <li><strong>409</strong> - Email już istnieje</li>
+    <li><strong>401</strong> - Brak autoryzacji</li>
+    <li><strong>403</strong> - Brak uprawnień</li>
+</ul>
+
+<h2>Walidacja</h2>
+<ul>
+    <li>Email musi być unikalny</li>
+    <li>Hasło musi mieć minimum 8 znaków</li>
+    <li>Nazwa nie może być pusta</li>
+    <li>Email musi być poprawnym formatem</li>
+</ul> 

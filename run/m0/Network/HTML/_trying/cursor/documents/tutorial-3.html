@@ -1,0 +1,52 @@
+<h1>Trzeci tutorial</h1>
+<p>Ostatni tutorial pokazuje jak rozszerzyć system o własne funkcjonalności.</p>
+
+<h2>Rozszerzenia</h2>
+<ul>
+    <li>Tworzenie pluginów</li>
+    <li>Integracja z zewnętrznymi API</li>
+    <li>Własne modele danych</li>
+    <li>Niestandardowe widoki</li>
+</ul>
+
+<h2>Wymagany czas</h2>
+<p>Około 90 minut</p>
+
+<h2>Wymagania wstępne</h2>
+<ul>
+    <li>Ukończenie Tutorial 2</li>
+    <li>Znajomość JavaScript ES6+</li>
+    <li>Podstawowa znajomość Node.js</li>
+</ul>
+
+<h2>Krok 1: Tworzenie pluginu</h2>
+<p>Utwórz własny plugin systemu:</p>
+<pre>class MyPlugin {
+  constructor() {
+    this.name = 'MyPlugin';
+  }
+  
+  init(app) {
+    // Inicjalizacja pluginu
+  }
+}</pre>
+
+<h2>Krok 2: Integracja z API</h2>
+<p>Zintegruj system z zewnętrznym API:</p>
+<pre>const response = await fetch('https://api.external.com/data');
+const data = await response.json();</pre>
+
+<h2>Krok 3: Własne modele</h2>
+<p>Utwórz własny model danych:</p>
+<pre>class CustomModel {
+  constructor(data) {
+    this.data = data;
+  }
+  
+  validate() {
+    // Walidacja danych
+  }
+}</pre>
+
+<h2>Krok 4: Niestandardowe widoki</h2>
+<p>Stwórz własne widoki w interfejsie użytkownika.</p> 

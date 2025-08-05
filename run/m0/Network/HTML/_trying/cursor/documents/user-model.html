@@ -1,0 +1,39 @@
+<h1>Model User</h1>
+<p>Model reprezentujący użytkownika w systemie.</p>
+
+<h2>Właściwości</h2>
+<ul>
+    <li><code>id</code> (number): Unikalny identyfikator</li>
+    <li><code>name</code> (string): Imię i nazwisko użytkownika</li>
+    <li><code>email</code> (string): Adres email (unikalny)</li>
+    <li><code>password</code> (string): Zahashowane hasło</li>
+    <li><code>role</code> (string): Rola użytkownika (user, admin)</li>
+    <li><code>createdAt</code> (Date): Data utworzenia</li>
+    <li><code>updatedAt</code> (Date): Data ostatniej aktualizacji</li>
+</ul>
+
+<h2>Walidacja</h2>
+<ul>
+    <li><code>name</code>: Wymagane, min. 2 znaki, max. 100 znaków</li>
+    <li><code>email</code>: Wymagane, poprawny format email, unikalne</li>
+    <li><code>password</code>: Wymagane, min. 8 znaków</li>
+    <li><code>role</code>: Opcjonalne, domyślnie "user"</li>
+</ul>
+
+<h2>Metody</h2>
+<ul>
+    <li><code>validate()</code>: Sprawdza poprawność danych</li>
+    <li><code>hashPassword()</code>: Hashuje hasło</li>
+    <li><code>comparePassword()</code>: Porównuje hasło z hashem</li>
+    <li><code>toJSON()</code>: Zwraca dane bez hasła</li>
+</ul>
+
+<h2>Przykład użycia</h2>
+<pre>const user = new User({
+  name: "Jan Kowalski",
+  email: "jan@example.com",
+  password: "securePassword123",
+  role: "user"
+});
+
+await user.save();</pre> 

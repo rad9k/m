@@ -1,0 +1,31 @@
+<h1>API Reference</h1>
+<p>Dokumentacja API zawiera szczegółowe informacje o wszystkich dostępnych endpointach.</p>
+<p>API jest RESTful i zwraca dane w formacie JSON.</p>
+
+<h2>Podstawowe informacje</h2>
+<ul>
+    <li><strong>Base URL:</strong> <code>https://api.example.com/v1</code></li>
+    <li><strong>Format danych:</strong> JSON</li>
+    <li><strong>Autoryzacja:</strong> Bearer Token</li>
+    <li><strong>Rate limiting:</strong> 1000 requestów na godzinę</li>
+</ul>
+
+<h2>Autoryzacja</h2>
+<p>Wszystkie żądania do API wymagają autoryzacji. Użyj nagłówka Authorization:</p>
+<pre>Authorization: Bearer YOUR_API_TOKEN</pre>
+
+<h2>Kody odpowiedzi</h2>
+<ul>
+    <li><strong>200</strong> - Sukces</li>
+    <li><strong>201</strong> - Utworzono</li>
+    <li><strong>400</strong> - Błędne żądanie</li>
+    <li><strong>401</strong> - Brak autoryzacji</li>
+    <li><strong>404</strong> - Nie znaleziono</li>
+    <li><strong>500</strong> - Błąd serwera</li>
+</ul>
+
+<h2>Przykład użycia</h2>
+<pre>curl -X GET \
+  https://api.example.com/v1/users \
+  -H 'Authorization: Bearer YOUR_TOKEN' \
+  -H 'Content-Type: application/json'</pre> 

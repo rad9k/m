@@ -170,7 +170,6 @@ namespace m0.UIWpf.Controls
 
         IEdge baseEdgeFinal = null;
 
-        // not used now but might be helpfull in future
         private void SetBaseEdgeFinal(IEdge baseEdge)
         {
             //ExecutionFlowHelper.GraphChangeWatchOff();
@@ -253,7 +252,6 @@ namespace m0.UIWpf.Controls
                 else
                     errorList = ZeroCodeProcessingHelper.Parse(BaseEdge, editor_Text, out baseEdge_new);
                 
-
 
                 if (baseEdge_new != null)
                     SetBaseEdgeFinal(baseEdge_new);
@@ -356,7 +354,7 @@ namespace m0.UIWpf.Controls
         FoldingManager foldingManager;
         DispatcherTimer foldingUpdateTimer;
 
-        CodeRepresentationEnum codeRepresentation_prev;
+        IVertex codeRepresentation_prev;
 
         bool codeRepresentation_prev_calculated = false;
 

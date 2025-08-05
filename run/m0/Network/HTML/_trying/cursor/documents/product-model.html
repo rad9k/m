@@ -1,0 +1,42 @@
+<h1>Model Product</h1>
+<p>Model reprezentujący produkt w systemie.</p>
+
+<h2>Właściwości</h2>
+<ul>
+    <li><code>id</code> (number): Unikalny identyfikator</li>
+    <li><code>name</code> (string): Nazwa produktu</li>
+    <li><code>description</code> (string): Opis produktu</li>
+    <li><code>price</code> (number): Cena produktu</li>
+    <li><code>category</code> (string): Kategoria produktu</li>
+    <li><code>inStock</code> (boolean): Czy produkt jest dostępny</li>
+    <li><code>createdAt</code> (Date): Data utworzenia</li>
+    <li><code>updatedAt</code> (Date): Data ostatniej aktualizacji</li>
+</ul>
+
+<h2>Walidacja</h2>
+<ul>
+    <li><code>name</code>: Wymagane, min. 1 znak, max. 200 znaków</li>
+    <li><code>description</code>: Opcjonalne, max. 1000 znaków</li>
+    <li><code>price</code>: Wymagane, liczba dodatnia</li>
+    <li><code>category</code>: Opcjonalne, max. 100 znaków</li>
+    <li><code>inStock</code>: Opcjonalne, domyślnie true</li>
+</ul>
+
+<h2>Metody</h2>
+<ul>
+    <li><code>validate()</code>: Sprawdza poprawność danych</li>
+    <li><code>isAvailable()</code>: Sprawdza czy produkt jest dostępny</li>
+    <li><code>updateStock()</code>: Aktualizuje stan magazynowy</li>
+    <li><code>getFormattedPrice()</code>: Zwraca sformatowaną cenę</li>
+</ul>
+
+<h2>Przykład użycia</h2>
+<pre>const product = new Product({
+  name: "Laptop Dell XPS 13",
+  description: "Nowoczesny laptop biznesowy",
+  price: 3999.99,
+  category: "Electronics",
+  inStock: true
+});
+
+await product.save();</pre> 

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Dynamic TOC Loader</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      display: flex;
+      overflow: hidden;
+    }
+    #sidebar {
+      width: 300px;
+      min-width: 100px;
+      max-width: 600px;
+      background-color: #f0f0f0;
+      overflow: auto;
+      resize: horizontal;
+      padding: 10px;
+    }
+    #main {
+      flex: 1;
+      overflow: auto;
+      padding: 10px;
+    }
+    #toc ul {
+      list-style-type: none;
+      padding-left: 20px;
+    }
+    .toggle {
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .hidden {
+      display: none;
+    }
+    #toggleSidebar {
+      position: absolute;
+      left: 0;
+      top: 0;
+      padding: 5px 10px;
+      z-index: 1000;
+      background: #ccc;
+      border-right: 1px solid #aaa;
+    }
+  </style>
+</head>
+<body>
+  <div id="toggleSidebar">☰</div>
+  <div id="sidebar">
+    <button onclick="expandAll()">Expand All</button>
+    <button onclick="collapseAll()">Collapse All</button>
+    <div id="toc"></div>
+  </div>
+  <div id="main">
+    <h2>Welcome</h2>
+    <p>Select a document from the Table of Contents.</p>
+  </div>
+
+<script>
+const tocData = [
+  {
+    title: "Introduction",
+    file: "doc1.html",
+    children: [
+      {
+        title: "Getting Started",
+        file: "doc2.html",
+        children: [
+          {
+            title: "Installation",
+            file: "doc3.html",
+            children: [
+              {
+                title: "Linux",
+                file: "doc4.html",
+                children: []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    title: "Advanced Topics",
+    file: "doc5.html",
+    children: []
+  },
+  {
+    title: "API Reference",
+    file: "doc6.html",
+    children: [
+      {
+        title: "Endpoints",
+        file: "doc7.html",
+        children: []
+      }
+    ]
+  },
+  {
+    title: "FAQ",
+    file: "doc8.html",
+    children: []
+  }
+];
+
+function createTOC(container, data) {
+  const ul = document.createElement("ul");
+  for (const item of data) {
+    const li = document.createElement("li");
+    const span = document.createElement("span");
+    span.textContent = item.title;
+    span.classList.add("toggle");
+    span.onclick = () => loadDocument(item.file);
+    li.appendChild(span);
+
+    if (item.children && item.children.length > 0) {
+      const childContainer = createTOC(null, item.children);
+      childContainer.classList.add("hidden");
+      const toggleIcon = document.createElement("span");
+      toggleIcon.textContent = " [+] ";
+      toggleIcon.style.cursor = "pointer";
+      toggleIcon.onclick = (e) => {
+        e.stopPropagation();
+        const hidden = childContainer.classList.toggle("hidden");
+        toggleIcon.textContent = hidden ? " [+] " : " [−] ";
+      };
+      li.insertBefore(toggleIcon, span);
+      li.appendChild(childContainer);
+    }
+    ul.appendChild(li);
+  }
+  if (container) container.appendChild(ul);
+  return ul;
+}
+
+function expandAll() {
+  document.querySelectorAll("#toc ul").forEach(ul => ul.classList.remove("hidden"));
+  document.querySelectorAll("#toc span").forEach(span => {
+    if (span.textContent.trim() === "[+]") span.textContent = " [−] ";
+  });
+}
+
+function collapseAll() {
+  document.querySelectorAll("#toc ul").forEach(ul => {
+    if (ul !== document.querySelector("#toc > ul")) ul.classList.add("hidden");
+  });
+  document.querySelectorAll("#toc span").forEach(span => {
+    if (span.textContent.trim() === "[−]") span.textContent = " [+] ";
+  });
+}
+
+function loadDocument(file) {
+  
+    document.getElementById("main").innerHTML = file;
+  
+}
+
+function _loadDocument(file) {
+  fetch(file).then(resp => resp.text()).then(html => {
+    document.getElementById("main").innerHTML = html;
+  });
+}
+
+function setupTOC() {
+  const tocContainer = document.getElementById("toc");
+  tocContainer.innerHTML = "";
+  createTOC(tocContainer, tocData);
+}
+
+setupTOC();
+
+document.getElementById("toggleSidebar").onclick = () => {
+  const sidebar = document.getElementById("sidebar");
+  sidebar.style.display = (sidebar.style.display === "none") ? "block" : "none";
+};
+</script>
+</body>
+</html>

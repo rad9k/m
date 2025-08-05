@@ -1,0 +1,50 @@
+<h1>PUT /api/users/:id</h1>
+<p>Aktualizuje istniejącego użytkownika.</p>
+
+<h2>Parametry ścieżki</h2>
+<ul>
+    <li><code>id</code>: ID użytkownika do aktualizacji</li>
+</ul>
+
+<h2>Body</h2>
+<pre>{
+  "name": "Jan Kowalski (zaktualizowany)",
+  "email": "jan.nowy@example.com",
+  "role": "admin"
+}</pre>
+
+<h2>Parametry</h2>
+<ul>
+    <li><code>name</code> (opcjonalny): Nowe imię i nazwisko</li>
+    <li><code>email</code> (opcjonalny): Nowy adres email</li>
+    <li><code>role</code> (opcjonalny): Nowa rola użytkownika</li>
+    <li><code>password</code> (opcjonalny): Nowe hasło</li>
+</ul>
+
+<h2>Odpowiedź</h2>
+<pre>{
+  "id": 123,
+  "name": "Jan Kowalski (zaktualizowany)",
+  "email": "jan.nowy@example.com",
+  "role": "admin",
+  "createdAt": "2024-01-01T00:00:00Z",
+  "updatedAt": "2024-01-02T00:00:00Z"
+}</pre>
+
+<h2>Kody odpowiedzi</h2>
+<ul>
+    <li><strong>200</strong> - Użytkownik zaktualizowany</li>
+    <li><strong>400</strong> - Błędne dane</li>
+    <li><strong>404</strong> - Użytkownik nie znaleziony</li>
+    <li><strong>409</strong> - Email już istnieje</li>
+    <li><strong>401</strong> - Brak autoryzacji</li>
+    <li><strong>403</strong> - Brak uprawnień</li>
+</ul>
+
+<h2>Uwagi</h2>
+<ul>
+    <li>Wszystkie pola są opcjonalne</li>
+    <li>Tylko podane pola zostaną zaktualizowane</li>
+    <li>Email musi być unikalny (jeśli jest zmieniany)</li>
+    <li>Hasło jest hashowane przed zapisem</li>
+</ul> 

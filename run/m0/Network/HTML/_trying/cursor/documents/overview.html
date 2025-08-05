@@ -1,0 +1,33 @@
+<h1>Przegląd systemu</h1>
+<p>System składa się z kilku głównych komponentów, które współpracują ze sobą.</p>
+
+<h2>Architektura</h2>
+<p>System wykorzystuje architekturę modułową z jasno zdefiniowanymi interfejsami.</p>
+
+<h2>Główne komponenty</h2>
+<ul>
+    <li><strong>Serwer HTTP</strong> - obsługuje żądania HTTP</li>
+    <li><strong>Router</strong> - kieruje żądania do odpowiednich kontrolerów</li>
+    <li><strong>Kontrolery</strong> - obsługują logikę biznesową</li>
+    <li><strong>Modele</strong> - reprezentują dane w systemie</li>
+    <li><strong>Baza danych</strong> - przechowuje dane aplikacji</li>
+    <li><strong>Cache</strong> - przyspiesza dostęp do często używanych danych</li>
+</ul>
+
+<h2>Przepływ danych</h2>
+<ol>
+    <li>Żądanie HTTP dociera do serwera</li>
+    <li>Router kieruje żądanie do odpowiedniego kontrolera</li>
+    <li>Kontroler przetwarza żądanie i używa modeli</li>
+    <li>Model pobiera/zapisuje dane z bazy danych</li>
+    <li>Kontroler zwraca odpowiedź HTTP</li>
+</ol>
+
+<h2>Technologie</h2>
+<ul>
+    <li>Node.js - środowisko uruchomieniowe</li>
+    <li>Express.js - framework web</li>
+    <li>SQLite/PostgreSQL - baza danych</li>
+    <li>Redis - cache (opcjonalnie)</li>
+    <li>JWT - autoryzacja</li>
+</ul> 
