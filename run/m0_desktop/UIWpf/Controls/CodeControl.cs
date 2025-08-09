@@ -1,28 +1,16 @@
 ﻿using ICSharpCode.AvalonEdit;
-using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Highlighting;
 using m0.FormalTextLanguage;
 using m0.Foundation;
 using m0.Graph;
-using m0.Graph.ExecutionFlow;
-using m0.UIWpf.Commands;
-using m0.UIWpf.Controls;
-using m0.UIWpf.Dialog;
-using m0.UIWpf.Foundation;
 using m0.UIWpf.Visualisers.Code;
-using m0.UIWpf.Visualisers.Helper;
 using m0.User.Process.UX;
-using m0.Util;
-using m0.ZeroCode;
 using m0.ZeroTypes;
-using m0.ZeroUML;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -30,8 +18,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using System.Xml;
-using Xceed.Wpf.Toolkit.Core.Converters;
-using static System.Net.WebRequestMethods;
 
 namespace m0.UIWpf.Controls
 {
@@ -360,19 +346,19 @@ namespace m0.UIWpf.Controls
 
         public void ViewAttributesUpdated()
         {
-            IVertex codeRepresentation_Vertex = Vertex.Get(false, @"CodeRepresentation:");
+            IVertex codeRepresentationVertex = Vertex.Get(false, @"CodeRepresentation:");
 
-            if (codeRepresentation_Vertex != null)
+            if (codeRepresentationVertex != null)
             {                
                 if (codeRepresentation_prev_calculated)
                 {
-                    if (codeRepresentation_Vertex_prev != codeRepresentation_Vertex)
+                    if (codeRepresentation_Vertex_prev != codeRepresentationVertex)
                         ExecuteGenerate();
                 }
                 else
                     codeRepresentation_prev_calculated = true;
 
-                codeRepresentation_Vertex_prev = codeRepresentation_Vertex;
+                codeRepresentation_Vertex_prev = codeRepresentationVertex;
             }
 
             if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, @"ShowWhiteSpace:"),"True"))
