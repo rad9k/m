@@ -18,6 +18,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using System.Xml;
+using static System.Net.WebRequestMethods;
 
 namespace m0.UIWpf.Controls
 {
@@ -340,7 +341,7 @@ namespace m0.UIWpf.Controls
         FoldingManager foldingManager;
         DispatcherTimer foldingUpdateTimer;
 
-        IVertex codeRepresentation_Vertex_prev;
+        IVertex codeRepresentationVertex_prev;
 
         bool codeRepresentation_prev_calculated = false;
 
@@ -352,13 +353,13 @@ namespace m0.UIWpf.Controls
             {                
                 if (codeRepresentation_prev_calculated)
                 {
-                    if (codeRepresentation_Vertex_prev != codeRepresentationVertex)
+                    if (codeRepresentationVertex_prev != codeRepresentationVertex)
                         ExecuteGenerate();
                 }
                 else
                     codeRepresentation_prev_calculated = true;
 
-                codeRepresentation_Vertex_prev = codeRepresentationVertex;
+                codeRepresentationVertex_prev = codeRepresentationVertex;
             }
 
             if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, @"ShowWhiteSpace:"),"True"))
@@ -511,14 +512,20 @@ namespace m0.UIWpf.Controls
 
                 IEdge ee = GetBaseEdge();
 
-                IVertex ftl = GraphUtil.GetQueryOutFirst(Vertex, "FormalTextLanguage", null);
+                IVertex ftlp = GraphUtil.GetQueryOutFirst(Vertex, "FormalTextLanguageProcessing", null);
 
                 string generated;
 
-                if (ftl == null)
-                    generated = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ee, GetCodeRepresentation());
-                else
-                    generated = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ftl, ee, GetCodeRepresentation());
+                //if (ftl == null)
+                  //  generated = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ee, GetCodeRepresentation());
+                //else
+                  //  generated = MinusZero.Instance.DefaultFormalTextGenerator.Generate(ftl, ee, GetCodeRepresentation());
+
+                if (ftlp == null)
+                    generated = ZeroCodeProcessingHelper.Generate(ee);
+                else                    
+                    generated = ZeroCodeProcessingHelper.Generate(ftlp, ee);
+
 
                 return generated;
             }

@@ -186,9 +186,9 @@ namespace m0_SYSTEM_GENERATE
 
             print("execution succesfull finish");
 
-             //System.Diagnostics.Process.Start("c:\\Users\\rad9k\\source\\repos\\m\\generate\\m0j_copy_rad9k.bat");
+             System.Diagnostics.Process.Start("c:\\Users\\rad9k\\source\\repos\\m\\generate\\m0j_copy_rad9k.bat");
 
-            System.Diagnostics.Process.Start("c:\\Users\\radoslaw.tereszczuk\\source\\repos\\m\\generate\\m0j_copy_radoslaw.bat");
+            //System.Diagnostics.Process.Start("c:\\Users\\radoslaw.tereszczuk\\source\\repos\\m\\generate\\m0j_copy_radoslaw.bat");
 
             //System.Diagnostics.Process.Start("c:\\Users\\teres\\source\\repos\\m\\generate\\m0j_copy_teres.bat");
         }

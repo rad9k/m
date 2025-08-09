@@ -1,10 +1,14 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\radoslaw.tereszczuk\\source\\repos\\m\\generate\\",
+  "WorkspaceRootPath": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|c:\\users\\radoslaw.tereszczuk\\source\\repos\\m\\generate\\m0_system_generate\\legacysystem\\m0.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|c:\\users\\rad9k\\source\\repos\\m\\generate\\m0_system_generate\\legacysystem\\m0.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|solutionrelative:m0_system_generate\\legacysystem\\m0.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|c:\\users\\rad9k\\source\\repos\\m\\generate\\m0_system_generate\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|solutionrelative:m0_system_generate\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,7 +18,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -22,15 +26,11 @@
             },
             {
               "$type": "Bookmark",
-              "Name": "ST:130:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+              "Name": "ST:131:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
             },
             {
               "$type": "Bookmark",
               "Name": "ST:131:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:129:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
             },
             {
               "$type": "Bookmark",
@@ -40,14 +40,37 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "m0.cs",
-              "DocumentMoniker": "C:\\Users\\radoslaw.tereszczuk\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\LegacySystem\\m0.cs",
+              "DocumentMoniker": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\LegacySystem\\m0.cs",
               "RelativeDocumentMoniker": "m0_SYSTEM_GENERATE\\LegacySystem\\m0.cs",
-              "ToolTip": "C:\\Users\\radoslaw.tereszczuk\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\LegacySystem\\m0.cs*",
+              "ToolTip": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\LegacySystem\\m0.cs*",
               "RelativeToolTip": "m0_SYSTEM_GENERATE\\LegacySystem\\m0.cs*",
-              "ViewState": "AgIAABQMAAAAAAAAAAAYwB0MAAArAAAAAAAAAA==",
+              "ViewState": "AgIAAPkPAAAAAAAAAAAkwA0QAADXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-23T22:03:55.754Z",
+              "WhenOpened": "2025-08-09T23:06:09.885Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\Program.cs",
+              "RelativeDocumentMoniker": "m0_SYSTEM_GENERATE\\Program.cs",
+              "ToolTip": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\Program.cs",
+              "RelativeToolTip": "m0_SYSTEM_GENERATE\\Program.cs",
+              "ViewState": "AgIAALIAAAAAb+hg2ZEowLwAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-09T22:55:36.123Z",
+              "EditorCaption": ""
+            }
+          ]
+        },
+        {
+          "DockedWidth": 1156,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
             }
           ]
         }

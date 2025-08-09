@@ -4107,7 +4107,7 @@ namespace m0
                 "Enum:OrientationEnum{EnumValue:Horizontal,EnumValue:Vertical}," +
                 "Class:MultiContainerItem{Attribute:Orientation{$MinCardinality:0,$MaxCardinality:1},Attribute:SubFontSize{$MinCardinality:0,$MaxCardinality:1,$DefaultValue:12,MinValue:1,MaxValue:40,$DisplayLarger:},Attribute:SubBackgroundColor{$MinCardinality:0,$MaxCardinality:1},,Attribute:SubForegroundColor{$MinCardinality:0,$MaxCardinality:1}}," +
                 "Class:MultiContainerSubItem{Attribute:NotExistingContentQueryEdge{$MinCardinality:0,$MaxCardinality:1}}," +
-                "Class:CodeView{Attribute:ContentQuery{$MinCardinality:0,$MaxCardinality:1},Attribute:FontSize{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:12,MinValue:1,MaxValue:40,$DisplayLarger:},Attribute:FormalTextLanguageProcessing{$MinCardinality:0,$MaxCardinality:1}}" +
+                "Class:CodeView{Attribute:ContentQuery{$MinCardinality:0,$MaxCardinality:1},Attribute:FontSize{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:12,MinValue:1,MaxValue:40,$DisplayLarger:},Association:FormalTextLanguageProcessing{$MinCardinality:1,$MaxCardinality:1}}" +
                 "}");
 
 

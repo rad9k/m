@@ -285,6 +285,11 @@ namespace m0.ZeroTypes
 
             foreach (IEdge child in children)
             {
+                if (child.To.Value.ToString() == "FormalTextLanguageProgessing")
+                {
+                    int z = 0;
+                }
+
                 bool canAdd = false;
 
                 IVertex childMetaVertex = child.Meta;
@@ -312,7 +317,14 @@ namespace m0.ZeroTypes
 
                 if (canAdd)
                     if (GraphUtil.ExistQueryOut(child.To, "$DefaultValue", null))
-                        nv.AddVertex(child.To, GraphUtil.GetQueryOutFirst(child.To, "$DefaultValue", null).Value);
+                    {   
+
+
+                        if (IsLink(child.Meta)) // if link, then we do not want to add default value, but just edge
+                            nv.AddEdge(child.To, GraphUtil.GetQueryOutFirst(child.To, "$DefaultValue", null));
+                        else
+                            nv.AddVertex(child.To, GraphUtil.GetQueryOutFirst(child.To, "$DefaultValue", null).Value);
+                    }
                     else
                         nv.AddVertex(child.To, null); // ? XXX
             }

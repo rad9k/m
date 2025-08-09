@@ -12,16 +12,16 @@ namespace m0.FormalTextLanguage
 {
     public class ZeroCodeProcessingHelper
     {
-        static IVertex defaultFormalTextLanguageProcessing = MinusZero.Instance.Root.Get(false, @"System\FormalTextLanguage\DefaultFormalTextLanguageProcessing:");
+        static IVertex DefaultFormalTextLanguageProcessing = MinusZero.Instance.Root.Get(false, @"System\FormalTextLanguage\DefaultFormalTextLanguageProcessing:");
 
         public static string Generate(IEdge graphBaseEdge)
         {
-            return Generate(defaultFormalTextLanguageProcessing, graphBaseEdge);
+            return Generate(DefaultFormalTextLanguageProcessing, graphBaseEdge);
         }
 
         public static IVertex Parse(IEdge rootEdge, string text, out IEdge rootEdge_new)
         {
-            return Parse(defaultFormalTextLanguageProcessing, rootEdge, text, out rootEdge_new);
+            return Parse(DefaultFormalTextLanguageProcessing, rootEdge, text, out rootEdge_new);
         }
 
         public static string Generate(IVertex formalTextLanguageProcessing, IEdge graphBaseEdge)
