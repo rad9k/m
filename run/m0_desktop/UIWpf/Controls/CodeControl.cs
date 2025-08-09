@@ -354,7 +354,7 @@ namespace m0.UIWpf.Controls
         FoldingManager foldingManager;
         DispatcherTimer foldingUpdateTimer;
 
-        IVertex codeRepresentation_prev;
+        IVertex codeRepresentation_Vertex_prev;
 
         bool codeRepresentation_prev_calculated = false;
 
@@ -363,18 +363,16 @@ namespace m0.UIWpf.Controls
             IVertex codeRepresentation_Vertex = Vertex.Get(false, @"CodeRepresentation:");
 
             if (codeRepresentation_Vertex != null)
-            {
-                CodeRepresentationEnum codeRepresentation = CodeRepresentationEnumHelper.GetEnum(codeRepresentation_Vertex);
-
+            {                
                 if (codeRepresentation_prev_calculated)
                 {
-                    if (codeRepresentation_prev != codeRepresentation)
+                    if (codeRepresentation_Vertex_prev != codeRepresentation_Vertex)
                         ExecuteGenerate();
                 }
                 else
                     codeRepresentation_prev_calculated = true;
 
-                codeRepresentation_prev = codeRepresentation;
+                codeRepresentation_Vertex_prev = codeRepresentation_Vertex;
             }
 
             if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, @"ShowWhiteSpace:"),"True"))
