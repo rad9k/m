@@ -434,8 +434,8 @@ namespace m0
         {
             IVertex startVertex = FileSystemUtil.GetDirectoryFromFileSystem(m0DllPath);
 
-            if (startVertex != null) { 
-            }
+            if (startVertex != null)  
+                root.AddEdge(root.Get(false, @"System\\Meta\\Store\\Filesystem\\Start"), startVertex);            
         }
 
         void Autostart()

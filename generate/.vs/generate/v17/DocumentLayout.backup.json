@@ -3,11 +3,15 @@
   "WorkspaceRootPath": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A8A00DED-611C-4FF5-8B12-5ECC14242B23}|m0\\m0.csproj|c:\\users\\rad9k\\source\\repos\\m\\generate\\m0\\store\\filesystem\\filesystemstore.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A8A00DED-611C-4FF5-8B12-5ECC14242B23}|m0\\m0.csproj|solutionrelative:m0\\store\\filesystem\\filesystemstore.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|c:\\users\\rad9k\\source\\repos\\m\\generate\\m0_system_generate\\legacysystem\\m0.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|solutionrelative:m0_system_generate\\legacysystem\\m0.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|c:\\users\\rad9k\\source\\repos\\m\\generate\\m0_system_generate\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_system_generate\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|solutionrelative:m0_system_generate\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -18,8 +22,21 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "FileSystemStore.cs",
+              "DocumentMoniker": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0\\Store\\FileSystem\\FileSystemStore.cs",
+              "RelativeDocumentMoniker": "m0\\Store\\FileSystem\\FileSystemStore.cs",
+              "ToolTip": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0\\Store\\FileSystem\\FileSystemStore.cs",
+              "RelativeToolTip": "m0\\Store\\FileSystem\\FileSystemStore.cs",
+              "ViewState": "AgIAABUBAAAAAAAAAAAAACIBAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-10T14:31:57.461Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:129:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
@@ -38,20 +55,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "m0.cs",
               "DocumentMoniker": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\LegacySystem\\m0.cs",
               "RelativeDocumentMoniker": "m0_SYSTEM_GENERATE\\LegacySystem\\m0.cs",
-              "ToolTip": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\LegacySystem\\m0.cs*",
-              "RelativeToolTip": "m0_SYSTEM_GENERATE\\LegacySystem\\m0.cs*",
-              "ViewState": "AgIAAPkPAAAAAAAAAAAkwA0QAAAGAQAAAAAAAA==",
+              "ToolTip": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\LegacySystem\\m0.cs",
+              "RelativeToolTip": "m0_SYSTEM_GENERATE\\LegacySystem\\m0.cs",
+              "ViewState": "AgIAACMXAAAAAAAAAAAQwDYXAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-09T23:06:09.885Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\Program.cs",
               "RelativeDocumentMoniker": "m0_SYSTEM_GENERATE\\Program.cs",
@@ -59,8 +76,7 @@
               "RelativeToolTip": "m0_SYSTEM_GENERATE\\Program.cs",
               "ViewState": "AgIAALIAAAAAb+hg2ZEowLwAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-09T22:55:36.123Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-08-09T22:55:36.123Z"
             }
           ]
         },

@@ -15,6 +15,24 @@ namespace m0.Store.FileSystem
     {
         public static IVertex GetDirectoryFromFileSystem(string path)
         {
+            // Wykrywanie systemu operacyjnego
+            bool isWindows = Environment.OSVersion.Platform == PlatformID.Win32NT;
+            bool isLinux = Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX;
+            
+            // Sprawdzenie czy ścieżka istnieje w systemie operacyjnym
+            if (Directory.Exists(path))
+            {
+                // Rozdzielenie ścieżki na poszczególne katalogi
+                string[] directories = path.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
+                
+                // Iteracja przez każdy katalog
+                foreach (string directory in directories)
+                {
+                    // Tu możesz dodać swoje ciało foreach
+                    // directory zawiera nazwę aktualnego katalogu
+                }
+            }
+            
             return null;
         }
 
