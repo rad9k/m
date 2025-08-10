@@ -287,6 +287,8 @@ namespace m0.Store.FileSystem
 
             File_ReadDateTime = File.AddVertex(attribute, "ReadDateTime");
             File_ReadDateTime.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\String"));
+
+            mfsf.AddVertex(null, "Start"); 
         }
 
         public object GetRootIdentifier()

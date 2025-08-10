@@ -1,4 +1,5 @@
-﻿using m0.Util;
+﻿using m0.Foundation;
+using m0.Util;
 using m0.ZeroCode;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,11 @@ namespace m0.Store.FileSystem
 {
     public class FileSystemUtil
     {
+        public static IVertex GetDirectoryFromFileSystem(string path)
+        {
+            return null;
+        }
+
         public static void CreateDirectoryIfNotExist(string baseDirectory, string toBePossiblyCreatedDirectory)
         {
             string fullPath = Path.Combine(baseDirectory, toBePossiblyCreatedDirectory);

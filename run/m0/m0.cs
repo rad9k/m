@@ -417,7 +417,7 @@ namespace m0
             Transaction.Initialize();            
         }
 
-        void LoadFromFileSystem()
+        void CreateAutostart()
         {
             FileSystemUtil.CreateDirectoryIfNotExist(m0DllPath, "autostart");
 
@@ -428,6 +428,14 @@ namespace m0
             IVertex autostartVertex = root.AddVertex(null, "Autostart");
 
             fsl.Load(autostartVertex);        
+        }
+
+        void CreateStart()
+        {
+            IVertex startVertex = FileSystemUtil.GetDirectoryFromFileSystem(m0DllPath);
+
+            if (startVertex != null) { 
+            }
         }
 
         void Autostart()
@@ -481,7 +489,9 @@ namespace m0
 
             StaticMetaInitialize();
 
-            LoadFromFileSystem();
+            CreateStart();
+
+            CreateAutostart();
 
 
 
