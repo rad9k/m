@@ -54,11 +54,19 @@ namespace m0.ZeroUML
                 else if (GraphUtil.GetIntegerValueOr0(e.To.Get(false, "$MinCardinality:")) != 0)
                     ObjectVertex.AddVertex(e.To, null);
 
+            IVertex AggregationVertices = ObjectVertex.GetAll(false, @"$Is:\Aggregation:");
+
+            foreach (IEdge e in AggregationVertices)
+                if (e.To.Get(false, "$DefaultValue:") != null)
+                    ObjectVertex.AddVertex(e.To, e.To.Get(false, "$DefaultValue:").Value);
+                else if (GraphUtil.GetIntegerValueOr0(e.To.Get(false, "$MinCardinality:")) != 0)
+                    ObjectVertex.AddVertex(e.To, null);
+
             IVertex AssociationVertices = ObjectVertex.GetAll(false, @"$Is:\Association:");
 
             foreach (IEdge e in AssociationVertices)
                 if (e.To.Get(false, "$DefaultValue:") != null)
-                    ObjectVertex.AddVertex(e.To, e.To.Get(false, "$DefaultValue:").Value);
+                    ObjectVertex.AddEdge(e.To, e.To.Get(false, "$DefaultValue:"));
                 else
                     ObjectVertex.AddVertex(e.To, null);
         }

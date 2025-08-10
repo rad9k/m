@@ -284,9 +284,7 @@ namespace m0.UIWpf.Commands
         }
 
         public static void OpenFormVisualiser(IVertex baseVertex, bool isFloating)
-        {
-            IVertex toReturn;
-
+        {            
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
@@ -307,9 +305,7 @@ namespace m0.UIWpf.Commands
             IVertex visualiserVertex = baseVertex.Get(false, "To:");
 
 
-            IPlatformClass sv = (IPlatformClass)PlatformClass.CreatePlatformObject(visualiserVertex, visualiserVertex);
-
-            //GraphUtil.ReplaceEdge(sv.Vertex, "BaseEdge", baseVertex);
+            IPlatformClass sv = (IPlatformClass)PlatformClass.CreatePlatformObject(visualiserVertex, visualiserVertex);            
 
             if (isFloating)
                 MinusZero.Instance.UserInteraction.ShowContentFloating(sv, FloatingWindowSize.Medium);
@@ -327,9 +323,7 @@ namespace m0.UIWpf.Commands
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
             
-            IPlatformClass sv = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex, baseVertex);
-            
-            //Edge.CopyAndReplaceEdgeVertexByEdgeVertex(sv.Vertex, "BaseEdge", baseVertex);
+            IPlatformClass sv = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex, baseVertex);                        
 
             if (isFloating)
                 MinusZero.Instance.UserInteraction.ShowContentFloating(sv, FloatingWindowSize.Medium);
@@ -349,9 +343,7 @@ namespace m0.UIWpf.Commands
 
             IEdge edge = new EasyEdge(null, null, baseVertex.Get(false, "Meta:"));
 
-            IPlatformClass sv = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex, edge);
-
-            //GraphUtil.ReplaceEdge(sv.Vertex.Get(false, "BaseEdge:"), "To", baseVertex.Get(false, "Meta:"));            
+            IPlatformClass sv = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex, edge);            
 
             MinusZero.Instance.UserInteraction.ShowContent(sv);
 
@@ -366,11 +358,7 @@ namespace m0.UIWpf.Commands
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
             
-            IPlatformClass pc = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex, baseVertex);
-
-            //GraphUtil.ReplaceEdge(pc.Vertex, "BaseEdge", baseVertex);
-
-            //Edge.CopyAndReplaceEdgeVertexByEdgeVertex(pc.Vertex, "BaseEdge", baseVertex);
+            IPlatformClass pc = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex, baseVertex);            
 
             MinusZero.Instance.UserInteraction.ShowContentFloating(pc, FloatingWindowSize.Medium);
 
@@ -384,16 +372,10 @@ namespace m0.UIWpf.Commands
             IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, baseVertex.Get(false, "Meta:"), baseVertex.Get(false, "To:"));
 
             IPlatformClass pc = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex.Get(false, "VisualiserClass:"), baseEdgeVertex);
-
-            //GraphUtil.ReplaceEdge(pc.Vertex.Get(false, "BaseEdge:"),"Meta", baseVertex.Get(false, "Meta:"));
-
-            //GraphUtil.ReplaceEdge(pc.Vertex.Get(false, "BaseEdge:"), "To", baseVertex.Get(false, "To:"));
-
+            
             IVertex synchronisedVisualiser = inputVertex.Get(false, "SynchronisedVisualiser:");
 
-            BaseSelectedSynchronisedHelper helper = new BaseSelectedSynchronisedHelper(pc.Vertex, synchronisedVisualiser);
-
-            //PlatformClass.RegisterVertexChangeListeners(synchronisedVisualiser,new VertexChange(helper.SynchronisedVisualiserChange), new string[]{"BaseEdge","SelectedEdges"});
+            BaseSelectedSynchronisedHelper helper = new BaseSelectedSynchronisedHelper(pc.Vertex, synchronisedVisualiser);            
             
             IVertex firstSelectedVertex = synchronisedVisualiser.Get(false, @"SelectedEdges:\");
 
@@ -405,9 +387,7 @@ namespace m0.UIWpf.Commands
 
         public static void OpenVisualiserSelectedSelected(IVertex baseVertex, IVertex inputVertex)
         {
-            IPlatformClass pc = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex.Get(false, "VisualiserClass:"), baseVertex);
-
-            //GraphUtil.ReplaceEdge(pc.Vertex, "BaseEdge", baseVertex);
+            IPlatformClass pc = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex.Get(false, "VisualiserClass:"), baseVertex);            
 
             GraphUtil.ReplaceEdge(pc.Vertex, "SelectedEdges", inputVertex.Get(false, @"SynchronisedVisualiser:\SelectedEdges:"));
 

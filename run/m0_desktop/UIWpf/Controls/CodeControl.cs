@@ -341,25 +341,25 @@ namespace m0.UIWpf.Controls
         FoldingManager foldingManager;
         DispatcherTimer foldingUpdateTimer;
 
-        IVertex codeRepresentationVertex_prev;
+        IVertex FormalTextLanguageProcessingVertex_prev;
 
-        bool codeRepresentation_prev_calculated = false;
+        bool FormalTextLanguageProcessingVertex_prev_calculated = false;
 
         public void ViewAttributesUpdated()
         {
-            IVertex codeRepresentationVertex = Vertex.Get(false, @"CodeRepresentation:");
+            IVertex FormalTextLanguageProcessingVertex = Vertex.Get(false, @"FormalTextLanguageProcessing:");
 
-            if (codeRepresentationVertex != null)
+            if (FormalTextLanguageProcessingVertex != null)
             {                
-                if (codeRepresentation_prev_calculated)
+                if (FormalTextLanguageProcessingVertex_prev_calculated)
                 {
-                    if (codeRepresentationVertex_prev != codeRepresentationVertex)
+                    if (FormalTextLanguageProcessingVertex_prev != FormalTextLanguageProcessingVertex)
                         ExecuteGenerate();
                 }
                 else
-                    codeRepresentation_prev_calculated = true;
+                    FormalTextLanguageProcessingVertex_prev_calculated = true;
 
-                codeRepresentationVertex_prev = codeRepresentationVertex;
+                FormalTextLanguageProcessingVertex_prev = FormalTextLanguageProcessingVertex;
             }
 
             if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, @"ShowWhiteSpace:"),"True"))
