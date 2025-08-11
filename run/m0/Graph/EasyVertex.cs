@@ -849,6 +849,14 @@ namespace m0.Graph
             VertexInit();
         }
 
+        public EasyVertex(IStore _store, bool executeVertexInit) : base(_store)
+        {
+            if (executeVertexInit)
+                VertexInit();
+        }
+
+        
+
         public EasyVertex(IStore _store, object toBeIdentifier) : base(_store)
         {
             DisposedState = DisposeStateEnum.Live;

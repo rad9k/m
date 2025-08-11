@@ -338,7 +338,7 @@ namespace m0.Graph
         {            
             this._Store = _Store;
             _AccessLevel = GeneralUtil.CreateAndCopyList<AccessLevelEnum>(this._Store.AccessLevel);            
-        }
+        }        
 
         public override string ToString()
         {

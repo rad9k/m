@@ -23,16 +23,18 @@ namespace m0.Store.FileSystem
             }
             set
             {
-                System.IO.StreamWriter file = new System.IO.StreamWriter(Identifier.ToString());
-                file.WriteLine(value);
+                // for now we do not want this
 
-                file.Close();
+                //System.IO.StreamWriter file = new System.IO.StreamWriter(Identifier.ToString());
+                //file.WriteLine(value);
+
+                //file.Close();
             }
         }
 
         public FileContentVertex(string identifier, IStore store)
-            : base(store)
-        {
+            : base(store, false) 
+        {            
             _Identifier = identifier; // identified vertex are used for volatile stores         
         }
     }

@@ -17,6 +17,8 @@ namespace m0.Store.FileSystem
 
     public class FileVertex : AbstractFileSystemVertex
     {             
+        static string[] TextFileExensions = new string[] { ".txt", ".log", ".csv", ".xml", ".json", ".htm", ".html", ".js" };
+
         FileInfo FI;
 
         public JsonSerializationStore JsonStore;
@@ -142,6 +144,11 @@ namespace m0.Store.FileSystem
                 BinaryStore = (BinaryStore)Store.StoreUniverse.GetStore("m0.Store.Binary.BinaryStore, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", Identifier.ToString());
 
                 AddEdge(FileSystemStore.Store, BinaryStore.Root);
+            }
+
+            if (TextFileExensions.Contains(extension_lower))
+            {
+                AddEdge(FileSystemStore.File_Content, new FileContentVertex(FI.FullName, this.Store));
             }
         }        
 

@@ -262,7 +262,7 @@ namespace m0.Store.FileSystem
             File = mfsf.Get(false, @"File");
 
             File_Content = File.AddVertex(attribute, "Content");
-            File_Content.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\Vertex"));
+            File_Content.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\String"));
 
             File_Filename = File.AddVertex(attribute, "Filename");
             File_Filename.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\String"));
