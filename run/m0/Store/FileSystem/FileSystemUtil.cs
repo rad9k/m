@@ -1,4 +1,5 @@
 ﻿using m0.Foundation;
+using m0.Graph;
 using m0.Util;
 using m0.ZeroCode;
 using System;
@@ -15,22 +16,27 @@ namespace m0.Store.FileSystem
     {
         public static IVertex GetDirectoryFromFileSystem(string path)
         {
-            // Wykrywanie systemu operacyjnego
             bool isWindows = Environment.OSVersion.Platform == PlatformID.Win32NT;
             bool isLinux = Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX;
             
-            // Sprawdzenie czy ścieżka istnieje w systemie operacyjnym
             if (Directory.Exists(path))
             {
-                // Rozdzielenie ścieżki na poszczególne katalogi
                 string[] directories = path.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
-                
-                // Iteracja przez każdy katalog
+
+                IVertex vertex = MinusZero.Instance.root;
+
                 foreach (string directory in directories)
                 {
-                    // Tu możesz dodać swoje ciało foreach
-                    // directory zawiera nazwę aktualnego katalogu
+                    string query = directory;
+
+                    if (query.EndsWith(":"))
+                        query = query[0].ToString();
+
+                    //vertex = vertex.Get(false, directory);
+                    vertex = GraphUtil.GetQueryOutFirst(vertex, null, query);
                 }
+
+                return vertex;
             }
             
             return null;

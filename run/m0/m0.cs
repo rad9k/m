@@ -435,7 +435,7 @@ namespace m0
             IVertex startVertex = FileSystemUtil.GetDirectoryFromFileSystem(m0DllPath);
 
             if (startVertex != null)  
-                root.AddEdge(root.Get(false, @"System\\Meta\\Store\\Filesystem\\Start"), startVertex);            
+                root.AddEdge(root.Get(false, @"System\Meta\Store\FileSystem\Start"), startVertex);            
         }
 
         void Autostart()
@@ -489,13 +489,14 @@ namespace m0
 
             StaticMetaInitialize();
 
+
+            AddDrives();
+
+
+
             CreateStart();
 
             CreateAutostart();
-
-
-
-            AddDrives();
 
 
 
