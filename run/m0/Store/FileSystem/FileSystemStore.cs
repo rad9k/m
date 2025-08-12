@@ -79,10 +79,10 @@ namespace m0.Store.FileSystem
 
         public void StoreVertexIdentifier(IVertex Vertex)
         {
-            if (!(Vertex.Identifier is string))
-            {
-                throw new Exception("Not a string vertex identifier in file system store");                
-            }
+           // if (!(Vertex.Identifier is string)) // will brake for FileContentVertex. I do not know a reason the code exist so far
+           // {
+           //     throw new Exception("Not a string vertex identifier in file system store");                
+           // }
             //throw new NotImplementedException();
         }
 

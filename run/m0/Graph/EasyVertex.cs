@@ -847,15 +847,7 @@ namespace m0.Graph
         public EasyVertex(IStore _store) : base(_store)
         {
             VertexInit();
-        }
-
-        public EasyVertex(IStore _store, bool executeVertexInit) : base(_store)
-        {
-            if (executeVertexInit)
-                VertexInit();
-        }
-
-        
+        }     
 
         public EasyVertex(IStore _store, object toBeIdentifier) : base(_store)
         {

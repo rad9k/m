@@ -32,7 +32,6 @@ namespace m0.Store.FileSystem
                     if (query.EndsWith(":"))
                         query = query[0].ToString();
 
-                    //vertex = vertex.Get(false, directory);
                     vertex = GraphUtil.GetQueryOutFirst(vertex, null, query);
                 }
 

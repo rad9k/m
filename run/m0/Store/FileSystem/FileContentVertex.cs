@@ -10,19 +10,36 @@ namespace m0.Store.FileSystem
 {
     public class FileContentVertex : EasyVertex
     {
+        string fileName;
+
+        object _value;
+
         public override object Value
         {
             get
             {
+                if (fileName == null)
+                {
+                    // this is a "normal" vertex, not identified by file name
+                    return _value;
+                }
+
                 try
                 {
-                    return System.IO.File.ReadAllText(Identifier.ToString());
+                    return System.IO.File.ReadAllText(fileName);
                 }
                 catch (Exception e) { }
                 return "";
             }
             set
             {
+                if (fileName == null)
+                {
+                    // this is a "normal" vertex, not identified by file name
+                    _value = value;
+                    return;
+                }
+
                 // for now we do not want this
 
                 //System.IO.StreamWriter file = new System.IO.StreamWriter(Identifier.ToString());
@@ -32,10 +49,16 @@ namespace m0.Store.FileSystem
             }
         }
 
-        public FileContentVertex(string identifier, IStore store)
-            : base(store, false) 
+        public FileContentVertex(string _fileName, IStore store)
+            : base(store) 
         {            
-            _Identifier = identifier; // identified vertex are used for volatile stores         
+            fileName = _fileName; // identified vertex are used for volatile stores         
+        }
+
+        public FileContentVertex(IStore store)
+            : base(store)
+        {
+            fileName = null; // "normal" Vertex mode   
         }
     }
 }
