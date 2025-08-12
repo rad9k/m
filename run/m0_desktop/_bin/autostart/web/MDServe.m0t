@@ -1,0 +1,12 @@
+System\FormalTextLanguage\ZeroCode_VertexAndManyLines
+"MDServe"
+	function "MDServe_Handler" (@VertexType "startDir", @String "url")
+		if url == "/"
+			return @@ret_index[]
+		if url == "/script.js"
+			return @@ret_script[]
+		return "ok"
+	function "ret_index" ()
+		return Start\:web\:'index.html'\Content
+	function "ret_script" ()
+		return Start\:web\:'script.js'\Content

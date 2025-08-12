@@ -64,7 +64,17 @@ namespace m0.Network.Server {
             // Log the HTTP request
             LogHttpRequest(context, method, url);
             
-            return Results.Text(DoHttpMapping(url, HttpActionEnumHelper.GetVertex(action)));
+            string response = DoHttpMapping(url, HttpActionEnumHelper.GetVertex(action));
+            
+            // Check if response looks like HTML and set appropriate content type
+            if (response != null && response.TrimStart().StartsWith("<"))
+            {
+                return Results.Content(response, "text/html; charset=utf-8");
+            }
+            else
+            {
+                return Results.Text(response);
+            }
         }
 
         private void LogHttpRequest(HttpContext context, string method, string url)
