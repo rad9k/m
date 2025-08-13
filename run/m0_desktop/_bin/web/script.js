@@ -1,83 +1,5 @@
-// Sample data - table of contents
-const treeData = [
-    {
-        id: 'intro',
-        title: 'Introduction',
-        children: [
-            {
-                id: 'getting-started',
-                title: 'Getting Started',
-                children: [
-                    {
-                        id: 'installation',
-                        title: 'Installation',
-                        children: [
-                            { id: 'install-windows', title: 'Installation on Windows' },
-                            { id: 'install-linux', title: 'Installation on Linux' },
-                            { id: 'install-mac', title: 'Installation on macOS' }
-                        ]
-                    },
-                    {
-                        id: 'configuration',
-                        title: 'Configuration',
-                        children: [
-                            { id: 'config-basic', title: 'Basic Configuration' },
-                            { id: 'config-advanced', title: 'Advanced Configuration' }
-                        ]
-                    }
-                ]
-            },
-            {
-                id: 'overview',
-                title: 'System Overview',
-                children: [
-                    { id: 'architecture', title: 'Architecture' },
-                    { id: 'components', title: 'Components' }
-                ]
-            }
-        ]
-    },
-    {
-        id: 'api',
-        title: 'API Reference',
-        children: [
-            {
-                id: 'endpoints',
-                title: 'Endpoints',
-                children: [
-                    { id: 'get-users', title: 'GET /users' },
-                    { id: 'post-users', title: 'POST /users' },
-                    { id: 'put-users', title: 'PUT /users' }
-                ]
-            },
-            {
-                id: 'models',
-                title: 'Data Models',
-                children: [
-                    { id: 'user-model', title: 'User Model' },
-                    { id: 'product-model', title: 'Product Model' }
-                ]
-            }
-        ]
-    },
-    {
-        id: 'tutorials',
-        title: 'Tutorials',
-        children: [
-            { id: 'tutorial-1', title: 'First Tutorial' },
-            { id: 'tutorial-2', title: 'Second Tutorial' },
-            { id: 'tutorial-3', title: 'Third Tutorial' }
-        ]
-    },
-    {
-        id: 'faq',
-        title: 'FAQ',
-        children: [
-            { id: 'faq-general', title: 'General Questions' },
-            { id: 'faq-technical', title: 'Technical Questions' }
-        ]
-    }
-];
+// Tree data will be loaded from tree.json file
+let treeData = [];
 
 // All documents are loaded dynamically from HTML files
 
@@ -210,7 +132,31 @@ let treeView;
 let isResizing = false;
 let startX, startWidth;
 
-document.addEventListener('DOMContentLoaded', () => {
+// Load tree data from JSON file
+async function loadTreeData() {
+    try {
+        const response = await fetch('tree.json');
+        if (response.ok) {
+            treeData = await response.json();
+            return true;
+        } else {
+            console.error('Failed to load tree.json');
+            return false;
+        }
+    } catch (error) {
+        console.error('Error loading tree.json:', error);
+        return false;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+    // Load tree data first
+    const dataLoaded = await loadTreeData();
+    if (!dataLoaded) {
+        console.error('Could not load tree data, using empty tree');
+        treeData = [];
+    }
+    
     const treeContainer = document.getElementById('treeContainer');
     treeView = new TreeView(treeContainer, treeData);
 

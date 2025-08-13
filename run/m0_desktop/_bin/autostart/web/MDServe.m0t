@@ -5,8 +5,12 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			return @@ret_index[]
 		if url == "/script.js"
 			return @@ret_script[]
+		if url == "/tree.json"
+			return @@ret_tree[]
 		return "ok"
 	function "ret_index" ()
 		return Start\:web\:'index.html'\Content
 	function "ret_script" ()
 		return Start\:web\:'script.js'\Content
+	function "ret_tree" ()
+		return Start\:web\:'tree.json'\Content
