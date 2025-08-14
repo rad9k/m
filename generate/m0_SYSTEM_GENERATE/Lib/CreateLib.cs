@@ -26,6 +26,7 @@ namespace m0_SYSTEM_GENERATE.Lib
         static IVertex LibStd;
         static IVertex LibSys;
         static IVertex LibStdUI;
+        static IVertex LibStdView;
         static IVertex LibNet;
 
         public static void CreateLibStd()
@@ -116,6 +117,19 @@ namespace m0_SYSTEM_GENERATE.Lib
             AddFunction(LibStdUI, "OpenCodeVisualiser", type, "OpenCodeVisualiser", null, new TypeName[] { new TypeName("baseEdge", "Edge", 1, 1) });
         }
 
+        public static void CreateLibStdView()
+        {
+            print("* creating Lib\\StdView");
+
+            IVertex root = m0.MinusZero.Instance.root;
+
+            IVertex lib = root.Get(false, "System").AddVertex(null, "Lib");
+
+            LibStdView = lib.AddVertex(null, "StdView");
+
+            GraphUtil.LoadTXTParseAndMove_ChildEdges(@"_RES\Lib\View\View.txt", LibStdView);
+        }
+
         public static void CreateLibNet()
         {
             print("* creating Lib\\Net");
@@ -187,6 +201,10 @@ namespace m0_SYSTEM_GENERATE.Lib
             print("* saving Lib\\StdUI");
 
             GeneralUtil.CreateM0JAndMoveEdgesIntoIt_IncludeEverythingBesidesList("lib_stdui.m0j", LibStdUI, new HashSet<IVertex>(systemSubGraphWithLinks), storeOverride);
+
+            print("* saving Lib\\StdView");
+
+            GeneralUtil.CreateM0JAndMoveEdgesIntoIt_IncludeEverythingBesidesList("lib_stdview.m0j", LibStdView, new HashSet<IVertex>(systemSubGraphWithLinks), storeOverride);
 
             print("* saving Lib\\Net");
 

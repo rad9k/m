@@ -1,0 +1,3 @@
+"STORE"
+	function VertexToJson (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
+	function JsonToVertex (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")

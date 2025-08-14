@@ -88,41 +88,34 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="_RES\Generator\HarmonyMelodyTimeGenerator.txt">
+    <Content Include="_RES\Lib\Music\Chord\BasicChords.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="_RES\Generator\SimpleTransformer.txt">
+    </Content>
+    <Content Include="_RES\Lib\Music\Generator\HarmonyMelodyTimeGenerator.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="_RES\Instrument\X09\X09_CC.txt">
+    </Content>
+    <Content Include="_RES\Lib\Music\Generator\SimpleTransformer.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="_RES\Instrument\X09\X09_mode_1_PitchSet.txt">
+    </Content>
+    <Content Include="_RES\Lib\Music\Instrument\MFB522\MFB522_PitchSet.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="_RES\Instrument\X09\X09_mode_2_PitchSet.txt">
+    </Content>
+    <Content Include="_RES\Lib\Music\Instrument\TR8S\TR8S_PitchSet.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="_RES\Chord\BasicChords.txt">
+    </Content>
+    <Content Include="_RES\Lib\Music\Instrument\X09\X09_CC.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="_RES\Instrument\TR8S\TR8S_PitchSet.txt">
+    </Content>
+    <Content Include="_RES\Lib\Music\Instrument\X09\X09_mode_1_PitchSet.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="_RES\Instrument\MFB522\MFB522_PitchSet.txt">
+    </Content>
+    <Content Include="_RES\Lib\Music\Instrument\X09\X09_mode_2_PitchSet.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="_RES\Lib\Net\HttpServer_Init.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_RES\Lib\View\View.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="_RES\UXTemplate\from_m0.txt" />

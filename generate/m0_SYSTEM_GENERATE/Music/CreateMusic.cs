@@ -745,8 +745,8 @@ namespace m0_SYSTEM_GENERATE.Music
         {
             // Generator
             
-            GraphUtil.LoadTXTParseAndMove(@"_RES\Generator\HarmonyMelodyTimeGenerator.txt", MusicGenerator, "'HarmonyMelodyTimeGenerator'");
-            GraphUtil.LoadTXTParseAndMove(@"_RES\Generator\SimpleTransformer.txt", MusicGenerator, "'SimpleTransformer'");
+            GraphUtil.LoadTXTParseAndMove(@"_RES\Lib\Music\Generator\HarmonyMelodyTimeGenerator.txt", MusicGenerator, "'HarmonyMelodyTimeGenerator'");
+            GraphUtil.LoadTXTParseAndMove(@"_RES\Lib\Music\Generator\SimpleTransformer.txt", MusicGenerator, "'SimpleTransformer'");
 
             // Instrument
 
@@ -754,23 +754,23 @@ namespace m0_SYSTEM_GENERATE.Music
 
             IVertex X09 = Instrument.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Package"), "XBase09");
 
-            GraphUtil.LoadTXTParseAndMove(@"_RES\Instrument\X09\X09_CC.txt", X09, "'XBase09_ControlChangeDescriptionSet'");
-            GraphUtil.LoadTXTParseAndMove(@"_RES\Instrument\X09\X09_mode_1_PitchSet.txt", X09, "'XBase09_mode_1_PitchSet'");
-            GraphUtil.LoadTXTParseAndMove(@"_RES\Instrument\X09\X09_mode_2_PitchSet.txt", X09, "'XBase09_mode_2_PitchSet'");
+            GraphUtil.LoadTXTParseAndMove(@"_RES\Lib\Music\Instrument\X09\X09_CC.txt", X09, "'XBase09_ControlChangeDescriptionSet'");
+            GraphUtil.LoadTXTParseAndMove(@"_RES\Lib\Music\Instrument\X09\X09_mode_1_PitchSet.txt", X09, "'XBase09_mode_1_PitchSet'");
+            GraphUtil.LoadTXTParseAndMove(@"_RES\Lib\Music\Instrument\X09\X09_mode_2_PitchSet.txt", X09, "'XBase09_mode_2_PitchSet'");
 
             IVertex TR8S = Instrument.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Package"), "TR8S");
 
-            GraphUtil.LoadTXTParseAndMove(@"_RES\Instrument\TR8S\TR8S_PitchSet.txt", TR8S, "'TR8S_PitchSet'");
+            GraphUtil.LoadTXTParseAndMove(@"_RES\Lib\Music\Instrument\TR8S\TR8S_PitchSet.txt", TR8S, "'TR8S_PitchSet'");
 
             IVertex MFB522 = Instrument.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Package"), "MFB522");
 
-            GraphUtil.LoadTXTParseAndMove(@"_RES\Instrument\MFB522\MFB522_PitchSet.txt", MFB522, "'MFB522_PitchSet'");
+            GraphUtil.LoadTXTParseAndMove(@"_RES\Lib\Music\Instrument\MFB522\MFB522_PitchSet.txt", MFB522, "'MFB522_PitchSet'");
 
             // Chord
 
             IVertex Chord = Music.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Package"), "Chord");
 
-            GraphUtil.LoadTXTAndParse(@"_RES\Chord\BasicChords.txt", Chord);
+            GraphUtil.LoadTXTAndParse(@"_RES\Lib\Music\Chord\BasicChords.txt", Chord);
 
             IEdge toDelete1 = Chord.OutEdges[0];
             IEdge toDelete2 = Chord.OutEdges[1];
