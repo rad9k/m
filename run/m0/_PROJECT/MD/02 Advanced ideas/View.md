@@ -65,11 +65,11 @@ __After the "Possible view definitions" table (below) evaluation we come to conc
 
 ## Transform function parameters
 
-- event @Vertex
+- event @Event
 	- if event == ~00 than transform function is expected to generate whole source/target (so this is not a _transform_ function but a _generate_)
-- from @Vertex
-- meta @Vertex
-- to @Vertex
+- from @VertexType
+- meta @VertexType
+- to @VertexType
 
 ## How to define source / target trigger
 
