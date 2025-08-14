@@ -40,6 +40,9 @@ namespace m0_SYSTEM_GENERATE
             IVertex lib_sys = r.AddVertex(null, "System\\Lib\\Sys");
             lib_sys.AddVertex(null, "lib_sys.m0j");
 
+            IVertex lib_stdview = r.AddVertex(null, "System\\Lib\\StdView");
+            lib_stdview.AddVertex(null, "lib_stdview.m0j");
+
             IVertex lib_stdui = r.AddVertex(null, "System\\Lib\\StdUI");
             lib_stdui.AddVertex(null, "lib_stdui.m0j");
 
