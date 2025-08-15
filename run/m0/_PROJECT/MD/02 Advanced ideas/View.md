@@ -1,5 +1,10 @@
 # Views
 
+## Graph
+
+```-0
+```
+
 ## About
 
 _View_ is defined as _meta edge_. When this _meta edge_ is added to given vertex (the given vertex will be called from now the _source_ vertex), the _view_ is created in the _target_ vertex.
@@ -85,7 +90,7 @@ So it means that there:
 ## create view syntax
 
 ```-0
-view "trigger name" {
+create view "trigger name" {
 	from query "query body"
 	from filter @GraphChangeFilterEnum\value
 	from to transform @TransformFunction

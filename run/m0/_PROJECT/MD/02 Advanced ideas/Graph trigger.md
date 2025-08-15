@@ -46,7 +46,7 @@
 ## create trigger syntax
 
 ```-0
-trigger "trigger name" {
+create trigger "trigger name" {
 	filter @GraphChangeFilterEnum\value
 	query "query body"
 	listener @ListenerFunction
