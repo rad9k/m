@@ -56,7 +56,7 @@ create trigger "trigger name" {
 above expression will create trigger at local stack, so that means it can be used in following way
 
 ```-0
-AddHere +< trigger "trigger name"{
+AddHere +< create trigger "trigger name"{
 	...
 }
 ```
