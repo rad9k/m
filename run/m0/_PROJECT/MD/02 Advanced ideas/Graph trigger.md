@@ -47,7 +47,7 @@
 
 ```-0
 create trigger "trigger name" {
-	filter @GraphChangeFilterEnum\value
+	filter @GraphChangeFilterEnum\ValueChange
 	query "query body"
 	listener @ListenerFunction
 }
