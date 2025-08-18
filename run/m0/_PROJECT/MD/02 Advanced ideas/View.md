@@ -3,6 +3,14 @@
 ## Graph
 
 ```-0
+<@View :: "">
+	<@$Is :: @View>
+	<@FromTriggerQuery :: "query body">
+	<@FromTriggerFilter :: @GraphChangeEnum\ValueChange>
+	<@FromToTransformFunction :: @f>
+	<@ToTriggerQuery :: "query body">
+	<@ToTriggerFilter :: @GraphChangeEnum\ValueChange>
+	<@ToFromTransformFunction :: @f>
 ```
 
 ## About
@@ -40,7 +48,7 @@ __After the "Possible view definitions" table (below) evaluation we come to conc
 |updatable target to source    |updatable      |target to source|NO            |NO                       |YES           |YES                      |
 |updatable both                |updatable      |both            |YES           |YES                      |YES           |YES                      |
 
-## Create trigger Graph
+## Create view Graph
 
 ```-0
 <(?<ANY>) :: "">
@@ -90,12 +98,12 @@ So it means that there:
 ## create view syntax
 
 ```-0
-create view "trigger name" {
+create view {
 	from query "query body"
-	from filter @GraphChangeFilterEnum\value
+	from filter @@GraphChangeFilterEnum\ValueChange
 	from to transform @TransformFunction
 	to query "query body"
-	to filter @GraphChangeFilterEnum\value
+	to filter @@GraphChangeFilterEnum\ValueChange
 	to from transform @TransformFunction
 }
 ```
