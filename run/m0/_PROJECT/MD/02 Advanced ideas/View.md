@@ -11,6 +11,11 @@
 	<@ToTriggerQuery :: "query body">
 	<@ToTriggerFilter :: @GraphChangeEnum\ValueChange>
 	<@ToFromTransformFunction :: @f>
+<@$GraphChangeTrigger :: "CreateView">
+	<@$Is :: @GraphChangeTrigger>
+	<@ChangeTypeFilter :: @OnlyNonTransactedRootVertexEvents>
+	<@ChangeTypeFilter :: @MetaEdgeAdded>
+	<@Listener :: @CreateViewMetaEdgeAdded>
 ```
 
 ## About
