@@ -58,7 +58,7 @@ namespace m0.Graph.ExecutionFlow
     {
         static IVertex _is_meta;
 
-        static IVertex dotNetEndPoint_meta;
+        static IVertex dotNetStaticMethod_meta;
         static IVertex typeName_meta;
         static IVertex methodName_meta;
 
@@ -76,7 +76,7 @@ namespace m0.Graph.ExecutionFlow
         {
             IVertex r = m0.MinusZero.Instance.root;
 
-            dotNetEndPoint_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetStaticMethod");
+            dotNetStaticMethod_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetStaticMethod");
             typeName_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetStaticMethod\DotNetTypeName");
             methodName_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\DotNetStaticMethod\DotNetMethodName");
             _is_meta = r.Get(false, @"System\Meta\Base\Vertex\$Is");
@@ -238,7 +238,7 @@ namespace m0.Graph.ExecutionFlow
 
         public static void DecorateWithDotNetStaticMethod(IVertex baseVertex, string _typeName, string _methodName)
         {
-            baseVertex.AddEdge(_is_meta, dotNetEndPoint_meta);
+            baseVertex.AddEdge(_is_meta, dotNetStaticMethod_meta);
 
             baseVertex.AddVertex(typeName_meta, _typeName);
 

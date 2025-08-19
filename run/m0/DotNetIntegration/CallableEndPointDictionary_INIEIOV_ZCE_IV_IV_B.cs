@@ -61,7 +61,7 @@ namespace m0.DotNetIntegration
                     del = (CallableEndPointDelegate)method.CreateDelegate(typeof(CallableEndPointDelegate));
                 }
 
-                if(del!=null)
+                if (del != null)
                     DotNetEndPointDictionary.Add(_is, del);
             }
 

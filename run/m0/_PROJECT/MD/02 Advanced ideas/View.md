@@ -106,10 +106,10 @@ So it means that there:
 create view {
 	from query "query body"
 	from filter @@GraphChangeFilterEnum\ValueChange
-	from to transform @TransformFunction
+	from to transform @@TransformFunction
 	to query "query body"
 	to filter @@GraphChangeFilterEnum\ValueChange
-	to from transform @TransformFunction
+	to from transform @@TransformFunction
 }
 ```
 

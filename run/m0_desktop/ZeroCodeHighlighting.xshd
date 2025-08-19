@@ -13,7 +13,7 @@
   <Color name="String" fontWeight="bold" foreground="#6733D5" />
   <Color name="Operator" fontWeight="bold" foreground="#FF0000" />
   <Color name="DoubleColon" fontWeight="bold" foreground="#255867" />
-  <Color name="Monkey" foreground="#6BD1EF" />
+  <Color name="Monkey" fontWeight="bold" foreground="#3B91EF" />
   <Color name="Escape" foreground="#4BB1CF" />
 
   
