@@ -3544,7 +3544,7 @@ namespace m0
                 + ",Class:DotNetDelegate{Attribute:DotNetDelegatePointer{$MinCardinality:1,$MaxCardinality:1}}"
                 + ",Class:VertexEval"
                 + ",Class:View{Attribute:FromTriggerQuery{$MinCardinality:0,$MaxCardinality:-1},Association:FromTriggerFilter{$MinCardinality:0,$MaxCardinality:-1},Association:FromToTransformFunction{$MinCardinality:0,$MaxCardinality:-1},Attribute:ToTriggerQuery{$MinCardinality:0,$MaxCardinality:-1},Association:ToTriggerFilter{$MinCardinality:0,$MaxCardinality:-1},Association:ToFromTransformFunction{$MinCardinality:0,$MaxCardinality:-1}}"
-                + ",Function:CreateViewMetaEdgeAdded}");
+                + "}");
 
             LegacySystem.Graph.EasyVertex.Get(smze, false, @"GraphChangeEnum").AddEdge(
                  LegacySystem.Graph.EasyVertex.Get(smz, false, "*$Inherits"),
@@ -3677,6 +3677,12 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\EventTrigger\Fire\event").AddEdge(
               LegacySystem.Graph.EasyVertex.Get(smz, false, "*$EdgeTarget"),
               LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\Event"));
+
+            // CreateViewMetaEdgeAdded
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow").AddVertex(
+                 LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Function"),
+                 "CreateViewMetaEdgeAdded");
 
             // GenericEventHandler
 
