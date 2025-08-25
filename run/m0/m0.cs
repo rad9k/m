@@ -157,7 +157,7 @@ namespace m0
             emptystore.Root.AddEdge(null, empty);
 
             tempRoot = TempStore.Root;
-        }
+        }        
 
         void Init_AfterZeroCodeDefintionCreated()
         {
@@ -470,6 +470,8 @@ namespace m0
 
             Bootstrap();
             
+
+
             ExecutionFlowHelper.StartTransaction();            
 
 
@@ -488,6 +490,8 @@ namespace m0
             
 
             StaticMetaInitialize();
+
+            m0.Graph.ExecutionFlow.Initialize.Run();
 
 
             AddDrives();
