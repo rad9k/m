@@ -120,3 +120,24 @@ AddHere +< view "view name"{
 	...
 }
 ```
+
+## example
+
+```-0
+"EXAMPLE"
+	variable "a" @VertexType
+	variable "b" @VertexType
+	function "f" (@Event "viewEvent", @VertexType "from", @VertexType "meta", @VertexType "to")
+		to +< :: "pozdro"
+		to +< :: viewEvent<>
+		foreach x in from\
+			to +< @@System :: x
+	a = "edg"
+	a +< create view{
+		from to transform @@f
+	}
+	b = "b"
+	b +< :: "kotek"
+	b +< :: "piesek"
+	b +< a :: "docel"
+```
