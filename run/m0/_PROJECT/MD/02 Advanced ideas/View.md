@@ -125,19 +125,41 @@ AddHere +< view "view name"{
 
 ```-0
 "EXAMPLE"
-	variable "a" @VertexType
-	variable "b" @VertexType
-	function "f" (@Event "viewEvent", @VertexType "from", @VertexType "meta", @VertexType "to")
-		to +< :: "pozdro"
-		to +< :: viewEvent<>
-		foreach x in from\
-			to +< @@System :: x
-	a = "edg"
-	a +< create view{
-		from to transform @@f
+	import @System\Lib\Std direct meta
+	variable "ExampleView" @VertexType
+	variable "Source" @VertexType
+	"set"
+		"value"
+	"summary"
+		"min"
+		"max"
+		"count"
+	function "kotek" @String()
+		return "kot"
+	function "ExampleView_FromToTransform" (@Event "viewEvent", @VertexType "from", @VertexType "meta", @VertexType "to")
+		variable "min" @VertexType
+		variable "max" @VertexType
+		to +< @@summary ::
+		to\summary +< @@summary\count :: from\set\value<>
+		min = @@Min[from\set\value]
+		max = @@Max[from\set\value]
+		to\summary +< @@summary\min :: min
+		to\summary +< @@summary\max :: max
+	ExampleView = "Example View"
+	ExampleView +< create view{
+		from to transform @@ExampleView_FromToTransform
 	}
-	b = "b"
-	b +< :: "kotek"
-	b +< :: "piesek"
-	b +< a :: "docel"
+	Source = "Source"
+	Source +< @@set :: "first set"{
+		@@set\value :: "1"
+		@@set\value :: "2"
+		@@set\value :: "3"
+	}
+	Source +< @@set :: "second set"{
+		@@set\value :: "10"
+		@@set\value :: "20"
+		@@set\value :: "30"
+		@@set\value :: "40"
+	}
+	Source +< ExampleView :: "Target"
 ```
