@@ -134,17 +134,12 @@ AddHere +< view "view name"{
 		"min"
 		"max"
 		"count"
-	function "kotek" @String()
-		return "kot"
 	function "ExampleView_FromToTransform" (@Event "viewEvent", @VertexType "from", @VertexType "meta", @VertexType "to")
-		variable "min" @VertexType
-		variable "max" @VertexType
-		to +< @@summary ::
-		to\summary +< @@summary\count :: from\set\value<>
-		min = @@Min[from\set\value]
-		max = @@Max[from\set\value]
-		to\summary +< @@summary\min :: min
-		to\summary +< @@summary\max :: max
+		to +< @@summary ::{
+			@@summary\count :: from\set\value<>
+			@@summary\min :: @@Min[from\set\value]
+			@@summary\min :: @@Max[from\set\value]
+		}
 	ExampleView = "Example View"
 	ExampleView +< create view{
 		from to transform @@ExampleView_FromToTransform

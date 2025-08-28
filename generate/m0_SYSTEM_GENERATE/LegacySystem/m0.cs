@@ -1224,7 +1224,7 @@ namespace m0
             IVertex keywordGroupDefinition = LegacySystem.Graph.EasyVertex.Get(smb, false, @"$KeywordGroupDefinition");
 
             IVertex kgd_ColonEmptyInner2SlashMarkIndexMethodNewLink = k.AddVertex(keywordGroupDefinition, "ColonEmptyInner2SlashMarkIndexMethodNewLink");
-            IVertex kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy = k.AddVertex(keywordGroupDefinition, "ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy");
+            IVertex kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall = k.AddVertex(keywordGroupDefinition, "ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall");
             IVertex kgd_ColonEmptyInner2SlashMarkIndexMethod = k.AddVertex(keywordGroupDefinition, "ColonEmptyInner2SlashMarkIndexMethod");
             IVertex kgd_Empty2Inner = k.AddVertex(keywordGroupDefinition, "Empty2Inner");
             IVertex kgd_InnerCreation = k.AddVertex(keywordGroupDefinition, "InnerCreation");
@@ -1707,7 +1707,7 @@ namespace m0
 
             o_index.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLink);
 
-            o_index.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy);
+            o_index.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall);
 
             IVertex o_index_any = o_index.AddVertex(any, "");
 
@@ -1736,7 +1736,7 @@ namespace m0
 
             o_setCount.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLink);
 
-            o_setCount.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy);
+            o_setCount.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall);
 
             IVertex o_setCount_any = o_setCount.AddVertex(any, "");
 
@@ -1915,7 +1915,7 @@ namespace m0
             //
             // (?<left_ColonEmptyNew>)||(?<SUB>)(?<right_ColonEmptyNew>)                         
 
-            IVertex o_doubleColon = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>) :: (?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)");
+            IVertex o_doubleColon = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall>) :: (?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall>)");
 
             //IVertex o_doubleColon = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLink>)::(?<SUB>)(?<right_ColonEmptyInner2SlashMarkIndexMethodNewLink>)");
 
@@ -1926,9 +1926,9 @@ namespace m0
             o_doubleColon_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleColon"));
 
-            o_doubleColon_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"DoubleOperator\LeftExpression"), "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)");
+            o_doubleColon_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"DoubleOperator\LeftExpression"), "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall>)");
 
-            IVertex o_doubleColon_any_right = o_doubleColon_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"DoubleOperator\RightExpression"), "(?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)");
+            IVertex o_doubleColon_any_right = o_doubleColon_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"DoubleOperator\RightExpression"), "(?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall>)");
 
             IVertex o_doubleColon_any_targetExpr = o_doubleColon_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ExpressionAtom\NextExpression"), "");
 
@@ -1939,7 +1939,7 @@ namespace m0
             //
             // ||(?<SUB>)(?<right_ColonEmptyNew>)                         
 
-            IVertex o_doubleColon2 = k.AddVertex(keyword, ":: (?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)");
+            IVertex o_doubleColon2 = k.AddVertex(keyword, ":: (?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall>)");
 
             //IVertex o_doubleColon2 = k.AddVertex(keyword, "::(?<SUB>)(?<right_ColonEmptyInner2SlashMarkIndexMethodNewLink>)");
 
@@ -1950,7 +1950,7 @@ namespace m0
             o_doubleColon2_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleColon"));
 
-            IVertex o_doubleColon2_any_right = o_doubleColon2_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"DoubleOperator\RightExpression"), "(?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)");
+            IVertex o_doubleColon2_any_right = o_doubleColon2_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"DoubleOperator\RightExpression"), "(?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall>)");
 
             IVertex o_doubleColon2_any_targetExpr = o_doubleColon2_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ExpressionAtom\NextExpression"), "");
 
@@ -1960,7 +1960,7 @@ namespace m0
             //
             // (?<left_ColonEmptyNew>)||(?<SUB>)                         
 
-            IVertex o_doubleColon3 = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>) ::");
+            IVertex o_doubleColon3 = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall>) ::");
 
             // Vertex o_doubleColon3 = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLink>)::(?<SUB>)");
 
@@ -1971,7 +1971,7 @@ namespace m0
             o_doubleColon3_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleColon"));
 
-            o_doubleColon3_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"DoubleOperator\LeftExpression"), "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)");
+            o_doubleColon3_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"DoubleOperator\LeftExpression"), "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall>)");
 
             IVertex o_doubleColon3_any_targetExpr = o_doubleColon3_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ExpressionAtom\NextExpression"), "");
 
@@ -1983,7 +1983,7 @@ namespace m0
             //
             // (?<left_ColonEmptyNew>);;(?<SUB>)(?<right_ColonEmptyNew>)                         
 
-            IVertex o_doubleSemicolon = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>) ::> (?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)");
+            IVertex o_doubleSemicolon = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall>) ::> (?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall>)");
 
             //IVertex o_doubleSemicolon = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLink>);;(?<SUB>)(?<right_ColonEmptyInner2SlashMarkIndexMethodNewLink>)");
 
@@ -1994,9 +1994,9 @@ namespace m0
             o_doubleSemicolon_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleSemicolon"));
 
-            o_doubleSemicolon_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"DoubleOperator\LeftExpression"), "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)");
+            o_doubleSemicolon_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"DoubleOperator\LeftExpression"), "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall>)");
 
-            IVertex o_doubleSemicolon_any_right = o_doubleSemicolon_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"DoubleOperator\RightExpression"), "(?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)");
+            IVertex o_doubleSemicolon_any_right = o_doubleSemicolon_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"DoubleOperator\RightExpression"), "(?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall>)");
 
             IVertex o_doubleSemicolon_any_targetExpr = o_doubleSemicolon_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ExpressionAtom\NextExpression"), "");
 
@@ -2007,7 +2007,7 @@ namespace m0
             //
             // ;;(?<SUB>)(?<right_ColonEmptyNew>)                         
 
-            IVertex o_doubleSemicolon2 = k.AddVertex(keyword, "::> (?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)");
+            IVertex o_doubleSemicolon2 = k.AddVertex(keyword, "::> (?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall>)");
 
             //IVertex o_doubleSemicolon2 = k.AddVertex(keyword, ";;(?<SUB>)(?<right_ColonEmptyInner2SlashMarkIndexMethodNewLink>)");
 
@@ -2018,7 +2018,7 @@ namespace m0
             o_doubleSemicolon2_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleSemicolon"));
 
-            IVertex o_doubleSemicolon2_any_right = o_doubleSemicolon2_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"DoubleOperator\RightExpression"), "(?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)");
+            IVertex o_doubleSemicolon2_any_right = o_doubleSemicolon2_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"DoubleOperator\RightExpression"), "(?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall>)");
 
             IVertex o_doubleSemicolon2_any_targetExpr = o_doubleSemicolon2_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ExpressionAtom\NextExpression"), "");
 
@@ -2028,7 +2028,7 @@ namespace m0
             //
             // (?<left_ColonEmptyNew>);;(?<SUB>)                         
 
-            IVertex o_doubleSemicolon3 = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>) ::>");
+            IVertex o_doubleSemicolon3 = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall>) ::>");
 
             // Vertex o_doubleSemicolon3 = k.AddVertex(keyword, "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLink>);;(?<SUB>)");
 
@@ -2039,7 +2039,7 @@ namespace m0
             o_doubleSemicolon3_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleSemicolon"));
 
-            o_doubleSemicolon3_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"DoubleOperator\LeftExpression"), "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)");
+            o_doubleSemicolon3_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"DoubleOperator\LeftExpression"), "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall>)");
 
             IVertex o_doubleSemicolon3_any_targetExpr = o_doubleSemicolon3_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ExpressionAtom\NextExpression"), "");
 
@@ -2055,7 +2055,7 @@ namespace m0
 
             o_colon.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLink);
 
-            o_colon.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy);
+            o_colon.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall);
 
             o_colon.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethod);
 
@@ -2082,7 +2082,7 @@ namespace m0
 
             o_colon2.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLink);
 
-            o_colon2.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy);
+            o_colon2.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall);
 
             o_colon2.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethod);
 
@@ -2107,7 +2107,7 @@ namespace m0
 
             o_colon3.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLink);
 
-            o_colon3.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy);
+            o_colon3.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall);
 
             o_colon3.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethod);
 
@@ -2131,7 +2131,7 @@ namespace m0
 
             AddSingleOperator(k, smu, smb, keyword, any, "%(?<expr>)", "CopySet");
 
-            LegacySystem.Graph.EasyVertex.Get(k, false, "%(?<expr>)").AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy);
+            LegacySystem.Graph.EasyVertex.Get(k, false, "%(?<expr>)").AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall);
 
             // `
             //
@@ -2146,6 +2146,8 @@ namespace m0
             // [(*(+, +) (?<expr>)*)]
 
             IVertex o_call = k.AddVertex(keyword, "(?<target_ColonEmptyInner2SlashMarkIndexMethodNewLink>)[(*(+, +)(?<expr>)*)]");
+
+            o_call.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall);
 
             IVertex o_call_any = o_call.AddVertex(any, "");
 
@@ -2256,7 +2258,7 @@ namespace m0
 
             AddSingleOperator(k, smu, smb, keyword, any, "((?<expr>))", "()");
 
-            LegacySystem.Graph.EasyVertex.Get(k, false, "((?<expr>))").AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy);
+            LegacySystem.Graph.EasyVertex.Get(k, false, "((?<expr>))").AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall);
 
             // \
             //
@@ -2272,7 +2274,7 @@ namespace m0
 
             o_Slash.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLink);
 
-            o_Slash.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy);
+            o_Slash.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall);
 
             IVertex o_Slash_any = o_Slash.AddVertex(any, "");
 
@@ -2299,7 +2301,7 @@ namespace m0
 
             o_InSlash.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLink);
 
-            o_InSlash.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy);
+            o_InSlash.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall);
 
             IVertex o_InSlash_any = o_InSlash.AddVertex(any, "");
 
@@ -2326,7 +2328,7 @@ namespace m0
 
             o_Mark.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLink);
 
-            o_Mark.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy);
+            o_Mark.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall);
 
             IVertex o_Mark_any = o_Mark.AddVertex(any, "");
 
@@ -2370,7 +2372,7 @@ namespace m0
 
             o_Inner2.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLink);
 
-            o_Inner2.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy);
+            o_Inner2.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall);
 
             o_Inner2.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethod);
 
@@ -2422,7 +2424,7 @@ namespace m0
 
             newValueKeyword.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLink);
 
-            newValueKeyword.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy);
+            newValueKeyword.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall);
 
             IVertex newValueKeyword_any = newValueKeyword.AddVertex(any, "(?<value>)");
 
@@ -2441,7 +2443,7 @@ namespace m0
 
             empty1Keyword.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLink);
 
-            empty1Keyword.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy);
+            empty1Keyword.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall);
 
             empty1Keyword.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethod);
 
@@ -2483,7 +2485,7 @@ namespace m0
 
             at.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLink);
 
-            at.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy);
+            at.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall);
 
             at.AddVertex(linkKeyword, "");
 
@@ -2586,7 +2588,7 @@ namespace m0
 
             o_methodCall.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLink);
 
-            o_methodCall.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy);
+            o_methodCall.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall);
 
             IVertex o_methodCall_any = o_methodCall.AddVertex(any, "");
 

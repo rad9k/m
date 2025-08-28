@@ -208,7 +208,7 @@ Example:
 ```-0
 <@$Keyword :: "@(?<value>)">
 	<@$$KeywordGroup :: @ColonEmptyInner2SlashMarkIndexMethodNewLink>
-	<@$$KeywordGroup :: @ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>
+	<@$$KeywordGroup :: @ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall>
 	<@$$LinkKeyword :: @$Empty>
 	<@(?<ANY>) :: "">
 		<@$Is :: @Link>
@@ -222,12 +222,12 @@ Example:
 Example:
 
 ```-0
-<@$Keyword :: "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>) :: (?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)">
+<@$Keyword :: "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall>) :: (?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall>)">
 	<@$$NonSelfRecursiveParameters :: @$Empty>
 	<@(?<ANY>) :: "">
 		<@$Is :: DoubleColon>
-		<@LeftExpression :: "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)">
-		<@RightExpression :: "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)">
+		<@LeftExpression :: "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall>)">
+		<@RightExpression :: "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall>)">
 		<@NextExpression :: "">
 			<@$$LocalRoot :: @InnerCreation>
 ```
