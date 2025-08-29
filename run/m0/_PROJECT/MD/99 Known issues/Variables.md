@@ -83,8 +83,8 @@ Result:
 ```
 
 Comment:
-- `<+<`` is not `AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex` as the `init` disapeared
-- `<<<`` is not `AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphIncludingLinksAsIsInLeftVertex ` as the `init` disapeared
+- `<+<` is not `AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex` as the `init` disapeared
+- `<<<` is not `AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphIncludingLinksAsIsInLeftVertex ` as the `init` disapeared
 
 ## "copied variable usage
 
@@ -117,18 +117,18 @@ Code:
 Result:
 ```-0
 ""
-	<@examples\Y\a :: "a">
-	<@examples\Y\b :: "copy">
-	<@examples\Y\b :: "b">
-	<@examples\Y\c :: "copy">
+	<@a :: "a">
+	<@b :: "copy">
+	<@b :: "b">
+	<@c :: "copy">
 		"c"
-	<@examples\Y\d :: "d">
-	<@examples\Y\e :: "">
+	<@d :: "d">
+	<@e :: "">
 		"e"
-	<@examples\Y\f :: "">
+	<@f :: "">
 		"f"
 ```
 
 Comment:
-- `<+<`` is not `AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex` as the `init` disapeared
-- `<<<`` is not `AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphIncludingLinksAsIsInLeftVertex ` as the `init` disapeared
+- `<+<` is not `AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex` as the `copy` disapeared
+- `<<<` is not `AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphIncludingLinksAsIsInLeftVertex ` as the `copy` disapeared
