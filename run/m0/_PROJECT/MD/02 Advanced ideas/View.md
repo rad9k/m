@@ -158,3 +158,23 @@ AddHere +< view "view name"{
 	}
 	Source +< ExampleView :: "Target"
 ```
+
+Above code results in the following:
+
+```-0
+"Source"
+	<@set :: "first set">
+		<@value :: "1">
+		<@value :: "2">
+		<@value :: "3">
+	<@set :: "second set">
+		<@value :: "10">
+		<@value :: "20">
+		<@value :: "30">
+		<@value :: "40">
+	<@'Example View' :: "Target">
+		<@summary :: "$Empty">
+			<@count :: "7">
+			<@min :: "1">
+			<@min :: "40">
+```
