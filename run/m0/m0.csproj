@@ -131,6 +131,5 @@
   <ItemGroup>
     <Folder Include="ZeroTypes\UX\" />
     <Folder Include="_PROJECT\MD\04 Web Server\" />
-    <Folder Include="_PROJECT\MD\99 Known issues\" />
   </ItemGroup>
 </Project>
