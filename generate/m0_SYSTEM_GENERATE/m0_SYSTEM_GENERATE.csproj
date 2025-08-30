@@ -115,7 +115,7 @@
     <Content Include="_RES\Lib\Net\HttpServer_Init.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="_RES\Lib\View\View.txt">
+    <Content Include="_RES\Lib\StdView\StdView.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="_RES\UXTemplate\from_m0.txt" />

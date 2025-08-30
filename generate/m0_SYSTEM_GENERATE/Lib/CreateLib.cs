@@ -1,10 +1,12 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.Graph.ExecutionFlow;
 using m0.Lib;
 using m0.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using static m0_SYSTEM_GENERATE.Program;
@@ -127,7 +129,15 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             LibStdView = lib.AddVertex(null, "StdView");
 
-            GraphUtil.LoadTXTParseAndMove_ChildEdges(@"_RES\Lib\View\View.txt", LibStdView);
+            string type_json = "m0.Lib.StdView.Json, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+
+            GraphUtil.LoadTXTParseAndMove_ChildEdges(@"_RES\Lib\StdView\StdView.txt", LibStdView);
+
+            IVertex VertexToJson_Transform_Vertex = LibStdView.Get(false, "VertexToJson_Transform");
+            IVertex JsonToVertex_Transform_Vertex = LibStdView.Get(false, "JsonToVertex_Transform");
+
+            ExecutionFlowHelper.DecorateWithDotNetStaticMethod(VertexToJson_Transform_Vertex, type_json, "VertexToJson_Transform");
+            ExecutionFlowHelper.DecorateWithDotNetStaticMethod(JsonToVertex_Transform_Vertex, type_json, "JsonToVertex_Transform");
         }
 
         public static void CreateLibNet()

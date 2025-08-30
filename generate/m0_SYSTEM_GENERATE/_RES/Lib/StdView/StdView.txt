@@ -1,0 +1,21 @@
+"STORE"
+	function "VertexToJson_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
+	function "JsonToVertex_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
+	"VertexToJson"
+		<@$GraphChangeTrigger :: "CreateView">
+			<@$Is :: @GraphChangeTrigger>
+			<@ChangeTypeFilter :: @OnlyNonTransactedRootVertexEvents>
+			<@ChangeTypeFilter :: @MetaEdgeAdded>
+			<@Listener :: @System\Meta\ZeroTypes\ExecutionFlow\CreateViewMetaEdgeAdded>
+		<@View :: "">
+			<@$Is :: @View>	
+			<@FromToTransformFunction :: @VertexToJson_Transform>
+	"JsonToVertex"
+		<@$GraphChangeTrigger :: "CreateView">
+			<@$Is :: @GraphChangeTrigger>
+			<@ChangeTypeFilter :: @OnlyNonTransactedRootVertexEvents>
+			<@ChangeTypeFilter :: @MetaEdgeAdded>
+			<@Listener :: @System\Meta\ZeroTypes\ExecutionFlow\CreateViewMetaEdgeAdded>
+		<@View :: "">
+			<@$Is :: @View>	
+			<@FromToTransformFunction :: @JsonToVertex_Transform>
