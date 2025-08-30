@@ -3686,6 +3686,22 @@ namespace m0
                  LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Function"),
                  "CreateViewMetaEdgeAdded");
 
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\CreateViewMetaEdgeAdded").AddVertex(
+                 LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method\InputParameter"),
+                 "event");
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\CreateViewMetaEdgeAdded\event").AddEdge(
+              LegacySystem.Graph.EasyVertex.Get(smz, false, "*$EdgeTarget"),
+              LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\Event"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\CreateViewMetaEdgeAdded\event").AddVertex(
+                LegacySystem.Graph.EasyVertex.Get(smz, false, "*$MinCardinality"),
+                "0");
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\CreateViewMetaEdgeAdded\event").AddVertex(
+              LegacySystem.Graph.EasyVertex.Get(smz, false, "*$MaxCardinality"),
+              "-1");
+
             // GenericEventHandler
 
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow").AddVertex(

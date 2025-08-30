@@ -21,7 +21,7 @@ $Empty
 ```
 
 Comment:
-- Strange.
+- View not working and `TEST` not visible. This is not expected.
 
 
 ## View on initialized variable
