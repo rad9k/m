@@ -18,8 +18,8 @@ namespace m0.Graph.ExecutionFlow
             IVertex CreateViewMetaEdgeAdded = GraphUtil.GetQueryOutFirst(ExecutionFlow, null, "CreateViewMetaEdgeAdded");
 
             ExecutionFlowHelper.DecorateWithDotNetStaticMethod(CreateViewMetaEdgeAdded,
-                "m0.Graph.ExecutionFlow.View, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", 
-                "CreateView_ToFromListener");
+                "m0.Graph.ExecutionFlow.View, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                "CreateView_MetaEdgeAdded");
         }
     }
 }
