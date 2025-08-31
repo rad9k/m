@@ -7,14 +7,9 @@ using System.Threading.Tasks;
 
 namespace m0.Lib.StdView
 {
-    public class JsonToVertex
+    public class VertexToJson
     {
         public static INoInEdgeInOutVertexVertex VertexToJson_Transform(IExecution exe)
-        {
-            return null;
-        }
-
-        public static INoInEdgeInOutVertexVertex JsonToVertex_Transform(IExecution exe)
         {
             return null;
         }
