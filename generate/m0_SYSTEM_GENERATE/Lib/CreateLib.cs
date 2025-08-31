@@ -129,15 +129,18 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             LibStdView = lib.AddVertex(null, "StdView");
 
-            string type_json = "m0.Lib.StdView.Json, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
-
             GraphUtil.LoadTXTParseAndMove_ChildEdges(@"_RES\Lib\StdView\StdView.txt", LibStdView);
 
             IVertex VertexToJson_Transform_Vertex = LibStdView.Get(false, "VertexToJson_Transform");
             IVertex JsonToVertex_Transform_Vertex = LibStdView.Get(false, "JsonToVertex_Transform");
 
-            ExecutionFlowHelper.DecorateWithDotNetStaticMethod(VertexToJson_Transform_Vertex, type_json, "VertexToJson_Transform");
-            ExecutionFlowHelper.DecorateWithDotNetStaticMethod(JsonToVertex_Transform_Vertex, type_json, "JsonToVertex_Transform");
+            ExecutionFlowHelper.DecorateWithDotNetStaticMethod(VertexToJson_Transform_Vertex,
+                "m0.Lib.StdView.JsonToVertex, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                "VertexToJson_Transform");
+
+            ExecutionFlowHelper.DecorateWithDotNetStaticMethod(JsonToVertex_Transform_Vertex,
+                "m0.Lib.StdView.VertexToJson, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",, 
+                "JsonToVertex_Transform");
         }
 
         public static void CreateLibNet()
