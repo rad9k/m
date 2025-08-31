@@ -4,18 +4,18 @@
 	"VertexToJson"
 		<@$GraphChangeTrigger :: "CreateView">
 			<@$Is :: @GraphChangeTrigger>
-			<@ChangeTypeFilter :: @OnlyNonTransactedRootVertexEvents>
-			<@ChangeTypeFilter :: @MetaEdgeAdded>
-			<@Listener :: @System\Meta\ZeroTypes\ExecutionFlow\CreateViewMetaEdgeAdded>
+			<@GraphChangeTrigger\ChangeTypeFilter :: @OnlyNonTransactedRootVertexEvents>
+			<@GraphChangeTrigger\ChangeTypeFilter :: @MetaEdgeAdded>
+			<@GraphChangeTrigger\Listener :: @System\Meta\ZeroTypes\ExecutionFlow\CreateViewMetaEdgeAdded>
 		<@View :: "">
 			<@$Is :: @View>	
 			<@FromToTransformFunction :: @VertexToJson_Transform>
 	"JsonToVertex"
 		<@$GraphChangeTrigger :: "CreateView">
 			<@$Is :: @GraphChangeTrigger>
-			<@ChangeTypeFilter :: @OnlyNonTransactedRootVertexEvents>
-			<@ChangeTypeFilter :: @MetaEdgeAdded>
-			<@Listener :: @System\Meta\ZeroTypes\ExecutionFlow\CreateViewMetaEdgeAdded>
+			<@GraphChangeTrigger\ChangeTypeFilter :: @OnlyNonTransactedRootVertexEvents>
+			<@GraphChangeTrigger\ChangeTypeFilter :: @MetaEdgeAdded>
+			<@GraphChangeTrigger\Listener :: @System\Meta\ZeroTypes\ExecutionFlow\CreateViewMetaEdgeAdded>
 		<@View :: "">
 			<@$Is :: @View>	
 			<@FromToTransformFunction :: @JsonToVertex_Transform>
