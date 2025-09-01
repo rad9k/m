@@ -21,6 +21,11 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="_PROJECT\AI\**" />
+    <EmbeddedResource Remove="_PROJECT\AI\**" />
+    <None Remove="_PROJECT\AI\**" />
+  </ItemGroup>
+  <ItemGroup>
     <AppDesigner Include="Properties\" />
 	<PackageReference Include="Microsoft.AspNetCore.App" />       
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />    
@@ -131,6 +136,5 @@
   <ItemGroup>
     <Folder Include="ZeroTypes\UX\" />
     <Folder Include="_PROJECT\MD\04 Web Server\" />
-    <Folder Include="_PROJECT\AI\" />
   </ItemGroup>
 </Project>

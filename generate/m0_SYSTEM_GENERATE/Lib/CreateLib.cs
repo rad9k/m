@@ -135,11 +135,11 @@ namespace m0_SYSTEM_GENERATE.Lib
             IVertex JsonToVertex_Transform_Vertex = LibStdView.Get(false, "JsonToVertex_Transform");
 
             ExecutionFlowHelper.DecorateWithDotNetStaticMethod(VertexToJson_Transform_Vertex,
-                "m0.Lib.StdView.JsonToVertex, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                "m0.Lib.StdView.VertexToJson, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
                 "VertexToJson_Transform");
 
             ExecutionFlowHelper.DecorateWithDotNetStaticMethod(JsonToVertex_Transform_Vertex,
-                "m0.Lib.StdView.VertexToJson, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", 
+                "m0.Lib.StdView.JsonToVertex, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", 
                 "JsonToVertex_Transform");
         }
 

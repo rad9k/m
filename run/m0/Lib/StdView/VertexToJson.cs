@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using m0.Graph;
 using System.Text.Json.Serialization;
+using m0.ZeroTypes;
 
 namespace m0.Lib.StdView
 {
@@ -30,52 +31,56 @@ namespace m0.Lib.StdView
         }
 
         public static string VertexToJson_Process(IVertex baseVertex){
-            if(baseVertex == null)
+            if (baseVertex == null)
                 throw new ArgumentNullException(nameof(baseVertex));
 
-            var visited = new Dictionary<IVertex, VertexJsonNode>();
+            var recursionPath = new HashSet<IVertex>();
 
-            VertexJsonNode BuildNode(IVertex v){
-                if(v == null)
+            VertexJsonNode BuildNode(IVertex v, IEdge incomingEdge){
+                if (v == null)
                     return null;
 
-                if(visited.TryGetValue(v, out var existing))
-                    return existing;
+                if (incomingEdge != null && !VertexOperations.CanCopyEdge(incomingEdge))
+                    return null;
+
+                if (recursionPath.Contains(v))
+                    return new VertexJsonNode { Value = ConvertValue(v.Value) };
 
                 var node = new VertexJsonNode{
                     Value = ConvertValue(v.Value),
                     Relationships = new Dictionary<string, object>()
                 };
 
-                visited[v] = node; // register before traversing to handle cycles
+                recursionPath.Add(v);
 
                 var outEdges = v.OutEdges;
-                if(outEdges != null)
+                if (outEdges != null)
                 {
                     var grouped = outEdges
-                        .Where(e => e != null)
+                        .Where(e => e != null && VertexOperations.CanCopyEdge(e))
                         .GroupBy(e => e.Meta != null && e.Meta.Value != null ? e.Meta.Value.ToString() : "null");
 
-                    foreach(var group in grouped)
+                    foreach (var group in grouped)
                     {
                         var children = group
-                            .Select(e => BuildNode(e.To))
+                            .Select(e => BuildNode(e.To, e))
                             .Where(child => child != null)
                             .ToList();
 
-                        if(children.Count == 1)
+                        if (children.Count == 1)
                             node.Relationships[group.Key] = children[0];
                         else if(children.Count > 1)
                             node.Relationships[group.Key] = children;
                     }
                 }
-
+                
+                recursionPath.Remove(v);
                 return node;
             }
 
-            var root = BuildNode(baseVertex);
+            var root = BuildNode(baseVertex, null);
 
-            var jsonOptions = new JsonSerializerOptions{ WriteIndented = true, ReferenceHandler = ReferenceHandler.Preserve };
+            var jsonOptions = new JsonSerializerOptions{ WriteIndented = true };
             return JsonSerializer.Serialize(root, jsonOptions);
         }
 
