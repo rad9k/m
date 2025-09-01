@@ -22,6 +22,8 @@ namespace m0.Lib.StdView
             if (from == null || to == null)
                 return exe.Stack;
 
+            string json = VertexToJson_Process(from);
+
             //m0.MinusZero.Instance.UserInteraction.InteractionOutput(GraphUtil.GetStringValue(output));
 
             return exe.Stack;

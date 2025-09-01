@@ -139,7 +139,7 @@ namespace m0_SYSTEM_GENERATE.Lib
                 "VertexToJson_Transform");
 
             ExecutionFlowHelper.DecorateWithDotNetStaticMethod(JsonToVertex_Transform_Vertex,
-                "m0.Lib.StdView.VertexToJson, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",, 
+                "m0.Lib.StdView.VertexToJson, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", 
                 "JsonToVertex_Transform");
         }
 
