@@ -1,0 +1,2 @@
+Uzywaj jezyka angielskiego w calym kodzie w tym do wszystkich nazw i komentarzy. 
+Nazwy klas, metod, atrybutow i zmienych publicznych oraz funkcji z duzej litery - upper camel case. Nazwy parametrow i zmiennych przywatnych - lower cammel case.
