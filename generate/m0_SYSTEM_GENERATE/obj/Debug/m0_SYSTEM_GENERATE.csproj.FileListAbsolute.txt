@@ -145,5 +145,5 @@ C:\Users\teres\source\repos\m\generate\m0_SYSTEM_GENERATE\bin\Debug\_RES\Lib\Mus
 C:\Users\teres\source\repos\m\generate\m0_SYSTEM_GENERATE\bin\Debug\_RES\Lib\Music\Instrument\X09\X09_CC.txt
 C:\Users\teres\source\repos\m\generate\m0_SYSTEM_GENERATE\bin\Debug\_RES\Lib\Music\Instrument\X09\X09_mode_1_PitchSet.txt
 C:\Users\teres\source\repos\m\generate\m0_SYSTEM_GENERATE\bin\Debug\_RES\Lib\Music\Instrument\X09\X09_mode_2_PitchSet.txt
-C:\Users\teres\source\repos\m\generate\m0_SYSTEM_GENERATE\bin\Debug\_RES\Lib\View\View.txt
 C:\Users\rad9k\source\repos\m\generate\m0_SYSTEM_GENERATE\bin\Debug\_RES\Lib\StdView\StdView.txt
+C:\Users\teres\source\repos\m\generate\m0_SYSTEM_GENERATE\bin\Debug\_RES\Lib\StdView\StdView.txt

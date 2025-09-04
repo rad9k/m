@@ -5,10 +5,11 @@
 	"m3"
 	"t"
 		<@m1 :: "raz">
-			"raz kotek"
-				"k1"
+			<@m2 :: "raz kotek">
+				<@m3 :: "kotek">
 				"k2"
-			"raz piesek"
+			<@m2 :: "raz piesek">
+				<@m3 :: "piesek">
 			<@m3 :: "trzy">			
 		<@m2 :: "dwa">
 			"dwa kotek"

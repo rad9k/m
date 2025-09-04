@@ -100,7 +100,7 @@ namespace m0.ZeroTypes
             GraphUtil.DeleteEdge(source, metaVertex, toVertex);
         }        
 
-        public static bool IsAtomicVertex(IVertex vertex)
+        public static bool IsAtomicVertex(IVertex vertex) // vertex can always have $GraphChangeTrigger
         {
             if (vertex.OutEdges.Count() > 0)
                 return false;
