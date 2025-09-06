@@ -12,18 +12,22 @@ namespace m0.ZeroTypes
 {
     public class VertexOperations
     {
+        static string[] NoCopyNoCountMetaValue = {"$GraphChangeTrigger"};
+
         public static bool CanCopyEdge(IEdge e)
         {
-            if (e.Meta.Value.ToString() == "$GraphChangeTrigger")
-                return false;
+            foreach (string s in NoCopyNoCountMetaValue)
+                if (e.Meta.Value.ToString() == s)
+                    return false;
 
             return true;
         }
 
         public static bool CanCopyMeta(IVertex v)
         {
-            if (v.Value.ToString() == "$GraphChangeTrigger")
-                return false;
+            foreach (string s in NoCopyNoCountMetaValue)
+                if (v.Value.ToString() == s)
+                    return false;
 
             return true;
         }
@@ -71,22 +75,22 @@ namespace m0.ZeroTypes
                 return true;
         }
 
-        public static bool IsInheritedEdge(IVertex baseVertex, IVertex metaVertex)
+        public static bool IsInherited(IVertex baseVertex, string isInheritedFrom_String)
         {
             foreach (IEdge e in GraphUtil.GetQueryOut(baseVertex, "$Inherits",null))
-                if (_IsInheritedEdge(e.To, metaVertex))
+                if (_IsInherited(e.To, isInheritedFrom_String))
                     return true;
 
             return false;
         }
 
-        private static bool _IsInheritedEdge(IVertex baseVertex, IVertex metaVertex)
+        private static bool _IsInherited(IVertex baseVertex, string isInheritedFrom_String)
         {
-            if (GraphUtil.ExistQueryOut(baseVertex, metaVertex.Value, null))
+            if (GraphUtil.ExistQueryOut(baseVertex, isInheritedFrom_String, null))
                 return true;
 
             foreach (IEdge e in GraphUtil.GetQueryOut(baseVertex, "$Inherits", null))
-                if (_IsInheritedEdge(e.To, metaVertex))
+                if (_IsInherited(e.To, isInheritedFrom_String))
                     return true;
 
             return false;
@@ -102,10 +106,26 @@ namespace m0.ZeroTypes
 
         public static bool IsAtomicVertex(IVertex vertex) // vertex can always have $GraphChangeTrigger
         {
-            if (vertex.OutEdges.Count() > 0)
-                return false;
+            if (vertex.OutEdges.Count() == 0)
+                return true;
 
-            return true;
+            int cnt = 0;
+
+            foreach (string s in NoCopyNoCountMetaValue)
+                cnt += GraphUtil.GetQueryOutCount(vertex, s, null);
+
+            if (vertex.OutEdges.Count() == cnt)
+                return true;
+
+            return false;
+        }
+
+        public static bool IsAtomicEdge(IEdge edge) // vertex can always have $GraphChangeTrigger
+        {
+            if (IsInherited(edge.Meta, "AtomType"))
+                return true;
+
+            return IsAtomicVertex(edge.To);
         }
 
         public static IVertex GetChildEdges(IVertex metaVertex)
@@ -284,12 +304,7 @@ namespace m0.ZeroTypes
             IVertex children = metaVertex; // can use VertexOperations.GetChildEdges, but $DefaultValue: should be OK
 
             foreach (IEdge child in children)
-            {
-                if (child.To.Value.ToString() == "FormalTextLanguageProgessing")
-                {
-                    int z = 0;
-                }
-
+            {                
                 bool canAdd = false;
 
                 IVertex childMetaVertex = child.Meta;
@@ -318,8 +333,6 @@ namespace m0.ZeroTypes
                 if (canAdd)
                     if (GraphUtil.ExistQueryOut(child.To, "$DefaultValue", null))
                     {   
-
-
                         if (IsLink(child.Meta)) // if link, then we do not want to add default value, but just edge
                             nv.AddEdge(child.To, GraphUtil.GetQueryOutFirst(child.To, "$DefaultValue", null));
                         else
