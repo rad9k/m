@@ -104,7 +104,7 @@ namespace m0.ZeroTypes
             GraphUtil.DeleteEdge(source, metaVertex, toVertex);
         }        
 
-        public static bool IsAtomicVertex(IVertex vertex) // vertex can always have $GraphChangeTrigger
+        public static bool IsAtomicVertex(IVertex vertex) // vertex can always have multiple $GraphChangeTrigger
         {
             if (vertex.OutEdges.Count() == 0)
                 return true;
@@ -120,7 +120,7 @@ namespace m0.ZeroTypes
             return false;
         }
 
-        public static bool IsAtomicEdge(IEdge edge) // vertex can always have $GraphChangeTrigger
+        public static bool IsAtomicEdge(IEdge edge) // vertex can always have multiple $GraphChangeTrigger
         {
             if (IsInherited(edge.Meta, "AtomType"))
                 return true;
