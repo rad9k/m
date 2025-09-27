@@ -28,7 +28,7 @@ namespace m0.Lib.StdView
 
             to.Value = json;
 
-            //m0.MinusZero.Instance.UserInteraction.InteractionOutput(GraphUtil.GetStringValue(output));
+            m0.MinusZero.Instance.UserInteraction.InteractionOutput(GraphUtil.GetStringValue(to));
 
             return exe.Stack;
         }
@@ -42,10 +42,25 @@ namespace m0.Lib.StdView
                 SkipValidation = false
             };
 
-            using var writer = new Utf8JsonWriter(buffer, options);
-            return "kal";
+            Utf8JsonWriter writer = new Utf8JsonWriter(buffer, options);
+
+            ProcessVertex(baseVertex, writer);
+
+            writer.Flush();
+            return Encoding.UTF8.GetString(buffer.WrittenSpan);            
         }
 
-        static voiiiiiiiiiid
+        static void ProcessVertex(IVertex baseVertex, Utf8JsonWriter writer) { 
+            writer.WriteStartObject();
+
+            foreach (IEdge e in baseVertex)
+            {                
+                if (VertexOperations.IsAtomicEdge(e))
+
+            }
+            
+            writer.WriteEndObject();            
+        }
+
     }
 }
