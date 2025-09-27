@@ -44,22 +44,90 @@ namespace m0.Lib.StdView
 
             Utf8JsonWriter writer = new Utf8JsonWriter(buffer, options);
 
-            ProcessVertex(baseVertex, writer);
+            IList<IVertex> visited = new List<IVertex>();
+
+            ProcessVertex(baseVertex, writer, visited);
 
             writer.Flush();
             return Encoding.UTF8.GetString(buffer.WrittenSpan);            
         }
 
-        static void ProcessVertex(IVertex baseVertex, Utf8JsonWriter writer) { 
+        static void ProcessVertex(IVertex baseVertex, Utf8JsonWriter writer, IList<IVertex> visited) { 
+            if (visited.Contains(baseVertex))
+            {
+                WriteAtomVertex(baseVertex, writer);
+                return;
+            }
+
+            visited.Add(baseVertex);
+
             writer.WriteStartObject();
 
             foreach (IEdge e in baseVertex)
-            {                
-                if (VertexOperations.IsAtomicEdge(e))
+                if (!VertexOperations.IsViewVertex(e.To))
+                {
+                    if (VertexOperations.IsAtomicEdge(e))
+                        WriteAtomicEdge(e, writer);
+                    else
+                    {
+                        string metaValue = GraphUtil.GetStringValue(e.Meta);
 
-            }
-            
+                        if (metaValue != "$Empty")
+                            writer.WritePropertyName(metaValue);
+                        else
+                            writer.WritePropertyName(GraphUtil.GetStringValue(e.To));
+
+                        ProcessVertex(e.To, writer, visited);
+                    }
+                        
+                }
+                        
             writer.WriteEndObject();            
+        }
+
+        static void WriteAtomicEdge(IEdge e, Utf8JsonWriter writer)
+        {
+            writer.WritePropertyName(GraphUtil.GetStringValue(e.Meta));
+
+            WriteAtomVertex(e.To, writer);
+        }
+
+        static void WriteAtomVertex(IVertex v, Utf8JsonWriter writer)
+        {
+            var value = v.Value;
+
+            if (value is string)
+            {
+                writer.WriteStringValue((string)value);
+            }
+            else if (value is int)
+            {
+                writer.WriteNumberValue((int)value);
+            }
+            else if (value is long)
+            {
+                writer.WriteNumberValue((long)value);
+            }
+            else if (value is float)
+            {
+                writer.WriteNumberValue((float)value);
+            }
+            else if (value is double)
+            {
+                writer.WriteNumberValue((double)value);
+            }
+            else if (value is bool)
+            {
+                writer.WriteBooleanValue((bool)value);
+            }
+            else if (value == null)
+            {
+                writer.WriteNullValue();
+            }
+            else
+            {
+                writer.WriteStringValue(value.ToString());
+            }
         }
 
     }

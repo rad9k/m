@@ -104,6 +104,14 @@ namespace m0.ZeroTypes
             GraphUtil.DeleteEdge(source, metaVertex, toVertex);
         }        
 
+        public static bool IsViewVertex(IVertex vertex)
+        {
+            if (GraphUtil.ExistQueryOut(vertex, "$GraphChangeTrigger", "CreateView"))
+                return true;
+
+            return false;
+        }
+
         public static bool IsAtomicVertex(IVertex vertex) // vertex can always have multiple $GraphChangeTrigger
         {
             if (vertex.OutEdges.Count() == 0)
