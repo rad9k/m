@@ -66,7 +66,7 @@ namespace m0.Lib.StdView
             foreach (IEdge e in baseVertex)
                 if (!VertexOperations.IsViewVertex(e.To))
                 {
-                    if (VertexOperations.IsAtomicEdge(e))
+                    if (VertexOperations.IsAtomicEdge(e) || VertexOperations.IsLink(e))
                         WriteAtomicEdge(e, writer);
                     else
                     {
