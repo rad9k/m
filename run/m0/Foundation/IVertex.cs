@@ -50,23 +50,7 @@ namespace m0.Foundation
 
         IList<IEdge> MetaInEdgesRaw { get; } // without $Inherits
 
-
         INoInEdgeInOutVertexVertex Execute(IExecution exe);
-
-        // 3.0 BEG
-
-        int ExternalReferenceCount { get; }
-
-        void AddExternalReference();
-
-        void RemoveExternalReference();
-
-        void CheckIfShouldDispose();
-
-        bool HasOnlyNonTransactedRootVertexEventsEdge { get; }
-
-
-        // 3.0 END
 
         // 2.0 BEG
 
@@ -80,6 +64,26 @@ namespace m0.Foundation
         void QueryInEdges(object meta, object from, out IEdge result, out IList<IEdge> results);
 
         // 2.0 END
+
+        // 3.0 BEG
+
+        int ExternalReferenceCount { get; }
+
+        void AddExternalReference();
+
+        void RemoveExternalReference();
+
+        void CheckIfShouldDispose();
+
+        bool HasOnlyNonTransactedRootVertexEventsEdge { get; }
+
+        // 3.0 END
+
+        // 5.0 BEG
+
+
+
+        // 5.0 END
 
         IVertex AddVertex(IVertex metaVertex, object val);
 
