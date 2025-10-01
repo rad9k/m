@@ -12,31 +12,31 @@ namespace m0.ZeroTypes
 {
     public class VertexOperations
     {
-        static string[] NoCopyNoCountMetaValue = {"$GraphChangeTrigger"};
-        static string[] NoCopyNoCountVertexIsValue = { "GraphChangeTrigger" };
+        static string[] NoCopyCountViewMetaValue = {"$GraphChangeTrigger"};
+        static string[] NoCopyCountViewVertexIsValue = { "GraphChangeTrigger" };
 
-        public static bool CanCopyEdge(IEdge e)
+        public static bool CanCopyCountViewEdge(IEdge e)
         {
-            foreach (string s in NoCopyNoCountMetaValue)
+            foreach (string s in NoCopyCountViewMetaValue)
                 if (e.Meta.Value.ToString() == s)
                     return false;
 
             return true;
         }
 
-        public static bool CanCopyMeta(IVertex v)
+        public static bool CanCopyCountViewMeta(IVertex v)
         {
-            foreach (string s in NoCopyNoCountMetaValue)
+            foreach (string s in NoCopyCountViewMetaValue)
                 if (v.Value.ToString() == s)
                     return false;
 
             return true;
         }
 
-        public static bool CanCopyVertex(IVertex v)
+        public static bool CanCopyCountViewVertex(IVertex v)
         {
-            foreach (string s in NoCopyNoCountMetaValue)
-                if (v.Value.ToString() == s)
+            foreach (string s in NoCopyCountViewVertexIsValue)
+                if (GraphUtil.ExistQueryOut(v, "$Is", s))
                     return false;
 
             return true;
@@ -129,7 +129,7 @@ namespace m0.ZeroTypes
 
             int cnt = 0;
 
-            foreach (string s in NoCopyNoCountMetaValue)
+            foreach (string s in NoCopyCountViewMetaValue)
                 cnt += GraphUtil.GetQueryOutCount(vertex, s, null);
 
             if (vertex.OutEdges.Count() == cnt)

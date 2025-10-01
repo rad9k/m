@@ -170,7 +170,7 @@ namespace m0.ZeroCode
                 else
                     linearizedTo = e.To;
 
-               if (VertexOperations.CanCopyMeta(linearizedMeta))
+               if (VertexOperations.CanCopyCountViewMeta(linearizedMeta))
                     linearizedVertex.AddEdge(linearizedMeta, linearizedTo);
 
                 LinearizeGraph_Reccurent(e.To, sourceLinerizedDict, beenList);
