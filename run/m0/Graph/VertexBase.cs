@@ -422,5 +422,10 @@ namespace m0.Graph
         {
 
         }
+
+        public IDictionary<object, object> GetOutOdgesByMeta()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

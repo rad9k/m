@@ -81,7 +81,7 @@ namespace m0.Foundation
 
         // 5.0 BEG
 
-
+        IDictionary<object, object> GetOutOdgesByMeta();
 
         // 5.0 END
 

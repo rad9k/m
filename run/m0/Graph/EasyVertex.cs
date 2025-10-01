@@ -587,12 +587,20 @@ namespace m0.Graph
                     v.OutEdgesDictionariesNeedsRebuild = true;
         }
 
+        public IDictionary<object, object> GetOutOdgesByMeta()
+        {
+            if (OutEdgesDictionariesNeedsRebuild_Meta)
+                OutEdgesDictionariesRebuild_Meta();
+
+            return OutEdgesByMeta;
+        }
+
         public override void QueryOutEdges(object meta, object to, out IEdge result, out IList<IEdge> results)
          {
             result = null;
             results = null;
 
-            if(meta!=null && to == null)
+            if (meta!=null && to == null)
             {
                 if (OutEdgesDictionariesNeedsRebuild_Meta)
                     OutEdgesDictionariesRebuild_Meta();

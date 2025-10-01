@@ -13,6 +13,7 @@ namespace m0.ZeroTypes
     public class VertexOperations
     {
         static string[] NoCopyNoCountMetaValue = {"$GraphChangeTrigger"};
+        static string[] NoCopyNoCountVertexIsValue = { "GraphChangeTrigger" };
 
         public static bool CanCopyEdge(IEdge e)
         {
@@ -24,6 +25,15 @@ namespace m0.ZeroTypes
         }
 
         public static bool CanCopyMeta(IVertex v)
+        {
+            foreach (string s in NoCopyNoCountMetaValue)
+                if (v.Value.ToString() == s)
+                    return false;
+
+            return true;
+        }
+
+        public static bool CanCopyVertex(IVertex v)
         {
             foreach (string s in NoCopyNoCountMetaValue)
                 if (v.Value.ToString() == s)

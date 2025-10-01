@@ -53,6 +53,7 @@ namespace m0.Lib.StdView
         }
 
         static void ProcessVertex(IVertex baseVertex, Utf8JsonWriter writer, IList<IVertex> visited) { 
+           // if (VertexOperations.CanCopyEdge)
             if (visited.Contains(baseVertex))
             {
                 WriteAtomVertex(baseVertex, writer);
