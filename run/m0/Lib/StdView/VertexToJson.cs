@@ -78,7 +78,7 @@ namespace m0.Lib.StdView
                     writer.WriteStartArray();
 
                     foreach(IEdge e in (List_VertexBase)kvp.Value)
-                        if (!VertexOperations.IsViewVertex(e.To))
+                        if (VertexOperations.CanCopyCountViewEdge(e) && !VertexOperations.IsViewVertex(e.Meta))
                         {
                             if (VertexOperations.IsAtomicEdge(e) || VertexOperations.IsLink(e))
                                 WriteAtomVertex(e.To, writer);
@@ -92,7 +92,7 @@ namespace m0.Lib.StdView
                 {
                     IEdge e = (IEdge)kvp.Value;
 
-                    if (!VertexOperations.IsViewVertex(e.To))
+                    if (VertexOperations.CanCopyCountViewEdge(e) && !VertexOperations.IsViewVertex(e.Meta))
                     {
                         if (VertexOperations.IsAtomicEdge(e) || VertexOperations.IsLink(e))
                             WriteAtomEdge(e, writer);
@@ -108,6 +108,7 @@ namespace m0.Lib.StdView
                             ProcessVertex(e.To, writer, visited);
                         }
                     }
+                    
                 }
             }
 
