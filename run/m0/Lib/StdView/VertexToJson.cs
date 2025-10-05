@@ -78,9 +78,11 @@ namespace m0.Lib.StdView
                             ProcessVertex_NoArray(writer, visited, e);
                     }
                     else
+                    {
                         writer.WritePropertyName(meta);
 
-                    ProcessVertex_Array(writer, visited, kvp);
+                        ProcessVertex_Array(writer, visited, kvp);
+                    }
                 }
                 else
                 {
