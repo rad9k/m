@@ -132,19 +132,10 @@ namespace m0.Lib.StdView
         }
 
         static void WriteAtomEdge(IEdge e, Utf8JsonWriter writer)
-        {
-            string metaValue = GraphUtil.GetStringValue(e.Meta);
+        {            
+            writer.WritePropertyName(GraphUtil.GetStringValue(e.Meta));
 
-            if (metaValue != "$Empty")
-            {
-                writer.WritePropertyName(GraphUtil.GetStringValue(e.Meta));
-
-                WriteAtomVertex(e.To, writer);
-            }
-            else
-            {
-                writer.WriteString()
-            }
+            WriteAtomVertex(e.To, writer);            
         }
 
         static void WriteAtomVertex(IVertex v, Utf8JsonWriter writer)
