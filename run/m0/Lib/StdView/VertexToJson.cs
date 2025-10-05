@@ -72,66 +72,61 @@ namespace m0.Lib.StdView
                 {
                     string meta = kvp.Key.ToString();
 
-                    if (meta != "$Empty")
+                    if (meta == "$Empty")
+                    {
+                        foreach (IEdge e in (List_VertexBase)kvp.Value)
+                            ProcessVertex_NoArray(writer, visited, e);
+                    }
+                    else
                         writer.WritePropertyName(meta);
 
-                    writer.WriteStartArray();
-
-                    foreach(IEdge e in (List_VertexBase)kvp.Value)
-                        if (VertexOperations.CanCopyCountViewEdge(e) && !VertexOperations.IsViewVertex(e.Meta))
-                        {
-                            if (VertexOperations.IsAtomicEdge(e) || VertexOperations.IsLink(e))
-                                WriteAtomVertex(e.To, writer);
-                            else
-                                ProcessVertex(e.To, writer, visited);
-                        }
-
-                    writer.WriteEndArray();
+                    ProcessVertex_Array(writer, visited, kvp);
                 }
                 else
                 {
                     IEdge e = (IEdge)kvp.Value;
 
-                    if (VertexOperations.CanCopyCountViewEdge(e) && !VertexOperations.IsViewVertex(e.Meta))
-                    {
-                        if (VertexOperations.IsAtomicEdge(e) || VertexOperations.IsLink(e))
-                            WriteAtomEdge(e, writer);
-                        else
-                        {
-                            string metaValue = GraphUtil.GetStringValue(e.Meta);
-
-                            if (metaValue != "$Empty")
-                                writer.WritePropertyName(metaValue);
-                            else
-                                writer.WritePropertyName(GraphUtil.GetStringValue(e.To));
-
-                            ProcessVertex(e.To, writer, visited);
-                        }
-                    }
-                    
+                    ProcessVertex_NoArray(writer, visited, e);
                 }
             }
-
-            /*foreach (IEdge e in baseVertex)
-                if (!VertexOperations.IsViewVertex(e.To))
-                {
-                    if (VertexOperations.IsAtomicEdge(e) || VertexOperations.IsLink(e))
-                        WriteAtomEdge(e, writer);
-                    else
-                    {
-                        string metaValue = GraphUtil.GetStringValue(e.Meta);
-
-                        if (metaValue != "$Empty")
-                            writer.WritePropertyName(metaValue);
-                        else
-                            writer.WritePropertyName(GraphUtil.GetStringValue(e.To));
-
-                        ProcessVertex(e.To, writer, visited);
-                    }
-                        
-                }*/
                         
             writer.WriteEndObject();            
+        }
+
+        private static void ProcessVertex_Array(Utf8JsonWriter writer, IList<IVertex> visited, KeyValuePair<object, object> kvp)
+        {
+            writer.WriteStartArray();
+
+            foreach (IEdge e in (List_VertexBase)kvp.Value)
+                if (VertexOperations.CanCopyCountViewEdge(e) && !VertexOperations.IsViewVertex(e.Meta))
+                {
+                    if (VertexOperations.IsAtomicEdge(e) || VertexOperations.IsLink(e))
+                        WriteAtomVertex(e.To, writer);
+                    else
+                        ProcessVertex(e.To, writer, visited);
+                }
+
+            writer.WriteEndArray();
+        }
+
+        private static void ProcessVertex_NoArray(Utf8JsonWriter writer, IList<IVertex> visited, IEdge e)
+        {
+            if (VertexOperations.CanCopyCountViewEdge(e) && !VertexOperations.IsViewVertex(e.Meta))
+            {
+                if (VertexOperations.IsAtomicEdge(e) || VertexOperations.IsLink(e))
+                    WriteAtomEdge(e, writer);
+                else
+                {
+                    string metaValue = GraphUtil.GetStringValue(e.Meta);
+
+                    if (metaValue != "$Empty")
+                        writer.WritePropertyName(metaValue);
+                    else
+                        writer.WritePropertyName(GraphUtil.GetStringValue(e.To));
+
+                    ProcessVertex(e.To, writer, visited);
+                }
+            }
         }
 
         static void WriteAtomEdge(IEdge e, Utf8JsonWriter writer)
