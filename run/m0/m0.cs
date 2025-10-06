@@ -438,6 +438,11 @@ namespace m0
                 root.AddEdge(root.Get(false, @"System\Meta\Store\FileSystem\Start"), startVertex);            
         }
 
+        void CreateTemp()
+        {                                   
+            root.AddVertex(null, "Temp");
+        }
+
         void Autostart()
         {
             IVertex autostartVertex = root.Get(false, "Autostart");
@@ -499,6 +504,8 @@ namespace m0
 
 
             CreateStart();
+
+            CreateTemp();
 
             CreateAutostart();
 

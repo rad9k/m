@@ -36,7 +36,7 @@
 			<@Query :: "query body">
 		<@Expression :: "">
 			<@Is :: @ChangeTypeFilter>
-			<@Value :: @ChangeTypeFilterEnum\Value>
+			<@Value :: @ChangeTypeFilterEnum\ValueChange>
 		<@Expression :: "">
 			<@Is :: @Listener>
 			<@Target :: @ListenerFunction>
@@ -46,17 +46,17 @@
 ## create trigger syntax
 
 ```-0
-trigger "trigger name" {
-	filter @GraphChangeFilterEnum\value
+create trigger "trigger name" {
+	filter @@GraphChangeFilterEnum\ValueChange
 	query "query body"
-	listener @ListenerFunction
+	listener @@ListenerFunction
 }
 ```
 
 above expression will create trigger at local stack, so that means it can be used in following way
 
 ```-0
-AddHere +< trigger "trigger name"{
+AddHere +< create trigger "trigger name"{
 	...
 }
 ```

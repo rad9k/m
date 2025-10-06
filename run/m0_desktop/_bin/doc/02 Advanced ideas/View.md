@@ -1,5 +1,23 @@
 # Views
 
+## Graph
+
+```-0
+<@View :: "">
+	<@$Is :: @View>
+	<@FromTriggerQuery :: "query body">
+	<@FromTriggerFilter :: @GraphChangeEnum\ValueChange>
+	<@FromToTransformFunction :: @f>
+	<@ToTriggerQuery :: "query body">
+	<@ToTriggerFilter :: @GraphChangeEnum\ValueChange>
+	<@ToFromTransformFunction :: @f>
+<@$GraphChangeTrigger :: "CreateView">
+	<@$Is :: @GraphChangeTrigger>
+	<@ChangeTypeFilter :: @OnlyNonTransactedRootVertexEvents>
+	<@ChangeTypeFilter :: @MetaEdgeAdded>
+	<@Listener :: @CreateViewMetaEdgeAdded>
+```
+
 ## About
 
 _View_ is defined as _meta edge_. When this _meta edge_ is added to given vertex (the given vertex will be called from now the _source_ vertex), the _view_ is created in the _target_ vertex.
@@ -35,7 +53,7 @@ __After the "Possible view definitions" table (below) evaluation we come to conc
 |updatable target to source    |updatable      |target to source|NO            |NO                       |YES           |YES                      |
 |updatable both                |updatable      |both            |YES           |YES                      |YES           |YES                      |
 
-## Create trigger Graph
+## Create view Graph
 
 ```-0
 <(?<ANY>) :: "">
@@ -65,11 +83,11 @@ __After the "Possible view definitions" table (below) evaluation we come to conc
 
 ## Transform function parameters
 
-- event @Vertex
+- event @Event
 	- if event == ~00 than transform function is expected to generate whole source/target (so this is not a _transform_ function but a _generate_)
-- from @Vertex
-- meta @Vertex
-- to @Vertex
+- from @VertexType
+- meta @VertexType
+- to @VertexType
 
 ## How to define source / target trigger
 
@@ -85,13 +103,13 @@ So it means that there:
 ## create view syntax
 
 ```-0
-view "trigger name" {
+create view {
 	from query "query body"
-	from filter @GraphChangeFilterEnum\value
-	from to transform @TransformFunction
+	from filter @@GraphChangeFilterEnum\ValueChange
+	from to transform @@TransformFunction
 	to query "query body"
-	to filter @GraphChangeFilterEnum\value
-	to from transform @TransformFunction
+	to filter @@GraphChangeFilterEnum\ValueChange
+	to from transform @@TransformFunction
 }
 ```
 
@@ -101,4 +119,62 @@ above expression will create view at local stack, so that means it can be used i
 AddHere +< view "view name"{
 	...
 }
+```
+
+## example
+
+```-0
+"EXAMPLE"
+	import @System\Lib\Std direct meta
+	variable "ExampleView" @VertexType
+	variable "Source" @VertexType
+	"set"
+		"value"
+	"summary"
+		"min"
+		"max"
+		"count"
+	function "ExampleView_FromToTransform" (@Event "viewEvent", @VertexType "from", @VertexType "meta", @VertexType "to")
+		to +< @@summary ::{
+			@@summary\count :: from\set\value<>
+			@@summary\min :: @@Min[from\set\value]
+			@@summary\min :: @@Max[from\set\value]
+		}
+	ExampleView = "Example View"
+	ExampleView +< create view{
+		from to transform @@ExampleView_FromToTransform
+	}
+	Source = "Source"
+	Source +< @@set :: "first set"{
+		@@set\value :: "1"
+		@@set\value :: "2"
+		@@set\value :: "3"
+	}
+	Source +< @@set :: "second set"{
+		@@set\value :: "10"
+		@@set\value :: "20"
+		@@set\value :: "30"
+		@@set\value :: "40"
+	}
+	Source +< ExampleView :: "Target"
+```
+
+Above code results in the following:
+
+```-0
+"Source"
+	<@set :: "first set">
+		<@value :: "1">
+		<@value :: "2">
+		<@value :: "3">
+	<@set :: "second set">
+		<@value :: "10">
+		<@value :: "20">
+		<@value :: "30">
+		<@value :: "40">
+	<@'Example View' :: "Target">
+		<@summary :: "$Empty">
+			<@count :: "7">
+			<@min :: "1">
+			<@min :: "40">
 ```

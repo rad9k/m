@@ -136,11 +136,11 @@ Edges resulting from keyword definition containing `$$StartInLocalRoot` meta edg
 ```
 - Code source string
 ```-0
-query<<"1">>
+query<<"5">>
 ```
 - Result graph
 ```-0
-<@$Empty :: "a">
+<@$Empty :: "query">
 	<@$Is :: @Query>
 	<@NextExpression :: "">
 		<@$Is :: @SetIndex>

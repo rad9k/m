@@ -2,14 +2,14 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 "webserver"
 	import @System\Lib\Net direct meta
 	
-	variable "v_map" @VertexType
+	variable "map" @VertexType
 	variable "server" @HttpServer
 	
 	function "handler"(@String "url")
 		return @@Autostart\web\MDServe\MDServe_Handler[Start\:doc, url]
 		
-	v_map +< create http mapping "map"{
+	map +< create http mapping "map"{
 		mapping @@HttpActionEnum\GET "/*" @@handler
 	}
-	server = new @@HttpServer[v_map\:map, "5000"]
+	server = new @@HttpServer[map\:map, "5000"]
 	server.Start[]
