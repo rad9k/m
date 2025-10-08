@@ -66,15 +66,24 @@ namespace m0.ZeroUML.Instructions
             IEdge e;
             IList<IEdge> eList;
 
-            IList<string> processedValueList = processQueryValue(exe, value);
+            bool queryByVariable;
+            IList<string> processedValueList = processQueryValue(exe, value, out queryByVariable);
 
 
             foreach (string processedValue in processedValueList)
             {
-                if (exe.MetaMode)
-                    inputQs.QueryOutEdges(processedValue, null, out e, out eList);
-                else
-                    inputQs.QueryOutEdges(null, processedValue, out e, out eList);
+                if (queryByVariable)
+                {
+                    if (processedValue.Length > 0 && processedValue[0]==':')
+                        inputQs.QueryOutEdges(null, processedValue.Substring(1), out e, out eList);
+                    else
+                        inputQs.QueryOutEdges(processedValue, null, out e, out eList);                                            
+                } else { 
+                    if (exe.MetaMode)
+                        inputQs.QueryOutEdges(processedValue, null, out e, out eList);
+                    else
+                        inputQs.QueryOutEdges(null, processedValue, out e, out eList);
+                }
 
                 if (e != null)
                     newQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(e);
@@ -88,6 +97,14 @@ namespace m0.ZeroUML.Instructions
 
         private static List<string> processQueryValue(ZeroCodeExecution exe, string value)
         {
+            bool queryByVariable;
+            return processQueryValue(exe, value, out queryByVariable);
+        }
+
+        private static List<string> processQueryValue(ZeroCodeExecution exe, string value, out bool queryByVariable)
+        {
+            queryByVariable = false;
+
             List<string> retList = new List<string>();
 
             if (value == null)
@@ -99,15 +116,17 @@ namespace m0.ZeroUML.Instructions
                 return retList;
             }
 
-            if (value.Length > 2 && value[0] == '{' && value[value.Length - 1] == '}')
+            if (value.Length > 2 && value[0] == '(' && value[value.Length - 1] == ')')
             {
-                string expression = value.Substring(1, value.Length - 3);
+                string expression = value.Substring(1, value.Length - 2);
 
                 IEnumerable<IEdge> stackQueryResult = exe.Stack.GetAll(exe.MetaMode, expression);
 
                 foreach (IEdge e in stackQueryResult)
                     if (e.To.Value != null)
                         retList.Add(e.To.Value.ToString());
+
+                queryByVariable = true;
             }
             else
                 retList.Add(value);
