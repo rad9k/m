@@ -101,7 +101,9 @@ namespace m0.Store.FileSystem
         }                        
 
         protected override void UpdateFileSystemVertex()
-        {         
+        {
+            AddVertexToFileSystemVertex(MinusZero.Instance.Is, FileSystemStore.File);
+
             GraphUtil.RemoveAllEdges(FileSystemVertex);
 
             AddVertexToFileSystemVertex(FileSystemStore.File_Filename, FI.Name);            
@@ -110,9 +112,8 @@ namespace m0.Store.FileSystem
 
             if (extension.Length > 1)
                 extension = extension.Substring(1);
-
-            AddVertexToFileSystemVertex(FileSystemStore.File_Extension, extension);
-
+            
+            AddVertexToFileSystemVertex(FileSystemStore.File_Extension, FileSystemStore.File);
             AddVertexToFileSystemVertex(FileSystemStore.File_FullFilename, FI.FullName);
             AddVertexToFileSystemVertex(FileSystemStore.File_Size, FI.Length.ToString());
             AddVertexToFileSystemVertex(FileSystemStore.File_FileAttribute, FI.Attributes.ToString());

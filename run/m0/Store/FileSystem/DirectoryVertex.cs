@@ -67,7 +67,9 @@ namespace m0.Store.FileSystem
         }
 
         protected override void UpdateFileSystemVertex()
-        {           
+        {
+            AddVertexToFileSystemVertex(MinusZero.Instance.Is, FileSystemStore.Directory);
+
             AddVertexToFileSystemVertex(FileSystemStore.Directory_Filename, DI.Name);
 
             string extension = DI.Extension;

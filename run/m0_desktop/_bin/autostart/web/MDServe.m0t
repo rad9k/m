@@ -3,10 +3,13 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 	function "MDServe_Handler" (@VertexType "startDir", @String "url")
 		if url == "/"
 			return @@ret_index[]
+			
 		if url == "/script.js"
 			return @@ret_script[]
+			
 		if url == "/tree.json"
-			return @@ret_tree[]
+			return @@ret_tree[startDir]
+			
 		return "ok"
 		
 	function "ret_index" ()
@@ -15,5 +18,28 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 	function "ret_script" ()
 		return Start\:web\:'script.js'\Content
 		
-	function "ret_tree" ()
-		return Start\:web\:'tree.json'\Content
+	"TestData"
+		"Meta"
+			"id"
+			"title"
+			"children"
+		"Json"
+			""
+				<@?'TestData' :: "ajdi">
+		
+	function "ret_tree" (@String "startDir")
+		variable "startDirId" @String
+		variable "treeVertex" @VertexType
+		
+		startDirId = startDir\FullFilename
+		
+		if :Temp\:'(startDirId)'<>!="0"
+			return :Temp\:'(startDirId)'\:x
+			
+		:Temp +< %startDirId		
+		
+		treeVertex = :Temp\:'(startDirId)'
+		
+		treeVertex +< :: "x"
+			
+		return "k"
