@@ -5,6 +5,7 @@ using m0.Util;
 using m0.ZeroCode;
 using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
+using m0.ZeroUML.Instructions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -153,6 +154,8 @@ namespace m0.Graph
             TextStore TextStore = (TextStore)baseVertex.Store.StoreUniverse.GetStore("m0.Store.Text.TextStore, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", fileName);
 
             TextStore.ReadOnly = ReadOnly;
+
+            //ZeroUMLInstructionHelpers.MoveEdgesIntoVertex(TextStore.Root, baseVertex);
 
             GraphUtil.DeepCopyByVertex(TextStore.Root, baseVertex);
         }
