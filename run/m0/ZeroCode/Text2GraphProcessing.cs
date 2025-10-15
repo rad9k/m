@@ -1473,7 +1473,11 @@ namespace m0.ZeroCode
                                 if (s.currentLineInfo.IsLineEnd(sPos))
                                 { // the + 2 might be not needed, but who knows....
                                   //if (text[sPos] == '\r' || text[sPos] == '\n')
-                                    sPos = s.currentLineInfo.lineEnd_NoTrim + 1;
+
+                                    //sPos = s.currentLineInfo.lineEnd_NoTrim + 1; // 20251015 THAT WAS and spaces & tabs at the end of line becomed 'X ||/t'
+
+                                    sPos = s.currentLineInfo.lineEnd + 1; // now should be corrected
+
                                     shallProceed = false;
                                 }
 
