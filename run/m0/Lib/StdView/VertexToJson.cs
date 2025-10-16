@@ -66,6 +66,8 @@ namespace m0.Lib.StdView
 
             writer.WriteStartObject();
 
+            //writer.WriteStartArray();
+
             foreach (KeyValuePair<object,object> kvp in baseVertex.GetOutOdgesByMeta())
             {
                 if (kvp.Value is List_VertexBase)
@@ -74,8 +76,12 @@ namespace m0.Lib.StdView
 
                     if (meta == "$Empty")
                     {
-                        foreach (IEdge e in (List_VertexBase)kvp.Value)
-                            ProcessVertex_NoArray(writer, visited, e);
+                        //foreach (IEdge e in (List_VertexBase)kvp.Value)
+                        //  ProcessVertex_NoArray(writer, visited, e);
+
+                        writer.WritePropertyName("");
+
+                        ProcessVertex_Array(writer, visited, kvp);
                     }
                     else
                     {
@@ -93,6 +99,7 @@ namespace m0.Lib.StdView
             }
                         
             writer.WriteEndObject();            
+            //writer.WriteEndArray();
         }
 
         private static void ProcessVertex_Array(Utf8JsonWriter writer, IList<IVertex> visited, KeyValuePair<object, object> kvp)
