@@ -2,16 +2,16 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 "MDServe"
 	function "MDServe_Handler" (@VertexType "startDir", @String "url")
 		if url == "/"
-			return @@ret_index[]			
+			return @@ret_index[]
 		if url == "/script.js"
-			return @@ret_script[]			
+			return @@ret_script[]
 		if url == "/tree.json"
-			return @@ret_tree[startDir]			
-		return "ok"		
+			return @@ret_tree[startDir]
+		return "ok"
 	function "ret_index" ()
-		return Start\:web\:'index.html'\Content		
+		return Start\:web\:'index.html'\Content
 	function "ret_script" ()
-		return Start\:web\:'script.js'\Content		
+		return Start\:web\:'script.js'\Content
 	"TestData"
 		"Meta"
 			"id"
@@ -19,14 +19,14 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			"children"
 		"Json"
 			""
-				<@TestData\Meta\id :: "a">				
+				<@TestData\Meta\id :: "a">	
 	function "ret_tree" (@String "startDir")
 		variable "startDirId" @String
-		variable "treeVertex" @VertexType		
-		startDirId = startDir\FullFilename		
+		variable "treeVertex" @VertexType
+		startDirId = startDir\FullFilename
 		if :Temp\:'(startDirId)'<>!="0"
-			return :Temp\:'(startDirId)'\:x			
-		:Temp +< %startDirId				
-		treeVertex = :Temp\:'(startDirId)'		
-		treeVertex +< :: "x"			
+			return :Temp\:'(startDirId)'\:x
+		:Temp +< %startDirId
+		treeVertex = :Temp\:'(startDirId)'
+		treeVertex +< :: "x"
 		return "k"

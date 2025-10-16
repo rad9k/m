@@ -155,9 +155,9 @@ namespace m0.Graph
 
             TextStore.ReadOnly = ReadOnly;
 
-            //ZeroUMLInstructionHelpers.MoveEdgesIntoVertex(TextStore.Root, baseVertex);
+            //ZeroUMLInstructionHelpers.MoveEdgesIntoVertex(TextStore.Root, baseVertex); copies everything including
 
-            GraphUtil.DeepCopyByVertex(TextStore.Root, baseVertex);
+           // GraphUtil.DeepCopyByVertex(TextStore.Root, baseVertex); works but problem with meta (old metas remain and they are not copied)
         }
 
         public static void LoadTXTParseAndMove(string fileName, IVertex baseVertex, string vertexName)
