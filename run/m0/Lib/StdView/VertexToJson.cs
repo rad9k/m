@@ -4,6 +4,7 @@ using m0.ZeroTypes;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -64,11 +65,22 @@ namespace m0.Lib.StdView
 
             visited.Add(baseVertex);
 
-            writer.WriteStartObject();
+            
+            
+        }
 
-            //writer.WriteStartArray();
+        static void ProcessVertex_HomogenicChildren(IVertex baseVertex, Utf8JsonWriter writer, IList<IVertex> visited)
+        {
+            writer.WriteStartArray();
 
-            foreach (KeyValuePair<object,object> kvp in baseVertex.GetOutOdgesByMeta())
+            writer.WriteEndArray();
+        }
+
+        static void ProcessVertex_HeterogenicChildren(IVertex baseVertex, Utf8JsonWriter writer, IList<IVertex> visited)
+        {
+            writer.WriteStartObject();            
+
+            foreach (KeyValuePair<object, object> kvp in baseVertex.GetOutOdgesByMeta())
             {
                 if (kvp.Value is List_VertexBase)
                 {
@@ -97,9 +109,8 @@ namespace m0.Lib.StdView
                     ProcessVertex_NoArray(writer, visited, e);
                 }
             }
-                        
-            writer.WriteEndObject();            
-            //writer.WriteEndArray();
+
+            writer.WriteEndObject();
         }
 
         private static void ProcessVertex_Array(Utf8JsonWriter writer, IList<IVertex> visited, KeyValuePair<object, object> kvp)
