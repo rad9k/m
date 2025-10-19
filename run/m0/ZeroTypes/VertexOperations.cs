@@ -33,6 +33,16 @@ namespace m0.ZeroTypes
             return true;
         }
 
+        public static bool CanCopyCountViewMetaString(string str)
+        {
+            foreach (string s in NoCopyCountViewMetaValue)
+                if (str == s)
+                    return false;
+
+            return true;
+        }
+
+
         public static bool CanCopyCountViewVertex(IVertex v)
         {
             foreach (string s in NoCopyCountViewVertexIsValue)
@@ -118,6 +128,21 @@ namespace m0.ZeroTypes
         {
             if (GraphUtil.ExistQueryOut(vertex, "$GraphChangeTrigger", "CreateView"))
                 return true;
+
+            return false;
+        }
+
+        public static bool DoOutEdgesDictionaryValueContainViewVertex(object value)
+        {
+            if (value is IEdge) {
+                
+            }
+
+            List_VertexBase edges = value as List_VertexBase;
+
+            foreach (IEdge e in edges)
+                if (IsViewVertex(e.Meta))
+                    return true;
 
             return false;
         }

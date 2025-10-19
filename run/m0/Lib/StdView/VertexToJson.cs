@@ -65,11 +65,29 @@ namespace m0.Lib.StdView
 
             visited.Add(baseVertex);
 
+            IDictionary<object, object> baseVertex_OutEdgesDictionary = baseVertex.GetOutOdgesByMeta();
+
             
-            
+            bool IsHomogenicAndOnlyEmptyMeta = true;
+
+            foreach (KeyValuePair<object, object> kvp in baseVertex_OutEdgesDictionary)
+            {
+                string meta = kvp.Key.ToString();
+                
+                if (VertexOperations.CanCopyCountViewMetaString(meta) 
+                    && meta != "$Empty" 
+                    && !VertexOperations.DoOutEdgesDictionaryValueContainViewVertex(kvp.Value))
+                    IsHomogenicAndOnlyEmptyMeta = false;
+            }
+                        
+            if (IsHomogenicAndOnlyEmptyMeta)
+                ProcessVertex_HomogenicAndOnlyEmptyMetaChildren(baseVertex, writer, visited);
+            else
+                ProcessVertex_HeterogenicChildren(baseVertex, writer, visited);
+
         }
 
-        static void ProcessVertex_HomogenicChildren(IVertex baseVertex, Utf8JsonWriter writer, IList<IVertex> visited)
+        static void ProcessVertex_HomogenicAndOnlyEmptyMetaChildren(IVertex baseVertex, Utf8JsonWriter writer, IList<IVertex> visited)
         {
             writer.WriteStartArray();
 
