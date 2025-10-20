@@ -447,7 +447,7 @@ namespace m0
         {
             IVertex autostartVertex = root.Get(false, "Autostart");
 
-            IExecution exe = new ZeroCodeExecution();
+            IExecution exe = new ZeroCodeExecution(autostartVertex);
 
             foreach (IEdge e in autostartVertex)
                 e.To.Execute(exe);

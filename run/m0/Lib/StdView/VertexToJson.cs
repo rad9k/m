@@ -68,7 +68,7 @@ namespace m0.Lib.StdView
             IDictionary<object, object> baseVertex_OutEdgesDictionary = baseVertex.GetOutOdgesByMeta();
 
             
-            bool IsHomogenicAndOnlyEmptyMeta = true;
+            bool IsHomogenicAndMultipleAndOnlyEmptyMeta = true;
 
             foreach (KeyValuePair<object, object> kvp in baseVertex_OutEdgesDictionary)
             {
@@ -76,23 +76,44 @@ namespace m0.Lib.StdView
                 
                 if (VertexOperations.CanCopyCountViewMetaString(meta) 
                     && meta != "$Empty" 
-                    && !VertexOperations.DoOutEdgesDictionaryValueContainViewVertex(kvp.Value)
-                    && !(kvp.Value is List_VertexBase))
-                    IsHomogenicAndOnlyEmptyMeta = false;
+                    && !VertexOperations.DoOutEdgesDictionaryValueContainViewVertex(kvp.Value))
+                    IsHomogenicAndMultipleAndOnlyEmptyMeta = false;
+
+                if (meta == "$Empty" && !(kvp.Value is List_VertexBase))
+                    IsHomogenicAndMultipleAndOnlyEmptyMeta = false;
             }
                         
-            if (IsHomogenicAndOnlyEmptyMeta)
-                ProcessVertex_HomogenicAndOnlyEmptyMetaChildren(baseVertex, writer, visited);
+            if (IsHomogenicAndMultipleAndOnlyEmptyMeta)
+                ProcessVertex_HomogenicAndMultipleAndOnlyEmptyMetaChildren(baseVertex, writer, visited);
             else
                 ProcessVertex_HeterogenicChildren(baseVertex, writer, visited);
 
         }
 
-        static void ProcessVertex_HomogenicAndOnlyEmptyMetaChildren(IVertex baseVertex, Utf8JsonWriter writer, IList<IVertex> visited)
+        static void ProcessVertex_HomogenicAndMultipleAndOnlyEmptyMetaChildren(IVertex baseVertex, Utf8JsonWriter writer, IList<IVertex> visited)
         {
-            writer.WriteStartArray();
+            //writer.WriteStartArray();
 
-            writer.WriteEndArray();
+
+            foreach (KeyValuePair<object, object> kvp in baseVertex.GetOutOdgesByMeta())
+            {
+                if (kvp.Value is List_VertexBase)
+                {
+                    string meta = kvp.Key.ToString();
+
+                    if (meta == "$Empty")
+                    {
+                        //foreach (IEdge e in (List_VertexBase)kvp.Value)
+                        //  ProcessVertex_NoArray(writer, visited, e);
+
+                     //   writer.WritePropertyName("");
+
+                        ProcessVertex_Array(writer, visited, kvp);
+                    }
+                }
+            }
+
+            //writer.WriteEndArray();
         }
 
         static void ProcessVertex_HeterogenicChildren(IVertex baseVertex, Utf8JsonWriter writer, IList<IVertex> visited)
