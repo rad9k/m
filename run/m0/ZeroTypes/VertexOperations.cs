@@ -134,9 +134,8 @@ namespace m0.ZeroTypes
 
         public static bool DoOutEdgesDictionaryValueContainViewVertex(object value)
         {
-            if (value is IEdge) {
-                
-            }
+            if (value is IEdge)
+                return IsViewVertex(((IEdge)value).Meta);
 
             List_VertexBase edges = value as List_VertexBase;
 

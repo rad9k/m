@@ -155,7 +155,7 @@ namespace m0.Graph
 
             TextStore.ReadOnly = ReadOnly;
 
-            foreach (IEdge e in TextStore.Root)
+            foreach (IEdge e in TextStore.Root) // this is enough for now
                 baseVertex.AddEdge(e.Meta, e.To);
 
             //ZeroUMLInstructionHelpers.MoveEdgesIntoVertex(TextStore.Root, baseVertex); copies everything including

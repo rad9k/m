@@ -36,6 +36,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@TestData\Meta\children :: "">
 					<@TestData\Meta\id :: "models">
 					<@TestData\Meta\title :: "Data Models">
+		"Json2"
+			""
+			""
 	function "ret_tree" (@String "startDir")
 		variable "startDirId" @String
 		variable "treeVertex" @VertexType

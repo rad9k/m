@@ -76,7 +76,8 @@ namespace m0.Lib.StdView
                 
                 if (VertexOperations.CanCopyCountViewMetaString(meta) 
                     && meta != "$Empty" 
-                    && !VertexOperations.DoOutEdgesDictionaryValueContainViewVertex(kvp.Value))
+                    && !VertexOperations.DoOutEdgesDictionaryValueContainViewVertex(kvp.Value)
+                    && !(kvp.Value is List_VertexBase))
                     IsHomogenicAndOnlyEmptyMeta = false;
             }
                         
