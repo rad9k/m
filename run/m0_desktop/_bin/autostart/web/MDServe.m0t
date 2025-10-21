@@ -1,17 +1,23 @@
 System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 "MDServe"
-	function "MDServe_Handler" (@VertexType "startDir", @String "url")
+	function "MDServeHandler" (@VertexType "startDir", @String "url")
 		if url == "/"
-			return @@ret_index[]
+			return @@getIndex[]
+			
 		if url == "/script.js"
-			return @@ret_script[]
+			return @@getScript[]
+			
 		if url == "/tree.json"
-			return @@ret_tree[startDir]
+			return @@getTreeJson[startDir]
+			
 		return "ok"
-	function "ret_index" ()
+		
+	function "getIndex" ()
 		return Start\:web\:'index.html'\Content
-	function "ret_script" ()
+		
+	function "getScript" ()
 		return Start\:web\:'script.js'\Content
+		
 	"TestData"
 		"Meta"
 			"id"
@@ -35,17 +41,35 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@TestData\Meta\title :: "Endpoints">
 				<@TestData\Meta\children :: "">
 					<@TestData\Meta\id :: "models">
-					<@TestData\Meta\title :: "Data Models">
-		"Json2"
-			""
-			""
-	function "ret_tree" (@String "startDir")
+					<@TestData\Meta\title :: "Data Models">	
+	function "getTreeJson" (@String "startDir")
 		variable "startDirId" @String
 		variable "treeVertex" @VertexType
+		variable "v" @VertexType
+		
 		startDirId = startDir\FullFilename
-		if :Temp\:'(startDirId)'<>!="0"
-			return :Temp\:'(startDirId)'\:x
+		
+		if :Temp\:'(startDirId)'<> != "0"
+			return :Temp\:'(startDirId)'\json:
+			
+		v = @@getTree[startDir]
+		v +< :System\:Lib\:StdView\:VertexToJson :: ""
+			
 		:Temp +< %startDirId
 		treeVertex = :Temp\:'(startDirId)'
-		treeVertex +< :: "x"
-		return "k"
+		
+		treeVertex +< "json" :: v\VertexToJson
+		
+		return treeVertex\json
+		
+	function "getTree" (@String "startDir")
+		variable "v" @VertexType
+		
+		v +< :: "xxx"{
+			foreach e in startDir\
+				:: e\Filename
+		}
+		
+		:Temp +< v
+		
+		return @@TestData\Json

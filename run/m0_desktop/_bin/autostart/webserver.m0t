@@ -6,7 +6,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 	variable "server" @HttpServer
 	
 	function "handler"(@String "url")
-		return @@Autostart\web\MDServe\MDServe_Handler[Start\:doc, url]
+		return @@Autostart\web\MDServe\MDServeHandler[Start\:doc, url]
 		
 	map +< create http mapping "map"{
 		mapping @@HttpActionEnum\GET "/*" @@handler
