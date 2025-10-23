@@ -65,16 +65,18 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 	function "getTree" (@VertexType "startDir")
 		variable "v" @VertexType
 		
-		v +< getTree_Recursive[startDir]
+		v +< @@getTree_Recursive[startDir]
 		
 		:Temp +< v
 		
 		return @@TestData\Json
 		
-	function "getTree_Recursive"(@VertexType "file")
+	function "getTree_Recursive"(@VertexType "directory")
 		variable "v" @VertexType
 		
-		foreach e in startDir\
-			v +< e\Filename
+		v +< :: ""{
+			@@TestData\Meta\id :: "ajdi"
+			@@TestData\Meta\id :: v
+		}
 		
 		return v
