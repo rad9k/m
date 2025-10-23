@@ -62,14 +62,19 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 		
 		return treeVertex\json
 		
-	function "getTree" (@String "startDir")
+	function "getTree" (@VertexType "startDir")
 		variable "v" @VertexType
 		
-		v +< :: "xxx"{
-			foreach e in startDir\
-				:: e\Filename
-		}
+		v +< getTree_Recursive[startDir]
 		
 		:Temp +< v
 		
 		return @@TestData\Json
+		
+	function "getTree_Recursive"(@VertexType "file")
+		variable "v" @VertexType
+		
+		foreach e in startDir\
+			v +< e\Filename
+		
+		return v
