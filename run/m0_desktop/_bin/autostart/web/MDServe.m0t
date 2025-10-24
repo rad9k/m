@@ -1,5 +1,6 @@
 System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 "MDServe"
+	import @System\Lib\Std direct meta
 	function "MDServeHandler" (@VertexType "startDir", @String "url")
 		if url == "/"
 			return @@getIndex[]
@@ -17,6 +18,12 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 		
 	function "getScript" ()
 		return Start\:web\:'script.js'\Content
+		
+	"Meta"
+		"MDServeCache"
+		"id"
+		"title"
+		"children"
 		
 	"TestData"
 		"Meta"
@@ -44,7 +51,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@TestData\Meta\title :: "Data Models">	
 	function "getTreeJson" (@String "startDir")
 		variable "startDirId" @String
-		variable "treeVertex" @VertexType
+		variable "treeTempVertex" @VertexType
 		variable "v" @VertexType
 		
 		startDirId = startDir\FullFilename
@@ -52,31 +59,55 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 		if :Temp\:'(startDirId)'<> != "0"
 			return :Temp\:'(startDirId)'\json:
 			
-		v = @@getTree[startDir]
+		v = @@getTree[startDir, "True"]
 		v +< :System\:Lib\:StdView\:VertexToJson :: ""
 			
-		:Temp +< %startDirId
-		treeVertex = :Temp\:'(startDirId)'
+		:Temp +< @@Meta\MDServeCache :: %startDirId
+		treeTempVertex = :Temp\:'(startDirId)'
 		
-		treeVertex +< "json" :: v\VertexToJson
+		treeTempVertex +< "json" :: v\VertexToJson
 		
-		return treeVertex\json
+		return treeTempVertex\json
 		
 	function "getTree" (@VertexType "startDir")
 		variable "v" @VertexType
 		
-		v +< @@getTree_Recursive[startDir]
+		v +< @@getTree_Recursive[startDir, "True", ""]
 		
 		:Temp +< v
 		
 		return @@TestData\Json
 		
-	function "getTree_Recursive"(@VertexType "directory")
+	function "getTree_Recursive"(@VertexType "dir", @Boolean isFirstLevel, @String "path")
 		variable "v" @VertexType
+		variable "f" @String
+		variable "c" @VertexType
 		
-		v +< :: ""{
-			@@TestData\Meta\id :: "ajdi"
-			@@TestData\Meta\id :: v
-		}
+		c = dir
+		c += isFirstLevel
+		:Temp +< "exe" :: @@Concatenate[c]
+		
+		if isFirstLevel == "True"
+			foreach "e" in dir\
+				if (e\$Is:Directory<> != "0") | (e\$Is:File<> != "0")
+					v +< ::> @@getTree_Recursive[e, "False"]
+			return v\
+		
+		if isFirstLevel == "False"
+			:Temp +< "false"
+			f = path
+			f += @@Replace[dir\Filename, " ", "_"]
+			v +< @@Meta\id :: @@Concatenate[f]
+			v +< @@Meta\title :: dir\Filename
+			idCnt = idCnt + "1"
+			
+			f = path
+			f += "-"
+			f = @@Concatenate[f]
+			
+			if dir\$Is:Directory<> != "0"
+				foreach "e" in dir\
+					if (e\$Is:Directory<> != "0") | (e\$Is:File<> != "0")
+						v +< @@Meta\children ::> @@getTree_Recursive[e, "False", f]
 		
 		return v

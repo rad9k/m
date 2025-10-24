@@ -1,23 +1,11 @@
-	function "getTree_Recursive"(@VertexType "directory")
+	function "getTree_Recursive"(@VertexType "dir", @Boolean isFirstLevel)
 		variable "v" @VertexType
 		
-		
-		
-		foreach e in file\{$Is:Directory}
-			
-			if e\$Is:Directory<> != "0"
-			v +< e\Filename
-		
-		return v
-
-
-
-function "getTree_Recursive"(@VertexType "directory")
-		variable "v" @VertexType
+		if isFirstLevel == "False"
+			if dir\$Is:D
 		
 		v +< :: ""{
 			@@TestData\Meta\id :: "ajdi"
-			@@TestData\Meta\title :: directory\Filename
-		}
-		
+			@@TestData\Meta\title :: dir\Filename
+		}	
 		return v
