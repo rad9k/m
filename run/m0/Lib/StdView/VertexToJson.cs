@@ -66,7 +66,7 @@ namespace m0.Lib.StdView
             IDictionary<object, object> baseVertex_OutEdgesDictionary = baseVertex.GetOutOdgesByMeta();
 
             
-            bool IsHomogenicAndMultipleAndOnlyEmptyMeta = true;
+            bool IsArrayOrHomogenicAndMultipleAndOnlyEmptyMeta = true;
 
             foreach (KeyValuePair<object, object> kvp in baseVertex_OutEdgesDictionary)
             {
@@ -75,20 +75,23 @@ namespace m0.Lib.StdView
                 if (VertexOperations.CanCopyCountViewMetaString(meta) 
                     && meta != "$Empty" 
                     && !VertexOperations.DoOutEdgesDictionaryValueContainViewVertex(kvp.Value))
-                    IsHomogenicAndMultipleAndOnlyEmptyMeta = false;
+                    IsArrayOrHomogenicAndMultipleAndOnlyEmptyMeta = false;
 
                 if (meta == "$Empty" && !(kvp.Value is List_VertexBase))
-                    IsHomogenicAndMultipleAndOnlyEmptyMeta = false;
+                    IsArrayOrHomogenicAndMultipleAndOnlyEmptyMeta = false;
+
+                if (meta == "$Empty" && !(kvp.Value is List_VertexBase))
+                    IsArrayOrHomogenicAndMultipleAndOnlyEmptyMeta = false;
             }
                         
-            if (IsHomogenicAndMultipleAndOnlyEmptyMeta)
-                ProcessVertex_HomogenicAndMultipleAndOnlyEmptyMetaChildren(baseVertex, writer, visited);
+            if (IsArrayOrHomogenicAndMultipleAndOnlyEmptyMeta)
+                ProcessVertex_ArrayOrHomogenicAndMultipleAndOnlyEmptyMetaChildren(baseVertex, writer, visited);
             else
                 ProcessVertex_HeterogenicChildren(baseVertex, writer, visited);
 
         }
 
-        static void ProcessVertex_HomogenicAndMultipleAndOnlyEmptyMetaChildren(IVertex baseVertex, Utf8JsonWriter writer, IList<IVertex> visited)
+        static void ProcessVertex_ArrayOrHomogenicAndMultipleAndOnlyEmptyMetaChildren(IVertex baseVertex, Utf8JsonWriter writer, IList<IVertex> visited)
         {
             //writer.WriteStartArray();
 

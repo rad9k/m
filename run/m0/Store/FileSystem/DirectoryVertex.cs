@@ -80,6 +80,12 @@ namespace m0.Store.FileSystem
             AddVertexToFileSystemVertex(FileSystemStore.Directory_Extension, extension);
 
             AddVertexToFileSystemVertex(FileSystemStore.Directory_FullFilename, DI.FullName);
+
+            if (DI.Name.Contains("."))
+                AddVertexToFileSystemVertex(FileSystemStore.Directory_Basename, DI.Name.Substring(0, DI.Name.LastIndexOf(".")));
+            else
+                AddVertexToFileSystemVertex(FileSystemStore.Directory_Basename, DI.Name);
+
             AddVertexToFileSystemVertex(FileSystemStore.Directory_FileAttribute, DI.Attributes.ToString());
             AddVertexToFileSystemVertex(FileSystemStore.Directory_CreationDateTime, DI.CreationTime.ToString());
             AddVertexToFileSystemVertex(FileSystemStore.Directory_UpdateDateTime, DI.LastWriteTime.ToString());

@@ -147,6 +147,7 @@ namespace m0.Store.FileSystem
         public static IVertex Directory_Filename;
         public static IVertex Directory_Extension;
         public static IVertex Directory_FullFilename;
+        public static IVertex Directory_Basename;
         public static IVertex Directory_FileAttribute;
         public static IVertex Directory_CreationDateTime;
         public static IVertex Directory_UpdateDateTime;
@@ -182,7 +183,8 @@ namespace m0.Store.FileSystem
                         
             Directory_Filename = Directory.Get(false, "Filename");            
             Directory_Extension = Directory.Get(false, "Extension");           
-            Directory_FullFilename = Directory.Get(false, "FullFilename");           
+            Directory_FullFilename = Directory.Get(false, "FullFilename");
+            Directory_Basename = Directory.Get(false, "Basename");
             Directory_FileAttribute = Directory.Get(false, "FileAttribute");
             Directory_CreationDateTime = Directory.Get(false, "CreationDateTime");
             Directory_UpdateDateTime = Directory.Get(false, "UpdateDateTime");

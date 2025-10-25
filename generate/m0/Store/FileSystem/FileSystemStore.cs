@@ -145,6 +145,7 @@ namespace m0.Store.FileSystem
         public static IVertex Store;
         public static IVertex Directory;
         public static IVertex Directory_Filename;
+        public static IVertex Directory_Basename;
         public static IVertex Directory_Extension;
         public static IVertex Directory_FullFilename;
         public static IVertex Directory_FileAttribute;
@@ -231,6 +232,9 @@ namespace m0.Store.FileSystem
 
             Directory_Filename = Directory.AddVertex(attribute, "Filename");
             Directory_Filename.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\String"));
+
+            Directory_Basename = Directory.AddVertex(attribute, "Basename");
+            Directory_Basename.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\String"));
 
             Directory_Extension = Directory.AddVertex(attribute, "Extension");
             Directory_Extension.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\String"));
