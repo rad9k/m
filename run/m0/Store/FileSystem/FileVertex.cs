@@ -116,6 +116,7 @@ namespace m0.Store.FileSystem
                 AddVertexToFileSystemVertex(FileSystemStore.File_Extension, FI.Extension.Substring(1));
 
             AddVertexToFileSystemVertex(FileSystemStore.File_FullFilename, FI.FullName);
+            AddVertexToFileSystemVertex(FileSystemStore.File_Name, FI);
             AddVertexToFileSystemVertex(FileSystemStore.File_Size, FI.Length.ToString());
             AddVertexToFileSystemVertex(FileSystemStore.File_FileAttribute, FI.Attributes.ToString());
             AddVertexToFileSystemVertex(FileSystemStore.File_CreationDateTime, FI.CreationTime.ToString());

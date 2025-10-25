@@ -156,6 +156,7 @@ namespace m0.Store.FileSystem
         public static IVertex File;
         public static IVertex File_Content;
         public static IVertex File_Filename;
+        public static IVertex File_Basename;
         public static IVertex File_Extension;
         public static IVertex File_FullFilename;
         public static IVertex File_Size;
@@ -266,6 +267,9 @@ namespace m0.Store.FileSystem
 
             File_Filename = File.AddVertex(attribute, "Filename");
             File_Filename.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\String"));
+
+            File_Basename = File.AddVertex(attribute, "Basename");
+            File_Basename.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\String"));
 
             File_Extension = File.AddVertex(attribute, "Extension");
             File_Extension.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\String"));

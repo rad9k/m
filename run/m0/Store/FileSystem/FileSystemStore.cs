@@ -156,6 +156,7 @@ namespace m0.Store.FileSystem
         public static IVertex File;
         public static IVertex File_Content;
         public static IVertex File_Filename;
+        public static IVertex File_Basename;
         public static IVertex File_Extension;
         public static IVertex File_FullFilename;
         public static IVertex File_Size;
@@ -191,6 +192,7 @@ namespace m0.Store.FileSystem
 
             File_Content = File.Get(false, "Content");
             File_Filename = File.Get(false, "Filename");
+            File_Basename = File.Get(false, "Basename");
             File_Extension = File.Get(false, "Extension");
             File_FullFilename = File.Get(false, "FullFilename");
             File_Size = File.Get(false, "Size");
@@ -202,9 +204,10 @@ namespace m0.Store.FileSystem
             staticVariablesInitialisationMade = true;
         }
 
-        public static void FillSystemMeta() // called from m0_SYSTEM_GENERATE
+        public static void FillSystemMeta() // THIS IS NOT CALLED
+            // called from m0_SYSTEM_GENERATE
         {
-            MinusZero z = MinusZero.Instance;
+            /*MinusZero z = MinusZero.Instance;
 
             IVertex mfsf = z.Root.Get(false, @"System\Meta\Store").AddVertex(null,"FileSystem");
 
@@ -286,7 +289,7 @@ namespace m0.Store.FileSystem
             File_UpdateDateTime.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\String"));
 
             File_ReadDateTime = File.AddVertex(attribute, "ReadDateTime");
-            File_ReadDateTime.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\String"));
+            File_ReadDateTime.AddEdge(vEdgeTarget, sm.Get(false, @"ZeroTypes\String"));*/
         }
 
         public object GetRootIdentifier()
