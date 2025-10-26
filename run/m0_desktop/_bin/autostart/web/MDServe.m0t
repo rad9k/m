@@ -9,14 +9,14 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			return @@getScript[]
 			
 		if url == "/tree.json"
-			return @@getTreeJson[startDir]
+			return @@getTreeJson[]			
 			
 		return "ok"
 		
-	function "getIndex" ()
+	function "getIndex" @String()
 		return Start\:web\:'index.html'\Content
 		
-	function "getScript" ()
+	function "getScript" @String()
 		return Start\:web\:'script.js'\Content
 		
 	"Meta"
@@ -24,90 +24,66 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 		"id"
 		"title"
 		"children"
-		
-	"TestData"
-		"Meta"
-			"id"
-			"title"
-			"children"
-		"Json"
-			""
-				<@TestData\Meta\id :: "intro">
-				<@TestData\Meta\title :: "KUPA">
-				<@TestData\Meta\children :: "">
-					<@TestData\Meta\id :: "getting">
-					<@TestData\Meta\title :: "Getting Started">
-				<@TestData\Meta\children :: "">
-					<@TestData\Meta\id :: "overview">
-					<@TestData\Meta\title :: "System Overview">
-			""
-				<@TestData\Meta\id :: "api">
-				<@TestData\Meta\title :: "API Reference">
-				<@TestData\Meta\children :: "">
-					<@TestData\Meta\id :: "endpoints">
-					<@TestData\Meta\title :: "Endpoints">
-				<@TestData\Meta\children :: "">
-					<@TestData\Meta\id :: "models">
-					<@TestData\Meta\title :: "Data Models">	
-	function "getTreeJson" (@String "startDir")
+			<@System\Lib\StdView\$IsJsonArray :: "">
+			
+	function "getTreeJson" @String(@String "startDir")
 		variable "startDirId" @String
-		variable "treeTempVertex" @VertexType
-		variable "v" @VertexType
+		variable "cache" @VertexType
+		variable "tree" @VertexType
 		
 		startDirId = startDir\FullFilename
 		
 		if :Temp\:'(startDirId)'<> != "0"
 			return :Temp\:'(startDirId)'\json:
 			
-		v = @@getTree[startDir, "True"]
-		v +< :System\:Lib\:StdView\:VertexToJson :: ""
+		tree +< @@getTree_Recursive[startDir, "True", ""]
+		tree +< :System\:Lib\:StdView\:VertexToJson :: ""
 			
-		:Temp +< @@Meta\MDServeCache :: %startDirId
-		treeTempVertex = :Temp\:'(startDirId)'
+		cache = @@Meta\MDServeCache :: %startDirId
+		:Temp +< cache
 		
-		treeTempVertex +< "json" :: v\VertexToJson
+		cache +< "json" :: tree\VertexToJson
 		
-		return treeTempVertex\json
+		return cache\json
 		
-	function "getTree" (@VertexType "startDir")
-		variable "v" @VertexType
-		
-		v +< @@getTree_Recursive[startDir, "True", ""]
-		
-		:Temp +< v
-		
-		return @@TestData\Json
-		
-	function "getTree_Recursive"(@VertexType "dir", @Boolean isFirstLevel, @String "path")
-		variable "v" @VertexType
-		variable "f" @String
-		variable "c" @VertexType
-		
-		c = dir
-		c += isFirstLevel
-		:Temp +< "exe" :: @@Concatenate[c]
-		
+	function "getTree_Recursive" @VertexType(@VertexType "dir", @Boolean "isFirstLevel", @String "path")
+		variable "tree" @VertexType
+		variable "id" @String
+		variable "idConcatenated" @String
+				
 		if isFirstLevel == "True"
 			foreach "e" in dir\
 				if (e\$Is:Directory<> != "0") | (e\$Is:File<> != "0")
-					v +< ::> @@getTree_Recursive[e, "False"]
-			return v\
+					tree +< ::> @@getTree_Recursive[e, "False"]
+			return tree\
 		
-		if isFirstLevel == "False"
-			:Temp +< "false"
-			f = path
-			f += @@Replace[dir\Filename, " ", "_"]
-			v +< @@Meta\id :: @@Concatenate[f]
-			v +< @@Meta\title :: dir\Filename
-			idCnt = idCnt + "1"
+		if isFirstLevel == "False"			
+			test path == ""
+				case true
+					id = ""					
+				case false
+					id = path
+					id += "/"
+					
+			id += dir\Basename
+			idConcatenated = @@Concatenate[id]
 			
-			f = path
-			f += "-"
-			f = @@Concatenate[f]
-			
+			tree +< @@Meta\id :: idConcatenated
+			tree +< @@Meta\title :: @@removeNumeric[dir\Basename]
+									
 			if dir\$Is:Directory<> != "0"
 				foreach "e" in dir\
 					if (e\$Is:Directory<> != "0") | (e\$Is:File<> != "0")
-						v +< @@Meta\children ::> @@getTree_Recursive[e, "False", f]
+						tree +< @@Meta\children ::> @@getTree_Recursive[e, "False", idConcatenated]
 		
-		return v
+		return tree
+		
+	function "removeNumeric" @String(@String "input")
+		variable "firstTwo" @String
+		
+		firstTwo = @@Substring['input', "1", "2"]
+		
+		if @@IsNumeric[firstTwo]
+			return @@Substring['input', "3", "-1"]
+			
+		return 'input'

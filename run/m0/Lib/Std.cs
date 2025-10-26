@@ -361,8 +361,11 @@ namespace m0.Lib
             {
                 string inputString = e.To.Value.ToString();
 
-                int finalFrom = from - 1;
+                int finalFrom = from - 1;                               
                 int finalLength = to - from + 1;
+
+                if (to == -1)
+                    finalLength = inputString.Length - finalFrom;
 
                 if (finalFrom < inputString.Length)
                 {
