@@ -55,6 +55,8 @@ namespace m0_SYSTEM_GENERATE.Lib
             AddFunction(LibStd, "IndexOf", type, "IndexOf", "String", new TypeName[] { new TypeName("input", "String", 0, -1), new TypeName("test", "String") });
             AddFunction(LibStd, "Substring", type, "Substring", "String", new TypeName[] { new TypeName("input", "String", 0, -1), new TypeName("from", "Integer"), new TypeName("to", "Integer") });
 
+            AddFunction(LibStd, "IsNumeric", type, "IsNumeric", "Boolean", new TypeName[] { new TypeName("input", "VertexType", 0, -1)});
+
 
             AddFunction(LibStd, "Sqrt", type, "Sqrt", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1) });
             AddFunction(LibStd, "Pow", type, "Pow", "Float", new TypeName[] { new TypeName("value", "Float", 0, -1), new TypeName("power", "Float") });
