@@ -377,6 +377,29 @@ namespace m0.Lib
 
             return newStack;
         }
+
+        public static INoInEdgeInOutVertexVertex IsNumeric(IExecution exe)
+        {
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
+
+            IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "input", null);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            foreach (IEdge e in inputList)
+            {
+                object number;
+                GraphUtil.GetNumberValue(e.To, out number);
+
+                if (number == null)
+                    newStack.AddVertex(null, "False");
+                else
+                    newStack.AddVertex(null, "True");
+            }
+
+            return newStack;
+        }
+
         public static INoInEdgeInOutVertexVertex Sqrt(IExecution exe)
         {
             INoInEdgeInOutVertexVertex stack = exe.Stack;
