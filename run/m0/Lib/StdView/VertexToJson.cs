@@ -29,6 +29,8 @@ namespace m0.Lib.StdView
 
             to.Value = json;
 
+            //m0.MinusZero.Instance.UserInteraction.InteractionOutput(GraphUtil.GetStringValue(to));
+
             return exe.Stack;
         }
 
@@ -66,7 +68,7 @@ namespace m0.Lib.StdView
             IDictionary<object, object> baseVertex_OutEdgesDictionary = baseVertex.GetOutOdgesByMeta();
 
             
-            bool IsArrayOrHomogenicAndMultipleAndOnlyEmptyMeta = true;
+            bool IsHomogenicAndMultipleAndOnlyEmptyMeta = true;
 
             foreach (KeyValuePair<object, object> kvp in baseVertex_OutEdgesDictionary)
             {
@@ -75,63 +77,50 @@ namespace m0.Lib.StdView
                 if (VertexOperations.CanCopyCountViewMetaString(meta) 
                     && meta != "$Empty" 
                     && !VertexOperations.DoOutEdgesDictionaryValueContainViewVertex(kvp.Value))
-                    IsArrayOrHomogenicAndMultipleAndOnlyEmptyMeta = false;
+                    IsHomogenicAndMultipleAndOnlyEmptyMeta = false;
 
                 if (meta == "$Empty" && !(kvp.Value is List_VertexBase))
-                    IsArrayOrHomogenicAndMultipleAndOnlyEmptyMeta = false;
+                    IsHomogenicAndMultipleAndOnlyEmptyMeta = false;
 
                 if (meta == "$Empty" && !(kvp.Value is List_VertexBase))
-                    IsArrayOrHomogenicAndMultipleAndOnlyEmptyMeta = false;
+                    IsHomogenicAndMultipleAndOnlyEmptyMeta = false;
             }
                         
-            if (IsArrayOrHomogenicAndMultipleAndOnlyEmptyMeta)
-                ProcessVertex_ArrayOrHomogenicAndMultipleAndOnlyEmptyMetaChildren(baseVertex, writer, visited);
+            if (IsHomogenicAndMultipleAndOnlyEmptyMeta)
+                ProcessVertex_HomogenicAndMultipleAndOnlyEmptyMetaChildren(baseVertex, writer, visited);
             else
                 ProcessVertex_HeterogenicChildren(baseVertex, writer, visited);
 
         }
 
-        static void ProcessVertex_ArrayOrHomogenicAndMultipleAndOnlyEmptyMetaChildren(IVertex baseVertex, Utf8JsonWriter writer, IList<IVertex> visited)
-        {
-            //writer.WriteStartArray();
-
-
+        static void ProcessVertex_HomogenicAndMultipleAndOnlyEmptyMetaChildren(IVertex baseVertex, Utf8JsonWriter writer, IList<IVertex> visited)
+        {            
             foreach (KeyValuePair<object, object> kvp in baseVertex.GetOutOdgesByMeta())
             {
                 if (kvp.Value is List_VertexBase)
                 {
                     string meta = kvp.Key.ToString();
 
-                    if (meta == "$Empty")
-                    {
-                        //foreach (IEdge e in (List_VertexBase)kvp.Value)
-                        //  ProcessVertex_NoArray(writer, visited, e);
-
-                     //   writer.WritePropertyName("");
-
-                        ProcessVertex_Array(writer, visited, kvp);
-                    }
+                    if (meta == "$Empty")                    
+                        ProcessVertex_Array(writer, visited, kvp);                    
                 }
             }
-
-            //writer.WriteEndArray();
         }
 
         static void ProcessVertex_HeterogenicChildren(IVertex baseVertex, Utf8JsonWriter writer, IList<IVertex> visited)
         {
-            writer.WriteStartObject();            
+            writer.WriteStartObject();
 
             foreach (KeyValuePair<object, object> kvp in baseVertex.GetOutOdgesByMeta())
             {
+                bool isArray = kvp.Value is List_VertexBase;
+
                 if (kvp.Value is List_VertexBase)
                 {
                     string meta = kvp.Key.ToString();
 
                     if (meta == "$Empty")
-                    {
-                        //foreach (IEdge e in (List_VertexBase)kvp.Value)
-                        //  ProcessVertex_NoArray(writer, visited, e);
-
+                    {                        
                         writer.WritePropertyName("");
 
                         ProcessVertex_Array(writer, visited, kvp);
@@ -170,22 +159,45 @@ namespace m0.Lib.StdView
             writer.WriteEndArray();
         }
 
-        private static void ProcessVertex_NoArray(Utf8JsonWriter writer, IList<IVertex> visited, IEdge e)
+        private static void ProcessVertex_SingleArray(Utf8JsonWriter writer, IList<IVertex> visited, IEdge e)
         {
+            writer.WriteStartArray();
+            
             if (VertexOperations.CanCopyCountViewEdge(e) && !VertexOperations.IsViewVertex(e.Meta))
             {
                 if (VertexOperations.IsAtomicEdge(e) || VertexOperations.IsLink(e))
-                    WriteAtomEdge(e, writer);
+                    WriteAtomVertex(e.To, writer);
+                else
+                    ProcessVertex(e.To, writer, visited);
+            }
+
+            writer.WriteEndArray();
+        }
+
+        private static void ProcessVertex_NoArray(Utf8JsonWriter writer, IList<IVertex> visited, IEdge e)
+        {
+            if (VertexOperations.CanCopyCountViewEdge(e) && !VertexOperations.IsViewVertex(e.Meta)) 
+            {
+                string metaValue = GraphUtil.GetStringValue(e.Meta);
+
+                if (GraphUtil.ExistQueryOut(e.Meta, "$IsJsonArray", null))
+                {
+                    writer.WritePropertyName(metaValue);
+                    ProcessVertex_SingleArray(writer, visited, e);
+                }
                 else
                 {
-                    string metaValue = GraphUtil.GetStringValue(e.Meta);
-
-                    if (metaValue != "$Empty")
-                        writer.WritePropertyName(metaValue);
+                    if (VertexOperations.IsAtomicEdge(e) || VertexOperations.IsLink(e)) // NoArray
+                        WriteAtomEdge(e, writer);
                     else
-                        writer.WritePropertyName(GraphUtil.GetStringValue(e.To));
+                    {                        
+                        if (metaValue != "$Empty")
+                            writer.WritePropertyName(metaValue);
+                        else
+                            writer.WritePropertyName(GraphUtil.GetStringValue(e.To));
 
-                    ProcessVertex(e.To, writer, visited);
+                        ProcessVertex(e.To, writer, visited);
+                    }
                 }
             }
         }

@@ -142,7 +142,7 @@ namespace m0_SYSTEM_GENERATE.Lib
                 "m0.Lib.StdView.JsonToVertex, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", 
                 "JsonToVertex_Transform");
 
-            LibStdView.AddVertex(null, "$IsArray");
+            LibStdView.AddVertex(null, "$IsJsonArray");
         }
 
         public static void CreateLibNet()
