@@ -17,7 +17,7 @@ namespace m0.Store.FileSystem
 
     public class FileVertex : AbstractFileSystemVertex
     {             
-        static string[] TextFileExensions = new string[] { ".txt", ".log", ".csv", ".xml", ".json", ".htm", ".html", ".js" };
+        static string[] TextFileExensions = new string[] { ".txt", ".log", ".csv", ".xml", ".json", ".htm", ".html", ".js", ".md" };
 
         FileInfo FI;
 
@@ -156,7 +156,8 @@ namespace m0.Store.FileSystem
 
             if (TextFileExensions.Contains(extension_lower))
             {
-                AddEdge(FileSystemStore.File_Content, new FileContentVertex(FI.FullName, this.Store));
+                //AddEdge(FileSystemStore.File_Content, new FileContentVertex(FI.FullName, this.Store));
+                AddEdge(FileSystemStore.File_Content, new FileContentVertex(FI.FullName, MinusZero.Instance.TempStore));
             }
         }        
 
