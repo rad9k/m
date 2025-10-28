@@ -22,6 +22,7 @@ namespace m0.Lib.StdView
         private static bool isInsideInlineCode = false;
         private static bool isInsideLink = false;
         private static bool isInsideImage = false;
+        private static bool isInsideTable = false;
         private static int blockquoteLevel = 0;
         public static INoInEdgeInOutVertexVertex MdStringToTokenVertexes_Transform(IExecution exe)
         {
@@ -50,6 +51,7 @@ namespace m0.Lib.StdView
             isInsideInlineCode = false;
             isInsideLink = false;
             isInsideImage = false;
+            isInsideTable = false;
             blockquoteLevel = 0;
 
             int position = 0;
@@ -272,9 +274,11 @@ namespace m0.Lib.StdView
                 }
                 
                 // Handle tables (| col1 | col2 |)
-                if (currentChar == '|')
+                if (currentChar == '|' && !isInsideTable)
                 {
+                    isInsideTable = true;
                     ExtractTable(md, ref position, to);
+                    isInsideTable = false;
                     continue;
                 }
                 
@@ -812,11 +816,57 @@ namespace m0.Lib.StdView
         {
             AddTokenToTarget(to, "TableStart");
             
-            bool isFirstRow = true;
-            bool isSeparatorProcessed = false;
             List<string> alignments = new List<string>();
+            int originalPosition = position;
             
-            // Process table line by line
+            // First pass: find separator and process it
+            int currentPos = position;
+            
+            while (currentPos < md.Length)
+            {
+                SkipWhitespace(md, ref currentPos);
+                
+                if (currentPos >= md.Length || md[currentPos] != '|')
+                {
+                    break;
+                }
+                
+                if (IsTableSeparatorLine(md, currentPos))
+                {
+                    // Found separator, process it
+                    position = currentPos;
+                    alignments = ProcessTableSeparator(md, ref position, to);
+                    break;
+                }
+                
+                // Skip to next line
+                while (currentPos < md.Length && md[currentPos] != '\n' && md[currentPos] != '\r')
+                {
+                    currentPos++;
+                }
+                
+                // Skip the newline character(s)
+                if (currentPos < md.Length && md[currentPos] == '\r')
+                {
+                    currentPos++;
+                }
+                if (currentPos < md.Length && md[currentPos] == '\n')
+                {
+                    currentPos++;
+                }
+                
+                // Skip whitespace at beginning of next line
+                while (currentPos < md.Length && char.IsWhiteSpace(md[currentPos]) && md[currentPos] != '\n' && md[currentPos] != '\r')
+                {
+                    currentPos++;
+                }
+            }
+            
+            // Reset position to start of table
+            position = originalPosition;
+            
+            // Second pass: process all lines with alignments
+            bool isFirstRow = true;
             while (position < md.Length)
             {
                 // Skip leading whitespace
@@ -825,49 +875,104 @@ namespace m0.Lib.StdView
                 // Check if we're at a table row (starts with |)
                 if (position >= md.Length || md[position] != '|')
                 {
+                    // Check if next line starts with | (continuation of table)
+                    if (position < md.Length)
+                    {
+                        int nextLineStart = position;
+                        // Skip to next line
+                        while (nextLineStart < md.Length && md[nextLineStart] != '\n' && md[nextLineStart] != '\r')
+                        {
+                            nextLineStart++;
+                        }
+                        if (nextLineStart < md.Length && md[nextLineStart] == '\n')
+                        {
+                            nextLineStart++;
+                        }
+                        if (nextLineStart < md.Length && md[nextLineStart] == '\r')
+                        {
+                            nextLineStart++;
+                        }
+                        // Skip whitespace on next line
+                        while (nextLineStart < md.Length && char.IsWhiteSpace(md[nextLineStart]) && md[nextLineStart] != '\n' && md[nextLineStart] != '\r')
+                        {
+                            nextLineStart++;
+                        }
+                        // Check if next line starts with |
+                        if (nextLineStart < md.Length && md[nextLineStart] == '|')
+                        {
+                            position = nextLineStart;
+                            continue;
+                        }
+                    }
                     break; // End of table
                 }
                 
-                // Check if this is a separator line (contains only |, -, :, spaces)
+                // Check if this is a separator line
                 bool isSeparatorLine = IsTableSeparatorLine(md, position);
                 
-                if (isSeparatorLine && !isSeparatorProcessed)
+                if (isSeparatorLine)
                 {
-                    // Process separator line to determine column alignments
-                    alignments = ProcessTableSeparator(md, ref position, to);
-                    isSeparatorProcessed = true;
+                    // Skip separator line (already processed)
+                    SkipToNextLine(md, ref position);
+                    continue;
                 }
-                else if (!isSeparatorLine)
+                else
                 {
                     // Process regular table row
+                    if (isFirstRow)
+                    {
+                        // Add HeaderBegin for the first row (header)
+                        AddTokenToTarget(to, "HeaderBegin");
+                    }
+                    
                     ProcessTableRow(md, ref position, to, isFirstRow, alignments);
+                    
+                    if (isFirstRow)
+                    {
+                        // Add HeaderEnd after processing the first row (header)
+                        AddTokenToTarget(to, "HeaderEnd");
+                    }
+                    
                     isFirstRow = false;
-                }
-                
-                // Skip to next line
-                while (position < md.Length && md[position] != '\n' && md[position] != '\r')
-                {
-                    position++;
-                }
-                if (position < md.Length && md[position] == '\n')
-                {
-                    position++;
-                }
-                if (position < md.Length && md[position] == '\r')
-                {
-                    position++;
+                    // Skip to next line after processing row
+                    SkipToNextLine(md, ref position);
                 }
             }
             
             AddTokenToTarget(to, "TableEnd");
         }
         
+        private static void SkipToNextLine(string md, ref int position)
+        {
+            // Skip to next line
+            while (position < md.Length && md[position] != '\n' && md[position] != '\r')
+            {
+                position++;
+            }
+            if (position < md.Length && md[position] == '\n')
+            {
+                position++;
+            }
+            if (position < md.Length && md[position] == '\r')
+            {
+                position++;
+            }
+        }
+        
         private static bool IsTableSeparatorLine(string md, int position)
         {
             int startPos = position;
+            bool hasDash = false;
+            StringBuilder debugLine = new StringBuilder();
+            
             while (position < md.Length && md[position] != '\n' && md[position] != '\r')
             {
                 char c = md[position];
+                debugLine.Append(c);
+                if (c == '-')
+                {
+                    hasDash = true;
+                }
                 if (c != '|' && c != '-' && c != ':' && c != ' ')
                 {
                     position = startPos; // Reset position
@@ -876,38 +981,50 @@ namespace m0.Lib.StdView
                 position++;
             }
             position = startPos; // Reset position
-            return true;
+            
+            // Debug output - we can't call AddTokenToTarget here without a target
+            // Let's just return the result for now
+            
+            return hasDash; // Must have at least one dash to be a separator
         }
         
         private static List<string> ProcessTableSeparator(string md, ref int position, IVertex to)
         {
             List<string> alignments = new List<string>();
+            int tempPosition = position;
             
             // Skip opening |
-            position++;
+            tempPosition++;
             
-            while (position < md.Length && md[position] != '\n' && md[position] != '\r')
+            while (tempPosition < md.Length && md[tempPosition] != '\n' && md[tempPosition] != '\r')
             {
-                SkipWhitespace(md, ref position);
+                // Skip whitespace
+                while (tempPosition < md.Length && char.IsWhiteSpace(md[tempPosition]) && md[tempPosition] != '\n' && md[tempPosition] != '\r')
+                {
+                    tempPosition++;
+                }
                 
-                if (position >= md.Length || md[position] == '\n' || md[position] == '\r')
+                if (tempPosition >= md.Length || md[tempPosition] == '\n' || md[tempPosition] == '\r')
                     break;
                     
                 // Extract alignment for this column
-                string alignment = ExtractColumnAlignment(md, ref position);
+                string alignment = ExtractColumnAlignment(md, ref tempPosition);
                 alignments.Add(alignment);
                 
                 // Skip to next |
-                while (position < md.Length && md[position] != '|' && md[position] != '\n' && md[position] != '\r')
+                while (tempPosition < md.Length && md[tempPosition] != '|' && md[tempPosition] != '\n' && md[tempPosition] != '\r')
                 {
-                    position++;
+                    tempPosition++;
                 }
                 
-                if (position < md.Length && md[position] == '|')
+                if (tempPosition < md.Length && md[tempPosition] == '|')
                 {
-                    position++; // Skip |
+                    tempPosition++; // Skip |
                 }
             }
+            
+            // Update position to end of separator line
+            position = tempPosition;
             
             return alignments;
         }
@@ -917,19 +1034,44 @@ namespace m0.Lib.StdView
             int startPos = position;
             bool hasLeftColon = false;
             bool hasRightColon = false;
+            int dashCount = 0;
             
-            while (position < md.Length && md[position] != '|' && md[position] != '\n' && md[position] != '\r')
+            // First, skip any leading spaces
+            while (position < md.Length && md[position] == ' ')
             {
-                char c = md[position];
-                if (c == ':')
-                {
-                    if (position == startPos)
-                        hasLeftColon = true;
-                    else
-                        hasRightColon = true;
-                }
                 position++;
             }
+            
+            // Check if first non-space character is a colon (left alignment)
+            if (position < md.Length && md[position] == ':')
+            {
+                hasLeftColon = true;
+                position++;
+            }
+            
+            // Count dashes
+            while (position < md.Length && md[position] == '-')
+            {
+                dashCount++;
+                position++;
+            }
+            
+            // Check if there's a colon after dashes (right alignment)
+            if (position < md.Length && md[position] == ':')
+            {
+                hasRightColon = true;
+                position++;
+            }
+            
+            // Skip any trailing spaces
+            while (position < md.Length && md[position] == ' ')
+            {
+                position++;
+            }
+            
+            // Check if we have at least 3 dashes
+            if (dashCount < 3)
+                return "left"; // default if not enough dashes
             
             if (hasLeftColon && hasRightColon)
                 return "center";
@@ -986,28 +1128,28 @@ namespace m0.Lib.StdView
             if (isFirstRow)
             {
                 AddTokenToTarget(to, "HeaderColumnBegin");
-                
-                // Add alignment token for header column
-                if (columnIndex < alignments.Count)
-                {
-                    string alignment = alignments[columnIndex];
-                    if (alignment == "left")
-                    {
-                        AddTokenToTarget(to, "HeaderAlignLeft");
-                    }
-                    else if (alignment == "center")
-                    {
-                        AddTokenToTarget(to, "HeaderAlignCenter");
-                    }
-                    else if (alignment == "right")
-                    {
-                        AddTokenToTarget(to, "HeaderAlignRight");
-                    }
-                }
             }
             else
             {
                 AddTokenToTarget(to, "CellBegin");
+            }
+            
+            // Add alignment token for both header and regular cells
+            if (columnIndex < alignments.Count)
+            {
+                string alignment = alignments[columnIndex];
+                if (alignment == "left")
+                {
+                    AddTokenToTarget(to, "AlignLeft");
+                }
+                else if (alignment == "center")
+                {
+                    AddTokenToTarget(to, "AlignCenter");
+                }
+                else if (alignment == "right")
+                {
+                    AddTokenToTarget(to, "AlignRight");
+                }
             }
             
             // Extract cell content (everything until | or end of line)
