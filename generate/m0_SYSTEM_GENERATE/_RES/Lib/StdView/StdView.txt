@@ -1,7 +1,52 @@
 "STORE"
+	"Json"
+		"$IsJsonArray"
+	"Md"
+		"HardBreak"
+		"ParagraphBreak"
+		"HorizontalRule"
+		"Header1Start"
+		"Header2Start"
+		"Header3Start"
+		"Header4Start"
+		"Header5Start"
+		"Header6Start"
+		"BoldStart"
+		"BoldEnd"
+		"ItalicStart"
+		"ItalicEnd"
+		"CodeBlockStart"
+		"CodeBlockEnd"
+		"InlineCodeStart"
+		"InlineCodeEnd"
+		"LinkStart"
+		"LinkText"
+		"LinkUrl"
+		"LinkEnd"
+		"ImageStart"
+		"ImageUrl"
+		"ImageEnd"
+		"BlockquoteStart"
+		"BlockquoteEnd"
+		"ListItemStart"
+		"OrderedListItemStart"
+		"TableStart"
+		"HeaderBegin"
+		"HeaderEnd"
+		"TableEnd"
+		"RowBegin"
+		"RowEnd"
+		"HeaderColumnBegin"
+		"HeaderColumnEnd"
+		"CellBegin"
+		"CellEnd"
+		"AlignLeft"
+		"AlignCenter"
+		"AlignCenter"
 	function "VertexToJson_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
 	function "JsonToVertex_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
-	function "MdStringToTokenVertexes_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
+	function "MdStringToMdTokenVertexes_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
+	function "MdTokenVertexesToHTMLString_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
 	"VertexToJson"
 		<@$GraphChangeTrigger :: "CreateView">
 			<@$Is :: @GraphChangeTrigger>
@@ -20,7 +65,7 @@
 		<@View :: "">
 			<@$Is :: @View>	
 			<@FromToTransformFunction :: @JsonToVertex_Transform>
-	"MdStringToTokenVertexes"
+	"MdStringToMdTokenVertexes"
 		<@$GraphChangeTrigger :: "CreateView">
 			<@$Is :: @GraphChangeTrigger>
 			<@GraphChangeTrigger\ChangeTypeFilter :: @OnlyNonTransactedRootVertexEvents>
@@ -28,4 +73,13 @@
 			<@GraphChangeTrigger\Listener :: @System\Meta\ZeroTypes\ExecutionFlow\CreateViewMetaEdgeAdded>
 		<@View :: "">
 			<@$Is :: @View>	
-			<@FromToTransformFunction :: @MdStringToTokenVertexes_Transform>
+			<@FromToTransformFunction :: @MdStringToMdTokenVertexes_Transform>
+	"MdTokenVertexesToHTMLString"
+		<@$GraphChangeTrigger :: "CreateView">
+			<@$Is :: @GraphChangeTrigger>
+			<@GraphChangeTrigger\ChangeTypeFilter :: @OnlyNonTransactedRootVertexEvents>
+			<@GraphChangeTrigger\ChangeTypeFilter :: @MetaEdgeAdded>
+			<@GraphChangeTrigger\Listener :: @System\Meta\ZeroTypes\ExecutionFlow\CreateViewMetaEdgeAdded>
+		<@View :: "">
+			<@$Is :: @View>	
+			<@FromToTransformFunction :: @MdTokenVertexesToHTMLString_Transform>

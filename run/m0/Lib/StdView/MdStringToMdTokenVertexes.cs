@@ -8,13 +8,55 @@ using System.Threading.Tasks;
 
 namespace m0.Lib.StdView
 {
-    public class MdStringToTokenVertexes
+    public class MdStringToMdTokenVertexes
     {
         static string str="";
 
         private static IVertex MdToken;
         private static IVertex MdText;
-        
+
+        static IVertex HardBreak;
+        static IVertex ParagraphBreak;
+        static IVertex HorizontalRule;
+        static IVertex Header1Start;
+        static IVertex Header2Start;
+        static IVertex Header3Start;
+        static IVertex Header4Start;
+        static IVertex Header5Start;
+        static IVertex Header6Start;
+        static IVertex BoldStart;
+        static IVertex BoldEnd;
+        static IVertex ItalicStart;
+        static IVertex ItalicEnd;
+        static IVertex CodeBlockStart;
+        static IVertex CodeBlockEnd;
+        static IVertex InlineCodeStart;
+        static IVertex InlineCodeEnd;
+        static IVertex LinkStart;
+        static IVertex LinkText;
+        static IVertex LinkUrl;
+        static IVertex LinkEnd;
+        static IVertex ImageStart;
+        static IVertex ImageUrl;
+        static IVertex ImageEnd;
+        static IVertex BlockquoteStart;
+        static IVertex BlockquoteEnd;
+        static IVertex ListItemStart;
+        static IVertex OrderedListItemStart;
+        static IVertex TableStart;
+        static IVertex HeaderBegin;
+        static IVertex HeaderEnd;
+        static IVertex TableEnd;
+        static IVertex RowBegin;
+        static IVertex RowEnd;
+        static IVertex HeaderColumnBegin;
+        static IVertex HeaderColumnEnd;
+        static IVertex CellBegin;
+        static IVertex CellEnd;
+        static IVertex AlignLeft;
+        static IVertex AlignCenter;
+        static IVertex AlignRight;
+
         // State tracking for nested elements
         private static bool isInsideBold = false;
         private static bool isInsideItalic = false;
@@ -24,7 +66,8 @@ namespace m0.Lib.StdView
         private static bool isInsideImage = false;
         private static bool isInsideTable = false;
         private static int blockquoteLevel = 0;
-        public static INoInEdgeInOutVertexVertex MdStringToTokenVertexes_Transform(IExecution exe)
+
+        public static INoInEdgeInOutVertexVertex MdStringToMdTokenVertexes_Transform(IExecution exe)
         {
             INoInEdgeInOutVertexVertex stack = exe.Stack;
 
@@ -388,29 +431,6 @@ namespace m0.Lib.StdView
                    (md[position] == '_' && md[position + 1] == '_');
         }
 
-        private static string ExtractBoldText(string md, ref int position)
-        {
-            char marker = md[position];
-            position += 2; // Skip opening markers
-            
-            StringBuilder result = new StringBuilder();
-            result.Append(marker).Append(marker);
-            
-            while (position < md.Length - 1)
-            {
-                if (md[position] == marker && md[position + 1] == marker)
-                {
-                    result.Append(marker).Append(marker);
-                    position += 2;
-                    break;
-                }
-                result.Append(md[position]);
-                position++;
-            }
-            
-            return result.ToString();
-        }
-
         private static bool IsItalicStart(string md, int position)
         {
             if (position >= md.Length) return false;
@@ -427,30 +447,7 @@ namespace m0.Lib.StdView
             char current = md[position];
             return (current == '*' || current == '_') && 
                    (position + 1 >= md.Length || md[position + 1] != current);
-        }
-
-        private static string ExtractItalicText(string md, ref int position)
-        {
-            char marker = md[position];
-            position++; // Skip opening marker
-            
-            StringBuilder result = new StringBuilder();
-            result.Append(marker);
-            
-            while (position < md.Length)
-            {
-                if (md[position] == marker)
-                {
-                    result.Append(marker);
-                    position++;
-                    break;
-                }
-                result.Append(md[position]);
-                position++;
-            }
-            
-            return result.ToString();
-        }
+        }   
 
         private static bool IsCodeBlockStart(string md, int position)
         {
@@ -479,51 +476,7 @@ namespace m0.Lib.StdView
             if (!isInsideInlineCode) return false; // Not inside inline code
             return md[position] == '`';
         }
-
-        private static string ExtractCodeBlock(string md, ref int position)
-        {
-            position += 3; // Skip opening ```
-            
-            StringBuilder result = new StringBuilder();
-            result.Append("```");
-            
-            while (position < md.Length - 2)
-            {
-                if (md[position] == '`' && md[position + 1] == '`' && md[position + 2] == '`')
-                {
-                    result.Append("```");
-                    position += 3;
-                    break;
-                }
-                result.Append(md[position]);
-                position++;
-            }
-            
-            return result.ToString();
-        }
-
-        private static string ExtractInlineCode(string md, ref int position)
-        {
-            position++; // Skip opening `
-            
-            StringBuilder result = new StringBuilder();
-            result.Append('`');
-            
-            while (position < md.Length)
-            {
-                if (md[position] == '`')
-                {
-                    result.Append('`');
-                    position++;
-                    break;
-                }
-                result.Append(md[position]);
-                position++;
-            }
-            
-            return result.ToString();
-        }
-
+                
         private static string ExtractLink(string md, ref int position)
         {
             position++; // Skip opening [
@@ -732,61 +685,7 @@ namespace m0.Lib.StdView
             }
             return false;
         }
-
-        private static bool IsBlockquoteLevelChange(string md, int position)
-        {
-            // Check if we're at a newline and next line has different number of > symbols
-            if (position < md.Length && md[position] == '\n')
-            {
-                int nextLineStart = position + 1;
-                // Skip any carriage return
-                if (nextLineStart < md.Length && md[nextLineStart] == '\r')
-                {
-                    nextLineStart++;
-                }
-                // Skip whitespace
-                while (nextLineStart < md.Length && char.IsWhiteSpace(md[nextLineStart]))
-                {
-                    nextLineStart++;
-                }
-                
-                if (nextLineStart >= md.Length) return false;
-                
-                // Count > symbols in next line
-                int nextLevel = 0;
-                int i = nextLineStart;
-                while (i < md.Length && md[i] == '>')
-                {
-                    nextLevel++;
-                    i++;
-                }
-                
-                // If next line has different level than current, it's a level change
-                return nextLevel != blockquoteLevel;
-            }
-            return false;
-        }
-
-        private static string ExtractBlockquote(string md, ref int position)
-        {
-            position++; // Skip opening >
-            
-            StringBuilder result = new StringBuilder();
-            result.Append('>');
-            
-            // Skip whitespace after >
-            SkipWhitespace(md, ref position);
-            
-            // Extract content until newline
-            while (position < md.Length && md[position] != '\n' && md[position] != '\r')
-            {
-                result.Append(md[position]);
-                position++;
-            }
-            
-            return result.ToString();
-        }
-
+        
         private static string ExtractRegularText(string md, ref int position)
         {
             StringBuilder result = new StringBuilder();
@@ -1148,7 +1047,7 @@ namespace m0.Lib.StdView
                 }
                 else if (alignment == "right")
                 {
-                    AddTokenToTarget(to, "AlignRight");
+                    AddTokenToTarget(to, "AlignCenter");
                 }
             }
             

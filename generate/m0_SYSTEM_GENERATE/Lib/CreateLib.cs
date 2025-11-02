@@ -135,7 +135,9 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             IVertex VertexToJson_Transform_Vertex = LibStdView.Get(false, "VertexToJson_Transform");
             IVertex JsonToVertex_Transform_Vertex = LibStdView.Get(false, "JsonToVertex_Transform");
-            IVertex MdStringToTokenVertexes_Transform_Vertex = LibStdView.Get(false, "MdStringToTokenVertexes_Transform");
+            IVertex MdStringToMdTokenVertexes_Transform_Vertex = LibStdView.Get(false, "MdStringToMdTokenVertexes_Transform");
+            IVertex MdTokenVertexesToHTMLString_Transform_Vertex = LibStdView.Get(false, "MdTokenVertexesToHTMLString_Transform");
+
 
             ExecutionFlowHelper.DecorateWithDotNetStaticMethod(VertexToJson_Transform_Vertex,
                 "m0.Lib.StdView.VertexToJson, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
@@ -145,12 +147,14 @@ namespace m0_SYSTEM_GENERATE.Lib
                 "m0.Lib.StdView.JsonToVertex, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", 
                 "JsonToVertex_Transform");
 
-            ExecutionFlowHelper.DecorateWithDotNetStaticMethod(MdStringToTokenVertexes_Transform_Vertex,
-                "m0.Lib.StdView.MdStringToTokenVertexes, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+            ExecutionFlowHelper.DecorateWithDotNetStaticMethod(MdStringToMdTokenVertexes_Transform_Vertex,
+                "m0.Lib.StdView.MdStringToMdTokenVertexes, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
                 "MdStringToTokenVertexes_Transform");
 
-            LibStdView.AddVertex(null, "$IsJsonArray");
-        }
+            ExecutionFlowHelper.DecorateWithDotNetStaticMethod(MdStringToMdTokenVertexes_Transform_Vertex,
+                "m0.Lib.StdView.MdTokenVertexesToHTMLString, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                "MdTokenVertexesToHTMLString_Transform");            
+        }        
 
         public static void CreateLibNet()
         {

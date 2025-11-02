@@ -24,7 +24,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 		"id"
 		"title"
 		"children"
-			<@System\Lib\StdView\$IsJsonArray :: "">
+			<@System\Lib\StdView\Json\$IsJsonArray :: "">
 			
 	function "getTreeJson" @String(@String "startDir")
 		variable "startDirId" @String
