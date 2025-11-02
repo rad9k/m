@@ -43,10 +43,12 @@
 		"AlignLeft"
 		"AlignCenter"
 		"AlignCenter"
+	"Html"
+		function "MdTokenVertexesToHTMLString_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
+			to +< "pozdro"
 	function "VertexToJson_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
 	function "JsonToVertex_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
-	function "MdStringToMdTokenVertexes_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
-	function "MdTokenVertexesToHTMLString_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
+	function "MdStringToMdTokenVertexes_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")	
 	"VertexToJson"
 		<@$GraphChangeTrigger :: "CreateView">
 			<@$Is :: @GraphChangeTrigger>
@@ -82,4 +84,4 @@
 			<@GraphChangeTrigger\Listener :: @System\Meta\ZeroTypes\ExecutionFlow\CreateViewMetaEdgeAdded>
 		<@View :: "">
 			<@$Is :: @View>	
-			<@FromToTransformFunction :: @MdTokenVertexesToHTMLString_Transform>
+			<@FromToTransformFunction :: @Html\MdTokenVertexesToHTMLString_Transform>
