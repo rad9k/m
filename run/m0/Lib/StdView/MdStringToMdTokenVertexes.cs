@@ -9,14 +9,10 @@ using System.Threading.Tasks;
 namespace m0.Lib.StdView
 {
     public class MdStringToMdTokenVertexes
-    {
-        static string str="";
-
-        private static IVertex MdToken;
-        private static IVertex MdText;
-
+    {                
         static IVertex Md = MinusZero.Instance.Root.Get(false, @"System\Lib\StdView\Md");
 
+        static IVertex Text = Md.Get(false, "Text");
         static IVertex HardBreak = Md.Get(false, "HardBreak");
         static IVertex ParagraphBreak = Md.Get(false, "ParagraphBreak");
         static IVertex HorizontalRule = Md.Get(false, "HorizontalRule");
@@ -109,7 +105,7 @@ namespace m0.Lib.StdView
                 if (IsHardBreak(md, position))
                 {
                     ExtractHardBreak(md, ref position);
-                    AddTokenToTarget(to, "HardBreak");
+                    AddTokenToTarget(to, HardBreak);
                     continue;
                 }
                 
@@ -117,7 +113,7 @@ namespace m0.Lib.StdView
                 if (IsParagraphBreak(md, position))
                 {
                     ExtractParagraphBreak(md, ref position);
-                    AddTokenToTarget(to, "ParagraphBreak");
+                    AddTokenToTarget(to, ParagraphBreak);
                     continue;
                 }
                 
@@ -139,7 +135,7 @@ namespace m0.Lib.StdView
                 if (IsHorizontalRule(md, position))
                 {
                     ExtractHorizontalRule(md, ref position);
-                    AddTokenToTarget(to, "HorizontalRule");
+                    AddTokenToTarget(to, HorizontalRule);
                     continue;
                 }
                 
@@ -150,7 +146,29 @@ namespace m0.Lib.StdView
                     if (headerLevel > 0 && headerLevel <= 6)
                     {
                         position += headerLevel;
-                        AddTokenToTarget(to, "Header" + headerLevel + "Start");
+
+                        switch (headerLevel)
+                        {
+                            case 1:
+                                AddTokenToTarget(to, Header1Start);
+                                break;
+                            case 2:
+                                AddTokenToTarget(to, Header2Start);
+                                break;
+                            case 3:
+                                AddTokenToTarget(to, Header3Start);
+                                break;
+                            case 4:
+                                AddTokenToTarget(to, Header4Start);
+                                break;
+                            case 5:
+                                AddTokenToTarget(to, Header5Start);
+                                break;
+                            case 6:
+                                AddTokenToTarget(to, Header6Start);
+                                break;
+                        }
+                        
                         SkipWhitespace(md, ref position);
                         continue;
                     }
@@ -161,7 +179,7 @@ namespace m0.Lib.StdView
                 {
                     position += 2; // Skip opening markers
                     isInsideBold = true;
-                    AddTokenToTarget(to, "BoldStart");
+                    AddTokenToTarget(to, BoldStart);
                     continue;
                 }
                 
@@ -170,7 +188,7 @@ namespace m0.Lib.StdView
                 {
                     position += 2; // Skip closing markers
                     isInsideBold = false;
-                    AddTokenToTarget(to, "BoldEnd");
+                    AddTokenToTarget(to, BoldEnd);
                     continue;
                 }
                 
@@ -179,7 +197,7 @@ namespace m0.Lib.StdView
                 {
                     position++; // Skip opening marker
                     isInsideItalic = true;
-                    AddTokenToTarget(to, "ItalicStart");
+                    AddTokenToTarget(to, ItalicStart);
                     continue;
                 }
                 
@@ -188,7 +206,7 @@ namespace m0.Lib.StdView
                 {
                     position++; // Skip closing marker
                     isInsideItalic = false;
-                    AddTokenToTarget(to, "ItalicEnd");
+                    AddTokenToTarget(to, ItalicEnd);
                     continue;
                 }
                 
@@ -197,7 +215,7 @@ namespace m0.Lib.StdView
                 {
                     position += 3; // Skip opening ```
                     isInsideCodeBlock = true;
-                    AddTokenToTarget(to, "CodeBlockStart");
+                    AddTokenToTarget(to, CodeBlockStart);
                     continue;
                 }
                 
@@ -206,7 +224,7 @@ namespace m0.Lib.StdView
                 {
                     position += 3; // Skip closing ```
                     isInsideCodeBlock = false;
-                    AddTokenToTarget(to, "CodeBlockEnd");
+                    AddTokenToTarget(to, CodeBlockEnd);
                     continue;
                 }
                 
@@ -215,7 +233,7 @@ namespace m0.Lib.StdView
                 {
                     position++; // Skip opening `
                     isInsideInlineCode = true;
-                    AddTokenToTarget(to, "InlineCodeStart");
+                    AddTokenToTarget(to, InlineCodeStart);
                     continue;
                 }
                 
@@ -224,7 +242,7 @@ namespace m0.Lib.StdView
                 {
                     position++; // Skip closing `
                     isInsideInlineCode = false;
-                    AddTokenToTarget(to, "InlineCodeEnd");
+                    AddTokenToTarget(to, InlineCodeEnd);
                     continue;
                 }
                 
@@ -233,7 +251,7 @@ namespace m0.Lib.StdView
                 {
                     position++; // Skip opening [
                     isInsideLink = true;
-                    AddTokenToTarget(to, "LinkStart");
+                    AddTokenToTarget(to, LinkStart);
                     continue;
                 }
                 
@@ -242,7 +260,7 @@ namespace m0.Lib.StdView
                 {
                     ExtractLinkEnd(md, ref position);
                     isInsideLink = false;
-                    AddTokenToTarget(to, "LinkEnd");
+                    AddTokenToTarget(to, LinkEnd);
                     continue;
                 }
                 
@@ -251,7 +269,7 @@ namespace m0.Lib.StdView
                 {
                     position += 2; // Skip opening ![
                     isInsideImage = true;
-                    AddTokenToTarget(to, "ImageStart");
+                    AddTokenToTarget(to, ImageStart);
                     continue;
                 }
                 
@@ -260,7 +278,7 @@ namespace m0.Lib.StdView
                 {
                     ExtractImageEnd(md, ref position);
                     isInsideImage = false;
-                    AddTokenToTarget(to, "ImageEnd");
+                    AddTokenToTarget(to, ImageEnd);
                     continue;
                 }
                 
@@ -292,14 +310,14 @@ namespace m0.Lib.StdView
                     while (blockquoteLevel < newLevel)
                     {
                         blockquoteLevel++;
-                        AddTokenToTarget(to, "BlockquoteStart");
+                        AddTokenToTarget(to, BlockquoteStart);
                     }
                     
                     // If we're going to a lower level, add BlockquoteEnd tokens
                     while (blockquoteLevel > newLevel)
                     {
                         blockquoteLevel--;
-                        AddTokenToTarget(to, "BlockquoteEnd");
+                        AddTokenToTarget(to, BlockquoteEnd);
                     }
                     
                     position = i; // Skip all > symbols and spaces
@@ -313,7 +331,7 @@ namespace m0.Lib.StdView
                     while (blockquoteLevel > 0)
                     {
                         blockquoteLevel--;
-                        AddTokenToTarget(to, "BlockquoteEnd");
+                        AddTokenToTarget(to, BlockquoteEnd);
                     }
                     continue;
                 }
@@ -351,22 +369,23 @@ namespace m0.Lib.StdView
             while (blockquoteLevel > 0)
             {
                 blockquoteLevel--;
-                AddTokenToTarget(to, "BlockquoteEnd");
+                AddTokenToTarget(to, BlockquoteEnd);
             }
         }
 
-        private static void AddTokenToTarget(IVertex target, string tokenType)
-        {
-            // Add token to target vertex using MdToken for non-text tokens
-            target.AddVertex(MdToken, tokenType);            
-            str+= tokenType + "\n";
+        private static void AddTokenToTarget(IVertex target, IVertex tokenType)
+        {        
+            target.AddVertex(tokenType, "");            
+        }
+
+        private static void AddTokenWithTextToTarget(IVertex target, IVertex tokenType, string text)
+        {            
+            target.AddVertex(tokenType, text);
         }
 
         private static void AddTextTokenToTarget(IVertex target, string textValue)
-        {
-            // Add text token to target vertex using MdText
-            target.AddVertex(MdText, "TXT"+textValue);
-            str += "TXT" + textValue + "\n";
+        {         
+            target.AddVertex(Text, textValue);        
         }
 
         private static bool IsHorizontalRule(string md, int position)
@@ -646,12 +665,12 @@ namespace m0.Lib.StdView
             // Extract list marker
             if (md[position] == '-' || md[position] == '*')
             {
-                AddTokenToTarget(to, "ListItemStart");
+                AddTokenToTarget(to, ListItemStart);
                 position++;
             }
             else if (char.IsDigit(md[position]))
             {
-                AddTokenToTarget(to, "OrderedListItemStart");
+                AddTokenToTarget(to, OrderedListItemStart);
                 while (position < md.Length && char.IsDigit(md[position]))
                 {
                     position++;
@@ -823,7 +842,7 @@ namespace m0.Lib.StdView
                     if (isFirstRow)
                     {
                         // Add HeaderBegin for the first row (header)
-                        AddTokenToTarget(to, "HeaderBegin");
+                        AddTokenToTarget(to, HeaderBegin);
                     }
                     
                     ProcessTableRow(md, ref position, to, isFirstRow, alignments);
@@ -831,7 +850,7 @@ namespace m0.Lib.StdView
                     if (isFirstRow)
                     {
                         // Add HeaderEnd after processing the first row (header)
-                        AddTokenToTarget(to, "HeaderEnd");
+                        AddTokenToTarget(to, HeaderEnd);
                     }
                     
                     isFirstRow = false;
@@ -840,7 +859,7 @@ namespace m0.Lib.StdView
                 }
             }
             
-            AddTokenToTarget(to, "TableEnd");
+            AddTokenToTarget(to, TableEnd);
         }
         
         private static void SkipToNextLine(string md, ref int position)
@@ -988,7 +1007,7 @@ namespace m0.Lib.StdView
         {
             if (!isFirstRow)
             {
-                AddTokenToTarget(to, "RowBegin");
+                AddTokenToTarget(to, RowBegin);
             }
             
             // Skip opening |
@@ -1020,7 +1039,7 @@ namespace m0.Lib.StdView
             
             if (!isFirstRow)
             {
-                AddTokenToTarget(to, "RowEnd");
+                AddTokenToTarget(to, RowEnd);
             }
         }
         
@@ -1028,11 +1047,11 @@ namespace m0.Lib.StdView
         {
             if (isFirstRow)
             {
-                AddTokenToTarget(to, "HeaderColumnBegin");
+                AddTokenToTarget(to, HeaderColumnBegin);
             }
             else
             {
-                AddTokenToTarget(to, "CellBegin");
+                AddTokenToTarget(to, CellBegin);
             }
             
             // Add alignment token for both header and regular cells
@@ -1041,15 +1060,15 @@ namespace m0.Lib.StdView
                 string alignment = alignments[columnIndex];
                 if (alignment == "left")
                 {
-                    AddTokenToTarget(to, "AlignLeft");
+                    AddTokenToTarget(to, AlignLeft);
                 }
                 else if (alignment == "center")
                 {
-                    AddTokenToTarget(to, "AlignCenter");
+                    AddTokenToTarget(to, AlignCenter);
                 }
                 else if (alignment == "right")
                 {
-                    AddTokenToTarget(to, "AlignCenter");
+                    AddTokenToTarget(to, AlignCenter);
                 }
             }
             
@@ -1069,11 +1088,11 @@ namespace m0.Lib.StdView
             
             if (isFirstRow)
             {
-                AddTokenToTarget(to, "HeaderColumnEnd");
+                AddTokenToTarget(to, HeaderColumnEnd);
             }
             else
             {
-                AddTokenToTarget(to, "CellEnd");
+                AddTokenToTarget(to, CellEnd);
             }
         }
 
