@@ -1,18 +1,35 @@
 ﻿using m0.Foundation;
 using m0.Graph;
 using m0.Network.Server;
+using m0.ZeroCode.Helpers;
 using Microsoft.AspNetCore.Server.Kestrel.Transport.NamedPipes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace m0.Lib.Net
 {
     public class Net
     {
         static IDictionary<IVertex, HttpServer> ServerInstances = new Dictionary<IVertex, HttpServer>();
+
+        
+        public static INoInEdgeInOutVertexVertex UrlDecode(IExecution exe)
+        {
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
+
+            IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "url", null);                       
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            foreach (IEdge e in inputList)
+                newStack.AddVertex(null, HttpUtility.UrlDecode(GraphUtil.GetStringValue(e.To)));
+
+            return newStack;
+        }
 
         public static INoInEdgeInOutVertexVertex HttpServer_Start(IExecution exe)
         {

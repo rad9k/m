@@ -1,6 +1,7 @@
 System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 "MDServe"
 	import @System\Lib\Std direct meta
+	import @System\Lib\Net direct meta
 	function "MDServeHandler" (@VertexType "startDir", @String "url")
 		if url == "/"
 			return @@getIndex[]
@@ -11,7 +12,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 		if url == "/tree.json"
 			return @@getTreeJson[]			
 			
-		return "ok"
+		return @@getFile[url]
 		
 	function "getIndex" @String()
 		return Start\:web\:'index.html'\Content
@@ -87,3 +88,14 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			return @@Substring['input', "3", "-1"]
 			
 		return 'input'
+		
+	function "getFile" (@String "url")
+		variable "html" @String
+		
+		html = Start\:web\:'_doc_page_top.html'\Content
+		html += @@UrlDecode[url]
+		html += Start\:web\:'_doc_page_bottom.html'\Content
+		
+	
+		return @@Concatenate[html]
+	
