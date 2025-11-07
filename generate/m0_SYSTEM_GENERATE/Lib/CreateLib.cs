@@ -148,7 +148,7 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             ExecutionFlowHelper.DecorateWithDotNetStaticMethod(MdStringToMdTokenVertexes_Transform_Vertex,
                 "m0.Lib.StdView.MdStringToMdTokenVertexes, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
-                "MdStringToTokenVertexes_Transform");            
+                "MdStringToMdTokenVertexes_Transform");            
         }        
 
         public static void CreateLibNet()

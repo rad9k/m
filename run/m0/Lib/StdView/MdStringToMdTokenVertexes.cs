@@ -734,7 +734,7 @@ namespace m0.Lib.StdView
 
         private static void ExtractTable(string md, ref int position, IVertex to)
         {
-            AddTokenToTarget(to, "TableStart");
+            AddTokenToTarget(to, TableStart);
             
             List<string> alignments = new List<string>();
             int originalPosition = position;
@@ -1068,7 +1068,7 @@ namespace m0.Lib.StdView
                 }
                 else if (alignment == "right")
                 {
-                    AddTokenToTarget(to, AlignCenter);
+                    AddTokenToTarget(to, AlignRight);
                 }
             }
             

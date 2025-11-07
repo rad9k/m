@@ -2,6 +2,7 @@
 	"Json"
 		"$IsJsonArray"
 	"Md"
+		"Text"
 		"HardBreak"
 		"ParagraphBreak"
 		"HorizontalRule"
@@ -42,7 +43,7 @@
 		"CellEnd"
 		"AlignLeft"
 		"AlignCenter"
-		"AlignCenter"
+		"AlignRight"
 	"Html"
 		function "MdTokenVertexesToHTMLString_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
 			to +< "pozdro"
