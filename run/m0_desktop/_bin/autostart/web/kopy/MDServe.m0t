@@ -10,9 +10,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			return @@getScript[]
 			
 		if url == "/tree.json"
-			return @@getCache[startDir]\TreeJson
+			return @@getTreeJson[startDir]
 			
-		return @@getFile[url]
+		return @@getFile[startDir, url]
 		
 	function "getIndex" @String()
 		return Start\:web\:'index.html'\Content
@@ -29,7 +29,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 		"children"
 			<@System\Lib\StdView\Json\$IsJsonArray :: "">
 			
-	function "getCache" @String(@String "startDir")
+	function "getTreeJson" @String(@String "startDir")
 		variable "startDirId" @String
 		variable "cache" @VertexType
 		variable "tree" @VertexType
@@ -37,7 +37,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 		startDirId = startDir\FullFilename
 		
 		if :Temp\:'(startDirId)'<> != "0"
-			return :Temp\:'(startDirId)'
+			return :Temp\:'(startDirId)'\TreeJson:
 			
 		tree +< @@getTree_Recursive[startDir, "True", ""]
 		tree +< :System\:Lib\:StdView\:VertexToJson :: ""
@@ -47,7 +47,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 		
 		cache +< @@Meta\MDServeCache\TreeJson :: tree\VertexToJson
 		
-		return cache	
+		return cache\json
 		
 	function "getTree_Recursive" @VertexType(@VertexType "dir", @Boolean "isFirstLevel", @String "path")
 		variable "tree" @VertexType
@@ -91,6 +91,26 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			
 		return 'input'
 		
+	function "getFile" (@String "startDir", @String "url")
+		variable "startDirId" @String
+		variable "cache" @VertexType
+		variable "tree" @VertexType
+		
+		startDirId = startDir\FullFilename
+		
+		if :Temp\:'(startDirId)'<> != "0"
+			return :Temp\:'(startDirId)'\json:
+			
+		tree +< @@getTree_Recursive[startDir, "True", ""]
+		tree +< :System\:Lib\:StdView\:VertexToJson :: ""
+			
+		cache = @@Meta\MDServeCache :: %startDirId
+		:Temp +< cache
+		
+		cache +< "json" :: tree\VertexToJson
+		
+		return cache\json
+		
 	function "getFile" (@String "url")
 		variable "html" @String
 		
@@ -100,4 +120,3 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 		
 	
 		return @@Concatenate[html]
-	
