@@ -2161,6 +2161,13 @@ namespace m0
             o_call_any_param.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
                 Empty);
 
+            // next expression
+
+            IVertex o_call_any_targetExpr = o_call_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ExpressionAtom\NextExpression"), "");
+
+            o_call_any_targetExpr.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$LocalRoot"), kgd_SlashMarkIndexMethod);
+
+          
             // return
             //
             // return (?<expr>)
@@ -2603,6 +2610,12 @@ namespace m0
 
             o_methodCall_any_param.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
                 Empty);
+
+            // next expression
+
+            IVertex o_methodCall_any_targetExpr = o_methodCall_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ExpressionAtom\NextExpression"), "");
+
+            o_methodCall_any_targetExpr.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$LocalRoot"), kgd_SlashMarkIndexMethod);
 
             // namedblock 
             //

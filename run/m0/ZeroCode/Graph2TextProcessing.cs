@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using m0.Foundation;
+﻿using m0.Foundation;
 using m0.Graph;
 using m0.Util;
 using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace m0.ZeroCode
 {
@@ -962,7 +963,10 @@ namespace m0.ZeroCode
                         tabTimes--;
 
                 }
-                
+
+                if (/*wasNewVertex &&*/ !VertexOperations.IsLink(keywordEdge) /*&& e != km.BaseEdge*/) // 2025.11.09 added for the sake of {}\
+                    AppendSubVertices(km, keywordEdge, km.BaseEdgePath);
+
                 return whatToReturn;
             }
             
@@ -1154,8 +1158,10 @@ namespace m0.ZeroCode
                     SourceAppend(ZeroCodeCommon.stringToPossiblyEscapedString(dict, e.To.Value.ToString())); // emptyKeyword handling
                                                                                                              //SourceAppend(e.To.Value.ToString()); // emptyKeyword handling
 
-                if (wasNewVertex && !VertexOperations.IsLink(e) /*&& e != km.BaseEdge*/)
-                    wasThereNewLine = AppendSubVertices(km, e, path);
+                //if (wasNewVertex && !VertexOperations.IsLink(e) /*&& e != km.BaseEdge*/) // 2025.11.09 and now wasNewVertex condition removed
+                //and also whole block below is removed as we have it in the AppendKeyword in about 966
+                //       if (/*wasNewVertex &&*/ !VertexOperations.IsLink(e) /*&& e != km.BaseEdge*/)
+                //     wasThereNewLine = AppendSubVertices(km, e, path);
             }
         }
 
@@ -1215,7 +1221,7 @@ namespace m0.ZeroCode
         bool AppendEdge(IEdge e, IEdge parent, string path, bool ParentKmHasTabAddingOmmit)
         {
             if (KeywordMatchedSubGraphEdges.ContainsKey(e))
-                if (ShouldAppendKeywordHere(e, path))
+                if (ShouldAppendKeywordHere(e, path) || e.Meta.Value.ToString() == "NextExpression")
                     return AppendKeyword(e, false, ParentKmHasTabAddingOmmit);
                 else
                      if (KeywordMatchedSubGraphEdges[e].BaseEdge.To != e.To) // :O)
@@ -1713,7 +1719,7 @@ namespace m0.ZeroCode
               //if (log)
               //  m0.MinusZero.Instance.Log(1, level, "ZeroCodeGraph2String_Reccurent", baseEdge.Meta.ToString() + "::" + baseEdge.To.ToString());
 
-            if (BeenList.Contains(baseEdge))
+            if (BeenList.Contains(baseEdge) /*&& baseEdge.Meta.Value.ToString() != "NextExpression"*/)
                 return;
 
             if (!ZeroCodeUtil.FilterEdgeForGraph2TextProcessing(baseEdge))
