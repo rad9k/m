@@ -41,39 +41,44 @@ namespace m0.Network.Server {
             thisVertex = _thisVertex;
         }
 
+        private readonly object _lockObject = new object();
+
         // New method handling every HTTP request
         private IResult HandleRequest(HttpContext context)
         {
-            // Get URL and HTTP action
-            string url = context.Request.Path.ToString();
-            var method = context.Request.Method;
-            m0.Lib.Net.HttpActionEnum action = m0.Lib.Net.HttpActionEnum.GET;
-            switch (method.ToUpperInvariant())
+            lock (_lockObject) // no reentry in ZeroCode
             {
-                case "GET": action = HttpActionEnum.GET; break;
-                case "POST": action = HttpActionEnum.POST; break;
-                case "PUT": action = HttpActionEnum.PUT; break;
-                case "DELETE": action = HttpActionEnum.DELETE; break;
-                case "PATCH": action = HttpActionEnum.PATCH; break;
-                case "HEAD": action = HttpActionEnum.HEADOPTIONS; break;
-                case "OPTIONS": action = HttpActionEnum.HEADOPTIONS; break;
-                case "TRACE": action = HttpActionEnum.TRACE; break;
-                default: action = HttpActionEnum.GET; break;
-            }
-            
-            // Log the HTTP request
-            LogHttpRequest(context, method, url);
-            
-            string response = DoHttpMapping(url, HttpActionEnumHelper.GetVertex(action));
-            
-            // Check if response looks like HTML and set appropriate content type
-            if (response != null && response.TrimStart().StartsWith("<"))
-            {
-                return Results.Content(response, "text/html; charset=utf-8");
-            }
-            else
-            {
-                return Results.Text(response);
+                // Get URL and HTTP action
+                string url = context.Request.Path.ToString();
+                var method = context.Request.Method;
+                m0.Lib.Net.HttpActionEnum action = m0.Lib.Net.HttpActionEnum.GET;
+                switch (method.ToUpperInvariant())
+                {
+                    case "GET": action = HttpActionEnum.GET; break;
+                    case "POST": action = HttpActionEnum.POST; break;
+                    case "PUT": action = HttpActionEnum.PUT; break;
+                    case "DELETE": action = HttpActionEnum.DELETE; break;
+                    case "PATCH": action = HttpActionEnum.PATCH; break;
+                    case "HEAD": action = HttpActionEnum.HEADOPTIONS; break;
+                    case "OPTIONS": action = HttpActionEnum.HEADOPTIONS; break;
+                    case "TRACE": action = HttpActionEnum.TRACE; break;
+                    default: action = HttpActionEnum.GET; break;
+                }
+
+                // Log the HTTP request
+                LogHttpRequest(context, method, url);
+
+                string response = DoHttpMapping(url, HttpActionEnumHelper.GetVertex(action));
+
+                // Check if response looks like HTML and set appropriate content type
+                if (response != null && response.TrimStart().StartsWith("<"))
+                {
+                    return Results.Content(response, "text/html; charset=utf-8");
+                }
+                else
+                {
+                    return Results.Text(response);
+                }
             }
         }
 

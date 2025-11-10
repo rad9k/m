@@ -12,7 +12,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 		if url == "/tree.json"
 			return @@getCache[startDir]\TreeJson
 			
-		return @@getFile[url]
+		return @@getFile[startDir, url]
 		
 	function "getIndex" @String()
 		return Start\:web\:'index.html'\Content
@@ -23,13 +23,14 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 	"Meta"
 		"MDServeCache"
 			"TreeJson"
-			"IdHTML"
+			"Id"
+				"HTML"
 		"id"
 		"title"
 		"children"
 			<@System\Lib\StdView\Json\$IsJsonArray :: "">
 			
-	function "getCache" @String(@String "startDir")
+	function "getCache" @VertexType(@String "startDir")
 		variable "startDirId" @String
 		variable "cache" @VertexType
 		variable "tree" @VertexType
@@ -62,9 +63,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 		
 		if isFirstLevel == "False"			
 			test path == ""
-				case true
+				case "true"
 					id = ""					
-				case false
+				case "false"
 					id = path
 					id += "/"
 					
@@ -91,13 +92,28 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			
 		return 'input'
 		
-	function "getFile" (@String "url")
+	function "getFile" (@String "startDir", @String "url")
+		variable "cache" @VertexType
 		variable "html" @String
+		variable "concatenated" @String
+		
+		cache = @@getCache[startDir]
+		
+		if cache\Id:'(url)'<> != "0"
+			return cache\Id:'(url)'\HTML:
 		
 		html = Start\:web\:'_doc_page_top.html'\Content
 		html += @@UrlDecode[url]
+		html += startDir
 		html += Start\:web\:'_doc_page_bottom.html'\Content
 		
+		@@Meta\MDServeCache\Id :: url
+		
+		cache +< Id
+		
+		concatenated = @@Concatenate[html]
+		
+		Id +< @@Meta\MDServeCache\Id\HTML ::> concatenated
 	
-		return @@Concatenate[html]
+		return concatenated
 	
