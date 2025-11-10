@@ -1808,7 +1808,11 @@ namespace m0.ZeroUML.Instructions
             exe.RemoveStackFrame(); // LEAVE NEW STACK
 
             //if (local_isStackFrameReturn)
-            return toReturnStack;
+            
+            //return toReturnStack; want to have []\
+
+            return NextExpressionHandle(exe, toReturnStack, instructionVertex); // []\ worx
+            
             //else
             //   return CreateStack();
         }
@@ -2320,7 +2324,9 @@ namespace m0.ZeroUML.Instructions
                     newStack.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(e);
             }
 
-            return newStack;
+            // return newStack; want to have []\
+
+            return NextExpressionHandle(exe, newStack, instructionVertex); // []\ worx
         }
 
         private static INoInEdgeInOutVertexVertex MethodCallForOneObject(IVertex theObject, ZeroCodeExecution exe, IVertex targetExpression, IList<IEdge> parameterExpressions)
