@@ -224,7 +224,7 @@ namespace m0.Lib
             return newStack;
         }
 
-        public static INoInEdgeInOutVertexVertex Split(IExecution exe)
+        public static INoInEdgeInOutVertexVertex CharacterSplit(IExecution exe)
         {
             INoInEdgeInOutVertexVertex stack = exe.Stack;
 
@@ -243,7 +243,7 @@ namespace m0.Lib
             return newStack;
         }
 
-        public static INoInEdgeInOutVertexVertex SplitBy(IExecution exe)
+        public static INoInEdgeInOutVertexVertex Split(IExecution exe)
         {
             INoInEdgeInOutVertexVertex stack = exe.Stack;
 

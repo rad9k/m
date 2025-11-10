@@ -95,25 +95,47 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 	function "getFile" (@String "startDir", @String "url")
 		variable "cache" @VertexType
 		variable "html" @String
-		variable "concatenated" @String
+		variable "concatenatedHtml" @String
+		variable "splittedUrl" @String
+		variable "split" @String
+		variable "splitCounter" @Integer
+		variable "splitIterator" @VertexType
+		variable "fileName" @String
 		
 		cache = @@getCache[startDir]
 		
 		if cache\Id:'(url)'<> != "0"
 			return cache\Id:'(url)'\HTML:
+			
+		splittedUrl = @@Split[@@UrlDecode[url],"/"]
+		
+		splitCounter = "1"
+		splitIterator = startDir
+		
+		while splitCounter < splittedUrl<>			
+			split = splittedUrl<<splitCounter>>
+			splitIterator = splitIterator\:'(split)'			
+			splitCounter = splitCounter + "1"
+			
+		split = splittedUrl<<splitCounter>>
+		split += ".md"
+		fileName = @@Concatenate[split]
+		splitIterator = splitIterator\:'(fileName)'
+
+		splitIterator\Content +< :System\:Lib\:StdView\:MdStringToMdTokenVertexes :: ""
+		splitIterator\Content\MdStringToMdTokenVertexes +< :System\:Lib\:StdView\:MdTokenVertexesToHTMLString :: ""
 		
 		html = Start\:web\:'_doc_page_top.html'\Content
-		html += @@UrlDecode[url]
-		html += startDir
+		html += splitIterator\Content\MdStringToMdTokenVertexes\MdTokenVertexesToHTMLString
 		html += Start\:web\:'_doc_page_bottom.html'\Content
+		
+		concatenatedHtml = @@Concatenate[html]
 		
 		@@Meta\MDServeCache\Id :: url
 		
 		cache +< Id
 		
-		concatenated = @@Concatenate[html]
-		
-		Id +< @@Meta\MDServeCache\Id\HTML ::> concatenated
+		Id +< @@Meta\MDServeCache\Id\HTML ::> concatenatedHtml
+		Id +< "split" ::> splitIterator
 	
-		return concatenated
-	
+		return concatenatedHtml

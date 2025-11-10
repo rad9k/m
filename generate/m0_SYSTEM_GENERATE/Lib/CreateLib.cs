@@ -49,8 +49,8 @@ namespace m0_SYSTEM_GENERATE.Lib
             AddFunction(LibStd, "NumericSort", type, "NumericSort", "VertexType", new TypeName[] { new TypeName("toSortVertex", "VertexType", 0, -1) });
 
             AddFunction(LibStd, "Concatenate", type, "Concatenate", "String", new TypeName[] { new TypeName("input", "String", 0, -1) });
-            AddFunction(LibStd, "Split", type, "Split", "String", new TypeName[] { new TypeName("input", "String", 0, -1) });
-            AddFunction(LibStd, "SplitBy", type, "SplitBy", "String", new TypeName[] { new TypeName("input", "String", 0, -1), new TypeName("by", "String", 1, -1) });
+            AddFunction(LibStd, "CharacterSplit", type, "CharacterSplit", "String", new TypeName[] { new TypeName("input", "String", 0, -1) });
+            AddFunction(LibStd, "Split", type, "Split", "String", new TypeName[] { new TypeName("input", "String", 0, -1), new TypeName("by", "String", 1, -1) });
             AddFunction(LibStd, "Replace", type, "Replace", "String", new TypeName[] { new TypeName("input", "String", 0, -1), new TypeName("from", "String"), new TypeName("to", "String") });
             AddFunction(LibStd, "IndexOf", type, "IndexOf", "String", new TypeName[] { new TypeName("input", "String", 0, -1), new TypeName("test", "String") });
             AddFunction(LibStd, "Substring", type, "Substring", "String", new TypeName[] { new TypeName("input", "String", 0, -1), new TypeName("from", "Integer"), new TypeName("to", "Integer") });

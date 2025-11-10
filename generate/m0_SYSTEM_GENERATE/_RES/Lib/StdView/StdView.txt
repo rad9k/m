@@ -1,4 +1,5 @@
 "STORE"
+	import @System\Lib\Std direct meta
 	"Json"
 		"$IsJsonArray"
 	"Md"
@@ -46,7 +47,15 @@
 		"AlignRight"
 	"Html"
 		function "MdTokenVertexesToHTMLString_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
-			to +< "pozdro"
+			variable "html" @String
+			
+			foreach "e" in from\				
+				html += "<BR>"
+				html += 'e
+				html += " - "
+				html += e
+				
+			to <- @@Concatenate[html]
 	function "VertexToJson_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
 	function "JsonToVertex_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
 	function "MdStringToMdTokenVertexes_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")	
