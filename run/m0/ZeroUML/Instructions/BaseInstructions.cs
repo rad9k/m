@@ -1869,6 +1869,43 @@ namespace m0.ZeroUML.Instructions
             return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
         }
 
+        public static INoInEdgeInOutVertexVertex ForEachEdge(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        {
+            isStackFrameReturn = false;
+
+            IVertex variable = GraphUtil.GetQueryOutFirst(instructionVertex, "Variable", null);
+            IVertex set = GraphUtil.GetQueryOutFirst(instructionVertex, "Set", null);
+
+            if (variable != null && set != null)
+            {
+                INoInEdgeInOutVertexVertex setExecution = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, set);
+
+                bool local_isStackFrameReturn = false;
+                INoInEdgeInOutVertexVertex possibleToReturnStack = null;
+
+                foreach (IEdge setEdge in setExecution)
+                {
+                    exe.AddStackFrame(); // ENTER NEW STACK
+
+                    IEdge variableEdge = GraphUtil.CreateArtificialEdge(variable, EdgeHelper.CreateTempEdgeVertex(setEdge));
+
+                    exe.Stack.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(variableEdge);
+
+                    possibleToReturnStack = ZeroCodeExecutonUtil.SequentiallyExecuteInstructions(exe, exe.Stack, instructionVertex, out local_isStackFrameReturn);
+
+                    if (local_isStackFrameReturn)
+                        break;
+
+                    exe.RemoveStackFrame();  // LEAVE NEW STACK
+                }
+
+                if (local_isStackFrameReturn)
+                    return possibleToReturnStack;
+            }
+
+            return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
+        }
+
         public static INoInEdgeInOutVertexVertex While(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;

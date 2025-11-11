@@ -105,7 +105,7 @@
 			variable "length" @Integer
 			variable "CCvalue" @Integer
 			Output -< Output\Event:
-			foreach e in Input\Event:
+			for vertex "e" in Input\Event:
 				Output +< @@History\Event :: e{
 					if e\$Is:NoteEvent<> == "1"
 						note = this.'DoNoteShift'[e\Note]

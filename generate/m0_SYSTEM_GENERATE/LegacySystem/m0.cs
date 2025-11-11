@@ -504,6 +504,7 @@ namespace m0
                 ",Function{$$NoSequentialExecution:,$InstanceCreationPriority:},Block{$InstanceCreationPriority:,$EmptyValueInstance:},NamedBlock{$InstanceCreationPriority:}" +
                 ",While{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},$InstanceCreationPriority:,$EmptyValueInstance:,$EmptyMetaInstance:}" +
                 ",ForEach{Variable{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},Set{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},$InstanceCreationPriority:,$EmptyValueInstance:,$EmptyMetaInstance:}" +
+                ",ForEachEdge{Variable{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},Set{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},$InstanceCreationPriority:,$EmptyValueInstance:,$EmptyMetaInstance:}" +
                 ",If{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},$InstanceCreationPriority:,$EmptyValueInstance:,$EmptyMetaInstance:},Test{Expression{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},Case{$MinCardinality:0,$MaxCardinality:-1,$IsAggregation:},Fallback{$MinCardinality:0,$MaxCardinality:1,$IsAggregation:},$InstanceCreationPriority:,$EmptyValueInstance:,$EmptyMetaInstance:},Case{Test{$$NoSequentialExecution:,$MinCardinality:1,$MaxCardinality:1},$InstanceCreationPriority:,$EmptyValueInstance:},Fallback{$InstanceCreationPriority:,$EmptyValueInstance:}" +
                 ",EmptySet,Constant" +
                 ",Execute,Parse,ParseWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}},Generate,GenerateWithLanguage{FormalTextLanguage{$MinCardinality:0,$MaxCardinality:1}}" +
@@ -578,6 +579,7 @@ namespace m0
             AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "FunctionCall"), "FunctionCall");
             AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "Return"), "Return");
             AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "ForEach"), "ForEach");
+            AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "ForEachEdge"), "ForEachEdge");
             AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "While"), "While");
             AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "If"), "If");
             AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "Test"), "Test");
@@ -921,6 +923,16 @@ namespace m0
                  LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                  LegacySystem.Graph.EasyVertex.Get(smu, false, "Package"));  // and not StackFrameCreator*/
 
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"ForEachEdge").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "NextOut"));
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"ForEachEdge").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "Action"));
+            /*LegacySystem.Graph.EasyVertex.Get(smu, false, @"ForEachEdge").AddEdge(
+                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
+                 LegacySystem.Graph.EasyVertex.Get(smu, false, "Package"));  // and not StackFrameCreator*/
+
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"Function").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "StackFrameCreatorWithInputOutput"));
@@ -1042,6 +1054,11 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, @"Atom"));
 
+            // smu.Get(false, @"ForEachEdge\Variable").AddEdge(sm.Get(false, @"*$EdgeTarget"), smu.Get(false, @"Query")); // better this
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"ForEachEdge\Set").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, @"Atom"));
+
             // meta            
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"ParseWithLanguage\FormalTextLanguage").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
@@ -1147,6 +1164,8 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"Case\Test").AddEdge(isAggregation, Empty);
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"ForEach\Set").AddEdge(isAggregation, Empty);
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"ForEachEdge\Set").AddEdge(isAggregation, Empty);
 
             //
 
@@ -2180,11 +2199,11 @@ namespace m0
 
             AddKeyword(k, smu, smb, keyword, any, "return", "Return");
 
-            // foreach
+            // for each vertex
             //
-            // foreach (?<var>) in (?<set>)
+            // for each vertex (?<var>) in (?<set>)
 
-            IVertex o_foreach = k.AddVertex(keyword, "foreach (?<var>) in (?<set>)");
+            IVertex o_foreach = k.AddVertex(keyword, "for vertex (?<var>) in (?<set>)");
 
             IVertex o_foreach_any = o_foreach.AddVertex(any, "");
 
@@ -2194,6 +2213,21 @@ namespace m0
             o_foreach_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ForEach\Variable"), "(?<var>)");
 
             o_foreach_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ForEach\Set"), "(?<set>)");
+
+            // for each edge
+            //
+            // for each edge (?<var>) in (?<set>)
+
+            IVertex o_foreachedge = k.AddVertex(keyword, "for edge (?<var>) in (?<set>)");
+
+            IVertex o_foreachedge_any = o_foreachedge.AddVertex(any, "");
+
+            o_foreachedge_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "ForEachEdge"));
+
+            o_foreachedge_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ForEachEdge\Variable"), "(?<var>)");
+
+            o_foreachedge_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ForEachEdge\Set"), "(?<set>)");
 
             // while
             //

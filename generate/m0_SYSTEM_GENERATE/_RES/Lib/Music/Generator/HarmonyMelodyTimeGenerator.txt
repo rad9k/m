@@ -31,7 +31,7 @@
 			sortedChordProgressionChord1 = @@NumericSortByQuery[ChordProgression\Chord<<"1">>\Pitch, "Note:"]
 			Output -< Output\Event:
 			counter = "1"
-			foreach t in TriggerSet\Trigger:
+			for vertex t in TriggerSet\Trigger:
 				Output +< @@History\Event :: t{
 					melody = MelodyFlow\Step<<counter>>\Quant\Note
 					note = %sortedChordProgressionChord1<<melody + "1">>\Note
@@ -48,8 +48,8 @@
 			variable "counter" @Integer
 			Output -< Output\Event:
 			counter = "1"
-			foreach t in TriggerSet\Trigger:
-				foreach quant in MelodyFlow\Step<<counter>>\Quant
+			for vertex "t" in TriggerSet\Trigger:
+				for vertex "quant" in MelodyFlow\Step<<counter>>\Quant
 					Output +< @@History\Event :: t{
 						@@$Is ::> @@NoteEvent
 						@@Event\TriggerTime :: %t\TriggerTime

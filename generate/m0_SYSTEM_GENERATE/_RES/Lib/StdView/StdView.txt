@@ -49,11 +49,11 @@
 		function "MdTokenVertexesToHTMLString_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
 			variable "html" @String
 			
-			foreach "e" in from\				
+			for each edge "e" in from\
 				html += "<BR>"
-				html += `e
+				html += e\Meta
 				html += " - "
-				html += e
+				html += e\To
 				
 			to <- @@Concatenate[html]
 	function "VertexToJson_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")

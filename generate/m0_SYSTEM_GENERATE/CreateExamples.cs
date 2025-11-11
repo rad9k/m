@@ -274,16 +274,16 @@ namespace m0_SYSTEM_GENERATE
              "\r\n\tB += \"2\"" +
              "\r\n\tB += \"3\"" +
              "\r\n\tB += \"4\"" +
-             "\r\n\tforeach \"X\" in A" +
-             "\r\n\t\tforeach \"Y\" in B" +
+             "\r\n\tfor vertex \"X\" in A" +
+             "\r\n\t\tfor vertex \"Y\" in B" +
              "\r\n\t\t\tC += (X*\"4\") + Y" +
-             "\r\n\tforeach \"X\" in A" +
-             "\r\n\t\tforeach \"Y\" in B" +
-             "\r\n\t\t\tforeach \"Z\" in C" +
+             "\r\n\tfor vertex \"X\" in A" +
+             "\r\n\t\tfor vertex \"Y\" in B" +
+             "\r\n\t\t\tfor vertex \"Z\" in C" +
              "\r\n\t\t\t\tD += (Z * \"20\") + (X*\"4\") + Y" +
-             "\r\n\tforeach \"X\" in A" +
-             "\r\n\t\tforeach \"Y\" in B" +
-             "\r\n\t\t\tforeach \"W\" in D" +
+             "\r\n\tfor vertex \"X\" in A" +
+             "\r\n\t\tfor vertex \"Y\" in B" +
+             "\r\n\t\t\tfor vertex \"W\" in D" +
              "\r\n\t\t\t\tE += (W * \"200\") + (Z * \"20\") + (X*\"4\") + Y", m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new
              );
 
@@ -296,7 +296,7 @@ namespace m0_SYSTEM_GENERATE
              "\r\n\tA += \"1\"" +
              "\r\n\tA += \"2\"" +
              "\r\n\tB = \"b\"" +
-             "\r\n\tforeach \"X\" in A" +
+             "\r\n\tfor vertex \"X\" in A" +
              "\r\n\t\tB += X", m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new
              );
 
@@ -415,8 +415,8 @@ namespace m0_SYSTEM_GENERATE
     "\r\n\tnamedblock \"Cblok\"()" +
     "\r\n\t\treturn Name" +
     "\r\n\tnamedblock \"Dblok\"()" +
-    "\r\n\t\tforeach \"X\" in x" +
-    "\r\n\t\t\tforeach \"Y\" in y" +
+    "\r\n\t\tfor vertex \"X\" in x" +
+    "\r\n\t\t\tfor vertex \"Y\" in y" +
     "\r\n\t\t\t\tX += Y" +
     "\r\n\tblock" +
     "\r\n\t\ta = \"False\"" +
@@ -463,7 +463,7 @@ namespace m0_SYSTEM_GENERATE
             IEdge code16 = code.AddVertexAndReturnEdge(null, null);
             MinusZero.Instance.DefaultFormalTextParser.Parse(code16,
             "\"codeforech\"" +
-    "\r\n\tforeach xxx in yyy\\kuery" +
+    "\r\n\tfor vertex xxx in yyy\\kuery" +
     "\r\n\t\ty+=xxx" +
     "\r\n\t\tb+=xxx" 
     , m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new
@@ -479,12 +479,12 @@ namespace m0_SYSTEM_GENERATE
 "\r\n\t\tfunction \"Bin\"()" +
 "\r\n\t\t @@B\\Bin[]" +
 "\r\n\tfunction \"A\"()" +
-"\r\n\t\tforeach \"X\" in x" +
-"\r\n\t\t\tforeach \"Y\" in y" +
+"\r\n\t\tfor vertex \"X\" in x" +
+"\r\n\t\t\tfor vertex \"Y\" in y" +
 "\r\n\t\t\t\tX += Y" +
 "\r\n\twhile \"1\" == \"2\"" +
-"\r\n\t\tforeach \"X\" in x" +
-"\r\n\t\t\tforeach \"Y\" in y" +
+"\r\n\t\tfor vertex \"X\" in x" +
+"\r\n\t\t\tfor vertex \"Y\" in y" +
 "\r\n\t\t\t\tX += Y"
 , m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new
     );

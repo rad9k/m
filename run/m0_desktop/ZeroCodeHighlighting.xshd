@@ -53,7 +53,8 @@
       <Word>method</Word>
       <Word>function</Word>
       <Word>return</Word>
-      <Word>foreach</Word>
+      <Word>for vertex</Word>
+	  <Word>for edge</Word>
       <Word>while</Word>
       <Word>if</Word>
       <Word>test</Word>
