@@ -1,0 +1,177 @@
+nie dziala dobrze rozpoznawanie list punktorowych (unordered). "-" dziala, "+" dziala ale "*" juz nie dziala i jeszcze generuje ItalicBegin a potem ItalicEnd. oto przykladowy md:
+
+- a
++ b
+* c
+- a
++ b
+* c
+
+powino byc
+
+ListItemsStart ::
+ListItemStart ::
+Text :: "a"
+ListItemStart ::
+Text :: "b"
+ListItemStart ::
+Text :: "c"
+ListItemStart ::
+Text :: "a"
+ListItemStart ::
+Text :: "b"
+ListItemStart ::
+Text :: "c"
+ListItemsEnd ::
+
+a jest
+
+ListItemsStart ::
+ListItemStart ::
+Text :: "a"
+ListItemStart ::
+Text :: "b"
+ItalicStart ::
+Text :: " c"
+ListItemStart ::
+Text :: "a"
+ListItemsEnd ::
+Text :: "b"
+ItalicEnd ::
+Text :: " c"
+ListItemsEnd ::
+
+nie dziala zagniezdzanie list, zaruwno punktorowe (ListItems) jak i numerowane (OrderedListItems). podam Ci przyklad, dla md:
+
+- A1
+	+ B1
+	- B2
+- A2
+	* B3
+		- C4
+		- C5
+	* B4
+		- C6
+- A3
+1. A1
+	1. B1
+	1. B2
+1. A2
+	1. B3
+		1. C4
+		1. C5
+	1. B4
+		1. C6
+1. A3
+
+powinno byc
+
+ListItemsBegin ::
+ListItemBegin ::
+Text :: "A1"
+ListItemsBegin ::
+ListItemBegin ::
+Text :: "B1"
+ListItemBegin ::
+Text :: "B2"
+ListItemsEnd ::
+ListItemBegin ::
+Text :: "A2"
+ListItemsBegin ::
+ListItemBegin ::
+Text :: "B3"
+ListItemsBegin ::
+ListItemBegin ::
+Text :: "C4"
+ListItemBegin ::
+Text :: "C5"
+ListItemsEnd ::
+ListItemBegin ::
+Text :: "B4"
+ListItemsBegin ::
+ListItemBegin ::
+Text :: "C6"
+ListItemsEnd ::
+ListItemsEnd ::
+ListItemBegin ::
+Text :: "A3"
+ListItemsEnd ::
+OrderedItemsBegin ::
+OrderedItemBegin ::
+Text :: "A1"
+OrderedItemsBegin ::
+OrderedItemBegin ::
+Text :: "B1"
+OrderedItemBegin ::
+Text :: "B2"
+OrderedItemsEnd ::
+OrderedItemBegin ::
+Text :: "A2"
+OrderedItemsBegin ::
+OrderedItemBegin ::
+Text :: "B3"
+OrderedItemsBegin ::
+OrderedItemBegin ::
+Text :: "C4"
+OrderedItemBegin ::
+Text :: "C5"
+OrderedItemsEnd ::
+OrderedItemBegin ::
+Text :: "B4"
+OrderedItemsBegin ::
+OrderedItemBegin ::
+Text :: "C6"
+OrderedItemsEnd ::
+OrderedItemsEnd ::
+OrderedItemBegin ::
+Text :: "A3"
+OrderedItemsEnd ::
+
+a jest tak:
+
+
+
+ListItemsBegin ::
+ListItemBegin ::
+A1	"
+ListItemBegin ::
+B1	"
+ListItemBegin ::
+B2
+ListItemBegin ::
+A2	"
+ListItemBegin ::
+B3		"
+ListItemBegin ::
+C4		"
+ListItemBegin ::
+C5	"
+ListItemBegin ::
+B4		"
+ListItemBegin ::
+C6
+ListItemBegin ::
+A3
+</ul>
+OrderedItemsStart ::
+OrderedItemBegin
+A1	"
+OrderedItemBegin
+B1	"
+OrderedItemBegin
+B2
+OrderedItemBegin
+A2	"
+OrderedItemBegin
+B3		"
+OrderedItemBegin
+C4		"
+OrderedItemBegin
+C5	"
+OrderedItemBegin
+B4		"
+OrderedItemBegin
+C6
+OrderedItemBegin
+A3
+OrderedItemsEnd ::

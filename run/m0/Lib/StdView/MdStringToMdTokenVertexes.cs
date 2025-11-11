@@ -22,6 +22,12 @@ namespace m0.Lib.StdView
         static IVertex Header4Start = Md.Get(false, "Header4Start");
         static IVertex Header5Start = Md.Get(false, "Header5Start");
         static IVertex Header6Start = Md.Get(false, "Header6Start");
+        static IVertex Header1End = Md.Get(false, "Header1End");
+        static IVertex Header2End = Md.Get(false, "Header2End");
+        static IVertex Header3End = Md.Get(false, "Header3End");
+        static IVertex Header4End = Md.Get(false, "Header4End");
+        static IVertex Header5End = Md.Get(false, "Header5End");
+        static IVertex Header6End = Md.Get(false, "Header6End");
         static IVertex BoldStart = Md.Get(false, "BoldStart");
         static IVertex BoldEnd = Md.Get(false, "BoldEnd");
         static IVertex ItalicStart = Md.Get(false, "ItalicStart");
@@ -39,8 +45,12 @@ namespace m0.Lib.StdView
         static IVertex ImageEnd = Md.Get(false, "ImageEnd");
         static IVertex BlockquoteStart = Md.Get(false, "BlockquoteStart");
         static IVertex BlockquoteEnd = Md.Get(false, "BlockquoteEnd");
+        static IVertex ListItemsStart = Md.Get(false, "ListItemsStart");
         static IVertex ListItemStart = Md.Get(false, "ListItemStart");
+        static IVertex ListItemsEnd = Md.Get(false, "ListItemsEnd");
+        static IVertex OrderedListItemsStart = Md.Get(false, "OrderedListItemsStart");
         static IVertex OrderedListItemStart = Md.Get(false, "OrderedListItemStart");
+        static IVertex OrderedListItemsEnd = Md.Get(false, "OrderedListItemsEnd");
         static IVertex TableStart = Md.Get(false, "TableStart");
         static IVertex HeaderBegin = Md.Get(false, "HeaderBegin");
         static IVertex HeaderEnd = Md.Get(false, "HeaderEnd");
@@ -64,6 +74,16 @@ namespace m0.Lib.StdView
         private static bool isInsideImage = false;
         private static bool isInsideTable = false;
         private static int blockquoteLevel = 0;
+        private static int currentHeaderLevel = 0;
+
+        private enum ListType
+        {
+            None,
+            Unordered,
+            Ordered
+        }
+
+        private static ListType currentListType = ListType.None;
 
         public static INoInEdgeInOutVertexVertex MdStringToMdTokenVertexes_Transform(IExecution exe)
         {
@@ -94,6 +114,8 @@ namespace m0.Lib.StdView
             isInsideImage = false;
             isInsideTable = false;
             blockquoteLevel = 0;
+            currentHeaderLevel = 0;
+            currentListType = ListType.None;
 
             int position = 0;
 
@@ -104,6 +126,7 @@ namespace m0.Lib.StdView
                 // Handle hard breaks (two or more spaces at end of line)
                 if (IsHardBreak(md, position))
                 {
+                    CloseHeaderIfOpen(to);
                     ExtractHardBreak(md, ref position);
                     AddTokenToTarget(to, HardBreak);
                     continue;
@@ -112,6 +135,8 @@ namespace m0.Lib.StdView
                 // Handle paragraph breaks (double newline = empty line)
                 if (IsParagraphBreak(md, position))
                 {
+                    CloseHeaderIfOpen(to);
+                    CloseListIfOpen(to);
                     ExtractParagraphBreak(md, ref position);
                     AddTokenToTarget(to, ParagraphBreak);
                     continue;
@@ -120,14 +145,28 @@ namespace m0.Lib.StdView
                 // Handle single newlines (just advance position)
                 if (currentChar == '\n')
                 {
+                    CloseHeaderIfOpen(to);
                     position++;
+                    if (currentListType != ListType.None && !IsNextListItem(md, position))
+                    {
+                        CloseListIfOpen(to);
+                    }
                     continue;
                 }
                 
                 // Handle carriage returns (just advance position)
                 if (currentChar == '\r')
                 {
+                    CloseHeaderIfOpen(to);
                     position++;
+                    if (position < md.Length && md[position] == '\n')
+                    {
+                        continue;
+                    }
+                    if (currentListType != ListType.None && !IsNextListItem(md, position))
+                    {
+                        CloseListIfOpen(to);
+                    }
                     continue;
                 }
 
@@ -168,6 +207,8 @@ namespace m0.Lib.StdView
                                 AddTokenToTarget(to, Header6Start);
                                 break;
                         }
+                        
+                        currentHeaderLevel = headerLevel;
                         
                         SkipWhitespace(md, ref position);
                         continue;
@@ -365,6 +406,9 @@ namespace m0.Lib.StdView
                 }
             }
             
+            CloseListIfOpen(to);
+            CloseHeaderIfOpen(to);
+            
             // Close all remaining blockquote levels at the end
             while (blockquoteLevel > 0)
             {
@@ -386,6 +430,80 @@ namespace m0.Lib.StdView
         private static void AddTextTokenToTarget(IVertex target, string textValue)
         {         
             target.AddVertex(Text, textValue);        
+        }
+
+        private static void CloseHeaderIfOpen(IVertex target)
+        {
+            if (currentHeaderLevel == 0)
+            {
+                return;
+            }
+
+            switch (currentHeaderLevel)
+            {
+                case 1:
+                    AddTokenToTarget(target, Header1End);
+                    break;
+                case 2:
+                    AddTokenToTarget(target, Header2End);
+                    break;
+                case 3:
+                    AddTokenToTarget(target, Header3End);
+                    break;
+                case 4:
+                    AddTokenToTarget(target, Header4End);
+                    break;
+                case 5:
+                    AddTokenToTarget(target, Header5End);
+                    break;
+                case 6:
+                    AddTokenToTarget(target, Header6End);
+                    break;
+            }
+
+            currentHeaderLevel = 0;
+        }
+
+        private static void CloseListIfOpen(IVertex target)
+        {
+            switch (currentListType)
+            {
+                case ListType.Unordered:
+                    AddTokenToTarget(target, ListItemsEnd);
+                    break;
+                case ListType.Ordered:
+                    AddTokenToTarget(target, OrderedListItemsEnd);
+                    break;
+                default:
+                    return;
+            }
+
+            currentListType = ListType.None;
+        }
+
+        private static void EnsureListContext(IVertex target, ListType desired)
+        {
+            if (currentListType == desired)
+            {
+                return;
+            }
+
+            CloseListIfOpen(target);
+
+            switch (desired)
+            {
+                case ListType.Unordered:
+                    AddTokenToTarget(target, ListItemsStart);
+                    break;
+                case ListType.Ordered:
+                    AddTokenToTarget(target, OrderedListItemsStart);
+                    break;
+                case ListType.None:
+                default:
+                    return;
+            }
+
+            currentListType = desired;
         }
 
         private static bool IsHorizontalRule(string md, int position)
@@ -457,6 +575,7 @@ namespace m0.Lib.StdView
             if (position >= md.Length) return false;
             if (isInsideItalic) return false; // Already inside italic
             char current = md[position];
+            if (current == '*' && IsListItem(md, position)) return false;
             return (current == '*' || current == '_') && 
                    (position + 1 >= md.Length || md[position + 1] != current);
         }
@@ -466,6 +585,7 @@ namespace m0.Lib.StdView
             if (position >= md.Length) return false;
             if (!isInsideItalic) return false; // Not inside italic
             char current = md[position];
+            if (current == '*' && IsListItem(md, position)) return false;
             return (current == '*' || current == '_') && 
                    (position + 1 >= md.Length || md[position + 1] != current);
         }   
@@ -636,19 +756,58 @@ namespace m0.Lib.StdView
             }
         }
 
+        private static bool IsAtLineStartOrIndented(string md, int position)
+        {
+            int idx = position - 1;
+
+            while (idx >= 0 && (md[idx] == ' ' || md[idx] == '\t'))
+            {
+                idx--;
+            }
+
+            return idx < 0 || md[idx] == '\n' || md[idx] == '\r';
+        }
+
+        private static bool IsNextListItem(string md, int position)
+        {
+            int nextPos = position;
+
+            while (nextPos < md.Length && (md[nextPos] == ' ' || md[nextPos] == '\t' || md[nextPos] == '\r'))
+            {
+                nextPos++;
+            }
+
+            if (nextPos >= md.Length || md[nextPos] == '\n')
+            {
+                return false;
+            }
+
+            return IsListItem(md, nextPos);
+        }
+
         private static bool IsListItem(string md, int position)
         {
             if (position >= md.Length) return false;
-            
-            // Check for unordered list (- or *)
-            if (md[position] == '-' || md[position] == '*')
+
+            // Check for unordered list (- or * or +)
+            if (md[position] == '-' || md[position] == '*' || md[position] == '+')
             {
+                if (!IsAtLineStartOrIndented(md, position))
+                {
+                    return false;
+                }
+
                 return position + 1 >= md.Length || char.IsWhiteSpace(md[position + 1]);
             }
-            
+
             // Check for ordered list (1. 2. etc.)
             if (char.IsDigit(md[position]))
             {
+                if (!IsAtLineStartOrIndented(md, position))
+                {
+                    return false;
+                }
+
                 int i = position;
                 while (i < md.Length && char.IsDigit(md[i]))
                 {
@@ -656,20 +815,22 @@ namespace m0.Lib.StdView
                 }
                 return i < md.Length && md[i] == '.' && (i + 1 >= md.Length || char.IsWhiteSpace(md[i + 1]));
             }
-            
+
             return false;
         }
 
         private static void ExtractListItem(string md, ref int position, IVertex to)
         {
             // Extract list marker
-            if (md[position] == '-' || md[position] == '*')
+            if (md[position] == '-' || md[position] == '*' || md[position] == '+')
             {
+                EnsureListContext(to, ListType.Unordered);
                 AddTokenToTarget(to, ListItemStart);
                 position++;
             }
             else if (char.IsDigit(md[position]))
             {
+                EnsureListContext(to, ListType.Ordered);
                 AddTokenToTarget(to, OrderedListItemStart);
                 while (position < md.Length && char.IsDigit(md[position]))
                 {
@@ -717,12 +878,25 @@ namespace m0.Lib.StdView
                 
                 // Stop at special characters that start other tokens
                 if (current == '\n' || current == '\r' || 
-                    current == '#' || current == '*' || current == '_' || 
-                    current == '`' || current == '[' || current == '!' ||
-                    current == '-' || current == '>' || current == '|' ||
+                    current == '#' || current == '_' || current == '`' ||
+                    current == '[' || current == '!' || current == '>' || current == '|' ||
+                    (current == '-' && IsListItem(md, position)) ||
+                    (current == '+' && IsListItem(md, position)) ||
                     (char.IsDigit(current) && IsListItem(md, position)))
                 {
                     break;
+                }
+
+                if (current == '*')
+                {
+                    if (IsListItem(md, position) ||
+                        IsBoldStart(md, position) ||
+                        IsBoldEnd(md, position) ||
+                        IsItalicStart(md, position) ||
+                        IsItalicEnd(md, position))
+                    {
+                        break;
+                    }
                 }
                 
                 result.Append(current);

@@ -1,0 +1,3 @@
+- aa**"Vertex has meta edge"**bb
+- aa**Vertex has meta edge**bb
+- **"Vertex _X_ has meta edge _Y_"**

@@ -13,6 +13,12 @@
 		"Header4Start"
 		"Header5Start"
 		"Header6Start"
+		"Header1End"
+		"Header2End"
+		"Header3End"
+		"Header4End"
+		"Header5End"
+		"Header6End"
 		"BoldStart"
 		"BoldEnd"
 		"ItalicStart"
@@ -30,8 +36,12 @@
 		"ImageEnd"
 		"BlockquoteStart"
 		"BlockquoteEnd"
+		"ListItemsStart"
 		"ListItemStart"
+		"ListItemsEnd"
+		"OrderedListItemsStart"
 		"OrderedListItemStart"
+		"OrderedListItemsEnd"
 		"TableStart"
 		"HeaderBegin"
 		"HeaderEnd"
@@ -66,22 +76,40 @@
 						html += "<HR>"
 						
 					case "Header1Start"
-						html += ""
+						html += "<H1>"
 											
 					case "Header2Start"
-						html += ""
+						html += "<H2>"
 						
 					case "Header3Start"
-						html += ""
+						html += "<H3>"
 						
 					case "Header4Start"
-						html += ""
+						html += "<H4>"
 						
 					case "Header5Start"
-						html += ""
+						html += "<H5>"
 						
 					case "Header6Start"
-						html += ""
+						html += "<H6>"
+						
+					case "Header1End"
+						html += "</H1><HR>"
+											
+					case "Header2End"
+						html += "</H2><HR>"
+						
+					case "Header3End"
+						html += "</H3>"
+						
+					case "Header4End"
+						html += "</H4>"
+						
+					case "Header5End"
+						html += "</H5>"
+						
+					case "Header6End"
+						html += "</H6>"
 						
 					case "BoldStart"
 						html += "<B>"
@@ -134,11 +162,23 @@
 					case "BlockquoteEnd"
 						html += "[bqEND]"
 						
+					case "ListItemsStart"
+						html += "<ul>"
+						
 					case "ListItemStart"
 						html += "<li>"
 						
+					case "ListItemsEnd"
+						html += "</ul>"
+					
+					case "OrderedListItemsStart"
+						html += "<ol>"
+						
 					case "OrderedListItemStart"
 						html += "<li>"
+						
+					case "OrderedListItemsEnd"
+						html += "</ol>"
 						
 					case "TableStart"
 						html += "<table>"
