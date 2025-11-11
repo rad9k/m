@@ -2,6 +2,11 @@
 
 _Vertex_ has three kinds of properites:
 - it has a atomic _value_
+	- nested 1
+some text in nesteed
+	- nested 2
+some more text
+	some more test 2
 - it h  as a set of _incoming edges_
 - it has a set of _outcoming edges_
 
