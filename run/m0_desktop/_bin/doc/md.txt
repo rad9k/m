@@ -133,45 +133,97 @@ a jest tak:
 
 ListItemsBegin ::
 ListItemBegin ::
-A1	"
+Text :: "A1	"
 ListItemBegin ::
-B1	"
+Text :: "B1	"
 ListItemBegin ::
-B2
+Text :: "B2
 ListItemBegin ::
-A2	"
+Text :: "A2	"
 ListItemBegin ::
-B3		"
+Text :: "B3		"
 ListItemBegin ::
-C4		"
+Text :: "C4		"
 ListItemBegin ::
-C5	"
+Text :: "C5	"
 ListItemBegin ::
-B4		"
+Text :: "B4		"
 ListItemBegin ::
-C6
+Text :: "C6
 ListItemBegin ::
-A3
-</ul>
+Text :: "A3
+ListItemsEnd ::
 OrderedItemsStart ::
 OrderedItemBegin
-A1	"
+Text :: "A1	"
 OrderedItemBegin
-B1	"
+Text :: "B1	"
 OrderedItemBegin
-B2
+Text :: "B2
 OrderedItemBegin
-A2	"
+Text :: "A2	"
 OrderedItemBegin
-B3		"
+Text :: "B3		"
 OrderedItemBegin
-C4		"
+Text :: "C4		"
 OrderedItemBegin
-C5	"
+Text :: "C5	"
 OrderedItemBegin
-B4		"
+Text :: "B4		"
 OrderedItemBegin
-C6
+Text :: "C6
 OrderedItemBegin
-A3
+Text :: "A3
 OrderedItemsEnd ::
+
+
+paragrafy tekstu wewnatrz list nie sa dobrze obslugiwane. dam przyklad. dla md:
+
+- A1
+	+ B1
+	a to powinno byc
+	
+	w ramah tego punktu
+	- B2
+- A2
+
+dostaje
+
+ListItemsBegin ::
+ListItemBegin ::
+Text :: "A1"
+ListItemsBegin ::
+ListItemBegin ::
+Text :: "B1"
+ListItemsEnd ::
+ListItemsEnd ::
+Text :: "	a to powinno byc"
+ParagraphBreak ::
+Text :: "	w ramah tego punktu"
+ListItemsBegin ::
+ListItemBegin ::
+Text :: "B2"
+ListItemsEnd ::
+ListItemsBegin ::
+ListItemBegin ::
+Text :: "A2"
+ListItemsEnd ::
+
+a powinno byc
+
+ListItemsBegin ::
+ListItemBegin ::
+Text :: "A1"
+ListItemsBegin ::
+ListItemBegin ::
+Text :: "B1"
+HardBreak ::
+Text :: "a to powinno byc"
+ParagraphBreak ::
+Text :: "w ramah tego punktu"
+ListItemBegin ::
+Text :: "B2"
+ListItemsEnd ::
+ListItemBegin ::
+Text :: "A2"
+ListItemsEnd ::

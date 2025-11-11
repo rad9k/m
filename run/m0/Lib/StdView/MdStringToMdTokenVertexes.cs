@@ -83,7 +83,22 @@ namespace m0.Lib.StdView
             Ordered
         }
 
-        private static ListType currentListType = ListType.None;
+        private struct ListContext
+        {
+            public ListType Type;
+            public int Indent;
+        }
+
+        private static readonly Stack<ListContext> listContextStack = new Stack<ListContext>();
+        private const int TabWidth = 4;
+
+        private struct LineAnalysis
+        {
+            public int Indent;
+            public int ContentPosition;
+            public bool HasContent;
+            public bool IsBlankLine;
+        }
 
         public static INoInEdgeInOutVertexVertex MdStringToMdTokenVertexes_Transform(IExecution exe)
         {
@@ -115,7 +130,7 @@ namespace m0.Lib.StdView
             isInsideTable = false;
             blockquoteLevel = 0;
             currentHeaderLevel = 0;
-            currentListType = ListType.None;
+            listContextStack.Clear();
 
             int position = 0;
 
@@ -136,8 +151,42 @@ namespace m0.Lib.StdView
                 if (IsParagraphBreak(md, position))
                 {
                     CloseHeaderIfOpen(to);
-                    CloseListIfOpen(to);
                     ExtractParagraphBreak(md, ref position);
+
+                    LineAnalysis paragraphAnalysis = AnalyzeLine(md, position);
+                    bool listContinues = false;
+
+                    if (listContextStack.Count > 0)
+                    {
+                        if (paragraphAnalysis.HasContent)
+                        {
+                            CloseListsToIndent(to, paragraphAnalysis.Indent);
+
+                            if (TryGetListItem(md, paragraphAnalysis.ContentPosition, out _, out _, out _))
+                            {
+                                listContinues = true;
+                            }
+                            else if (ShouldStayInCurrentList(paragraphAnalysis.Indent))
+                            {
+                                listContinues = true;
+                            }
+                        }
+                        else
+                        {
+                            listContinues = true;
+                        }
+                    }
+
+                    if (paragraphAnalysis.HasContent)
+                    {
+                        position = paragraphAnalysis.ContentPosition;
+                    }
+
+                    if (listContextStack.Count > 0 && !listContinues)
+                    {
+                        CloseAllLists(to);
+                    }
+
                     AddTokenToTarget(to, ParagraphBreak);
                     continue;
                 }
@@ -146,11 +195,50 @@ namespace m0.Lib.StdView
                 if (currentChar == '\n')
                 {
                     CloseHeaderIfOpen(to);
+                    int lookaheadPosition = position + 1;
+                    LineAnalysis lineAnalysis = AnalyzeLine(md, lookaheadPosition);
+
                     position++;
-                    if (currentListType != ListType.None && !IsNextListItem(md, position))
+
+                    if (listContextStack.Count > 0 && lineAnalysis.HasContent)
                     {
-                        CloseListIfOpen(to);
+                        CloseListsToIndent(to, lineAnalysis.Indent);
+
+                        if (TryGetListItem(md, lineAnalysis.ContentPosition, out _, out _, out _))
+                        {
+                            position = lineAnalysis.ContentPosition;
+                            continue;
+                        }
+
+                        if (ShouldStayInCurrentList(lineAnalysis.Indent))
+                        {
+                            AddTokenToTarget(to, HardBreak);
+                            position = lineAnalysis.ContentPosition;
+                            continue;
+                        }
+
+                        if (lineAnalysis.Indent == 0)
+                        {
+                            CloseAllLists(to);
+                        }
+                        else
+                        {
+                            CloseListsToIndent(to, lineAnalysis.Indent);
+                            if (!ShouldStayInCurrentList(lineAnalysis.Indent))
+                            {
+                                CloseAllLists(to);
+                            }
+                        }
+
+                        position = lineAnalysis.ContentPosition;
+                        continue;
                     }
+
+                    if (lineAnalysis.HasContent)
+                    {
+                        position = lineAnalysis.ContentPosition;
+                    }
+
                     continue;
                 }
                 
@@ -162,10 +250,6 @@ namespace m0.Lib.StdView
                     if (position < md.Length && md[position] == '\n')
                     {
                         continue;
-                    }
-                    if (currentListType != ListType.None && !IsNextListItem(md, position))
-                    {
-                        CloseListIfOpen(to);
                     }
                     continue;
                 }
@@ -323,10 +407,11 @@ namespace m0.Lib.StdView
                     continue;
                 }
                 
-                // Handle list items (- item or * item or 1. item)
-                if (IsListItem(md, position))
+                // Handle list items (-, +, *, or ordered lists)
+                if (TryGetListItem(md, position, out int markerPosition, out int listIndent, out ListType listType))
                 {
-                    ExtractListItem(md, ref position, to);
+                    position = markerPosition;
+                    ExtractListItem(md, ref position, to, listIndent, listType);
                     continue;
                 }
                 
@@ -406,7 +491,7 @@ namespace m0.Lib.StdView
                 }
             }
             
-            CloseListIfOpen(to);
+            CloseAllLists(to);
             CloseHeaderIfOpen(to);
             
             // Close all remaining blockquote levels at the end
@@ -464,9 +549,16 @@ namespace m0.Lib.StdView
             currentHeaderLevel = 0;
         }
 
-        private static void CloseListIfOpen(IVertex target)
+        private static void CloseCurrentList(IVertex target)
         {
-            switch (currentListType)
+            if (listContextStack.Count == 0)
+            {
+                return;
+            }
+
+            ListContext context = listContextStack.Pop();
+
+            switch (context.Type)
             {
                 case ListType.Unordered:
                     AddTokenToTarget(target, ListItemsEnd);
@@ -474,23 +566,20 @@ namespace m0.Lib.StdView
                 case ListType.Ordered:
                     AddTokenToTarget(target, OrderedListItemsEnd);
                     break;
-                default:
-                    return;
             }
-
-            currentListType = ListType.None;
         }
 
-        private static void EnsureListContext(IVertex target, ListType desired)
+        private static void CloseAllLists(IVertex target)
         {
-            if (currentListType == desired)
+            while (listContextStack.Count > 0)
             {
-                return;
+                CloseCurrentList(target);
             }
+        }
 
-            CloseListIfOpen(target);
-
-            switch (desired)
+        private static void OpenList(IVertex target, ListType type, int indent)
+        {
+            switch (type)
             {
                 case ListType.Unordered:
                     AddTokenToTarget(target, ListItemsStart);
@@ -498,12 +587,166 @@ namespace m0.Lib.StdView
                 case ListType.Ordered:
                     AddTokenToTarget(target, OrderedListItemsStart);
                     break;
-                case ListType.None:
                 default:
                     return;
             }
 
-            currentListType = desired;
+            listContextStack.Push(new ListContext { Type = type, Indent = indent });
+        }
+
+        private static void EnsureListContext(IVertex target, ListType desired, int indent)
+        {
+            if (desired == ListType.None)
+            {
+                return;
+            }
+
+            while (listContextStack.Count > 0 && indent < listContextStack.Peek().Indent)
+            {
+                CloseCurrentList(target);
+            }
+
+            if (listContextStack.Count == 0)
+            {
+                OpenList(target, desired, indent);
+                return;
+            }
+
+            if (indent > listContextStack.Peek().Indent)
+            {
+                OpenList(target, desired, indent);
+                return;
+            }
+
+            if (listContextStack.Peek().Type != desired)
+            {
+                CloseCurrentList(target);
+                OpenList(target, desired, indent);
+            }
+        }
+
+        private static bool TryGetListItem(string md, int position, out int markerPosition, out int indent, out ListType type)
+        {
+            markerPosition = position;
+            indent = 0;
+            type = ListType.None;
+
+            if (position >= md.Length)
+            {
+                return false;
+            }
+
+            int lineStart = position;
+            while (lineStart > 0 && md[lineStart - 1] != '\n' && md[lineStart - 1] != '\r')
+            {
+                lineStart--;
+            }
+
+            int temp = lineStart;
+            int localIndent = 0;
+            while (temp < md.Length && (md[temp] == ' ' || md[temp] == '\t'))
+            {
+                localIndent += md[temp] == '\t' ? TabWidth : 1;
+                temp++;
+            }
+
+            if (temp >= md.Length)
+            {
+                return false;
+            }
+
+            if (position > temp)
+            {
+                return false;
+            }
+
+            if (!IsListItem(md, temp))
+            {
+                return false;
+            }
+
+            markerPosition = temp;
+            indent = localIndent;
+            type = char.IsDigit(md[temp]) ? ListType.Ordered : ListType.Unordered;
+            return true;
+        }
+
+        private static LineAnalysis AnalyzeLine(string md, int position)
+        {
+            LineAnalysis analysis = new LineAnalysis
+            {
+                Indent = 0,
+                ContentPosition = position,
+                HasContent = false,
+                IsBlankLine = false
+            };
+
+            int idx = position;
+            while (idx < md.Length)
+            {
+                char c = md[idx];
+                if (c == ' ')
+                {
+                    analysis.Indent++;
+                    idx++;
+                    continue;
+                }
+                if (c == '\t')
+                {
+                    analysis.Indent += TabWidth;
+                    idx++;
+                    continue;
+                }
+                if (c == '\r')
+                {
+                    idx++;
+                    continue;
+                }
+                if (c == '\n')
+                {
+                    analysis.IsBlankLine = true;
+                    analysis.ContentPosition = idx;
+                    return analysis;
+                }
+
+                analysis.HasContent = true;
+                analysis.ContentPosition = idx;
+                return analysis;
+            }
+
+            analysis.IsBlankLine = !analysis.HasContent;
+            analysis.ContentPosition = idx;
+            return analysis;
+        }
+
+        private static bool ShouldStayInCurrentList(int indent)
+        {
+            if (listContextStack.Count == 0)
+            {
+                return false;
+            }
+
+            ListContext current = listContextStack.Peek();
+
+            if (indent > current.Indent)
+            {
+                return true;
+            }
+
+            if (indent == current.Indent && current.Indent > 0)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private static void CloseListsToIndent(IVertex target, int indent)
+        {
+            while (listContextStack.Count > 0 && listContextStack.Peek().Indent > indent)
+            {
+                CloseCurrentList(target);
+            }
         }
 
         private static bool IsHorizontalRule(string md, int position)
@@ -768,23 +1011,6 @@ namespace m0.Lib.StdView
             return idx < 0 || md[idx] == '\n' || md[idx] == '\r';
         }
 
-        private static bool IsNextListItem(string md, int position)
-        {
-            int nextPos = position;
-
-            while (nextPos < md.Length && (md[nextPos] == ' ' || md[nextPos] == '\t' || md[nextPos] == '\r'))
-            {
-                nextPos++;
-            }
-
-            if (nextPos >= md.Length || md[nextPos] == '\n')
-            {
-                return false;
-            }
-
-            return IsListItem(md, nextPos);
-        }
-
         private static bool IsListItem(string md, int position)
         {
             if (position >= md.Length) return false;
@@ -819,18 +1045,17 @@ namespace m0.Lib.StdView
             return false;
         }
 
-        private static void ExtractListItem(string md, ref int position, IVertex to)
+        private static void ExtractListItem(string md, ref int position, IVertex to, int indent, ListType listType)
         {
-            // Extract list marker
-            if (md[position] == '-' || md[position] == '*' || md[position] == '+')
+            EnsureListContext(to, listType, indent);
+
+            if (listType == ListType.Unordered)
             {
-                EnsureListContext(to, ListType.Unordered);
                 AddTokenToTarget(to, ListItemStart);
-                position++;
+                position++; // Skip marker (-, *, +)
             }
-            else if (char.IsDigit(md[position]))
+            else if (listType == ListType.Ordered)
             {
-                EnsureListContext(to, ListType.Ordered);
                 AddTokenToTarget(to, OrderedListItemStart);
                 while (position < md.Length && char.IsDigit(md[position]))
                 {
@@ -841,7 +1066,7 @@ namespace m0.Lib.StdView
                     position++;
                 }
             }
-            
+
             // Skip whitespace after marker
             SkipWhitespace(md, ref position);
         }
