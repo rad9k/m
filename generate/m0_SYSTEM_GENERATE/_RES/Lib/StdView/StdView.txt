@@ -49,11 +49,136 @@
 		function "MdTokenVertexesToHTMLString_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
 			variable "html" @String
 			
-			for each edge "e" in from\
-				html += "<BR>"
-				html += e\Meta
-				html += " - "
-				html += e\To
+			html = ""
+			
+			for edge "e" in from\
+				test e\Meta
+					case "Text"
+						html += e\To
+						
+					case "HardBreak"
+						html += "<BR>"
+						
+					case "ParagraphBreak"
+						html += "<BR><BR>"
+						
+					case "HorizontalRule"
+						html += "<HR>"
+						
+					case "Header1Start"
+						html += "<"
+											
+					case "Header2Start"
+						html += ""
+						
+					case "Header3Start"
+						html += ""
+						
+					case "Header4Start"
+						html += ""
+						
+					case "Header5Start"
+						html += ""
+						
+					case "Header6Start"
+						html += ""
+						
+					case "BoldStart"
+						html += "<B>"
+						
+					case "BoldEnd"
+						html += "</B>"
+						
+					case "ItalicStart"
+						html += "<I>"
+						
+					case "ItalicEnd"
+						html += "</I>"
+						
+					case "CodeBlockStart"
+						html += "<div style=code>"
+						
+					case "CodeBlockEnd"
+						html += "</div>"
+						
+					case "InlineCodeStart"
+						html += "<div style=inlinecode>"
+						
+					case "InlineCodeEnd"
+						html += "</div>"
+						
+					case "LinkStart"
+						html += ""
+						
+					case "LinkText"
+						html += ""
+						
+					case "LinkUrl"
+						html += ""
+						
+					case "LinkEnd"
+						html += ""
+						
+					case "ImageStart"
+						html += ""
+						
+					case "ImageUrl"
+						html += ""
+						
+					case "ImageEnd"
+						html += ""
+						
+					case "BlockquoteStart"
+						html += "[bqBEG]"
+						
+					case "BlockquoteEnd"
+						html += "[bqEND]"
+						
+					case "ListItemStart"
+						html += "<li>"
+						
+					case "OrderedListItemStart"
+						html += "<li>"
+						
+					case "TableStart"
+						html += "<table>"
+						
+					case "HeaderBegin"
+						html += "<tr>"
+						
+					case "HeaderEnd"
+						html += "</tr>"
+						
+					case "TableEnd"
+						html += "</table>"
+						
+					case "RowBegin"
+						html += "<tr>"
+						
+					case "RowEnd"
+						html += "</tr>"
+						
+					case "HeaderColumnBegin"
+						html += "<td>"
+						
+					case "HeaderColumnEnd"
+						html += "</td>"
+						
+					case "CellBegin"
+						html += "<td>"
+						
+					case "CellEnd"
+						html += "</td>"
+						
+					case "AlignLeft"
+						html += "<div align=left>"
+						
+					case "AlignCenter"
+						html += "<div align=center>"
+						
+					case "AlignRight"
+						html += "<div align=right>"
+						
 				
 			to <- @@Concatenate[html]
 	function "VertexToJson_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
