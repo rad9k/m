@@ -14,6 +14,7 @@ class TreeView {
     init() {
         this.render();
         this.bindEvents();
+	loadDocument_index();
     }
 
     render() {
@@ -204,6 +205,29 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 });
+
+function loadDocument_index() {
+    const mainContent = document.getElementById('mainContent');
+    
+    // Load document from HTML file
+    const docPath = `index`;
+    
+    fetch(docPath)
+        .then(response => {
+            if (response.ok) {
+                return response.text();
+            } else {
+                mainContent.innerHTML = '<div class="document-placeholder">Select an item from the left panel to load the document</div>';
+            }
+        })
+        .then(content => {
+            mainContent.innerHTML = content;
+        })
+        .catch(error => {
+            console.error('Error loading document:', error);
+            mainContent.innerHTML = '<div class="document-placeholder">Select an item from the left panel to load the document</div>';
+        });
+} 
 
 function loadDocument(docId) {
     const mainContent = document.getElementById('mainContent');
