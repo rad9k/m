@@ -185,36 +185,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 		if(isCollapsed==false){
 			isCollapsed = true;
 			savedWidth = sidebar.style.width || sidebar.offsetWidth + 'px';
-			const currentWidth = sidebar.offsetWidth;
-			
-			// Start both animations simultaneously
+			sidebar.style.width = '0px';
+			sidebar.style.padding = '0';
+			sidebar.style.minWidth = '0';
 			sidebar.classList.add('collapsed');
 			toggleBtn.classList.remove('sidebar-visible');
-			toggleBtn.textContent = '▶';
 			toggleBtn.style.left = '0px';
-			
-			// After transform animation, reduce width
-			setTimeout(() => {
-				sidebar.style.width = '0px';
-				sidebar.style.padding = '0';
-				sidebar.style.minWidth = '0';
-			}, 300);
+			toggleBtn.textContent = '▶';
 		}else{
 			isCollapsed = false;
 			const widthToRestore = savedWidth || '250px';
-			const widthValue = parseInt(widthToRestore) || 250;
-			
-			// Restore width first so sidebar can expand
 			sidebar.style.width = widthToRestore;
 			sidebar.style.padding = '';
 			sidebar.style.minWidth = '';
-			
-			// Trigger reflow to ensure width is applied before removing collapsed class
-			sidebar.offsetWidth;
-			
-			// Remove collapsed class and animate toggle button simultaneously
 			sidebar.classList.remove('collapsed');
 			toggleBtn.classList.add('sidebar-visible');
+			const widthValue = parseInt(widthToRestore) || 250;
 			toggleBtn.style.left = widthValue + 'px';
 			toggleBtn.textContent = '◀';
 		}
@@ -227,7 +213,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         isResizing = true;
         startX = e.clientX;
         startWidth = sidebar.offsetWidth;
-        sidebar.classList.add('no-transition');
         document.body.style.cursor = 'col-resize';
         e.preventDefault();
     });
@@ -244,7 +229,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.addEventListener('mouseup', () => {
         if (isResizing) {
             isResizing = false;
-            sidebar.classList.remove('no-transition');
             document.body.style.cursor = '';
         }
     });

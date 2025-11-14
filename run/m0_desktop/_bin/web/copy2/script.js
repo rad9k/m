@@ -227,7 +227,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         isResizing = true;
         startX = e.clientX;
         startWidth = sidebar.offsetWidth;
-        sidebar.classList.add('no-transition');
         document.body.style.cursor = 'col-resize';
         e.preventDefault();
     });
@@ -244,7 +243,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.addEventListener('mouseup', () => {
         if (isResizing) {
             isResizing = false;
-            sidebar.classList.remove('no-transition');
             document.body.style.cursor = '';
         }
     });

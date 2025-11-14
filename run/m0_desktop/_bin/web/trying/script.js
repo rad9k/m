@@ -132,6 +132,7 @@ class TreeView {
 let treeView;
 let isResizing = false;
 let startX, startWidth;
+let savedSidebarWidth = 250; // Default width
 
 // Load tree data from JSON file
 async function loadTreeData() {
@@ -170,64 +171,81 @@ document.addEventListener('DOMContentLoaded', async () => {
         treeView.expandAll();
     });
 
-	let isCollapsed = false;
-	let savedWidth = 0;
-	
-	// Initialize toggle button position
-	const sidebar = document.getElementById('sidebar');
-	const toggleBtn = document.getElementById('toggleBtn');
-	toggleBtn.classList.add('sidebar-visible');
-	toggleBtn.style.left = sidebar.offsetWidth + 'px';
-	
     // Panel hide button
-    toggleBtn.addEventListener('click', () => {
-				
-		if(isCollapsed==false){
-			isCollapsed = true;
-			savedWidth = sidebar.style.width || sidebar.offsetWidth + 'px';
-			const currentWidth = sidebar.offsetWidth;
-			
-			// Start both animations simultaneously
-			sidebar.classList.add('collapsed');
-			toggleBtn.classList.remove('sidebar-visible');
-			toggleBtn.textContent = '▶';
-			toggleBtn.style.left = '0px';
-			
-			// After transform animation, reduce width
-			setTimeout(() => {
-				sidebar.style.width = '0px';
-				sidebar.style.padding = '0';
-				sidebar.style.minWidth = '0';
-			}, 300);
-		}else{
-			isCollapsed = false;
-			const widthToRestore = savedWidth || '250px';
-			const widthValue = parseInt(widthToRestore) || 250;
-			
-			// Restore width first so sidebar can expand
-			sidebar.style.width = widthToRestore;
-			sidebar.style.padding = '';
-			sidebar.style.minWidth = '';
-			
-			// Trigger reflow to ensure width is applied before removing collapsed class
-			sidebar.offsetWidth;
-			
-			// Remove collapsed class and animate toggle button simultaneously
-			sidebar.classList.remove('collapsed');
-			toggleBtn.classList.add('sidebar-visible');
-			toggleBtn.style.left = widthValue + 'px';
-			toggleBtn.textContent = '◀';
-		}
+    document.getElementById('toggleBtn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('toggleBtn');
+        const isCollapsed = sidebar.classList.contains('collapsed');
+        
+        if (isCollapsed) {
+            // Expand sidebar - remove collapsed class first
+            sidebar.classList.remove('collapsed');
+            // Remove all important inline styles first
+            sidebar.style.removeProperty('flex-basis');
+            sidebar.style.removeProperty('flex-shrink');
+            sidebar.style.removeProperty('flex-grow');
+            sidebar.style.removeProperty('min-width');
+            sidebar.style.removeProperty('max-width');
+            // Wait one frame, then set saved width
+            requestAnimationFrame(() => {
+                sidebar.style.setProperty('flex-basis', savedSidebarWidth + 'px', 'important');
+                sidebar.style.setProperty('flex-shrink', '0', 'important');
+                sidebar.style.setProperty('flex-grow', '0', 'important');
+                sidebar.style.setProperty('min-width', '200px', 'important');
+                sidebar.style.setProperty('max-width', '400px', 'important');
+            });
+            toggleBtn.textContent = '◀';
+        } else {
+            // Collapse sidebar - save current flex-basis first
+            const computedStyle = window.getComputedStyle(sidebar);
+            let currentWidth = sidebar.offsetWidth || 250;
+            
+            // Try to get flex-basis from computed style
+            const flexBasis = computedStyle.flexBasis;
+            if (flexBasis && flexBasis !== 'auto' && flexBasis !== '0px') {
+                const parsed = parseInt(flexBasis);
+                if (!isNaN(parsed) && parsed > 0) {
+                    currentWidth = parsed;
+                }
+            }
+            
+            // Check inline style
+            if (sidebar.style.flexBasis) {
+                const parsed = parseInt(sidebar.style.flexBasis);
+                if (!isNaN(parsed) && parsed > 0) {
+                    currentWidth = parsed;
+                }
+            }
+            
+            if (currentWidth > 0 && currentWidth < 500) {
+                savedSidebarWidth = Math.round(currentWidth);
+            }
+            
+            // Set all size properties to 0 to collapse sidebar completely
+            sidebar.style.setProperty('flex-basis', '0px', 'important');
+            sidebar.style.setProperty('flex-shrink', '1', 'important');
+            sidebar.style.setProperty('flex-grow', '0', 'important');
+            sidebar.style.setProperty('width', '0px', 'important');
+            sidebar.style.setProperty('min-width', '0px', 'important');
+            sidebar.style.setProperty('max-width', '0px', 'important');
+            sidebar.style.setProperty('overflow', 'hidden', 'important');
+            
+            // Add collapsed class (CSS will hide header and tree-container)
+            sidebar.classList.add('collapsed');
+            toggleBtn.textContent = '▶';
+        }
     });
 
     // Resize handle
     const resizeHandle = document.getElementById('resizeHandle');
+    const sidebar = document.getElementById('sidebar');
 
     resizeHandle.addEventListener('mousedown', (e) => {
         isResizing = true;
         startX = e.clientX;
         startWidth = sidebar.offsetWidth;
-        sidebar.classList.add('no-transition');
         document.body.style.cursor = 'col-resize';
         e.preventDefault();
     });
@@ -237,15 +255,30 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         const deltaX = e.clientX - startX;
         const newWidth = Math.max(200, Math.min(400, startWidth + deltaX));
-        sidebar.style.width = newWidth + 'px';
-        toggleBtn.style.left = newWidth + 'px';
+        // Use flex-basis for consistency
+        sidebar.style.setProperty('flex-basis', newWidth + 'px', 'important');
+        sidebar.style.setProperty('flex-shrink', '0', 'important');
+        sidebar.style.setProperty('flex-grow', '0', 'important');
+        sidebar.style.setProperty('min-width', '200px', 'important');
+        sidebar.style.setProperty('max-width', '400px', 'important');
+        // Update saved width if sidebar is not collapsed
+        if (!sidebar.classList.contains('collapsed')) {
+            savedSidebarWidth = newWidth;
+        }
     });
 
     document.addEventListener('mouseup', () => {
         if (isResizing) {
             isResizing = false;
-            sidebar.classList.remove('no-transition');
             document.body.style.cursor = '';
+            // Update saved width after resize is complete
+            const sidebar = document.getElementById('sidebar');
+            if (!sidebar.classList.contains('collapsed')) {
+                const currentWidth = sidebar.offsetWidth || parseInt(sidebar.style.width) || 250;
+                if (currentWidth > 0 && currentWidth < 500) {
+                    savedSidebarWidth = Math.round(currentWidth);
+                }
+            }
         }
     });
 });
