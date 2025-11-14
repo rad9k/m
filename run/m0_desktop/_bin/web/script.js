@@ -209,7 +209,7 @@ function loadDocument(docId) {
     const mainContent = document.getElementById('mainContent');
     
     // Load document from HTML file
-    const docPath = `documents/${docId}.html`;
+    const docPath = `${docId}`;
     
     fetch(docPath)
         .then(response => {
