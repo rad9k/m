@@ -254,7 +254,7 @@ function loadDocument_index() {
     const mainContent = document.getElementById('mainContent');
     
     // Load document from HTML file
-    const docPath = `index`;
+    const docPath = `00_Start`;
     
     fetch(docPath)
         .then(response => {

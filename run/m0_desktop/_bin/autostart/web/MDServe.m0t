@@ -88,7 +88,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 		firstTwo = @@Substring['input', "1", "2"]
 		
 		if @@IsNumeric[firstTwo]
-			return @@Substring['input', "3", "-1"]
+			return @@Substring['input', "4", "-1"]
 			
 		return 'input'
 		
