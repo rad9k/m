@@ -94,10 +94,10 @@
 						html += "<H6>"
 						
 					case "Header1End"
-						html += "</H1><HR>"
+						html += "</H1>"
 											
 					case "Header2End"
-						html += "</H2><HR>"
+						html += "</H2>"
 						
 					case "Header3End"
 						html += "</H3>"
