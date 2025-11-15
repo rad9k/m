@@ -184,10 +184,10 @@
 						html += "<table>"
 						
 					case "HeaderBegin"
-						html += "<tr>"
+						html += "<thead>"
 						
 					case "HeaderEnd"
-						html += "</tr>"
+						html += "</thead>"
 						
 					case "TableEnd"
 						html += "</table>"
