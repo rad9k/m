@@ -124,16 +124,16 @@
 						html += "</I>"
 						
 					case "CodeBlockStart"
-						html += "<div style=code>"
+						html += "<pre><code>"
 						
 					case "CodeBlockEnd"
-						html += "</div>"
+						html += "</code></pre>"
 						
 					case "InlineCodeStart"
-						html += "<div style=inlinecode>"
+						html += "<code>"
 						
 					case "InlineCodeEnd"
-						html += "</div>"
+						html += "</code>"
 						
 					case "LinkStart"
 						html += ""
