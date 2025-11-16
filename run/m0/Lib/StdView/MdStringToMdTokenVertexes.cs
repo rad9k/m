@@ -187,11 +187,12 @@ namespace m0.Lib.StdView
                         CloseAllLists(to);
                     }
 
+                    // Generate ParagraphBreak for empty line
                     AddTokenToTarget(to, ParagraphBreak);
                     continue;
                 }
                 
-                // Handle single newlines (just advance position)
+                // Handle single newlines (generate HardBreak if next line has content)
                 if (currentChar == '\n')
                 {
                     CloseHeaderIfOpen(to);
@@ -230,13 +231,18 @@ namespace m0.Lib.StdView
                             }
                         }
 
+                        // Generate HardBreak for single newline when next line has content
+                        AddTokenToTarget(to, HardBreak);
                         position = lineAnalysis.ContentPosition;
                         continue;
                     }
 
                     if (lineAnalysis.HasContent)
                     {
+                        // Generate HardBreak for single newline when next line has content
+                        AddTokenToTarget(to, HardBreak);
                         position = lineAnalysis.ContentPosition;
+                        continue;
                     }
 
                     continue;
@@ -1565,6 +1571,7 @@ namespace m0.Lib.StdView
 
         private static void ExtractParagraphBreak(string md, ref int position)
         {
+            // Skip all consecutive empty lines (2 or more newlines)
             // Skip first newline
             if (position < md.Length && md[position] == '\n')
             {
@@ -1579,29 +1586,43 @@ namespace m0.Lib.StdView
                 }
             }
             
-            // Skip any carriage return
-            if (position < md.Length && md[position] == '\r')
+            // Skip all subsequent empty lines and whitespace
+            while (position < md.Length)
             {
-                position++;
-            }
-            
-            // Skip any whitespace on the empty line
-            while (position < md.Length && char.IsWhiteSpace(md[position]) && md[position] != '\n' && md[position] != '\r')
-            {
-                position++;
-            }
-            
-            // Skip the second newline
-            if (position < md.Length && md[position] == '\n')
-            {
-                position++;
-            }
-            else if (position < md.Length && md[position] == '\r')
-            {
-                position++;
-                if (position < md.Length && md[position] == '\n')
+                // Skip any carriage return
+                if (position < md.Length && md[position] == '\r')
                 {
                     position++;
+                }
+                
+                // Skip any whitespace on the empty line
+                while (position < md.Length && char.IsWhiteSpace(md[position]) && md[position] != '\n' && md[position] != '\r')
+                {
+                    position++;
+                }
+                
+                // Check if next character is a newline (empty line continues)
+                if (position < md.Length && (md[position] == '\n' || md[position] == '\r'))
+                {
+                    // Skip the newline
+                    if (md[position] == '\n')
+                    {
+                        position++;
+                    }
+                    else if (md[position] == '\r')
+                    {
+                        position++;
+                        if (position < md.Length && md[position] == '\n')
+                        {
+                            position++;
+                        }
+                    }
+                    // Continue loop to check for more empty lines
+                }
+                else
+                {
+                    // Next line has content, stop here
+                    break;
                 }
             }
         }
