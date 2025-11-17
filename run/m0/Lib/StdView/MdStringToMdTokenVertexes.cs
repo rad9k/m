@@ -519,7 +519,17 @@ namespace m0.Lib.StdView
         }
 
         private static void AddTextTokenToTarget(IVertex target, string textValue)
-        {         
+        {
+            textValue = textValue.Replace("<", "&lt;");
+            textValue = textValue.Replace(">", "&gt;");
+            textValue = textValue.Replace("&", "&amp;");      
+            textValue = textValue.Replace("\"", "&quot;");      
+            textValue = textValue.Replace("'", "&apos;");      
+            textValue = textValue.Replace("`", "&grave;");      
+            textValue = textValue.Replace("~", "&tilde;");      
+            textValue = textValue.Replace("^", "&circ;");      
+            textValue = textValue.Replace("|", "&verbar;");      
+            textValue = textValue.Replace("\\", "&bsol;");      
             target.AddVertex(Text, textValue);        
         }
 
