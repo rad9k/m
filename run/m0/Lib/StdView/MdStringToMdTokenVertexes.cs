@@ -422,7 +422,7 @@ namespace m0.Lib.StdView
                 }
                 
                 // Handle blockquotes (> text)
-                if (currentChar == '>')
+                if (currentChar == '>' && IsBlockquoteStart(md, position))
                 {
                     // Count > symbols (with optional spaces between them) to determine level
                     int newLevel = 0;
@@ -1075,6 +1075,80 @@ namespace m0.Lib.StdView
 
             // Skip whitespace after marker
             SkipWhitespace(md, ref position);
+        }
+
+        private static bool IsBlockquoteStart(string md, int position)
+        {
+            // First check: Don't treat > as blockquote if we're inside a code block or inline code (using state flags)
+            if (isInsideCodeBlock || isInsideInlineCode)
+            {
+                return false;
+            }
+            
+            // Second check: Check if we're inside inline code by scanning backwards for unclosed backticks
+            // This handles cases like "The `(?<ANY>)` meta edge" where > is inside inline code
+            // This is a backup check in case the state flag wasn't set yet
+            if (IsInsideInlineCodeByScanning(md, position))
+            {
+                return false;
+            }
+            
+            // Third check: Check if > is at the start of a line (after newline or at start of string, with optional spaces/tabs before)
+            int idx = position - 1;
+            
+            // Skip whitespace (spaces and tabs) before the >
+            while (idx >= 0 && (md[idx] == ' ' || md[idx] == '\t'))
+            {
+                idx--;
+            }
+            
+            // Check if we're at the start of a line (after newline or at start of string)
+            if (idx >= 0 && md[idx] != '\n' && md[idx] != '\r')
+            {
+                return false; // Not at start of line
+            }
+            
+            return true;
+        }
+        
+        private static bool IsInsideInlineCodeByScanning(string md, int position)
+        {
+            // Scan backwards from position to find if we're inside inline code
+            // This is a backup check in case the state flag wasn't set yet
+            int idx = position - 1;
+            bool insideInlineCode = false;
+            
+            while (idx >= 0)
+            {
+                char c = md[idx];
+                
+                // If we hit a newline, stop scanning (inline code can't span lines)
+                if (c == '\n' || c == '\r')
+                {
+                    break;
+                }
+                
+                // Check for backtick
+                if (c == '`')
+                {
+                    // Check if it's part of a code block (triple backtick) - skip it
+                    // We check if previous two characters are also backticks
+                    if (idx >= 2 && md[idx - 1] == '`' && md[idx - 2] == '`')
+                    {
+                        // Found triple backtick - skip all three
+                        idx -= 3;
+                        if (idx < 0) break;
+                        continue;
+                    }
+                    
+                    // It's a single backtick - toggle inline code state
+                    insideInlineCode = !insideInlineCode;
+                }
+                
+                idx--;
+            }
+            
+            return insideInlineCode;
         }
 
         private static bool IsBlockquoteEnd(string md, int position)
