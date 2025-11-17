@@ -138,6 +138,46 @@ namespace m0.Lib.StdView
             {
                 char currentChar = md[position];
                 
+                // If inside code block, only process closing ``` or extract text
+                if (isInsideCodeBlock)
+                {
+                    // Check for code block end (```)
+                    if (IsCodeBlockEnd(md, position))
+                    {
+                        position += 3; // Skip closing ```
+                        isInsideCodeBlock = false;
+                        AddTokenToTarget(to, CodeBlockEnd);
+                        continue;
+                    }
+                    // Otherwise, extract text until we find closing ```
+                    string codeBlockText = ExtractCodeBlockText(md, ref position);
+                    if (!string.IsNullOrEmpty(codeBlockText))
+                    {
+                        AddTextTokenToTarget(to, codeBlockText);
+                    }
+                    continue;
+                }
+                
+                // If inside inline code, only process closing ` or extract text
+                if (isInsideInlineCode)
+                {
+                    // Check for inline code end (`)
+                    if (IsInlineCodeEnd(md, position))
+                    {
+                        position++; // Skip closing `
+                        isInsideInlineCode = false;
+                        AddTokenToTarget(to, InlineCodeEnd);
+                        continue;
+                    }
+                    // Otherwise, extract text until we find closing `
+                    string inlineCodeText = ExtractInlineCodeText(md, ref position);
+                    if (!string.IsNullOrEmpty(inlineCodeText))
+                    {
+                        AddTextTokenToTarget(to, inlineCodeText);
+                    }
+                    continue;
+                }
+                
                 // Handle hard breaks (two or more spaces at end of line)
                 if (IsHardBreak(md, position))
                 {
@@ -350,15 +390,6 @@ namespace m0.Lib.StdView
                     continue;
                 }
                 
-                // Handle code block end (```)
-                if (IsCodeBlockEnd(md, position))
-                {
-                    position += 3; // Skip closing ```
-                    isInsideCodeBlock = false;
-                    AddTokenToTarget(to, CodeBlockEnd);
-                    continue;
-                }
-                
                 // Handle inline code (`code`)
                 if (IsInlineCodeStart(md, position))
                 {
@@ -368,14 +399,8 @@ namespace m0.Lib.StdView
                     continue;
                 }
                 
-                // Handle inline code end (`)
-                if (IsInlineCodeEnd(md, position))
-                {
-                    position++; // Skip closing `
-                    isInsideInlineCode = false;
-                    AddTokenToTarget(to, InlineCodeEnd);
-                    continue;
-                }
+                // Note: Code block end and inline code end are handled at the beginning
+                // of the loop when inside code blocks to prevent markdown processing
                 
                 // Handle links [text](url)
                 if (IsLinkStart(md, position))
@@ -520,9 +545,9 @@ namespace m0.Lib.StdView
 
         private static void AddTextTokenToTarget(IVertex target, string textValue)
         {
+            textValue = textValue.Replace("&", "&amp;");
             textValue = textValue.Replace("<", "&lt;");
-            textValue = textValue.Replace(">", "&gt;");
-            textValue = textValue.Replace("&", "&amp;");      
+            textValue = textValue.Replace(">", "&gt;");            
             textValue = textValue.Replace("\"", "&quot;");      
             textValue = textValue.Replace("'", "&apos;");      
             textValue = textValue.Replace("`", "&grave;");      
@@ -816,6 +841,7 @@ namespace m0.Lib.StdView
         private static bool IsBoldStart(string md, int position)
         {
             if (position + 1 >= md.Length) return false;
+            if (isInsideCodeBlock || isInsideInlineCode) return false; // Don't process inside code blocks
             if (isInsideBold) return false; // Already inside bold
             return (md[position] == '*' && md[position + 1] == '*') ||
                    (md[position] == '_' && md[position + 1] == '_');
@@ -824,6 +850,7 @@ namespace m0.Lib.StdView
         private static bool IsBoldEnd(string md, int position)
         {
             if (position + 1 >= md.Length) return false;
+            if (isInsideCodeBlock || isInsideInlineCode) return false; // Don't process inside code blocks
             if (!isInsideBold) return false; // Not inside bold
             return (md[position] == '*' && md[position + 1] == '*') ||
                    (md[position] == '_' && md[position + 1] == '_');
@@ -832,6 +859,7 @@ namespace m0.Lib.StdView
         private static bool IsItalicStart(string md, int position)
         {
             if (position >= md.Length) return false;
+            if (isInsideCodeBlock || isInsideInlineCode) return false; // Don't process inside code blocks
             if (isInsideItalic) return false; // Already inside italic
             char current = md[position];
             if (current == '*' && IsListItem(md, position)) return false;
@@ -842,6 +870,7 @@ namespace m0.Lib.StdView
         private static bool IsItalicEnd(string md, int position)
         {
             if (position >= md.Length) return false;
+            if (isInsideCodeBlock || isInsideInlineCode) return false; // Don't process inside code blocks
             if (!isInsideItalic) return false; // Not inside italic
             char current = md[position];
             if (current == '*' && IsListItem(md, position)) return false;
@@ -918,6 +947,7 @@ namespace m0.Lib.StdView
         private static bool IsLinkStart(string md, int position)
         {
             if (position >= md.Length) return false;
+            if (isInsideCodeBlock || isInsideInlineCode) return false; // Don't process inside code blocks
             if (isInsideLink) return false; // Already inside link
             return md[position] == '[';
         }
@@ -925,6 +955,7 @@ namespace m0.Lib.StdView
         private static bool IsLinkEnd(string md, int position)
         {
             if (position >= md.Length) return false;
+            if (isInsideCodeBlock || isInsideInlineCode) return false; // Don't process inside code blocks
             if (!isInsideLink) return false; // Not inside link
             return md[position] == ']' && position + 1 < md.Length && md[position + 1] == '(';
         }
@@ -949,6 +980,7 @@ namespace m0.Lib.StdView
         private static bool IsImageStart(string md, int position)
         {
             if (position + 1 >= md.Length) return false;
+            if (isInsideCodeBlock || isInsideInlineCode) return false; // Don't process inside code blocks
             if (isInsideImage) return false; // Already inside image
             return md[position] == '!' && md[position + 1] == '[';
         }
@@ -994,6 +1026,7 @@ namespace m0.Lib.StdView
         private static bool IsImageEnd(string md, int position)
         {
             if (position >= md.Length) return false;
+            if (isInsideCodeBlock || isInsideInlineCode) return false; // Don't process inside code blocks
             if (!isInsideImage) return false; // Not inside image
             return md[position] == ']' && position + 1 < md.Length && md[position + 1] == '(';
         }
@@ -1181,6 +1214,47 @@ namespace m0.Lib.StdView
                 return nextLineStart >= md.Length || md[nextLineStart] != '>';
             }
             return false;
+        }
+        
+        private static string ExtractCodeBlockText(string md, ref int position)
+        {
+            StringBuilder result = new StringBuilder();
+            
+            while (position < md.Length)
+            {
+                // Check if we found the closing ```
+                if (position + 2 < md.Length && 
+                    md[position] == '`' && 
+                    md[position + 1] == '`' && 
+                    md[position + 2] == '`')
+                {
+                    break; // Stop before the closing ```
+                }
+                
+                result.Append(md[position]);
+                position++;
+            }
+            
+            return result.ToString();
+        }
+        
+        private static string ExtractInlineCodeText(string md, ref int position)
+        {
+            StringBuilder result = new StringBuilder();
+            
+            while (position < md.Length)
+            {
+                // Check if we found the closing `
+                if (md[position] == '`')
+                {
+                    break; // Stop before the closing `
+                }
+                
+                result.Append(md[position]);
+                position++;
+            }
+            
+            return result.ToString();
         }
         
         private static string ExtractRegularText(string md, ref int position)
