@@ -3206,7 +3206,24 @@ namespace m0
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
 
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, sm, "{ZeroTypes{AtomType:String,AtomType:Integer,AtomType:Decimal,AtomType:Float,AtomType:Boolean,Type:VertexType,Class:Edge{Association:From{$MinCardinality:0,$MaxCardinality:1},Association:Meta{$MinCardinality:1,$MaxCardinality:1},Association:To{$MinCardinality:1,$MaxCardinality:1}},Class:DateTime{Attribute:Year{$MinCardinality:1,$MaxCardinality:1},Attribute:Month{$MinCardinality:1,$MaxCardinality:1},Attribute:Day{$MinCardinality:1,$MaxCardinality:1},Attribute:Hour{$MinCardinality:1,$MaxCardinality:1},Attribute:Minute{$MinCardinality:1,$MaxCardinality:1},Attribute:Second{$MinCardinality:1,$MaxCardinality:1},Attribute:Millisecond{$MinCardinality:0,$MaxCardinality:1}},Class:FormalTextLanguage,Enum:EnumBase,Class:HasBaseEdge{Attribute:BaseEdge{$MinCardinality:1,$MaxCardinality:1}},Class:HasSelectedEdges{Attribute:SelectedEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:},Attribute:ShowSelectedEdgesBaseEdge{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False}},Class:HasFilter{Attribute:FilterQuery{$MinCardinality:0,$MaxCardinality:1}},Class:HasExecutableVertex{Attribute:ExecutableVertex{$MinCardinality:1,$MaxCardinality:1}},Class:Exception{Attribute:CodeEdge{$MinCardinality:0,$MaxCardinality:1},Attribute:DataEdge{$MinCardinality:0,$MaxCardinality:-1},Attribute:Where{$MinCardinality:0,$MaxCardinality:1},Attribute:Type{$MinCardinality:0,$MaxCardinality:1},Attribute:What{$MinCardinality:1,$MaxCardinality:1}},Class:FormalTextLanguageProcessing{Attribute:ParserHandler{$MinCardinality:0,$MaxCardinality:1},Attribute:GeneratorHandler{$MinCardinality:0,$MaxCardinality:1},Aggregation:LanguageParameterFirst{$MinCardinality:0,$MaxCardinality:1},Aggregation:LanguageParameterSecond{$MinCardinality:0,$MaxCardinality:1}},Enum:ExceptionTypeEnum{EnumValue:Error,EnumValue:Warning,EnumValue:Info},Enum:CodeRepresentationEnum{EnumValue:EdgeOneLine,EnumValue:LinearizedManyLines,EnumValue:ManyLinesExcludingParent,EnumValue:VertexAndManyLines,EnumValue:EdgeAndManyLines}}}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, sm, "{ZeroTypes{AtomType:String,AtomType:Integer,AtomType:Decimal,AtomType:Float," +
+                "AtomType:Boolean,Type:VertexType,"+
+                "Class:Edge{Association:From{$MinCardinality:0,$MaxCardinality:1},"+
+                "Association:Meta{$MinCardinality:1,$MaxCardinality:1},Association:To{$MinCardinality:1,$MaxCardinality:1}},"+
+                "Class:DateTime{Attribute:Year{$MinCardinality:1,$MaxCardinality:1},Attribute:Month{$MinCardinality:1,$MaxCardinality:1},Attribute:Day{$MinCardinality:1,$MaxCardinality:1},Attribute:Hour{$MinCardinality:1,$MaxCardinality:1},Attribute:Minute{$MinCardinality:1,$MaxCardinality:1},Attribute:Second{$MinCardinality:1,$MaxCardinality:1},Attribute:Millisecond{$MinCardinality:0,$MaxCardinality:1}},"+
+                "Class:FormalTextLanguage," +
+                "Enum:EnumBase,"+
+                "Class:HasBaseEdge{Attribute:BaseEdge{$MinCardinality:1,$MaxCardinality:1}},"+
+                "Class:HasSelectedEdges{Attribute:SelectedEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:},Attribute:ShowSelectedEdgesBaseEdge{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False}},"+
+                "Class:HasFilter{Attribute:FilterQuery{$MinCardinality:0,$MaxCardinality:1}},"+
+                "Class:HasExecutableVertex{Attribute:ExecutableVertex{$MinCardinality:1,$MaxCardinality:1}},"+
+                "Class:Exception{Attribute:CodeEdge{$MinCardinality:0,$MaxCardinality:1},Attribute:DataEdge{$MinCardinality:0,$MaxCardinality:-1},Attribute:Where{$MinCardinality:0,$MaxCardinality:1},Attribute:Type{$MinCardinality:0,$MaxCardinality:1},Attribute:What{$MinCardinality:1,$MaxCardinality:1}},"+
+                "Class:FormalTextLanguageProcessing{Attribute:ParserHandler{$MinCardinality:0,$MaxCardinality:1},Attribute:GeneratorHandler{$MinCardinality:0,$MaxCardinality:1},Aggregation:LanguageParameterFirst{$MinCardinality:0,$MaxCardinality:1},Aggregation:LanguageParameterSecond{$MinCardinality:0,$MaxCardinality:1}},"+
+                "Class:TextToken," +
+                "Enum:ExceptionTypeEnum{EnumValue:Error,EnumValue:Warning,EnumValue:Info}," +
+                "Enum:CodeRepresentationEnum{EnumValue:EdgeOneLine,EnumValue:LinearizedManyLines,EnumValue:ManyLinesExcludingParent,EnumValue:VertexAndManyLines,EnumValue:EdgeAndManyLines}}}");
+
+            // FormalTextLanguage
 
             IVertex FormalTextLanguage = LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\FormalTextLanguage");
 
@@ -3237,6 +3254,8 @@ namespace m0
             AddAttribute(FormalTextLanguage, "NextAtomEdge", 1, 1, vertexType);
 
             AddAttribute(FormalTextLanguage, "CodeViewTimeLinkKeywordPart", 0, -1, vertexType);
+            AddAttribute(FormalTextLanguage, "ViewTokens", 0, -1, LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\TextToken"));
+
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\String").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$Is"),
@@ -3420,6 +3439,14 @@ namespace m0
                 + ",Class:Position{Attribute:X,Attribute:Y}"
                 + ",Enum:LayoutTypeEnum{EnumValue:Vertical,EnumValue:Horizontal,EnumValue:Wrap,EnumValue:Manual,EnumValue:Auto,EnumValue:Hidden}"
                 + "}}");
+
+            // TextToken UPDATE
+
+            IVertex TextToken = LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\TextToken");
+
+            AddAttribute(TextToken, "Color", 0, 1, LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\UX\Color"));
+            
+            //
 
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"UX\Color").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$Is"), LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class"));
@@ -6391,6 +6418,15 @@ namespace m0
             foreach (var de in baseColors)
                 ColorHelper.AddColor(Colors, "VeryVeryVeryVeryLight" + de.Key, ScaleUp(de.Value[0], 0.97), ScaleUp(de.Value[1], 0.97), ScaleUp(de.Value[2], 0.97), 255);
 
+              < Color name = "grey"  foreground = "#999999" />
+  < Color name = "keyword" fontWeight = "bold" foreground = "#00C2CF" />
+  < Color name = "DolarKeyword" foreground = "#00008F" />
+  < Color name = "String" fontWeight = "bold" foreground = "#6733D5" />
+  < Color name = "Operator" fontWeight = "bold" foreground = "#FF0000" />
+  < Color name = "DoubleColon" fontWeight = "bold" foreground = "#255867" />
+  < Color name = "Monkey" fontWeight = "bold" foreground = "#3B91EF" />
+  < Color name = "Escape" foreground = "#4BB1CF" />
+            ColorHelper.AddColor(Colors, )
         }
 
         IVertex AddUXTemplate(IVertex where, String Value, bool doNotShowInherited,
