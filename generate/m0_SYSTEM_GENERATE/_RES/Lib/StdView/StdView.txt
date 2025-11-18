@@ -23,8 +23,8 @@
 		"BoldEnd"
 		"ItalicStart"
 		"ItalicEnd"
-		"CodeBlockStart"
-		"CodeBlockEnd"
+		"CodeBlock"
+			"FormalTextLanguageName"
 		"InlineCodeStart"
 		"InlineCodeEnd"
 		"LinkStart"
@@ -123,10 +123,11 @@
 					case "ItalicEnd"
 						html += "</I>"
 						
-					case "CodeBlockStart"
+					case "CodeBlock"
 						html += "<pre><code>"
-						
-					case "CodeBlockEnd"
+						if e\To\FormalTextLanguageName<> != "0"
+							html += e\To\FormalTextLanguageName
+						html += e\To
 						html += "</code></pre>"
 						
 					case "InlineCodeStart"
