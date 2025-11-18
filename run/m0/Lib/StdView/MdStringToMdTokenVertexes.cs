@@ -32,8 +32,8 @@ namespace m0.Lib.StdView
         static IVertex BoldEnd = Md.Get(false, "BoldEnd");
         static IVertex ItalicStart = Md.Get(false, "ItalicStart");
         static IVertex ItalicEnd = Md.Get(false, "ItalicEnd");
-        static IVertex CodeBlockStart = Md.Get(false, "CodeBlockStart");
-        static IVertex CodeBlockEnd = Md.Get(false, "CodeBlockEnd");
+        static IVertex CodeBlock = Md.Get(false, "CodeBlock");
+        static IVertex FormalTextLanguageName = Md.Get(false, @"CodeBlock\FormalTextLanguageName");
         static IVertex InlineCodeStart = Md.Get(false, "InlineCodeStart");
         static IVertex InlineCodeEnd = Md.Get(false, "InlineCodeEnd");
         static IVertex LinkStart = Md.Get(false, "LinkStart");
@@ -75,6 +75,8 @@ namespace m0.Lib.StdView
         private static bool isInsideTable = false;
         private static int blockquoteLevel = 0;
         private static int currentHeaderLevel = 0;
+        private static StringBuilder codeBlockContent = null;
+        private static string codeBlockLanguageName = null;
 
         private enum ListType
         {
@@ -130,6 +132,8 @@ namespace m0.Lib.StdView
             isInsideTable = false;
             blockquoteLevel = 0;
             currentHeaderLevel = 0;
+            codeBlockContent = null;
+            codeBlockLanguageName = null;
             listContextStack.Clear();
 
             int position = 0;
@@ -146,15 +150,29 @@ namespace m0.Lib.StdView
                     {
                         position += 3; // Skip closing ```
                         isInsideCodeBlock = false;
-                        AddTokenToTarget(to, CodeBlockEnd);
+                        
+                        // Add CodeBlock token with collected content
+                        string content = codeBlockContent != null ? codeBlockContent.ToString() : "";
+                        
+                        if (!string.IsNullOrEmpty(codeBlockLanguageName))
+                        {
+                            AddCodeBlockToTarget_withFormalTextLanguageName(to, content, codeBlockLanguageName);
+                        }
+                        else
+                        {
+                            AddCodeBlockToTarget(to, content);
+                        }
+                        
+                        codeBlockContent = null;
+                        codeBlockLanguageName = null;
                         continue;
                     }
-                    // Otherwise, extract text until we find closing ```
-                    string codeBlockText = ExtractCodeBlockText(md, ref position);
-                    if (!string.IsNullOrEmpty(codeBlockText))
+                    // Otherwise, collect text until we find closing ```
+                    if (codeBlockContent != null)
                     {
-                        AddTextTokenToTarget(to, codeBlockText);
+                        codeBlockContent.Append(md[position]);
                     }
+                    position++;
                     continue;
                 }
                 
@@ -386,7 +404,41 @@ namespace m0.Lib.StdView
                 {
                     position += 3; // Skip opening ```
                     isInsideCodeBlock = true;
-                    AddTokenToTarget(to, CodeBlockStart);
+                    codeBlockContent = new StringBuilder();
+                    codeBlockLanguageName = null;
+                    
+                    // Check if there's text immediately after ``` (before newline)
+                    int tempPos = position;
+                    StringBuilder languageNameBuilder = new StringBuilder();
+                    
+                    while (tempPos < md.Length && md[tempPos] != '\n' && md[tempPos] != '\r')
+                    {
+                        languageNameBuilder.Append(md[tempPos]);
+                        tempPos++;
+                    }
+                    
+                    string potentialLanguageName = languageNameBuilder.ToString().Trim();
+                    if (!string.IsNullOrEmpty(potentialLanguageName))
+                    {
+                        // There's language name, use it and start content from next line
+                        codeBlockLanguageName = potentialLanguageName;
+                        position = tempPos;
+                    }
+                    else
+                    {
+                        // No language name, but still skip to next line to avoid empty line
+                        position = tempPos;
+                    }
+                    
+                    // Skip newline to start content from next line (don't start from empty line)
+                    if (position < md.Length && md[position] == '\r')
+                    {
+                        position++;
+                    }
+                    if (position < md.Length && md[position] == '\n')
+                    {
+                        position++;
+                    }
                     continue;
                 }
                 
@@ -538,9 +590,15 @@ namespace m0.Lib.StdView
             target.AddVertex(tokenType, "");            
         }
 
-        private static void AddTokenWithTextToTarget(IVertex target, IVertex tokenType, string text)
-        {            
-            target.AddVertex(tokenType, text);
+        private static void AddCodeBlockToTarget(IVertex target, string text)
+        {
+            target.AddVertex(CodeBlock, text);
+        }
+
+        private static void AddCodeBlockToTarget_withFormalTextLanguageName(IVertex target, string text, string FormalTextLanguageName_value)
+        {
+            IVertex v = target.AddVertex(CodeBlock, text);
+            v.AddVertex(FormalTextLanguageName, FormalTextLanguageName_value);
         }
 
         private static void AddTextTokenToTarget(IVertex target, string textValue)
