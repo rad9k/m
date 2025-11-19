@@ -93,7 +93,7 @@ namespace m0.Lib.StdView
 
                 foreach (ViewToken vt in vtl)
                 {
-                    if (vt.tokenString[token_pos] == text[text_pos])
+                    if (vt.tokenString.Length > text_pos && vt.tokenString[token_pos] == text[text_pos])
                     {
                         if (token_pos + 1 == vt.tokenString.Length)
                             return vt;
