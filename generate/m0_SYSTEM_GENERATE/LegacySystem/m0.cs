@@ -6418,7 +6418,7 @@ namespace m0
             foreach (var de in baseColors)
                 ColorHelper.AddColor(Colors, "VeryVeryVeryVeryLight" + de.Key, ScaleUp(de.Value[0], 0.97), ScaleUp(de.Value[1], 0.97), ScaleUp(de.Value[2], 0.97), 255);
 
-            ColorHelper.AddColor(Colors, "KeywordGrey",153, 153, 153, 255);
+            ColorHelper.AddColor(Colors, "KeywordGrey", 153, 153, 153, 255);
             ColorHelper.AddColor(Colors, "Keyword",0, 194, 207, 255);
             ColorHelper.AddColor(Colors, "KeywordDolarKeyword", 0, 0, 143, 255);
             ColorHelper.AddColor(Colors, "KeywordString", 103, 51, 213, 255);

@@ -592,28 +592,36 @@ namespace m0.Lib.StdView
 
         private static void AddCodeBlockToTarget(IVertex target, string text)
         {
-            target.AddVertex(CodeBlock, text);
+            target.AddVertex(CodeBlock, TextProcess(text));
         }
 
         private static void AddCodeBlockToTarget_withFormalTextLanguageName(IVertex target, string text, string FormalTextLanguageName_value)
         {
-            IVertex v = target.AddVertex(CodeBlock, text);
+            IVertex v = target.AddVertex(CodeBlock, TextProcess(text));
             v.AddVertex(FormalTextLanguageName, FormalTextLanguageName_value);
         }
 
-        private static void AddTextTokenToTarget(IVertex target, string textValue)
+        static string TextProcess(string _textValue)
         {
-            textValue = textValue.Replace("&", "&amp;");
-            textValue = textValue.Replace("<", "&lt;");
-            textValue = textValue.Replace(">", "&gt;");            
-            textValue = textValue.Replace("\"", "&quot;");      
-            textValue = textValue.Replace("'", "&apos;");      
-            textValue = textValue.Replace("`", "&grave;");      
-            textValue = textValue.Replace("~", "&tilde;");      
-            textValue = textValue.Replace("^", "&circ;");      
-            textValue = textValue.Replace("|", "&verbar;");      
-            textValue = textValue.Replace("\\", "&bsol;");      
-            target.AddVertex(Text, textValue);        
+            StringBuilder textValue = new StringBuilder(_textValue);
+
+            textValue.Replace("&", "&amp;");
+            textValue.Replace("<", "&lt;");
+            textValue.Replace(">", "&gt;");
+            textValue.Replace("\"", "&quot;");
+            textValue.Replace("'", "&apos;");
+            textValue.Replace("`", "&grave;");
+            textValue.Replace("~", "&tilde;");
+            textValue.Replace("^", "&circ;");
+            textValue.Replace("|", "&verbar;");
+            textValue.Replace("\\", "&bsol;");
+            
+            return textValue.ToString();
+        }
+
+        private static void AddTextTokenToTarget(IVertex target, string textValue)
+        {            
+            target.AddVertex(Text, TextProcess(textValue));
         }
 
         private static void CloseHeaderIfOpen(IVertex target)

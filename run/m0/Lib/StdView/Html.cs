@@ -11,7 +11,7 @@ namespace m0.Lib.StdView
 {
     public class Html
     {
-        static IVertex FormalTextLanguages_Vertex = MinusZero.Instance.Root.Get(false, @"System\FormalTextLangueges");
+        static IVertex FormalTextLanguages_Vertex = MinusZero.Instance.Root.Get(false, @"System\FormalTextLanguage");
 
         public static INoInEdgeInOutVertexVertex AddColorsToCode(IExecution exe)
         {
@@ -23,7 +23,7 @@ namespace m0.Lib.StdView
             string FormalTextLanguage = GraphUtil.GetStringValue(FormalTextLanguage_Vertex);
             string text = GraphUtil.GetStringValue(text_Vertex);
 
-            IVertex ftl = GraphUtil.GetQueryOutFirst(FormalTextLanguages_Vertex, FormalTextLanguage, null);
+            IVertex ftl = GraphUtil.GetQueryOutFirst(FormalTextLanguages_Vertex, null, FormalTextLanguage);
 
             INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
 
@@ -49,13 +49,17 @@ namespace m0.Lib.StdView
                 {
                     List<ViewToken> vtl = dict.viewTokensDictionary[c];
 
-                    string match = ViewTokenMatch(vtl, text, i);
+                    ViewToken matchToken = ViewTokenMatch(vtl, text, i);
 
-                    if (match == null)
+                    if (matchToken == null)
                         sb.Append(c);
                     else
                     {
-
+                        sb.Append("<span style=\"color:");
+                        sb.Append(GetColor(matchToken.colorVertex));
+                        sb.Append("\">");
+                        sb.Append(matchToken.tokenString);
+                        sb.Append("</span>");
                     }
                 }
                 else
@@ -65,9 +69,46 @@ namespace m0.Lib.StdView
             return sb.ToString();
         }
 
-        private static string ViewTokenMatch(List<ViewToken> vtl, string text, int i)
+        private static string GetColor(IVertex colorVertex)
         {
-            throw new NotImplementedException();
+            StringBuilder sb = new StringBuilder();
+            sb.Append("#");
+            sb.Append(GraphUtil.GetNumberValue<int>(GraphUtil.GetQueryOutFirst(colorVertex, "Red", null)).ToString("2X"));
+            sb.Append(GraphUtil.GetNumberValue<int>(GraphUtil.GetQueryOutFirst(colorVertex, "Green", null)).ToString("2X"));
+            sb.Append(GraphUtil.GetNumberValue<int>(GraphUtil.GetQueryOutFirst(colorVertex, "Blue", null)).ToString("2X"));
+
+            return sb.ToString();
+        }
+
+        private static ViewToken ViewTokenMatch(List<ViewToken> vtl_in, string text, int text_pos)
+        {
+            int token_pos = 1;
+            text_pos++;
+
+            List<ViewToken> vtl = vtl_in;
+
+            while (vtl.Count > 0)
+            {
+                List<ViewToken> vtl_next = new List<ViewToken>();
+
+                foreach (ViewToken vt in vtl)
+                {
+                    if (vt.tokenString[token_pos] == text[text_pos])
+                    {
+                        if (token_pos + 1 == vt.tokenString.Length)
+                            return vt;
+                        else
+                            vtl_next.Add(vt);
+                    }
+                }
+
+                text_pos++;
+                token_pos++;
+
+                vtl = vtl_next;
+            }
+
+            return null;
         }
     }
 }
