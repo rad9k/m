@@ -130,7 +130,31 @@ namespace m0.ZeroCode.Helpers
 
             prepare_Graph2Text(d);
 
+            prepare_viewTokens(d);
+
             return d;
+        }
+
+        private static void prepare_viewTokens(FormalTextLanguageDictinaries d)
+        {
+            d.viewTokensDictionary = new Dictionary<char, List<ViewToken>>();
+
+            foreach(IEdge e in GraphUtil.GetQueryOut(d.FormalTextLanguageVertex, "ViewToken", null))
+            {
+                IVertex tokenVertex = e.To;
+                string tokenString = tokenVertex.Value.ToString();
+                IVertex colorVertex = GraphUtil.GetQueryOutFirst(tokenVertex, "Color", null);
+
+                ViewToken vt = new ViewToken();
+                vt.tokenString = tokenString;
+                vt.colorVertex = colorVertex;
+                char firstChar = tokenString[0];
+
+                if (!d.viewTokensDictionary.ContainsKey(firstChar))
+                    d.viewTokensDictionary.Add(firstChar, new List<ViewToken>());
+
+                d.viewTokensDictionary[firstChar].Add(vt);
+            }
         }
 
         static void prepare_Graph2Text(FormalTextLanguageDictinaries d)

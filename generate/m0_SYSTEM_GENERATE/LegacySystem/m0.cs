@@ -3254,7 +3254,7 @@ namespace m0
             AddAttribute(FormalTextLanguage, "NextAtomEdge", 1, 1, vertexType);
 
             AddAttribute(FormalTextLanguage, "CodeViewTimeLinkKeywordPart", 0, -1, vertexType);
-            AddAttribute(FormalTextLanguage, "ViewTokens", 0, -1, LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\TextToken"));
+            AddAttribute(FormalTextLanguage, "ViewToken", 0, -1, LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\TextToken"));
 
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\String").AddEdge(
@@ -6418,15 +6418,14 @@ namespace m0
             foreach (var de in baseColors)
                 ColorHelper.AddColor(Colors, "VeryVeryVeryVeryLight" + de.Key, ScaleUp(de.Value[0], 0.97), ScaleUp(de.Value[1], 0.97), ScaleUp(de.Value[2], 0.97), 255);
 
-              < Color name = "grey"  foreground = "#999999" />
-  < Color name = "keyword" fontWeight = "bold" foreground = "#00C2CF" />
-  < Color name = "DolarKeyword" foreground = "#00008F" />
-  < Color name = "String" fontWeight = "bold" foreground = "#6733D5" />
-  < Color name = "Operator" fontWeight = "bold" foreground = "#FF0000" />
-  < Color name = "DoubleColon" fontWeight = "bold" foreground = "#255867" />
-  < Color name = "Monkey" fontWeight = "bold" foreground = "#3B91EF" />
-  < Color name = "Escape" foreground = "#4BB1CF" />
-            ColorHelper.AddColor(Colors, )
+            ColorHelper.AddColor(Colors, "KeywordGrey",153, 153, 153, 255);
+            ColorHelper.AddColor(Colors, "Keyword",0, 194, 207, 255);
+            ColorHelper.AddColor(Colors, "KeywordDolarKeyword", 0, 0, 143, 255);
+            ColorHelper.AddColor(Colors, "KeywordString", 103, 51, 213, 255);
+            ColorHelper.AddColor(Colors, "KeywordOperator", 256, 0, 0, 255);
+            ColorHelper.AddColor(Colors, "KeywordDoubleColon", 37, 88, 103, 255);
+            ColorHelper.AddColor(Colors, "KeywordMonkey", 59, 145, 103, 255);
+            ColorHelper.AddColor(Colors, "KeywordEscape", 75, 177, 207, 255);
         }
 
         IVertex AddUXTemplate(IVertex where, String Value, bool doNotShowInherited,
@@ -7168,6 +7167,97 @@ namespace m0
             quick.AddEdge(atomtype, Root.Get(false, @"System\Meta\ZeroTypes\Exception"));
         }
 
+        void CreateSystemFormalTextLanguageZeroCodeVisual_ViewTokens()
+        {
+            string[] keywords = {
+              "package",
+              "import",
+              "meta",
+              "direct",
+              "default",
+              "class",
+              "attribute",
+              "variable",
+              "association",
+              "aggregation",
+              "method",
+              "function",
+              "return",
+              "for vertex",
+              "for edge",
+              "while",
+              "if",
+              "test",
+              "case",
+              "fallback",
+              "execute",
+              "parse",
+              "generate",
+              "new",
+              "in",
+              "this",
+              "block",
+              "namedblock",
+              "create trigger",
+              "query",
+              "filter",
+              "listener",
+              "create view",
+              "from query",
+              "from filter",
+              "from to transform",
+              "to query",
+              "to filter",
+              "to from transform",
+              "create http mapping",
+              "mapping" };
+
+            string[] operators =
+            {
+                "#", "<>", "<+>", "<->", "<-", "+<", "=", "+=", "~=", "-<", "~<", "<-", "<+<", "<<<", "<<", ">>", "~00", "+", "-", "*", "/", "==", "===", "====", "!=", "!", "&", "|", ">=", "<=", "::", ":", "%", "`", "[", "]", "(", ")", "\\", "?", "{", "}", ".", ",", "+<", "<", ">"
+                //	\#|&lt;&gt;|&lt;\+&gt;|&lt;-&gt;|&lt;-|\+&lt;|=|\+=|~=|-&lt;|~&lt;|&lt;-|&lt;\+&lt;|&lt;&lt;&lt;|&lt;&lt;|&gt;&gt;|~00|\+|-|\*|/|==|===|====|!=|!|\&amp;|\||&gt;=|&lt;=|::|:|%|`|\[|\]|\(|\)|\\|\?|\{|\}|\.|,|\+&lt;|&lt;|&gt;
+            };
+
+            IVertex sftl = Root.Get(false, @"System\FormalTextLanguage\ZeroCode");
+            IVertex ViewToken = Root.Get(false, @"System\Meta\ZeroTypes\FormalTextLanguage\ViewToken");
+            IVertex TextToken = Root.Get(false, @"System\Meta\ZeroTypes\TextToken");
+            IVertex Color = Root.Get(false, @"System\Meta\ZeroTypes\TextToken\Color");
+
+            IVertex KeywordGrey = Root.Get(false, @"System\Data\UX\Colors\KeywordGrey");
+            IVertex Keyword = Root.Get(false, @"System\Data\UX\Colors\Keyword");
+            IVertex KeywordDolarKeyword = Root.Get(false, @"System\Data\UX\Colors\KeywordDolarKeyword");
+            IVertex KeywordString = Root.Get(false, @"System\Data\UX\Colors\KeywordString");
+            IVertex KeywordOperator = Root.Get(false, @"System\Data\UX\Colors\KeywordOperator");
+            IVertex KeywordDoubleColon = Root.Get(false, @"System\Data\UX\Colors\KeywordDoubleColon");
+            IVertex KeywordMonkey = Root.Get(false, @"System\Data\UX\Colors\KeywordMonkey");
+            IVertex KeywordEscape = Root.Get(false, @"System\Data\UX\Colors\KeywordEscape");
+
+            IVertex v;
+
+            foreach (string s in keywords)
+            {
+                v = sftl.AddVertex(ViewToken, s);
+                v.AddEdge(Is, TextToken);
+                v.AddEdge(Color, Keyword);
+            }
+
+            foreach (string s in operators)
+            {
+                v = sftl.AddVertex(ViewToken, s);
+                v.AddEdge(Is, TextToken);
+                v.AddEdge(Color, KeywordOperator);
+            }
+
+            // monkey
+
+            v = sftl.AddVertex(ViewToken, "@");
+            v.AddEdge(Is, TextToken);
+            v.AddEdge(Color, KeywordMonkey);
+
+
+
+        }   
+
         private void Initialize_PreParserReady()
         {
             LogLevel = -2;
@@ -7254,6 +7344,8 @@ namespace m0
             CreateSystemHardware();
 
             CreateSystemDataUXColor();
+
+            CreateSystemFormalTextLanguageZeroCodeVisual_ViewTokens();
 
             CreateSystemDataUXZeroUMLTemplate(); // <<<<<<<<<<<<<<<<<<<
 

@@ -56,6 +56,7 @@
 		"AlignCenter"
 		"AlignRight"
 	"Html"
+		function "AddColorsToCode" (@String "FormalTextLanguage", @String "text")
 		function "MdTokenVertexesToHTMLString_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
 			variable "html" @String
 			
@@ -125,10 +126,11 @@
 						
 					case "CodeBlock"
 						html += "<pre><code>"
-						if e\To\FormalTextLanguageName<> != "0"
-							html += e\To\FormalTextLanguageName
-							html += "!!!"
-						html += e\To
+						test e\To\FormalTextLanguageName<> != "0"
+							case "True"
+								html += @@Html\AddColorsToCode[e\To\FormalTextLanguageName, e\To]
+							case "False"
+								html += e\To
 						html += "</code></pre>"
 						
 					case "InlineCodeStart"

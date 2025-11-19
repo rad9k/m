@@ -135,7 +135,8 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             IVertex VertexToJson_Transform_Vertex = LibStdView.Get(false, "VertexToJson_Transform");
             IVertex JsonToVertex_Transform_Vertex = LibStdView.Get(false, "JsonToVertex_Transform");
-            IVertex MdStringToMdTokenVertexes_Transform_Vertex = LibStdView.Get(false, "MdStringToMdTokenVertexes_Transform");            
+            IVertex MdStringToMdTokenVertexes_Transform_Vertex = LibStdView.Get(false, "MdStringToMdTokenVertexes_Transform");
+            IVertex AddColorsToCode_Vertex = LibStdView.Get(false, @"Html\AddColorsToCode");
 
 
             ExecutionFlowHelper.DecorateWithDotNetStaticMethod(VertexToJson_Transform_Vertex,
@@ -148,7 +149,11 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             ExecutionFlowHelper.DecorateWithDotNetStaticMethod(MdStringToMdTokenVertexes_Transform_Vertex,
                 "m0.Lib.StdView.MdStringToMdTokenVertexes, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
-                "MdStringToMdTokenVertexes_Transform");            
+                "MdStringToMdTokenVertexes_Transform");
+
+            ExecutionFlowHelper.DecorateWithDotNetStaticMethod(AddColorsToCode_Vertex,
+                "m0.Lib.StdView.Html, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                "AddColorsToCode");
         }        
 
         public static void CreateLibNet()

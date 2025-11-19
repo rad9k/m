@@ -16,9 +16,19 @@ namespace m0.ZeroCode.Helpers
         public string regexpString;
     }
 
+    public class ViewToken
+    {
+        public string tokenString;
+        public IVertex colorVertex;
+    }
+
     public class FormalTextLanguageDictinaries
     {
         public IVertex FormalTextLanguageVertex;
+
+        // code visualisation
+
+        public Dictionary<char, List<ViewToken>> viewTokensDictionary;
 
         // Graph2Text
 
