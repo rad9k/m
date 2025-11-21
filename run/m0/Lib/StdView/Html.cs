@@ -13,6 +13,24 @@ namespace m0.Lib.StdView
     {
         static IVertex FormalTextLanguages_Vertex = MinusZero.Instance.Root.Get(false, @"System\FormalTextLanguage");
 
+        static string DequoteText(string _textValue)
+        {
+            StringBuilder textValue = new StringBuilder(_textValue);
+
+            textValue.Replace("&amp;", "&");
+            textValue.Replace("&lt;", "<");
+            textValue.Replace("&gt;", ">");
+            textValue.Replace("&quot;", "\"");
+            textValue.Replace("&apos;", "\"");
+            textValue.Replace("&grave;", "`");
+            textValue.Replace("&tilde;", "~");
+            textValue.Replace("&circ;", "^");
+            textValue.Replace("&verbar;", "|");
+            textValue.Replace("&bsol;", "\\");
+
+            return textValue.ToString();
+        }
+
         public static INoInEdgeInOutVertexVertex AddColorsToCode(IExecution exe)
         {
             INoInEdgeInOutVertexVertex stack = exe.Stack;
@@ -21,7 +39,7 @@ namespace m0.Lib.StdView
             IVertex text_Vertex = GraphUtil.GetQueryOutFirst(stack, "text", null);
 
             string FormalTextLanguage = GraphUtil.GetStringValue(FormalTextLanguage_Vertex);
-            string text = GraphUtil.GetStringValue(text_Vertex);
+            string text = DequoteText(GraphUtil.GetStringValue(text_Vertex));
 
             IVertex ftl = GraphUtil.GetQueryOutFirst(FormalTextLanguages_Vertex, null, FormalTextLanguage);
 
@@ -60,6 +78,8 @@ namespace m0.Lib.StdView
                         sb.Append("\">");
                         sb.Append(matchToken.tokenString);
                         sb.Append("</span>");
+
+                        i+=matchToken.tokenString.Length - 1;
                     }
                 }
                 else
@@ -73,9 +93,16 @@ namespace m0.Lib.StdView
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("#");
-            sb.Append(GraphUtil.GetNumberValue<int>(GraphUtil.GetQueryOutFirst(colorVertex, "Red", null)).ToString("2X"));
-            sb.Append(GraphUtil.GetNumberValue<int>(GraphUtil.GetQueryOutFirst(colorVertex, "Green", null)).ToString("2X"));
-            sb.Append(GraphUtil.GetNumberValue<int>(GraphUtil.GetQueryOutFirst(colorVertex, "Blue", null)).ToString("2X"));
+            object val;
+           
+            GraphUtil.GetNumberValue(GraphUtil.GetQueryOutFirst(colorVertex, "Red", null), out val);
+            sb.Append(Convert.ToInt16(val).ToString("2X"));
+
+            GraphUtil.GetNumberValue(GraphUtil.GetQueryOutFirst(colorVertex, "Green", null), out val);
+            sb.Append(Convert.ToInt16(val).ToString("2X"));
+
+            GraphUtil.GetNumberValue(GraphUtil.GetQueryOutFirst(colorVertex, "Blue", null), out val);
+            sb.Append(Convert.ToInt16(val).ToString("2X"));
 
             return sb.ToString();
         }
@@ -93,7 +120,7 @@ namespace m0.Lib.StdView
 
                 foreach (ViewToken vt in vtl)
                 {
-                    if (vt.tokenString.Length > text_pos && vt.tokenString[token_pos] == text[text_pos])
+                    if (vt.tokenString.Length > token_pos && vt.tokenString[token_pos] == text[text_pos])
                     {
                         if (token_pos + 1 == vt.tokenString.Length)
                             return vt;
