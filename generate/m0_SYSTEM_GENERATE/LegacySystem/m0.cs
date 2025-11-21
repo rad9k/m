@@ -6422,7 +6422,7 @@ namespace m0
             ColorHelper.AddColor(Colors, "Keyword",0, 194, 207, 255);
             ColorHelper.AddColor(Colors, "KeywordDolarKeyword", 0, 0, 143, 255);
             ColorHelper.AddColor(Colors, "KeywordString", 103, 51, 213, 255);
-            ColorHelper.AddColor(Colors, "KeywordOperator", 256, 0, 0, 255);
+            ColorHelper.AddColor(Colors, "KeywordOperator", 255, 0, 0, 255);
             ColorHelper.AddColor(Colors, "KeywordDoubleColon", 37, 88, 103, 255);
             ColorHelper.AddColor(Colors, "KeywordMonkey", 59, 145, 103, 255);
             ColorHelper.AddColor(Colors, "KeywordEscape", 75, 177, 207, 255);
@@ -7186,7 +7186,7 @@ namespace m0
               "for vertex",
               "for edge",
               "while",
-              "if",
+              "if ",
               "test",
               "case",
               "fallback",
@@ -7194,7 +7194,7 @@ namespace m0
               "parse",
               "generate",
               "new",
-              "in",
+              "in ",
               "this",
               "block",
               "namedblock",
