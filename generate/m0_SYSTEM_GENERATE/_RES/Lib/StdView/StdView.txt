@@ -128,7 +128,7 @@
 					case "CodeBlock"
 						test e\To\FormalTextLanguageName == "InlineHTML"
 							case "True"
-								html += @@DequoteText[e\To]
+								html += @@Html\DequoteText[e\To]
 							case "False"							
 								html += "<pre><code>"								
 								test e\To\FormalTextLanguageName<> != "0"
