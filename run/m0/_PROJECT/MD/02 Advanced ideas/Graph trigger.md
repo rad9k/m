@@ -2,7 +2,7 @@
 
 ## Graph 
 
-```-0
+```ZeroCode
 <$GraphChangeTrigger :: "name string">
 	<@$Is :: @GraphChangeTrigger>		
 	<@ChangeTypeFilter :: @GraphChangeFilterEnum\value>
@@ -25,7 +25,7 @@
 
 ## create trigger Graph
 
-```-0
+```ZeroCode
 <(?<ANY>) :: "">
 	<@$Is :: CreateTrigger>
 	<@Name :: "trigger name">
@@ -45,7 +45,7 @@
 
 ## create trigger syntax
 
-```-0
+```ZeroCode
 create trigger "trigger name" {
 	filter @@GraphChangeFilterEnum\ValueChange
 	query "query body"
@@ -55,7 +55,7 @@ create trigger "trigger name" {
 
 above expression will create trigger at local stack, so that means it can be used in following way
 
-```-0
+```ZeroCode
 AddHere +< create trigger "trigger name"{
 	...
 }

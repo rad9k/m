@@ -2,7 +2,7 @@
 
 ## Graph
 
-```-0
+```ZeroCode
 <@View :: "">
 	<@$Is :: @View>
 	<@FromTriggerQuery :: "query body">
@@ -55,7 +55,7 @@ __After the "Possible view definitions" table (below) evaluation we come to conc
 
 ## Create view Graph
 
-```-0
+```ZeroCode
 <(?<ANY>) :: "">
 	<@$Is :: CreateView>
 	<@Name :: "view name">
@@ -102,7 +102,7 @@ So it means that there:
 
 ## create view syntax
 
-```-0
+```ZeroCode
 create view {
 	from query "query body"
 	from filter @@GraphChangeFilterEnum\ValueChange
@@ -115,7 +115,7 @@ create view {
 
 above expression will create view at local stack, so that means it can be used in following way
 
-```-0
+```ZeroCode
 AddHere +< view "view name"{
 	...
 }
@@ -123,7 +123,7 @@ AddHere +< view "view name"{
 
 ## example
 
-```-0
+```ZeroCode
 "EXAMPLE"
 	import @System\Lib\Std direct meta
 	variable "ExampleView" @VertexType
@@ -161,7 +161,7 @@ AddHere +< view "view name"{
 
 Above code results in the following:
 
-```-0
+```ZeroCode
 "Source"
 	<@set :: "first set">
 		<@value :: "1">

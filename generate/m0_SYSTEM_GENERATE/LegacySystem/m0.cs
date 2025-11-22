@@ -3219,9 +3219,19 @@ namespace m0
                 "Class:HasExecutableVertex{Attribute:ExecutableVertex{$MinCardinality:1,$MaxCardinality:1}},"+
                 "Class:Exception{Attribute:CodeEdge{$MinCardinality:0,$MaxCardinality:1},Attribute:DataEdge{$MinCardinality:0,$MaxCardinality:-1},Attribute:Where{$MinCardinality:0,$MaxCardinality:1},Attribute:Type{$MinCardinality:0,$MaxCardinality:1},Attribute:What{$MinCardinality:1,$MaxCardinality:1}},"+
                 "Class:FormalTextLanguageProcessing{Attribute:ParserHandler{$MinCardinality:0,$MaxCardinality:1},Attribute:GeneratorHandler{$MinCardinality:0,$MaxCardinality:1},Aggregation:LanguageParameterFirst{$MinCardinality:0,$MaxCardinality:1},Aggregation:LanguageParameterSecond{$MinCardinality:0,$MaxCardinality:1}},"+
-                "Class:TextToken," +
+                "Class:TextToken{Attribute:IsBold,Attribute:IsItalic}," +
                 "Enum:ExceptionTypeEnum{EnumValue:Error,EnumValue:Warning,EnumValue:Info}," +
                 "Enum:CodeRepresentationEnum{EnumValue:EdgeOneLine,EnumValue:LinearizedManyLines,EnumValue:ManyLinesExcludingParent,EnumValue:VertexAndManyLines,EnumValue:EdgeAndManyLines}}}");
+
+            // TextToken
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\TextToken\IsBold").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Boolean"));
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\TextToken\IsItalic").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Boolean"));
 
             // FormalTextLanguage
 
@@ -7222,6 +7232,9 @@ namespace m0
             IVertex ViewToken = Root.Get(false, @"System\Meta\ZeroTypes\FormalTextLanguage\ViewToken");
             IVertex TextToken = Root.Get(false, @"System\Meta\ZeroTypes\TextToken");
             IVertex Color = Root.Get(false, @"System\Meta\ZeroTypes\TextToken\Color");
+            
+            IVertex IsBold = Root.Get(false, @"System\Meta\ZeroTypes\TextToken\IsBold");
+            IVertex IsItalic = Root.Get(false, @"System\Meta\ZeroTypes\TextToken\IsItalic");
 
             IVertex KeywordGrey = Root.Get(false, @"System\Data\UX\Colors\KeywordGrey");
             IVertex Keyword = Root.Get(false, @"System\Data\UX\Colors\Keyword");
@@ -7246,15 +7259,22 @@ namespace m0
                 v = sftl.AddVertex(ViewToken, s);
                 v.AddEdge(Is, TextToken);
                 v.AddEdge(Color, KeywordOperator);
+                v.AddVertex(IsBold, "True");
             }
+
+            // double colon
+
+            v = sftl.AddVertex(ViewToken, "::");
+            v.AddEdge(Is, TextToken);
+            v.AddEdge(Color, KeywordDoubleColon);
+            v.AddVertex(IsBold, "True");
 
             // monkey
 
             v = sftl.AddVertex(ViewToken, "@");
             v.AddEdge(Is, TextToken);
             v.AddEdge(Color, KeywordMonkey);
-
-
+            v.AddVertex(IsBold, "True");
 
         }   
 

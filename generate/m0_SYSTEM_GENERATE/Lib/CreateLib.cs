@@ -137,6 +137,7 @@ namespace m0_SYSTEM_GENERATE.Lib
             IVertex JsonToVertex_Transform_Vertex = LibStdView.Get(false, "JsonToVertex_Transform");
             IVertex MdStringToMdTokenVertexes_Transform_Vertex = LibStdView.Get(false, "MdStringToMdTokenVertexes_Transform");
             IVertex AddColorsToCode_Vertex = LibStdView.Get(false, @"Html\AddColorsToCode");
+            IVertex DequoteText_Vertex = LibStdView.Get(false, @"Html\DequoteText");
 
 
             ExecutionFlowHelper.DecorateWithDotNetStaticMethod(VertexToJson_Transform_Vertex,
@@ -154,6 +155,10 @@ namespace m0_SYSTEM_GENERATE.Lib
             ExecutionFlowHelper.DecorateWithDotNetStaticMethod(AddColorsToCode_Vertex,
                 "m0.Lib.StdView.Html, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
                 "AddColorsToCode");
+
+            ExecutionFlowHelper.DecorateWithDotNetStaticMethod(DequoteText_Vertex,
+                "m0.Lib.StdView.Html, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                "DequoteText");
         }        
 
         public static void CreateLibNet()

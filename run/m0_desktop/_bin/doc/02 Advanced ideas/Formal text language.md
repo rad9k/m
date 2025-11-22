@@ -12,7 +12,7 @@ Those meta edges are used in keyword definition.
 
 ### ANY
 
-```-0
+```ZeroCode
 <(?<ANY>) :: "new vertex">
 ```
 
@@ -20,7 +20,7 @@ The `(?<ANY>)` meta edge in keyword definition will match any meta edge to match
 
 Example:
 
-```-0
+```ZeroCode
 <@$Keyword :: ""(?<left>) +<(?<SUB>) (?<right>)">
 	<@(?<ANY>) :: "">
 		<@$Is :: @AddRightEdgeesIntoLeftEdges>
@@ -30,7 +30,7 @@ Example:
 
 Above keyword will match following sub graph, even as there is `Next` meta in the root edge. The `Next` meta does not exist in the keyword definition and is matched by `(?<ANY>)`.
 
-```-0
+```ZeroCode
 <@Next :: >
 	<@$Is :: @AddRightEdgeesIntoLeftEdges>
 	<@LeftExpression :: "A">
@@ -39,13 +39,13 @@ Above keyword will match following sub graph, even as there is `Next` meta in th
 
 ### LAST
 
-```-0
+```ZeroCode
 <(?<LAST>) :: "new vertex">
 ```
 
 The meta of new current edge is the meta of last (previously) added edge. This is used in import definitions.
 
-```-0
+```ZeroCode
 <@Keyword :: "import (?<name>) (?<link>) meta">
 	<@$$ImportMeta :: "import[ ]+%"(?<name>.*)%"[ ]+@(?<link>[^ ]+)[ ]+meta[ ]*\r">
 	<@$ImportMeta :: "(?<name>)">
@@ -56,7 +56,7 @@ The meta of new current edge is the meta of last (previously) added edge. This i
 
 ### $KeywordGroupDefinition
 
-```-0
+```ZeroCode
 <@$KeywordGroupDefinition :: "keyword group name">
 ```
 
@@ -69,7 +69,7 @@ The _group name_ has to be created with `$$KeywordGroupDefiniion` meta edge.
 
 Example:
 
-```-0
+```ZeroCode
 <@$Keyword :: "%<<(?<expr)>>">
 	<@$$KeywordGroup :: @GROUP_NAME>
 	<@(?<ANY>) :: "">
@@ -85,7 +85,7 @@ When the keyword string has `(* ... *)` section, there is a need to define what 
 Example:
  
 - Keyword definition:
-```-0
+```ZeroCode
 <@$Keyword :: "method (?<name>) (?<returnType>)((*(+, +)(?<paramType>) (?<paramName>)*))">
 	<@Method :: "(?<name>)">
 		<@$Is :: @Method>
@@ -95,11 +95,11 @@ Example:
 			<@$$KeywordManyRoot :: @$Empty>
 ```
 - Code source string:
-```-0
+```ZeroCode
 method "setName" (@String "name", @String "surname")
 ```
 - Result graph:
-```-0							
+```ZeroCode							
 <@Method :: "setName">
 	<@$Is :: @Method>
 	<@InputParameter :: "name">
@@ -117,7 +117,7 @@ The `$$LocalRoot` meta edge points to _group name_. The _group name_ has to be c
 Edges resulting from keyword definition containing `$$StartInLocalRoot` meta edge will be added to _local root_, instead of the _default root_.
 
 - _local root_ defining keyword
-```-0
+```ZeroCode
 <@$Keyword :: "(?<value)">
 	<@(?<ANY>) :: "(?<value>)">
 		<@$$StartInLocalRoot :: @$Empty>
@@ -126,7 +126,7 @@ Edges resulting from keyword definition containing `$$StartInLocalRoot` meta edg
 			<@$$LocalRoot :: @GROUP_NAME>
 ```
 - `$$StartInLocalRoot` keyword
-```-0
+```ZeroCode
 <@$Keyword :: "%<<(?<expr)>>">
 	<@$$KeywordGroup :: @GROUP_NAME>
 	<@(?<ANY>) :: "">
@@ -135,11 +135,11 @@ Edges resulting from keyword definition containing `$$StartInLocalRoot` meta edg
 		<@Expression :: "(?<expr>)">
 ```
 - Code source string
-```-0
+```ZeroCode
 query<<"5">>
 ```
 - Result graph
-```-0
+```ZeroCode
 <@$Empty :: "query">
 	<@$Is :: @Query>
 	<@NextExpression :: "">
@@ -153,7 +153,7 @@ Keyword definition having `$$NewVertexKeyword` meta edge will result in keyword 
 
 Example:
 
-```-0
+```ZeroCode
 <@$Keyword :: "(?<value>)">
 	<@$$EmptyKeyword :: @$Empty>
 	<@$$KeywordGroup :: @Empty2Inner>
@@ -169,7 +169,7 @@ Keyword definition having `$$NewVertexKeyword` meta edge will result in keyword 
 
 Example:
 
-```-0
+```ZeroCode
 <@$Keyword :: "(?<value>)">
 	<@$$NewVertexKeyword :: @$Empty>
 	<@(?<ANY>) :: "(?<value>)">
@@ -177,13 +177,13 @@ Example:
 
 ### $$ForceNewVertex
 
-```-0
+```ZeroCode
 <@$$ForceNewVertex :: @$Empty>
 ```
 
 Enforfces to create new vertex string and not link in graph-2-text. This special meta is used in case where `$IsAggregation ::` can not be used.
 
-```-0
+```ZeroCode
 <@Keyword :: "attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>) <<(?<MinValue>):(?<MaxValue>)>>">
 	<@Attribte :: "(?<name>)">
 		<@$EdgeTarget :: @(?<type>)>
@@ -205,7 +205,7 @@ Keyword definition having `$$LinkKeyword` meta edge will result in keyword creti
 
 Example:
 
-```-0
+```ZeroCode
 <@$Keyword :: "@(?<value>)">
 	<@$$KeywordGroup :: @ColonEmptyInner2SlashMarkIndexMethodNewLink>
 	<@$$KeywordGroup :: @ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>
@@ -221,7 +221,7 @@ Example:
 
 Example:
 
-```-0
+```ZeroCode
 <@$Keyword :: "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>) :: (?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)">
 	<@$$NonSelfRecursiveParameters :: @$Empty>
 	<@(?<ANY>) :: "">

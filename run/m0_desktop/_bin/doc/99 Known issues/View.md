@@ -4,7 +4,7 @@
 
 Code:
 
-```-0
+```ZeroCode
 "EXAMPLE"
 	variable "ExampleView" @VertexType
 	variable "Source" @VertexType
@@ -16,7 +16,7 @@ Code:
 ```
 
 Result:
-```-0
+```ZeroCode
 $Empty
 ```
 
@@ -28,7 +28,7 @@ Comment:
 
 Code:
 
-```-0
+```ZeroCode
 "EXAMPLE"
 	variable "ExampleView" @VertexType
 	variable "Source" @VertexType
@@ -41,7 +41,7 @@ Code:
 ```
 
 Result:
-```-0
+```ZeroCode
 "Source"
 	"TEST"
 	<@'Example View' :: "Target">
@@ -54,7 +54,7 @@ Comment:
 
 Code:
 
-```-0
+```ZeroCode
 "EXAMPLE"
 	variable "ExampleView" @VertexType
 	variable "Source" @VertexType
@@ -67,7 +67,7 @@ Code:
 ```
 
 Result:
-```-0
+```ZeroCode
 "$Empty"
 ```
 
@@ -78,7 +78,7 @@ Comment:
 
 Code:
 
-```-0
+```ZeroCode
 "EXAMPLE"
 	variable "ExampleView" @VertexType
 	variable "Source" @VertexType
@@ -93,7 +93,7 @@ Code:
 ```
 
 Result:
-```-0
+```ZeroCode
 "Source"
 	"TEST"
 	<@'Example View' :: "Target">
@@ -106,7 +106,7 @@ Comment:
 
 Code:
 
-```-0
+```ZeroCode
 "EXAMPLE"
 	variable "o" @tst
 	variable "ExampleView" @VertexType
@@ -122,7 +122,7 @@ Code:
 ```
 
 Result:
-```-0
+```ZeroCode
 ""
 	<@$Is :: @tst>
 	<@Source :: "">

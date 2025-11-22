@@ -356,7 +356,7 @@
 						<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
 						<@LineDecorator\ConstantLabel :: "do">
 						
-		<@UXTemplate :: "ForEach">
+		<@UXTemplate :: "ForVertex">
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:ForEach}">
 			<@MetaVertexTestQuery :: "ForEach">
@@ -364,7 +364,7 @@
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>			
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\ActionContainerItemVertex>
-				<@LabeledItem\ConstantLabel :: "for each">
+				<@LabeledItem\ConstantLabel :: "for vertex">
 				<@LabeledItem\ShowMeta :: "False">				
 				<@MultiContainerItem\Orientation :: @OrientationEnum\Vertical>				
 			<@$Inherits :: @ZeroUML\NextDecorator>
@@ -399,6 +399,74 @@
 				<@UXDecoratorTemplate :: "set">
 					<@$Is :: @UXDecoratorTemplate>
 					<@EdgeTestQuery :: "$Is:ForEach\Set">
+					<@ToDiagramItemTestQuery :: "">
+					<@DecoratorClass :: @LineDecorator>
+					<@DecoratorVertex :: "">
+						<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+						<@LineDecorator\ConstantLabel :: "set">
+			<@UXTemplate :: "Do">
+				<@$Is :: @UXTemplate>				
+				<@ItemVertex :: "">
+					<@CodeView\ContentQuery :: "$Empty:">
+					<@MultiContainerSubItem\NotExistingContentQueryEdge :: @$Empty>
+					<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\LinearizedManyLines>
+					<@Size :: "">
+						<@$Is :: @Size>
+						<@Width :: "0">
+						<@Height :: "0">
+				<@$Inherits :: @ZeroUML\PackageDecorators>
+				<@UXDecoratorTemplate :: "do">
+					<@$Is :: @UXDecoratorTemplate>
+					<@SupportEmptyMetaEdge :: "True">
+					<@ToDiagramItemTestQuery :: "">
+					<@DecoratorClass :: @LineDecorator>
+					<@DecoratorVertex :: "">
+						<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+						<@LineDecorator\ConstantLabel :: "do">
+						
+		<@UXTemplate :: "ForEdge">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:ForEachEdge}">
+			<@MetaVertexTestQuery :: "ForEachEdge">
+			<@ItemClass :: @MultiContainerItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>			
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\ActionContainerItemVertex>
+				<@LabeledItem\ConstantLabel :: "for edge">
+				<@LabeledItem\ShowMeta :: "False">				
+				<@MultiContainerItem\Orientation :: @OrientationEnum\Vertical>				
+			<@$Inherits :: @ZeroUML\NextDecorator>
+			<@UXTemplate :: "Variable">
+				<@$Is :: @UXTemplate>
+				<@ItemVertex :: "">
+					<@UXContainer\SubItemsNotVisible :: "True">
+					<@CodeView\ContentQuery :: "Variable:">
+					<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\LinearizedManyLines>
+					<@Size :: "">
+						<@$Is :: @Size>
+						<@Width :: "0">
+						<@Height :: "26">
+				<@UXDecoratorTemplate :: "variable">
+					<@$Is :: @UXDecoratorTemplate>
+					<@EdgeTestQuery :: "$Is:ForEachEdge\Variable">
+					<@ToDiagramItemTestQuery :: "">
+					<@DecoratorClass :: @LineDecorator>
+					<@DecoratorVertex :: "">
+						<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+						<@LineDecorator\ConstantLabel :: "variable">
+			<@UXTemplate :: "Set">
+				<@$Is :: @UXTemplate>
+				<@ItemVertex :: "">
+					<@UXContainer\SubItemsNotVisible :: "True">
+					<@CodeView\ContentQuery :: "Set:">
+					<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\LinearizedManyLines>
+					<@Size :: "">
+						<@$Is :: @Size>
+						<@Width :: "0">
+						<@Height :: "26">
+				<@UXDecoratorTemplate :: "set">
+					<@$Is :: @UXDecoratorTemplate>
+					<@EdgeTestQuery :: "$Is:ForEachEdge\Set">
 					<@ToDiagramItemTestQuery :: "">
 					<@DecoratorClass :: @LineDecorator>
 					<@DecoratorVertex :: "">

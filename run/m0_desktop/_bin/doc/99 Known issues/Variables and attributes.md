@@ -4,7 +4,7 @@
 
 Code:
 
-```-0
+```ZeroCode
 "EXAMPLE"
 	variable "a" @VertexType
 	variable "b" @VertexType
@@ -22,7 +22,7 @@ Code:
 ```
 
 Result:
-```-0
+```ZeroCode
 ""
 	<@a :: "a">
 	<@b :: "">
@@ -43,7 +43,7 @@ Comment:
 
 Code:
 
-```-0
+```ZeroCode
 "EXAMPLE"
 	variable "a" @VertexType
 	variable "b" @VertexType
@@ -68,7 +68,7 @@ Code:
 ```
 
 Result:
-```-0
+```ZeroCode
 ""
 	<@a :: "a">
 	<@b :: "init">
@@ -90,7 +90,7 @@ Comment:
 
 Code:
 
-```-0
+```ZeroCode
 "EXAMPLE"
 	variable "a" @VertexType
 	variable "b" @VertexType
@@ -115,7 +115,7 @@ Code:
 ```
 
 Result:
-```-0
+```ZeroCode
 ""
 	<@a :: "a">
 	<@b :: "copy">
@@ -137,7 +137,7 @@ Comment:
 
 Code:
 
-```-0
+```ZeroCode
 "EXAMPLE"
 	variable "o" @tst
 
@@ -164,7 +164,7 @@ Code:
 ```
 
 Result:
-```-0
+```ZeroCode
 ""
 	<@$Is :: @tst>
 	<@b :: "">
@@ -186,7 +186,7 @@ Comment:
 
 Code:
 
-```-0
+```ZeroCode
 "EXAMPLE"
 	variable "o" @tst
 
@@ -219,7 +219,7 @@ Code:
 ```
 
 Result:
-```-0
+```ZeroCode
 ""
 	<@$Is :: @tst>
 	<@a :: "init">
@@ -239,7 +239,7 @@ Comment:
 
 Code:
 
-```-0
+```ZeroCode
 "EXAMPLE"
 	variable "o" @tst
 
@@ -272,7 +272,7 @@ Code:
 ```
 
 Result:
-```-0
+```ZeroCode
 ""
 	<@$Is :: @tst>
 	<@a :: "copy">
@@ -292,7 +292,7 @@ Comment:
 
 Code:
 
-```-0
+```ZeroCode
 "EXAMPLE"
 	variable "o" @tst
 
@@ -325,7 +325,7 @@ Code:
 ```
 
 Result:
-```-0
+```ZeroCode
 ""
 	<@$Is :: @tst>
 	<@b :: "init">
@@ -347,7 +347,7 @@ Comment:
 
 Code:
 
-```-0
+```ZeroCode
 "EXAMPLE"
 	variable "o" @tst
 	class "tst"
@@ -375,7 +375,7 @@ Code:
 ```
 
 Result:
-```-0
+```ZeroCode
 ""
 	<@$Is :: @tst>
 	<@b :: "init">
@@ -397,7 +397,7 @@ Comment:
 
 Code:
 
-```-0
+```ZeroCode
 "EXAMPLE"
 	variable "o" @tst
 
@@ -417,7 +417,7 @@ Code:
 ```
 
 Result:
-```-0
+```ZeroCode
 ""
 	<@$Is :: @tst>
 	<@a :: "a">

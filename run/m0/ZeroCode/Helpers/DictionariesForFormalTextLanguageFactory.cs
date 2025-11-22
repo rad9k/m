@@ -148,6 +148,8 @@ namespace m0.ZeroCode.Helpers
                 ViewToken vt = new ViewToken();
                 vt.tokenString = tokenString;
                 vt.colorVertex = colorVertex;
+                vt.tokenVertex = tokenVertex;
+
                 char firstChar = tokenString[0];
 
                 if (!d.viewTokensDictionary.ContainsKey(firstChar))

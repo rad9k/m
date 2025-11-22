@@ -20,6 +20,7 @@ namespace m0.ZeroCode.Helpers
     {
         public string tokenString;
         public IVertex colorVertex;
+        public IVertex tokenVertex;
     }
 
     public class FormalTextLanguageDictinaries

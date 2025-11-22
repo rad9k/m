@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace m0.Lib.StdView
@@ -14,7 +15,7 @@ namespace m0.Lib.StdView
     {
         static IVertex FormalTextLanguages_Vertex = MinusZero.Instance.Root.Get(false, @"System\FormalTextLanguage");
 
-        static string DequoteText(string _textValue)
+        static string DequoteText_internal(string _textValue)
         {
             StringBuilder textValue = new StringBuilder(_textValue);
 
@@ -32,6 +33,19 @@ namespace m0.Lib.StdView
             return textValue.ToString();
         }
 
+        public static INoInEdgeInOutVertexVertex DequoteText(IExecution exe)
+        {
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
+            
+            IVertex text_Vertex = GraphUtil.GetQueryOutFirst(stack, "text", null);            
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+            
+            newStack.AddVertex(null, DequoteText_internal(GraphUtil.GetStringValue(text_Vertex)));
+
+            return newStack;
+        }
+
         public static INoInEdgeInOutVertexVertex AddColorsToCode(IExecution exe)
         {
             INoInEdgeInOutVertexVertex stack = exe.Stack;
@@ -40,7 +54,7 @@ namespace m0.Lib.StdView
             IVertex text_Vertex = GraphUtil.GetQueryOutFirst(stack, "text", null);
 
             string FormalTextLanguage = GraphUtil.GetStringValue(FormalTextLanguage_Vertex);
-            string text = DequoteText(GraphUtil.GetStringValue(text_Vertex));
+            string text = DequoteText_internal(GraphUtil.GetStringValue(text_Vertex));
 
             IVertex ftl = GraphUtil.GetQueryOutFirst(FormalTextLanguages_Vertex, null, FormalTextLanguage);
 
@@ -62,9 +76,7 @@ namespace m0.Lib.StdView
             if (GeneralUtil.CompareStrings(ftl, "ZeroCode"))
                 IsZeroCode = true;
             else
-                IsZeroCode = false;
-
-            IsInsideString = false;
+                IsZeroCode = false;            
 
             FormalTextLanguageDictinaries dict = DictionariesForFormalTextLanguageFactory.Get(ftl);
 
@@ -76,18 +88,18 @@ namespace m0.Lib.StdView
             {
                 char c = text[i];
 
-                if (IsZeroCode && c == '\"')
+                if (IsZeroCode && c == '\"') // STRING
                 {
-                    if (!IsInsideString) {
-                        IsInsideString = true;
-                        sb.Append("<span style=\"color:#6733D5\">\"");
-                    }
-                    else
-                    {
-                        IsInsideString = false;
-                        sb.Append("\"</span>");
-                    }
-                        
+                    sb.Append("<span style=\"color:#6733D5\"><b>\"");                    
+
+                    i++;
+
+                    while (text[i] != '\"' && i < text.Length) {
+                        sb.Append(text[i]);
+                        i++;
+                    }                    
+                    
+                    sb.Append("\"</b></span>");                        
                 }
                 else
                 {
@@ -101,10 +113,32 @@ namespace m0.Lib.StdView
                             sb.Append(c);
                         else
                         {
+                            bool IsBold = false;
+                            if (GraphUtil.ExistQueryOut(matchToken.tokenVertex, "IsBold", "True"))
+                                IsBold = true;
+
+                            bool IsItalic = false;
+                            if (GraphUtil.ExistQueryOut(matchToken.tokenVertex, "IsItalic", "True"))
+                                IsItalic = true;
+
                             sb.Append("<span style=\"color:");
                             sb.Append(GetColor(matchToken.colorVertex));
                             sb.Append("\">");
+
+                            if (IsBold)
+                                sb.Append("<b>");
+
+                            if (IsItalic)
+                                sb.Append("<i>");
+
                             sb.Append(matchToken.tokenString);
+
+                            if (IsBold)
+                                sb.Append("</b>");
+
+                            if (IsItalic)
+                                sb.Append("</i>");
+
                             sb.Append("</span>");
 
                             i += matchToken.tokenString.Length - 1;
