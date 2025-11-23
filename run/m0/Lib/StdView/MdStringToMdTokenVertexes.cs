@@ -592,36 +592,18 @@ namespace m0.Lib.StdView
 
         private static void AddCodeBlockToTarget(IVertex target, string text)
         {
-            target.AddVertex(CodeBlock, TextProcess(text));
+            target.AddVertex(CodeBlock, HtmlUtil.QuoteString(text));
         }
 
         private static void AddCodeBlockToTarget_withFormalTextLanguageName(IVertex target, string text, string FormalTextLanguageName_value)
         {
-            IVertex v = target.AddVertex(CodeBlock, TextProcess(text));
+            IVertex v = target.AddVertex(CodeBlock, HtmlUtil.QuoteString(text));
             v.AddVertex(FormalTextLanguageName, FormalTextLanguageName_value);
-        }
-
-        static string TextProcess(string _textValue)
-        {
-            StringBuilder textValue = new StringBuilder(_textValue);
-
-            textValue.Replace("&", "&amp;");
-            textValue.Replace("<", "&lt;");
-            textValue.Replace(">", "&gt;");
-            textValue.Replace("\"", "&quot;");
-            textValue.Replace("'", "&apos;");
-            textValue.Replace("`", "&grave;");
-            textValue.Replace("~", "&tilde;");
-            textValue.Replace("^", "&circ;");
-            textValue.Replace("|", "&verbar;");
-            textValue.Replace("\\", "&bsol;");
-            
-            return textValue.ToString();
-        }
+        }        
 
         private static void AddTextTokenToTarget(IVertex target, string textValue)
         {            
-            target.AddVertex(Text, TextProcess(textValue));
+            target.AddVertex(Text, HtmlUtil.QuoteString(textValue));
         }
 
         private static void CloseHeaderIfOpen(IVertex target)

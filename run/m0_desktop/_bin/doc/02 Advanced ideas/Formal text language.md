@@ -11,40 +11,31 @@ code source string + keyword definition -> result graph
 Those meta edges are used in keyword definition.
 
 ### ANY
-
 ```ZeroCode
 <(?<ANY>) :: "new vertex">
 ```
-
 The `(?<ANY>)` meta edge in keyword definition will match any meta edge to match this keyword in given edge. This is especially usefull when nesting expressions. 
 
 Example:
-
 ```ZeroCode
-<@$Keyword :: ""(?<left>) +<(?<SUB>) (?<right>)">
+<@$Keyword :: "(?<left>) +<(?<SUB>) (?<right>)">
 	<@(?<ANY>) :: "">
 		<@$Is :: @AddRightEdgeesIntoLeftEdges>
 		<@LeftExpression :: "(?<left>)">
 		<@RightExpression :: "(?<right>)">
 ```
-
 Above keyword will match following sub graph, even as there is `Next` meta in the root edge. The `Next` meta does not exist in the keyword definition and is matched by `(?<ANY>)`.
-
 ```ZeroCode
 <@Next :: >
 	<@$Is :: @AddRightEdgeesIntoLeftEdges>
 	<@LeftExpression :: "A">
 	<@RightExpression :: "B">
 ```
-
 ### LAST
-
 ```ZeroCode
 <(?<LAST>) :: "new vertex">
 ```
-
 The meta of new current edge is the meta of last (previously) added edge. This is used in import definitions.
-
 ```ZeroCode
 <@Keyword :: "import (?<name>) (?<link>) meta">
 	<@$$ImportMeta :: "import[ ]+%"(?<name>.*)%"[ ]+@(?<link>[^ ]+)[ ]+meta[ ]*\r">
@@ -53,22 +44,17 @@ The meta of new current edge is the meta of last (previously) added edge. This i
 		<@$Is :: @$ImportMeta>
 	<@(?<LAST>) :: "(?<link>)">
 ```
-
 ### $KeywordGroupDefinition
-
 ```ZeroCode
 <@$KeywordGroupDefinition :: "keyword group name">
 ```
-
 Defines keyword group with a given name.
-
 ### $$KeywordGroup
 
 `$$KeuwordGroup` meta edge in the keyword defining vertex, assigns given keyword definition to the given _group name_. 
 The _group name_ has to be created with `$$KeywordGroupDefiniion` meta edge.
 
 Example:
-
 ```ZeroCode
 <@$Keyword :: "%<<(?<expr)>>">
 	<@$$KeywordGroup :: @GROUP_NAME>
@@ -77,14 +63,13 @@ Example:
 		<@$Is :: @SetIndex>
 		<@Expression :: "(?<expr>)">
 ```
-
 ### $$KeywordManyRoot
 
 When the keyword string has `(* ... *)` section, there is a need to define what keyword edge will mach the `(* ... *)` section. If given vertex in the keyword definition contains the `$$KeywordManyRoot` meta edge, it makes given edge the `(* ... *)` section root. That means this edge will be present in the result graph as many times as there are `(* ... *)` section maches in the source text.
 
 Example:
- 
-- Keyword definition:
+
+**Keyword definition:**
 ```ZeroCode
 <@$Keyword :: "method (?<name>) (?<returnType>)((*(+, +)(?<paramType>) (?<paramName>)*))">
 	<@Method :: "(?<name>)">
@@ -94,11 +79,11 @@ Example:
 			<$EdgeTarget :: "(?<paramType>)">
 			<@$$KeywordManyRoot :: @$Empty>
 ```
-- Code source string:
+**Code source string:**
 ```ZeroCode
 method "setName" (@String "name", @String "surname")
 ```
-- Result graph:
+**Result graph:**
 ```ZeroCode							
 <@Method :: "setName">
 	<@$Is :: @Method>
@@ -107,7 +92,6 @@ method "setName" (@String "name", @String "surname")
 	<@InputParameter :: "surname">
 		<@EdgeTarget :: @String>
 ```
-
 ### $$LocalRoot and $$StartInLocalRoot 
 
 If vertex in keyword definition contains `$$LocalRoot` meta edge, the vertex is defined as _local root_. 
@@ -116,7 +100,7 @@ The `$$LocalRoot` meta edge points to _group name_. The _group name_ has to be c
 
 Edges resulting from keyword definition containing `$$StartInLocalRoot` meta edge will be added to _local root_, instead of the _default root_.
 
-- _local root_ defining keyword
+**_local root_ defining keyword**
 ```ZeroCode
 <@$Keyword :: "(?<value)">
 	<@(?<ANY>) :: "(?<value>)">
@@ -125,7 +109,7 @@ Edges resulting from keyword definition containing `$$StartInLocalRoot` meta edg
 		<@NextExpression :: "">
 			<@$$LocalRoot :: @GROUP_NAME>
 ```
-- `$$StartInLocalRoot` keyword
+**`$$StartInLocalRoot` keyword**
 ```ZeroCode
 <@$Keyword :: "%<<(?<expr)>>">
 	<@$$KeywordGroup :: @GROUP_NAME>
@@ -134,11 +118,11 @@ Edges resulting from keyword definition containing `$$StartInLocalRoot` meta edg
 		<@$Is :: @SetIndex>
 		<@Expression :: "(?<expr>)">
 ```
-- Code source string
+**Code source string**
 ```ZeroCode
 query<<"5">>
 ```
-- Result graph
+**Result graph**
 ```ZeroCode
 <@$Empty :: "query">
 	<@$Is :: @Query>
@@ -146,13 +130,11 @@ query<<"5">>
 		<@$Is :: @SetIndex>
 			<@Expression :: "5">
 ```
-
 ### $$EmptyKeyword
 
 Keyword definition having `$$NewVertexKeyword` meta edge will result in keyword creting new vertex values keyword.
 
 Example:
-
 ```ZeroCode
 <@$Keyword :: "(?<value>)">
 	<@$$EmptyKeyword :: @$Empty>
@@ -162,27 +144,21 @@ Example:
 		<@NextExpression :: "">
 			<@$$LocalRoot :: "Inner">
 ```
-
 ### $$NewVertexKeyword
 
 Keyword definition having `$$NewVertexKeyword` meta edge will result in keyword creting new vertex values keyword.
 
 Example:
-
 ```ZeroCode
 <@$Keyword :: "(?<value>)">
 	<@$$NewVertexKeyword :: @$Empty>
 	<@(?<ANY>) :: "(?<value>)">
 ```
-
 ### $$ForceNewVertex
-
 ```ZeroCode
 <@$$ForceNewVertex :: @$Empty>
 ```
-
 Enforfces to create new vertex string and not link in graph-2-text. This special meta is used in case where `$IsAggregation ::` can not be used.
-
 ```ZeroCode
 <@Keyword :: "attribute (?<name>) (?<type>) (?<MinCardinality>):(?<MaxCardinality>) <<(?<MinValue>):(?<MaxValue>)>>">
 	<@Attribte :: "(?<name>)">
@@ -198,13 +174,11 @@ Enforfces to create new vertex string and not link in graph-2-text. This special
 		<@$IsAggregation :: @$Empty>
 		<@$Is :: @Attribute>
 ```
-
 ### $$LinkKeyword
 
 Keyword definition having `$$LinkKeyword` meta edge will result in keyword creting new vertex values keyword.
 
 Example:
-
 ```ZeroCode
 <@$Keyword :: "@(?<value>)">
 	<@$$KeywordGroup :: @ColonEmptyInner2SlashMarkIndexMethodNewLink>
@@ -214,13 +188,11 @@ Example:
 		<@$Is :: @Link>
 		<@Target :: "(<?<value>)">
 ```
-
 ### $$NonSelfRecursiveParameter
 
 [TBD What is it?]
 
 Example:
-
 ```ZeroCode
 <@$Keyword :: "(?<left_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>) :: (?<right_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopy>)">
 	<@$$NonSelfRecursiveParameters :: @$Empty>
@@ -231,7 +203,6 @@ Example:
 		<@NextExpression :: "">
 			<@$$LocalRoot :: @InnerCreation>
 ```
-
 ### $$Import
 
 ### $$ImportDirect

@@ -6429,12 +6429,12 @@ namespace m0
                 ColorHelper.AddColor(Colors, "VeryVeryVeryVeryLight" + de.Key, ScaleUp(de.Value[0], 0.97), ScaleUp(de.Value[1], 0.97), ScaleUp(de.Value[2], 0.97), 255);
 
             ColorHelper.AddColor(Colors, "KeywordGrey", 153, 153, 153, 255);
-            ColorHelper.AddColor(Colors, "Keyword",0, 194, 207, 255);
+            ColorHelper.AddColor(Colors, "Keyword", 0, 192, 207, 255);
             ColorHelper.AddColor(Colors, "KeywordDolarKeyword", 0, 0, 143, 255);
-            ColorHelper.AddColor(Colors, "KeywordString", 103, 51, 213, 255);
+            ColorHelper.AddColor(Colors, "KeywordString", 103, 51, 213, 255);            
             ColorHelper.AddColor(Colors, "KeywordOperator", 255, 0, 0, 255);
             ColorHelper.AddColor(Colors, "KeywordDoubleColon", 37, 88, 103, 255);
-            ColorHelper.AddColor(Colors, "KeywordMonkey", 59, 145, 103, 255);
+            ColorHelper.AddColor(Colors, "KeywordMonkey", 59, 145, 239, 255);
             ColorHelper.AddColor(Colors, "KeywordEscape", 75, 177, 207, 255);
         }
 
@@ -7252,6 +7252,7 @@ namespace m0
                 v = sftl.AddVertex(ViewToken, s);
                 v.AddEdge(Is, TextToken);
                 v.AddEdge(Color, Keyword);
+                v.AddVertex(IsBold, "True");
             }
 
             foreach (string s in operators)

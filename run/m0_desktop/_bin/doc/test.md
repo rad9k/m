@@ -1,3 +1,6 @@
+```InlineHTML
+<a href="gazeta.pl">gazeta</a>
+```
 ```ZeroCode
 "code"
 	"Code0"

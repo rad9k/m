@@ -15,24 +15,6 @@ namespace m0.Lib.StdView
     {
         static IVertex FormalTextLanguages_Vertex = MinusZero.Instance.Root.Get(false, @"System\FormalTextLanguage");
 
-        static string DequoteText_internal(string _textValue)
-        {
-            StringBuilder textValue = new StringBuilder(_textValue);
-
-            textValue.Replace("&amp;", "&");
-            textValue.Replace("&lt;", "<");
-            textValue.Replace("&gt;", ">");
-            textValue.Replace("&quot;", "\"");
-            textValue.Replace("&apos;", "\"");
-            textValue.Replace("&grave;", "`");
-            textValue.Replace("&tilde;", "~");
-            textValue.Replace("&circ;", "^");
-            textValue.Replace("&verbar;", "|");
-            textValue.Replace("&bsol;", "\\");
-
-            return textValue.ToString();
-        }
-
         public static INoInEdgeInOutVertexVertex DequoteText(IExecution exe)
         {
             INoInEdgeInOutVertexVertex stack = exe.Stack;
@@ -41,7 +23,7 @@ namespace m0.Lib.StdView
 
             INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
             
-            newStack.AddVertex(null, DequoteText_internal(GraphUtil.GetStringValue(text_Vertex)));
+            newStack.AddVertex(null, HtmlUtil.DequoteString(GraphUtil.GetStringValue(text_Vertex)));
 
             return newStack;
         }
@@ -54,7 +36,7 @@ namespace m0.Lib.StdView
             IVertex text_Vertex = GraphUtil.GetQueryOutFirst(stack, "text", null);
 
             string FormalTextLanguage = GraphUtil.GetStringValue(FormalTextLanguage_Vertex);
-            string text = DequoteText_internal(GraphUtil.GetStringValue(text_Vertex));
+            string text = HtmlUtil.DequoteString(GraphUtil.GetStringValue(text_Vertex));
 
             IVertex ftl = GraphUtil.GetQueryOutFirst(FormalTextLanguages_Vertex, null, FormalTextLanguage);
 
@@ -90,15 +72,20 @@ namespace m0.Lib.StdView
 
                 if (IsZeroCode && c == '\"') // STRING
                 {
-                    sb.Append("<span style=\"color:#6733D5\"><b>\"");                    
+                    //sb.Append("<span style=\"color:#6733D5\"><b>\"");                    
+                    sb.Append("<span style=\"color:#9763E5\"><b>\"");
 
                     i++;
 
-                    while (text[i] != '\"' && i < text.Length) {
-                        sb.Append(text[i]);
+                    StringBuilder sb2 = new StringBuilder();
+
+                    while (i < text.Length && text[i] != '\"') {
+                        sb2.Append(text[i]);
                         i++;
-                    }                    
+                    }
                     
+                    sb.Append(HtmlUtil.QuoteString(sb2.ToString()));
+
                     sb.Append("\"</b></span>");                        
                 }
                 else
@@ -131,7 +118,7 @@ namespace m0.Lib.StdView
                             if (IsItalic)
                                 sb.Append("<i>");
 
-                            sb.Append(matchToken.tokenString);
+                            sb.Append(HtmlUtil.QuoteString(matchToken.tokenString));
 
                             if (IsBold)
                                 sb.Append("</b>");
