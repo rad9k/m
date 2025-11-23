@@ -1,7 +1,6 @@
 # Views
 
 ## Graph
-
 ```ZeroCode
 <@View :: "">
 	<@$Is :: @View>
@@ -17,7 +16,6 @@
 	<@ChangeTypeFilter :: @MetaEdgeAdded>
 	<@Listener :: @CreateViewMetaEdgeAdded>
 ```
-
 ## About
 
 _View_ is defined as _meta edge_. When this _meta edge_ is added to given vertex (the given vertex will be called from now the _source_ vertex), the _view_ is created in the _target_ vertex.
@@ -26,9 +24,9 @@ _View_ is defined as _meta edge_. When this _meta edge_ is added to given vertex
 
 - _**view**_
 	- type:
-		- fire and forget (_> no triggers_)		
+		- fire and forget (_no triggers_)		
 			- The view is generated when edge is added.
-		- updatable (_> has to have triggers_)
+		- updatable (_has to have triggers_)
 	- direction:
 		- _source_ to _target_
 		- _target_ to _source_
@@ -54,7 +52,6 @@ __After the "Possible view definitions" table (below) evaluation we come to conc
 |updatable both                |updatable      |both            |YES           |YES                      |YES           |YES                      |
 
 ## Create view Graph
-
 ```ZeroCode
 <(?<ANY>) :: "">
 	<@$Is :: CreateView>
@@ -80,11 +77,10 @@ __After the "Possible view definitions" table (below) evaluation we come to conc
 			<@Is :: @ToFromTransformFunction>
 			<@Target :: @ListenerFunction>
 ```
-
 ## Transform function parameters
 
 - event @Event
-	- if event == ~00 than transform function is expected to generate whole source/target (so this is not a _transform_ function but a _generate_)
+	- if `event == ~00` than transform function is expected to generate whole source/target (so this is not a _transform_ function but a _generate_)
 - from @VertexType
 - meta @VertexType
 - to @VertexType
@@ -101,7 +97,6 @@ So it means that there:
 > In case trigger queries are not defined, it means that only _source_ or _target_ vertex are the view triggering events source.
 
 ## create view syntax
-
 ```ZeroCode
 create view {
 	from query "query body"
@@ -112,17 +107,13 @@ create view {
 	to from transform @@TransformFunction
 }
 ```
-
 above expression will create view at local stack, so that means it can be used in following way
-
 ```ZeroCode
 AddHere +< view "view name"{
 	...
 }
 ```
-
 ## example
-
 ```ZeroCode
 "EXAMPLE"
 	import @System\Lib\Std direct meta
@@ -158,9 +149,7 @@ AddHere +< view "view name"{
 	}
 	Source +< ExampleView :: "Target"
 ```
-
 Above code results in the following:
-
 ```ZeroCode
 "Source"
 	<@set :: "first set">

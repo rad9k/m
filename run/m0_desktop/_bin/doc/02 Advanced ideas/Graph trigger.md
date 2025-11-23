@@ -1,15 +1,13 @@
 # Graph Change Trigger
 
 ## Graph 
-
 ```ZeroCode
-<$GraphChangeTrigger :: "name string">
+<@$GraphChangeTrigger :: "name string">
 	<@$Is :: @GraphChangeTrigger>		
 	<@ChangeTypeFilter :: @GraphChangeFilterEnum\value>
 	<@ScopeQuery :: "query">
 	<@Listener :: @ListenerFunction>
 ```
-
 ## GraphChangeFilterEnum
 
 - OnlyNonTransactedRootVertexEvents
@@ -24,7 +22,6 @@
 - OutputEdgeDisposed
 
 ## create trigger Graph
-
 ```ZeroCode
 <(?<ANY>) :: "">
 	<@$Is :: CreateTrigger>
@@ -42,9 +39,7 @@
 			<@Target :: @ListenerFunction>
 
 ```
-
 ## create trigger syntax
-
 ```ZeroCode
 create trigger "trigger name" {
 	filter @@GraphChangeFilterEnum\ValueChange
@@ -52,9 +47,7 @@ create trigger "trigger name" {
 	listener @@ListenerFunction
 }
 ```
-
 above expression will create trigger at local stack, so that means it can be used in following way
-
 ```ZeroCode
 AddHere +< create trigger "trigger name"{
 	...
