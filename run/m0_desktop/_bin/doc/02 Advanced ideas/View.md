@@ -43,14 +43,12 @@ _View_ is defined as _meta edge_. When this _meta edge_ is added to given vertex
 __After the "Possible view definitions" table (below) evaluation we come to conclusion, that just trigger queries and transform function are enough to express above.__
 
 ## Possible view definitions
-
 |comment                       |type           |direction       |source trigger|source transform function|target trigger|target transform function|
 |:-----------------------------|:--------------|:---------------|:-------------|:------------------------|:-------------|:------------------------|
 |one time from source to target|fire and forget|source to target|NO            |YES                      |NO            |NO                       |
 |updatable source to target    |updatable      |source to target|YES           |YES                      |NO            |NO                       |
 |updatable target to source    |updatable      |target to source|NO            |NO                       |YES           |YES                      |
 |updatable both                |updatable      |both            |YES           |YES                      |YES           |YES                      |
-
 ## Create view Graph
 ```ZeroCode
 <(?<ANY>) :: "">
