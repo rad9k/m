@@ -145,16 +145,20 @@
 						html += "</code>"
 						
 					case "LinkStart"
-						html += ""
+						html += "LinkStart"
 						
 					case "LinkText"
-						html += ""
+						html += "LinkText@"
+						html += e\To
+						html += "@"
 						
 					case "LinkUrl"
-						html += ""
+						html += "LinkUrl@"
+						html += e\To
+						html += "@"
 						
 					case "LinkEnd"
-						html += ""
+						html += "LinkEnd"
 						
 					case "ImageStart"
 						html += ""
