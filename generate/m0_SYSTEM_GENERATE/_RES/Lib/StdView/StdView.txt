@@ -166,10 +166,10 @@
 						html += ""
 						
 					case "BlockquoteStart"
-						html += "[bqBEG]"
+						html += "<blockquote>"
 						
 					case "BlockquoteEnd"
-						html += "[bqEND]"
+						html += "</blockquote>"
 						
 					case "ListItemsStart"
 						html += "<ul>"

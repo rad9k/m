@@ -245,6 +245,23 @@ namespace m0.Lib.StdView
                         CloseAllLists(to);
                     }
 
+                    // Close blockquote if next line doesn't start with >
+                    if (blockquoteLevel > 0 && paragraphAnalysis.HasContent)
+                    {
+                        bool nextLineIsBlockquote = paragraphAnalysis.ContentPosition < md.Length && 
+                                                    md[paragraphAnalysis.ContentPosition] == '>';
+                        
+                        if (!nextLineIsBlockquote)
+                        {
+                            // Close all blockquote levels before the ParagraphBreak
+                            while (blockquoteLevel > 0)
+                            {
+                                blockquoteLevel--;
+                                AddTokenToTarget(to, BlockquoteEnd);
+                            }
+                        }
+                    }
+
                     // Generate ParagraphBreak for empty line
                     AddTokenToTarget(to, ParagraphBreak);
                     continue;
@@ -258,6 +275,29 @@ namespace m0.Lib.StdView
                     LineAnalysis lineAnalysis = AnalyzeLine(md, lookaheadPosition);
 
                     position++;
+
+                    // Check if we need to close blockquote (next line doesn't start with >)
+                    if (blockquoteLevel > 0 && lineAnalysis.HasContent)
+                    {
+                        // Check if the content position starts with > (blockquote continues)
+                        bool nextLineIsBlockquote = lineAnalysis.ContentPosition < md.Length && 
+                                                    md[lineAnalysis.ContentPosition] == '>';
+                        
+                        if (!nextLineIsBlockquote)
+                        {
+                            // Close all blockquote levels before the HardBreak for the next line
+                            while (blockquoteLevel > 0)
+                            {
+                                blockquoteLevel--;
+                                AddTokenToTarget(to, BlockquoteEnd);
+                            }
+                            
+                            // Generate HardBreak for single newline when next line has content (after BlockquoteEnd)
+                            AddTokenToTarget(to, HardBreak);
+                            position = lineAnalysis.ContentPosition;
+                            continue;
+                        }
+                    }
 
                     if (listContextStack.Count > 0 && lineAnalysis.HasContent)
                     {
@@ -533,17 +573,6 @@ namespace m0.Lib.StdView
                     continue;
                 }
                 
-                // Handle blockquote end (newline not followed by >)
-                if (IsBlockquoteEnd(md, position))
-                {
-                    // Close all remaining blockquote levels
-                    while (blockquoteLevel > 0)
-                    {
-                        blockquoteLevel--;
-                        AddTokenToTarget(to, BlockquoteEnd);
-                    }
-                    continue;
-                }
                 
                 // Handle tables (| col1 | col2 |)
                 if (currentChar == '|' && !isInsideTable)
@@ -1242,27 +1271,6 @@ namespace m0.Lib.StdView
             return insideInlineCode;
         }
 
-        private static bool IsBlockquoteEnd(string md, int position)
-        {
-            // Check if we're at a newline and next line doesn't start with >
-            if (position < md.Length && md[position] == '\n')
-            {
-                int nextLineStart = position + 1;
-                // Skip any carriage return
-                if (nextLineStart < md.Length && md[nextLineStart] == '\r')
-                {
-                    nextLineStart++;
-                }
-                // Skip whitespace (but not newlines)
-                while (nextLineStart < md.Length && char.IsWhiteSpace(md[nextLineStart]) && md[nextLineStart] != '\n' && md[nextLineStart] != '\r')
-                {
-                    nextLineStart++;
-                }
-                // Check if next line doesn't start with > (end of blockquote)
-                return nextLineStart >= md.Length || md[nextLineStart] != '>';
-            }
-            return false;
-        }
         
         private static string ExtractCodeBlockText(string md, ref int position)
         {
