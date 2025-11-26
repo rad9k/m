@@ -36,13 +36,22 @@ namespace m0.Lib.StdView
         static IVertex FormalTextLanguageName = Md.Get(false, @"CodeBlock\FormalTextLanguageName");
         static IVertex InlineCodeStart = Md.Get(false, "InlineCodeStart");
         static IVertex InlineCodeEnd = Md.Get(false, "InlineCodeEnd");
-        static IVertex LinkStart = Md.Get(false, "LinkStart");
-        static IVertex LinkText = Md.Get(false, "LinkText");
-        static IVertex LinkUrl = Md.Get(false, "LinkUrl");
-        static IVertex LinkEnd = Md.Get(false, "LinkEnd");
-        static IVertex ImageStart = Md.Get(false, "ImageStart");
-        static IVertex ImageUrl = Md.Get(false, "ImageUrl");
-        static IVertex ImageEnd = Md.Get(false, "ImageEnd");
+        static IVertex Link = Md.Get(false, "Link");
+        static IVertex LinkText = Md.Get(false, @"Link\Text");
+        static IVertex LinkUrl = Md.Get(false, @"Link\Url");
+        static IVertex Image = Md.Get(false, "Image");
+        static IVertex ImageText = Md.Get(false, @"Image\Text");
+        static IVertex ImageUrl = Md.Get(false, @"Image\Url");
+        static IVertex Generic = Md.Get(false, "Generic");
+        static IVertex GenericNameValue = Md.Get(false, @"Generic\NameValue");
+        static IVertex GenericName = Md.Get(false, @"Generic\NameValue");
+        static IVertex GenericValue = Md.Get(false, @"Generic\NameValue");
+
+        static IVertex LinkStart = Md.Get(false, "LinkStart"); // TO DELETE
+        static IVertex LinkEnd = Md.Get(false, "LinkEnd"); // TO DELETE
+        static IVertex ImageStart = Md.Get(false, "ImageStart"); // TO DELETE
+        static IVertex ImageEnd = Md.Get(false, "ImageEnd"); // TO DELETE
+
         static IVertex BlockquoteStart = Md.Get(false, "BlockquoteStart");
         static IVertex BlockquoteEnd = Md.Get(false, "BlockquoteEnd");
         static IVertex ListItemsStart = Md.Get(false, "ListItemsStart");
@@ -497,18 +506,7 @@ namespace m0.Lib.StdView
                 // Handle links [text](url)
                 if (IsLinkStart(md, position))
                 {
-                    position++; // Skip opening [
-                    isInsideLink = true;
-                    AddTokenToTarget(to, LinkStart);
-                    continue;
-                }
-                
-                // Handle link end ](url)
-                if (IsLinkEnd(md, position))
-                {
-                    ExtractLinkEnd(md, ref position);
-                    isInsideLink = false;
-                    AddTokenToTarget(to, LinkEnd);
+                    ExtractLink(md, ref position, to);
                     continue;
                 }
                 
@@ -634,6 +632,28 @@ namespace m0.Lib.StdView
         {            
             target.AddVertex(Text, HtmlUtil.QuoteString(textValue));
         }
+
+        private static void AddLinkTokenToTarget(IVertex target, string textValue, string urlValue)
+        {
+            IVertex v = target.AddVertex(Link, null);
+            v.AddVertex(LinkText, textValue);
+            v.AddVertex(LinkUrl, urlValue);
+        }
+
+        private static void AddImageTokenToTarget(IVertex target, string textValue, string urlValue)
+        {
+            IVertex v = target.AddVertex(Image, null);
+            v.AddVertex(ImageText, textValue);
+            v.AddVertex(ImageUrl, urlValue);
+        }
+
+        private static void AddImageTokenToTarget(IVertex target, string urlValue)
+        {
+            IVertex v = target.AddVertex(Image, null);
+            v.AddVertex(ImageUrl, urlValue);
+        }
+
+
 
         private static void CloseHeaderIfOpen(IVertex target)
         {
@@ -1029,22 +1049,37 @@ namespace m0.Lib.StdView
             return md[position] == '[';
         }
 
-        private static bool IsLinkEnd(string md, int position)
+        private static void ExtractLink(string md, ref int position, IVertex target)
         {
-            if (position >= md.Length) return false;
-            if (isInsideCodeBlock || isInsideInlineCode) return false; // Don't process inside code blocks
-            if (!isInsideLink) return false; // Not inside link
-            return md[position] == ']' && position + 1 < md.Length && md[position + 1] == '(';
-        }
-
-        private static void ExtractLinkEnd(string md, ref int position)
-        {
+            position++; // Skip opening [
+            
+            // Extract link text
+            StringBuilder textBuilder = new StringBuilder();
+            while (position < md.Length && md[position] != ']')
+            {
+                textBuilder.Append(md[position]);
+                position++;
+            }
+            
+            if (position >= md.Length)
+            {
+                return; // Malformed link
+            }
+            
             position++; // Skip ]
+            
+            if (position >= md.Length || md[position] != '(')
+            {
+                return; // Malformed link
+            }
+            
             position++; // Skip (
             
-            // Skip URL until )
+            // Extract URL
+            StringBuilder urlBuilder = new StringBuilder();
             while (position < md.Length && md[position] != ')')
             {
+                urlBuilder.Append(md[position]);
                 position++;
             }
             
@@ -1052,6 +1087,8 @@ namespace m0.Lib.StdView
             {
                 position++; // Skip )
             }
+            
+            AddLinkTokenToTarget(target, textBuilder.ToString(), urlBuilder.ToString());
         }
 
         private static bool IsImageStart(string md, int position)

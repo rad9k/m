@@ -147,8 +147,12 @@
 					case "InlineCodeEnd"
 						html += "</code>"
 						
-					case "LinkStart"
-						html += "LinkStart"
+					case "Link"
+						html += "<a href="
+						html += e\To\Url
+						html += ">"
+						html += e\To\Text
+						html += "</a>"
 						
 					case "LinkText"
 						html += "LinkText@"
