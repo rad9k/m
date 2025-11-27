@@ -10,5 +10,11 @@ namespace m0.Util
     {
         public string Key;
         public string Value;
+
+        public StringKeyValue(string key, string value)
+        {
+            Key = key;
+            Value = value;
+        }
     }
 }

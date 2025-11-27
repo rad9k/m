@@ -45,14 +45,8 @@ namespace m0.Lib.StdView
         static IVertex ImageUrl = Md.Get(false, @"Image\Url");
         static IVertex Generic = Md.Get(false, "Generic");
         static IVertex GenericNameValue = Md.Get(false, @"Generic\NameValue");
-        static IVertex GenericName = Md.Get(false, @"Generic\NameValue");
-        static IVertex GenericValue = Md.Get(false, @"Generic\NameValue");
-
-        static IVertex LinkStart = Md.Get(false, "LinkStart"); // TO DELETE
-        static IVertex LinkEnd = Md.Get(false, "LinkEnd"); // TO DELETE
-        static IVertex ImageStart = Md.Get(false, "ImageStart"); // TO DELETE
-        static IVertex ImageEnd = Md.Get(false, "ImageEnd"); // TO DELETE
-
+        static IVertex GenericName = Md.Get(false, @"Generic\NameValue\Name");
+        static IVertex GenericValue = Md.Get(false, @"Generic\NameValue\Value");
         static IVertex BlockquoteStart = Md.Get(false, "BlockquoteStart");
         static IVertex BlockquoteEnd = Md.Get(false, "BlockquoteEnd");
         static IVertex ListItemsStart = Md.Get(false, "ListItemsStart");

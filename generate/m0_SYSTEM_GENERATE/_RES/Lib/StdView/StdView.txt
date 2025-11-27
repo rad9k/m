@@ -166,6 +166,16 @@
 								html += "%"><BR><span class=%"description%">"
 								html += e\To\Text
 								html += "</span></center>"
+								
+					case "Generic"
+						html += "generic<BR>"
+						html += e\To
+						:Temp +< e
+						for vertex "v" in e\To\
+							html += "<BR>"
+							html += v\Name
+							html += "<BR>"
+							html += v\Value
 						
 					case "BlockquoteStart"
 						html += "<blockquote>"
