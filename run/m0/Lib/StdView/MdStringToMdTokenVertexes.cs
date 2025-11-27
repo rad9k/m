@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -510,21 +511,17 @@ namespace m0.Lib.StdView
                     continue;
                 }
                 
-                // Handle images ![alt](url)
-                if (IsImageStart(md, position))
+                // Handle generic elements !ELEMENT_NAME[param1](value1)[param2](value2)...
+                if (IsGenericElementStart(md, position))
                 {
-                    position += 2; // Skip opening ![
-                    isInsideImage = true;
-                    AddTokenToTarget(to, ImageStart);
+                    ExtractGenericElement(md, ref position, to);
                     continue;
                 }
-                
-                // Handle image end ](url)
-                if (IsImageEnd(md, position))
+
+                // Handle images ![alt](url) or !(url)
+                if (IsImageStart(md, position))
                 {
-                    ExtractImageEnd(md, ref position);
-                    isInsideImage = false;
-                    AddTokenToTarget(to, ImageEnd);
+                    ExtractImage(md, ref position, to);
                     continue;
                 }
                 
@@ -651,6 +648,17 @@ namespace m0.Lib.StdView
         {
             IVertex v = target.AddVertex(Image, null);
             v.AddVertex(ImageUrl, urlValue);
+        }
+
+        private static void AddGenericTokenToTarget(IVertex target, string genericElementName, IList<StringKeyValue> parameters)
+        {
+            IVertex v = target.AddVertex(Generic, genericElementName);
+            foreach (var param in parameters)
+            {
+                IVertex nv = v.AddVertex(GenericNameValue, null);
+                nv.AddVertex(GenericName, param.Key);
+                nv.AddVertex(GenericValue, param.Value);
+            }
         }
 
 
@@ -1093,48 +1101,159 @@ namespace m0.Lib.StdView
 
         private static bool IsImageStart(string md, int position)
         {
-            if (position + 1 >= md.Length) return false;
+            if (position >= md.Length) return false;
             if (isInsideCodeBlock || isInsideInlineCode) return false; // Don't process inside code blocks
-            if (isInsideImage) return false; // Already inside image
-            return md[position] == '!' && md[position + 1] == '[';
+            if (md[position] != '!') return false;
+            
+            // Check for ![text](url) format
+            if (position + 1 < md.Length && md[position + 1] == '[')
+                return true;
+            
+            // Check for !(url) format
+            if (position + 1 < md.Length && md[position + 1] == '(')
+                return true;
+            
+            return false;
         }
 
-        private static string ExtractImage(string md, ref int position)
+        private static void ExtractImage(string md, ref int position, IVertex target)
         {
-            position += 2; // Skip opening ![
+            position++; // Skip !
             
-            StringBuilder result = new StringBuilder();
-            result.Append("![");
-            
-            while (position < md.Length)
+            // Check if it's !(url) format (no alt text)
+            if (md[position] == '(')
             {
-                if (md[position] == ']' && position + 1 < md.Length && md[position + 1] == '(')
+                position++; // Skip (
+                
+                // Extract URL
+                StringBuilder simpleUrlBuilder = new StringBuilder();
+                while (position < md.Length && md[position] != ')')
                 {
-                    result.Append(']');
+                    simpleUrlBuilder.Append(md[position]);
                     position++;
-                    
-                    // Extract URL part
-                    position++; // Skip opening (
-                    result.Append('(');
-                    
-                    while (position < md.Length && md[position] != ')')
-                    {
-                        result.Append(md[position]);
-                        position++;
-                    }
-                    
-                    if (position < md.Length)
-                    {
-                        result.Append(')');
-                        position++;
-                    }
-                    break;
                 }
-                result.Append(md[position]);
+                
+                if (position < md.Length)
+                {
+                    position++; // Skip )
+                }
+                
+                AddImageTokenToTarget(target, simpleUrlBuilder.ToString());
+                return;
+            }
+            
+            // It's ![text](url) format
+            position++; // Skip [
+            
+            // Extract alt text
+            StringBuilder textBuilder = new StringBuilder();
+            while (position < md.Length && md[position] != ']')
+            {
+                textBuilder.Append(md[position]);
                 position++;
             }
             
-            return result.ToString();
+            if (position >= md.Length)
+            {
+                return; // Malformed image
+            }
+            
+            position++; // Skip ]
+            
+            if (position >= md.Length || md[position] != '(')
+            {
+                return; // Malformed image
+            }
+            
+            position++; // Skip (
+            
+            // Extract URL
+            StringBuilder urlBuilder = new StringBuilder();
+            while (position < md.Length && md[position] != ')')
+            {
+                urlBuilder.Append(md[position]);
+                position++;
+            }
+            
+            if (position < md.Length)
+            {
+                position++; // Skip )
+            }
+            
+            AddImageTokenToTarget(target, textBuilder.ToString(), urlBuilder.ToString());
+        }
+
+        private static bool IsGenericElementStart(string md, int position)
+        {
+            if (position >= md.Length) return false;
+            if (isInsideCodeBlock || isInsideInlineCode) return false;
+            if (md[position] != '!') return false;
+            
+            // Check if next char is uppercase letter (element name start)
+            if (position + 1 >= md.Length) return false;
+            char nextChar = md[position + 1];
+            return char.IsUpper(nextChar);
+        }
+
+        private static void ExtractGenericElement(string md, ref int position, IVertex target)
+        {
+            position++; // Skip !
+            
+            // Extract element name (until [ or end)
+            StringBuilder nameBuilder = new StringBuilder();
+            while (position < md.Length && md[position] != '[' && !char.IsWhiteSpace(md[position]))
+            {
+                nameBuilder.Append(md[position]);
+                position++;
+            }
+            
+            string elementName = nameBuilder.ToString();
+            List<StringKeyValue> parameters = new List<StringKeyValue>();
+            
+            // Extract parameters [name](value) pairs
+            while (position < md.Length && md[position] == '[')
+            {
+                position++; // Skip [
+                
+                // Extract parameter name
+                StringBuilder paramNameBuilder = new StringBuilder();
+                while (position < md.Length && md[position] != ']')
+                {
+                    paramNameBuilder.Append(md[position]);
+                    position++;
+                }
+                
+                if (position >= md.Length)
+                {
+                    break; // Malformed
+                }
+                
+                position++; // Skip ]
+                
+                if (position >= md.Length || md[position] != '(')
+                {
+                    break; // Malformed
+                }
+                
+                position++; // Skip (
+                
+                // Extract parameter value
+                StringBuilder paramValueBuilder = new StringBuilder();
+                while (position < md.Length && md[position] != ')')
+                {
+                    paramValueBuilder.Append(md[position]);
+                    position++;
+                }
+                
+                if (position < md.Length)
+                {
+                    position++; // Skip )
+                }
+                
+                parameters.Add(new StringKeyValue(paramNameBuilder.ToString(), paramValueBuilder.ToString()));
+            }
+            
+            AddGenericTokenToTarget(target, elementName, parameters);
         }
 
         private static bool IsImageEnd(string md, int position)

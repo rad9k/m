@@ -148,33 +148,24 @@
 						html += "</code>"
 						
 					case "Link"
-						html += "<a href="
+						html += "<a href=%""
 						html += e\To\Url
-						html += ">"
+						html += "%">"
 						html += e\To\Text
 						html += "</a>"
 						
-					case "LinkText"
-						html += "LinkText@"
-						html += e\To
-						html += "@"
-						
-					case "LinkUrl"
-						html += "LinkUrl@"
-						html += e\To
-						html += "@"
-						
-					case "LinkEnd"
-						html += "LinkEnd"
-						
-					case "ImageStart"
-						html += ""
-						
-					case "ImageUrl"
-						html += ""
-						
-					case "ImageEnd"
-						html += ""
+					case "Image"
+						test e\To\Text<> == "0"
+							case "True"
+								html += "<center><img src=%""
+								html += e\To\Url
+								html += "%"></center>"
+							case "False"
+								html += "<center><img src=%""
+								html += e\To\Url
+								html += "%"><BR><span class=%"description%">"
+								html += e\To\Text
+								html += "</span></center>"
 						
 					case "BlockquoteStart"
 						html += "<blockquote>"
