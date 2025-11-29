@@ -89,11 +89,9 @@ For the _source_ / _target_ trigger to be defined, it is enough to define trigge
 So it means that there:
 - should be at last one `FromTriggerFilter` present to define _source_ trigger.
 - should be at last one `ToTriggerFilter` present to define _target_ trigger.
-
 > Please note that lack of existence of `FromTriggerQuery` or `ToTriggerQuery` does not make _source_ / _target_ trigger to be not defined.
 >
 > In case trigger queries are not defined, it means that only _source_ or _target_ vertex are the view triggering events source.
-
 ## create view syntax
 ```ZeroCode
 create view {
