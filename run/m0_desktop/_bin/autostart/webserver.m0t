@@ -9,7 +9,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 		return @@Autostart\web\MDServe\MDServeHandler[Start\:doc, url]
 		
 	map +< create http mapping "map"{
-		mapping @@HttpActionEnum\GET "/*" @@handler
+		mapping @@HttpActionEnum\GET "/files/*" @@Start:\files
+		mapping @@HttpActionEnum\GET "/*" @@handler		
 	}
 	server = new @@HttpServer[map\:map, "5000"]
 	server.Start[]
