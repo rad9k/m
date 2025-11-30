@@ -181,7 +181,7 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             // HttpActionEnum
 
-            IVertex HttpActionEnumVertex = GraphUtil.AddEnum(LibNet, "HttpActionEnum", new string[] { "GET", "PUT", "POST", "DELETE", "PATCH", "HEADOPTIONS", "TRACE" });
+            IVertex HttpActionEnumVertex = GraphUtil.AddEnum(LibNet, "HttpActionEnum", new string[] { "GET", "PUT", "POST", "DELETE", "PATCH", "HEAD","OPTIONS", "TRACE" });
 
             // HttpMappig
 

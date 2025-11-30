@@ -45,41 +45,41 @@ namespace m0.Network.Server {
 
         // New method handling every HTTP request
         private IResult HandleRequest(HttpContext context)
-        {
-            lock (_lockObject) // no reentry in ZeroCode
+        {            
+            // Get URL and HTTP action
+            string url = context.Request.Path.ToString();
+            var method = context.Request.Method;
+            m0.Lib.Net.HttpActionEnum action = m0.Lib.Net.HttpActionEnum.GET;
+            switch (method.ToUpperInvariant())
             {
-                // Get URL and HTTP action
-                string url = context.Request.Path.ToString();
-                var method = context.Request.Method;
-                m0.Lib.Net.HttpActionEnum action = m0.Lib.Net.HttpActionEnum.GET;
-                switch (method.ToUpperInvariant())
-                {
-                    case "GET": action = HttpActionEnum.GET; break;
-                    case "POST": action = HttpActionEnum.POST; break;
-                    case "PUT": action = HttpActionEnum.PUT; break;
-                    case "DELETE": action = HttpActionEnum.DELETE; break;
-                    case "PATCH": action = HttpActionEnum.PATCH; break;
-                    case "HEAD": action = HttpActionEnum.HEADOPTIONS; break;
-                    case "OPTIONS": action = HttpActionEnum.HEADOPTIONS; break;
-                    case "TRACE": action = HttpActionEnum.TRACE; break;
-                    default: action = HttpActionEnum.GET; break;
-                }
-
-                // Log the HTTP request
-                LogHttpRequest(context, method, url);
-
-                string response = DoHttpMapping(url, HttpActionEnumHelper.GetVertex(action));
-
-                // Check if response looks like HTML and set appropriate content type
-                if (response != null && response.TrimStart().StartsWith("<"))
-                {
-                    return Results.Content(response, "text/html; charset=utf-8");
-                }
-                else
-                {
-                    return Results.Text(response);
-                }
+                case "GET": action = HttpActionEnum.GET; break;
+                case "POST": action = HttpActionEnum.POST; break;
+                case "PUT": action = HttpActionEnum.PUT; break;
+                case "DELETE": action = HttpActionEnum.DELETE; break;
+                case "PATCH": action = HttpActionEnum.PATCH; break;
+                case "HEAD": action = HttpActionEnum.HEAD; break;
+                case "OPTIONS": action = HttpActionEnum.HEAD; break;
+                case "TRACE": action = HttpActionEnum.TRACE; break;
+                default: action = HttpActionEnum.GET; break;
             }
+
+            // Log the HTTP request
+            LogHttpRequest(context, method, url);
+
+
+            IResult result;
+
+            string response = DoHttpMapping(context, url, HttpActionEnumHelper.GetVertex(action), out result);
+
+            if (result != null) 
+                return result;
+
+            // Check if response looks like HTML and set appropriate content type
+            if (response != null && response.TrimStart().StartsWith("<"))            
+                return Results.Content(response, "text/html; charset=utf-8");            
+            else            
+                return Results.Text(response);            
+            
         }
 
         private void LogHttpRequest(HttpContext context, string method, string url)
@@ -143,8 +143,10 @@ namespace m0.Network.Server {
             }
         }
 
-        private string DoHttpMapping(string url, IVertex actionVertexRequested)
+        private string DoHttpMapping(HttpContext context, string url, IVertex actionVertexRequested, out IResult result)
         {
+            result = null;
+
             IVertex mappingVertex = GraphUtil.GetQueryOutFirst(thisVertex, "Mapping", null);
 
             if (mappingVertex == null)
@@ -177,6 +179,13 @@ namespace m0.Network.Server {
                 if (handlerVertex == null)
                     continue;
 
+                if (GraphUtil.ExistQueryOut(handlerVertex, "$Is", "Directory"))
+                {
+                    // Handle as file request
+                    result = HandleFileRequest(context, url, handlerVertex);
+                    return null;
+                }
+
                 return CallHandler(handlerVertex, url);
             }
 
@@ -204,17 +213,105 @@ namespace m0.Network.Server {
 
         private string CallHandler(IVertex handlerVertex, string url)
         {
-            IVertex parameters = InstructionHelpers.CreateStack();
+            lock (_lockObject)
+            {
+                IVertex parameters = InstructionHelpers.CreateStack();
 
-            parameters.AddVertex(url_meta, url);
+                parameters.AddVertex(url_meta, url);
 
-            INoInEdgeInOutVertexVertex ret = ZeroCodeExecutonUtil.FuncionCall(handlerVertex, parameters);
+                INoInEdgeInOutVertexVertex ret = ZeroCodeExecutonUtil.FuncionCall(handlerVertex, parameters);
 
-            if (ret.OutEdges.Count > 0)
-                return ret.OutEdges[0].To.ToString();
-            else
-                return "[null]";
+                if (ret.OutEdges.Count > 0)
+                    return ret.OutEdges[0].To.ToString();
+                else
+                    return "[null]";
+            }
         }
+
+        // FILE HANDLING BEG
+
+        private string GetContentType(string filePath)
+        {
+            string extension = Path.GetExtension(filePath).ToLowerInvariant();
+
+            return extension switch
+            {
+                ".bmp" => "image/bmp",
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png" => "image/png",
+                ".gif" => "image/gif",
+                ".svg" => "image/svg+xml",
+                ".webp" => "image/webp",
+                ".ico" => "image/x-icon",
+                ".pdf" => "application/pdf",
+                ".txt" => "text/plain",
+                ".html" or ".htm" => "text/html",
+                ".css" => "text/css",
+                ".js" => "application/javascript",
+                ".json" => "application/json",
+                ".xml" => "application/xml",
+                ".zip" => "application/zip",
+                ".mp3" => "audio/mpeg",
+                ".wav" => "audio/wav",
+                ".ogg" => "audio/ogg",
+                ".flac" => "audio/flac",
+                ".m4a" => "audio/mp4",
+                _ => "application/octet-stream"
+            };
+        }
+
+        private IResult HandleFileRequest(HttpContext context, string url, IVertex handler)
+        {            
+            string method = context.Request.Method.ToUpperInvariant();
+
+            if ((method != "GET" && method != "HEAD") 
+                || url.Contains("./")
+                || url.Contains(@".\")
+                || url.Contains("../")
+                || url.Contains(@"..\")
+                )            
+                return Results.StatusCode(405); // Method Not Allowed            
+
+            string[] urlSplit = url.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+
+            IVertex directoryIterator = handler;
+
+            for (int pos = 0; pos < urlSplit.Length - 1; pos++)
+            {
+                directoryIterator = GraphUtil.GetQueryOutFirst(directoryIterator, "Directory", urlSplit[pos]);
+
+                if (directoryIterator == null)
+                    return Results.StatusCode(404); // Not Found
+            }
+
+            IVertex fileVertex = GraphUtil.GetQueryOutFirst(directoryIterator, "File", urlSplit[^1]);
+
+            if (fileVertex == null)
+                return Results.StatusCode(404); // Not Found
+
+            
+            IVertex fullFilepathVertex = GraphUtil.GetQueryOutFirst(fileVertex, "FullFilename", null);
+            string filePath = GraphUtil.GetStringValue(fullFilepathVertex);
+
+            if (!File.Exists(filePath))
+                return Results.StatusCode(404); // Not Found
+                
+            if (method == "HEAD")
+            {
+                string contentType = GetContentType(filePath);
+                var fileInfo = new FileInfo(filePath);
+                context.Response.Headers["Content-Type"] = contentType;
+                context.Response.Headers["Content-Length"] = fileInfo.Length.ToString();
+                return Results.Ok();
+            }
+
+            string fileContentType = GetContentType(filePath);
+
+            var fileStream = File.OpenRead(filePath);
+            return Results.File(fileStream, fileContentType, Path.GetFileName(filePath));            
+        }
+
+        // FILE HANDLING END
 
         // Remove ConfigureEndpoints and map all HTTP methods to HandleRequest
         public void StartAsync(string url = "http://localhost:5000")

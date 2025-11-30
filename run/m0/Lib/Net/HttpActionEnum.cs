@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace m0.Lib.Net
 {
-    public enum HttpActionEnum { GET, PUT, POST, DELETE, PATCH, HEADOPTIONS, TRACE }
+    public enum HttpActionEnum { GET, PUT, POST, DELETE, PATCH, HEAD, OPTIONS, TRACE }
 
     public class HttpActionEnumHelper
     {
@@ -16,7 +16,8 @@ namespace m0.Lib.Net
         static IVertex POST_meta = MinusZero.Instance.root.Get(false, @"System\Lib\Net\HttpActionEnum\POST");
         static IVertex DELETE_meta = MinusZero.Instance.root.Get(false, @"System\Lib\Net\HttpActionEnum\DELETE");
         static IVertex PATCH_meta = MinusZero.Instance.root.Get(false, @"System\Lib\Net\HttpActionEnum\PATCH");
-        static IVertex HEADOPTIONS_meta = MinusZero.Instance.root.Get(false, @"System\Lib\Net\HttpActionEnum\HEADOPTIONS");
+        static IVertex HEAD_meta = MinusZero.Instance.root.Get(false, @"System\Lib\Net\HttpActionEnum\HEAD");
+        static IVertex OPTIONS_meta = MinusZero.Instance.root.Get(false, @"System\Lib\Net\HttpActionEnum\OPTIONS");
         static IVertex TRACE_meta = MinusZero.Instance.root.Get(false, @"System\Lib\Net\HttpActionEnum\TRACE");
 
         public static HttpActionEnum GetEnum(IVertex v)
@@ -31,7 +32,8 @@ namespace m0.Lib.Net
                 case "POST": return HttpActionEnum.POST;
                 case "DELETE": return HttpActionEnum.DELETE;
                 case "PATCH": return HttpActionEnum.PATCH;
-                case "HEADOPTIONS": return HttpActionEnum.HEADOPTIONS;
+                case "HEAD": return HttpActionEnum.HEAD;
+                case "OPTIONS": return HttpActionEnum.OPTIONS;
                 case "TRACE": return HttpActionEnum.TRACE;
                 default: return HttpActionEnum.GET;
             }
@@ -46,7 +48,8 @@ namespace m0.Lib.Net
                 case HttpActionEnum.POST: return POST_meta;
                 case HttpActionEnum.DELETE: return DELETE_meta;
                 case HttpActionEnum.PATCH: return PATCH_meta;
-                case HttpActionEnum.HEADOPTIONS: return HEADOPTIONS_meta;
+                case HttpActionEnum.HEAD: return HEAD_meta;
+                case HttpActionEnum.OPTIONS: return OPTIONS_meta;
                 case HttpActionEnum.TRACE: return TRACE_meta;
                 default: return GET_meta;
             }
