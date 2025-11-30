@@ -520,11 +520,11 @@ namespace m0
 
         public void Initialize_AfterUXInitialized()
         {
-          //  ExecutionFlowHelper.StartTransaction();
+            ExecutionFlowHelper.StartTransaction();
 
             Autostart();
 
-          //  ExecutionFlowHelper.CommitTransaction();
+            ExecutionFlowHelper.CommitTransaction();
         }
     }
 }

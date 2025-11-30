@@ -18,7 +18,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Bookmark",
@@ -38,6 +38,18 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CreateLib.cs",
+              "DocumentMoniker": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs",
+              "RelativeDocumentMoniker": "m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs",
+              "ToolTip": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs",
+              "RelativeToolTip": "m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs",
+              "ViewState": "AgIAAIcAAAAAAAAAAAAgwJ4AAABKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-22T17:39:33.474Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
               "Title": "m0.cs",
               "DocumentMoniker": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\LegacySystem\\m0.cs",
@@ -48,18 +60,6 @@
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-18T16:39:01.666Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "CreateLib.cs",
-              "DocumentMoniker": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs",
-              "RelativeDocumentMoniker": "m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs",
-              "ToolTip": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs",
-              "RelativeToolTip": "m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs",
-              "ViewState": "AgIAAIcAAAAAAAAAAAAgwJ4AAABKAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-22T17:39:33.474Z"
             }
           ]
         },
