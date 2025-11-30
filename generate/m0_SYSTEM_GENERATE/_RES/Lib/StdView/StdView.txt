@@ -61,6 +61,10 @@
 	"Html"
 		function "AddColorsToCode" (@String "FormalTextLanguage", @String "text")
 		function "DequoteText" @String(@String "text")
+		function "handleGeneric_YOUTUBE" @String(@String "id")
+			html += "<iframe src=%"https://www.youtube.com/embed/"
+			html += id
+			html += "?rel=0&modestbranding=1&controls=1&showinfo=0&fs=1&autoplay=0%" allow=%"accelerometer; encrypted-media; gyroscope; picture-in-picture%" allowfullscreen></iframe>"
 		function "MdTokenVertexesToHTMLString_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
 			variable "html" @String
 			
@@ -168,14 +172,9 @@
 								html += "</span></center>"
 								
 					case "Generic"
-						html += "generic<BR>"
-						html += e\To
-						:Temp +< e
-						for vertex "v" in e\To\
-							html += "<BR>"
-							html += v\Name
-							html += "<BR>"
-							html += v\Value
+						test e\To
+							case "YOUTUBE"
+								html += @@handleGeneric_YOUTUBE[e\To\{Name:id}\Value]
 						
 					case "BlockquoteStart"
 						html += "<blockquote>"
