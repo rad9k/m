@@ -108,7 +108,6 @@ namespace m0.Network.Server {
                 logFilename = "http_server_" + port + "_" + timestamp + ".log";
             }
 
-
             try
             {
                 lock (_logLock)
@@ -171,7 +170,9 @@ namespace m0.Network.Server {
 
                 string pathMask = GraphUtil.GetStringValue(pathMaskVertex);
 
-                if (!IsPathMatch(pathMask, url))
+                int pathMatch = IsPathMatch(pathMask, url);
+
+                if (pathMatch == -1)
                     continue;
 
                 IVertex handlerVertex = GraphUtil.GetQueryOutFirst(e.To, "Handler", null);
@@ -182,7 +183,7 @@ namespace m0.Network.Server {
                 if (GraphUtil.ExistQueryOut(handlerVertex, "$Is", "Directory"))
                 {
                     // Handle as file request
-                    result = HandleFileRequest(context, url, handlerVertex);
+                    result = HandleFileRequest(context, url.Substring(pathMatch), handlerVertex);
                     return null;
                 }
 
@@ -192,22 +193,22 @@ namespace m0.Network.Server {
             return "[404]";
         }
 
-        private bool IsPathMatch(string pathMask, string url)
+        private int IsPathMatch(string pathMask, string url)
         {
             if (pathMask.Contains("*"))
             {
                 string startsWith = pathMask.Substring(0, pathMask.IndexOf('*'));
 
                 if (url.StartsWith(startsWith))
-                    return true;
+                    return startsWith.Length;
                 else
-                    return false;
+                    return -1;
             }
             else {
                 if (pathMask == url)
-                    return true;
+                    return pathMask.Length;
                 else
-                    return false;
+                    return -1;
             }
         }
 
