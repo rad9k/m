@@ -451,7 +451,7 @@ body {
 	margin-bottom: -0.5em;
 }
 
- .markdown-body .video-wrapper {
+.markdown-body .video-wrapper {
     position: relative;
     padding-bottom: 56.25%; /* 16:9 aspect ratio */
     height: 0;
@@ -461,13 +461,21 @@ body {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
- .markdown-body .video-wrapper iframe {
+.markdown-body .video-wrapper iframe {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     border: none;	
+}
+
+.markdown-body audio {
+    width: 60%;        /* zajmuje max 60% szerokości */
+    max-width: 600px;  /* ale nie więcej niż 500px */
+    min-width: 260px;  /* opcjonalnie – żeby zawsze było czytelne */
+    display: block;
+    margin: 10px 0; /* centrowanie + odstęp */
 }
 
 /* ===== SCROLLBAR STYLING ===== */
@@ -515,9 +523,22 @@ body {
 
 <div class="markdown-body" id="mainContent">    
             Select an item from the left panel to load the document
-        </div>
+</div>
 
+<script src="script.js"></script>
 
-    <script src="script.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  document.body.addEventListener("ended", (e) => {
+    if (!e.target.classList.contains("player")) return;
+    
+    const players = Array.from(document.querySelectorAll(".player"));
+    const currentIndex = players.indexOf(e.target);
+    const next = players[currentIndex + 1];
+    
+    if (next) next.play();
+  }, true); // true = capture phase
+});
+</script>
 </body>
 </html> 

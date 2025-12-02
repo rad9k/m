@@ -68,7 +68,7 @@
 		function "handleGeneric_AUDIO" (@String "url")
 			html += "<audio class=%"player%" controls src=%""
 			html += url
-			html += "%"></audio>"
+			html += "%"/>"
 		function "MdTokenVertexesToHTMLString_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
 			variable "html" @String
 			
@@ -179,7 +179,7 @@
 						test e\To
 							case "YOUTUBE"
 								@@Html\handleGeneric_YOUTUBE[e\To\{Name:id}\Value]
-							case "AUDIO"
+							case "AUDIO
 								@@Html\handleGeneric_AUDIO[e\To\{Name:url}\Value]
 					
 					case "BlockquoteStart"
