@@ -307,9 +307,46 @@ namespace m0.Network.Server {
             }
 
             string fileContentType = GetContentType(filePath);
+            return HandleFileRequestWithRange(context, filePath, fileContentType);
+        }
 
-            var fileStream = File.OpenRead(filePath);
-            return Results.File(fileStream, fileContentType, Path.GetFileName(filePath));            
+        private IResult HandleFileRequestWithRange(HttpContext context, string filePath, string contentType)
+        {
+            var fileInfo = new FileInfo(filePath);
+            long fileSize = fileInfo.Length;
+
+            var rangeHeader = context.Request.Headers["Range"].ToString();
+
+            if (string.IsNullOrEmpty(rangeHeader))
+            {
+                // Normalne żądanie - cały plik
+                var fileStream = File.OpenRead(filePath);
+                context.Response.Headers["Accept-Ranges"] = "bytes";
+                return Results.File(fileStream, contentType, Path.GetFileName(filePath));
+            }
+
+            // Parsowanie Range header: "bytes=1234-5678" lub "bytes=1234-"
+            var range = rangeHeader.Replace("bytes=", "").Split('-');
+            long start = long.Parse(range[0]);
+            long end = range.Length > 1 && !string.IsNullOrEmpty(range[1])
+                ? long.Parse(range[1])
+                : fileSize - 1;
+
+            long contentLength = end - start + 1;
+
+            // Otwórz plik i przeskocz do pozycji start
+            var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            stream.Seek(start, SeekOrigin.Begin);
+
+            // Ustaw nagłówki dla partial content
+            context.Response.StatusCode = 206; // Partial Content
+            context.Response.Headers["Content-Range"] = $"bytes {start}-{end}/{fileSize}";
+            context.Response.Headers["Accept-Ranges"] = "bytes";
+            context.Response.Headers["Content-Length"] = contentLength.ToString();
+            context.Response.ContentType = contentType;
+
+            // Zwróć fragment pliku
+            return Results.Stream(stream, contentType);
         }
 
         // FILE HANDLING END
