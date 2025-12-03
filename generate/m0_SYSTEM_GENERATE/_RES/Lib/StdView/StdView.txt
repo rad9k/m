@@ -60,15 +60,22 @@
 		"AlignRight"
 	"Html"
 		function "AddColorsToCode" (@String "FormalTextLanguage", @String "text")
+		function "DiagramQueryToDiagramId" (@String "query")
 		function "DequoteText" @String(@String "text")
-		function "handleGeneric_YOUTUBE" (@String "id")
+		function "HandleGeneric_YOUTUBE" (@String "id")
 			html += "<center><div class=%"video-container%"><div class=%"video-wrapper%"><iframe src=%"https://www.youtube.com/embed/"
 			html += id
 			html += "?rel=0&modestbranding=1&controls=1&showinfo=0&fs=1&autoplay=0%" allow=%"accelerometer; encrypted-media; gyroscope; picture-in-picture%" allowfullscreen></iframe></div></div></center>"
-		function "handleGeneric_AUDIO" (@String "url")
+		function "HandleGeneric_AUDIO" (@String "url")
 			html += "<audio class=%"player%" controls src=%""
 			html += url
 			html += "%"></audio>"
+		function "HandleGeneric_DIAGRAM" (@String "query", @String "label")
+			html += "<center><img src=%""
+			html += @@Html\DiagramQueryToDiagramId[query]
+			html += "%"><BR><span class=%"description%">"
+			html += label
+			html += "</span></center>"
 		function "MdTokenVertexesToHTMLString_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
 			variable "html" @String
 			
@@ -178,9 +185,11 @@
 					case "Generic"
 						test e\To
 							case "YOUTUBE"
-								@@Html\handleGeneric_YOUTUBE[e\To\{Name:id}\Value]
+								@@Html\HandleGeneric_YOUTUBE[e\To\{Name:id}\Value]
 							case "AUDIO"
-								@@Html\handleGeneric_AUDIO[e\To\{Name:url}\Value]
+								@@Html\HandleGeneric_AUDIO[e\To\{Name:url}\Value]
+							case "DIAGRAM"
+								@@Html\HandleGeneric_DIAGRAM[e\To\{Name:query}\Value, e\To\{Name:label}\Value]
 					
 					case "BlockquoteStart"
 						html += "<blockquote>"
