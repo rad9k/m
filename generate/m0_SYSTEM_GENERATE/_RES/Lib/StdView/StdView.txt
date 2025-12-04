@@ -60,7 +60,7 @@
 		"AlignRight"
 	"Html"
 		function "AddColorsToCode" (@String "FormalTextLanguage", @String "text")
-		function "DiagramQueryToDiagramId" (@String "query")
+		function "DiagramQueryToDiagramId" (@String "Query")
 		function "DequoteText" @String(@String "text")
 		function "HandleGeneric_YOUTUBE" (@String "id")
 			html += "<center><div class=%"video-container%"><div class=%"video-wrapper%"><iframe src=%"https://www.youtube.com/embed/"
@@ -70,9 +70,9 @@
 			html += "<audio class=%"player%" controls src=%""
 			html += url
 			html += "%"></audio>"
-		function "HandleGeneric_DIAGRAM" (@String "query", @String "label")
+		function "HandleGeneric_DIAGRAM" (@String "Query", @String "label")
 			html += "<center><img src=%""
-			html += @@Html\DiagramQueryToDiagramId[query]
+			html += @@Html\DiagramQueryToDiagramId[Query]
 			html += "%"><BR><span class=%"description%">"
 			html += label
 			html += "</span></center>"
@@ -189,7 +189,7 @@
 							case "AUDIO"
 								@@Html\HandleGeneric_AUDIO[e\To\{Name:url}\Value]
 							case "DIAGRAM"
-								@@Html\HandleGeneric_DIAGRAM[e\To\{Name:query}\Value, e\To\{Name:label}\Value]
+								@@Html\HandleGeneric_DIAGRAM[e\To\{Name:Query}\Value, e\To\{Name:label}\Value]
 					
 					case "BlockquoteStart"
 						html += "<blockquote>"

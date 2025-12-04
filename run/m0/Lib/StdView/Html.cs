@@ -15,6 +15,32 @@ namespace m0.Lib.StdView
     {
         static IVertex FormalTextLanguages_Vertex = MinusZero.Instance.Root.Get(false, @"System\FormalTextLanguage");
 
+        public static string DiagramQueryToDiagramId_internal(string query)
+        {
+            query = query.Replace(@"\", "-");
+            query = query.Replace(@"{", "-");
+            query = query.Replace(@"}", "-");
+            query = query.Replace(@"'", "-");
+            query = query.Replace(@":", "-");
+
+            return query;
+        }
+
+        public static INoInEdgeInOutVertexVertex DiagramQueryToDiagramId(IExecution exe)
+        {
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
+
+            IVertex query_Vertex = GraphUtil.GetQueryOutFirst(stack, "Query", null);
+
+            string query = GraphUtil.GetStringValue(query_Vertex);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            newStack.AddVertex(null, DiagramQueryToDiagramId_internal(query));
+
+            return newStack;
+        }
+
         public static INoInEdgeInOutVertexVertex DequoteText(IExecution exe)
         {
             INoInEdgeInOutVertexVertex stack = exe.Stack;
