@@ -1,7 +1,7 @@
 "Templates"
 	import @System\Meta\ZeroTypes\UX direct meta
 	import @System\Data\UX\Colors direct meta
-	import @System\FormalTextLanguage\FormalTextLanguageProcessing: direct meta
+	import @System\FormalTextLanguage direct meta
 	 
 	<@UXTemplate :: "ZeroUML">
 		<@$Is :: @UXTemplate>
