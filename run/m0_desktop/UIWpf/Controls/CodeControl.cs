@@ -514,8 +514,6 @@ namespace m0.UIWpf.Controls
 
                 IVertex ftlp = GraphUtil.GetQueryOutFirst(Vertex, "FormalTextLanguageProcessing", null);
 
-                ftlp = null;
-
                 string generated;
 
                 //if (ftl == null)
