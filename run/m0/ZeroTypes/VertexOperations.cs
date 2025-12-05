@@ -57,8 +57,13 @@ namespace m0.ZeroTypes
             if (GeneralUtil.CompareStrings(e_Meta.Value, "$EdgeTarget"))
                 return true;
 
-            if (GraphUtil.ExistQueryOut(e_Meta, "$EdgeTarget", null) && !GraphUtil.ExistQueryOut(e_Meta, "$IsAggregation", null))
+            if (GeneralUtil.CompareStrings(e_Meta.Value, "Association")) // THIS IS A HACK. as 
+            // if (GraphUtil.ExistQueryOut(e_Meta, "$VertexTarget", null) && !GraphUtil.ExistQueryOut(e_Meta, "$IsAggregation", null)) return true;
+            // causes problems in graph2vertex at least
                 return true;
+
+            if (GraphUtil.ExistQueryOut(e_Meta, "$EdgeTarget", null) && !GraphUtil.ExistQueryOut(e_Meta, "$IsAggregation", null))
+                return true;            
 
             if (GraphUtil.GetQueryOutFirst(e_Meta, "$IsLink", null) != null)
                 return true;
