@@ -1,6 +1,7 @@
 "Templates"
 	import @System\Meta\ZeroTypes\UX direct meta
 	import @System\Data\UX\Colors direct meta
+	import @System\FormalTextLanguage\FormalTextLanguageProcessing: direct meta
 	 
 	<@UXTemplate :: "ZeroUML">
 		<@$Is :: @UXTemplate>
@@ -14,7 +15,7 @@
 				<@$Inherits :: @ZeroUML\ActionItemVertex>
 				<@LabeledItem\ConstantLabel :: "code linear">
 				<@LabeledItem\ShowMeta :: "True">
-				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\LinearizedManyLines>
+				<@CodeItem\FormalTextLanguageProcessing :: @ZeroCode_LinearizedManyLines>
 			<@$Inherits :: @ZeroUML\NextDecorator>
 			<@UXDecoratorTemplate :: "Edge">
 				<@$Is :: @UXDecoratorTemplate>

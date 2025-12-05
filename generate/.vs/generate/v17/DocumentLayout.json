@@ -44,7 +44,7 @@
               "RelativeDocumentMoniker": "m0_SYSTEM_GENERATE\\Program.cs",
               "ToolTip": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\Program.cs",
               "RelativeToolTip": "m0_SYSTEM_GENERATE\\Program.cs",
-              "ViewState": "AgIAALIAAAAAAAAAAAApwMsAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAALQAAAAAAAAAAAAgwMsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-28T23:25:10.374Z",
               "EditorCaption": ""
@@ -70,10 +70,6 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
             }
           ]
         }
