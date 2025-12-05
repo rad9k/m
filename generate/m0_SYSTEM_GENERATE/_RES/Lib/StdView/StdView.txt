@@ -71,9 +71,9 @@
 			html += url
 			html += "%"></audio>"
 		function "HandleGeneric_DIAGRAM" (@String "Query", @String "label")
-			html += "<center><img src=%""
+			html += "<center><img src=%"diagrams\"
 			html += @@Html\DiagramQueryToDiagramId[Query]
-			html += "%"><BR><span class=%"description%">"
+			html += ".png%">"><BR><span class=%"description%">"
 			html += label
 			html += "</span></center>"
 		function "MdTokenVertexesToHTMLString_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")

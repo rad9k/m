@@ -9,6 +9,7 @@ using m0.ZeroUML.Instructions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
 using System.Text;
 
 namespace m0.Graph
@@ -58,7 +59,7 @@ namespace m0.Graph
 
     public class GraphUtil
     {
-        public enum DebugOperationEnum { Init, OutEdgeAdd, OutEdgeRemove, InEdgeAdd, InEdgeRemove, Dispose, Value}
+        public enum DebugOperationEnum { Init, OutEdgeAdd, OutEdgeRemove, InEdgeAdd, InEdgeRemove, Dispose, Value }
 
         static string DebugStore = "C:\\m0\\b.m0";
         static long[] DebugVertex = { 11 };
@@ -85,13 +86,13 @@ namespace m0.Graph
             return;
 
             if (v != null
-                && v.Identifier != null 
-                && v.Identifier is long 
-                && DebugVertex.Contains((long)v.Identifier) 
+                && v.Identifier != null
+                && v.Identifier is long
+                && DebugVertex.Contains((long)v.Identifier)
                 && v.Store.Identifier == DebugStore
                 && DebugOperation.Contains(Operation))
             {
-                int x = 0;                
+                int x = 0;
             }
         }
 
@@ -116,17 +117,17 @@ namespace m0.Graph
             for (int x = 0; x < level; x++)
                 tab.Append("    ");
 
-            foreach(IEdge e in v)
+            foreach (IEdge e in v)
             {
                 s.Append(tab);
 
-                s.Append(e.Meta.ToString() + " :: " + e.To.ToString() + "\n") ;
+                s.Append(e.Meta.ToString() + " :: " + e.To.ToString() + "\n");
 
                 GetSubVertexesAsString_Reccurent(s, e.To, level + 1, nestLimit);
             }
         }
 
-        public static  string GetVertexIdString(IVertex v)
+        public static string GetVertexIdString(IVertex v)
         {
             return "[" + v.Store.Identifier.ToString() + ":" + v.Identifier.ToString() + "]";
         }
@@ -174,7 +175,7 @@ namespace m0.Graph
             baseVertex.AddEdge(e.Meta, e.To);
 
             baseVertex.DeleteEdge(tmp);
-        }        
+        }
 
         public static IVertex AddEnum(IVertex baseVertex, string enumName, string[] values)
         {
@@ -202,7 +203,7 @@ namespace m0.Graph
         }
 
         public static void AddInherits(IVertex baseVertex, IVertex inherit)
-        {            
+        {
             baseVertex.AddEdge(m0.MinusZero.Instance.Inherits, inherit);
         }
 
@@ -308,8 +309,8 @@ namespace m0.Graph
             IVertex r = MinusZero.Instance.root;
 
             IVertex a = baseVertex.AddVertex(null, edgeName);
-            
-            a.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), target);            
+
+            a.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget"), target);
 
             return a;
         }
@@ -323,7 +324,7 @@ namespace m0.Graph
         }
 
         public static IEdge CreateArtificialEdge(IVertex meta, IVertex to)
-        {            
+        {
             EdgeBase e = new EdgeBase(null, meta, to);
 
             return e;
@@ -345,7 +346,7 @@ namespace m0.Graph
                     return null;
 
                 pos++;
-            } 
+            }
 
             return cursor;
         }
@@ -379,8 +380,8 @@ namespace m0.Graph
         {
             IEdge result;
             IList<IEdge> results;
-            
-            baseVertex.QueryOutEdges(meta, value, out result, out results);            
+
+            baseVertex.QueryOutEdges(meta, value, out result, out results);
 
             if (result != null)
                 return result.To;
@@ -395,7 +396,7 @@ namespace m0.Graph
         {
             IEdge result;
             IList<IEdge> results;
-            
+
             baseVertex.QueryInEdges(meta, value, out result, out results);
 
             if (result != null)
@@ -546,8 +547,8 @@ namespace m0.Graph
 
             return toRet;
         }
-        
-        
+
+
 
         public static void AddRange_NoNoInherit(IList<IEdge> to, IList<IEdge> from)
         {
@@ -555,7 +556,7 @@ namespace m0.Graph
                 if (!GraphUtil.ExistQueryOut(e.Meta, "$NoInherit", null))
                     to.Add(e);
         }
-        
+
         public static string GetQueryStringPart_MetaMode(FormalTextLanguageDictinaries dict, IVertex meta, IVertex to)
         {
             if (GeneralUtil.CompareStrings(meta.ToString(), "$Empty"))
@@ -567,37 +568,37 @@ namespace m0.Graph
         public static string GetIdentyfyingQuerySubString_MetaMode(FormalTextLanguageDictinaries dict, IEdge e) // this is used in String2Graph, so we need to reference ZeroCodeCommon.MetaSeparator
         {
             if (VertexOperations.IsToVertexEnoughToIdentifyEdge(e.From, e.To))
-                return ZeroCodeCommon.stringToPossiblyEscapedString(dict, e.To.ToString()+""); // there was no ToString. might cause problems. XXX why this "" as we do not have null To?
+                return ZeroCodeCommon.stringToPossiblyEscapedString(dict, e.To.ToString() + ""); // there was no ToString. might cause problems. XXX why this "" as we do not have null To?
             else
                 if (VertexOperations.IsMetaAndToVertexEnoughToIdentifyEdge(e.From, e.Meta, e.To))
-                    return GetQueryStringPart_MetaMode(dict, e.Meta, e.To);
-                else
+                return GetQueryStringPart_MetaMode(dict, e.Meta, e.To);
+            else
+            {
+                int pos = 0;
+                IList<IEdge> q = GraphUtil.GetQueryOut(e.From, e.Meta.Value, e.To.Value);
+                //IVertex q = e.From.GetAll(false, ZeroCodeCommon.stringToPossiblyEscapedString(e.Meta.ToString()) + ZeroCodeCommon.MetaSeparator + ZeroCodeCommon.stringToPossiblyEscapedString(e.To.ToString()));                    
+
+                IVertex tv;
+                do
                 {
-                    int pos = 0;
-                    IList<IEdge> q = GraphUtil.GetQueryOut(e.From, e.Meta.Value, e.To.Value);
-                    //IVertex q = e.From.GetAll(false, ZeroCodeCommon.stringToPossiblyEscapedString(e.Meta.ToString()) + ZeroCodeCommon.MetaSeparator + ZeroCodeCommon.stringToPossiblyEscapedString(e.To.ToString()));                    
+                    tv = q.ElementAt(pos).To;
+                    pos++;
+                } while (tv != e.To && pos > q.Count);
 
-                    IVertex tv;
-                    do
-                    {
-                        tv = q.ElementAt(pos).To;
-                        pos++;
-                    } while (tv != e.To && pos > q.Count);                    
-
-                    return GetQueryStringPart_MetaMode(dict, e.Meta,e.To) + dict.SetIndexPrefix + "\"" + pos + "\"" + dict.SetIndexPostfix; 
-                }
+                return GetQueryStringPart_MetaMode(dict, e.Meta, e.To) + dict.SetIndexPrefix + "\"" + pos + "\"" + dict.SetIndexPostfix;
+            }
         }
 
         public static IVertex GetMostInheritedMeta(IVertex baseVertex, IVertex startMeta)
         {
             IVertex _startMeta = startMeta;
 
-            IVertex highestInheritanceLevel=null;
+            IVertex highestInheritanceLevel = null;
             int highestInheritanceLevel_level = 0;
 
             int tempLevel;
 
-            foreach (IEdge e in GraphUtil.GetQueryOut(baseVertex,"$Is",null))
+            foreach (IEdge e in GraphUtil.GetQueryOut(baseVertex, "$Is", null))
             {
                 tempLevel = GetInheritanceLevel(e.To, _startMeta, 0);
 
@@ -618,7 +619,7 @@ namespace m0.Graph
 
             int biggest = 0;
 
-            foreach(IEdge e in GraphUtil.GetQueryOut(testMeta, "$Inherits", false))
+            foreach (IEdge e in GraphUtil.GetQueryOut(testMeta, "$Inherits", false))
             {
                 int temp = GetInheritanceLevel(e.To, startMeta, input + 1);
                 if (temp > biggest)
@@ -673,7 +674,7 @@ namespace m0.Graph
             if (vertexLeft == null || vertexRight == null)
                 return false;
 
-            if (vertexLeft.Value != null && vertexRight.Value!=null)
+            if (vertexLeft.Value != null && vertexRight.Value != null)
                 return vertexLeft.Value.ToString() == vertexRight.Value.ToString();
 
             return false;
@@ -701,7 +702,7 @@ namespace m0.Graph
                     edgeByMeta.To.Value = value;
                     return edgeByMeta.To;
                 }
-            }            
+            }
         }
 
         static public void GetNumberValue(IVertex Vertex, out object number)
@@ -772,12 +773,12 @@ namespace m0.Graph
         {
             if (Value == null)
                 return true;
-            
+
             return false;
         }
 
         static public int? ToInt<T>(T Value)
-        {            
+        {
             if (typeof(T) == typeof(int?))
                 return (int?)(object)Value;
 
@@ -791,7 +792,7 @@ namespace m0.Graph
         }
 
         static public double? ToDouble<T>(T Value)
-        {            
+        {
             if (typeof(T) == typeof(int?))
                 return (double?)(int?)(object)Value;
 
@@ -805,7 +806,7 @@ namespace m0.Graph
         }
 
         static public T FromDouble<T>(double? Value)
-        {            
+        {
             if (typeof(T) == typeof(int?))
                 return (T)(object)(int?)Value;
 
@@ -846,7 +847,7 @@ namespace m0.Graph
 
         static public bool GetBooleanValue(IVertex Vertex, ref bool isNull)
         {
-            if(Vertex == null || Vertex.Value == null)
+            if (Vertex == null || Vertex.Value == null)
             {
                 isNull = true;
                 return false;
@@ -862,8 +863,8 @@ namespace m0.Graph
 
         static public bool GetBooleanValueOrFalse(IVertex Vertex)
         {
-            if (Vertex == null || Vertex.Value == null)                            
-                return false;            
+            if (Vertex == null || Vertex.Value == null)
+                return false;
 
             string val = Vertex.Value.ToString();
 
@@ -890,8 +891,8 @@ namespace m0.Graph
         {
             int? ret = GetIntegerValue(Vertex);
 
-            if (ret == null)                            
-                return 0;            
+            if (ret == null)
+                return 0;
 
             return (int)ret;
         }
@@ -903,7 +904,8 @@ namespace m0.Graph
                 if (Vertex.Value is decimal)
                     return (decimal)Vertex.Value;
 
-                if (Vertex.Value is string) {
+                if (Vertex.Value is string)
+                {
                     decimal r;
 
                     if (Decimal.TryParse((string)Vertex.Value, out r))
@@ -938,8 +940,8 @@ namespace m0.Graph
         {
             decimal? ret = GetDecimalValue(Vertex);
 
-            if (ret == null)                            
-                return 0;            
+            if (ret == null)
+                return 0;
 
             return (decimal)ret;
         }
@@ -986,8 +988,8 @@ namespace m0.Graph
         {
             double? ret = GetDoubleValue(Vertex);
 
-            if (ret == null)                            
-                return 0;            
+            if (ret == null)
+                return 0;
 
             return (double)ret;
         }
@@ -1025,7 +1027,7 @@ namespace m0.Graph
             foreach (IEdge e in el)
                 if (GraphUtil.GetQueryOutCount(e.To, "$Is", "Edge") > 0)
                     v.DeleteEdge(e);
-                
+
         }
 
         static public void DeleteEdgeByToVertex(IVertex source, IVertex toVertex)
@@ -1038,7 +1040,7 @@ namespace m0.Graph
 
         static public void DeleteEdgeByMeta(IVertex source, string MetaValue)
         {
-            IEdge e = GetQueryOutFirstEdge(source, MetaValue, null);                
+            IEdge e = GetQueryOutFirstEdge(source, MetaValue, null);
 
             if (e != null)
                 source.DeleteEdge(e);
@@ -1048,7 +1050,7 @@ namespace m0.Graph
         {
             IList<IEdge> edges = GetQueryOut(source, MetaValue, null);
 
-            foreach (IEdge e in edges)            
+            foreach (IEdge e in edges)
                 source.DeleteEdge(e);
         }
 
@@ -1097,27 +1099,27 @@ namespace m0.Graph
         }
 
         static public IEdge ReplaceEdge(IVertex Vertex, string MetaValue, IVertex NewEdgeToVertex)
-        {            
+        {
             IEdge toReplace = GetQueryOutFirstEdge(Vertex, MetaValue, null);
 
             if (toReplace == null)
                 throw new Exception("Vertex does not have \"" + MetaValue + "\" edge");
 
-            IVertex meta = toReplace.Meta;            
+            IVertex meta = toReplace.Meta;
 
             Vertex.DeleteEdge(toReplace);
 
-            return Vertex.AddEdge(meta, NewEdgeToVertex);            
+            return Vertex.AddEdge(meta, NewEdgeToVertex);
         }
 
         static public IEdge CreateOrReplaceEdge(IVertex Vertex, IVertex metaVertex, IVertex NewEdgeToVertex)
         {
-            IEdge toReplace = FindEdgeByMetaVertex(Vertex, metaVertex);            
+            IEdge toReplace = FindEdgeByMetaVertex(Vertex, metaVertex);
 
             if (toReplace != null)
                 Vertex.DeleteEdge(toReplace);
 
-            return  Vertex.AddEdge(metaVertex, NewEdgeToVertex);
+            return Vertex.AddEdge(metaVertex, NewEdgeToVertex);
         }
 
         static public IEdge CreateOrReplaceEdge_DeepCopy(IVertex Vertex, IVertex metaVertex, IVertex NewEdgeToVertex)
@@ -1155,7 +1157,8 @@ namespace m0.Graph
             return Vertex.AddEdge(meta, NewEdgeToVertex);
         }
 
-        static public IVertex ReplaceEdgeByValue(IVertex Vertex, string MetaValue, object VertexValue){
+        static public IVertex ReplaceEdgeByValue(IVertex Vertex, string MetaValue, object VertexValue)
+        {
             IEdge toReplace = FindEdgeByMetaValue(Vertex, MetaValue);
 
             if (toReplace == null)
@@ -1165,7 +1168,7 @@ namespace m0.Graph
 
             Vertex.DeleteEdge(toReplace);
 
-            return Vertex.AddVertex(meta, VertexValue);            
+            return Vertex.AddVertex(meta, VertexValue);
         }
 
         static public IVertex CreateOrReplaceEdgeByValue(IVertex Vertex, IVertex metaVertex, object value)
@@ -1184,7 +1187,7 @@ namespace m0.Graph
                     return true;
 
             return false;
-        }     
+        }
 
         static public IVertex DeepFindOneByValue(IVertex findRoot, string value, bool canGoIntoLinks)
         {
@@ -1233,7 +1236,7 @@ namespace m0.Graph
                 }
 
                 if (!visited.Contains(e.To) && (canGoIntoLinks || !VertexOperations.IsLink(e))) // this canGoIntoLinks looks bad, should be canGoIntoLinks XXX TO BE TESTED
-                {                                                            
+                {
                     visited.Add(e.To);
 
                     if (DeepIterator_Reccurent(e.To, iterate, visited, returnList, isSingleResult, canModifyOutEdges, canGoIntoLinks))
@@ -1241,8 +1244,8 @@ namespace m0.Graph
                         toReturn = true;
 
                         break;
-                    }                    
-                }                
+                    }
+                }
             }
 
             return toReturn;
@@ -1250,9 +1253,9 @@ namespace m0.Graph
 
         static public void DeepCopy(IEdge edgeToCopy, IVertex copyTo)
         {
-            HashSet<IVertex> visited = new HashSet<IVertex>();            
+            HashSet<IVertex> visited = new HashSet<IVertex>();
 
-            DeepCopy_Reccurent(edgeToCopy, copyTo, visited);            
+            DeepCopy_Reccurent(edgeToCopy, copyTo, visited);
         }
 
         static void DeepCopy_Reccurent(IEdge edgeToCopy, IVertex copyTo, HashSet<IVertex> visited)
@@ -1265,11 +1268,11 @@ namespace m0.Graph
                 if (!visited.Contains(e.To) && !VertexOperations.IsLink(e))
                     DeepCopy_Reccurent(e, newVertex, visited);
                 else
-                    newVertex.AddEdge(e.Meta, e.To);                      
+                    newVertex.AddEdge(e.Meta, e.To);
         }
 
         static public void DeepCopyByVertex(IVertex vertexToCopy, IVertex copyTo)
-        {            
+        {
             HashSet<IVertex> visited = new HashSet<IVertex>();
 
             DeepCopyByVertex_Reccurent(vertexToCopy, copyTo, visited);
@@ -1297,7 +1300,7 @@ namespace m0.Graph
 
         static public IEnumerable<IVertex> GetSubGraphWithoutLinksAsList(IVertex iterationRoot)
         {
-            HashSet<IVertex> visited = new HashSet<IVertex>();            
+            HashSet<IVertex> visited = new HashSet<IVertex>();
 
             GetSubGraphWithoutLinks_Reccurent(iterationRoot, visited);
 
@@ -1310,8 +1313,8 @@ namespace m0.Graph
 
             foreach (IEdge e in baseVertex.OutEdgesRaw)
                 if (!visited.Contains(e.To) && !VertexOperations.IsLink(e))
-                        GetSubGraphWithoutLinks_Reccurent(e.To, visited);                           
-        }      
+                    GetSubGraphWithoutLinks_Reccurent(e.To, visited);
+        }
 
         static public List<IEdge> GetSubGraphAsEdgesWithoutLinksAsList(IEdge iterationRoot)
         {
@@ -1355,7 +1358,7 @@ namespace m0.Graph
             visited.Add(baseVertex);
 
             foreach (IEdge e in baseVertex.OutEdgesRaw)
-                if (!visited.Contains(e.To) && e.To!=MinusZero.Instance.root)
+                if (!visited.Contains(e.To) && e.To != MinusZero.Instance.root)
                     GetSubGraphWithLinksButExcludeRoot_Reccurent(e.To, visited);
         }
 
@@ -1376,7 +1379,7 @@ namespace m0.Graph
                 if (!visited.Contains(e.To) && !excludeList.Contains(e.To))
                     GetSubGraph_Reccurent_ExcludeList(e.To, visited, excludeList);
         }
-        
+
 
         static public IEnumerable<IVertex> GetSubGraphWithoutLinksAsListButExcludeList(IVertex iterationRoot, HashSet<IVertex> excludeList)
         {
@@ -1398,13 +1401,74 @@ namespace m0.Graph
 
         public static IVertex GetVertex(string storeName, long id)
         {
-            MemoryStore store = (MemoryStore) MinusZero.Instance.GetStore(storeName);
+            MemoryStore store = (MemoryStore)MinusZero.Instance.GetStore(storeName);
 
             if (store.VertexIdentifiersDictionary.ContainsKey(id))
                 return store.GetVertexByIdentifier(id);
             else
                 return null;
         }
-        
+
+        public static string GetQueryBetweenVertexes_byInEdges(IVertex from, IVertex to)
+        {
+            if (from == null || to == null)
+                throw new ArgumentNullException();
+
+            if (from == to)
+                return "";
+
+            var visited = new HashSet<IVertex>();
+            var parentEdge = new Dictionary<IVertex, IEdge>();
+
+            var queue = new Queue<IVertex>();
+
+            visited.Add(from);
+            parentEdge[from] = null;
+            queue.Enqueue(from);
+
+            // --- BFS ---
+            while (queue.Count > 0)
+            {
+                var v = queue.Dequeue();
+
+                if (v == to)
+                    break;
+
+                foreach (IEdge e in v.InEdges)
+                {
+                    IVertex eFrom = e.From;
+
+                    if (!visited.Contains(eFrom))
+                    {
+                        visited.Add(eFrom);
+                        parentEdge[eFrom] = e;
+                        queue.Enqueue(eFrom);
+                    }
+                }
+
+                int x = 0;
+            }
+
+            if (!parentEdge.ContainsKey(to))
+                return null;
+
+            StringBuilder sb = new StringBuilder();
+            bool isFirst = true;
+
+            for (IEdge e = parentEdge[to]; e != null; e = parentEdge[e.To])
+            {
+                if (isFirst)
+                    isFirst = false;
+                else
+                    sb.Append(@"\");
+
+                if (e.Meta != MinusZero.Instance.Empty)
+                    sb.Append(e.Meta.ToString() + ":" + e.To.ToString());
+                else
+                    sb.Append(":" + e.To.ToString());
+            }
+
+            return sb.ToString();
+        }
     }
 }

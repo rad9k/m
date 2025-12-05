@@ -1624,12 +1624,23 @@ namespace m0.UIWpf.UX
                     GraphChangeTrigger.RemoveListener(VisualiserHelper.graphChangeListenerEdge);
 
                     DisposeAllItems();
+
+                    SaveDiagram();
                 }
                 else
                 {
                     TypedEdge.RemoveFromDictionary(this);
                 }
             }
+        }
+
+        private void SaveDiagram()
+        {
+            string path = GraphUtil.GetQueryBetweenVertexes_byInEdges(this.Vertex, MinusZero.Instance.Root);
+
+            string pathEncoded = Lib.StdView.Html.DiagramQueryToDiagramId_internal(path);
+
+            CanvasToPng.SaveCanvasToPng(Canvas, MinusZero.Instance.Root.Get(false, @"Start:\FullFilename:") + @"\diagrams\" + pathEncoded + ".png");
         }
 
         public IUXContainer GetItemByPoint_ByCanvas(Point p)
