@@ -306,7 +306,7 @@ namespace m0.ZeroTypes.UX
         static IVertex SubItemsNotVisible_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\SubItemsNotVisible");
         static IVertex NewItemUXTemplate_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\NewItemUXTemplate");
         static IVertex ContentQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\CodeView\ContentQuery");
-        static IVertex FormalTextLanguage_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\FormalTextLanguage");
+        static IVertex FormalTextLanguageProcessing_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\FormalTextLanguageProcessing");
         static IVertex CodeRepresentation_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\CodeRepresentation");
 
         static IVertex Size_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Size");        
@@ -462,6 +462,8 @@ namespace m0.ZeroTypes.UX
             }
         }
 
+
+
         public CodeRepresentationEnum CodeRepresentation
         {
             get
@@ -476,15 +478,15 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        public IVertex FormalTextLanguage
+        public IVertex FormalTextLanguageProcessing
         {
             get
             {
-                return GraphUtil.GetQueryOutFirst(Vertex, "FormalTextLanguage", null);
+                return GraphUtil.GetQueryOutFirst(Vertex, "FormalTextLanguageProcessing", null);
             }
             set
             {
-                GraphUtil.CreateOrReplaceEdge(Vertex, FormalTextLanguage_meta, value);
+                GraphUtil.CreateOrReplaceEdge(Vertex, FormalTextLanguageProcessing_meta, value);
             }
         }
 

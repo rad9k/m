@@ -140,17 +140,10 @@ namespace m0.ZeroTypes.UX
 
                     // formaltextlanguage
 
-                    IVertex template_FormalTextLanguage = GraphUtil.GetQueryOutFirst(template.ItemVertex, "FormalTextLanguage", null);
+                    IVertex template_FormalTextLanguageProcessing = GraphUtil.GetQueryOutFirst(template.ItemVertex, "FormalTextLanguageProcessing", null);
 
-                    if (template_FormalTextLanguage != null)
-                        item.FormalTextLanguage = template_FormalTextLanguage;
-
-                    // CodeRepresentation
-
-                    IVertex template_CodeRepresentation = GraphUtil.GetQueryOutFirst(template.ItemVertex, "CodeRepresentation", null);
-
-                    if (template_CodeRepresentation != null)
-                        item.CodeRepresentation = CodeRepresentationEnumHelper.GetEnum(template_CodeRepresentation);
+                    if (template_FormalTextLanguageProcessing != null)
+                        item.FormalTextLanguageProcessing = template_FormalTextLanguageProcessing;
 
                     // NotExistingContentQueryEdge
 
