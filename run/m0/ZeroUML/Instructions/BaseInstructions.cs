@@ -1832,7 +1832,7 @@ namespace m0.ZeroUML.Instructions
             return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
         }
 
-        public static INoInEdgeInOutVertexVertex ForEach(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        public static INoInEdgeInOutVertexVertex ForVertex(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
 
@@ -1869,7 +1869,7 @@ namespace m0.ZeroUML.Instructions
             return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
         }
 
-        public static INoInEdgeInOutVertexVertex ForEachEdge(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        public static INoInEdgeInOutVertexVertex ForEdge(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
 

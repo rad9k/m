@@ -36,7 +36,7 @@
 				<@$Inherits :: @ZeroUML\ActionItemVertex>
 				<@LabeledItem\ConstantLabel :: "code edge">
 				<@LabeledItem\ShowMeta :: "True">
-				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\EdgeAndManyLines>
+				<@CodeItem\FormalTextLanguageProcessing :: @ZeroCode_EdgeAndManyLines>
 			<@$Inherits :: @ZeroUML\NextDecorator>
 			<@UXDecoratorTemplate :: "Edge">
 				<@$Is :: @UXDecoratorTemplate>
@@ -57,7 +57,7 @@
 				<@$Inherits :: @ZeroUML\ActionItemVertex>
 				<@LabeledItem\ConstantLabel :: "code line">
 				<@LabeledItem\ShowMeta :: "True">
-				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\EdgeOneLine>			
+				<@CodeItem\FormalTextLanguageProcessing :: @ZeroCode_EdgeOneLine>			
 			<@$Inherits :: @ZeroUML\NextDecorator>			
 
 		<@UXTemplate :: "Class">
@@ -124,7 +124,7 @@
 					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
 				
-		<@UXTemplate :: "BlockCODE">
+		<@UXTemplate :: "Block CODE">
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:Block}">
 			<@MetaVertexTestQuery :: "Block">
@@ -134,10 +134,10 @@
 				<@$Inherits :: @ZeroUML\ActionItemVertex>
 				<@LabeledItem\ShowMeta :: "False">
 				<@LabeledItem\ConstantLabel :: "block">
-				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\ManyLinesExcludingParent>
+				<@CodeItem\FormalTextLanguageProcessing :: @ZeroCode_ManyLinesExcludingParent>
 			<@$Inherits :: @ZeroUML\NextDecorator>
 			
-		<@UXTemplate :: "NamedBlockCODE">
+		<@UXTemplate :: "NamedBlock CODE">
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:NamedBlock}">
 			<@MetaVertexTestQuery :: "NamedBlock">
@@ -147,10 +147,10 @@
 				<@$Inherits :: @ZeroUML\ActionItemVertex>
 				<@LabeledItem\ShowMeta :: "False">
 				<@LabeledItem\ConstantLabel :: "named block">
-				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\ManyLinesExcludingParent>
+				<@CodeItem\FormalTextLanguageProcessing :: @ZeroCode_ManyLinesExcludingParent>
 			<@$Inherits :: @ZeroUML\NextDecorator>			
 			
-		<@UXTemplate :: "BlockCONTAINER">
+		<@UXTemplate :: "Block CONTAINER">
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:Block}">
 			<@MetaVertexTestQuery :: "Block">
@@ -164,7 +164,7 @@
 			<@$Inherits :: @ZeroUML\NextDecorator>
 			<@$Inherits :: @ZeroUML\bodyDecorator>
 			
-		<@UXTemplate :: "NamedBlockCONTAINER">
+		<@UXTemplate :: "NamedBlock CONTAINER">
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:NamedBlock}">
 			<@MetaVertexTestQuery :: "NamedBlock">
@@ -219,7 +219,7 @@
 				<@$Inherits :: @ZeroUML\ActionItemVertex>
 				<@LabeledItem\UseCodeLabel :: "True">
 				<@LabeledItem\ContentQuery :: "Test:">
-				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\LinearizedManyLines>
+				<@CodeItem\FormalTextLanguageProcessing :: @ZeroCode_LinearizedManyLines>
 			<@$Inherits :: @ZeroUML\NextDecorator>
 			<@UXDecoratorTemplate :: "than">
 				<@$Is :: @UXDecoratorTemplate>
@@ -241,7 +241,7 @@
 				<@$Inherits :: @ZeroUML\ActionItemVertex>
 				<@LabeledItem\UseCodeLabel :: "True">
 				<@LabeledItem\ContentQuery :: "Expression:">
-				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\LinearizedManyLines>
+				<@CodeItem\FormalTextLanguageProcessing :: @ZeroCode_LinearizedManyLines>
 				<@UXItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
 			<@$Inherits :: @ZeroUML\NextDecorator>
 			<@UXDecoratorTemplate :: "case">
@@ -272,7 +272,7 @@
 				<@LabeledItem\UseCodeLabel :: "True">
 				<@LabeledItem\ConstantLabel :: "case">
 				<@LabeledItem\ContentQuery :: "Test:">
-				<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\LinearizedManyLines>
+				<@CodeItem\FormalTextLanguageProcessing :: @ZeroCode_LinearizedManyLines>
 				<@UXItem\BorderColor :: @VeryVeryVeryLightVioletBlue>
 			<@$Inherits :: @ZeroUML\NextDecorator>
 			<@$Inherits :: @ZeroUML\PackageDecorators>
@@ -324,7 +324,7 @@
 				<@ItemVertex :: "">
 					<@UXContainer\SubItemsNotVisible :: "True">
 					<@CodeView\ContentQuery :: "Test:">
-					<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\LinearizedManyLines>
+					<@CodeItem\FormalTextLanguageProcessing :: @ZeroCode_LinearizedManyLines>
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
@@ -342,7 +342,7 @@
 				<@ItemVertex :: "">
 					<@CodeView\ContentQuery :: "$Empty:">
 					<@MultiContainerSubItem\NotExistingContentQueryEdge :: @$Empty>
-					<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\LinearizedManyLines>
+					<@CodeItem\FormalTextLanguageProcessing :: @ZeroCode_LinearizedManyLines>
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
@@ -359,8 +359,8 @@
 						
 		<@UXTemplate :: "ForVertex">
 			<@$Is :: @UXTemplate>
-			<@DirectVertexTestQuery :: "{$Is:ForEach}">
-			<@MetaVertexTestQuery :: "ForEach">
+			<@DirectVertexTestQuery :: "{$Is:ForVertex}">
+			<@MetaVertexTestQuery :: "ForVertex">
 			<@ItemClass :: @MultiContainerItem>
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>			
 			<@ItemVertex :: "">
@@ -374,14 +374,14 @@
 				<@ItemVertex :: "">
 					<@UXContainer\SubItemsNotVisible :: "True">
 					<@CodeView\ContentQuery :: "Variable:">
-					<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\LinearizedManyLines>
+					<@CodeItem\FormalTextLanguageProcessing :: @ZeroCode_LinearizedManyLines>
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
 						<@Height :: "26">
 				<@UXDecoratorTemplate :: "variable">
 					<@$Is :: @UXDecoratorTemplate>
-					<@EdgeTestQuery :: "$Is:ForEach\Variable">
+					<@EdgeTestQuery :: "$Is:ForVertex\Variable">
 					<@ToDiagramItemTestQuery :: "">
 					<@DecoratorClass :: @LineDecorator>
 					<@DecoratorVertex :: "">
@@ -392,14 +392,14 @@
 				<@ItemVertex :: "">
 					<@UXContainer\SubItemsNotVisible :: "True">
 					<@CodeView\ContentQuery :: "Set:">
-					<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\LinearizedManyLines>
+					<@CodeItem\FormalTextLanguageProcessing :: @ZeroCode_LinearizedManyLines>
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
 						<@Height :: "26">
 				<@UXDecoratorTemplate :: "set">
 					<@$Is :: @UXDecoratorTemplate>
-					<@EdgeTestQuery :: "$Is:ForEach\Set">
+					<@EdgeTestQuery :: "$Is:ForVertex\Set">
 					<@ToDiagramItemTestQuery :: "">
 					<@DecoratorClass :: @LineDecorator>
 					<@DecoratorVertex :: "">
@@ -410,7 +410,7 @@
 				<@ItemVertex :: "">
 					<@CodeView\ContentQuery :: "$Empty:">
 					<@MultiContainerSubItem\NotExistingContentQueryEdge :: @$Empty>
-					<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\LinearizedManyLines>
+					<@CodeItem\FormalTextLanguageProcessing :: @ZeroCode_LinearizedManyLines>
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
@@ -427,8 +427,8 @@
 						
 		<@UXTemplate :: "ForEdge">
 			<@$Is :: @UXTemplate>
-			<@DirectVertexTestQuery :: "{$Is:ForEachEdge}">
-			<@MetaVertexTestQuery :: "ForEachEdge">
+			<@DirectVertexTestQuery :: "{$Is:ForEdge}">
+			<@MetaVertexTestQuery :: "ForEdge">
 			<@ItemClass :: @MultiContainerItem>
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>			
 			<@ItemVertex :: "">
@@ -442,14 +442,14 @@
 				<@ItemVertex :: "">
 					<@UXContainer\SubItemsNotVisible :: "True">
 					<@CodeView\ContentQuery :: "Variable:">
-					<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\LinearizedManyLines>
+					<@CodeItem\FormalTextLanguageProcessing :: @ZeroCode_LinearizedManyLines>
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
 						<@Height :: "26">
 				<@UXDecoratorTemplate :: "variable">
 					<@$Is :: @UXDecoratorTemplate>
-					<@EdgeTestQuery :: "$Is:ForEachEdge\Variable">
+					<@EdgeTestQuery :: "$Is:ForEdge\Variable">
 					<@ToDiagramItemTestQuery :: "">
 					<@DecoratorClass :: @LineDecorator>
 					<@DecoratorVertex :: "">
@@ -460,14 +460,14 @@
 				<@ItemVertex :: "">
 					<@UXContainer\SubItemsNotVisible :: "True">
 					<@CodeView\ContentQuery :: "Set:">
-					<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\LinearizedManyLines>
+					<@CodeItem\FormalTextLanguageProcessing :: @ZeroCode_LinearizedManyLines>
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
 						<@Height :: "26">
 				<@UXDecoratorTemplate :: "set">
 					<@$Is :: @UXDecoratorTemplate>
-					<@EdgeTestQuery :: "$Is:ForEachEdge\Set">
+					<@EdgeTestQuery :: "$Is:ForEdge\Set">
 					<@ToDiagramItemTestQuery :: "">
 					<@DecoratorClass :: @LineDecorator>
 					<@DecoratorVertex :: "">
@@ -478,7 +478,7 @@
 				<@ItemVertex :: "">
 					<@CodeView\ContentQuery :: "$Empty:">
 					<@MultiContainerSubItem\NotExistingContentQueryEdge :: @$Empty>
-					<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\LinearizedManyLines>
+					<@CodeItem\FormalTextLanguageProcessing :: @ZeroCode_LinearizedManyLines>
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
@@ -508,7 +508,7 @@
 				<@$Is :: @UXTemplate>
 				<@ItemVertex :: "">
 					<@UXContainer\SubItemsNotVisible :: "True">					
-					<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\EdgeOneLine>
+					<@CodeItem\FormalTextLanguageProcessing :: @ZeroCode_EdgeOneLine>
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
@@ -516,7 +516,7 @@
 			<@UXTemplate :: "body">
 				<@$Is :: @UXTemplate>				
 				<@ItemVertex :: "">										
-					<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\ManyLinesExcludingParent>
+					<@CodeItem\FormalTextLanguageProcessing :: @ZeroCode_ManyLinesExcludingParent>
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
@@ -540,7 +540,7 @@
 				<@$Is :: @UXTemplate>
 				<@ItemVertex :: "">
 					<@UXContainer\SubItemsNotVisible :: "True">					
-					<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\EdgeOneLine>
+					<@CodeItem\FormalTextLanguageProcessing :: @ZeroCode_EdgeOneLine>
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
@@ -548,7 +548,7 @@
 			<@UXTemplate :: "body">
 				<@$Is :: @UXTemplate>				
 				<@ItemVertex :: "">					
-					<@CodeItem\CodeRepresentation :: @CodeRepresentationEnum\ManyLinesExcludingParent>
+					<@CodeItem\FormalTextLanguageProcessing :: @ZeroCode_ManyLinesExcludingParent>
 					<@Size :: "">
 						<@$Is :: @Size>
 						<@Width :: "0">
@@ -691,31 +691,31 @@
 				<@DecoratorClass :: @LineDecorator>				
 				<@DecoratorVertex :: "">
 					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
-			<@UXDecoratorTemplate :: "BlockCODE">
+			<@UXDecoratorTemplate :: "Block CODE">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "$Is:\Block">
-				<@ToDiagramItemTestQuery :: "UXTemplate:BlockCODE">
+				<@ToDiagramItemTestQuery :: "UXTemplate:'Block CODE'">
 				<@DecoratorClass :: @LineDecorator>				
 				<@DecoratorVertex :: "">
 					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
-			<@UXDecoratorTemplate :: "NamedBlockCODE">
+			<@UXDecoratorTemplate :: "NamedBlock CODE">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "$Is:\NamedBlock">
-				<@ToDiagramItemTestQuery :: "UXTemplate:NamedBlockCODE">
+				<@ToDiagramItemTestQuery :: "UXTemplate:'NamedBlock CODE'">
 				<@DecoratorClass :: @LineDecorator>				
 				<@DecoratorVertex :: "">
 					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
-			<@UXDecoratorTemplate :: "BlockCONTAINER">
+			<@UXDecoratorTemplate :: "Block CONTAINER">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "$Is:\Block">
-				<@ToDiagramItemTestQuery :: "UXTemplate:BlockCONTAINER">
+				<@ToDiagramItemTestQuery :: "UXTemplate:'Block CONTAINER'">
 				<@DecoratorClass :: @LineDecorator>				
 				<@DecoratorVertex :: "">
 					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
-			<@UXDecoratorTemplate :: "NamedBlockCONTAINER">
+			<@UXDecoratorTemplate :: "NamedBlock CONTAINER">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "$Is:\NamedBlock">
-				<@ToDiagramItemTestQuery :: "UXTemplate:NamedBlockCONTAINER">
+				<@ToDiagramItemTestQuery :: "UXTemplate:'NamedBlock CONTAINER'">
 				<@DecoratorClass :: @LineDecorator>				
 				<@DecoratorVertex :: "">
 					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>

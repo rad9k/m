@@ -124,7 +124,7 @@
 					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
 				
-		<@UXTemplate :: "BlockCODE">
+		<@UXTemplate :: "Block CODE">
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:Block}">
 			<@MetaVertexTestQuery :: "Block">
@@ -137,7 +137,7 @@
 				<@CodeItem\FormalTextLanguageProcessing :: @ZeroCode_ManyLinesExcludingParent>
 			<@$Inherits :: @ZeroUML\NextDecorator>
 			
-		<@UXTemplate :: "NamedBlockCODE">
+		<@UXTemplate :: "NamedBlock CODE">
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:NamedBlock}">
 			<@MetaVertexTestQuery :: "NamedBlock">
@@ -150,7 +150,7 @@
 				<@CodeItem\FormalTextLanguageProcessing :: @ZeroCode_ManyLinesExcludingParent>
 			<@$Inherits :: @ZeroUML\NextDecorator>			
 			
-		<@UXTemplate :: "BlockCONTAINER">
+		<@UXTemplate :: "Block CONTAINER">
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:Block}">
 			<@MetaVertexTestQuery :: "Block">
@@ -164,7 +164,7 @@
 			<@$Inherits :: @ZeroUML\NextDecorator>
 			<@$Inherits :: @ZeroUML\bodyDecorator>
 			
-		<@UXTemplate :: "NamedBlockCONTAINER">
+		<@UXTemplate :: "NamedBlock CONTAINER">
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:NamedBlock}">
 			<@MetaVertexTestQuery :: "NamedBlock">
@@ -359,8 +359,8 @@
 						
 		<@UXTemplate :: "ForVertex">
 			<@$Is :: @UXTemplate>
-			<@DirectVertexTestQuery :: "{$Is:ForEach}">
-			<@MetaVertexTestQuery :: "ForEach">
+			<@DirectVertexTestQuery :: "{$Is:ForVertex}">
+			<@MetaVertexTestQuery :: "ForVertex">
 			<@ItemClass :: @MultiContainerItem>
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>			
 			<@ItemVertex :: "">
@@ -381,7 +381,7 @@
 						<@Height :: "26">
 				<@UXDecoratorTemplate :: "variable">
 					<@$Is :: @UXDecoratorTemplate>
-					<@EdgeTestQuery :: "$Is:ForEach\Variable">
+					<@EdgeTestQuery :: "$Is:ForVertex\Variable">
 					<@ToDiagramItemTestQuery :: "">
 					<@DecoratorClass :: @LineDecorator>
 					<@DecoratorVertex :: "">
@@ -399,7 +399,7 @@
 						<@Height :: "26">
 				<@UXDecoratorTemplate :: "set">
 					<@$Is :: @UXDecoratorTemplate>
-					<@EdgeTestQuery :: "$Is:ForEach\Set">
+					<@EdgeTestQuery :: "$Is:ForVertex\Set">
 					<@ToDiagramItemTestQuery :: "">
 					<@DecoratorClass :: @LineDecorator>
 					<@DecoratorVertex :: "">
@@ -427,8 +427,8 @@
 						
 		<@UXTemplate :: "ForEdge">
 			<@$Is :: @UXTemplate>
-			<@DirectVertexTestQuery :: "{$Is:ForEachEdge}">
-			<@MetaVertexTestQuery :: "ForEachEdge">
+			<@DirectVertexTestQuery :: "{$Is:ForEdge}">
+			<@MetaVertexTestQuery :: "ForEdge">
 			<@ItemClass :: @MultiContainerItem>
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>			
 			<@ItemVertex :: "">
@@ -449,7 +449,7 @@
 						<@Height :: "26">
 				<@UXDecoratorTemplate :: "variable">
 					<@$Is :: @UXDecoratorTemplate>
-					<@EdgeTestQuery :: "$Is:ForEachEdge\Variable">
+					<@EdgeTestQuery :: "$Is:ForEdge\Variable">
 					<@ToDiagramItemTestQuery :: "">
 					<@DecoratorClass :: @LineDecorator>
 					<@DecoratorVertex :: "">
@@ -467,7 +467,7 @@
 						<@Height :: "26">
 				<@UXDecoratorTemplate :: "set">
 					<@$Is :: @UXDecoratorTemplate>
-					<@EdgeTestQuery :: "$Is:ForEachEdge\Set">
+					<@EdgeTestQuery :: "$Is:ForEdge\Set">
 					<@ToDiagramItemTestQuery :: "">
 					<@DecoratorClass :: @LineDecorator>
 					<@DecoratorVertex :: "">
@@ -691,31 +691,31 @@
 				<@DecoratorClass :: @LineDecorator>				
 				<@DecoratorVertex :: "">
 					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
-			<@UXDecoratorTemplate :: "BlockCODE">
+			<@UXDecoratorTemplate :: "Block CODE">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "$Is:\Block">
-				<@ToDiagramItemTestQuery :: "UXTemplate:BlockCODE">
+				<@ToDiagramItemTestQuery :: "UXTemplate:'Block CODE'">
 				<@DecoratorClass :: @LineDecorator>				
 				<@DecoratorVertex :: "">
 					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
-			<@UXDecoratorTemplate :: "NamedBlockCODE">
+			<@UXDecoratorTemplate :: "NamedBlock CODE">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "$Is:\NamedBlock">
-				<@ToDiagramItemTestQuery :: "UXTemplate:NamedBlockCODE">
+				<@ToDiagramItemTestQuery :: "UXTemplate:'NamedBlock CODE'">
 				<@DecoratorClass :: @LineDecorator>				
 				<@DecoratorVertex :: "">
 					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
-			<@UXDecoratorTemplate :: "BlockCONTAINER">
+			<@UXDecoratorTemplate :: "Block CONTAINER">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "$Is:\Block">
-				<@ToDiagramItemTestQuery :: "UXTemplate:BlockCONTAINER">
+				<@ToDiagramItemTestQuery :: "UXTemplate:'Block CONTAINER'">
 				<@DecoratorClass :: @LineDecorator>				
 				<@DecoratorVertex :: "">
 					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
-			<@UXDecoratorTemplate :: "NamedBlockCONTAINER">
+			<@UXDecoratorTemplate :: "NamedBlock CONTAINER">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "$Is:\NamedBlock">
-				<@ToDiagramItemTestQuery :: "UXTemplate:NamedBlockCONTAINER">
+				<@ToDiagramItemTestQuery :: "UXTemplate:'NamedBlock CONTAINER'">
 				<@DecoratorClass :: @LineDecorator>				
 				<@DecoratorVertex :: "">
 					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
