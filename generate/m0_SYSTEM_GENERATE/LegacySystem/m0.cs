@@ -7158,7 +7158,8 @@ namespace m0
             quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Block"));
             quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\NamedBlock"));
             quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\While"));
-            quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\ForEach"));
+            quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\ForVertex"));
+            quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\ForEdge"));
             quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\If"));
             quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Test"));
             quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Case"));

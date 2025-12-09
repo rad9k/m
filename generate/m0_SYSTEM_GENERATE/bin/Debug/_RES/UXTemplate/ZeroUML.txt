@@ -718,7 +718,35 @@
 				<@ToDiagramItemTestQuery :: "UXTemplate:'NamedBlock CONTAINER'">
 				<@DecoratorClass :: @LineDecorator>				
 				<@DecoratorVertex :: "">
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>				
+			<@UXDecoratorTemplate :: "If">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:\If">
+				<@ToDiagramItemTestQuery :: "UXTemplate:If">
+				<@DecoratorClass :: @LineDecorator>				
+				<@DecoratorVertex :: "">
 					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			<@UXDecoratorTemplate :: "While">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:\While">
+				<@ToDiagramItemTestQuery :: "UXTemplate:While">
+				<@DecoratorClass :: @LineDecorator>				
+				<@DecoratorVertex :: "">
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			<@UXDecoratorTemplate :: "ForVertex">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:\ForVertex">
+				<@ToDiagramItemTestQuery :: "UXTemplate:ForVertex">
+				<@DecoratorClass :: @LineDecorator>				
+				<@DecoratorVertex :: "">
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			<@UXDecoratorTemplate :: "ForEdge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:\ForEdge">
+				<@ToDiagramItemTestQuery :: "UXTemplate:ForEdge">
+				<@DecoratorClass :: @LineDecorator>				
+				<@DecoratorVertex :: "">
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>					
 			<@UXDecoratorTemplate :: "Edge">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "$Is:\">				
