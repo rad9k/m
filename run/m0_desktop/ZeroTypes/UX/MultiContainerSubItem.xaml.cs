@@ -307,7 +307,6 @@ namespace m0.ZeroTypes.UX
         static IVertex NewItemUXTemplate_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\UXContainer\NewItemUXTemplate");
         static IVertex ContentQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\CodeView\ContentQuery");
         static IVertex FormalTextLanguageProcessing_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\FormalTextLanguageProcessing");
-        static IVertex CodeRepresentation_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\CodeRepresentation");
 
         static IVertex Size_type = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Size");        
 
@@ -459,22 +458,6 @@ namespace m0.ZeroTypes.UX
                     val = Vertex.AddVertex(ContentQuery_meta, value);
                 else
                     val.Value = value;
-            }
-        }
-
-
-
-        public CodeRepresentationEnum CodeRepresentation
-        {
-            get
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "CodeRepresentation", null);
-
-                return CodeRepresentationEnumHelper.GetEnum(val);
-            }
-            set
-            {
-                GraphUtil.CreateOrReplaceEdge(Vertex, CodeRepresentation_meta, CodeRepresentationEnumHelper.GetVertex(value));
             }
         }
 

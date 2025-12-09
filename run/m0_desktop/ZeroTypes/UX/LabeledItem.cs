@@ -362,8 +362,7 @@ namespace m0.ZeroTypes.UX
         static IVertex ConstantLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\ConstantLabel");
         static IVertex ContentQuery_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\ContentQuery");
         static IVertex UseCodeLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\UseCodeLabel");
-        static IVertex FormalTextLanguage_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\FormalTextLanguage");
-        static IVertex CodeRepresentation_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\CodeRepresentation");
+        static IVertex FormalTextLanguageProcessing_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\FormalTextLanguageProcessing");
         static IVertex ShowMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\ShowMeta");
         static IVertex HideLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\HideLabel");
         
@@ -458,20 +457,6 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        public CodeRepresentationEnum CodeRepresentation
-        {
-            get
-            {
-                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "CodeRepresentation", null);
-
-                return CodeRepresentationEnumHelper.GetEnum(val);
-            }
-            set
-            {
-                GraphUtil.CreateOrReplaceEdge(Vertex, CodeRepresentation_meta, CodeRepresentationEnumHelper.GetVertex(value));
-            }
-        }
-
         public bool ShowMeta
         {
             get
@@ -516,15 +501,15 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        public IVertex FormalTextLanguage
+        public IVertex FormalTextLanguageProcessing
         {
             get
             {
-                return GraphUtil.GetQueryOutFirst(Vertex, "FormalTextLanguage", null);                
+                return GraphUtil.GetQueryOutFirst(Vertex, "FormalTextLanguageProcessing", null);                
             }
             set
             {
-                GraphUtil.CreateOrReplaceEdge(Vertex, FormalTextLanguage_meta, value);
+                GraphUtil.CreateOrReplaceEdge(Vertex, FormalTextLanguageProcessing_meta, value);
             }
         }
 

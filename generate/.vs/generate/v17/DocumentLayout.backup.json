@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|c:\\users\\rad9k\\source\\repos\\m\\generate\\m0_system_generate\\createexamples.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|solutionrelative:m0_system_generate\\createexamples.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_system_generate\\legacysystem\\m0.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|solutionrelative:m0_system_generate\\legacysystem\\m0.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|c:\\users\\rad9k\\source\\repos\\m\\generate\\m0_system_generate\\createexamples.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|solutionrelative:m0_system_generate\\createexamples.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|c:\\users\\rad9k\\source\\repos\\m\\generate\\m0_system_generate\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -22,7 +22,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Bookmark",
@@ -42,7 +42,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "CreateExamples.cs",
               "DocumentMoniker": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\CreateExamples.cs",
               "RelativeDocumentMoniker": "m0_SYSTEM_GENERATE\\CreateExamples.cs",
@@ -68,13 +68,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "m0.cs",
               "DocumentMoniker": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\LegacySystem\\m0.cs",
               "RelativeDocumentMoniker": "m0_SYSTEM_GENERATE\\LegacySystem\\m0.cs",
               "ToolTip": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\LegacySystem\\m0.cs",
               "RelativeToolTip": "m0_SYSTEM_GENERATE\\LegacySystem\\m0.cs",
-              "ViewState": "AgIAAJ4IAAAAAAAAAAAgwLUIAABXAAAAAAAAAA==",
+              "ViewState": "AgIAACcCAAAAAAAAAAAkwPkBAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-28T23:21:01.468Z",
               "EditorCaption": ""
