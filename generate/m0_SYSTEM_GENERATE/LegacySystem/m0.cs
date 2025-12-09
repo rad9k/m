@@ -1223,6 +1223,9 @@ namespace m0
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Block"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "NamedBlock"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "While"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "If"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "ForVertex"));
+            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "ForEdge"));
 
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\$Import"));
             package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\$ImportMeta"));
