@@ -1,0 +1,24 @@
+Dodawanie pakietów Swagger do projektu:
+RestTest.csproj
++4
+</Project>
+  <ItemGroup>    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />  </ItemGroup></Project>
+Wszystkie funkcje z expose.cs są dostępne jako endpointy REST. Podsumowanie zmian:
+Zmiany:
+RestTest.csproj — zmieniono na Microsoft.NET.Sdk.Web i dodano pakiet Swagger
+ExposeController.cs — utworzono kontroler z endpointami:
+POST /api/expose/add — dodawanie dwóch liczb
+POST /api/expose/concat — łączenie dwóch stringów
+POST /api/expose/multiply — mnożenie dwóch liczb
+POST /api/expose/divide — dzielenie dwóch liczb
+POST /api/expose/subtract — odejmowanie dwóch liczb
+Program.cs — skonfigurowano Web API z Swagger
+expose.cs — zmieniono klasę z internal na public, aby była dostępna dla kontrolera
+Użycie:
+Po uruchomieniu aplikacji:
+API będzie dostępne pod adresem https://localhost:5001 (lub http://localhost:5000)
+Swagger UI będzie dostępny pod /swagger w trybie Development
+Wszystkie endpointy przyjmują dane w formacie JSON w body żądania POST
+Przykład użycia:
+POST /api/expose/add{  "a": 5,  "b": 3}
+Aplikacja gotowa do uruchomienia.
