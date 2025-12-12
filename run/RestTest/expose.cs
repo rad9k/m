@@ -7,8 +7,26 @@ using System.Threading.Tasks;
 
 namespace RestTest
 {
-    public class expose
+    public class User
     {
+        public string Name { get; set; } = string.Empty;
+        public int Age { get; set; }
+
+        public IList<Product> Products { get; set; } = new List<Product>();
+    }
+
+    public class Product
+    {
+        public string ProductName { get; set; } = string.Empty;
+        public double Price { get; set; }
+    }
+
+public class expose
+    {
+        public User ProcessUser(User input)
+        {
+            return input;
+        }
         public static int Add(int a, int b)
         {
             return a + b;

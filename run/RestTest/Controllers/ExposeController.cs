@@ -79,6 +79,23 @@ namespace RestTest.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
+
+        [HttpPost("processuser")]
+        [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<User> ProcessUser([FromBody] User user)
+        {
+            try
+            {
+                var exposeInstance = new expose();
+                var result = exposeInstance.ProcessUser(user);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
     }
 
     public class AddRequest
@@ -111,5 +128,6 @@ namespace RestTest.Controllers
         public int B { get; set; }
     }
 }
+
 
 
