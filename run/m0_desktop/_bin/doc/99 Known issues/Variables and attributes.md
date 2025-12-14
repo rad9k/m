@@ -61,7 +61,6 @@ Code:
 	e <+< "e"
 	f <<< "f"
 ```
-
 Result:
 ```ZeroCode
 ""
@@ -76,7 +75,6 @@ Result:
 	<@f :: "">
 		"f"
 ```
-
 Comment:
 - `<+<` is not `AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex` as the `init` disapeared
 - `<<<` is not `AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphIncludingLinksAsIsInLeftVertex ` as the `init` disapeared
@@ -84,7 +82,6 @@ Comment:
 ## Copied variable usage
 
 Code:
-
 ```ZeroCode
 "EXAMPLE"
 	variable "a" @VertexType
@@ -108,7 +105,6 @@ Code:
 	e <+< "e"
 	f <<< "f"
 ```
-
 Result:
 ```ZeroCode
 ""
@@ -123,15 +119,12 @@ Result:
 	<@f :: "">
 		"f"
 ```
-
 Comment:
 - `<+<` is not `AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex` as the `copy` disapeared
 - `<<<` is not `AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphIncludingLinksAsIsInLeftVertex ` as the `copy` disapeared
-
 ## Attribute usage
 
 Code:
-
 ```ZeroCode
 "EXAMPLE"
 	variable "o" @tst
@@ -157,7 +150,6 @@ Code:
 	o.doTest[]
 
 ```
-
 Result:
 ```ZeroCode
 ""
@@ -173,14 +165,11 @@ Result:
 	<@a :: "a">
 	<@b :: "b">
 ```
-
 Comment:
 - Seems OK.
-
 ## Initialized attribute usage
 
 Code:
-
 ```ZeroCode
 "EXAMPLE"
 	variable "o" @tst
@@ -212,7 +201,6 @@ Code:
 	o = new @@tst[]
 	o.doTest[]
 ```
-
 Result:
 ```ZeroCode
 ""
@@ -226,14 +214,11 @@ Result:
 	<@a :: "a">
 	<@b :: "b">
 ```
-
 Comment:
 - A lot of strange effects due to not using `this`
-
 ## Copied attribute usage
 
 Code:
-
 ```ZeroCode
 "EXAMPLE"
 	variable "o" @tst
@@ -265,7 +250,6 @@ Code:
 	o = new @@tst[]
 	o.doTest[]
 ```
-
 Result:
 ```ZeroCode
 ""
@@ -279,14 +263,11 @@ Result:
 	<@a :: "a">
 	<@b :: "b">
 ```
-
 Comment:
 - A lot of strange effects due to not using `this`
-
 ## Initialized attribute usage with `this`
 
 Code:
-
 ```ZeroCode
 "EXAMPLE"
 	variable "o" @tst
@@ -318,7 +299,6 @@ Code:
 	o = new @@tst[]
 	o.doTest[]
 ```
-
 Result:
 ```ZeroCode
 ""
@@ -334,14 +314,11 @@ Result:
 	<@a :: "a">
 	<@b :: "b">
 ```
-
 Comment:
 - Seems OK.
-
 ## Initialized attribute usage with `this` two times
 
 Code:
-
 ```ZeroCode
 "EXAMPLE"
 	variable "o" @tst
@@ -368,7 +345,6 @@ Code:
 	o = new @@tst[]
 	o.doTest[]
 ```
-
 Result:
 ```ZeroCode
 ""
@@ -384,14 +360,11 @@ Result:
 	<@a :: "a">
 	<@b :: "b">
 ```
-
 Comment:
 - This is the same as in case of not using `this` for initialization.
-
 ## Compare using `this` and direct attribute usage
 
 Code:
-
 ```ZeroCode
 "EXAMPLE"
 	variable "o" @tst
@@ -410,7 +383,6 @@ Code:
 	o = new @@tst[]
 	o.doTest[]
 ```
-
 Result:
 ```ZeroCode
 ""
@@ -419,6 +391,5 @@ Result:
 	<@y :: "">
 	<@z :: @a:a>
 ```
-
 Comment:
 - `this` is essential on the right side of assignment. Probably in other places also.
