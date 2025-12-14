@@ -78,7 +78,6 @@ Result:
 Comment:
 - `<+<` is not `AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex` as the `init` disapeared
 - `<<<` is not `AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphIncludingLinksAsIsInLeftVertex ` as the `init` disapeared
-
 ## Copied variable usage
 
 Code:
