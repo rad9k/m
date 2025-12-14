@@ -276,6 +276,9 @@ function loadDocument_index() {
 function loadDocument(docId) {
     const mainContent = document.getElementById('mainContent');
     
+    // Przewiń na górę
+    mainContent.scrollTop = 0;
+    
     // Load document from HTML file
     const docPath = `${docId}`;
     
@@ -289,9 +292,11 @@ function loadDocument(docId) {
         })
         .then(content => {
             mainContent.innerHTML = content;
+            // Opcjonalnie: przewiń ponownie po załadowaniu treści
+            mainContent.scrollTop = 0;
         })
         .catch(error => {
             console.error('Error loading document:', error);
             mainContent.innerHTML = '<div class="document-placeholder">Document not found</div>';
         });
-} 
+}

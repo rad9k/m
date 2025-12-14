@@ -3,7 +3,6 @@
 ## "Non existent" variables usage
 
 Code:
-
 ```ZeroCode
 "EXAMPLE"
 	variable "a" @VertexType
@@ -20,7 +19,6 @@ Code:
 	e <+< "e"
 	f <<< "f"
 ```
-
 Result:
 ```ZeroCode
 ""
@@ -35,14 +33,11 @@ Result:
 	<@f :: "">
 		"f"
 ```
-
 Comment:
 - Seems OK.
-
 ## Initialized variable usage
 
 Code:
-
 ```ZeroCode
 "EXAMPLE"
 	variable "a" @VertexType

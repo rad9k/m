@@ -41,7 +41,6 @@ _View_ is defined as _meta edge_. When this _meta edge_ is added to given vertex
 	- transform function _(0..1)_
 
 __After the "Possible view definitions" table (below) evaluation we come to conclusion, that just trigger queries and transform function are enough to express above.__
-
 ## Possible view definitions
 |comment                       |type           |direction       |source trigger|source transform function|target trigger|target transform function|
 |:-----------------------------|:--------------|:---------------|:-------------|:------------------------|:-------------|:------------------------|
@@ -82,7 +81,6 @@ __After the "Possible view definitions" table (below) evaluation we come to conc
 - from @VertexType
 - meta @VertexType
 - to @VertexType
-
 ## How to define source / target trigger
 
 For the _source_ / _target_ trigger to be defined, it is enough to define trigger filter respectively for the _source_ or _target_.
@@ -125,7 +123,7 @@ AddHere +< view "view name"{
 		to +< @@summary ::{
 			@@summary\count :: from\set\value<>
 			@@summary\min :: @@Min[from\set\value]
-			@@summary\min :: @@Max[from\set\value]
+			@@summary\max :: @@Max[from\set\value]
 		}
 	ExampleView = "Example View"
 	ExampleView +< create view{
@@ -161,5 +159,5 @@ Above code results in the following:
 		<@summary :: "$Empty">
 			<@count :: "7">
 			<@min :: "1">
-			<@min :: "40">
+			<@max :: "40">
 ```
