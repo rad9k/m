@@ -1,0 +1,394 @@
+# Variables
+
+## "Non existent" variables usage
+
+Code:
+```ZeroCode
+"EXAMPLE"
+	variable "a" @VertexType
+	variable "b" @VertexType
+	variable "c" @VertexType
+	variable "d" @VertexType
+	variable "e" @VertexType
+	variable "f" @VertexType
+
+	a = "a"
+	b += "b"
+	c +< "c"
+	d <- "d"
+	e <+< "e"
+	f <<< "f"
+```
+Result:
+```ZeroCode
+""
+	<@a :: "a">
+	<@b :: "">
+	<@b :: "b">
+	<@c :: "">
+		"c"
+	<@d :: "d">
+	<@e :: "">
+		"e"
+	<@f :: "">
+		"f"
+```
+Comment:
+- Seems OK.
+## Initialized variable usage
+
+Code:
+```ZeroCode
+"EXAMPLE"
+	variable "a" @VertexType
+	variable "b" @VertexType
+	variable "c" @VertexType
+	variable "d" @VertexType
+	variable "e" @VertexType
+	variable "f" @VertexType
+
+	a = "init"
+	b = "init"
+	c = "init"
+	d = "init"
+	e = "init"
+	f = "init"
+
+	a = "a"
+	b += "b"
+	c +< "c"
+	d <- "d"
+	e <+< "e"
+	f <<< "f"
+```
+Result:
+```ZeroCode
+""
+	<@a :: "a">
+	<@b :: "init">
+	<@b :: "b">
+	<@c :: "init">
+		"c"
+	<@d :: "d">
+	<@e :: "">
+		"e"
+	<@f :: "">
+		"f"
+```
+Comment:
+- `<+<` is not `AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex` as the `init` disapeared
+- `<<<` is not `AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphIncludingLinksAsIsInLeftVertex ` as the `init` disapeared
+## Copied variable usage
+
+Code:
+```ZeroCode
+"EXAMPLE"
+	variable "a" @VertexType
+	variable "b" @VertexType
+	variable "c" @VertexType
+	variable "d" @VertexType
+	variable "e" @VertexType
+	variable "f" @VertexType
+
+	a = %"copy"
+	b = %"copy"
+	c = %"copy"
+	d = %"copy"
+	e = %"copy"
+	f = %"copy"
+
+	a = "a"
+	b += "b"
+	c +< "c"
+	d <- "d"
+	e <+< "e"
+	f <<< "f"
+```
+Result:
+```ZeroCode
+""
+	<@a :: "a">
+	<@b :: "copy">
+	<@b :: "b">
+	<@c :: "copy">
+		"c"
+	<@d :: "d">
+	<@e :: "">
+		"e"
+	<@f :: "">
+		"f"
+```
+Comment:
+- `<+<` is not `AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex` as the `copy` disapeared
+- `<<<` is not `AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphIncludingLinksAsIsInLeftVertex ` as the `copy` disapeared
+## Attribute usage
+
+Code:
+```ZeroCode
+"EXAMPLE"
+	variable "o" @tst
+
+	class "tst"
+
+		attribute "a" @VertexType
+		attribute "b" @VertexType
+		attribute "c" @VertexType
+		attribute "d" @VertexType
+		attribute "e" @VertexType
+		attribute "f" @VertexType
+
+		method "doTest"()
+			a = "a"
+			b += "b"
+			c +< "c"
+			d <- "d"
+			e <+< "e"
+			f <<< "f"
+
+	o = new @@tst[]
+	o.doTest[]
+
+```
+Result:
+```ZeroCode
+""
+	<@$Is :: @tst>
+	<@b :: "">
+	<@c :: "">
+		"c"
+	<@d :: "d">
+	<@e :: "">
+		"e"
+	<@f :: "">
+		"f"
+	<@a :: "a">
+	<@b :: "b">
+```
+Comment:
+- Seems OK.
+## Initialized attribute usage
+
+Code:
+```ZeroCode
+"EXAMPLE"
+	variable "o" @tst
+
+	class "tst"
+
+		attribute "a" @VertexType
+		attribute "b" @VertexType
+		attribute "c" @VertexType
+		attribute "d" @VertexType
+		attribute "e" @VertexType
+		attribute "f" @VertexType
+
+		method "doTest" ()
+			a = "init"
+			b = "init"
+			c = "init"
+			d = "init"
+			e = "init"
+			f = "init"
+
+			a = "a"
+			b += "b"
+			c +< "c"
+			d <- "d"
+			e <+< "e"
+			f <<< "f"
+
+	o = new @@tst[]
+	o.doTest[]
+```
+Result:
+```ZeroCode
+""
+	<@$Is :: @tst>
+	<@a :: "init">
+	<@b :: "init">
+	<@c :: "init">
+	<@d :: "init">
+	<@e :: "init">
+	<@f :: "init">
+	<@a :: "a">
+	<@b :: "b">
+```
+Comment:
+- A lot of strange effects due to not using `this`
+## Copied attribute usage
+
+Code:
+```ZeroCode
+"EXAMPLE"
+	variable "o" @tst
+
+	class "tst"
+
+		attribute "a" @VertexType
+		attribute "b" @VertexType
+		attribute "c" @VertexType
+		attribute "d" @VertexType
+		attribute "e" @VertexType
+		attribute "f" @VertexType
+
+		method "doTest" ()
+			a = %"copy"
+			b = %"copy"
+			c = %"copy"
+			d = %"copy"
+			e = %"copy"
+			f = %"copy"
+
+			a = "a"
+			b += "b"
+			c +< "c"
+			d <- "d"
+			e <+< "e"
+			f <<< "f"
+
+	o = new @@tst[]
+	o.doTest[]
+```
+Result:
+```ZeroCode
+""
+	<@$Is :: @tst>
+	<@a :: "copy">
+	<@b :: "copy">
+	<@c :: "copy">
+	<@d :: "copy">
+	<@e :: "copy">
+	<@f :: "copy">
+	<@a :: "a">
+	<@b :: "b">
+```
+Comment:
+- A lot of strange effects due to not using `this`
+## Initialized attribute usage with `this`
+
+Code:
+```ZeroCode
+"EXAMPLE"
+	variable "o" @tst
+
+	class "tst"
+
+		attribute "a" @VertexType
+		attribute "b" @VertexType
+		attribute "c" @VertexType
+		attribute "d" @VertexType
+		attribute "e" @VertexType
+		attribute "f" @VertexType
+
+		method "doTest" ()
+			a = "init"
+			b = "init"
+			c = "init"
+			d = "init"
+			e = "init"
+			f = "init"
+
+			this\a = "a"
+			this\b += "b"
+			this\c +< "c"
+			this\d <- "d"
+			this\e <+< "e"
+			this\f <<< "f"
+
+	o = new @@tst[]
+	o.doTest[]
+```
+Result:
+```ZeroCode
+""
+	<@$Is :: @tst>
+	<@b :: "init">
+	<@c :: "init">
+		"c"
+	<@d :: "d">
+	<@e :: "">
+		"e"
+	<@f :: "">
+		"f"
+	<@a :: "a">
+	<@b :: "b">
+```
+Comment:
+- Seems OK.
+## Initialized attribute usage with `this` two times
+
+Code:
+```ZeroCode
+"EXAMPLE"
+	variable "o" @tst
+	class "tst"
+		attribute "a" @VertexType
+		attribute "b" @VertexType
+		attribute "c" @VertexType
+		attribute "d" @VertexType
+		attribute "e" @VertexType
+		attribute "f" @VertexType
+		method "doTest" ()
+			this\a = "init"
+			this\b = "init"
+			this\c = "init"
+			this\d = "init"
+			this\e = "init"
+			this\f = "init"
+			this\a = "a"
+			this\b += "b"
+			this\c +< "c"
+			this\d <- "d"
+			this\e <+< "e"
+			this\f <<< "f"
+	o = new @@tst[]
+	o.doTest[]
+```
+Result:
+```ZeroCode
+""
+	<@$Is :: @tst>
+	<@b :: "init">
+	<@c :: "init">
+		"c"
+	<@d :: "d">
+	<@e :: "">
+		"e"
+	<@f :: "">
+		"f"
+	<@a :: "a">
+	<@b :: "b">
+```
+Comment:
+- This is the same as in case of not using `this` for initialization.
+## Compare using `this` and direct attribute usage
+
+Code:
+```ZeroCode
+"EXAMPLE"
+	variable "o" @tst
+
+	class "tst"
+
+		attribute "a" @VertexType
+		attribute "y" @VertexType
+		attribute "z" @VertexType
+
+		method "doTest" ()
+			a = "a"
+			y = a
+			z = this\a
+
+	o = new @@tst[]
+	o.doTest[]
+```
+Result:
+```ZeroCode
+""
+	<@$Is :: @tst>
+	<@a :: "a">
+	<@y :: "">
+	<@z :: @a:a>
+```
+Comment:
+- `this` is essential on the right side of assignment. Probably in other places also.
