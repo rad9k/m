@@ -1841,19 +1841,19 @@ namespace m0.Lib.StdView
                 }
             }
             
-            // Extract cell content (everything until | or end of line)
-            StringBuilder cellContent = new StringBuilder();
-            while (position < md.Length && md[position] != '|' && md[position] != '\n' && md[position] != '\r')
+            // Extract cell content boundaries
+            int cellStart = position;
+            int cellEnd = position;
+            while (cellEnd < md.Length && md[cellEnd] != '|' && md[cellEnd] != '\n' && md[cellEnd] != '\r')
             {
-                cellContent.Append(md[position]);
-                position++;
+                cellEnd++;
             }
             
-            string content = cellContent.ToString().Trim();
-            if (!string.IsNullOrEmpty(content))
-            {
-                AddTextTokenToTarget(to, content);
-            }
+            // Process cell content for inline markdown formatting
+            ProcessInlineMarkdown(md, cellStart, cellEnd, to);
+            
+            // Update position to end of cell
+            position = cellEnd;
             
             if (isFirstRow)
             {
@@ -1863,6 +1863,166 @@ namespace m0.Lib.StdView
             {
                 AddTokenToTarget(to, CellEnd);
             }
+        }
+        
+        private static void ProcessInlineMarkdown(string md, int startPos, int endPos, IVertex to)
+        {
+            // Save current state
+            bool savedIsInsideBold = isInsideBold;
+            bool savedIsInsideItalic = isInsideItalic;
+            bool savedIsInsideInlineCode = isInsideInlineCode;
+            bool savedIsInsideLink = isInsideLink;
+            
+            // Reset state for cell processing
+            isInsideBold = false;
+            isInsideItalic = false;
+            isInsideInlineCode = false;
+            isInsideLink = false;
+            
+            int pos = startPos;
+            
+            // Skip leading whitespace
+            while (pos < endPos && char.IsWhiteSpace(md[pos]))
+            {
+                pos++;
+            }
+            
+            // Skip trailing whitespace
+            int contentEnd = endPos;
+            while (contentEnd > pos && char.IsWhiteSpace(md[contentEnd - 1]))
+            {
+                contentEnd--;
+            }
+            
+            while (pos < contentEnd)
+            {
+                char currentChar = md[pos];
+                
+                // Handle inline code
+                if (isInsideInlineCode)
+                {
+                    if (IsInlineCodeEnd(md, pos))
+                    {
+                        pos++;
+                        isInsideInlineCode = false;
+                        AddTokenToTarget(to, InlineCodeEnd);
+                        continue;
+                    }
+                    string inlineCodeText = ExtractInlineCodeText(md, ref pos);
+                    if (!string.IsNullOrEmpty(inlineCodeText))
+                    {
+                        AddTextTokenToTarget(to, inlineCodeText);
+                    }
+                    continue;
+                }
+                
+                // Handle bold text (**text** or __text__)
+                if (IsBoldStart(md, pos))
+                {
+                    pos += 2;
+                    isInsideBold = true;
+                    AddTokenToTarget(to, BoldStart);
+                    continue;
+                }
+                
+                if (IsBoldEnd(md, pos))
+                {
+                    pos += 2;
+                    isInsideBold = false;
+                    AddTokenToTarget(to, BoldEnd);
+                    continue;
+                }
+                
+                // Handle italic text (*text* or _text_)
+                if (IsItalicStart(md, pos))
+                {
+                    pos++;
+                    isInsideItalic = true;
+                    AddTokenToTarget(to, ItalicStart);
+                    continue;
+                }
+                
+                if (IsItalicEnd(md, pos))
+                {
+                    pos++;
+                    isInsideItalic = false;
+                    AddTokenToTarget(to, ItalicEnd);
+                    continue;
+                }
+                
+                // Handle inline code (`code`)
+                if (IsInlineCodeStart(md, pos))
+                {
+                    pos++;
+                    isInsideInlineCode = true;
+                    AddTokenToTarget(to, InlineCodeStart);
+                    continue;
+                }
+                
+                // Handle links [text](url)
+                if (IsLinkStart(md, pos))
+                {
+                    int posBeforeLink = pos;
+                    ExtractLink(md, ref pos, to);
+                    // Ensure we don't go beyond cell boundary
+                    if (pos > contentEnd)
+                    {
+                        pos = contentEnd;
+                    }
+                    continue;
+                }
+                
+                // Handle regular text
+                string regularText = ExtractRegularTextInCell(md, ref pos, contentEnd);
+                if (!string.IsNullOrEmpty(regularText))
+                {
+                    AddTextTokenToTarget(to, regularText);
+                }
+                else
+                {
+                    if (pos < contentEnd)
+                    {
+                        pos++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+            
+            // Restore state
+            isInsideBold = savedIsInsideBold;
+            isInsideItalic = savedIsInsideItalic;
+            isInsideInlineCode = savedIsInsideInlineCode;
+            isInsideLink = savedIsInsideLink;
+        }
+        
+        private static string ExtractRegularTextInCell(string md, ref int position, int endPos)
+        {
+            StringBuilder result = new StringBuilder();
+            
+            while (position < endPos)
+            {
+                char current = md[position];
+                
+                // Stop at special characters that start other tokens
+                if (current == '*' || current == '_' || current == '`' || current == '[')
+                {
+                    // Check if it's actually a markdown token
+                    if (IsBoldStart(md, position) || IsBoldEnd(md, position) ||
+                        IsItalicStart(md, position) || IsItalicEnd(md, position) ||
+                        IsInlineCodeStart(md, position) || IsLinkStart(md, position))
+                    {
+                        break;
+                    }
+                }
+                
+                result.Append(current);
+                position++;
+            }
+            
+            return result.ToString();
         }
 
         private static bool IsHardBreak(string md, int position)
