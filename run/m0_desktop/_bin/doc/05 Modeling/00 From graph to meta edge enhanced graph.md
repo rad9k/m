@@ -4,18 +4,21 @@ We will introduce _meta edge enhanced graph_ (_MEEG_), but first let analyze som
 ## Trees, acyclic graphs, cyclic graphs
 
 Starging from the data modelling perspective, lest's analyze what types of structures can be formed out of _vertexes_ (sometimes called _nodes_) and _edges_ in between _vertexes_. 
-For the simplicity and implementation transparency, we assume that all _edges_ are _directed edges_ → each _edge_ has _from vertex_ and _to vertex_ defined.
+> For the simplicity and implementation transparency, we assume that all _edges_ are _directed edges_ → each _edge_ has _from vertex_ and _to vertex_ defined.
 - _**tree**_
-	Each _to vertex_ can have only one _from vertex_ → as we are discussing _trees_ here this rule orginally is expressed as: each _node_ can have only one _parent node_.
-	No _edges_ cycles allowed → not possible to return to the same _vertex_ when traversing the structure.
+
+	- Each _to vertex_ can have only one _from vertex_ → as we are discussing _trees_ here this rule orginally is expressed as: each _node_ can have only one _parent node_.
+	- No _edges_ cycles allowed → not possible to return to the same _vertex_ when traversing the structure.
 
 - _**acyclic graph**_
-	Multiple _from vertexes_ possible for given _to vertex_.
-	No _edges_ cycles allowed → not possible to return to the same _vertex_ when traversing the structure.
+
+	- Multiple _from vertexes_ possible for given _to vertex_.
+	- No _edges_ cycles allowed → not possible to return to the same _vertex_ when traversing the structure.
 	
 - _**cyclic graph**_
-	Multiple _from vertexes_ possible for given _to vertex_.
-	_Edges_ cycles allowed → possible to return to the same _vertex_ when traversing the structure.
+
+	- Multiple _from vertexes_ possible for given _to vertex_.
+	- _Edges_ cycles allowed → possible to return to the same _vertex_ when traversing the structure.
 	
 Now let's analyze what data relationships are possible to be expressed by _tree_, _acyclic graph_, _cyclic graph_. As we store the data in the _vertexes_, the analyzed relationships are in fact relationships between _vertexes_.
 |structure type|one to many|many to many|recurrency|
@@ -52,10 +55,13 @@ As precise desciprtion of vertexes / edges shapes and values might be lenghty an
 	
 Those are:
 - **"Vertex _X_ has meta edge _Y_"**.
+
 	Precise description: _Outgoing edges_ set for _vertex_ X contains edge, that has _meta vertex_ pointing to _vertex_ with has a value of Y.
 
 - **"Vertex _X_ has meta edge _Y_ with the value of _Z_"**
+
 	Precise description: _Outgoing edges_ set for _vertex_ X contains edge, that has:
+	
 	- _meta vertex_ pointing to _vertex_ with has a value of Y.
 	- _to vertex_ that has value of _Z_.
 

@@ -217,20 +217,46 @@ namespace m0.Lib.StdView
 
                     LineAnalysis paragraphAnalysis = AnalyzeLine(md, position);
                     bool listContinues = false;
+                    bool shouldContinueListItem = false;
 
                     if (listContextStack.Count > 0)
                     {
                         if (paragraphAnalysis.HasContent)
                         {
-                            CloseListsToIndent(to, paragraphAnalysis.Indent);
-
-                            if (TryGetListItem(md, paragraphAnalysis.ContentPosition, out _, out _, out _))
+                            // Check if this is a new list item
+                            bool isNewListItem = TryGetListItem(md, paragraphAnalysis.ContentPosition, out _, out _, out _);
+                            
+                            if (isNewListItem)
                             {
+                                // It's a new list item, close lists to its indent level
+                                CloseListsToIndent(to, paragraphAnalysis.Indent);
                                 listContinues = true;
                             }
-                            else if (ShouldStayInCurrentList(paragraphAnalysis.Indent))
+                            else
                             {
-                                listContinues = true;
+                                // Not a new list item - check if it should continue current list
+                                ListContext current = listContextStack.Peek();
+                                
+                                if (paragraphAnalysis.Indent > current.Indent)
+                                {
+                                    // Text with indent greater than list indent - continuation of list item
+                                    listContinues = true;
+                                    shouldContinueListItem = true;
+                                }
+                                else if (ShouldStayInCurrentList(paragraphAnalysis.Indent))
+                                {
+                                    // Text with same or compatible indent - list continues
+                                    listContinues = true;
+                                }
+                                else
+                                {
+                                    // Text with smaller indent - close lists
+                                    // But don't close if we're continuing a list item (shouldn't happen here, but be safe)
+                                    if (!shouldContinueListItem)
+                                    {
+                                        CloseListsToIndent(to, paragraphAnalysis.Indent);
+                                    }
+                                }
                             }
                         }
                         else
@@ -244,7 +270,9 @@ namespace m0.Lib.StdView
                         position = paragraphAnalysis.ContentPosition;
                     }
 
-                    if (listContextStack.Count > 0 && !listContinues)
+                    // Only close lists if we're not continuing a list item
+                    // (shouldContinueListItem means we want to keep the list open)
+                    if (listContextStack.Count > 0 && !listContinues && !shouldContinueListItem)
                     {
                         CloseAllLists(to);
                     }
@@ -266,8 +294,117 @@ namespace m0.Lib.StdView
                         }
                     }
 
-                    // Generate ParagraphBreak for empty line
-                    AddTokenToTarget(to, ParagraphBreak);
+                    // Generate ParagraphBreak for empty line (unless we're continuing a list item)
+                    if (!shouldContinueListItem)
+                    {
+                        AddTokenToTarget(to, ParagraphBreak);
+                    }
+                    
+                    // If this is indented text continuing a list item, add HardBreak and process the text
+                    // directly as part of the list item (don't return to main loop yet)
+                    if (shouldContinueListItem && paragraphAnalysis.HasContent)
+                    {
+                        // Add two HardBreaks to match paragraph break effect (empty line = two breaks)
+                        AddTokenToTarget(to, HardBreak);
+                        AddTokenToTarget(to, HardBreak);
+                        // Position is already set to paragraphAnalysis.ContentPosition above (after tab)
+                        // Process the text line by line until we hit a newline or end of string
+                        // This ensures the text is processed within the list item context
+                        int lineEnd = position;
+                        while (lineEnd < md.Length && md[lineEnd] != '\n' && md[lineEnd] != '\r')
+                        {
+                            lineEnd++;
+                        }
+                        
+                        // Process the text from current position to line end
+                        while (position < lineEnd)
+                        {
+                            // Process inline markdown formatting (bold, italic, links, etc.)
+                            char contChar = md[position];
+                            
+                            // Handle bold text (**text** or __text__)
+                            if (IsBoldStart(md, position))
+                            {
+                                position += 2;
+                                isInsideBold = true;
+                                AddTokenToTarget(to, BoldStart);
+                                continue;
+                            }
+                            
+                            if (IsBoldEnd(md, position))
+                            {
+                                position += 2;
+                                isInsideBold = false;
+                                AddTokenToTarget(to, BoldEnd);
+                                continue;
+                            }
+                            
+                            // Handle italic text (*text* or _text_)
+                            if (IsItalicStart(md, position))
+                            {
+                                position++;
+                                isInsideItalic = true;
+                                AddTokenToTarget(to, ItalicStart);
+                                continue;
+                            }
+                            
+                            if (IsItalicEnd(md, position))
+                            {
+                                position++;
+                                isInsideItalic = false;
+                                AddTokenToTarget(to, ItalicEnd);
+                                continue;
+                            }
+                            
+                            // Handle inline code (`code`)
+                            if (IsInlineCodeStart(md, position))
+                            {
+                                position++;
+                                isInsideInlineCode = true;
+                                AddTokenToTarget(to, InlineCodeStart);
+                                continue;
+                            }
+                            
+                            if (isInsideInlineCode && IsInlineCodeEnd(md, position))
+                            {
+                                position++;
+                                isInsideInlineCode = false;
+                                AddTokenToTarget(to, InlineCodeEnd);
+                                continue;
+                            }
+                            
+                            // Handle links [text](url)
+                            if (IsLinkStart(md, position))
+                            {
+                                ExtractLink(md, ref position, to);
+                                continue;
+                            }
+                            
+                            // Handle regular text
+                            string continuationText = ExtractRegularText(md, ref position);
+                            if (!string.IsNullOrEmpty(continuationText))
+                            {
+                                AddTextTokenToTarget(to, continuationText);
+                            }
+                            else
+                            {
+                                if (position < lineEnd)
+                                {
+                                    position++;
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        // Don't skip the newline - let the main loop handle it
+                        // This ensures empty lines after continuation text are properly detected
+                        // as ParagraphBreak (for proper <BR><BR> before next list item or continuation)
+                        continue;
+                    }
+                    
                     continue;
                 }
                 
@@ -305,14 +442,25 @@ namespace m0.Lib.StdView
 
                     if (listContextStack.Count > 0 && lineAnalysis.HasContent)
                     {
-                        CloseListsToIndent(to, lineAnalysis.Indent);
-
+                        // Check if this is a new list item first
                         if (TryGetListItem(md, lineAnalysis.ContentPosition, out _, out _, out _))
                         {
+                            CloseListsToIndent(to, lineAnalysis.Indent);
                             position = lineAnalysis.ContentPosition;
                             continue;
                         }
 
+                        // Check if this is continuation of current list item (indent greater than list indent)
+                        ListContext current = listContextStack.Peek();
+                        if (lineAnalysis.Indent > current.Indent)
+                        {
+                            // This is continuation of list item - don't close lists, just add HardBreak
+                            AddTokenToTarget(to, HardBreak);
+                            position = lineAnalysis.ContentPosition;
+                            continue;
+                        }
+
+                        // Check if list should stay open
                         if (ShouldStayInCurrentList(lineAnalysis.Indent))
                         {
                             AddTokenToTarget(to, HardBreak);
@@ -320,6 +468,7 @@ namespace m0.Lib.StdView
                             continue;
                         }
 
+                        // Otherwise, close lists as needed
                         if (lineAnalysis.Indent == 0)
                         {
                             CloseAllLists(to);
@@ -570,6 +719,31 @@ namespace m0.Lib.StdView
                     ExtractTable(md, ref position, to);
                     isInsideTable = false;
                     continue;
+                }
+                
+                // Check if we're in a list context and text starts with indent greater than list indent
+                // This handles continuation of list items after empty lines (e.g., tab-indented text)
+                // Only check at the start of a line (after newline or at beginning of string)
+                if (listContextStack.Count > 0 && IsAtLineStart(md, position))
+                {
+                    LineAnalysis textAnalysis = AnalyzeLine(md, position);
+                    if (textAnalysis.HasContent)
+                    {
+                        // Check if this is not a new list item
+                        if (!TryGetListItem(md, textAnalysis.ContentPosition, out _, out _, out _))
+                        {
+                            ListContext current = listContextStack.Peek();
+                            // If text has indent greater than list indent, it's continuation of list item
+                            if (textAnalysis.Indent > current.Indent)
+                            {
+                                // Not a new list item, so treat as continuation
+                                AddTokenToTarget(to, HardBreak);
+                                position = textAnalysis.ContentPosition;
+                                // Continue processing - text will be handled as regular text within list item
+                                continue;
+                            }
+                        }
+                    }
                 }
                 
                 // Handle regular text
@@ -1285,6 +1459,23 @@ namespace m0.Lib.StdView
             }
 
             return idx < 0 || md[idx] == '\n' || md[idx] == '\r';
+        }
+        
+        private static bool IsAtLineStart(string md, int position)
+        {
+            if (position == 0)
+                return true;
+            
+            int idx = position - 1;
+            
+            // Skip carriage return if present
+            if (idx >= 0 && md[idx] == '\r')
+            {
+                idx--;
+            }
+            
+            // Check if previous character is newline
+            return idx >= 0 && md[idx] == '\n';
         }
 
         private static bool IsListItem(string md, int position)
@@ -2110,7 +2301,7 @@ namespace m0.Lib.StdView
                 }
             }
             
-            // Skip all subsequent empty lines and whitespace
+            // Skip all subsequent empty lines (but preserve whitespace on content lines for indent detection)
             while (position < md.Length)
             {
                 // Skip any carriage return
@@ -2118,6 +2309,9 @@ namespace m0.Lib.StdView
                 {
                     position++;
                 }
+                
+                // Remember position before skipping whitespace
+                int posBeforeWhitespace = position;
                 
                 // Skip any whitespace on the empty line
                 while (position < md.Length && char.IsWhiteSpace(md[position]) && md[position] != '\n' && md[position] != '\r')
@@ -2145,7 +2339,8 @@ namespace m0.Lib.StdView
                 }
                 else
                 {
-                    // Next line has content, stop here
+                    // Next line has content, restore position to preserve indentation
+                    position = posBeforeWhitespace;
                     break;
                 }
             }
