@@ -1,32 +1,37 @@
 # From graph to meta edge enhanced graph
 
-We will introduce _meta edge enhanced graph_ (_MEEG_), but first let analyze some simplier structures and their limitations.
+We will introduce _meta edge enhanced graph_ (_MEEG_), but before that we will start with simplier structures and their limitations analysis.
 ## Trees, acyclic graphs, cyclic graphs
 
-Starging from the data modelling perspective, lest's analyze what types of structures can be formed out of _vertexes_ (sometimes called _nodes_) and _edges_ in between _vertexes_. 
-> For the simplicity and implementation transparency, we assume that all _edges_ are _directed edges_ → each _edge_ has _from vertex_ and _to vertex_ defined.
+Starting from a data modelling perspective, lest's analyze what types of structures can be formed from _vertexes_ (sometimes called _nodes_) connected by _edges_. 
+
+> For the simplicity and implementation transparency, we assume that all _edges_ are _directed edges_ → each _edge_ has defined _from vertex_ and _to vertex_.
+
 - _**tree**_
 
-	- Each _to vertex_ can have only one _from vertex_ → as we are discussing _trees_ here this rule orginally is expressed as: each _node_ can have only one _parent node_.
-	- No _edges_ cycles allowed → not possible to return to the same _vertex_ when traversing the structure.
+	- Each _to vertex_ can have only one _from vertex_ → in the context of _trees_, this is expressed as: each _node_ can have only one _parent node_.
+	- Cycles are forbidden → it's impossible to return to the same _vertex_ when traversing the structure.
 
 - _**acyclic graph**_
 
-	- Multiple _from vertexes_ possible for given _to vertex_.
-	- No _edges_ cycles allowed → not possible to return to the same _vertex_ when traversing the structure.
+	- A _to vertex_ can have multiple _from vertexes_.
+	- Cycles are forbidden → it's impossible to return to the same _vertex_ when traversing the structure.
 	
 - _**cyclic graph**_
 
-	- Multiple _from vertexes_ possible for given _to vertex_.
-	- _Edges_ cycles allowed → possible to return to the same _vertex_ when traversing the structure.
-	
-Now let's analyze what data relationships are possible to be expressed by _tree_, _acyclic graph_, _cyclic graph_. As we store the data in the _vertexes_, the analyzed relationships are in fact relationships between _vertexes_.
+	- A _to vertex_ can have multiple _from vertexes_.
+	- Cycles are allowed → it's possible to return to the same _vertex_ when traversing the structure.	
+## Data relationships in different structures
+
+Now let's examine what data relationships each structure type can express. Since data are stored inside _vertexes_, we're analyzing relationships between _vertexes_.
+
 |structure type|one to many|many to many|recurrency|
 |-|-|-|-|
-|_tree_|YES|no|no|
-|_acyclic graph_|YES|YES|no|
-|_cyclic graph_|YES|YES|YES|
-The conclusion is that _cyclic graph_ is most universal data structure here, and handles all basic types of relations between data.
+|_tree_|✓|✗|✗|
+|_acyclic graph_|✓|✓|✗|
+|_cyclic graph_|✓|✓|✓|
+
+*Conclusion:* The cyclic graph is the most universal data structure here, supporting all basic types of data relationships.
 ## How graph can handle semantics → adding labels
 
 In most of the graph structures, data are property of the _vertexes_. Usually we can store some number or string value inside a _vertex_. But how to describe the _edge_? Imagine we would like to discriminate two possible relationships - for example "is employee" and "is organisational unit". Typicaly in graphs this is achieved by _labeling_ edges. In most of the cases this is just assigning a string value to the _edge_.

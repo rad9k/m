@@ -14,7 +14,7 @@ class TreeView {
     init() {
         this.render();
         this.bindEvents();
-	loadDocument_index();
+		loadDocument_index();
     }
 
     render() {
@@ -254,11 +254,12 @@ function loadDocument_index() {
     const mainContent = document.getElementById('mainContent');
     
     // Load document from HTML file
-    const docPath = `00_Start`;
+    const docPath = `00 Start`;
     
     fetch(docPath)
         .then(response => {
             if (response.ok) {
+				console.log("Cześć!");
                 return response.text();
             } else {
                 mainContent.innerHTML = '<div class="document-placeholder">Select an item from the left panel to load the document</div>';
@@ -270,7 +271,7 @@ function loadDocument_index() {
         .catch(error => {
             console.error('Error loading document:', error);
             mainContent.innerHTML = '<div class="document-placeholder">Select an item from the left panel to load the document</div>';
-        });
+        });		
 } 
 
 function loadDocument(docId) {
