@@ -1,4 +1,4 @@
-# Vertexes and edges
+# Meta edges enhanced graph
 
 _Vertex_ has three kinds of properites:
 - it has a atomic _value_	
@@ -14,7 +14,6 @@ The _edge_ has following properties:
 
 In most cases the _incoming edges_ are of less importance, and most of the graph alghoritms in _MinusZero_ use only _outcoming edges_. 
 However in some important scenarios the _incoming edges_ are also necessary to be known for given _vertex_, so this is a reason our model directly supports _incoming edges_.
-
 # How do we write about edges and vertexes?
 
 As precise desciprtion of vertexes / edges shapes and values might be lenghty and hard to read, in this documentation we are going to use some "shortcuts" - phrases that are shorter but not quite precise.	
