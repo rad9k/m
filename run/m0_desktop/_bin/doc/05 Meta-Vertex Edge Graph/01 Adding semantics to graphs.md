@@ -58,3 +58,8 @@ Among all the above attempts, some, particullary Topic Maps or Datalog seems to 
 
 **Those attemps has a lot of potential but current implementations due to the complexity often introduces more problems than they solve.**
 
+"While existing frameworks—notably RDF, Topic Maps, and Datalog with High-Order Logic (HiLog)—show promise in modeling complex relationships, they fail to provide a coherent, uniform model capable of seamlessly traversing multiple meta-levels. In practice, these systems often rely on rigid, non-recursive abstractions or special-purpose constructs that create "glass ceilings" for expressiveness.
+
+All public attempts to date ultimately stop short of adopting the relation as the sole ontological primitive. By preserving a distinction between 'data' and 'meta-data' structures, they fundamentally limit their own capacity to serve as a general-purpose computational substrate.
+
+While one could technically frame the -0 (MinusZero) environment as a 'graph-native Datalog HiLog execution environment', such a comparison is reductive. Unlike traditional HiLog implementations, -0 achieves a level of structural uniformity where meta-models, logic, and data instances are same-class citizens. This simplicity allows for real-time, executable graph-transformations and the birth of a new class of Graph Programming Languages, where the diagram is not a representation of the code, but the code itself.
