@@ -1,100 +1,122 @@
 # Introducing Meta-Vertex Edge Graph (_MVEG_)
 
-> Meta-Vertex Edge Graph is a _directed cyclic graph_ where each _edge_ insted of a label has additional vertex, called _meta vertex_. 
+> **Meta-Vertex Edge Graph (MVEG)** is a _directed cyclic graph_ where each _edge_, insted of a label has additional vertex, called _meta vertex_. 
 
 ## Why MVEG
 
-Simple _edges labeling_ is too simple to handle semantics needed to effectively manage complexity we have in typical IT systems. We need something more.
+Simple _edge labeling_ is not sufficient to express semantics required to manage the complexity of typical IT systems. As systems grow, semantics often becomes as complex as data itself — and treating it as mere annotations no longer works.
 
-Meta-Vertex Edge Graph (_MVEG_) delivers a lot of properties usefull when dealing with complexity by semantics:
+MVEG addresses this problem by making **semantics a structural element of the graph**, not an external layer.
 
-- **simple directed cyclic graph. only add _meta vertex_ in _edge_**
+### Core properties of MVEG
 
-	very simple data model that can easiely express very complex data structures
-	
-- **semantics is a first-class citizen**
-	
-	- same rules and system behavioue for data and (any level) semantics:
-	
-		- same validation
-		- same constrains
-		- same graphical presentation
-		- same relations to other assets (data / semantics)
-		
-	- same tooling for interaction with data and (any level) semantics:
-	
-		- same viewing
-		- same editing
-		- same quering
-		- same transformation
-	
-- **ontological unification**
+MVEG provides several key properties that make it effective for base structure of complex systems:
 
-	- expressing semantics is the same as expressing data
-	- relationships between semantics entities are exactly the same as relationships between data objects
-	- reccurent relationships on semantics entities possible exacty the same as reccurent relationships on data entities
-	
-- **any number of _meta_**
+**Minimal structural extension**
+- A simple directed cyclic graph
+- The only addition is a meta vertex on each edge
 
-	- ability to define semantics of any level
-	- any abstraction layers hierarchy and shape
-	- relationships between entities of different meta levels
-	
-- **reduction of ontological complexity**
+**Very simple data model**
+- A minimal set of concepts
+- Capable of expressing very complex data and semantic structures
 
-	- all the ontological expresivene power is aviable without any additional:
-	
-		- abstraction layers
-		- definitions
-		- non-necessary complexity
-		
-	- just two special meta vertexes: `$EdgeTarget` and `$VertexTarget`
-		
-- **structural homoiconicity**
+**Semantics as a first-class citizen**
+- Data and semantics are treated in exactly the same way 
+- Same rules and behavior for semantics and data:
+	- validation
+	- constraints
+	- graphical representation
+	- textual representation
+	- persistent storage
+	- relationships to other assets (data or semantics)
+- Can query semantics in the same way as data
+	- Can mix various meta levels in the same quering
+	- Applies to _Graph Virtual Machine_ as well → example: finding a function to call by a query
 
-	- _MVEG_ is used as a base starting point for the new class of programming langages (_graph programming lanugages_), that has homoiconicity property	
-	- homoiconicity is provided in a full glory - full structural homoiconicity:
+**Unified tooling**
+- The same tools are used to work with data and semantics
+- Unified tooling at any level:
+	- viewing
+	- editing
+	- querying
+	- transformation
 	
-		- code and data strutures are the same
-		- the execution structure (_Graph Virtual Machine code_) is the same as the _graph programming language_ programmer has direct access to
-		- code structure represents code execution flow
-		- code can do reflection and auto-modification
-		- code and data onthology are the same
-		- metaprogramming is core part of the language
+### Ontological unification
+
+There is no ontological split between “data” and “metadata”:
+- expressing semantics is the same as expressing data
+- relationships between semantic entities are exactly the same as relationships between data entities
+- recursive relationships between semantic entities are possible in the same way as recursive relationships between data entities
+
+### Arbitrary number of meta levels and their shape
+
+- any number of meta levels
+- semantics defined at any level
+- abstraction hierarchies of any shape
+- relationships between entities across different meta levels
+
+### Reduction of ontological complexity
+
+All expressive ontological power is available without introducing additional layers, such as:
+- separate abstraction frameworks
+- external definitions
+- unnecessary conceptual machinery
+
+To express any complex multi meta hierarchies of data / semantics entities and any relations between them, only three special meta vertices are required:
+- $Is
+- $EdgeTarget
+- $VertexTarget
+
+### Structural homoiconicity
+
+_MVEG_ can serve as a foundation for a new class of programming languages — graph programming languages — that exhibit full structural homoiconicity:
+- code and data structures are identical
+- the execution structure (Graph Virtual Machine code) is the same structure the programmer directly manipulates
+- code structure represents execution flow
+- code can do reflection and auto-modification
+- code and data share the same ontology
+- metaprogramming is a core feature, not an extension
 	
 ## MVEG definition
 
-Meta-Vertex Edge Graph is made out _vertexes_ and _edges_.
+Meta-Vertex Edge Graph consists of _vertexes_ and _edges_.
+
+**Vertex**
 
 _Vertex_ has three kinds of properites:
-- it has a atomic _value_	
-- it h  as a set of _incoming edges_
-- it has a set of _outcoming edges_
+- an atomic _value_	
+- a set of _incoming edges_
+- a set of _outgoing edges_
 
-The _value_ stores an atomic data such as a character string (such as "John") or number value (such as "3.14").
+The atomic _value_ may be, for example:
+- a string (such as "John")
+- number value (such as "3.14")
 
-The _edge_ has following properties:
+**Edge**
+
+An _edge_ has the following properties:
 - _from vertex_
-- edge's _meta vertex_ - reffering _vertex_ that describes given _edge_
+- edge's _meta vertex_ 
+	- reffering _vertex_ that describes given _edge_
+	- describing the semantics of the _edge_
 - _to vertex_
 
-In most cases the _incoming edges_ are of less importance, and most of the graph alghoritms in _-zero_ use only _outcoming edges_. 
-However in some important scenarios the _incoming edges_ are also necessary to be known for given _vertex_, so this is a reason our model directly supports _incoming edges_.
+In most cases the _incoming edges_ are less important, and many of the graph alghoritms in _-zero_ use only _outgoing edges_. 
+However in some important scenarios the _incoming edges_ are also essential (for example: to get the imports from the parent package), which is why the model explicitly supports them.
 
-# How do we write about edges and vertexes?
+## How do we write about edges and vertexes?
 
-As precise desciprtion of vertexes / edges shapes (relations) and values might be lenghty and hard to read, in this documentation we are going to use some "shortcuts" - phrases that are shorter but not quite precise.	
+A fully precise description of graph structure can be verbose and difficult to read.
+For clarity, this documentation uses short descriptive phrases that are easier to follow but slightly informal.	
 	
-Those are:
+Shortcut phrases:
 
 - **"Vertex _X_ has meta edge _Y_"**.
 
-	Precise description: _Outgoing edges_ set for _vertex_ X contains edge, that has _meta vertex_ pointing to _vertex_ with has a value of Y.
+	Precise meaning: The set of _outgoing edges_ of _vertex_ X contains an _edge_ whose _meta vertex_ points to a _vertex_ with atomic value Y.
 
 - **"Vertex _X_ has meta edge _Y_ with the value of _Z_"**
 
-	Precise description: _Outgoing edges_ set for _vertex_ X contains edge, that has:
-	
-	- _meta vertex_ pointing to _vertex_ with has a value of Y.
-	- _to vertex_ that has value of _Z_.
-
+	Precise description: The set of _outgoing edges_ of _vertex_ X contains an _edge_:
+		- whose _meta vertex_ points to a _vertex_ with atomic value Y
+		- whose _target vertex_ has atomic value Z
