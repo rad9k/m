@@ -2,6 +2,8 @@
 
 > **Meta-Vertex Edge Graph (MVEG)** is a _directed cyclic graph_ where each _edge_, insted of a label has additional vertex, called _meta vertex_. 
 
+...and that is. Now let's see where it takes us...
+
 ## Why MVEG
 
 Simple _edge labeling_ is not sufficient to express semantics required to manage the complexity of typical IT systems. As systems grow, semantics often becomes as complex as data itself — and treating it as mere annotations no longer works.
@@ -22,6 +24,11 @@ MVEG provides several key properties that make it effective for base structure o
 
 **Semantics as a first-class citizen**
 - Data and semantics are treated in exactly the same way 
+- Can query semantics in the same way as data
+	- Can mix various meta levels in the same query
+	- Applies to _Graph Virtual Machine_ as well → example: finding a function to call by a query
+	
+**Semantics is data. Data is semantics**
 - Same rules and behavior for semantics and data:
 	- validation
 	- constraints
@@ -29,13 +36,16 @@ MVEG provides several key properties that make it effective for base structure o
 	- textual representation
 	- persistent storage
 	- relationships to other assets (data or semantics)
-- Can query semantics in the same way as data
-	- Can mix various meta levels in the same quering
-	- Applies to _Graph Virtual Machine_ as well → example: finding a function to call by a query
+- Can define triggers on semantic entities 
+	- Each reference to semantic entity can fire a programmable event trigger
+	- Trigger can check if usage aligns with constraints - e.g., verify the _to vertex_ of the reffering _edge_ has all required _outgoing edges_ and add missing ones with default values
+- Can define updatable views on semantic entities
+	- Changes at deeper levels of semantic structure can fire programmable view update triggers
+	- View update triggers can keep meta models at any level consistent with each other
 
 **Unified tooling**
 - The same tools are used to work with data and semantics
-- Unified tooling at any level:
+- Any meta level (instance, meta model, meta meta model ect.) has unified tooling at any level:
 	- viewing
 	- editing
 	- querying
@@ -50,7 +60,7 @@ There is no ontological split between “data” and “metadata”:
 
 ### Arbitrary number of meta levels and their shape
 
-- any number of meta levels
+- any number of meta levels (instance, meta model, meta meta model ect.)
 - semantics defined at any level
 - abstraction hierarchies of any shape
 - relationships between entities across different meta levels

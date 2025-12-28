@@ -48,8 +48,8 @@ Do not want to define complexity or semantics here as those are rabbit holes. Le
 ## How graph can handle semantics. Is adding labels enough?
 
 > As _vertexes_ stores data, the _edges_ seems to be a good place to handle semantics. 
-
-But how do we describe an _edge_? Imagine we want to distinguish between two different types of relationships — for example, "is employee" and "is organizational unit". In graphs, this is typically achieved by _edges labeling_. In most cases, this simply means assigning a string value to the _edge_.
+>
+> But how do we describe an _edge_? Imagine we want to distinguish between two different types of relationships — for example, "is employee" and "is organizational unit". In graphs, this is typically achieved by _edges labeling_. In most cases, this simply means assigning a string value to the _edge_.
 
 This works for most of the cases, but introduces two fundamental problems:
 
