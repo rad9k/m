@@ -109,6 +109,7 @@ An _edge_ has the following properties:
 - edge's _meta vertex_ 
 	- reffering _vertex_ that describes given _edge_
 	- describing the semantics of the _edge_
+	- _meta vertex_ in MVEG always represent not individual edge's desciption but rather relation class - that's why we have _meta_ in its name 
 - _to vertex_
 
 In most cases the _incoming edges_ are less important, and many of the graph alghoritms in _-zero_ use only _outgoing edges_. 
