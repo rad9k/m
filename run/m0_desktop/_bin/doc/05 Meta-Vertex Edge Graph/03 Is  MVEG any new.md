@@ -76,19 +76,21 @@ Unlike approaches that try to give every edge a unique identity through reificat
 
 - **Structural Homoiconicity:** The definition of a relation type is just another vertex in the graph, accessible through direct pointers.
 
-- **Unified Navigation:** Navigating from an edge to its type, from a type to its constraints, and from constraints to their meta-definitions uses the same pointer traversal mechanism throughout.
+- **Unified Navigation:** Navigating from an instance to its type, and from a type to its meta-type, uses exactly the same pointer traversal mechanism as navigating data.
 
 - **Semantics as Data:** The meta vertex has its own incoming and outgoing edges representing properties, constraints, and relationships—all queryable through standard graph operations without separate query mechanisms.
 
 - **Recursion without Complexity:** Since meta vertices are shared by edge classes (not unique per instance), the graph remains efficient while supporting unlimited meta-levels. Each level uses identical structural primitives.
 
-**The practical impact** is not primarily about computational performance—modern implementations of RDF, Topic Maps, and Property Graphs can achieve similar efficiency with proper indexing. Rather, MVEG provides **conceptual simplicity**: 
+> **The practical impact** is not primarily about computational performance—modern implementations of RDF, Topic Maps, and Property Graphs can achieve similar efficiency with proper indexing. 
+
+Rather, MVEG provides **conceptual simplicity**: 
 
 - A single primitive (vertex) instead of multiple ontological categories
 - A single navigation mechanism (pointer traversal) instead of separate query patterns for data vs. metadata
 - Uniform treatment of semantics and data, enabling triggers, updatable views, and meta-programming as native graph operations
 
-This eliminates the conceptual overhead accumulated through decades of evolution in other paradigms, where each layer (RDF → RDFS → OWL → SHACL) addresses limitations of the previous one.
+This eliminates the conceptual overhead accumulated through decades of evolution in other paradigms.
 
 ## MVEG Value Proposition
 
