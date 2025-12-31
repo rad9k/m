@@ -1,10 +1,20 @@
-# Scope and use cases
+# Use cases and scope
 
 > The -zero platform is built on Meta-Vertex Edge Graph (MVEG), a core data structure providing extreme simplicity with unlimited semantic expressivity and coherent behavior across all meta-levels. Based on MVEG Graph Database, the platform unifies representations of the underlying graph as diagrams (visual representation with rich primitives and nested views) and text languages (built-in and custom with language algebra supporting inheritance and mixing). Graph can also be executed by the Graph Virtual Machine. GVM operates at high abstraction levels where code runs alongside data and meta-models with no impedance mismatch, achieving full structural homoiconicity - code and data share identical structures, enabling reflection, auto-modification, and metaprogramming as core features rather than extensions.
 
-Multiple platform instance types support different workflows: console instances for Linux/Mac/Docker environments, and GUI instances (Windows WPF) providing unified drag-and-drop, bulk operations, and advanced editors where all GUI elements are themselves manipulable graph fragments. Built-in GVM libraries support REST endpoint exposure and consumption, HTTP/Markdown web server, and JSON processing → enabling graph-based web services and document publishing.
+Multiple platform instance types support different workflows: console instances for Linux/Mac/Docker environments, and GUI instances (Windows WPF) providing unified drag-and-drop, bulk operations, and advanced editors where all GUI elements are themselves manipulable graph fragments. Built-in GVM libraries support REST endpoint exposure and consumption, HTTP/Markdown web server, and JSON processing → enabling graph-based web services publishing.
 
-## Scope
+## Use cases
+
+-zero is a modeling/development/execution platform than can be used in unlimited number of scenarios. A few examples:
+
+- **Business process orchestration**
+
+	Using diagrams to design / update / maintain / document business process, such as client risk scoring in a bank. The business process can have very complex logic and have multiple sub-processes being represented in separate or embedded diagrams. The logic can reference internal risk profile tables stored in the graph database. The business process will usually be of orchestration type - calling other systems or microservices via REST interface and using data from them in the high-level business decisions. What is important: the diagrams are not any kind of "simple no-code tool" - diagrams can express processing of very complex data structures with complex queries, transformations and data structures creation statements. If there is a need of documentation, -zero has web server embeded and all changes in the logic (for example risk profile tables) or diagrams (for example risk scoring process) are instantly visible via HTTP web server as a part of markdown based hierarchical documentation portal (same as this documentation).
+	
+- **Retail back-end**
+
+## Scope details
 
 The -zero platform is built on several interconnected core capabilities:
 
@@ -20,12 +30,12 @@ The -zero platform is built on several interconnected core capabilities:
 **Modeling** - Unlimited Meta-levels
 * Represent complex data and knowledge (static properties, dynamic properties, anything expressible in language or mathematics) as MVEG
 * Meta-modeling with any number of levels and custom relations between instances, models, and meta-models
-* Model transformations (built-in and custom)
-* Built-in and easily defined custom meta-models (all as graph fragments)
+* Model querying and transformations (built-in and custom)
+* Built-in and easily defined custom meta-models (defined as a graph fragments)
 
 **Diagrams** - Graph = Diagram
 * Graph IS diagram: visual representation of any data and models
-* Rich library of diagram primitives, all as graph fragments
+* Rich library of diagram primitives (defined as a graph fragments)
 * Custom diagram types easily defined as graph fragments
 * Nested diagrams and multiple views of the same data
 
@@ -40,12 +50,12 @@ The -zero platform is built on several interconnected core capabilities:
 * High abstraction level operation:
   * Basic atom is set of meta-vertex extended edges
   * Cross-cutting concerns support by design
-  * Extensive graph inheritance and views
+  * Extensive graph inheritance and updatable views
   * Advanced querying built into execution platform
   * Code runs alongside data instances and meta-models in Graph DB (no impedance mismatch)
 * Turing complete, currently UML-inspired OOP paradigm (extensible to any execution paradigm)
 * Full structural homoiconicity: code and data structures are identical, enabling reflection, auto-modification, and being based on the same shared ontology
-* Developers access platform features directly: metaprogramming, transactions, triggers, views, persistent storage
+* Developers access platform features directly: metaprogramming, transactions, triggers, updatable views, persistent storage
 * Rich library: exposing and consuming REST endpoints, HTTP server, JSON, Markdown
 
 **Platform Integration** - Unified Experience
@@ -59,6 +69,4 @@ The -zero platform is built on several interconnected core capabilities:
     * Multiple graphical representations of same graph fragment
     * Diagram viewer/editor, advanced text editor, complex form scaffolding, flexible 2D visualization
     * All GUI elements are manipulable graph fragments
-* Markdown-based complex document HTTP server
-
-## Use cases
+* Markdown-based complex document HTTP server, displaying actual versions of all the referenced diagrams
