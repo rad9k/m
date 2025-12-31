@@ -10,9 +10,24 @@ Multiple platform instance types support different workflows: console instances 
 
 - **Business process orchestration**
 
-	Using diagrams to design / update / maintain / document business process, such as client risk scoring in a bank. The business process can have very complex logic and have multiple sub-processes being represented in separate or embedded diagrams. The logic can reference internal risk profile tables stored in the graph database. The business process will usually be of orchestration type - calling other systems or microservices via REST interface and using data from them in the high-level business decisions. What is important: the diagrams are not any kind of "simple no-code tool" - diagrams can express processing of very complex data structures with complex queries, transformations and data structures creation statements. If there is a need of documentation, -zero has web server embeded and all changes in the logic (for example risk profile tables) or diagrams (for example risk scoring process) are instantly visible via HTTP web server as a part of markdown based hierarchical documentation portal (same as this documentation).
+	Using diagrams to design and execute business process, such as client risk scoring in a bank. The business process can have very complex logic and have multiple sub-processes being represented in separate or embedded diagrams. The logic can reference -zero internal data base - for example risk profile tables stored in the graph database. The business process will usually be of orchestration type - calling other systems or microservices via REST interface and using data from them in the high-level business decisions. The diagrams are not any kind of "simple no-code tool". -zero diagrams can express processing of very complex data structures with complex queries, transformations and data structures creation statements. If there is a need of documentation, -zero has web server embeded and all changes in the logic (for example risk profile tables) or diagrams (for example risk scoring process) are instantly visible via HTTP web server as a part of markdown based hierarchical documentation portal.
 	
-- **Retail back-end**
+	CI/CD: can use git to have code/diagrams versioning
+	deployment: -zero console instance running in docker with network access to the orchestrated systems
+	
+- **Back-end**
+
+	As -zero is not capable yet to serve web front-ends on its own, we position -zero as a back-end platform, exposing REST services. Here it can shine storing and exposing any data alongside with logic. The logic lives in the graph database thus there is no impedence mismatch or need for any data ⇔ code translation layer like ORM. The data structures schema can be designed with diagram editor. Back-end logic can be expressed by diagrams, code or any desired mix of the two (in fact you can have code and diagrams at once on the screen).
+	
+	CI/CD: can use git to have code/diagrams versioning
+	deployment: -zero console instance running in docker exposing REST services
+	
+- **Enterprise architecture**
+
+	-zero started as enterprise diagramming platform and supports data instances, models and meta-models creation, update, maintanace, transformations and instant documentation. Those data and models are just a graph fragments and the diagrams are way of visualising those structures with a wide area of diagram primitives like boxes, lines, lists, embeded forms, code fragments editors, embeded diagrams and domain centric combinations of those. All those primitives can be further customized with colors, borders, transparencies. There is nice area of build-in diagram types and diagram primitives, but creating custom ones is a breeze. But creating nice diagrams is just the first step. Follow that with modeling high-level dependencies and adding meta information. Than it will be no problem to manage enterprise scale complexity by quering models and their meta data. Add automatic model transformations and by modyfing one diagram and underlying model, the updatable view is being automatically modified and the changes are visible on "target" diagram. Such transformation can be high-level simplification of complex structure, complete ontology reversion (for example from product centric to customer centric) or any other transformation that creates value. And those updatable views can work on both directions - when target diagram is modified the source one gets updated.
+
+CI/CD: can use git to have code/diagrams versioning
+	deployment: -zero console instance running in docker with network access to the orchestrated systems
 
 ## Scope details
 
