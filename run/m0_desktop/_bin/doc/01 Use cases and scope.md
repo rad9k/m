@@ -7,13 +7,6 @@ Multiple platform instance types support different workflows: console instances 
 ## Use cases
 
 -zero is a modeling/development/execution platform than can be used in unlimited number of scenarios. A few examples:
-
-- **Business process orchestration**
-
-	Using diagrams to design and execute business process, such as client risk scoring in a bank. The business process can have very complex logic and have multiple sub-processes being represented in separate or embedded diagrams. The logic can reference -zero internal data base - for example risk profile tables stored in the graph database. The business process will usually be of orchestration type - calling other systems or microservices via REST interface and using data from them in the high-level business decisions. The diagrams are not any kind of "simple no-code tool". -zero diagrams can express processing of very complex data structures with complex queries, transformations and data structures creation statements. If there is a need of documentation, -zero has web server embeded and all changes in the logic (for example risk profile tables) or diagrams (for example risk scoring process) are instantly visible via HTTP web server as a part of markdown based hierarchical documentation portal.
-	
-	CI/CD: can use git to have code/diagrams versioning
-	deployment: -zero console instance running in docker with network access to the orchestrated systems
 	
 - **Back-end**
 
@@ -24,7 +17,15 @@ Multiple platform instance types support different workflows: console instances 
 	
 - **AI pipeline**
 
-	In modern data science and AI we usually do not rely on one monolith-type component, but rather use pleora of components (usually Python based) that process data on various stages. Execution of several components defines a pipeline through which the data process, resulting in some model or report in the end. Such pipeline migh need to handle some logic, for example executing same tool for several input files in a loop or 
+	In modern data science and AI we usually do not rely on one monolith-type component, but rather use pleora of, usually Python based components that process data on various stages. Execution of several components defines a pipeline through which the data process, resulting in some model or report in the end. Pipeline migh need to handle some logic, for example executing python tool for several input files in a loop or anaylizng if there is a need to call LLM again to correct processing error. In most cases it will be a good idea to represent such a pipeline as diagram and if there is a need certain fragments might be edited as a text code. AI R&D is very often experimental science, where multiple pipelilne runs, with various parameters and input data sets lead to final model or a conclusion
+	
+	
+- **Business process orchestration**
+
+	-zero core use cases is to use diagrams for designing and executing of business process, such as client risk scoring in a bank. The business process can have very complex logic and have multiple sub-processes being represented in separate or embedded diagrams. The logic can reference -zero internal data base - for example risk profile tables stored in the graph database. The business process will usually be of orchestration type - calling other systems or microservices via REST interface and using data from them in the high-level business decisions. The diagrams are not any kind of "simple no-code tool". -zero diagrams can express processing of very complex data structures with complex queries, transformations and data structures creation statements. If there is a need of documentation, -zero has web server embeded and all changes in the logic (for example risk profile tables) or diagrams (for example risk scoring process) are instantly visible via HTTP web server as a part of markdown based hierarchical documentation portal.
+	
+	CI/CD: can use git to have code/diagrams versioning
+	deployment: -zero console instance running in docker with network access to the orchestrated systems
 	
 - **Enterprise architecture**
 
