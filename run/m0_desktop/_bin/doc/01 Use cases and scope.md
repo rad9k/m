@@ -22,12 +22,18 @@ Multiple platform instance types support different workflows: console instances 
 	CI/CD: can use git to have code/diagrams versioning
 	deployment: -zero console instance running in docker exposing REST services
 	
+- **AI pipeline**
+
+	In modern data science and AI we usually do not rely on one monolith-type component, but rather use pleora of components (usually Python based) that process data on various stages. Execution of several components defines a pipeline through which the data process, resulting in some model or report in the end. Such pipeline migh need to handle some logic, for example executing same tool for several input files in a loop or 
+	
 - **Enterprise architecture**
 
-	-zero started as enterprise diagramming platform and supports data instances, models and meta-models creation, update, maintanace, transformations and instant documentation. Those data and models are just a graph fragments and the diagrams are way of visualising those structures with a wide area of diagram primitives like boxes, lines, lists, embeded forms, code fragments editors, embeded diagrams and domain centric combinations of those. All those primitives can be further customized with colors, borders, transparencies. There is nice area of build-in diagram types and diagram primitives, but creating custom ones is a breeze. But creating nice diagrams is just the first step. Follow that with modeling high-level dependencies and adding meta information. Than it will be no problem to manage enterprise scale complexity by quering models and their meta data. Add automatic model transformations and by modyfing one diagram and underlying model, the updatable view is being automatically modified and the changes are visible on "target" diagram. Such transformation can be high-level simplification of complex structure, complete ontology reversion (for example from product centric to customer centric) or any other transformation that creates value. And those updatable views can work on both directions - when target diagram is modified the source one gets updated.
+	-zero started as enterprise diagramming platform and supports data instances, models and meta-models creation, update, maintanace, transformations and instant documentation. Those data and models are just a graph fragments and the diagrams are way of visualising those structures with a wide area of diagram primitives like boxes, lines, lists, embeded forms, code fragments editors, embeded diagrams and domain centric combinations of those. All those primitives can be further customized with colors, borders, transparencies. There is nice area of build-in diagram types and diagram primitives, but creating custom ones is a breeze. But creating nice diagrams is just the first step. Follow that with modeling high-level dependencies and adding meta information. Than it will be no problem to manage enterprise scale complexity by quering models and their meta data. Add automatic model transformations and by modyfing one diagram and underlying model, the updatable view is being automatically modified and the changes are visible on "target" diagram. Such transformation can be high-level simplification of complex structure, complete ontology reversion (for example from product centric to customer centric) or any other transformation that creates value. And those updatable views can work on both directions - when "target" diagram is modified the "source" one gets updated.
+	
+	In the end the diagrams needs to be presented to the wider audience. And mind that diagrams can be updated frequently. Fortunatelly no need to "publish" them. Just create a markdown based hierarchical documentation site and reference any diagrams from the md files. The diagrams will be part of the documentation portal and all the diagram updates will be instantly visible.
 
-CI/CD: can use git to have code/diagrams versioning
-	deployment: -zero console instance running in docker with network access to the orchestrated systems
+	CI/CD: can use git to have diagrams versioning
+	deployment: -zero desktop instance running in architects machines, documentation server running -zero console instance exposing the HTTP server
 
 ## Scope details
 
