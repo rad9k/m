@@ -4,7 +4,8 @@ The -zero is complete graph database / back-end execution platform where you can
 
 > The -zero platform is built on Meta-Vertex Edge Graph (MVEG), a core data structure providing extreme simplicity with unlimited semantic expressivity and coherent behavior across all meta-levels. Based on MVEG Graph Database, the platform unifies representations of the underlying graph as diagrams (visual representation with rich primitives and nested views) and text languages (built-in and custom with language algebra supporting text languages inheritance and mixing). Graph can also be executed by the Graph Virtual Machine. GVM operates at high abstraction levels where code runs alongside data and meta-models with no impedance mismatch, achieving full structural homoiconicity - code and data share identical structures, enabling reflection, auto-modification, and metaprogramming as core features rather than extensions.
 
-Two platform instance types support different workflows: console instances for Linux/Mac/Docker environments, and GUI instances (Windows WPF) providing unified drag-and-drop, bulk operations, and advanced editors where all GUI elements are themselves manipulable graph fragments. Built-in GVM libraries support REST endpoint exposure and consumption, HTTP/Markdown web server, and JSON processing → enabling graph-based web services and documentation publishing.
+Two platform instance types support different workflows: console instances for Linux/Mac/Docker environments, and GUI instances (Windows WPF) providing unified drag-and-drop, bulk operations, and advanced editors where all GUI elements are themselves manipulable graph fragments.
+Built-in GVM libraries support REST endpoint exposure and consumption, HTTP/Markdown web server, and JSON processing → enabling graph-based web services and documentation publishing.
 
 ## Use cases
 
