@@ -20,7 +20,7 @@ Built-in GVM libraries support REST endpoint exposure and consumption, HTTP/Mark
 	
 - **AI pipeline**
 	
-	In modern data science and AI, we typically don't rely on a single monolithic component. Instead, we use multiple, usually Python-based components that proceses data at various stages. Execution of several components defines a pipeline through which the data process, resulting in some model or report in the end. Pipelines often need to handle logic, like looping through input files or deciding whether to call an LLM again to fix processing errors. In most cases, representing such pipelines as diagrams works well, and when needed, specific parts can be edited as text code.
+	In modern data science and AI, we typically don't rely on a single monolithic component. Instead, we use multiple, usually Python-based components that process data at various stages. Execution of several components defines a pipeline through which the data proceses, resulting in some model or report in the end. Pipelines often need to handle logic, like looping through input files or deciding whether to call an LLM again to fix processing errors. In most cases, representing such pipelines as diagrams works well, and when needed, specific parts can be edited as text code.
 	
 	_CI/CD:_ can use git to have code/diagrams versioning
 	_deployment:_ -zero desktop instance running on AI expert machine	
