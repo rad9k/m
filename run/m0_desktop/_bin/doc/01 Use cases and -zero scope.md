@@ -13,7 +13,7 @@ Built-in GVM libraries support REST endpoint exposure and consumption, HTTP/Mark
 	
 - **Back-end**
 
-	-zero isn't ready to serve web front-ends on its own yet, so we position it as a back-end platform with REST API. This is where it excels – storing data and logic together. The logic lives directly in the graph database, so there's no impedance mismatch or need for translation layers like ORM. You can design data schemas with a diagram editor and express back-end logic through diagrams, code, or any mix of both (you can even have code and diagrams on screen simultaneously). All the REST plumbing and OpenAPI specyfication are automatically generated on the fly. Just mark the functions you want to expose with a 'REST' meta edge.
+	-zero isn't ready to serve web front-ends on its own yet, so we position it as a back-end platform with REST API. This is where it excels – storing data and logic together. The logic lives directly in the graph database, so there's no impedance mismatch or need for translation layers like ORM. You can design data schemas with a diagram editor and express back-end logic through diagrams, code, or any mix of both (you can even have code and diagrams on screen simultaneously). All the REST plumbing and OpenAPI specyfication are automatically generated on the fly. Just mark the functions you want to expose with a `REST` meta edge.
 	
 	_CI/CD:_ can use git to have code/diagrams versioning
 	_deployment:_ -zero console instance running in docker exposing REST services
