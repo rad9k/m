@@ -10,84 +10,101 @@
 
 Modern IT and especially computer systems creation and maitanance has several fundamental problems:
 
-**requirements**
+### Requirements
 
-- requirements definition is lost in the implementation
-- implementation itself is too low-level to recreate requirements from it
-- requirements definition even if documented at the project's start in not updated further
-- edge-cases identfied in the implementation are not expresseed and documented as the high-level requirements update
+**_Problem:_ Requirements and implementation become fatally out-of-sync**
 
-_summary:_ The requirements definition and implementation becmes out-of-sync, making implementation testing and future requirements evolution problematic.
+- Requirements definition is lost in the implementation - the "why" disappears, leaving only the "how"
+- Implementation itself is too low-level to recreate requirements from it
+- Requirements documentation, even when created at project start, is never updated as the system evolves
+- Edge cases discovered during implementation remain buried in code - they never flow back to update high-level requirements
+- After a few iterations, requirements documents become historical artifacts with no connection to actual system behavior
 
-**domain data model**
+_**Impact:**_ Testing becomes guesswork (what should we actually test?), and future requirements evolution is nearly impossible without archaeological code analysis.
 
-- implementation starts without defining basic bussiness concepts
-- different naming of the same semantic implementation assets
-- same names of different semantics implementation assets
-- even when starting with domain data model definition it instantly becomes detached from the implementation and after few iterations, becomes out-of-sync
-- expressing domain model as a diagram is not a common practice becouse of: 
-	- quickly becoming out-of-sync
-	- need of manual diagram publication after makeing changes
+### Domain data model
 
-_summary:_ Schema chaos or even no schema at all.
+**_Problem:_ Schema chaos - or no schema at all**
 
-**architecture**
+- Implementation starts without defining basic bussiness concepts first
+- The same concept gets different names across the codebase (semantic inconsistency)
+- Different concepts share the same names (naming collisions)
+- Even when teams start with a proper domain model, it immediately detaches from implementation
+- After a few iterations, the documented model bears no resemblance to actual code structure
+- Domain model diagrams aren't maintained because:
+	- They become outdated within days
+	- Publishing updated diagrams requires manual work nobody has time for
 
-- architecture not defined or documented
-- even it architcture is defined, often it is not published and not aviable for all interested stakeholders
-- instantly detached from implementation
-- after few sprints, the documented architecture is just a museal artefact
+_**Impact:**_ Semantic confusion across the team. Nobody knows what terms mean anymore. Data structures proliferate with unclear relationships.
 
-_summary:_ Problematic deployment and security risk analysis. Other system integration and next-version design are problematic also.
+### Architecture
 
-**data**
+**_Problem:_ Architecture exists only in tribal knowledge**
 
-- lack of proper and up-to-date domain-model results in multiple data sources in their own schema
-- each data source uses its own identifiers, reasoning about data items uniquicity becomes problematic → identifiers hell
-- data quality hard to track and keep healthy
+- Architecture not defined or documented
+- Even if architcture is defined, often it is not published and not available for all interested stakeholders
+- Instantly detached from implementation
+- After a few sprints, architecture documents become museum pieces - interesting historically, but not trustworthy
 
-_summary:_ Most valuable company's asset - the data is a source of problems and has a risk of not being used effectively.
+_**Impact:**_ Deployment becomes trial-and-error. Security risk analysis is impossible without current architecture. System integration with other systems is problematic. Designing the next version requires reverse-engineering the current one.
 
-**code**
+### Data
 
-- implementation languages operating on low lowel, thus the bussiness abstraction get lost during implementation
-- a lot of code not connected directly to the core requirements
-- in order to use the data, additional layers like ORM (object to relational mapping) are needed
-- can not mix abstraction levels in data queries
-- meta-programming feels like additional concept, is hard and non-intuitve
-- if code is visualized as diagram:
-	- code update does not update the diagram and diagram becomes outdated
-	- diagram can not be edited
-- not using powerfull techniques such as code generation and code transformation becouse of practical aspects and tooling limitations
+**_Problem:_ The company's most valuable asset becomes a liability**
 
-_summary:_ A lot of low level code that is not connected with business world - not able to be visulised (to understand what it does) and is not able to be connected with requirements (to identify where the requirements are implemented).
+- Lack of proper and up-to-date domain-model results in multiple data sources with their own schema
+- Each data source uses different identifiers for the same entities - reasoning about data uniqueness becomes impossible (identifier hell)
+- Data quality is hard to track and maintain without a clear model
 
-**testing, deployment and security**
+_**Impact:**_ Most valuable company's asset - the data is a source of problems and has a risk of not being used effectively.
 
-- no formal definition of requirements being up-to-date, so there is nothing as a base to define up-to-date test scenarios
-- not being able to identify what is the current architecture to design optimal deployment scenario
-- security holes analysis hard as the architecture needs to be reverse engineered
+### Code
 
-_summary:_ Delivery t manager drama. At least if he is aware ☺
+**_Problem:_ Mountains of low-level code obscure business logic**
 
-**next version**
+- Implementation languages operate at too low a level - business abstractions get lost in technical details
+- Most code isn't directly connected to core requirements (infrastructure, glue code, boilerplate)
+- Additional layers like ORM (Object-Relational Mapping) are needed just to work with data
+- Can't mix abstraction levels in data queries
+- Meta-programming feels like additional concept, is hard and non-intuitve
+- Code visualization as diagrams fails because:
+	- Non functional complex action diagrams due to lack of UX maturity
+	- Code updates don't update diagrams automatically - diagrams become outdated immediately
+	- Diagrams can't be edited to update code - one-way generation only
+- Powerful techniques like code generation and code transformation aren't used due to practical limitations and poor tooling
 
-- hard to get the as-is up-to date and coherent picture
-- hard to reason and design next version (to-be) of the system
-- as there is no common as-is domain model, it is not designed with future to-be evolution in mind
-- after to-be requirements defined, hard to pin-point architectural changes needed
-- hard to estimate to-be implementation risk
-- hard to execute next version implemention
+_**Impact:**_ A lot of low level code that is not connected with business world - not able to be visulised (to understand what it does) and is not able to be connected with requirements (to identify where the requirements are implemented).
 
-_summary:_ System evolution at risk.
+### Testing, deployment and security
+
+**_Problem:_ Testing without truth, deploying without maps, securing without visibility**
+
+- No formal definition of requirements being up-to-date, so there is nothing as a base to define up-to-date test scenarios
+- Can't identify current architecture, making optimal deployment design impossible
+- Security analysis requires reverse-engineering the architecture first - holes remain hidden
+
+_**Impact:**_ Delivery t manager drama. At least if they're aware of the problems ☺
+
+### Next Version / System Evolution
+
+**_Problem:_ Building the future on quicksand**
+
+- Nearly impossible to get an accurate, coherent, up-to-date picture of the current system (as-is)
+- Can't reason about or design the next version (to-be) without understanding current state
+- Without a common as-is domain model, the system wasn't designed with future evolution in mind
+- After defining to-be requirements, can't pinpoint what architectural changes are actually needed
+- Risk estimation for implementation is largely guesswork
+- Hard to execute next version implemention
+
+_**Impact:**_ System evolution itself is at risk. Companies get locked into their current systems, unable to adapt to changing business needs.
 
 ## Does AI help?
 
 For sure a lot of the above problems seems to be solvable by the AI. With the 2026-01-01 state of the art, we would say that above problems stays the same with AI and... 
 
-> ...AI just delivers more junior- and mid- minded set of hands that will automatically deal with the problems.
+> ...AI just delivers more junior- and mid- minded set of hands that automatically try to deal with the above problems.
 
-So maybe instead of putting all the egs in the AI nest, we should try to redefine the IT systems fundaments?
+So maybe instead of putting all the eggs in the AI nest, we should try to redefine the IT systems fundaments?
 
 ## The paradigm shift
 
@@ -99,8 +116,6 @@ So maybe instead of putting all the egs in the AI nest, we should try to redefin
 - **Zero impedance mismatch**. Structural homoiconicity: code and data share identical structures
 
 This isn't incremental improvement. It's rethinking what a software platform can be when built on fundamentally coherent principles where semantics is structural, not external.
-
-The revolution starts with reshaping the basic atom – adding one meta vertex to each edge. Everything else follows.
 
 ## -zero promise
 
