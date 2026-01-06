@@ -1,10 +1,16 @@
 # Why be interested. Current IT problems and how to solve them
 
+> -zero unifies requirements, code, data, and architecture into a single queryable graph, making IT systems transparent, consistent, and instantly analyzable.
+>
+> Modern IT systems are plagued by fragmentation—requirements, architecture, code, and data drift apart, creating inefficiency, risk, and complexity. -zero, powered by the Meta-Vertex Edge Graph (MVEG), unifies all system elements into a single, coherent, queryable structure, allowing instant visualization, real-time updates, and seamless analysis across every layer. This is not just an improvement—it’s a paradigm shift, turning IT chaos into clarity and enabling systems that are smarter, more adaptable, and future-ready from day one.
+>
+>**Architecture becomes implementation at higher abstraction, requirements become code scaffolding filled with technical details, eliminating synchronization hell.**
+
 -zero is a fundamental game-change. The revolution starts with reshaping the basic universe atom - fundamental data structure. The Meta-Vertex Edge Graph (MVEG) brings simplicity, coherence and extreme expressing power. And it shines everywhere used. Complex structures becomes more coherent and transparent. Universal properties and behaviour enables same powerfull mechanics (like meta-data, queries and updatable views) and tooling (like diagram view/edit, extensive visualisation).
 
 **_MVEG when applied to old IT concepts like database, query language, model, meta-model, virtual machine and programming language results in fundamental changes among those concepts and system paradigm-shift:_**
 
-> **Current IT:** abstraction is lost in the implementation
+> **current IT:** abstraction is lost in the implementation
 >
 > **-zero:** abstraction and its implementation are just two views of the same interconnected MVEG structure
 
@@ -106,7 +112,7 @@ For sure a lot of the above problems seems to be solvable by the AI. With the 20
 
 > ...AI just delivers more junior- and mid- minded set of hands that automatically try to deal with the above problems.
 
-So maybe instead of putting all the eggs in the AI nest, we should try to redefine the IT systems fundaments?
+So maybe instead of putting all the eggs in the AI nest, we should try to redefine the IT systems fundaments? Perhaps than there will be less work (and errors) for AI powered devs. **This is especially critical when implementing IT systems evolution to catch changeing business needs.**
 
 ## The paradigm shift
 
