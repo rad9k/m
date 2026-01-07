@@ -1,28 +1,28 @@
 # Use cases and -zero scope
 
-The -zero is complete graph database / back-end execution platform where you can express your system design and implementation by models and diagrams, graph programing languages or any combination of both.
+The -zero is a complete graph database / back-end execution platform, where you can express your system design and implementation by models and diagrams, graph programing languages or any combination of both.
 
 > The -zero platform is built on Meta-Vertex Edge Graph (MVEG), a core data structure providing extreme simplicity with unlimited semantic expressivity and coherent behavior across all meta-levels. Based on MVEG Graph Database, the platform unifies representations of the underlying graph as diagrams (visual representation with rich primitives and nested views) and text languages (built-in and custom with language algebra supporting text languages inheritance and mixing). Graph can also be executed by the Graph Virtual Machine. GVM operates at high abstraction levels where code runs alongside data and meta-models with no impedance mismatch, achieving full structural homoiconicity - code and data share identical structures, enabling reflection, auto-modification, and metaprogramming as core features rather than extensions.
 
 Two platform instance types support different workflows: 
-- console instances for Linux/Mac/Docker environments
-- GUI instances (Windows WPF) providing unified drag-and-drop, bulk operations, and advanced editors where all GUI elements are themselves manipulable graph fragments.
+- console instances for Linux/OS X/Docker environments
+- GUI instances (Windows WPF) providing unified drag-and-drop, bulk operations, and advanced editors where all GUI elements are themselves manipulable graph fragments
 Built-in GVM libraries support REST endpoint exposure and consumption, HTTP/Markdown web server, and JSON processing → enabling graph-based web services and documentation publishing.
 
 ## Use cases
 
--zero is a modeling/development/execution platform than can be used in unlimited number of scenarios. A few examples:
+-zero is a modeling/development/execution platform than can be used in unlimited number of scenarios. A few example use cases:
 	
 - **Back-end**
 
-	-zero isn't ready to serve web front-ends on its own yet, so we position it as a back-end platform with REST API. This is where it excels – storing data and logic together. The logic lives directly in the graph database, so there's no impedance mismatch or need for translation layers like ORM. You can design data schemas with a diagram editor and express back-end logic through diagrams, code, or any mix of both (you can even have code and diagrams on screen simultaneously). All the REST plumbing and OpenAPI specyfication are automatically generated on the fly. Just mark the functions you want to expose with a `REST` meta edge.
+	-zero isn't ready to serve web front-ends on its own yet, so for now we position it more as a back-end platform exposing and consuming REST APIs. This is where it excels – storing data and logic together. The logic lives directly in the graph database, so there's no impedance mismatch or need for translation layers like ORM. You can design data schemas with a diagram editor and express back-end logic through diagrams, code, or any mix of both (you can even have code and diagrams on screen simultaneously). All the REST plumbing and OpenAPI exposed services specyfication are automatically generated on the fly. Just mark the functions you want to expose with the `REST` meta edge.
 	
 	_CI/CD:_ can use git to have code/diagrams versioning
 	_deployment:_ -zero console instance running in docker @ server/cloud, exposing REST services
 	
 - **AI pipeline**
 	
-	In modern data science and AI, we typically don't rely on a single monolithic component. Instead, we use multiple, usually Python-based components that process data at various stages. Execution of several components defines a pipeline through which the data proceses, resulting in some model or report in the end. Pipelines often need to handle logic, like looping through input files or deciding whether to call an LLM again to fix processing errors. In most cases, representing such pipelines as diagrams works well, and when needed, specific parts can be edited as text code.
+	In modern data science and AI, we typically don't rely on a single monolithic component. Instead, we use multiple, usually Python-based components that process data at various stages. Execution of several components defines a pipeline through which the data are being processed, resulting in some model or report in the end. Such pipelines often needs to handle logic, like looping through input files or deciding whether to call an LLM again to fix processing errors. In most cases, representing such pipelines as diagrams works well, and when needed, specific parts can be edited as text code.
 	
 	_CI/CD:_ can use git to have code/diagrams versioning
 	_deployment:_ 
@@ -31,18 +31,19 @@ Built-in GVM libraries support REST endpoint exposure and consumption, HTTP/Mark
 	
 - **Business process orchestration**
 	
-	-zero core use cases is to use diagrams for designing and executing of business process, such as client risk scoring in a bank. The business process can have very complex logic and have multiple sub-processes being represented in separate or embedded diagrams. The logic can reference -zero's internal database, such as risk profile tables stored in the graph database. Business processes typically orchestrate calls to other systems or microservices via REST, using their data for high-level business decisions. The diagrams aren't simple "no-code tools" - they can express processing of very complex data structures with complex queries, transformations and data structures creation statements. For documentation, -zero has an embedded HTTP web server that instantly displays all changes to business data (like risk profile tables) or diagrams (like risk scoring processes) through a markdown-based documentation portal.
+	-zero core use case is to use diagrams for designing and executing of business process, such as client risk scoring in a bank. The business process can have very complex logic and have multiple sub-processes being represented in separate or embedded diagrams. The logic can reference -zero's internal database, such as risk profile tables stored in the graph database. Business processes typically orchestrate calls to other systems or microservices via REST API, using their data for high-level processing and business decisions. 
+	The diagrams aren't simple "no-code tools" - they can express processing of very complex data structures with complex queries, transformations and data structures creation statements. For documentation, -zero has an embedded HTTP web server that instantly displays all changes in business data (like risk profile tables) or diagrams (like risk scoring business proces) through a markdown-based documentation portal.
 	
 	_CI/CD:_ can use git to have code/diagrams versioning
 	_deployment:_ -zero console instance running in docker @ server/cloud, with network access to the orchestrated systems
 	
 - **Enterprise architecture**
 
-	-zero started as enterprise diagramming platform and supports data instances, models and meta-models creation, update, maintanace, transformations and instant documentation. Those data and models are just a graph fragments and the diagrams are way of visualising those structures with a wide area of diagram primitives like boxes, lines, lists, embeded forms, code fragments editors, embeded diagrams and domain centric combinations of those. All primitives can be customized with colors, borders, and transparency. While there's a solid collection of built-in diagram types and primitives, creating custom ones is straightforward. 
+	-zero started as enterprise diagramming platform and supports data instances, models and meta-models creation, update, maintanace, transformations and instant documentation. Those data and models are just a graph fragments and the diagrams are way of visualising those structures with a wide area of diagram primitives like boxes, lines, lists, embeded forms, code fragments editors, embeded diagrams and domain centric combinations of those. All primitives can be customized with colors, borders, rounding, line types and transparency. While there's a solid collection of built-in diagram types and primitives, creating custom ones is straightforward. 
 	
-	But creating diagrams is just the first step. You can model high-level dependencies and add meta-information, making it easy to manage enterprise-scale complexity by querying models and their metadata. Add automatic model transformations and by modyfing one diagram and underlying model, the updatable view is being automatically modified and the changes are visible on "target" diagram. Such transformation can be high-level simplification of complex structure, complete ontology reversion (for example from product centric to customer centric) or any other transformation that creates value. And those updatable views can work on both directions - when "target" diagram is modified the "source" one gets updated.
+	Creating diagrams is just the first step. You can model high-level dependencies and add meta-information, making it easy to manage enterprise-scale complexity by querying models and their metadata. Add automatic model transformations and by modyfing one diagram (and thus underlying model), the updatable view is being automatically modified and the changes are visible on "target" diagram. Such transformation can be high-level simplification of complex structure, complete ontology reversion (for example from product centric to customer centric) or any other transformation that creates value. And those updatable views can work on both directions - when "target" diagram is modified, the "source" one gets updated.
 	
-	In the end the diagrams needs to be presented to the wider audience. And mind that diagrams can be updated frequently. Fortunatelly no need to "publish" them. Just create a markdown based hierarchical documentation site and reference any diagrams from the md files. They'll appear in the documentation portal with all updates visible instantly.	
+	In the end the diagrams needs to be presented to the wider audience. Mind that diagrams can be updated frequently. Fortunatelly no need to "publish" them. Just create a markdown based hierarchical documentation site and reference any diagrams from the md files. They'll appear in the documentation portal with all updates visible instantly.	
 
 	_CI/CD:_ can use git to have diagrams versioning
 	_deployment:_ -zero desktop instance running on the architects machines, documentation server running -zero console instance exposing the HTTP server
