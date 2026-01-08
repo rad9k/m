@@ -107,13 +107,13 @@ The -zero platform is built on several interconnected core capabilities:
 
 ## Summary
 
-> -zero is a complete graph database and execution platform where system design and implementation can be expressed through models, diagrams, graph programming languages, or any combination thereof. The platform is built on Meta-Vertex Edge Graph (MVEG), a structure that provides extreme simplicity with unlimited semantic expressivity, unifying graph representation as visual diagrams, text languages, and executable code. -zero example use cases are backend exposing REST API, AI/data processing pipeline, business process orchestration, and an environment for enterprise architecture with instant documentation via built-in HTTP server.
+> -zero is a complete graph database and execution platform where system design and implementation can be expressed through models, diagrams, text and graph programming languages code, or any combination thereof. The platform is built on Meta-Vertex Edge Graph (MVEG), a structure that provides extreme simplicity with unlimited semantic expressivity, unifying graph representation as visual diagrams, text, and executable code. -zero example use cases are: backend exposing REST API, AI/data processing pipeline, business process orchestration, and an environment for enterprise architecture with instant documentation via built-in HTTP server.
 
 ## Future
 
-and yes. We are just getting started. There are many, many, many interesting next steps for -zero platform, for example:
+...and yes. We are just getting started. There are many, many, many interesting next steps for -zero platform, for example:
 - modeling and meta-modeling vs implementation research. _automating the "what?" → "how?"_
-- front-end. _can have GVM running in the browser_
-- distributing GVM. _can have edges between GVM instances across network_
+- front-end. _GVM running in the browser_
+- distributing GVM. _edges and access / queries between GVM instances across network_
 
 **the next steps depends on your input and feedback. it is your move now**
