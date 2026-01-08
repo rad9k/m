@@ -68,6 +68,7 @@ namespace m0.Lib.StdView
         static IVertex AlignLeft = Md.Get(false, "AlignLeft");
         static IVertex AlignCenter = Md.Get(false, "AlignCenter");
         static IVertex AlignRight = Md.Get(false, "AlignRight");
+        static IVertex AlignJustifty = Md.Get(false, "AlignJustify");
 
         // State tracking for nested elements
         private static bool isInsideBold = false;
@@ -1951,7 +1952,7 @@ namespace m0.Lib.StdView
             
             // Check if we have at least 3 dashes
             if (dashCount < 3)
-                return "left"; // default if not enough dashes
+                return "justify"; // default if not enough dashes
             
             if (hasLeftColon && hasRightColon)
                 return "center";
@@ -1960,7 +1961,7 @@ namespace m0.Lib.StdView
             else if (hasRightColon)
                 return "right";
             else
-                return "left"; // default
+                return "justify"; // default
         }
         
         private static void ProcessTableRow(string md, ref int position, IVertex to, bool isFirstRow, List<string> alignments)
@@ -2029,6 +2030,10 @@ namespace m0.Lib.StdView
                 else if (alignment == "right")
                 {
                     AddTokenToTarget(to, AlignRight);
+                }
+                else if (alignment == "justify")
+                {
+                    AddTokenToTarget(to, AlignJustifty);
                 }
             }
             
