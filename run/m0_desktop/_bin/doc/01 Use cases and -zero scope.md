@@ -52,33 +52,33 @@ Built-in GVM libraries support REST endpoint exposure and consumption, HTTP/Mark
 
 The -zero platform is built on several interconnected core capabilities:
 
-**Meta-Vertex Edge Graph (MVEG)** - The Foundation
+**Meta-Vertex Edge Graph (MVEG)** - _The Foundation_
 * Core data structure with extreme simplicity and unlimited semantic expressivity
 * Coherent behavior, properties, and tooling across all data instances and meta-levels
 
-**Graph Database** - Zero-Configuration Persistence
+**Graph Database** - _Zero-Configuration Persistence_
 * Simple binary, text, or JSON file storage with graph edges across separate stores
 * Complex querying with automatic indexing, triggers, transactions, and updatable views
 * Built directly on MVEG
 
-**Modeling** - Unlimited Meta-levels
-* Represent complex data and knowledge (static properties, dynamic properties, anything expressible in language or mathematics) as MVEG
+**Modeling** - _Unlimited Meta-levels_
+* Represent complex data and knowledge (static properties, dynamic processes, anything expressible in language or mathematics) as MVEG
 * Meta-modeling with any number of levels and custom relations between instances, models, and meta-models
 * Model querying and transformations (built-in and custom)
 * Built-in and easily defined custom meta-models (defined as a graph fragments)
 
-**Diagrams** - Graph = Diagram
+**Diagrams** - _Graph = Diagram_
 * Graph IS diagram: visual representation of any data and models
 * Rich library of diagram primitives (defined as a graph fragments)
 * Custom diagram types easily defined as graph fragments
 * Nested diagrams and multiple views of the same data
 
-**Text Languages** - Graph = Text
+**Text Languages** - _Graph = Text_
 * Graph IS text: built-in and custom graph ⇔ text languages
 * Language algebra supporting inheritance (whole languages or individual keywords) and language mixing
 * Language definitions are graph fragments
 
-**Graph Virtual Machine (GVM)** - Graph = Executable
+**Graph Virtual Machine (GVM)** - _Graph = Executable_
 * Graph IS code: executes graph programming languages natively
 * Exposes computer resources (file system, MIDI) as graph
 * High abstraction level operation:
@@ -92,15 +92,28 @@ The -zero platform is built on several interconnected core capabilities:
 * Developers access platform features directly: metaprogramming, transactions, triggers, updatable views, persistent storage
 * Rich library: exposing and consuming REST endpoints, HTTP server, JSON, Markdown
 
-**Platform Integration** - Unified Experience
+**Platform Integration** - _Unified Experience_
 * Core principle: diagram = graph = text, respected everywhere
 * Updatable views work across all modalities
-* Multiple instance types:
-  * Console instance (Linux/Mac/Docker)
+* Two -zero instance types:
+  * Console instance (Linux/OS X/Docker)
   * GUI instance (Windows WPF):
     * Unified drag-and-drop across all components
     * Bulk operations on edges/vertexes
     * Multiple graphical representations of same graph fragment
     * Diagram viewer/editor, advanced text editor, complex form scaffolding, flexible 2D visualization
     * All GUI elements are manipulable graph fragments
-* Markdown-based complex document HTTP server, displaying actual versions of all the referenced diagrams
+* Markdown-based hierarchical document HTTP server, displaying actual versions of all the referenced diagrams
+
+## Summary
+
+> -zero is a complete graph database and execution platform where system design and implementation can be expressed through models, diagrams, graph programming languages, or any combination thereof. The platform is built on Meta-Vertex Edge Graph (MVEG), a structure that provides extreme simplicity with unlimited semantic expressivity, unifying graph representation as visual diagrams, text languages, and executable code. -zero example use cases are backend exposing REST API, AI/data processing pipeline, business process orchestration, and an environment for enterprise architecture with instant documentation via built-in HTTP server.
+
+## Future
+
+and yes. We are just getting started. There are many, many, many interesting next steps for -zero platform, for example:
+- modeling and meta-modeling vs implementation research. _automating the "what?" → "how?"_
+- front-end. _can have GVM running in the browser_
+- distributing GVM. _can have edges between GVM instances across network_
+
+**the next steps depends on your input and feedback. it is your move now**
