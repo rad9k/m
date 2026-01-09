@@ -709,6 +709,15 @@ namespace m0.Lib.StdView
                     }
                     
                     position = i; // Skip all > symbols and spaces
+                    
+                    // After processing blockquote, check if there's a list item on the same line
+                    if (TryGetListItem(md, position, out int blockquoteListMarkerPosition, out int blockquoteListIndent, out ListType blockquoteListType))
+                    {
+                        position = blockquoteListMarkerPosition;
+                        ExtractListItem(md, ref position, to, blockquoteListIndent, blockquoteListType);
+                        continue;
+                    }
+                    
                     continue;
                 }
                 
@@ -963,6 +972,17 @@ namespace m0.Lib.StdView
             {
                 localIndent += md[temp] == '\t' ? TabWidth : 1;
                 temp++;
+            }
+
+            // Skip blockquote markers (> and optional space after)
+            while (temp < md.Length && md[temp] == '>')
+            {
+                temp++;
+                // Skip optional space after >
+                if (temp < md.Length && md[temp] == ' ')
+                {
+                    temp++;
+                }
             }
 
             if (temp >= md.Length)
@@ -1457,6 +1477,17 @@ namespace m0.Lib.StdView
             while (idx >= 0 && (md[idx] == ' ' || md[idx] == '\t'))
             {
                 idx--;
+            }
+
+            // Skip blockquote markers (> and optional space after) going backwards
+            while (idx >= 0 && md[idx] == '>')
+            {
+                idx--;
+                // Skip optional space before >
+                if (idx >= 0 && md[idx] == ' ')
+                {
+                    idx--;
+                }
             }
 
             return idx < 0 || md[idx] == '\n' || md[idx] == '\r';
