@@ -18,7 +18,7 @@ Above code defines:
 - `HairLength` _vertex_ connected the `Person` _vertex_ by the edge having `Attribute` as a meta edge
 
 > The syntax is `<META :: TO>` and `<@VERTEX :: "VALUE">` where:
-> - `<META :: TO>` defines a edge having `META` as meta edge, and having `TO` as target _vertex_
+> - `<META :: TO>` defines a edge having `META` as a meta edge, and having `TO` as a target _vertex_
 > - `@VERTEX` defines a link (reference) to _vertex_ represented by a `VERTEX` query
 > - `"VALUE"` creates a _new vertex_ and sets its value to `VALUE`
 
@@ -50,16 +50,18 @@ Above code defines:
 
 **How does it work?**
 
-- in the whole graph, we migh have defined different fragments where one of the graph's fragments contains instances and other fragment contains models that describe them
-- models are defined by vertexes conected by edges
+- in the whole graph, we migh have defined different fragments:
+	- one of the graph's fragments contains instances
+	- other fragment contains model that describe them
+- model is defined by vertexes conected by edges
 - instances are also defined by vertexes conected by edges
-- vertexes defined in models can be used to describe edges between the instance's vertexes
+- vertexes defined in model can be used to describe edges between the instance's vertexes
 
 ## How it is connected
 
-## Adding meta data to the model
+## More than labels: adding meta data to the model
 
-Above `Person` class model does not define data-types for the `Attribute`s. Let's add them.
+Above `Person` class model is very simple. It does not provide any additional information to the concepts (like `Name`) being references from the data instances. For example the above model does not define data-types for the `Attribute`s. Let's add them.
 
 ```ZeroCode
 <@Class :: "Person">
@@ -75,7 +77,7 @@ Above code defines:
 - Same as above: `Person` class; `Name`, `Surname` and `HairLength` attributes
 - for the `Name` and `Surname` the vertex value type is `String`
 - for the `HairLength` the vertex value is `Integer`
-- the _to vertex_ value type that is being described by the given _meta vertex_ is defined by the `$EdgeTarget` meta having _edge_ from the given _meta vertex_ to the _vertex_ representing given type
+- the _to vertex_  (for example: `Radek`) value type that is being described by the given _meta vertex_ (for example: `Name`) is defined by the `$EdgeTarget` meta having _edge_ from the given _meta vertex_ (for example: `Name`) to the _vertex_ representing given type (for example: `String`)
 
 > The syntax is `<META :: TO>` and `<@VERTEX :: @VERTEX>` where:
 > - `<META :: TO>` defines a edge having `META` as meta edge, and having `TO` as target _vertex_
@@ -84,7 +86,7 @@ Above code defines:
 ## Let's add meta model
 
 
-Abowe, we have only one meta relation: between `Person` class and it's instances. Can we add another meta level? Yes. In our case it will be a model for a class → it will me a meta-model.
+Abowe, we have only one meta relation: between `Person` class and it's instances (data). Can we add another meta level? Yes. In our case it will be a model for a class → it will me a meta-model.
 
 ```ZeroCode
 "Class"
@@ -93,9 +95,9 @@ Abowe, we have only one meta relation: between `Person` class and it's instances
 ```
 
 Above code defines:
-- a `Class` _vertex_
-- the `Class` _vertex_ has _edge_ poiting to the `Attribute` _vertex_
-- the `Attribute` _vertex_ has _edge_ poiting to the `Type` _vertex_. The _edge_ has `$VertexTarget` as _meta vertex_
+- A `Class` _vertex_
+- The `Class` _vertex_ has _edge_ poiting to the `Attribute` _vertex_
+- The `Attribute` _vertex_ has _edge_ poiting to the `Type` _vertex_. The _edge_ has `$VertexTarget` as _meta vertex_.
 
 > `<@$VertexTarget :: @TYPE>` translates into `<@$EdgeTarget :: @IS_OF_TYPE>` on higher meta level. Additionally the `IS_OF_TYPE` _vertex_ have the `<@$Is :: @TYPE>` _edge_, with means that `IS_OF_TYPE` _vertex_ is of `TYPE` _vertex_ type.
 
@@ -123,3 +125,8 @@ The combined result is:
 	<@Surname :: "Tereszczuk">
 	<@HairLength :: "7">
 ```
+
+The above code (in order):
+- Defines a model that describes how to define a `Class`. This is a meta-model.
+- Defines a `Person` `Class`. This is a model. The `Person` uses two conecpts, from the meta-model: `Class` and `Attribute` - those are used as _meta vertexes_ in the _edges_ of the `Person` defining graph fragment.
+- Defines two `Person` class instances. Both instances share the same concepts from the `Person` class model: `Person`, `Name`, `Surname` and `HairLength`  - those are used as _meta vertexes_ in the _edges_ of the `Person` class instances defining graph fragment.
