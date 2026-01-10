@@ -159,14 +159,10 @@ namespace m0.Lib.StdView
                         // Add CodeBlock token with collected content
                         string content = codeBlockContent != null ? codeBlockContent.ToString() : "";
                         
-                        if (!string.IsNullOrEmpty(codeBlockLanguageName))
-                        {
-                            AddCodeBlockToTarget_withFormalTextLanguageName(to, content, codeBlockLanguageName);
-                        }
-                        else
-                        {
-                            AddCodeBlockToTarget(to, content);
-                        }
+                        // Always use FormalTextLanguageName (empty string if not specified)
+                        // This ensures HTML generator creates <pre><code> wrapper
+                        string languageName = codeBlockLanguageName ?? "";
+                        AddCodeBlockToTarget_withFormalTextLanguageName(to, content, languageName);
                         
                         codeBlockContent = null;
                         codeBlockLanguageName = null;
@@ -1176,15 +1172,20 @@ namespace m0.Lib.StdView
         {
             if (position + 2 >= md.Length) return false;
             if (isInsideCodeBlock) return false; // Already inside code block
-            if (!IsAtLineStartOrIndented(md, position)) return false; // Must be at start of line
-            return md[position] == '`' && md[position + 1] == '`' && md[position + 2] == '`';
+            // Check for ``` - must have all three backticks
+            if (md[position] != '`' || md[position + 1] != '`' || md[position + 2] != '`') return false;
+            // After ```, next char should be newline or letter (language name) or end of string
+            int afterBackticks = position + 3;
+            if (afterBackticks >= md.Length) return true; // ``` at end of string
+            char nextChar = md[afterBackticks];
+            // Valid code block: ``` followed by newline, letter (language name), or space
+            return nextChar == '\n' || nextChar == '\r' || char.IsLetter(nextChar) || nextChar == ' ';
         }
 
         private static bool IsCodeBlockEnd(string md, int position)
         {
             if (position + 2 >= md.Length) return false;
             if (!isInsideCodeBlock) return false; // Not inside code block
-            if (!IsAtLineStartOrIndented(md, position)) return false; // Must be at start of line
             return md[position] == '`' && md[position + 1] == '`' && md[position + 2] == '`';
         }
 
