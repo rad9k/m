@@ -115,5 +115,6 @@ The -zero platform is built on several interconnected core capabilities:
 - modeling and meta-modeling vs implementation research. _automating the "what?" → "how?"_
 - front-end. _GVM running in the browser_
 - distributing GVM. _edges and access / queries between GVM instances across network_
+- mulithreaded GVM. _GVM supporting massive mulithreaded processing_
 
 **the next steps depends on your input and feedback. it is your move now**

@@ -520,8 +520,8 @@ namespace m0.Lib.StdView
                     continue;
                 }
                 
-                // Handle headers (# ## ### etc.)
-                if (currentChar == '#')
+                // Handle headers (# ## ### etc.) - only at the start of a line
+                if (currentChar == '#' && IsAtLineStartOrIndented(md, position))
                 {
                     int headerLevel = CountConsecutiveChars(md, position, '#');
                     if (headerLevel > 0 && headerLevel <= 6)
@@ -1176,6 +1176,7 @@ namespace m0.Lib.StdView
         {
             if (position + 2 >= md.Length) return false;
             if (isInsideCodeBlock) return false; // Already inside code block
+            if (!IsAtLineStartOrIndented(md, position)) return false; // Must be at start of line
             return md[position] == '`' && md[position + 1] == '`' && md[position + 2] == '`';
         }
 
@@ -1183,6 +1184,7 @@ namespace m0.Lib.StdView
         {
             if (position + 2 >= md.Length) return false;
             if (!isInsideCodeBlock) return false; // Not inside code block
+            if (!IsAtLineStartOrIndented(md, position)) return false; // Must be at start of line
             return md[position] == '`' && md[position + 1] == '`' && md[position + 2] == '`';
         }
 
@@ -1696,8 +1698,9 @@ namespace m0.Lib.StdView
                 
                 // Stop at special characters that start other tokens
                 if (current == '\n' || current == '\r' || 
-                    current == '#' || current == '_' || current == '`' ||
+                    current == '_' || current == '`' ||
                     current == '[' || current == '!' || current == '>' || current == '|' ||
+                    (current == '#' && IsAtLineStartOrIndented(md, position)) ||
                     (current == '-' && IsListItem(md, position)) ||
                     (current == '+' && IsListItem(md, position)) ||
                     (char.IsDigit(current) && IsListItem(md, position)))
