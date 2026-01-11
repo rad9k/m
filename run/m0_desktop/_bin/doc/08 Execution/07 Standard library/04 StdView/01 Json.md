@@ -1,0 +1,214 @@
+# Json
+
+## MVEG graph ⇔ Json mapping
+
+### No meta flat vertexes list
+
+**MVEG:**
+
+```MinusZero
+"VALUE"
+	"one"
+```
+
+**Json:**
+
+```
+[
+  "one"
+]
+```
+comments:
+
+- the value of the staring _vertex_ is ignored
+
+### No meta flat vertexes list
+
+**MVEG:**
+
+```MinusZero
+"VALUE"
+	"one"
+	"two"
+	"thre"
+```
+
+**Json:**
+
+```
+[
+  "one",
+  "two",
+  "thre"
+]
+```
+
+comments:
+
+- the value of the staring _vertex_ is ignored
+
+### Adding meta, one vertex
+
+**MVEG:**
+
+```MinusZero
+""
+	<@System\Meta :: "one">	
+```
+
+**Json:**
+
+```
+{
+  "Meta": "one"
+}
+```
+
+### Multiple vertexes with meta
+
+**MVEG:**
+
+```MinusZero
+""
+	<@System\Meta :: "one">
+	<@System\Meta :: "two">
+	<@System\Meta :: "three">
+```
+
+**Json:**
+
+```
+{
+  "Meta": [
+    "one",
+    "two",
+    "three"
+  ]
+}
+```
+
+comments:
+
+- if there are more than one _edge_ with the same _meta vertex_, those become a json array started with a key made of the _meta vertex_ and the values made of the _to vertexes_
+
+### simplest mapping
+
+**MVEG:**
+
+```MinusZero
+""
+	"one"
+		"two"
+```
+
+**Json:**
+
+```
+[
+  [
+    "two"
+  ]
+]
+```
+
+comments:
+
+- "one" is ignored as can not have `[:"one"["two"]]` json
+
+### simplest mapping
+
+**MVEG:**
+
+```MinusZero
+""
+	<@System\Meta :: "one">
+		"two"
+```
+
+**Json:**
+
+```
+{
+  "Meta": [
+    "two"
+  ]
+}
+```
+
+comments:
+
+- "one" is ignored as can not have `["Meta":"one"["two"]]` json
+
+### simplest mapping
+
+**MVEG:**
+
+```MinusZero
+""
+	<@System\Meta :: "one A">
+		"two A"
+	<@System\Meta :: "one A">
+		"two B"
+	<@System\Meta :: "one B">
+		"two C"
+```
+
+**Json:**
+
+```
+{
+ "Meta": [
+      "two A",    
+      "two B",
+      "two C"
+  ]
+}
+```
+
+### simplest mapping
+
+**MVEG:**
+
+```MinusZero
+```
+
+**Json:**
+
+```
+```
+
+### simplest mapping
+
+**MVEG:**
+
+```MinusZero
+```
+
+**Json:**
+
+```
+```
+
+### simplest mapping
+
+**MVEG:**
+
+```MinusZero
+```
+
+**Json:**
+
+```
+```
+
+### simplest mapping
+
+**MVEG:**
+
+```MinusZero
+```
+
+**Json:**
+
+```
+```

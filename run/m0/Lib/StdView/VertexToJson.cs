@@ -29,7 +29,7 @@ namespace m0.Lib.StdView
 
             to.Value = json;
 
-            m0.MinusZero.Instance.UserInteraction.InteractionOutput(GraphUtil.GetStringValue(to));
+            //m0.MinusZero.Instance.UserInteraction.InteractionOutput(GraphUtil.GetStringValue(to));
 
             return exe.Stack;
         }
@@ -147,11 +147,51 @@ namespace m0.Lib.StdView
                 {
                     if (VertexOperations.IsAtomicEdge(e) || VertexOperations.IsLink(e))
                         WriteAtomVertex(e.To, writer);
-                    else
+                    else if (!TryWriteUnwrappedEmpty(e.To, writer))
                         ProcessVertex(e.To, writer, visited);
                 }
 
             writer.WriteEndArray();
+        }
+
+        private static bool TryWriteUnwrappedEmpty(IVertex v, Utf8JsonWriter writer)
+        {
+            var dict = v.GetOutOdgesByMeta();
+            
+            // Find $Empty edges, ignoring view vertices
+            IEdge emptyEdge = null;
+            foreach (var kvp in dict)
+            {
+                string meta = kvp.Key.ToString();
+                if (!VertexOperations.CanCopyCountViewMetaString(meta))
+                    continue;
+                if (VertexOperations.DoOutEdgesDictionaryValueContainViewVertex(kvp.Value))
+                    continue;
+                    
+                // Non-$Empty meta found - can't unwrap
+                if (meta != "$Empty")
+                    return false;
+                
+                // Multiple $Empty or already found one
+                if (emptyEdge != null)
+                    return false;
+                    
+                if (kvp.Value is List_VertexBase list)
+                {
+                    if (list.Count != 1) return false;
+                    emptyEdge = list.First();
+                }
+                else
+                {
+                    emptyEdge = (IEdge)kvp.Value;
+                }
+            }
+            
+            if (emptyEdge == null) return false;
+            if (!VertexOperations.IsAtomicEdge(emptyEdge) && !VertexOperations.IsLink(emptyEdge)) return false;
+            
+            WriteAtomVertex(emptyEdge.To, writer);
+            return true;
         }
 
         private static void ProcessVertex_SingleArray(Utf8JsonWriter writer, IList<IVertex> visited, IEdge e)
@@ -162,7 +202,7 @@ namespace m0.Lib.StdView
             {
                 if (VertexOperations.IsAtomicEdge(e) || VertexOperations.IsLink(e))
                     WriteAtomVertex(e.To, writer);
-                else
+                else if (!TryWriteUnwrappedEmpty(e.To, writer))
                     ProcessVertex(e.To, writer, visited);
             }
 
