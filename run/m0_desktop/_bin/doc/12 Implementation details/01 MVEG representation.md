@@ -170,3 +170,9 @@ interface IEdge
 ```
 
 comments:
+
+- `From` exposes the _from vertex_
+
+- `Meta` exposes the _meta vertex_
+
+- `To` exposes the _to vertex_

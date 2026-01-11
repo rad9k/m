@@ -29,7 +29,7 @@ namespace m0.Lib.StdView
 
             to.Value = json;
 
-            //m0.MinusZero.Instance.UserInteraction.InteractionOutput(GraphUtil.GetStringValue(to));
+            m0.MinusZero.Instance.UserInteraction.InteractionOutput(GraphUtil.GetStringValue(to));
 
             return exe.Stack;
         }
@@ -77,9 +77,6 @@ namespace m0.Lib.StdView
                 if (VertexOperations.CanCopyCountViewMetaString(meta) 
                     && meta != "$Empty" 
                     && !VertexOperations.DoOutEdgesDictionaryValueContainViewVertex(kvp.Value))
-                    IsHomogenicAndMultipleAndOnlyEmptyMeta = false;
-
-                if (meta == "$Empty" && !(kvp.Value is List_VertexBase))
                     IsHomogenicAndMultipleAndOnlyEmptyMeta = false;
 
                 if (meta == "$Empty" && !(kvp.Value is List_VertexBase))
@@ -203,7 +200,7 @@ namespace m0.Lib.StdView
         }
 
         static void WriteAtomEdge(IEdge e, Utf8JsonWriter writer)
-        {            
+        {               
             writer.WritePropertyName(GraphUtil.GetStringValue(e.Meta));
 
             WriteAtomVertex(e.To, writer);            
