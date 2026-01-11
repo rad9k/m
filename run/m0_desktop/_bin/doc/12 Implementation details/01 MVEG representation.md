@@ -128,35 +128,45 @@ comments:
 
 - `InEdgesRaw` provides access to all of the _incoming edges_. The `InEdgesRaw` provides _incoming edges_ that are _physically_ attached to the _vertex_ - it means that the additional _outgoing edges_ that are added by the presence of the `$Inherits` _meta edge_ are not included here.
 
-- `InEdges` provides access to all of the _incoming edges_. The `InEdges` provides _incoming edes_ that are _logically_ attached to the _vertex_ - it means that the additional _outgoing edges_ that are added by the presence of the `$Inherits` _meta edge_ are included here.
+- `InEdges` provides access to all of the _incoming edges_. The `InEdges` provides _incoming edges_ that are _logically_ attached to the _vertex_ - it means that the additional _outgoing edges_ that are added by the presence of the `$Inherits` _meta edge_ are included here.
 
-- `MetaInEdgesRaw` provides access to all of the _meta incoming edges_ - this is a situation when given _vertex_ is used as _meta vertex_ in some _edge_. The `OutEdgesRaw` provides _meta incoming edges_ that are _physically_ attached to the _vertex_ - it means that the additional _outgoing edges_ that are added by the presence of the `$Inherits` _meta edge_ are not included here.
+- `MetaInEdgesRaw` provides access to all of the _meta incoming edges_ - this is a situation when given _vertex_ is used as _meta vertex_ in some _edge_. The `MetaInEdgesRaw` provides _meta incoming edges_ that are _physically_ attached to the _vertex_.
 
-- `Execute(IExecution exe);
+- `Execute` executes GVM code starting from given `IVertex`.
 
-- `QueryOutEdges(object meta, object to, out IEdge result, out IList<IEdge> results);
+- `QueryOutEdges` uses internal hash-based dictionaries (indexes) for look-up of _outgoing edges_ meeting criteria: having _meta vertex_ with a given value - `meta` parameter (or `null` → meaning no filter for _meta vertex_ value) and having _to vertex_ with a given value - `to` parameter (or `null` → meaning no filter for _to vertex_ value)
 
-- `QueryInEdges(object meta, object from, out IEdge result, out IList<IEdge> results);
+- `QueryInEdges` uses internal hash-based dictionaries (indexes) for look-up of _incoming edges_ meeting criteria: having _meta vertex_ with a given value - `meta` parameter (or `null` → meaning no filter for _meta vertex_ value) and having _from vertex_ with a given value - `from` parameter (or `null` → meaning no filter for _from vertex_ value)
      
-- `AddVertex(IVertex metaVertex, object val);
+- `AddVertex` adds new _vertex_ and returns newly created _vertex_.
 
-- `AddVertexAndReturnEdge(IVertex metaVertex, object val);
+- `AddVertexAndReturnEdge` adds new _vertex_ and returns newly created _edge_.
 
-- `AddEdge(IVertex metaVertex, IVertex destVertex);
+- `AddEdge` adds new _edge_ and returns it.
 
-- `DeleteEdge(IEdge edge);
+- `DeleteEdge` deletes _edge_.
 
-- `DeleteEdgesList(IEnumerable<IEdge> edges);
+- `DeleteEdgesList` deleteas _edges_ list.
 
-- `Get(bool metaMode, string query);
+- `Get` executes a query starting from given `IVertex` using provided `metaMode`. Returns only one `IVertex`.
 
-- `GetAll(bool metaMode, string query);
+- `GetAll` executes a query starting from given `IVertex` using provided `metaMode`. Returns a list of `IEdge`.
                      
-- `Store { get; }    
+- `Store` provides access to the `IStore` for given `IVertex`.
 
 ## IEdge
 
 The `IEdge` structure represents _edge_. The most important attributes and methods of the `IEdge` are shown below:
 
 ```
+interface IEdge
+{
+    IVertex From { get; }
+	
+    IVertex Meta { get; }
+	
+    IVertex To { get; }
+}
 ```
+
+comments:
