@@ -1,4 +1,4 @@
-﻿using m0.Foundation;
+using m0.Foundation;
 using m0.Graph;
 using m0.ZeroTypes;
 using System;
@@ -79,8 +79,6 @@ namespace m0.Lib.StdView
                     && !VertexOperations.DoOutEdgesDictionaryValueContainViewVertex(kvp.Value))
                     IsHomogenicAndMultipleAndOnlyEmptyMeta = false;
 
-                if (meta == "$Empty" && !(kvp.Value is List_VertexBase))
-                    IsHomogenicAndMultipleAndOnlyEmptyMeta = false;
             }
                         
             if (IsHomogenicAndMultipleAndOnlyEmptyMeta)
@@ -94,13 +92,13 @@ namespace m0.Lib.StdView
         {            
             foreach (KeyValuePair<object, object> kvp in baseVertex.GetOutOdgesByMeta())
             {
-                if (kvp.Value is List_VertexBase)
-                {
-                    string meta = kvp.Key.ToString();
+                string meta = kvp.Key.ToString();
+                if (meta != "$Empty") continue;
 
-                    if (meta == "$Empty")                    
-                        ProcessVertex_Array(writer, visited, kvp);                    
-                }
+                if (kvp.Value is List_VertexBase)
+                    ProcessVertex_Array(writer, visited, kvp);
+                else
+                    ProcessVertex_SingleArray(writer, visited, (IEdge)kvp.Value);
             }
         }
 
