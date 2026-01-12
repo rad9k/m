@@ -29,7 +29,7 @@ namespace m0.Lib.StdView
 
             to.Value = json;
 
-            //m0.MinusZero.Instance.UserInteraction.InteractionOutput(GraphUtil.GetStringValue(to));
+            m0.MinusZero.Instance.UserInteraction.InteractionOutput(GraphUtil.GetStringValue(to));
 
             return exe.Stack;
         }
@@ -54,6 +54,14 @@ namespace m0.Lib.StdView
         }
 
         static void ProcessVertex(IVertex baseVertex, Utf8JsonWriter writer, IList<IVertex> visited) {
+            ProcessVertexInternal(baseVertex, writer, visited, inArrayContext: false);
+        }
+
+        static void ProcessVertexInArrayContext(IVertex baseVertex, Utf8JsonWriter writer, IList<IVertex> visited) {
+            ProcessVertexInternal(baseVertex, writer, visited, inArrayContext: true);
+        }
+
+        static void ProcessVertexInternal(IVertex baseVertex, Utf8JsonWriter writer, IList<IVertex> visited, bool inArrayContext) {
             if (!VertexOperations.CanCopyCountViewVertex(baseVertex))
                 return;
 
@@ -81,7 +89,45 @@ namespace m0.Lib.StdView
 
             }
                         
-            if (IsHomogenicAndMultipleAndOnlyEmptyMeta)
+            if (IsHomogenicAndMultipleAndOnlyEmptyMeta && inArrayContext)
+            {
+                // In array context, unwrap homogenic vertices directly - write their children to current array
+                foreach (KeyValuePair<object, object> kvp in baseVertex.GetOutOdgesByMeta())
+                {
+                    string meta = kvp.Key.ToString();
+                    if (meta != "$Empty") continue;
+
+                    if (kvp.Value is List_VertexBase list)
+                    {
+                        foreach (IEdge edge in list)
+                        {
+                            if (VertexOperations.CanCopyCountViewEdge(edge) && !VertexOperations.IsViewVertex(edge.Meta))
+                            {
+                                if (VertexOperations.IsAtomicEdge(edge) || VertexOperations.IsLink(edge))
+                                    WriteAtomVertex(edge.To, writer);
+                                else if (VertexOperations.IsAtomicVertex(edge.To))
+                                    WriteAtomVertex(edge.To, writer);
+                                else if (!TryWriteUnwrappedEmpty(edge.To, writer, inArrayContext: true))
+                                    ProcessVertexInArrayContext(edge.To, writer, visited);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        IEdge edge = (IEdge)kvp.Value;
+                        if (VertexOperations.CanCopyCountViewEdge(edge) && !VertexOperations.IsViewVertex(edge.Meta))
+                        {
+                            if (VertexOperations.IsAtomicEdge(edge) || VertexOperations.IsLink(edge))
+                                WriteAtomVertex(edge.To, writer);
+                            else if (VertexOperations.IsAtomicVertex(edge.To))
+                                WriteAtomVertex(edge.To, writer);
+                            else if (!TryWriteUnwrappedEmpty(edge.To, writer, inArrayContext: true))
+                                ProcessVertexInArrayContext(edge.To, writer, visited);
+                        }
+                    }
+                }
+            }
+            else if (IsHomogenicAndMultipleAndOnlyEmptyMeta)
                 ProcessVertex_HomogenicAndMultipleAndOnlyEmptyMetaChildren(baseVertex, writer, visited);
             else
                 ProcessVertex_HeterogenicChildren(baseVertex, writer, visited);
@@ -114,7 +160,7 @@ namespace m0.Lib.StdView
                 {
                     string meta = kvp.Key.ToString();
 
-                    if (meta == "$Empty")
+                    if (meta == "$Empty" || meta == "")
                     {                        
                         writer.WritePropertyName("");
 
@@ -147,16 +193,86 @@ namespace m0.Lib.StdView
                 {
                     if (VertexOperations.IsAtomicEdge(e) || VertexOperations.IsLink(e))
                         WriteAtomVertex(e.To, writer);
-                    else if (!TryWriteUnwrappedEmpty(e.To, writer))
-                        ProcessVertex(e.To, writer, visited);
+                    else if (VertexOperations.IsAtomicVertex(e.To))
+                        // If To is atomic, write it directly instead of processing as vertex (which would create array)
+                        WriteAtomVertex(e.To, writer);
+                    else if (!TryWriteUnwrappedEmpty(e.To, writer, inArrayContext: true))
+                        ProcessVertexInArrayContext(e.To, writer, visited);
                 }
 
             writer.WriteEndArray();
         }
 
-        private static bool TryWriteUnwrappedEmpty(IVertex v, Utf8JsonWriter writer)
+        private static bool TryWriteUnwrappedEmpty(IVertex v, Utf8JsonWriter writer, bool inArrayContext = false)
         {
             var dict = v.GetOutOdgesByMeta();
+            
+            // Check if this vertex would create an array structure (homogenic with only $Empty)
+            bool wouldCreateArray = true;
+            foreach (var kvp in dict)
+            {
+                string meta = kvp.Key.ToString();
+                if (!VertexOperations.CanCopyCountViewMetaString(meta))
+                    continue;
+                if (VertexOperations.DoOutEdgesDictionaryValueContainViewVertex(kvp.Value))
+                    continue;
+                    
+                if (meta != "$Empty")
+                {
+                    wouldCreateArray = false;
+                    break;
+                }
+            }
+            
+            // If this vertex would create an array and we're in array context, try to unwrap it
+            // to avoid nested arrays
+            if (wouldCreateArray && dict.Count > 0 && inArrayContext)
+            {
+                // In array context, unwrap homogenic vertices directly into the current array
+                foreach (var kvp in dict)
+                {
+                    string meta = kvp.Key.ToString();
+                    if (!VertexOperations.CanCopyCountViewMetaString(meta))
+                        continue;
+                    if (VertexOperations.DoOutEdgesDictionaryValueContainViewVertex(kvp.Value))
+                        continue;
+                    if (meta != "$Empty")
+                        continue;
+                    
+                    if (kvp.Value is List_VertexBase list)
+                    {
+                        // Write all items from the inner array directly to the current array
+                        foreach (IEdge edge in list)
+                        {
+                            if (VertexOperations.IsAtomicEdge(edge) || VertexOperations.IsLink(edge))
+                                WriteAtomVertex(edge.To, writer);
+                            else if (VertexOperations.IsAtomicVertex(edge.To))
+                                WriteAtomVertex(edge.To, writer);
+                            else
+                                return false; // Can't unwrap, need to process normally
+                        }
+                        return true;
+                    }
+                    else
+                    {
+                        IEdge edge = (IEdge)kvp.Value;
+                        if (VertexOperations.IsAtomicEdge(edge) || VertexOperations.IsLink(edge))
+                        {
+                            WriteAtomVertex(edge.To, writer);
+                            return true;
+                        }
+                        else if (VertexOperations.IsAtomicVertex(edge.To))
+                        {
+                            WriteAtomVertex(edge.To, writer);
+                            return true;
+                        }
+                    }
+                }
+            }
+            
+            // If this vertex would create an array and we're NOT in array context, don't unwrap - preserve the array structure
+            if (wouldCreateArray && dict.Count > 0)
+                return false;
             
             // Find $Empty edges, ignoring view vertices
             IEdge emptyEdge = null;
@@ -202,8 +318,11 @@ namespace m0.Lib.StdView
             {
                 if (VertexOperations.IsAtomicEdge(e) || VertexOperations.IsLink(e))
                     WriteAtomVertex(e.To, writer);
-                else if (!TryWriteUnwrappedEmpty(e.To, writer))
-                    ProcessVertex(e.To, writer, visited);
+                else if (VertexOperations.IsAtomicVertex(e.To))
+                    // If To is atomic, write it directly instead of processing as vertex (which would create array)
+                    WriteAtomVertex(e.To, writer);
+                else if (!TryWriteUnwrappedEmpty(e.To, writer, inArrayContext: true))
+                    ProcessVertexInArrayContext(e.To, writer, visited);
             }
 
             writer.WriteEndArray();
@@ -225,11 +344,17 @@ namespace m0.Lib.StdView
                     if (VertexOperations.IsAtomicEdge(e) || VertexOperations.IsLink(e)) // NoArray
                         WriteAtomEdge(e, writer);
                     else
-                    {                        
-                        if (metaValue != "$Empty")
-                            writer.WritePropertyName(metaValue);
+                    {
+                        string toValue = GraphUtil.GetStringValue(e.To);
+                        
+                        // If meta is empty string or $Empty, use empty string as key
+                        if (metaValue == "" || metaValue == "$Empty")
+                            writer.WritePropertyName("");
+                        // If meta equals the vertex value, use empty string as key
+                        else if (metaValue == toValue)
+                            writer.WritePropertyName("");
                         else
-                            writer.WritePropertyName(GraphUtil.GetStringValue(e.To));
+                            writer.WritePropertyName(metaValue);
 
                         ProcessVertex(e.To, writer, visited);
                     }
@@ -239,7 +364,13 @@ namespace m0.Lib.StdView
 
         static void WriteAtomEdge(IEdge e, Utf8JsonWriter writer)
         {               
-            writer.WritePropertyName(GraphUtil.GetStringValue(e.Meta));
+            string metaValue = GraphUtil.GetStringValue(e.Meta);
+            
+            // If meta is empty string or $Empty, use empty string as key
+            if (metaValue == "" || metaValue == "$Empty")
+                writer.WritePropertyName("");
+            else
+                writer.WritePropertyName(metaValue);
 
             WriteAtomVertex(e.To, writer);            
         }
