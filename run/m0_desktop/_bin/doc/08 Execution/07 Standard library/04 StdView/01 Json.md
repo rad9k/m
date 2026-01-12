@@ -1,6 +1,6 @@
 # Json
 
-## MVEG graph ⇔ Json mapping
+## MVEG graph → Json mapping
 
 ### No meta flat vertexes list
 
@@ -113,7 +113,7 @@ comments:
 
 comments:
 
-- "one" is ignored as can not have `[:"one"["two"]]` json
+- `one` is ignored as can not have `:"one"["two"]` json
 
 ### simplest mapping
 
@@ -137,7 +137,7 @@ comments:
 
 comments:
 
-- "one" is ignored as can not have `["Meta":"one"["two"]]` json
+- `one` is ignored as can not have `"Meta":"one"["two"]` json
 
 ### simplest mapping
 
@@ -165,6 +165,74 @@ comments:
 }
 ```
 
+comments:
+
+- `one X` are ignored as can not have `"Meta":"one X"["two X"]` json
+
+### simplest mapping
+
+**MVEG:**
+
+```MinusZero
+""
+	"one"
+		"two"
+	<@System\Meta :: "three">
+		"two"
+```
+
+**Json:**
+
+```
+{
+  "": [
+    "two"
+  ],
+  "Meta": [
+    "two"
+  ]
+}
+```
+
+comments:
+
+- `three` is ignored as can not have `"Meta":"three"["two"]` json
+
+### simplest mapping
+
+**MVEG:**
+
+```MinusZero
+""
+	"one"
+		"two"
+	<@System\Meta :: "three">
+		"four"
+	<@System\Meta :: "five">
+		"six"
+	<@System\Meta :: "seven">
+```
+
+**Json:**
+
+```
+{
+  "": [
+    "two"
+  ],
+  "Meta": [
+    "four",
+    "six",
+    "seven"
+  ]
+}
+```
+
+comments:
+
+- `three` and `five` are ignored as can not have `"Meta":"three"["two"]` json
+- `seven` is not ignored, as it is emited as last array element
+
 ### simplest mapping
 
 **MVEG:**
@@ -189,26 +257,35 @@ comments:
 ```
 ```
 
-### simplest mapping
 
-**MVEG:**
+_______________________
+""
+	<@System\Meta :: "one A">
+		"two A"
+	<@System\Meta :: "one A">
+		"two B"
+	<@System\Meta :: "one B">
+		"two C"
+zwraca
+{
+  "Meta": [
+    [
+      "two A"
+    ],
+    [
+      "two B"
+    ],
+    [
+      "two C"
+    ]
+  ]
+}
 
-```MinusZero
-```
-
-**Json:**
-
-```
-```
-
-### simplest mapping
-
-**MVEG:**
-
-```MinusZero
-```
-
-**Json:**
-
-```
-```
+a powinien zwracac
+{
+ "Meta": [
+      "two A",    
+      "two B",
+      "two C"
+  ]
+}
