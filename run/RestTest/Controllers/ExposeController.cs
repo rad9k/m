@@ -39,58 +39,6 @@ namespace RestTest.Controllers
             }
         }
 
-        [HttpPost("multiply")]
-        [ProducesResponseType(typeof(MultiplyResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public IActionResult Multiply([FromBody] MultiplyRequest request)
-        {
-            try
-            {
-                var result = expose.Multiply(request.X, request.Y);
-                return Ok(new MultiplyResponse { Result = result });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ErrorResponse { Error = ex.Message });
-            }
-        }
-
-        [HttpPost("divide")]
-        [ProducesResponseType(typeof(DivideResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public IActionResult Divide([FromBody] DivideRequest request)
-        {
-            try
-            {
-                var result = expose.Divide(request.X, request.Y);
-                return Ok(new DivideResponse { Result = result });
-            }
-            catch (DivideByZeroException ex)
-            {
-                return BadRequest(new ErrorResponse { Error = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ErrorResponse { Error = ex.Message });
-            }
-        }
-
-        [HttpPost("subtract")]
-        [ProducesResponseType(typeof(SubtractResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-        public IActionResult Subtract([FromBody] SubtractRequest request)
-        {
-            try
-            {
-                var result = expose.subtract(request.A, request.B);
-                return Ok(new SubtractResponse { Result = result });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ErrorResponse { Error = ex.Message });
-            }
-        }
-
         [HttpPost("processuser")]
         [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -121,24 +69,6 @@ namespace RestTest.Controllers
         public string Str2 { get; set; } = string.Empty;
     }
 
-    public class MultiplyRequest
-    {
-        public double X { get; set; }
-        public double Y { get; set; }
-    }
-
-    public class DivideRequest
-    {
-        public int X { get; set; }
-        public int Y { get; set; }
-    }
-
-    public class SubtractRequest
-    {
-        public int A { get; set; }
-        public int B { get; set; }
-    }
-
     // Response models for OpenAPI documentation
     public class AddResponse
     {
@@ -150,21 +80,7 @@ namespace RestTest.Controllers
         public string Result { get; set; } = string.Empty;
     }
 
-    public class MultiplyResponse
-    {
-        public double Result { get; set; }
-    }
-
-    public class DivideResponse
-    {
-        public int Result { get; set; }
-    }
-
-    public class SubtractResponse
-    {
-        public int Result { get; set; }
-    }
-
+  
     public class ErrorResponse
     {
         public string Error { get; set; } = string.Empty;
