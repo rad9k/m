@@ -29,7 +29,7 @@ namespace m0.Lib.StdView
 
             to.Value = json;
 
-            m0.MinusZero.Instance.UserInteraction.InteractionOutput(GraphUtil.GetStringValue(to));
+            //m0.MinusZero.Instance.UserInteraction.InteractionOutput(GraphUtil.GetStringValue(to));
 
             return exe.Stack;
         }
