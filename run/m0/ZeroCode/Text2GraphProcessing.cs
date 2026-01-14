@@ -2496,7 +2496,7 @@ namespace m0.ZeroCode
                         e = new EasyEdge(e.From, meta, e.To);
                     }
 
-                    if (VertexOperations.IsLink(e))
+                    if (VertexOperations.IsLink_OldVersion(e))
                     {
                         if (ZeroCodeUtil.TryStringMatch((string)e.To.Value, 0, "(?<"))
                         {
@@ -2931,7 +2931,7 @@ namespace m0.ZeroCode
 
         private void ProcessToVertexMocksToLinks()
         {
-            GraphUtil.DeepIterator(parseRoot, this.ProcessToVertexMocksToLinks_Delegate, false, true, false);
+            GraphUtil.DeepIterator_OldVersion(parseRoot, this.ProcessToVertexMocksToLinks_Delegate, false, true, false);
         }
 
         static bool NoCodeViewProcessReEnter = false; // in the parseRoot.AddVertexAndReturnEdge(codeViewMetaEdge, "view trigger"); processing there is 

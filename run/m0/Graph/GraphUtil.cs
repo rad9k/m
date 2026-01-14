@@ -1251,6 +1251,54 @@ namespace m0.Graph
             return toReturn;
         }
 
+        static public IEnumerable<IVertex> DeepIterator_OldVersion(IVertex iterationRoot, GraphIteratorIterate iterate, bool isSingleResult, bool canModifyOutEdges, bool canGoIntoLinks)
+        {
+            HashSet<IVertex> visited = new HashSet<IVertex>();
+
+            List<IVertex> returnList = new List<IVertex>();
+
+            DeepIterator_Reccurent_OldVersion(iterationRoot, iterate, visited, returnList, isSingleResult, canModifyOutEdges, canGoIntoLinks);
+
+            return returnList;
+        }
+
+        static bool DeepIterator_Reccurent_OldVersion(IVertex iterationRoot, GraphIteratorIterate iterate, HashSet<IVertex> visited, List<IVertex> returnList, bool isSingleResult, bool canModifyOutEdges, bool canGoIntoLinks)
+        {
+            bool toReturn = false;
+
+            IEnumerable<IEdge> outEdges;
+
+            if (canModifyOutEdges)
+                outEdges = iterationRoot.OutEdges.ToList();
+            else
+                outEdges = iterationRoot.OutEdges;
+
+            //foreach (IEdge e in iterationRoot.OutEdges)
+            foreach (IEdge e in outEdges)
+            {
+                if (iterate(e))
+                {
+                    returnList.Add(e.To);
+                    if (isSingleResult)
+                        return true;
+                }
+
+                if (!visited.Contains(e.To) && (canGoIntoLinks || !VertexOperations.IsLink_OldVersion(e))) // this canGoIntoLinks looks bad, should be canGoIntoLinks XXX TO BE TESTED
+                {
+                    visited.Add(e.To);
+
+                    if (DeepIterator_Reccurent_OldVersion(e.To, iterate, visited, returnList, isSingleResult, canModifyOutEdges, canGoIntoLinks))
+                    {
+                        toReturn = true;
+
+                        break;
+                    }
+                }
+            }
+
+            return toReturn;
+        }
+
         static public void DeepCopy(IEdge edgeToCopy, IVertex copyTo)
         {
             HashSet<IVertex> visited = new HashSet<IVertex>();

@@ -52,6 +52,20 @@ namespace m0.ZeroTypes
             return true;
         }
 
+        public static bool IsLink_OldVersion(IVertex e_Meta)
+        {
+            if (GeneralUtil.CompareStrings(e_Meta.Value, "$EdgeTarget"))
+                return true;            
+
+            if (GraphUtil.ExistQueryOut(e_Meta, "$EdgeTarget", null) && !GraphUtil.ExistQueryOut(e_Meta, "$IsAggregation", null))
+                return true;
+
+            if (GraphUtil.GetQueryOutFirst(e_Meta, "$IsLink", null) != null)
+                return true;
+
+            return false;
+        }
+
         public static bool IsLink(IVertex e_Meta)
         {
             if (GeneralUtil.CompareStrings(e_Meta.Value, "$EdgeTarget"))
@@ -74,6 +88,11 @@ namespace m0.ZeroTypes
         public static bool IsLink(IEdge e)
         {
             return IsLink(e.Meta);
+        }
+
+        public static bool IsLink_OldVersion(IEdge e)
+        {
+            return IsLink_OldVersion(e.Meta);
         }
 
         public static bool IsMetaAndToVertexEnoughToIdentifyEdge(IVertex baseVertex, IVertex meta, IVertex to)

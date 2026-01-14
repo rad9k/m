@@ -3,9 +3,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 	class "User"
 		attribute "Name" @String
 		attribute "Age" @Integer
-		aggregation "Product" @User
-		association "KUPKA" @Product
-		attribute "Price" @User
+		aggregation "Product" @Product
+		association "Friend" @User		
 	class "Product"
 		attribute "Name" @String
 		attribute "Price" @Float

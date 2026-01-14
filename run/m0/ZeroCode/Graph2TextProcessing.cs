@@ -633,7 +633,7 @@ namespace m0.ZeroCode
                     return pre + toAdd + ZeroCodeCommon.stringToPossiblyEscapedString(dict, e.Meta.Value.ToString()) + ":";
                 }
 
-                if (!VertexOperations.IsLink(e))
+                if (!VertexOperations.IsLink_OldVersion(e))
                 {
                     string ret = FindKeywordEdge(pre + toAdd + ZeroCodeCommon.stringToPossiblyEscapedString(dict, e.Meta.Value.ToString()) + ":", e.To, toFind, ref keywordSubVertex);
 
