@@ -745,7 +745,7 @@ namespace m0.ZeroCode
 
             foreach (IEdge e in baseEdge.To.OutEdgesRaw)
             {
-                if (!VertexOperations.IsLink(e))
+                if (!VertexOperations.IsLink_OldVersion(e))
                 {
                     IEdge found = GetKeywordManyRoot_reccurent(toAdd + ZeroCodeCommon.stringToPossiblyEscapedString(dict, e.Meta.ToString()) + ":", e, out keywordManyRootQueryString);
 
@@ -898,11 +898,11 @@ namespace m0.ZeroCode
                     { // hack if there are no params but there are local roots
                         // hack EDIT in order to a[b<"3">\] to work hack has been reduced by zeroMatch
 
-                        if (!VertexOperations.IsLink(be))
+                        if (!VertexOperations.IsLink_OldVersion(be))
                             AppendSubVertices(km, be, path);
                     }
 
-                    if (!VertexOperations.IsLink(be)) // XXX 2020
+                    if (!VertexOperations.IsLink_OldVersion(be)) // XXX 2020
                                                       //foreach (IEdge e in ZeroCodeView.Linearize(be.To))
                         foreach (IEdge e in be.To.OutEdgesRaw)
                             if (!km.MatchedEdges.Contains(e))
@@ -964,7 +964,7 @@ namespace m0.ZeroCode
 
                 }
 
-                if (/*wasNewVertex &&*/ !VertexOperations.IsLink(keywordEdge) /*&& e != km.BaseEdge*/) // 2025.11.09 added for the sake of {}\
+                if (/*wasNewVertex &&*/ !VertexOperations.IsLink_OldVersion(keywordEdge) /*&& e != km.BaseEdge*/) // 2025.11.09 added for the sake of {}\
                     AppendSubVertices(km, keywordEdge, km.BaseEdgePath);
 
                 return whatToReturn;
@@ -987,7 +987,7 @@ namespace m0.ZeroCode
             {
                 string ret = null;
 
-                if (!VertexOperations.IsLink(ee))
+                if (!VertexOperations.IsLink_OldVersion(ee))
                     ret = GetPathFromKeywordMatchAndKeywordEdge(km, ee, GraphUtil.GetIdentyfyingQuerySubString_MetaMode(dict, e) + suffix + path);
 
                 if (ret != null)
@@ -1040,7 +1040,7 @@ namespace m0.ZeroCode
 
                     IEdge e = GetKewordEdgeByQuerystring(km, queryString);
 
-                    if (VertexOperations.IsLink(e))
+                    if (VertexOperations.IsLink_OldVersion(e))
                         BeenList.Add(e);
 
                     ProcessSentencePart(km, sentence, ref prevPos, ref wasThereNewLine, match, e, ParentKmHasTabAddingOmmit, keywordSubVertex);
@@ -1102,7 +1102,7 @@ namespace m0.ZeroCode
                             else
                                 e = ee.To.GetAll(false, queryString).FirstOrDefault();
 
-                            if (VertexOperations.IsLink(ee))
+                            if (VertexOperations.IsLink_OldVersion(ee))
                                 BeenList.Add(ee);
 
                             ProcessSentencePart(km, sentence, ref prevPos, ref wasThereNewLine, match, e, ParentKmHasTabAddingOmmit, keywordSubVertex);
@@ -1207,7 +1207,7 @@ namespace m0.ZeroCode
 
         bool ShouldAppendKeywordHere(IEdge e, string path)
         {
-            if (VertexOperations.IsLink(e)) // XXX should work
+            if (VertexOperations.IsLink_OldVersion(e)) // XXX should work
                 return true;
 
             if (SubGraphVerticesDictionary.ContainsKey(e.To) && SubGraphVerticesDictionary[e.To].LinkString == path)
@@ -1264,7 +1264,7 @@ namespace m0.ZeroCode
             if (keywordSubVertex != null && GraphUtil.ExistQueryOut(keywordSubVertex, "$$ForceNewVertex", null))
                 forceNewVertex = true;
 
-            if (VertexOperations.IsLink(e) && !forceNewVertex)
+            if (VertexOperations.IsLink_OldVersion(e) && !forceNewVertex)
             {
                 AppendAsLink(e.To, null, hideLinkPrefix);
 
@@ -1399,7 +1399,7 @@ namespace m0.ZeroCode
             foreach (IEdge searchResult in GraphUtil.GetQueryOut(parentToCheck, searchString_firstPart, searchString_secondPart))
                 if (!currentMatchGraphEdgeList.Contains(searchResult))
                 {
-                    if (!VertexOperations.IsLink(keywordEdge))
+                    if (!VertexOperations.IsLink_OldVersion(keywordEdge))
                         foreach (IEdge subKeywordEdge in keywordEdge.To.OutEdgesRaw)
                             if (!ZeroCodeUtil.IsDoubleDolarMeta(subKeywordEdge)
                                 && GetGraphMatch(searchResult.To, subKeywordEdge) == false)
@@ -1645,7 +1645,7 @@ namespace m0.ZeroCode
                 suffix = "\\";
 
             foreach (IEdge ee in e.To.OutEdgesRaw)
-                if (!VertexOperations.IsLink(ee)) 
+                if (!VertexOperations.IsLink_OldVersion(ee)) 
                 {
                     string LinkString = path + suffix + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(dict, ee);
 
@@ -1694,7 +1694,7 @@ namespace m0.ZeroCode
 
             CheckVertexIfItMachesAnyKeywordGraphs(ee, LinkString, e);
 
-            if (!BeenList.Contains(ee) && !VertexOperations.IsLink(ee))
+            if (!BeenList.Contains(ee) && !VertexOperations.IsLink_OldVersion(ee))
                 MatchKeywords(ee, LinkString, false);
         }
 
@@ -1759,7 +1759,7 @@ namespace m0.ZeroCode
             
             bool been = false;
 
-            bool isLink = VertexOperations.IsLink(baseEdge);
+            bool isLink = VertexOperations.IsLink_OldVersion(baseEdge);
 
             //if (BeenList.Contains(baseEdge)&&!isLink)
             //   been = true;     /?????????  
