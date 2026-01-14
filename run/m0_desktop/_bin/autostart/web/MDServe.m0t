@@ -37,14 +37,14 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 		
 		startDirId = startDir\FullFilename
 		
-		if :Temp\:'(startDirId)'<> != "0"
-			return :Temp\:'(startDirId)'
+		if :Server\:'(startDirId)'<> != "0"
+			return :Server\:'(startDirId)'
 			
 		tree +< @@getTree_Recursive[startDir, "True", ""]
 		tree +< :System\:Lib\:StdView\:VertexToJson :: ""
 			
 		cache = @@Meta\MDServeCache :: %startDirId
-		:Temp +< cache
+		:Server +< cache
 		
 		cache +< @@Meta\MDServeCache\TreeJson :: tree\VertexToJson
 		

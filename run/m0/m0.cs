@@ -430,11 +430,6 @@ namespace m0
             fsl.Load(autostartVertex);        
         }
 
-        void CreateWork()
-        {
-            IVertex w = root.AddVertex(null, "Work");
-        }
-
         void CreateStart()
         {
             IVertex startVertex = FileSystemUtil.GetDirectoryFromFileSystem(m0DllPath);
@@ -443,9 +438,11 @@ namespace m0
                 root.AddEdge(root.Get(false, @"System\Meta\Store\FileSystem\Start"), startVertex);            
         }
 
-        void CreateTemp()
+        void CreateTempWorkServer()
         {                                   
             root.AddVertex(null, "Temp");
+            root.AddVertex(null, "Work");
+            root.AddVertex(null, "Server");
         }
 
         void Autostart()
@@ -510,11 +507,10 @@ namespace m0
 
             CreateStart();
 
-            CreateTemp();
+            CreateTempWorkServer();
 
             CreateAutostart();
 
-            CreateWork();
 
 
 
