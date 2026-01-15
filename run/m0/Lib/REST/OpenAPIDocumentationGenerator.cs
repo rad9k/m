@@ -47,11 +47,11 @@ namespace m0.Lib.REST
                 writer.WriteString("version", "1.0.0");
                 writer.WriteEndObject();
 
-                // Collect functions and classes
+                // Collect functions
                 var functions = CollectFunctions(baseVertex);
-                var classes = CollectClasses(baseVertex);
-
-                // Collect referenced classes not directly defined in baseVertex
+                
+                // Collect only classes that are referenced by functions (and their dependencies)
+                var classes = new List<ClassInfo>();
                 CollectReferencedClasses(functions, classes);
 
                 // Write paths section
@@ -112,23 +112,6 @@ namespace m0.Lib.REST
             }
 
             return functions;
-        }
-
-        private static List<ClassInfo> CollectClasses(IVertex baseVertex)
-        {
-            var classes = new List<ClassInfo>();
-
-            foreach (IEdge edge in baseVertex.OutEdges)
-            {
-                string metaValue = GraphUtil.GetStringValue(edge.Meta);
-                if (metaValue == "Class")
-                {
-                    ClassInfo classInfo = CollectClassFromVertex(edge.To);
-                    classes.Add(classInfo);
-                }
-            }
-
-            return classes;
         }
 
         private static ClassInfo CollectClassFromVertex(IVertex classVertex)

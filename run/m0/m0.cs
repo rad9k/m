@@ -532,7 +532,7 @@ namespace m0
 
             //
 
-            IVertex v = Root.Get(false, @"Autostart\resttest2");
+            IVertex v = Root.Get(false, @"Autostart\resttest");
 
             m0.MinusZero.Instance.UserInteraction.InteractionOutput(Lib.REST.OpenApiDocumentationGenerator.GetOpenApiDocumentation(v));
         }
