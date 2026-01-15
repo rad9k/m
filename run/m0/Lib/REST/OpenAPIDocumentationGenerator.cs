@@ -51,6 +51,9 @@ namespace m0.Lib.REST
                 var functions = CollectFunctions(baseVertex);
                 var classes = CollectClasses(baseVertex);
 
+                // Collect referenced classes not directly defined in baseVertex
+                CollectReferencedClasses(functions, classes);
+
                 // Write paths section
                 WritePaths(writer, functions, classes);
 
@@ -82,6 +85,7 @@ namespace m0.Lib.REST
                     if (outputVertex != null)
                     {
                         functionInfo.OutputType = GetTypeName(outputVertex);
+                        functionInfo.OutputTypeVertex = outputVertex;
                     }
 
                     // Get input parameters
@@ -97,6 +101,7 @@ namespace m0.Lib.REST
                         if (edgeTarget != null)
                         {
                             paramInfo.Type = GetTypeName(edgeTarget);
+                            paramInfo.TypeVertex = edgeTarget;
                         }
 
                         functionInfo.InputParameters.Add(paramInfo);
@@ -118,73 +123,83 @@ namespace m0.Lib.REST
                 string metaValue = GraphUtil.GetStringValue(edge.Meta);
                 if (metaValue == "Class")
                 {
-                    var classInfo = new ClassInfo
-                    {
-                        Name = GraphUtil.GetStringValue(edge.To)
-                    };
-
-                    // Get attributes
-                    IList<IEdge> attributes = GraphUtil.GetQueryOut(edge.To, "Attribute", null);
-                    foreach (IEdge attrEdge in attributes)
-                    {
-                        var propInfo = new PropertyInfo
-                        {
-                            Name = GraphUtil.GetStringValue(attrEdge.To),
-                            IsArray = false
-                        };
-
-                        IVertex edgeTarget = GraphUtil.GetQueryOutFirst(attrEdge.To, "$EdgeTarget", null);
-                        if (edgeTarget != null)
-                        {
-                            propInfo.Type = GetTypeName(edgeTarget);
-                        }
-
-                        classInfo.Properties.Add(propInfo);
-                    }
-
-                    // Get aggregations (arrays)
-                    IList<IEdge> aggregations = GraphUtil.GetQueryOut(edge.To, "Aggregation", null);
-                    foreach (IEdge aggEdge in aggregations)
-                    {
-                        var propInfo = new PropertyInfo
-                        {
-                            Name = GraphUtil.GetStringValue(aggEdge.To),
-                            IsArray = true
-                        };
-
-                        IVertex edgeTarget = GraphUtil.GetQueryOutFirst(aggEdge.To, "$EdgeTarget", null);
-                        if (edgeTarget != null)
-                        {
-                            propInfo.Type = GetTypeName(edgeTarget);
-                        }
-
-                        classInfo.Properties.Add(propInfo);
-                    }
-
-                    // Get associations (arrays of references to other classes)
-                    IList<IEdge> associations = GraphUtil.GetQueryOut(edge.To, "Association", null);
-                    foreach (IEdge assocEdge in associations)
-                    {
-                        var propInfo = new PropertyInfo
-                        {
-                            Name = GraphUtil.GetStringValue(assocEdge.To),
-                            IsArray = true
-                        };
-
-                        IVertex edgeTarget = GraphUtil.GetQueryOutFirst(assocEdge.To, "$EdgeTarget", null);
-                        if (edgeTarget != null)
-                        {
-                            propInfo.Type = GetTypeName(edgeTarget);
-                        }
-
-                        classInfo.Properties.Add(propInfo);
-                    }
-
+                    ClassInfo classInfo = CollectClassFromVertex(edge.To);
                     classes.Add(classInfo);
                 }
             }
 
             return classes;
+        }
+
+        private static ClassInfo CollectClassFromVertex(IVertex classVertex)
+        {
+            var classInfo = new ClassInfo
+            {
+                Name = GraphUtil.GetStringValue(classVertex),
+                SourceVertex = classVertex
+            };
+
+            // Get attributes
+            IList<IEdge> attributes = GraphUtil.GetQueryOut(classVertex, "Attribute", null);
+            foreach (IEdge attrEdge in attributes)
+            {
+                var propInfo = new PropertyInfo
+                {
+                    Name = GraphUtil.GetStringValue(attrEdge.To),
+                    IsArray = false
+                };
+
+                IVertex edgeTarget = GraphUtil.GetQueryOutFirst(attrEdge.To, "$EdgeTarget", null);
+                if (edgeTarget != null)
+                {
+                    propInfo.Type = GetTypeName(edgeTarget);
+                    propInfo.TypeVertex = edgeTarget;
+                }
+
+                classInfo.Properties.Add(propInfo);
+            }
+
+            // Get aggregations (arrays)
+            IList<IEdge> aggregations = GraphUtil.GetQueryOut(classVertex, "Aggregation", null);
+            foreach (IEdge aggEdge in aggregations)
+            {
+                var propInfo = new PropertyInfo
+                {
+                    Name = GraphUtil.GetStringValue(aggEdge.To),
+                    IsArray = true
+                };
+
+                IVertex edgeTarget = GraphUtil.GetQueryOutFirst(aggEdge.To, "$EdgeTarget", null);
+                if (edgeTarget != null)
+                {
+                    propInfo.Type = GetTypeName(edgeTarget);
+                    propInfo.TypeVertex = edgeTarget;
+                }
+
+                classInfo.Properties.Add(propInfo);
+            }
+
+            // Get associations (arrays of references to other classes)
+            IList<IEdge> associations = GraphUtil.GetQueryOut(classVertex, "Association", null);
+            foreach (IEdge assocEdge in associations)
+            {
+                var propInfo = new PropertyInfo
+                {
+                    Name = GraphUtil.GetStringValue(assocEdge.To),
+                    IsArray = true
+                };
+
+                IVertex edgeTarget = GraphUtil.GetQueryOutFirst(assocEdge.To, "$EdgeTarget", null);
+                if (edgeTarget != null)
+                {
+                    propInfo.Type = GetTypeName(edgeTarget);
+                    propInfo.TypeVertex = edgeTarget;
+                }
+
+                classInfo.Properties.Add(propInfo);
+            }
+
+            return classInfo;
         }
 
         private static string GetTypeName(IVertex typeVertex)
@@ -199,6 +214,81 @@ namespace m0.Lib.REST
             }
 
             return "String"; // Default fallback
+        }
+
+        private static void CollectReferencedClasses(List<FunctionInfo> functions, List<ClassInfo> classes)
+        {
+            var collectedNames = new HashSet<string>(classes.Select(c => c.Name));
+            var verticesToProcess = new Queue<IVertex>();
+
+            // Collect type vertices from functions
+            foreach (var function in functions)
+            {
+                if (function.OutputTypeVertex != null)
+                {
+                    verticesToProcess.Enqueue(function.OutputTypeVertex);
+                }
+                foreach (var param in function.InputParameters)
+                {
+                    if (param.TypeVertex != null)
+                    {
+                        verticesToProcess.Enqueue(param.TypeVertex);
+                    }
+                }
+            }
+
+            // Collect type vertices from existing classes
+            foreach (var classInfo in classes.ToList())
+            {
+                foreach (var prop in classInfo.Properties)
+                {
+                    if (prop.TypeVertex != null)
+                    {
+                        verticesToProcess.Enqueue(prop.TypeVertex);
+                    }
+                }
+            }
+
+            // Process vertices and collect referenced classes
+            while (verticesToProcess.Count > 0)
+            {
+                IVertex typeVertex = verticesToProcess.Dequeue();
+                string typeName = GetTypeName(typeVertex);
+
+                // Skip primitive types
+                if (PrimitiveTypes.Contains(typeName))
+                {
+                    continue;
+                }
+
+                // Skip already collected classes
+                if (collectedNames.Contains(typeName))
+                {
+                    continue;
+                }
+
+                // Check if this vertex represents a class (has Attribute, Aggregation, or Association)
+                IList<IEdge> attributes = GraphUtil.GetQueryOut(typeVertex, "Attribute", null);
+                IList<IEdge> aggregations = GraphUtil.GetQueryOut(typeVertex, "Aggregation", null);
+                IList<IEdge> associations = GraphUtil.GetQueryOut(typeVertex, "Association", null);
+
+                if (attributes.Count > 0 || aggregations.Count > 0 || associations.Count > 0)
+                {
+                    // This is a class, collect it
+                    ClassInfo newClass = CollectClassFromVertex(typeVertex);
+                    classes.Add(newClass);
+                    collectedNames.Add(typeName);
+
+                    // Add its property types to process queue
+                    foreach (var prop in newClass.Properties)
+                    {
+                        if (prop.TypeVertex != null && !PrimitiveTypes.Contains(prop.Type) && !collectedNames.Contains(prop.Type))
+                        {
+                            verticesToProcess.Enqueue(prop.TypeVertex);
+                        }
+                    }
+                }
+            }
         }
 
         private static void WritePaths(Utf8JsonWriter writer, List<FunctionInfo> functions, List<ClassInfo> classes)
@@ -565,6 +655,7 @@ namespace m0.Lib.REST
         {
             public string Name { get; set; } = string.Empty;
             public string OutputType { get; set; } = string.Empty;
+            public IVertex OutputTypeVertex { get; set; }
             public List<ParameterInfo> InputParameters { get; set; } = new List<ParameterInfo>();
         }
 
@@ -572,11 +663,13 @@ namespace m0.Lib.REST
         {
             public string Name { get; set; } = string.Empty;
             public string Type { get; set; } = string.Empty;
+            public IVertex TypeVertex { get; set; }
         }
 
         private class ClassInfo
         {
             public string Name { get; set; } = string.Empty;
+            public IVertex SourceVertex { get; set; }
             public List<PropertyInfo> Properties { get; set; } = new List<PropertyInfo>();
         }
 
@@ -584,6 +677,7 @@ namespace m0.Lib.REST
         {
             public string Name { get; set; } = string.Empty;
             public string Type { get; set; } = string.Empty;
+            public IVertex TypeVertex { get; set; }
             public bool IsArray { get; set; }
         }
     }
