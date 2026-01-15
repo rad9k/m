@@ -1,1 +1,0 @@
-The project context and rules are located in the .ai/ folder.
