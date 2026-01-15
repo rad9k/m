@@ -178,7 +178,7 @@ namespace m0_SYSTEM_GENERATE.Lib
             IVertex BooleanType = root.Get(false, @"System\Meta\ZeroTypes\Boolean");
             IVertex StringType = root.Get(false, @"System\Meta\ZeroTypes\String");
 
-            IVertex default_meta = root.Get(false, @"System\Meta\Base\Vertex\$DefaultValue");
+            IVertex defaultValue_meta = root.Get(false, @"System\Meta\Base\Vertex\$DefaultValue");
 
             LibNet = lib.AddVertex(null, "Net");
 
@@ -208,10 +208,10 @@ namespace m0_SYSTEM_GENERATE.Lib
             GraphUtil.AddAttribute(httpServerVertex, "Port", IntegerType, 1, 1);
 
             IVertex doLogAttributeVertex = GraphUtil.AddAttribute(httpServerVertex, "DoLog", BooleanType, 1, 1);
-            doLogAttributeVertex.AddVertex(default_meta, "True");
+            doLogAttributeVertex.AddVertex(defaultValue_meta, "True");
 
             IVertex logFilenameVertex = GraphUtil.AddAttribute(httpServerVertex, "LogFilename", BooleanType, 1, 1);
-            logFilenameVertex.AddVertex(default_meta, "");
+            logFilenameVertex.AddVertex(defaultValue_meta, "");
 
             IVertex httpServer_InitVertex = AddMethod(httpServerVertex, "HttpServer", null, new TypeName[] { new TypeName("p_mapping", httpMapingVertex, 0, -1), new TypeName("p_port", "Integer", 0, 1) });
 
@@ -223,6 +223,13 @@ namespace m0_SYSTEM_GENERATE.Lib
             AddFunction(LibNet, "HttpHandler", type, null, "String", new TypeName[] { new TypeName("url", "String") });
 
             AddFunction(LibNet, "UrlDecode", type, "UrlDecode", "String", new TypeName[] { new TypeName("url", "String") });
+
+            // REST
+
+            IVertex restVertex = LibNet.AddVertex(null, "REST");
+            restVertex.AddVertex(null, "Endpoint");
+            restVertex.AddVertex(null, "NewClassDefinitions");
+            restVertex.AddVertex(null, "ClassDefinitions");
         }
 
         public static void Save(IEnumerable<IVertex> systemSubGraphWithLinks, Dictionary<string, StoreId> storeOverride)

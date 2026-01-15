@@ -1,0 +1,25 @@
+System\FormalTextLanguage\ZeroCode_VertexAndManyLines
+"resttest"	
+	class "produkt"
+		attribute "nazwa" @String
+		attribute "koszt" @Float
+		association "data" @DateTime
+	class "pan"
+		attribute "imie" @String
+		attribute "wiek" @Integer
+		aggregation "kosz" @produkt
+		association "kolega" @pan
+	function "dodaj" @Integer(@Integer "a", @Integer "b")
+		return a + b
+	function "dodaj2" @Integer()
+		return a + b
+	function "dodaj3" @Integer(@Integer "a", @Integer "b", @String "c", @Fload "d")
+		return a + b
+	function "dodaj4" @Integer(@Integer "a", @pan "p")
+		return a + b
+	function "dodaj5" @Integer(@Integer "a")
+		return a + b
+	function "lacz" @String(@String "str1", @String "str2")
+		return "kupka"
+	function "ProcessUser" @User(@pan "input")
+		return 'input'

@@ -17,6 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using m0.Lib.REST;
 
 
 
@@ -528,6 +529,12 @@ namespace m0
             Autostart();
 
             ExecutionFlowHelper.CommitTransaction();
+
+            //
+
+            IVertex v = Root.Get(false, @"Autostart\resttest2");
+
+            //m0.MinusZero.Instance.UserInteraction.InteractionOutput(Lib.REST.OpenApiDocumentationGenerator.GetOpenApiDocumentation(v));
         }
     }
 }

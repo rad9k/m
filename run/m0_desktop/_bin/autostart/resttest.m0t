@@ -8,10 +8,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 	class "Product"
 		attribute "Name" @String
 		attribute "Price" @Float
-		attribute "Price" @User
 	function "Add" @Integer(@Integer "a", @Integer "b")
 		return a + b
 	function "Concat" @String(@String "str1", @String "str2")
 		return "kupka"
 	function "ProcessUser" @User(@User "input")
-		return input
+		return 'input'
