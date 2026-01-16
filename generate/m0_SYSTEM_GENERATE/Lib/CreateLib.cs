@@ -226,7 +226,7 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             // REST
 
-            IVertex restVertex = LibNet.AddVertex(null, "REST");
+            IVertex restVertex = LibNet.AddVertex(null, "Rest");
             restVertex.AddVertex(null, "Endpoint");
             restVertex.AddVertex(null, "NewClassDefinitions");
             restVertex.AddVertex(null, "ClassDefinitions");

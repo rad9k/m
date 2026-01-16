@@ -1,0 +1,64 @@
+{
+  "koszyki": [
+    {
+      "id": 1,
+      "produkty": [
+        {
+          "nazwa": "Mleko",
+          "cena": 3.50,
+          "ilosc": 2
+        },
+        {
+          "nazwa": "Chleb",
+          "cena": 4.20,
+          "ilosc": 1
+        },
+        {
+          "nazwa": "Masło",
+          "cena": 6.80,
+          "ilosc": 1
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "produkty": [
+        {
+          "nazwa": "Jabłka",
+          "cena": 5.00,
+          "ilosc": 3
+        },
+        {
+          "nazwa": "Banany",
+          "cena": 7.50,
+          "ilosc": 2
+        },
+        {
+          "nazwa": "Pomarańcze",
+          "cena": 6.00,
+          "ilosc": 1
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "produkty": [
+        {
+          "nazwa": "Ser żółty",
+          "cena": 12.00,
+          "ilosc": 1
+        },
+        {
+          "nazwa": "Jogurt",
+          "cena": 3.20,
+          "ilosc": 4
+        },
+        {
+          "nazwa": "Jajka",
+          "cena": 15.00,
+          "ilosc": 1
+        }
+      ]
+    }
+  ]
+}

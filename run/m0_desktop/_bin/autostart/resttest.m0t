@@ -1,6 +1,6 @@
 System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 "resttest"
-	import @System\Lib\Net\REST direct meta
+	import @System\Lib\Net\Rest direct meta
 	class "niepoczebne"
 		attribute "Name" @String
 	class "User"
