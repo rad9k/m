@@ -44,8 +44,16 @@ namespace m0.Lib.StdView
                 return;
             }
 
-            IVertex schemaRoot = to.AddVertex(null, "Schema");
-            IVertex dataRoot = to.AddVertex(null, "Data");
+            IVertex schemaRoot;
+            
+            IVertex NewClassDefinitionsVertex = GraphUtil.GetQueryOutFirst(to, "NewClassDefinitions", null);
+            
+            if (NewClassDefinitionsVertex != null)
+                schemaRoot = NewClassDefinitionsVertex;
+            else
+                schemaRoot = to;
+            
+            IVertex dataRoot = to;
 
             var context = new SchemaContext(schemaRoot);
 
