@@ -1,5 +1,8 @@
 System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 "resttest"
+	import @System\Lib\Net\REST direct meta
+	class "niepoczebne"
+		attribute "Name" @String
 	class "User"
 		attribute "Name" @String
 		attribute "Age" @Integer
@@ -8,9 +11,12 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 	class "Product"
 		attribute "Name" @String
 		attribute "Price" @Float
+	class "niepoczebne2"
+		attribute "Name" @String
 	function "Add" @Integer(@Integer "a", @Integer "b")
 		return a + b
 	function "Concat" @String(@String "str1", @String "str2")
+		<@Endpoint :: @Empty>
 		return "kupka"
 	function "ProcessUser" @User(@User "input")
 		return 'input'

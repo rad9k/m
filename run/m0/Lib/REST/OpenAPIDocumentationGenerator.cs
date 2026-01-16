@@ -75,6 +75,12 @@ namespace m0.Lib.REST
                 string metaValue = GraphUtil.GetStringValue(edge.Meta);
                 if (metaValue == "Function")
                 {
+                    // Only collect functions that have "Endpoint" meta edge
+                    if (!GraphUtil.ExistQueryOut(edge.To, "Endpoint", null))
+                    {
+                        continue;
+                    }
+
                     var functionInfo = new FunctionInfo
                     {
                         Name = GraphUtil.GetStringValue(edge.To)
