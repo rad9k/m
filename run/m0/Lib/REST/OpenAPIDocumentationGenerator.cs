@@ -95,8 +95,16 @@ namespace m0.Lib.REST
                     {
                         var paramInfo = new ParameterInfo
                         {
-                            Name = GraphUtil.GetStringValue(paramEdge.To)
+                            Name = GraphUtil.GetStringValue(paramEdge.To),
+                            IsArray = false,
+                            IsNullable = false
                         };
+
+                        if (VertexOperations.IsMetaVertexOfManyMultiplicity(paramEdge.To))
+                            paramInfo.IsArray = true;
+
+                        if (VertexOperations.IsMetaVertexNullable(paramEdge.To))
+                            paramInfo.IsNullable = true;
 
                         IVertex edgeTarget = GraphUtil.GetQueryOutFirst(paramEdge.To, "$EdgeTarget", null);
                         if (edgeTarget != null)
@@ -130,11 +138,15 @@ namespace m0.Lib.REST
                 var propInfo = new PropertyInfo
                 {
                     Name = GraphUtil.GetStringValue(attrEdge.To),
-                    IsArray = false
+                    IsArray = false,
+                    IsNullable = false
                 };
 
                 if (VertexOperations.IsMetaVertexOfManyMultiplicity(attrEdge.To))                
-                    propInfo.IsArray = true;                
+                    propInfo.IsArray = true;
+                
+                if (VertexOperations.IsMetaVertexNullable(attrEdge.To))
+                    propInfo.IsNullable = true;
 
                 IVertex edgeTarget = GraphUtil.GetQueryOutFirst(attrEdge.To, "$EdgeTarget", null);
                 if (edgeTarget != null)
@@ -153,11 +165,15 @@ namespace m0.Lib.REST
                 var propInfo = new PropertyInfo
                 {
                     Name = GraphUtil.GetStringValue(aggEdge.To),
-                    IsArray = false
+                    IsArray = false,
+                    IsNullable = false
                 };
 
                 if (VertexOperations.IsMetaVertexOfManyMultiplicity(aggEdge.To))
                     propInfo.IsArray = true;
+
+                if (VertexOperations.IsMetaVertexNullable(aggEdge.To))
+                    propInfo.IsNullable = true;
 
                 IVertex edgeTarget = GraphUtil.GetQueryOutFirst(aggEdge.To, "$EdgeTarget", null);
                 if (edgeTarget != null)
@@ -176,11 +192,15 @@ namespace m0.Lib.REST
                 var propInfo = new PropertyInfo
                 {
                     Name = GraphUtil.GetStringValue(assocEdge.To),
-                    IsArray = false
+                    IsArray = false,
+                    IsNullable = false
                 };
 
                 if (VertexOperations.IsMetaVertexOfManyMultiplicity(assocEdge.To))
                     propInfo.IsArray = true;
+
+                if (VertexOperations.IsMetaVertexNullable(assocEdge.To))
+                    propInfo.IsNullable = true;
 
                 IVertex edgeTarget = GraphUtil.GetQueryOutFirst(assocEdge.To, "$EdgeTarget", null);
                 if (edgeTarget != null)
@@ -522,7 +542,32 @@ namespace m0.Lib.REST
             foreach (var param in function.InputParameters)
             {
                 writer.WritePropertyName(param.Name);
-                TypeConverter.WriteOpenApiTypeDefinition(writer, param.Type);
+
+                if (param.IsArray)
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("type", "array");
+
+                    writer.WritePropertyName("items");
+                    if (TypeConverter.IsPrimitiveType(param.Type))
+                    {
+                        TypeConverter.WriteOpenApiTypeDefinition(writer, param.Type, false);
+                    }
+                    else
+                    {
+                        writer.WriteStartObject();
+                        writer.WriteString("$ref", "#/components/schemas/" + param.Type);
+                        writer.WriteEndObject();
+                    }
+
+                    if (param.IsNullable)
+                        writer.WriteBoolean("nullable", true);
+                    writer.WriteEndObject();
+                }
+                else
+                {
+                    TypeConverter.WriteOpenApiTypeDefinition(writer, param.Type, param.IsNullable);
+                }
             }
 
             writer.WriteEndObject(); // properties
@@ -595,16 +640,24 @@ namespace m0.Lib.REST
                     writer.WriteString("type", "array");
 
                     writer.WritePropertyName("items");
-                    writer.WriteStartObject();
-                    writer.WriteString("$ref", "#/components/schemas/" + prop.Type);
-                    writer.WriteEndObject();
+                    if (TypeConverter.IsPrimitiveType(prop.Type))
+                    {
+                        TypeConverter.WriteOpenApiTypeDefinition(writer, prop.Type, false);
+                    }
+                    else
+                    {
+                        writer.WriteStartObject();
+                        writer.WriteString("$ref", "#/components/schemas/" + prop.Type);
+                        writer.WriteEndObject();
+                    }
 
-                    writer.WriteBoolean("nullable", true);
+                    if (prop.IsNullable)
+                        writer.WriteBoolean("nullable", true);
                     writer.WriteEndObject();
                 }
                 else
                 {
-                    TypeConverter.WriteOpenApiTypeDefinition(writer, prop.Type);
+                    TypeConverter.WriteOpenApiTypeDefinition(writer, prop.Type, prop.IsNullable);
                 }
             }
 
@@ -629,6 +682,8 @@ namespace m0.Lib.REST
             public string Name { get; set; } = string.Empty;
             public string Type { get; set; } = string.Empty;
             public IVertex TypeVertex { get; set; }
+            public bool IsArray { get; set; }
+            public bool IsNullable { get; set; }
         }
 
         private class ClassInfo
@@ -644,6 +699,7 @@ namespace m0.Lib.REST
             public string Type { get; set; } = string.Empty;
             public IVertex TypeVertex { get; set; }
             public bool IsArray { get; set; }
+            public bool IsNullable { get; set; }
         }
     }
 }

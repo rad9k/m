@@ -82,6 +82,19 @@ namespace m0.ZeroTypes
             return true;
         }
 
+        public static bool IsMetaVertexNullable(IVertex meta)
+        {
+            int? minCardinality = GraphUtil.GetIntegerValue(GraphUtil.GetQueryOutFirst(meta, "$MinCardinality", null));
+
+            if (minCardinality == null)
+                return true;
+
+            if (minCardinality == 0)
+                return true;
+
+            return false;
+        }
+
         public static bool IsLink_OldVersion(IVertex e_Meta) // not handling IsAssiciation. and now: yes IsLink_OldVersion and IsLink needs to be aligned
                                                              // BUT: to align them we migh need to have conistent "link" theory and for now it seems that there are holes in in (at least need two different versions)
         {

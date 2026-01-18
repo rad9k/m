@@ -57,8 +57,8 @@ namespace m0.Lib.StdView
 
             var context = new SchemaContext(schemaRoot);
 
-            SchemaClass rootClass = context.BuildRootSchema(document.RootElement);
-            CreateData(document.RootElement, dataRoot, rootClass, context);
+            context.BuildSchema(document.RootElement);
+            CreateData(document.RootElement, dataRoot, context);
         }
 
         private enum SchemaValueKind
@@ -99,18 +99,64 @@ namespace m0.Lib.StdView
                 isJsonArrayMeta = MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex\$IsJsonArray");
             }
 
-            public SchemaClass BuildRootSchema(JsonElement rootElement)
+            public void BuildSchema(JsonElement rootElement)
             {
                 if (rootElement.ValueKind == JsonValueKind.Object)
-                    return BuildObjectClass(rootElement, "Root", "Root");
+                {
+                    BuildNestedClassesFromObject(rootElement, "Root");
+                }
+                else if (rootElement.ValueKind == JsonValueKind.Array)
+                {
+                    BuildNestedClassesFromArray(rootElement, "Root");
+                }
+            }
 
-                SchemaClass rootClass = CreateClass("Root", "Root");
-                if (rootElement.ValueKind == JsonValueKind.Array)
-                    AddArrayProperty(rootClass, "items", rootElement, "Root.items");
-                else
-                    AddPrimitiveProperty(rootClass, "value", rootElement, "Root.value", isArray: false);
+            private void BuildNestedClassesFromObject(JsonElement obj, string path)
+            {
+                foreach (JsonProperty property in obj.EnumerateObject())
+                {
+                    string propertyPath = path + "." + property.Name;
 
-                return rootClass;
+                    if (property.Value.ValueKind == JsonValueKind.Object)
+                    {
+                        BuildObjectClass(property.Value, property.Name, propertyPath);
+                    }
+                    else if (property.Value.ValueKind == JsonValueKind.Array)
+                    {
+                        BuildNestedClassesFromArray(property.Value, propertyPath);
+                    }
+                }
+            }
+
+            private void BuildNestedClassesFromArray(JsonElement arrayElement, string path)
+            {
+                if (arrayElement.GetArrayLength() == 0)
+                    return;
+
+                JsonElement firstElement = arrayElement.EnumerateArray().First();
+
+                if (firstElement.ValueKind == JsonValueKind.Object)
+                {
+                    string className = GetClassNameFromPath(path);
+                    SchemaClass itemClass = BuildObjectClass(firstElement, className, path + ".Item");
+                    MergeArrayObjectItems(itemClass, arrayElement, path + ".Item");
+                }
+                else if (firstElement.ValueKind == JsonValueKind.Array)
+                {
+                    BuildNestedClassesFromArray(firstElement, path + ".Item");
+                }
+            }
+
+            private string GetClassNameFromPath(string path)
+            {
+                int lastDot = path.LastIndexOf('.');
+                return lastDot >= 0 ? path.Substring(lastDot + 1) : path;
+            }
+
+            public SchemaClass GetClassForPath(string path)
+            {
+                classesByPath.TryGetValue(path, out SchemaClass schemaClass);
+                return schemaClass;
             }
 
             private SchemaClass BuildObjectClass(JsonElement obj, string classNameHint, string path)
@@ -178,7 +224,7 @@ namespace m0.Lib.StdView
 
                 if (hasElement && firstElement.ValueKind == JsonValueKind.Object)
                 {
-                    SchemaClass targetClass = BuildObjectClass(firstElement, propertyName + "Item", path + ".Item");
+                    SchemaClass targetClass = BuildObjectClass(firstElement, propertyName, path + ".Item");
                     MergeArrayObjectItems(targetClass, arrayElement, path + ".Item");
                     return AddAssociationProperty(schemaClass, propertyName, targetClass, isArray: true);
                 }
@@ -201,7 +247,7 @@ namespace m0.Lib.StdView
 
             private SchemaClass BuildNestedArrayClass(string propertyName, JsonElement arrayElement, string path)
             {
-                SchemaClass arrayClass = CreateClass(propertyName + "Item", path);
+                SchemaClass arrayClass = CreateClass(propertyName, path);
                 AddArrayProperty(arrayClass, "items", arrayElement, path + ".items");
                 return arrayClass;
             }
@@ -313,17 +359,67 @@ namespace m0.Lib.StdView
             }
         }
 
-        private static void CreateData(JsonElement rootElement, IVertex dataRoot, SchemaClass rootClass, SchemaContext context)
+        private static void CreateData(JsonElement rootElement, IVertex dataRoot, SchemaContext context)
         {
-            IVertex rootInstance = dataRoot.AddVertex(rootClass.ClassVertex, "");
-            rootInstance.AddEdge(MinusZero.Instance.Is, rootClass.ClassVertex);
-
             if (rootElement.ValueKind == JsonValueKind.Object)
-                PopulateObjectData(rootElement, rootInstance, rootClass, context);
+                PopulateObjectDataDirectly(rootElement, dataRoot, context, "Root");
             else if (rootElement.ValueKind == JsonValueKind.Array)
-                PopulateArrayData(rootElement, rootInstance, rootClass.Properties["items"], context);
+                PopulateArrayDataDirectly(rootElement, dataRoot, context, "Root");
             else
-                PopulateSingleValue(rootInstance, rootClass.Properties["value"], rootElement, context);
+                dataRoot.AddVertex(null, ConvertPrimitive(rootElement));
+        }
+
+        private static void PopulateObjectDataDirectly(JsonElement obj, IVertex parentVertex, SchemaContext context, string path)
+        {
+            foreach (JsonProperty property in obj.EnumerateObject())
+            {
+                string propertyPath = path + "." + property.Name;
+
+                if (property.Value.ValueKind == JsonValueKind.Object)
+                {
+                    SchemaClass schemaClass = context.GetClassForPath(propertyPath);
+                    if (schemaClass != null)
+                    {
+                        IVertex objectVertex = parentVertex.AddVertex(schemaClass.ClassVertex, property.Name);
+                        objectVertex.AddEdge(MinusZero.Instance.Is, schemaClass.ClassVertex);
+                        PopulateObjectData(property.Value, objectVertex, schemaClass, context);
+                    }
+                }
+                else if (property.Value.ValueKind == JsonValueKind.Array)
+                {
+                    PopulateArrayDataDirectly(property.Value, parentVertex, context, propertyPath);
+                }
+                else
+                {
+                    parentVertex.AddVertex(null, property.Name).AddVertex(null, ConvertPrimitive(property.Value));
+                }
+            }
+        }
+
+        private static void PopulateArrayDataDirectly(JsonElement arrayElement, IVertex parentVertex, SchemaContext context, string path)
+        {
+            if (arrayElement.ValueKind != JsonValueKind.Array)
+                return;
+
+            SchemaClass itemClass = context.GetClassForPath(path + ".Item");
+
+            foreach (JsonElement item in arrayElement.EnumerateArray())
+            {
+                if (item.ValueKind == JsonValueKind.Object && itemClass != null)
+                {
+                    IVertex objectVertex = parentVertex.AddVertex(itemClass.ClassVertex, "");
+                    objectVertex.AddEdge(MinusZero.Instance.Is, itemClass.ClassVertex);
+                    PopulateObjectData(item, objectVertex, itemClass, context);
+                }
+                else if (item.ValueKind == JsonValueKind.Array)
+                {
+                    PopulateArrayDataDirectly(item, parentVertex, context, path + ".Item");
+                }
+                else
+                {
+                    parentVertex.AddVertex(null, ConvertPrimitive(item));
+                }
+            }
         }
 
         private static void PopulateObjectData(JsonElement obj, IVertex instanceVertex, SchemaClass schemaClass, SchemaContext context)

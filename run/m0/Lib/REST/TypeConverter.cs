@@ -25,7 +25,7 @@ namespace m0.Lib.REST
         /// <summary>
         /// Writes the OpenAPI type definition for a GVM type.
         /// </summary>
-        public static void WriteOpenApiTypeDefinition(Utf8JsonWriter writer, string typeName)
+        public static void WriteOpenApiTypeDefinition(Utf8JsonWriter writer, string typeName, bool isNullable = false)
         {
             writer.WriteStartObject();
 
@@ -46,9 +46,11 @@ namespace m0.Lib.REST
                 case "String":
                 default:
                     writer.WriteString("type", "string");
-                    writer.WriteBoolean("nullable", true);
                     break;
             }
+
+            if (isNullable)
+                writer.WriteBoolean("nullable", true);
 
             writer.WriteEndObject();
         }
