@@ -174,14 +174,151 @@ namespace m0.Lib.StdView
 
             private SchemaClass CreateClass(string classNameHint, string path)
             {
+                // Check if class with this name already exists in schemaRoot
+                IVertex existingClassVertex = FindExistingClass(classNameHint);
+                
+                if (existingClassVertex != null)
+                {
+                    var schemaClass = new SchemaClass
+                    {
+                        Name = classNameHint,
+                        ClassVertex = existingClassVertex
+                    };
+                    
+                    // Load existing properties from the class
+                    LoadExistingProperties(schemaClass, existingClassVertex);
+                    
+                    classesByPath[path] = schemaClass;
+                    classNameCounts[classNameHint] = 1; // Mark as used
+                    return schemaClass;
+                }
+                
                 string className = CreateUniqueClassName(classNameHint);
                 IVertex classVertex = GraphUtil.AddClass(schemaRoot, className);
+                var newSchemaClass = new SchemaClass
+                {
+                    Name = className,
+                    ClassVertex = classVertex
+                };
+                classesByPath[path] = newSchemaClass;
+                return newSchemaClass;
+            }
+
+            private IVertex FindExistingClass(string className)
+            {
+                foreach (IEdge edge in schemaRoot.OutEdges)
+                {
+                    string metaValue = GraphUtil.GetStringValue(edge.Meta);
+                    if (metaValue == "Class" && GraphUtil.GetStringValue(edge.To) == className)
+                    {
+                        return edge.To;
+                    }
+                }
+                return null;
+            }
+
+            private void LoadExistingProperties(SchemaClass schemaClass, IVertex classVertex)
+            {
+                // Load Attributes
+                IList<IEdge> attributes = GraphUtil.GetQueryOut(classVertex, "Attribute", null);
+                foreach (IEdge attrEdge in attributes)
+                {
+                    string propertyName = GraphUtil.GetStringValue(attrEdge.To);
+                    bool isArray = ZeroTypes.VertexOperations.IsMetaVertexOfManyMultiplicity(attrEdge.To);
+                    
+                    IVertex edgeTarget = GraphUtil.GetQueryOutFirst(attrEdge.To, "$EdgeTarget", null);
+                    
+                    var schemaProperty = new SchemaProperty
+                    {
+                        Name = propertyName,
+                        IsArray = isArray,
+                        ValueKind = SchemaValueKind.Primitive,
+                        PropertyVertex = attrEdge.To,
+                        TargetTypeVertex = edgeTarget
+                    };
+                    schemaClass.Properties[propertyName] = schemaProperty;
+                }
+
+                // Load Associations
+                IList<IEdge> associations = GraphUtil.GetQueryOut(classVertex, "Association", null);
+                foreach (IEdge assocEdge in associations)
+                {
+                    string propertyName = GraphUtil.GetStringValue(assocEdge.To);
+                    bool isArray = ZeroTypes.VertexOperations.IsMetaVertexOfManyMultiplicity(assocEdge.To);
+                    
+                    IVertex edgeTarget = GraphUtil.GetQueryOutFirst(assocEdge.To, "$EdgeTarget", null);
+                    
+                    // Find or create target SchemaClass
+                    SchemaClass targetClass = null;
+                    if (edgeTarget != null)
+                    {
+                        string targetClassName = GraphUtil.GetStringValue(edgeTarget);
+                        targetClass = FindOrCreateSchemaClassForVertex(edgeTarget, targetClassName);
+                    }
+                    
+                    var schemaProperty = new SchemaProperty
+                    {
+                        Name = propertyName,
+                        IsArray = isArray,
+                        ValueKind = SchemaValueKind.Object,
+                        PropertyVertex = assocEdge.To,
+                        TargetClass = targetClass
+                    };
+                    schemaClass.Properties[propertyName] = schemaProperty;
+                }
+
+                // Load Aggregations
+                IList<IEdge> aggregations = GraphUtil.GetQueryOut(classVertex, "Aggregation", null);
+                foreach (IEdge aggEdge in aggregations)
+                {
+                    string propertyName = GraphUtil.GetStringValue(aggEdge.To);
+                    bool isArray = ZeroTypes.VertexOperations.IsMetaVertexOfManyMultiplicity(aggEdge.To);
+                    
+                    IVertex edgeTarget = GraphUtil.GetQueryOutFirst(aggEdge.To, "$EdgeTarget", null);
+                    
+                    // Find or create target SchemaClass
+                    SchemaClass targetClass = null;
+                    if (edgeTarget != null)
+                    {
+                        string targetClassName = GraphUtil.GetStringValue(edgeTarget);
+                        targetClass = FindOrCreateSchemaClassForVertex(edgeTarget, targetClassName);
+                    }
+                    
+                    var schemaProperty = new SchemaProperty
+                    {
+                        Name = propertyName,
+                        IsArray = isArray,
+                        ValueKind = SchemaValueKind.Object,
+                        PropertyVertex = aggEdge.To,
+                        TargetClass = targetClass
+                    };
+                    schemaClass.Properties[propertyName] = schemaProperty;
+                }
+            }
+
+            private SchemaClass FindOrCreateSchemaClassForVertex(IVertex classVertex, string className)
+            {
+                // Check if we already have this class in our cache
+                foreach (var kvp in classesByPath)
+                {
+                    if (kvp.Value.ClassVertex == classVertex)
+                        return kvp.Value;
+                }
+                
+                // Create a wrapper SchemaClass for the existing vertex
                 var schemaClass = new SchemaClass
                 {
                     Name = className,
                     ClassVertex = classVertex
                 };
-                classesByPath[path] = schemaClass;
+                
+                // Load its properties recursively
+                LoadExistingProperties(schemaClass, classVertex);
+                
+                // Cache it with a generated path
+                string generatedPath = "Existing." + className;
+                classesByPath[generatedPath] = schemaClass;
+                
                 return schemaClass;
             }
 
