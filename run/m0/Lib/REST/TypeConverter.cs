@@ -11,7 +11,7 @@ namespace m0.Lib.REST
         // Primitive type names in GVM
         private static readonly HashSet<string> PrimitiveTypes = new HashSet<string>
         {
-            "String", "Integer", "Float", "Double", "Boolean", "Decimal"
+            "String", "Integer", "Float", "Double", "Boolean", "Decimal", "Null"
         };
 
         /// <summary>
@@ -20,6 +20,53 @@ namespace m0.Lib.REST
         public static bool IsPrimitiveType(string typeName)
         {
             return PrimitiveTypes.Contains(typeName);
+        }
+
+        /// <summary>
+        /// Gets the GVM type name from a JSON element value kind.
+        /// </summary>
+        public static string GetGvmTypeNameFromJsonElement(JsonElement value)
+        {
+            switch (value.ValueKind)
+            {
+                case JsonValueKind.String:
+                    return "String";
+                case JsonValueKind.Number:
+                    if (value.TryGetInt64(out _))
+                        return "Integer";
+                    return "Double";
+                case JsonValueKind.True:
+                case JsonValueKind.False:
+                    return "Boolean";
+                case JsonValueKind.Null:
+                    return "Null";
+                default:
+                    return "String";
+            }
+        }
+
+        /// <summary>
+        /// Converts a JSON element to a .NET primitive value.
+        /// </summary>
+        public static object ConvertJsonElementToPrimitive(JsonElement value)
+        {
+            switch (value.ValueKind)
+            {
+                case JsonValueKind.String:
+                    return value.GetString();
+                case JsonValueKind.Number:
+                    if (value.TryGetInt64(out long longValue))
+                        return longValue;
+                    return value.GetDouble();
+                case JsonValueKind.True:
+                    return true;
+                case JsonValueKind.False:
+                    return false;
+                case JsonValueKind.Null:
+                    return null;
+                default:
+                    return value.ToString();
+            }
         }
 
         /// <summary>
@@ -37,11 +84,16 @@ namespace m0.Lib.REST
                     break;
                 case "Float":
                 case "Double":
+                case "Decimal":
                     writer.WriteString("type", "number");
                     writer.WriteString("format", "double");
                     break;
                 case "Boolean":
                     writer.WriteString("type", "boolean");
+                    break;
+                case "Null":
+                    writer.WriteString("type", "string");
+                    isNullable = true;
                     break;
                 case "String":
                 default:

@@ -1,10 +1,10 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.Lib.REST;
 using m0.ZeroTypes;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -46,10 +46,10 @@ namespace m0.Lib.StdView
 
             IVertex schemaRoot;
             
-            IVertex NewClassDefinitionsVertex = GraphUtil.GetQueryOutFirst(to, "NewClassDefinitions", null);
+            IVertex ClassDefinitionsVertex = GraphUtil.GetQueryOutFirst(to, "ClassDefinitions", null);
             
-            if (NewClassDefinitionsVertex != null)
-                schemaRoot = NewClassDefinitionsVertex;
+            if (ClassDefinitionsVertex != null)
+                schemaRoot = ClassDefinitionsVertex;
             else
                 schemaRoot = to;
             
@@ -318,22 +318,8 @@ namespace m0.Lib.StdView
 
             private IVertex GetTypeVertex(JsonElement value)
             {
-                switch (value.ValueKind)
-                {
-                    case JsonValueKind.String:
-                        return GetZeroType("String");
-                    case JsonValueKind.Number:
-                        if (value.TryGetInt64(out _))
-                            return GetZeroType("Integer");
-                        return GetZeroType("Double") ?? GetZeroType("Float") ?? GetZeroType("Decimal") ?? GetZeroType("String");
-                    case JsonValueKind.True:
-                    case JsonValueKind.False:
-                        return GetZeroType("Boolean") ?? GetZeroType("String");
-                    case JsonValueKind.Null:
-                        return GetZeroType("Null") ?? GetZeroType("String");
-                    default:
-                        return GetZeroType("String");
-                }
+                string typeName = TypeConverter.GetGvmTypeNameFromJsonElement(value);
+                return GetZeroType(typeName);
             }
 
             private IVertex GetZeroType(string typeName)
@@ -366,7 +352,7 @@ namespace m0.Lib.StdView
             else if (rootElement.ValueKind == JsonValueKind.Array)
                 PopulateArrayDataDirectly(rootElement, dataRoot, context, "Root");
             else
-                dataRoot.AddVertex(null, ConvertPrimitive(rootElement));
+                dataRoot.AddVertex(null, TypeConverter.ConvertJsonElementToPrimitive(rootElement));
         }
 
         private static void PopulateObjectDataDirectly(JsonElement obj, IVertex parentVertex, SchemaContext context, string path)
@@ -391,7 +377,7 @@ namespace m0.Lib.StdView
                 }
                 else
                 {
-                    parentVertex.AddVertex(null, property.Name).AddVertex(null, ConvertPrimitive(property.Value));
+                    parentVertex.AddVertex(null, property.Name).AddVertex(null, TypeConverter.ConvertJsonElementToPrimitive(property.Value));
                 }
             }
         }
@@ -417,7 +403,7 @@ namespace m0.Lib.StdView
                 }
                 else
                 {
-                    parentVertex.AddVertex(null, ConvertPrimitive(item));
+                    parentVertex.AddVertex(null, TypeConverter.ConvertJsonElementToPrimitive(item));
                 }
             }
         }
@@ -440,7 +426,7 @@ namespace m0.Lib.StdView
         {
             if (schemaProperty.ValueKind == SchemaValueKind.Primitive)
             {
-                instanceVertex.AddVertex(schemaProperty.PropertyVertex, ConvertPrimitive(value));
+                instanceVertex.AddVertex(schemaProperty.PropertyVertex, TypeConverter.ConvertJsonElementToPrimitive(value));
                 return;
             }
 
@@ -466,7 +452,7 @@ namespace m0.Lib.StdView
             {
                 if (schemaProperty.ValueKind == SchemaValueKind.Primitive)
                 {
-                    instanceVertex.AddVertex(schemaProperty.PropertyVertex, ConvertPrimitive(item));
+                    instanceVertex.AddVertex(schemaProperty.PropertyVertex, TypeConverter.ConvertJsonElementToPrimitive(item));
                     continue;
                 }
 
@@ -478,25 +464,5 @@ namespace m0.Lib.StdView
             }
         }
 
-        private static object ConvertPrimitive(JsonElement value)
-        {
-            switch (value.ValueKind)
-            {
-                case JsonValueKind.String:
-                    return value.GetString();
-                case JsonValueKind.Number:
-                    if (value.TryGetInt64(out long longValue))
-                        return longValue;
-                    return value.GetDouble();
-                case JsonValueKind.True:
-                    return true;
-                case JsonValueKind.False:
-                    return false;
-                case JsonValueKind.Null:
-                    return null;
-                default:
-                    return value.ToString();
-            }
-        }
     }
 }
