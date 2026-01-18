@@ -1,5 +1,6 @@
 using m0.Foundation;
 using m0.Graph;
+using m0.ZeroTypes;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
@@ -12,12 +13,6 @@ namespace m0.Lib.REST
 {
     public class OpenApiDocumentationGenerator
     {
-        // Primitive type names that should generate Request/Response wrappers
-        private static readonly HashSet<string> PrimitiveTypes = new HashSet<string>
-        {
-            "String", "Integer", "Float", "Double", "Boolean", "Decimal"
-        };
-
         /// <summary>
         /// Generates OpenAPI 3.0.1 documentation from GVM vertex structure containing functions and classes.
         /// </summary>
@@ -138,6 +133,9 @@ namespace m0.Lib.REST
                     IsArray = false
                 };
 
+                if (VertexOperations.IsMetaVertexOfManyMultiplicity(attrEdge.To))                
+                    propInfo.IsArray = true;                
+
                 IVertex edgeTarget = GraphUtil.GetQueryOutFirst(attrEdge.To, "$EdgeTarget", null);
                 if (edgeTarget != null)
                 {
@@ -155,8 +153,11 @@ namespace m0.Lib.REST
                 var propInfo = new PropertyInfo
                 {
                     Name = GraphUtil.GetStringValue(aggEdge.To),
-                    IsArray = true
+                    IsArray = false
                 };
+
+                if (VertexOperations.IsMetaVertexOfManyMultiplicity(aggEdge.To))
+                    propInfo.IsArray = true;
 
                 IVertex edgeTarget = GraphUtil.GetQueryOutFirst(aggEdge.To, "$EdgeTarget", null);
                 if (edgeTarget != null)
@@ -175,8 +176,11 @@ namespace m0.Lib.REST
                 var propInfo = new PropertyInfo
                 {
                     Name = GraphUtil.GetStringValue(assocEdge.To),
-                    IsArray = true
+                    IsArray = false
                 };
+
+                if (VertexOperations.IsMetaVertexOfManyMultiplicity(assocEdge.To))
+                    propInfo.IsArray = true;
 
                 IVertex edgeTarget = GraphUtil.GetQueryOutFirst(assocEdge.To, "$EdgeTarget", null);
                 if (edgeTarget != null)
@@ -245,7 +249,7 @@ namespace m0.Lib.REST
                 string typeName = GetTypeName(typeVertex);
 
                 // Skip primitive types
-                if (PrimitiveTypes.Contains(typeName))
+                if (TypeConverter.IsPrimitiveType(typeName))
                 {
                     continue;
                 }
@@ -271,7 +275,7 @@ namespace m0.Lib.REST
                     // Add its property types to process queue
                     foreach (var prop in newClass.Properties)
                     {
-                        if (prop.TypeVertex != null && !PrimitiveTypes.Contains(prop.Type) && !collectedNames.Contains(prop.Type))
+                        if (prop.TypeVertex != null && !TypeConverter.IsPrimitiveType(prop.Type) && !collectedNames.Contains(prop.Type))
                         {
                             verticesToProcess.Enqueue(prop.TypeVertex);
                         }
@@ -398,7 +402,7 @@ namespace m0.Lib.REST
             if (function.InputParameters.Count == 1)
             {
                 var param = function.InputParameters[0];
-                if (!PrimitiveTypes.Contains(param.Type) && classes.Any(c => c.Name == param.Type))
+                if (!TypeConverter.IsPrimitiveType(param.Type) && classes.Any(c => c.Name == param.Type))
                 {
                     return "#/components/schemas/" + param.Type;
                 }
@@ -412,7 +416,7 @@ namespace m0.Lib.REST
         {
             // If output is a class type, use that class directly
             if (!string.IsNullOrEmpty(function.OutputType) && 
-                !PrimitiveTypes.Contains(function.OutputType) && 
+                !TypeConverter.IsPrimitiveType(function.OutputType) && 
                 classes.Any(c => c.Name == function.OutputType))
             {
                 return "#/components/schemas/" + function.OutputType;
@@ -493,7 +497,7 @@ namespace m0.Lib.REST
                 return true;
 
             var param = function.InputParameters[0];
-            return PrimitiveTypes.Contains(param.Type) || !classes.Any(c => c.Name == param.Type);
+            return TypeConverter.IsPrimitiveType(param.Type) || !classes.Any(c => c.Name == param.Type);
         }
 
         private static bool NeedsResponseWrapper(FunctionInfo function, List<ClassInfo> classes)
@@ -502,7 +506,7 @@ namespace m0.Lib.REST
             if (string.IsNullOrEmpty(function.OutputType))
                 return true;
 
-            return PrimitiveTypes.Contains(function.OutputType) || !classes.Any(c => c.Name == function.OutputType);
+            return TypeConverter.IsPrimitiveType(function.OutputType) || !classes.Any(c => c.Name == function.OutputType);
         }
 
         private static void WriteRequestSchema(Utf8JsonWriter writer, FunctionInfo function)
@@ -518,7 +522,7 @@ namespace m0.Lib.REST
             foreach (var param in function.InputParameters)
             {
                 writer.WritePropertyName(param.Name);
-                WriteTypeDefinition(writer, param.Type);
+                TypeConverter.WriteOpenApiTypeDefinition(writer, param.Type);
             }
 
             writer.WriteEndObject(); // properties
@@ -539,7 +543,7 @@ namespace m0.Lib.REST
             writer.WriteStartObject();
 
             writer.WritePropertyName("result");
-            WriteTypeDefinition(writer, function.OutputType);
+            TypeConverter.WriteOpenApiTypeDefinition(writer, function.OutputType);
 
             writer.WriteEndObject(); // properties
 
@@ -600,41 +604,13 @@ namespace m0.Lib.REST
                 }
                 else
                 {
-                    WriteTypeDefinition(writer, prop.Type);
+                    TypeConverter.WriteOpenApiTypeDefinition(writer, prop.Type);
                 }
             }
 
             writer.WriteEndObject(); // properties
 
             writer.WriteBoolean("additionalProperties", false);
-
-            writer.WriteEndObject();
-        }
-
-        private static void WriteTypeDefinition(Utf8JsonWriter writer, string typeName)
-        {
-            writer.WriteStartObject();
-
-            switch (typeName)
-            {
-                case "Integer":
-                    writer.WriteString("type", "integer");
-                    writer.WriteString("format", "int32");
-                    break;
-                case "Float":
-                case "Double":
-                    writer.WriteString("type", "number");
-                    writer.WriteString("format", "double");
-                    break;
-                case "Boolean":
-                    writer.WriteString("type", "boolean");
-                    break;
-                case "String":
-                default:
-                    writer.WriteString("type", "string");
-                    writer.WriteBoolean("nullable", true);
-                    break;
-            }
 
             writer.WriteEndObject();
         }
