@@ -2,7 +2,8 @@
 	import @System\Lib\Std direct meta
 	"Json"
 		"$IsJsonArray"		
-		"ClassDefinitions"
+		"ExistingClassDefinitions"
+		"NewClassDefinitions"
 	"Md"
 		"Text"
 		"HardBreak"

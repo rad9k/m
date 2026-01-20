@@ -44,18 +44,24 @@ namespace m0.Lib.StdView
                 return;
             }
 
-            IVertex schemaRoot;
+            // Determine where to create new classes
+            IVertex newClassDefinitionsVertex = GraphUtil.GetQueryOutFirst(to, "NewClassDefinitions", null);
+            IVertex newClassesRoot = newClassDefinitionsVertex ?? to;
             
-            IVertex ClassDefinitionsVertex = GraphUtil.GetQueryOutFirst(to, "ClassDefinitions", null);
+            // Collect all vertices where to look for existing classes
+            var existingClassesRoots = new List<IVertex>();
+            existingClassesRoots.Add(newClassesRoot); // Always check in the new classes root first
             
-            if (ClassDefinitionsVertex != null)
-                schemaRoot = ClassDefinitionsVertex;
-            else
-                schemaRoot = to;
+            IList<IEdge> existingClassDefinitionsEdges = GraphUtil.GetQueryOut(to, "ExistingClassDefinitions", null);
+            foreach (IEdge edge in existingClassDefinitionsEdges)
+            {
+                if (edge.To != null && !existingClassesRoots.Contains(edge.To))
+                    existingClassesRoots.Add(edge.To);
+            }
             
             IVertex dataRoot = to;
 
-            var context = new SchemaContext(schemaRoot);
+            var context = new SchemaContext(newClassesRoot, existingClassesRoots);
 
             context.BuildSchema(document.RootElement);
             CreateData(document.RootElement, dataRoot, context);
@@ -86,15 +92,17 @@ namespace m0.Lib.StdView
 
         private class SchemaContext
         {
-            private readonly IVertex schemaRoot;
+            private readonly IVertex newClassesRoot;
+            private readonly IList<IVertex> existingClassesRoots;
             private readonly IVertex zeroTypesRoot;
             private readonly IVertex isJsonArrayMeta;
             private readonly IDictionary<string, SchemaClass> classesByPath = new Dictionary<string, SchemaClass>();
             private readonly IDictionary<string, int> classNameCounts = new Dictionary<string, int>();
 
-            public SchemaContext(IVertex schemaRoot)
+            public SchemaContext(IVertex newClassesRoot, IList<IVertex> existingClassesRoots)
             {
-                this.schemaRoot = schemaRoot;
+                this.newClassesRoot = newClassesRoot;
+                this.existingClassesRoots = existingClassesRoots;
                 zeroTypesRoot = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes");
                 isJsonArrayMeta = MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex\$IsJsonArray");
             }
@@ -174,7 +182,7 @@ namespace m0.Lib.StdView
 
             private SchemaClass CreateClass(string classNameHint, string path)
             {
-                // Check if class with this name already exists in schemaRoot
+                // Check if class with this name already exists in any of the existing class roots
                 IVertex existingClassVertex = FindExistingClass(classNameHint);
                 
                 if (existingClassVertex != null)
@@ -193,8 +201,9 @@ namespace m0.Lib.StdView
                     return schemaClass;
                 }
                 
+                // Create new class in newClassesRoot
                 string className = CreateUniqueClassName(classNameHint);
-                IVertex classVertex = GraphUtil.AddClass(schemaRoot, className);
+                IVertex classVertex = GraphUtil.AddClass(newClassesRoot, className);
                 var newSchemaClass = new SchemaClass
                 {
                     Name = className,
@@ -206,12 +215,16 @@ namespace m0.Lib.StdView
 
             private IVertex FindExistingClass(string className)
             {
-                foreach (IEdge edge in schemaRoot.OutEdges)
+                // Search in all existing class roots (including newClassesRoot which is first in the list)
+                foreach (IVertex root in existingClassesRoots)
                 {
-                    string metaValue = GraphUtil.GetStringValue(edge.Meta);
-                    if (metaValue == "Class" && GraphUtil.GetStringValue(edge.To) == className)
+                    foreach (IEdge edge in root.OutEdges)
                     {
-                        return edge.To;
+                        string metaValue = GraphUtil.GetStringValue(edge.Meta);
+                        if (metaValue == "Class" && GraphUtil.GetStringValue(edge.To) == className)
+                        {
+                            return edge.To;
+                        }
                     }
                 }
                 return null;
