@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace m0.Lib.Net
 {
-    public enum HttpActionEnum { GET, PUT, POST, DELETE, PATCH, HEAD, OPTIONS, TRACE }
+    public enum HttpActionEnum { GET, PUT, POST, DELETE, PATCH, HEAD, OPTIONS, TRACE, REST }
 
     public class HttpActionEnumHelper
     {
@@ -19,6 +19,7 @@ namespace m0.Lib.Net
         static IVertex HEAD_meta = MinusZero.Instance.root.Get(false, @"System\Lib\Net\HttpActionEnum\HEAD");
         static IVertex OPTIONS_meta = MinusZero.Instance.root.Get(false, @"System\Lib\Net\HttpActionEnum\OPTIONS");
         static IVertex TRACE_meta = MinusZero.Instance.root.Get(false, @"System\Lib\Net\HttpActionEnum\TRACE");
+        static IVertex REST_meta = MinusZero.Instance.root.Get(false, @"System\Lib\Net\HttpActionEnum\REST");
 
         public static HttpActionEnum GetEnum(IVertex v)
         {
@@ -35,6 +36,7 @@ namespace m0.Lib.Net
                 case "HEAD": return HttpActionEnum.HEAD;
                 case "OPTIONS": return HttpActionEnum.OPTIONS;
                 case "TRACE": return HttpActionEnum.TRACE;
+                case "REST": return HttpActionEnum.REST;
                 default: return HttpActionEnum.GET;
             }
         }

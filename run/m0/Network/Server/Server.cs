@@ -158,10 +158,7 @@ namespace m0.Network.Server {
                 IVertex actionVertex = GraphUtil.GetQueryOutFirst(e.To, "Action", null);
 
                 if (actionVertex == null)
-                    continue;
-
-                if (!GraphUtil.GetValueAndCompareStrings(actionVertex, actionVertexRequested))
-                    continue;
+                    continue;                
 
                 IVertex pathMaskVertex = GraphUtil.GetQueryOutFirst(e.To, "PathMask", null);
 
@@ -178,6 +175,12 @@ namespace m0.Network.Server {
                 IVertex handlerVertex = GraphUtil.GetQueryOutFirst(e.To, "Handler", null);
 
                 if (handlerVertex == null)
+                    continue;
+
+                if (GraphUtil.GetValueAndCompareStrings(actionVertex, "REST"))
+                    return REST.RestHandler(handlerVertex, url, actionVertexRequested);
+
+                if (!GraphUtil.GetValueAndCompareStrings(actionVertex, actionVertexRequested))
                     continue;
 
                 if (GraphUtil.ExistQueryOut(handlerVertex, "$Is", "Directory"))
