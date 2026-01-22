@@ -144,6 +144,7 @@ namespace m0.Network.Server {
 
         private string DoHttpMapping(HttpContext context, string url, IVertex actionVertexRequested, out IResult result)
         {
+            
             result = null;
 
             IVertex mappingVertex = GraphUtil.GetQueryOutFirst(thisVertex, "Mapping", null);
@@ -170,7 +171,13 @@ namespace m0.Network.Server {
                 int pathMatch = IsPathMatch(pathMask, url);
 
                 if (pathMatch == -1)
-                    continue;
+                {
+                    url = url + @"/";
+                    pathMatch = IsPathMatch(pathMask, url);
+
+                    if (pathMatch == -1)
+                        continue;
+                }
 
                 string url_path = url.Substring(0, pathMatch);
                 string url_rest = url.Substring(pathMatch);
@@ -222,6 +229,9 @@ namespace m0.Network.Server {
         {
             lock (_lockObject)
             {
+                if (url.Length > 0 && url[0] == '/')
+                    url = url.Substring(1);
+
                 IVertex parameters = InstructionHelpers.CreateStack();
 
                 parameters.AddVertex(url_meta, url);
