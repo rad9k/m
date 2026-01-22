@@ -11,7 +11,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 	map +< create http mapping "map"{
 		mapping @@HttpActionEnum\GET "/files/*" @@Start:\files
 		mapping @@HttpActionEnum\GET "/diagrams/*" @@Start:\diagrams
-		mapping @@HttpActionEnum\GET "/doc/*" @@handler
+		mapping @@HttpActionEnum\GET "/*" @@handler
 		mapping @@HttpActionEnum\REST "/api/*" @@handler
 	}
 	server = new @@HttpServer[map\:map, "5000"]

@@ -9,7 +9,7 @@ namespace m0.Network.Server
 {
     public class REST
     {
-        public static string RestHandler(IVertex handlerVertex, string url, IVertex actionVertex)
+        public static string RestHandler(IVertex handlerVertex, string url_path, string url_rest, IVertex actionVertex)
         {
             return "kupka";
         }

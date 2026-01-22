@@ -3,13 +3,13 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 	import @System\Lib\Std direct meta
 	import @System\Lib\Net direct meta
 	function "MDServeHandler" (@VertexType "startDir", @String "url")
-		if url == "/"
+		if url == ""
 			return @@getIndex[]
 			
-		if url == "/script.js"
+		if url == "script.js"
 			return @@getScript[]
 			
-		if url == "/tree.json"
+		if url == "tree.json"
 			return @@getCache[startDir]\TreeJson
 			
 		return @@getFile[startDir, url]
