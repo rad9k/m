@@ -172,13 +172,16 @@ namespace m0.Network.Server {
                 if (pathMatch == -1)
                     continue;
 
+                string url_path = url.Substring(0, pathMatch);
+                string url_rest = url.Substring(pathMatch);
+
                 IVertex handlerVertex = GraphUtil.GetQueryOutFirst(e.To, "Handler", null);
 
                 if (handlerVertex == null)
                     continue;
 
                 if (GraphUtil.GetValueAndCompareStrings(actionVertex, "REST"))
-                    return REST.RestHandler(handlerVertex, url, actionVertexRequested);
+                    return REST.RestHandler(handlerVertex, url_path, url_rest, actionVertexRequested);
 
                 if (!GraphUtil.GetValueAndCompareStrings(actionVertex, actionVertexRequested))
                     continue;
@@ -186,11 +189,11 @@ namespace m0.Network.Server {
                 if (GraphUtil.ExistQueryOut(handlerVertex, "$Is", "Directory"))
                 {
                     // Handle as file request
-                    result = HandleFileRequest(context, url.Substring(pathMatch), handlerVertex);
+                    result = HandleFileRequest(context, url_rest, handlerVertex);
                     return null;
                 }
 
-                return CallHandler(handlerVertex, url);
+                return CallHandler(handlerVertex, url_rest);
             }
 
             return "[404]";
