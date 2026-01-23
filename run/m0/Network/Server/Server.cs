@@ -1,4 +1,4 @@
-﻿using m0.Foundation;
+using m0.Foundation;
 using m0.Graph;
 using m0.Lib.Net;
 using m0.Store.FileSystem;
@@ -143,8 +143,7 @@ namespace m0.Network.Server {
         }
 
         private string DoHttpMapping(HttpContext context, string url, IVertex actionVertexRequested, out IResult result)
-        {
-            
+        {            
             result = null;
 
             IVertex mappingVertex = GraphUtil.GetQueryOutFirst(thisVertex, "Mapping", null);
@@ -168,19 +167,27 @@ namespace m0.Network.Server {
 
                 string pathMask = GraphUtil.GetStringValue(pathMaskVertex);
 
-                int pathMatch = IsPathMatch(pathMask, url);
+                string url_to_process = url;
+
+                int pathMatch = IsPathMatch(pathMask, url_to_process);
 
                 if (pathMatch == -1)
                 {
-                    url = url + @"/";
-                    pathMatch = IsPathMatch(pathMask, url);
+                    url_to_process = url_to_process + @"/";
+                    pathMatch = IsPathMatch(pathMask, url_to_process);
 
-                    if (pathMatch == -1)
-                        continue;
+                    if (pathMatch != -1)
+                    {
+                        // Path matches with trailing slash - redirect to URL with trailing slash
+                        result = RedirectResult(url_to_process);
+                        return null;
+                    }
+
+                    continue;
                 }
 
-                string url_path = url.Substring(0, pathMatch);
-                string url_rest = url.Substring(pathMatch);
+                string url_path = url_to_process.Substring(0, pathMatch);
+                string url_rest = url_to_process.Substring(pathMatch);
 
                 IVertex handlerVertex = GraphUtil.GetQueryOutFirst(e.To, "Handler", null);
 
@@ -206,6 +213,12 @@ namespace m0.Network.Server {
             return "[404]";
         }
 
+        private IResult RedirectResult(string url)
+        {
+            // Return HTTP 302 Found redirect to the specified URL
+            return Results.Redirect(url, permanent: false, preserveMethod: false);
+        }
+
         private int IsPathMatch(string pathMask, string url)
         {
             if (pathMask.Contains("*"))
@@ -228,10 +241,7 @@ namespace m0.Network.Server {
         private string CallHandler(IVertex handlerVertex, string url)
         {
             lock (_lockObject)
-            {
-                if (url.Length > 0 && url[0] == '/')
-                    url = url.Substring(1);
-
+            {            
                 IVertex parameters = InstructionHelpers.CreateStack();
 
                 parameters.AddVertex(url_meta, url);
