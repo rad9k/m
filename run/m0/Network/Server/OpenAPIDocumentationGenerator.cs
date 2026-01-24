@@ -419,17 +419,7 @@ namespace m0.Network.Server
 
         private static string GetRequestSchemaRef(FunctionInfo function, List<ClassInfo> classes)
         {
-            // If function has single input parameter of class type, use that class directly
-            if (function.InputParameters.Count == 1)
-            {
-                var param = function.InputParameters[0];
-                if (!TypeConverter.IsPrimitiveType(param.Type) && classes.Any(c => c.Name == param.Type))
-                {
-                    return "#/components/schemas/" + param.Type;
-                }
-            }
-
-            // Otherwise, generate a request wrapper
+            // Always generate a request wrapper with parameter name
             return "#/components/schemas/" + function.Name + "Request";
         }
 
@@ -513,12 +503,8 @@ namespace m0.Network.Server
 
         private static bool NeedsRequestWrapper(FunctionInfo function, List<ClassInfo> classes)
         {
-            // Needs wrapper if not single class parameter
-            if (function.InputParameters.Count != 1)
-                return true;
-
-            var param = function.InputParameters[0];
-            return TypeConverter.IsPrimitiveType(param.Type) || !classes.Any(c => c.Name == param.Type);
+            // Always need request wrapper with parameter name
+            return true;
         }
 
         private static bool NeedsResponseWrapper(FunctionInfo function, List<ClassInfo> classes)
@@ -567,7 +553,18 @@ namespace m0.Network.Server
                 }
                 else
                 {
-                    TypeConverter.WriteOpenApiTypeDefinition(writer, param.Type, param.IsNullable);
+                    // For non-array parameters
+                    if (TypeConverter.IsPrimitiveType(param.Type))
+                    {
+                        TypeConverter.WriteOpenApiTypeDefinition(writer, param.Type, param.IsNullable);
+                    }
+                    else
+                    {
+                        // Class type - use $ref
+                        writer.WriteStartObject();
+                        writer.WriteString("$ref", "#/components/schemas/" + param.Type);
+                        writer.WriteEndObject();
+                    }
                 }
             }
 
@@ -583,17 +580,28 @@ namespace m0.Network.Server
             writer.WritePropertyName(function.Name + "Response");
             writer.WriteStartObject();
 
-            writer.WriteString("type", "object");
+            // For primitive/atomic types, return as array directly: ["value"]
+            if (TypeConverter.IsPrimitiveType(function.OutputType))
+            {
+                writer.WriteString("type", "array");
+                writer.WritePropertyName("items");
+                TypeConverter.WriteOpenApiTypeDefinition(writer, function.OutputType);
+            }
+            else
+            {
+                // For complex types, wrap in object with "result" property
+                writer.WriteString("type", "object");
 
-            writer.WritePropertyName("properties");
-            writer.WriteStartObject();
+                writer.WritePropertyName("properties");
+                writer.WriteStartObject();
 
-            writer.WritePropertyName("result");
-            TypeConverter.WriteOpenApiTypeDefinition(writer, function.OutputType);
+                writer.WritePropertyName("result");
+                TypeConverter.WriteOpenApiTypeDefinition(writer, function.OutputType);
 
-            writer.WriteEndObject(); // properties
+                writer.WriteEndObject(); // properties
 
-            writer.WriteBoolean("additionalProperties", false);
+                writer.WriteBoolean("additionalProperties", false);
+            }
 
             writer.WriteEndObject();
         }

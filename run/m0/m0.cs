@@ -535,6 +535,12 @@ namespace m0
             IVertex v = Root.Get(false, @"Autostart\resttest");
 
             //m0.MinusZero.Instance.UserInteraction.InteractionOutput(Network.Server.OpenApiDocumentationGenerator.GetOpenApiDocumentation(v));
+
+            IVertex VertexToJson_meta = MinusZero.Instance.Root.Get(false, @"System\Lib\StdView\VertexToJson");
+
+            IVertex e = MinusZero.Instance.Root.Get(false, @"examples\ma");
+
+            e.AddVertex(VertexToJson_meta, "");
         }
     }
 }

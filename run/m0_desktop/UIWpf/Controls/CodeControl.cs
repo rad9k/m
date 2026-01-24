@@ -324,13 +324,13 @@ namespace m0.UIWpf.Controls
                 return;
             }
 
-            if (e.Key == Key.Left && Keyboard.IsKeyDown(Key.RightAlt))
+            if (e.Key == Key.Left && Keyboard.IsKeyDown(Key.LeftAlt))
             {
                 ReferenceTextMemoryLeft();
                 return;
             }
 
-            if (e.Key == Key.Right && Keyboard.IsKeyDown(Key.RightAlt))
+            if (e.Key == Key.Right && Keyboard.IsKeyDown(Key.LeftAlt))
             {
                 ReferenceTextMemoryRight();
                 return;

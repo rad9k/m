@@ -24,12 +24,12 @@ namespace m0.Lib.StdView
 
             string JsonString = GraphUtil.GetStringValueOrNull(from);
 
-            JsonToVertex_Process(JsonString, to);
+            JsonToVertex_Process(JsonString, from, to);
 
             return null;
         }
 
-        public static void JsonToVertex_Process(string json, IVertex to)
+        public static void JsonToVertex_Process(string json, IVertex from, IVertex to)
         {
             if (to == null || string.IsNullOrWhiteSpace(json))
                 return;
@@ -45,14 +45,14 @@ namespace m0.Lib.StdView
             }
 
             // Determine where to create new classes
-            IVertex newClassDefinitionsVertex = GraphUtil.GetQueryOutFirst(to, "NewClassDefinitions", null);
+            IVertex newClassDefinitionsVertex = GraphUtil.GetQueryOutFirst(from, "NewClassDefinitions", null);
             IVertex newClassesRoot = newClassDefinitionsVertex ?? to;
             
             // Collect all vertices where to look for existing classes
             var existingClassesRoots = new List<IVertex>();
             existingClassesRoots.Add(newClassesRoot); // Always check in the new classes root first
             
-            IList<IEdge> existingClassDefinitionsEdges = GraphUtil.GetQueryOut(to, "ExistingClassDefinitions", null);
+            IList<IEdge> existingClassDefinitionsEdges = GraphUtil.GetQueryOut(from, "ExistingClassDefinitions", null);
             foreach (IEdge edge in existingClassDefinitionsEdges)
             {
                 if (edge.To != null && !existingClassesRoots.Contains(edge.To))

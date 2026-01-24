@@ -16,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -127,9 +128,9 @@ namespace m0.Network.Server {
                 {
                     if (_logWriter == null)
                     {
-                        FileSystemUtil.CreateDirectoryIfNotExist(MinusZero.Instance.m0DllPath, "http");
+                        FileSystemUtil.CreateDirectoryIfNotExist(MinusZero.Instance.m0DllPath, "log");
 
-                        string httpPath = Path.Combine(MinusZero.Instance.m0DllPath, "http");
+                        string httpPath = Path.Combine(MinusZero.Instance.m0DllPath, "log");
 
                         string logFilePath = Path.Combine(httpPath, HttpLogFilename);
                         _logWriter = new StreamWriter(logFilePath, true);
@@ -208,7 +209,10 @@ namespace m0.Network.Server {
                     continue;
 
                 if (GraphUtil.GetValueAndCompareStrings(actionVertex, "REST"))
-                    return REST.RestHandler(handlerVertex, url_path, url_rest, actionVertexRequested, this);
+                {
+                    string requestBody = ReadRequestBody(context);
+                    return REST.RestHandler(handlerVertex, url_path, url_rest, actionVertexRequested, requestBody, this);
+                }
 
                 if (!GraphUtil.GetValueAndCompareStrings(actionVertex, actionVertexRequested))
                     continue;
@@ -230,6 +234,14 @@ namespace m0.Network.Server {
         {
             // Return HTTP 302 Found redirect to the specified URL
             return Results.Redirect(url, permanent: false, preserveMethod: false);
+        }
+
+        private string ReadRequestBody(HttpContext context)
+        {
+            using (var reader = new StreamReader(context.Request.Body, Encoding.UTF8))
+            {
+                return reader.ReadToEndAsync().Result;
+            }
         }
 
         private int IsPathMatch(string pathMask, string url)
