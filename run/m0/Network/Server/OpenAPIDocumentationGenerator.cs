@@ -1,5 +1,6 @@
 using m0.Foundation;
 using m0.Graph;
+using m0.Lib.REST;
 using m0.ZeroTypes;
 using System;
 using System.Buffers;
@@ -9,7 +10,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 
-namespace m0.Lib.REST
+namespace m0.Network.Server
 {
     public class OpenApiDocumentationGenerator
     {

@@ -27,6 +27,11 @@ namespace m0.Network.Server {
 
         public IVertex thisVertex = null;
 
+        public bool DoHttpLog = true;
+        public string HttpLogFilename = "";
+        public bool DoRestLog = true;
+        public string RestLogFilename = "";
+
         private WebApplication? _app;
         private CancellationTokenSource? _cancellationTokenSource;
         private Task? _serverTask;
@@ -35,10 +40,34 @@ namespace m0.Network.Server {
 
         public string BaseUrl { get; private set; }
         public bool IsRunning => _app != null && _serverTask != null && !_serverTask.IsCompleted;
+        
+        public string ServerStartTimestamp;
 
         public HttpServer(IVertex _thisVertex)
         {
             thisVertex = _thisVertex;
+
+            IVertex doHttpLogVertex = GraphUtil.GetQueryOutFirst(thisVertex, "DoHttpLog", null);
+
+            if (doHttpLogVertex != null)
+                DoHttpLog = GraphUtil.GetBooleanValueOrFalse(doHttpLogVertex);
+
+            IVertex httpLogFilenameVertex = GraphUtil.GetQueryOutFirst(thisVertex, "HttpLogFilename", null);
+
+            if (httpLogFilenameVertex != null)
+                HttpLogFilename = GraphUtil.GetStringValueOrNull(httpLogFilenameVertex);
+
+            //
+
+            IVertex doRestLogVertex = GraphUtil.GetQueryOutFirst(thisVertex, "DoRestLog", null);
+
+            if (doRestLogVertex != null)
+                DoRestLog = GraphUtil.GetBooleanValueOrFalse(doRestLogVertex);
+
+            IVertex restLogFilenameVertex = GraphUtil.GetQueryOutFirst(thisVertex, "RestLogFilename", null);
+
+            if (restLogFilenameVertex != null)
+                RestLogFilename = GraphUtil.GetStringValueOrNull(restLogFilenameVertex);
         }
 
         private readonly object _lockObject = new object();
@@ -78,34 +107,18 @@ namespace m0.Network.Server {
             if (response != null && response.TrimStart().StartsWith("<"))            
                 return Results.Content(response, "text/html; charset=utf-8");            
             else            
-                return Results.Text(response);            
-            
+                return Results.Text(response);                        
         }
 
         private void LogHttpRequest(HttpContext context, string method, string url)
-        {
-            bool doLog = true;
-            string logFilename = "";
-
-            IVertex doLogVertex = GraphUtil.GetQueryOutFirst(thisVertex, "DoLog", null);
-
-            if (doLogVertex != null)
-                doLog = GraphUtil.GetBooleanValueOrFalse(doLogVertex);
-
-            IVertex logFilenameVertex = GraphUtil.GetQueryOutFirst(thisVertex, "LogFilename", null);
-
-            if (logFilenameVertex != null)
-                logFilename = GraphUtil.GetStringValueOrNull(logFilenameVertex);
-
-            if (logFilename == "")
+        {                     
+            if (HttpLogFilename == "")
             {
                 IVertex portVertex = GraphUtil.GetQueryOutFirst(thisVertex, "Port", null);
 
                 int port = GraphUtil.GetIntegerValueOr0(portVertex);
 
-                string timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
-
-                logFilename = "http_server_" + port + "_" + timestamp + ".log";
+                HttpLogFilename = "http_server_" + port + "_" + ServerStartTimestamp + ".log";
             }
 
             try
@@ -118,7 +131,7 @@ namespace m0.Network.Server {
 
                         string httpPath = Path.Combine(MinusZero.Instance.m0DllPath, "http");
 
-                        string logFilePath = Path.Combine(httpPath, logFilename);
+                        string logFilePath = Path.Combine(httpPath, HttpLogFilename);
                         _logWriter = new StreamWriter(logFilePath, true);
                     }
 
@@ -176,7 +189,7 @@ namespace m0.Network.Server {
                     url_to_process = url_to_process + @"/";
                     pathMatch = IsPathMatch(pathMask, url_to_process);
 
-                    if (pathMatch != -1)
+                    if (pathMatch != -1 && !GraphUtil.GetValueAndCompareStrings(actionVertex, "REST"))
                     {
                         // Path matches with trailing slash - redirect to URL with trailing slash
                         result = RedirectResult(url_to_process);
@@ -195,7 +208,7 @@ namespace m0.Network.Server {
                     continue;
 
                 if (GraphUtil.GetValueAndCompareStrings(actionVertex, "REST"))
-                    return REST.RestHandler(handlerVertex, url_path, url_rest, actionVertexRequested);
+                    return REST.RestHandler(handlerVertex, url_path, url_rest, actionVertexRequested, this);
 
                 if (!GraphUtil.GetValueAndCompareStrings(actionVertex, actionVertexRequested))
                     continue;
@@ -384,6 +397,7 @@ namespace m0.Network.Server {
                 throw new InvalidOperationException("Server allready running");
 
             BaseUrl = url;
+            ServerStartTimestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
             _cancellationTokenSource = new CancellationTokenSource();
 
             var builder = WebApplication.CreateBuilder();

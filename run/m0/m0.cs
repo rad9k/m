@@ -1,4 +1,4 @@
-﻿using m0.FormalTextLanguage;
+using m0.FormalTextLanguage;
 using m0.Foundation;
 using m0.Graph;
 using m0.Graph.ExecutionFlow;
@@ -534,7 +534,7 @@ namespace m0
 
             IVertex v = Root.Get(false, @"Autostart\resttest");
 
-            //m0.MinusZero.Instance.UserInteraction.InteractionOutput(Lib.REST.OpenApiDocumentationGenerator.GetOpenApiDocumentation(v));
+            //m0.MinusZero.Instance.UserInteraction.InteractionOutput(Network.Server.OpenApiDocumentationGenerator.GetOpenApiDocumentation(v));
         }
     }
 }
