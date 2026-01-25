@@ -18,7 +18,8 @@ namespace m0.Network.Server
     {
         private static IVertex JsonToVertex_meta = MinusZero.Instance.Root.Get(false, @"System\Lib\StdView\JsonToVertex");
         private static IVertex VertexToJson_meta = MinusZero.Instance.Root.Get(false, @"System\Lib\StdView\VertexToJson");
-        private static IVertex NewClassDefinitions_meta = MinusZero.Instance.Root.Get(false, @"System\Lib\StdView\Json\NewClassDefinitions");
+        private static IVertex NewClassDefinitions_meta = MinusZero.Instance.Root.Get(false, @"System\Lib\StdView\Json\$NewClassDefinitions");
+        private static IVertex JsonRootDefinition_meta = MinusZero.Instance.Root.Get(false, @"System\Lib\StdView\Json\$JsonRootDefinition");
 
         private static StreamWriter _logWriter;
         private static readonly object _logLock = new object();
@@ -153,19 +154,19 @@ namespace m0.Network.Server
 
         private static string CallMVEGHandler(IVertex handlerVertex, IVertex functionVertex, string inputJson)
         {
-            IList<IEdge> ExistingClassDefinitions = GraphUtil.GetQueryOut(handlerVertex, "ExistingClassDefinitions", null);
+            IList<IEdge> ExistingClassDefinitions = GraphUtil.GetQueryOut(handlerVertex, "$ExistingClassDefinitions", null);
 
-            IEdge NewClassDefinitions = GraphUtil.GetQueryOutFirstEdge(functionVertex, "NewClassDefinitions", null);
+            IEdge NewClassDefinitions = GraphUtil.GetQueryOutFirstEdge(functionVertex, "$NewClassDefinitions", null);
 
-            IVertex tempInputVertex = MinusZero.Instance.CreateTempVertex();
+            IVertex InputMVEGRootVertex = MinusZero.Instance.CreateTempVertex();
 
             foreach (IEdge exsisingClassDefinitionsEdge in ExistingClassDefinitions)            
-                tempInputVertex.AddEdge(exsisingClassDefinitionsEdge.Meta, exsisingClassDefinitionsEdge.To);
+                InputMVEGRootVertex.AddEdge(exsisingClassDefinitionsEdge.Meta, exsisingClassDefinitionsEdge.To);
 
             if (NewClassDefinitions != null)
-                tempInputVertex.AddEdge(NewClassDefinitions_meta, NewClassDefinitions.To);
+                InputMVEGRootVertex.AddEdge(NewClassDefinitions_meta, NewClassDefinitions.To);
             else
-                tempInputVertex.AddVertex(NewClassDefinitions_meta, "");
+                InputMVEGRootVertex.AddVertex(NewClassDefinitions_meta, "");
 
             //
 
@@ -173,11 +174,13 @@ namespace m0.Network.Server
 
             //
 
-            tempInputVertex.Value = inputJson;
+            IVertex InputJsonVertex = MinusZero.Instance.CreateTempVertex();
 
-            IVertex paremetersVertex = tempInputVertex.AddVertex(JsonToVertex_meta, "");
+            InputJsonVertex.Value = inputJson;
 
-            foreach (IEdge parameterEdge in paremetersVertex)
+            InputJsonVertex.AddEdge(JsonToVertex_meta, InputMVEGRootVertex);
+
+            foreach (IEdge parameterEdge in InputMVEGRootVertex)
             {
                 string parameterName = GraphUtil.GetStringValue(parameterEdge.To);
 
