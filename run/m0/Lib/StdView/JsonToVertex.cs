@@ -1,4 +1,4 @@
-﻿using m0.Foundation;
+using m0.Foundation;
 using m0.Graph;
 using m0.Lib.REST;
 using m0.ZeroTypes;
@@ -44,6 +44,8 @@ namespace m0.Lib.StdView
                 return;
             }
 
+            IVertex jsonRootDefinitionVertex = GraphUtil.GetQueryOutFirst(to, "$JsonRootDefinition", null);
+
             // Determine where to create new classes
             IVertex newClassDefinitionsVertex = GraphUtil.GetQueryOutFirst(to, "$NewClassDefinitions", null);
             IVertex newClassesRoot = newClassDefinitionsVertex ?? to;
@@ -61,7 +63,7 @@ namespace m0.Lib.StdView
             
             IVertex dataRoot = to;
 
-            var context = new SchemaContext(newClassesRoot, existingClassesRoots);
+            var context = new SchemaContext(newClassesRoot, existingClassesRoots, jsonRootDefinitionVertex);
 
             context.BuildSchema(document.RootElement);
             CreateData(document.RootElement, dataRoot, context);
@@ -94,17 +96,38 @@ namespace m0.Lib.StdView
         {
             private readonly IVertex newClassesRoot;
             private readonly IList<IVertex> existingClassesRoots;
+            private readonly IVertex jsonRootDefinitionVertex;
             private readonly IVertex zeroTypesRoot;
             private readonly IVertex isJsonArrayMeta;
             private readonly IDictionary<string, SchemaClass> classesByPath = new Dictionary<string, SchemaClass>();
             private readonly IDictionary<string, int> classNameCounts = new Dictionary<string, int>();
 
-            public SchemaContext(IVertex newClassesRoot, IList<IVertex> existingClassesRoots)
+            public SchemaContext(IVertex newClassesRoot, IList<IVertex> existingClassesRoots, IVertex jsonRootDefinitionVertex)
             {
                 this.newClassesRoot = newClassesRoot;
                 this.existingClassesRoots = existingClassesRoots;
+                this.jsonRootDefinitionVertex = jsonRootDefinitionVertex;
                 zeroTypesRoot = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes");
                 isJsonArrayMeta = MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex\$IsJsonArray");
+            }
+
+            /// <summary>
+            /// Gets the class type for a root-level JSON property from $JsonRootDefinition.
+            /// Looks for InputParameter with matching name and returns its $EdgeTarget.
+            /// </summary>
+            private IVertex GetTypeFromJsonRootDefinition(string propertyName)
+            {
+                if (jsonRootDefinitionVertex == null)
+                    return null;
+
+                // Find InputParameter with matching name
+                IVertex inputParameter = GraphUtil.GetQueryOutFirst(jsonRootDefinitionVertex, "InputParameter", propertyName);
+                if (inputParameter == null)
+                    return null;
+
+                // Get the $EdgeTarget - this is the actual class type
+                IVertex edgeTarget = GraphUtil.GetQueryOutFirst(inputParameter, "$EdgeTarget", null);
+                return edgeTarget;
             }
 
             public void BuildSchema(JsonElement rootElement)
@@ -127,11 +150,40 @@ namespace m0.Lib.StdView
 
                     if (property.Value.ValueKind == JsonValueKind.Object)
                     {
-                        BuildObjectClass(property.Value, property.Name, propertyPath);
+                        // At root level, try to get type from $JsonRootDefinition
+                        IVertex typeFromDefinition = null;
+                        if (path == "Root")
+                        {
+                            typeFromDefinition = GetTypeFromJsonRootDefinition(property.Name);
+                        }
+
+                        if (typeFromDefinition != null && !VertexOperations.IsAtomicType(typeFromDefinition))
+                        {
+                            // Use the class type from definition
+                            BuildObjectClassWithKnownType(property.Value, typeFromDefinition, propertyPath);
+                        }
+                        else
+                        {
+                            BuildObjectClass(property.Value, property.Name, propertyPath);
+                        }
                     }
                     else if (property.Value.ValueKind == JsonValueKind.Array)
                     {
-                        BuildNestedClassesFromArray(property.Value, propertyPath);
+                        // At root level, try to get type from $JsonRootDefinition for array items
+                        IVertex typeFromDefinition = null;
+                        if (path == "Root")
+                        {
+                            typeFromDefinition = GetTypeFromJsonRootDefinition(property.Name);
+                        }
+
+                        if (typeFromDefinition != null && !VertexOperations.IsAtomicType(typeFromDefinition))
+                        {
+                            BuildNestedClassesFromArrayWithKnownType(property.Value, typeFromDefinition, propertyPath);
+                        }
+                        else
+                        {
+                            BuildNestedClassesFromArray(property.Value, propertyPath);
+                        }
                     }
                 }
             }
@@ -153,6 +205,58 @@ namespace m0.Lib.StdView
                 {
                     BuildNestedClassesFromArray(firstElement, path + ".Item");
                 }
+            }
+
+            private void BuildNestedClassesFromArrayWithKnownType(JsonElement arrayElement, IVertex knownClassType, string path)
+            {
+                if (arrayElement.GetArrayLength() == 0)
+                    return;
+
+                JsonElement firstElement = arrayElement.EnumerateArray().First();
+
+                if (firstElement.ValueKind == JsonValueKind.Object)
+                {
+                    SchemaClass itemClass = BuildObjectClassWithKnownType(firstElement, knownClassType, path + ".Item");
+                    MergeArrayObjectItems(itemClass, arrayElement, path + ".Item");
+                }
+                else if (firstElement.ValueKind == JsonValueKind.Array)
+                {
+                    BuildNestedClassesFromArray(firstElement, path + ".Item");
+                }
+            }
+
+            private SchemaClass BuildObjectClassWithKnownType(JsonElement obj, IVertex knownClassType, string path)
+            {
+                if (classesByPath.TryGetValue(path, out SchemaClass existing))
+                {
+                    MergeObjectProperties(existing, obj, path);
+                    return existing;
+                }
+
+                // Use the known class type directly
+                SchemaClass schemaClass = CreateClassFromKnownType(knownClassType, path);
+                MergeObjectProperties(schemaClass, obj, path);
+                return schemaClass;
+            }
+
+            private SchemaClass CreateClassFromKnownType(IVertex knownClassType, string path)
+            {
+                string className = GraphUtil.GetStringValue(knownClassType);
+                
+                var schemaClass = new SchemaClass
+                {
+                    Name = className,
+                    ClassVertex = knownClassType
+                };
+
+                // Cache FIRST to prevent infinite recursion with circular references
+                classesByPath[path] = schemaClass;
+                classNameCounts[className] = 1; // Mark as used
+
+                // THEN load existing properties from the class
+                LoadExistingProperties(schemaClass, knownClassType);
+
+                return schemaClass;
             }
 
             private string GetClassNameFromPath(string path)
@@ -193,11 +297,13 @@ namespace m0.Lib.StdView
                         ClassVertex = existingClassVertex
                     };
                     
-                    // Load existing properties from the class
-                    LoadExistingProperties(schemaClass, existingClassVertex);
-                    
+                    // Cache FIRST to prevent infinite recursion with circular references
                     classesByPath[path] = schemaClass;
                     classNameCounts[classNameHint] = 1; // Mark as used
+                    
+                    // THEN load existing properties from the class
+                    LoadExistingProperties(schemaClass, existingClassVertex);
+                    
                     return schemaClass;
                 }
                 
@@ -325,12 +431,12 @@ namespace m0.Lib.StdView
                     ClassVertex = classVertex
                 };
                 
-                // Load its properties recursively
-                LoadExistingProperties(schemaClass, classVertex);
-                
-                // Cache it with a generated path
+                // Cache it FIRST to prevent infinite recursion with circular references
                 string generatedPath = "Existing." + className;
                 classesByPath[generatedPath] = schemaClass;
+                
+                // THEN load its properties recursively
+                LoadExistingProperties(schemaClass, classVertex);
                 
                 return schemaClass;
             }

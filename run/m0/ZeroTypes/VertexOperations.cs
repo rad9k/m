@@ -238,6 +238,13 @@ namespace m0.ZeroTypes
             return IsAtomicVertex(edge.To);
         }
 
+        public static bool IsAtomicType(IVertex metaVertex)
+        {
+            if (IsInherited(metaVertex, "AtomType"))
+                return true;
+            return false;
+        }
+
         public static IVertex GetChildEdges(IVertex metaVertex)
         {
             if (GraphUtil.GetQueryOutCount(metaVertex, "$Is", "Class") > 0)

@@ -168,11 +168,12 @@ namespace m0.Network.Server
             else
                 InputMVEGRootVertex.AddVertex(NewClassDefinitions_meta, "");
 
+            InputMVEGRootVertex.AddEdge(JsonRootDefinition_meta, functionVertex);
+
             //
 
             IVertex parametersStack = InstructionHelpers.CreateStack();
-
-            //
+            
 
             IVertex InputJsonVertex = MinusZero.Instance.CreateTempVertex();
 
