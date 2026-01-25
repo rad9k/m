@@ -18,6 +18,7 @@ namespace m0.Network.Server
     {
         private static IVertex JsonToVertex_meta = MinusZero.Instance.Root.Get(false, @"System\Lib\StdView\JsonToVertex");
         private static IVertex VertexToJson_meta = MinusZero.Instance.Root.Get(false, @"System\Lib\StdView\VertexToJson");
+        private static IVertex NewClassDefinitions_meta = MinusZero.Instance.Root.Get(false, @"System\Lib\StdView\Json\NewClassDefinitions");
 
         private static StreamWriter _logWriter;
         private static readonly object _logLock = new object();
@@ -162,7 +163,9 @@ namespace m0.Network.Server
                 tempInputVertex.AddEdge(exsisingClassDefinitionsEdge.Meta, exsisingClassDefinitionsEdge.To);
 
             if (NewClassDefinitions != null)
-                tempInputVertex.AddEdge(NewClassDefinitions.Meta, NewClassDefinitions.To);
+                tempInputVertex.AddEdge(NewClassDefinitions_meta, NewClassDefinitions.To);
+            else
+                tempInputVertex.AddVertex(NewClassDefinitions_meta, "");
 
             //
 
