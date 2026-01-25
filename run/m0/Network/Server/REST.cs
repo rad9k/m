@@ -188,8 +188,9 @@ namespace m0.Network.Server
                 IVertex functionParameter = GraphUtil.GetQueryOutFirst(functionVertex, "InputParameter", parameterName);
 
                 if (functionParameter != null)
-                    foreach (IEdge value in parameterEdge.To.OutEdgesRaw)                    
-                        parametersStack.AddEdge(functionParameter, value.To);                                        
+                    parametersStack.AddEdge(functionParameter, parameterEdge.To);
+                //       foreach (IEdge value in parameterEdge.To.OutEdgesRaw)                    
+                //         parametersStack.AddEdge(functionParameter, value.To);                                        
             }
 
             //
@@ -199,7 +200,7 @@ namespace m0.Network.Server
             IVertex returnVertex = MinusZero.Instance.CreateTempVertex();
 
             foreach (IEdge e in returnStack)
-                returnVertex.AddEdge(e.Meta, e.To);
+                returnVertex.AddEdge(null, e.To);
 
             IVertex return_Json = returnVertex.AddVertex(VertexToJson_meta, "");
 

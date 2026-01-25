@@ -15,6 +15,21 @@ namespace m0.ZeroTypes
         static string[] NoCopyCountViewMetaValue = {"$GraphChangeTrigger"};
         static string[] NoCopyCountViewVertexIsValue = { "GraphChangeTrigger" };
 
+        public static bool IsSpecialVertex(IVertex v)
+        {
+            if (v.Value == null)
+                return false;
+
+            if (v.Value.ToString().StartsWith("$"))
+            {
+                if (GraphUtil.GetStringValue(v) == "$Empty")
+                    return false;
+
+                return true;
+            }
+
+            return false;
+        }
         public static bool CanCopyCountViewEdge(IEdge e)
         {
             foreach (string s in NoCopyCountViewMetaValue)

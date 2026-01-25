@@ -101,7 +101,7 @@ namespace m0.Lib.StdView
                     {
                         foreach (IEdge edge in list)
                         {
-                            if (VertexOperations.CanCopyCountViewEdge(edge) && !VertexOperations.IsViewVertex(edge.Meta))
+                            if (VertexOperations.CanCopyCountViewEdge(edge) && !VertexOperations.IsViewVertex(edge.Meta) && !VertexOperations.IsSpecialVertex(edge.Meta))
                             {
                                 if (VertexOperations.IsAtomicEdge(edge) || VertexOperations.IsLink(edge))
                                     WriteAtomVertex(edge.To, writer);
@@ -115,7 +115,7 @@ namespace m0.Lib.StdView
                     else
                     {
                         IEdge edge = (IEdge)kvp.Value;
-                        if (VertexOperations.CanCopyCountViewEdge(edge) && !VertexOperations.IsViewVertex(edge.Meta))
+                        if (VertexOperations.CanCopyCountViewEdge(edge) && !VertexOperations.IsViewVertex(edge.Meta) && !VertexOperations.IsSpecialVertex(edge.Meta))
                         {
                             if (VertexOperations.IsAtomicEdge(edge) || VertexOperations.IsLink(edge))
                                 WriteAtomVertex(edge.To, writer);
@@ -158,6 +158,19 @@ namespace m0.Lib.StdView
 
                 if (kvp.Value is List_VertexBase)
                 {
+                    // Check if any edges in the list pass the filter (not special vertex)
+                    bool hasValidEdges = false;
+                    foreach (IEdge e in (List_VertexBase)kvp.Value)
+                    {
+                        if (VertexOperations.CanCopyCountViewEdge(e) && !VertexOperations.IsViewVertex(e.Meta) && !VertexOperations.IsSpecialVertex(e.Meta))
+                        {
+                            hasValidEdges = true;
+                            break;
+                        }
+                    }
+                    if (!hasValidEdges)
+                        continue;
+
                     string meta = kvp.Key.ToString();
 
                     if (meta == "$Empty" || meta == "")
@@ -177,6 +190,10 @@ namespace m0.Lib.StdView
                 {
                     IEdge e = (IEdge)kvp.Value;
 
+                    // Skip edges with special meta
+                    if (VertexOperations.IsSpecialVertex(e.Meta))
+                        continue;
+
                     ProcessVertex_NoArray(writer, visited, e);
                 }
             }
@@ -189,7 +206,7 @@ namespace m0.Lib.StdView
             writer.WriteStartArray();
 
             foreach (IEdge e in (List_VertexBase)kvp.Value)
-                if (VertexOperations.CanCopyCountViewEdge(e) && !VertexOperations.IsViewVertex(e.Meta))
+                if (VertexOperations.CanCopyCountViewEdge(e) && !VertexOperations.IsViewVertex(e.Meta) && !VertexOperations.IsSpecialVertex(e.Meta))
                 {
                     if (VertexOperations.IsAtomicEdge(e) || VertexOperations.IsLink(e))
                         WriteAtomVertex(e.To, writer);
@@ -314,7 +331,7 @@ namespace m0.Lib.StdView
         {
             writer.WriteStartArray();
             
-            if (VertexOperations.CanCopyCountViewEdge(e) && !VertexOperations.IsViewVertex(e.Meta))
+            if (VertexOperations.CanCopyCountViewEdge(e) && !VertexOperations.IsViewVertex(e.Meta) && !VertexOperations.IsSpecialVertex(e.Meta))
             {
                 if (VertexOperations.IsAtomicEdge(e) || VertexOperations.IsLink(e))
                     WriteAtomVertex(e.To, writer);
@@ -330,7 +347,7 @@ namespace m0.Lib.StdView
 
         private static void ProcessVertex_NoArray(Utf8JsonWriter writer, IList<IVertex> visited, IEdge e)
         {
-            if (VertexOperations.CanCopyCountViewEdge(e) && !VertexOperations.IsViewVertex(e.Meta)) 
+            if (VertexOperations.CanCopyCountViewEdge(e) && !VertexOperations.IsViewVertex(e.Meta) && !VertexOperations.IsSpecialVertex(e.Meta)) 
             {
                 string metaValue = GraphUtil.GetStringValue(e.Meta);
 
