@@ -607,7 +607,7 @@ namespace m0.Lib.StdView
                 PopulateObjectDataDirectly(rootElement, dataRoot, context, "Root");
             else if (rootElement.ValueKind == JsonValueKind.Array)
                 PopulateArrayDataDirectly(rootElement, dataRoot, context, "Root");
-            else
+            else if (rootElement.ValueKind != JsonValueKind.Null)
                 dataRoot.AddVertex(null, TypeConverter.ConvertJsonElementToPrimitive(rootElement));
         }
 
@@ -631,7 +631,7 @@ namespace m0.Lib.StdView
                 {
                     PopulateArrayDataDirectly(property.Value, parentVertex, context, propertyPath);
                 }
-                else
+                else if (property.Value.ValueKind != JsonValueKind.Null)
                 {
                     parentVertex.AddVertex(null, property.Name).AddVertex(null, TypeConverter.ConvertJsonElementToPrimitive(property.Value));
                 }
@@ -647,6 +647,8 @@ namespace m0.Lib.StdView
 
             foreach (JsonElement item in arrayElement.EnumerateArray())
             {
+                if (item.ValueKind == JsonValueKind.Null)
+                    continue;
                 if (item.ValueKind == JsonValueKind.Object && itemClass != null)
                 {
                     IVertex objectVertex = parentVertex.AddVertex(itemClass.ClassVertex, "");
@@ -680,6 +682,9 @@ namespace m0.Lib.StdView
 
         private static void PopulateSingleValue(IVertex instanceVertex, SchemaProperty schemaProperty, JsonElement value, SchemaContext context)
         {
+            if (value.ValueKind == JsonValueKind.Null)
+                return;
+
             if (schemaProperty.ValueKind == SchemaValueKind.Primitive)
             {
                 instanceVertex.AddVertex(schemaProperty.PropertyVertex, TypeConverter.ConvertJsonElementToPrimitive(value));
@@ -706,6 +711,8 @@ namespace m0.Lib.StdView
 
             foreach (JsonElement item in arrayElement.EnumerateArray())
             {
+                if (item.ValueKind == JsonValueKind.Null)
+                    continue;
                 if (schemaProperty.ValueKind == SchemaValueKind.Primitive)
                 {
                     instanceVertex.AddVertex(schemaProperty.PropertyVertex, TypeConverter.ConvertJsonElementToPrimitive(item));
