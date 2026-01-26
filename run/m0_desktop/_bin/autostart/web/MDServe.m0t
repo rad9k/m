@@ -24,7 +24,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 		"MDServeCache"
 			"TreeJson"
 			"Id"
-				"HTML"
+				"Html"
 		"id"
 		"title"
 		"children"
@@ -105,7 +105,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 		cache = @@getCache[startDir]
 		
 		if cache\Id:'(url)'<> != "0"
-			return cache\Id:'(url)'\HTML:
+			return cache\Id:'(url)'\Html:
 			
 		splittedUrl = @@Split[@@UrlDecode[url],"/"]
 		
@@ -123,10 +123,10 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 		splitIterator = splitIterator\:'(fileName)'
 
 		splitIterator\Content +< :System\:Lib\:StdView\:MdStringToMdTokenVertexes :: ""
-		splitIterator\Content\MdStringToMdTokenVertexes +< :System\:Lib\:StdView\:MdTokenVertexesToHTMLString :: ""
+		splitIterator\Content\MdStringToMdTokenVertexes +< :System\:Lib\:StdView\:MdTokenVertexesToHtmlString :: ""
 		
 		html = Start\:web\:'_doc_page_top.html'\Content
-		html += splitIterator\Content\MdStringToMdTokenVertexes\MdTokenVertexesToHTMLString
+		html += splitIterator\Content\MdStringToMdTokenVertexes\MdTokenVertexesToHtmlString
 		html += Start\:web\:'_doc_page_bottom.html'\Content
 		
 		concatenatedHtml = @@Concatenate[html]
@@ -135,7 +135,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 		
 		cache +< Id
 		
-		Id +< @@Meta\MDServeCache\Id\HTML ::> concatenatedHtml
+		Id +< @@Meta\MDServeCache\Id\Html ::> concatenatedHtml
 		Id +< "split" ::> splitIterator
 	
 		return concatenatedHtml

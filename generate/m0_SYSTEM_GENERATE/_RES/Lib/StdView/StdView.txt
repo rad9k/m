@@ -79,7 +79,7 @@
 			html += ".png%">"><BR><span class=%"description%">"
 			html += label
 			html += "</span></center>"
-		function "MdTokenVertexesToHTMLString_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
+		function "MdTokenVertexesToHtmlString_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
 			variable "html" @String
 			
 			html = ""
@@ -261,7 +261,8 @@
 			to <- @@Concatenate[html]
 	function "VertexToJson_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
 	function "JsonToVertex_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
-	function "MdStringToMdTokenVertexes_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")	
+	function "MdStringToMdTokenVertexes_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
+	function "OpenApiUrlVertexToPackage_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
 	"VertexToJson"
 		<@$GraphChangeTrigger :: "CreateView">
 			<@$Is :: @GraphChangeTrigger>
@@ -289,7 +290,7 @@
 		<@View :: "">
 			<@$Is :: @View>	
 			<@FromToTransformFunction :: @MdStringToMdTokenVertexes_Transform>
-	"MdTokenVertexesToHTMLString"
+	"MdTokenVertexesToHtmlString"
 		<@$GraphChangeTrigger :: "CreateView">
 			<@$Is :: @GraphChangeTrigger>
 			<@GraphChangeTrigger\ChangeTypeFilter :: @OnlyNonTransactedRootVertexEvents>
@@ -297,4 +298,13 @@
 			<@GraphChangeTrigger\Listener :: @System\Meta\ZeroTypes\ExecutionFlow\CreateViewMetaEdgeAdded>
 		<@View :: "">
 			<@$Is :: @View>	
-			<@FromToTransformFunction :: @Html\MdTokenVertexesToHTMLString_Transform>
+			<@FromToTransformFunction :: @Html\MdTokenVertexesToHtmlString_Transform>
+	"OpenApiUrlVertexToPackage"
+		<@$GraphChangeTrigger :: "CreateView">
+			<@$Is :: @GraphChangeTrigger>
+			<@GraphChangeTrigger\ChangeTypeFilter :: @OnlyNonTransactedRootVertexEvents>
+			<@GraphChangeTrigger\ChangeTypeFilter :: @MetaEdgeAdded>
+			<@GraphChangeTrigger\Listener :: @System\Meta\ZeroTypes\ExecutionFlow\CreateViewMetaEdgeAdded>
+		<@View :: "">
+			<@$Is :: @View>	
+			<@FromToTransformFunction :: @OpenApiUrlVertexToPackage_Transform>

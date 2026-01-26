@@ -86,7 +86,7 @@ namespace m0.Lib.Net
 
             HttpServer server = GetServer(thisVertex);
 
-            //server.StopAsync();
+            server.StopAsync();
 
             return exe.Stack;
         }

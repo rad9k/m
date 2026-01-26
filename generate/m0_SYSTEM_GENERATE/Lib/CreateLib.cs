@@ -136,6 +136,8 @@ namespace m0_SYSTEM_GENERATE.Lib
             IVertex VertexToJson_Transform_Vertex = LibStdView.Get(false, "VertexToJson_Transform");
             IVertex JsonToVertex_Transform_Vertex = LibStdView.Get(false, "JsonToVertex_Transform");
             IVertex MdStringToMdTokenVertexes_Transform_Vertex = LibStdView.Get(false, "MdStringToMdTokenVertexes_Transform");
+            IVertex OpenApiUrlVertexToPackage_Transform_Vertex = LibStdView.Get(false, "OpenApiUrlVertexToPackage_Transform");
+
             IVertex AddColorsToCode_Vertex = LibStdView.Get(false, @"Html\AddColorsToCode");
             IVertex DequoteText_Vertex = LibStdView.Get(false, @"Html\DequoteText");
             IVertex DiagramQueryToDiagramId_Vertex = LibStdView.Get(false, @"Html\DiagramQueryToDiagramId");
@@ -152,6 +154,10 @@ namespace m0_SYSTEM_GENERATE.Lib
             ExecutionFlowHelper.DecorateWithDotNetStaticMethod(MdStringToMdTokenVertexes_Transform_Vertex,
                 "m0.Lib.StdView.MdStringToMdTokenVertexes, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
                 "MdStringToMdTokenVertexes_Transform");
+
+            ExecutionFlowHelper.DecorateWithDotNetStaticMethod(OpenApiUrlVertexToPackage_Transform_Vertex,
+                "m0.Lib.StdView.OpenApiUrlVertexToPackage, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                "OpenApiUrlVertexToPackage_Transform");
 
             ExecutionFlowHelper.DecorateWithDotNetStaticMethod(AddColorsToCode_Vertex,
                 "m0.Lib.StdView.Html, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",

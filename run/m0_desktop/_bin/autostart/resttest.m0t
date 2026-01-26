@@ -1,13 +1,15 @@
 System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 "resttest"
 	import @System\Lib\Net\Rest direct meta
+	import @System\Lib\Std direct meta
 	class "niepoczebne"
 		attribute "Name" @String
 	class "User"
 		attribute "Name" @String
 		attribute "Age" @Integer
 		aggregation "Product" @Product
-		association "Friend" @User		
+			<@$MaxCardinality :: "-1">
+		aggregation "Friend" @User			
 	class "Product"
 		attribute "Name" @String
 		attribute "Price" @Float
@@ -16,7 +18,12 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 	function "Add" @Integer(@Integer "a", @Integer "b")
 		return a + b
 	function "Concat" @String(@String "str1", @String "str2")
-		<@Endpoint :: @Empty>
-		return "kupka"
+		<@Endpoint :: @$Empty>
+		variable "x" @String
+		x = str1
+		x += "kupka"
+		x += str2
+		return @@Concatenate[x]
 	function "ProcessUser" @User(@User "input")
+		<@Endpoint :: @$Empty>
 		return 'input'
