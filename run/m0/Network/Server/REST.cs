@@ -188,9 +188,7 @@ namespace m0.Network.Server
                 IVertex functionParameter = GraphUtil.GetQueryOutFirst(functionVertex, "InputParameter", parameterName);
 
                 if (functionParameter != null)
-                    parametersStack.AddEdge(functionParameter, parameterEdge.To);
-                //       foreach (IEdge value in parameterEdge.To.OutEdgesRaw)                    
-                //         parametersStack.AddEdge(functionParameter, value.To);                                        
+                    parametersStack.AddEdge(functionParameter, parameterEdge.To);                                    
             }
 
             //
