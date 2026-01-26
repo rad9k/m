@@ -666,7 +666,16 @@ namespace m0.Network.Server
                 }
                 else
                 {
-                    TypeConverter.WriteOpenApiTypeDefinition(writer, prop.Type, prop.IsNullable);
+                    if (TypeConverter.IsPrimitiveType(prop.Type))
+                    {
+                        TypeConverter.WriteOpenApiTypeDefinition(writer, prop.Type, prop.IsNullable);
+                    }
+                    else
+                    {
+                        writer.WriteStartObject();
+                        writer.WriteString("$ref", "#/components/schemas/" + prop.Type);
+                        writer.WriteEndObject();
+                    }
                 }
             }
 
