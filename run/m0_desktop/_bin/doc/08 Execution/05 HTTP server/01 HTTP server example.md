@@ -12,3 +12,7 @@
 		mapping @@GET "FunctionTwo" @@Two
 	}
 ```
+
+```
+dotnet dev-certs https --trust
+```

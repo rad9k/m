@@ -420,7 +420,17 @@ namespace m0.Network.Server {
             // Disable logging if not needed
             builder.Logging.SetMinimumLevel(LogLevel.Warning);
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSwagger",
+                    policy => policy.AllowAnyOrigin()
+                                   .AllowAnyMethod()
+                                   .AllowAnyHeader());
+            });
+
             _app = builder.Build();
+
+            _app.UseCors("AllowSwagger");
 
             // Map all HTTP methods to a single handler
             _app.MapMethods("/{**catchall}", new[] { "GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS", "TRACE" }, HandleRequest);

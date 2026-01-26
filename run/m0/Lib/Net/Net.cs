@@ -44,7 +44,9 @@ namespace m0.Lib.Net
 
             int port = GraphUtil.GetIntegerValueOr0(portVertex);
 
-            server.StartAsync("http://localhost:" + port);
+            //server.StartAsync("http://localhost:" + port+";https://localhost:" + port);
+
+            server.StartAsync("https://localhost:" + port);
 
             return exe.Stack;
         }

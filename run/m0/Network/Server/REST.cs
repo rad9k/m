@@ -101,7 +101,7 @@ namespace m0.Network.Server
             {
                 if (GraphUtil.GetValueAndCompareStrings(actionVertex, HttpActionEnumHelper.GetVertex(HttpActionEnum.GET)))
                 {
-                    return HandleOpenApiGet(handlerVertex);
+                    return HandleOpenApiGet(handlerVertex, url_path);
                 }
             }
 
@@ -147,9 +147,9 @@ namespace m0.Network.Server
             return "OK";
         }
 
-        private static string HandleOpenApiGet(IVertex handlerVertex)
+        private static string HandleOpenApiGet(IVertex handlerVertex, string url_path)
         {
-            return OpenApiDocumentationGenerator.GetOpenApiDocumentation(handlerVertex);
+            return OpenApiDocumentationGenerator.GetOpenApiDocumentation(handlerVertex, url_path);
         }
 
         private static string CallMVEGHandler(IVertex handlerVertex, IVertex functionVertex, string inputJson)

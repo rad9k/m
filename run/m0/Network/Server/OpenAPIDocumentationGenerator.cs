@@ -18,8 +18,9 @@ namespace m0.Network.Server
         /// Generates OpenAPI 3.0.1 documentation from GVM vertex structure containing functions and classes.
         /// </summary>
         /// <param name="baseVertex">The starting vertex containing Function and Class definitions</param>
+        /// <param name="urlPath">Base URL path for endpoints</param>
         /// <returns>OpenAPI JSON documentation string</returns>
-        static public string GetOpenApiDocumentation(IVertex baseVertex)
+        static public string GetOpenApiDocumentation(IVertex baseVertex, string urlPath)
         {
             var buffer = new ArrayBufferWriter<byte>();
             var options = new JsonWriterOptions
@@ -51,7 +52,7 @@ namespace m0.Network.Server
                 CollectReferencedClasses(functions, classes);
 
                 // Write paths section
-                WritePaths(writer, functions, classes);
+                WritePaths(writer, functions, classes, urlPath);
 
                 // Write components section
                 WriteComponents(writer, functions, classes);
@@ -305,7 +306,7 @@ namespace m0.Network.Server
             }
         }
 
-        private static void WritePaths(Utf8JsonWriter writer, List<FunctionInfo> functions, List<ClassInfo> classes)
+        private static void WritePaths(Utf8JsonWriter writer, List<FunctionInfo> functions, List<ClassInfo> classes, string urlPath)
         {
             writer.WritePropertyName("paths");
             writer.WriteStartObject();
@@ -313,18 +314,20 @@ namespace m0.Network.Server
             // Write function endpoints
             foreach (var function in functions)
             {
-                WritePathForFunction(writer, function, classes);
+                WritePathForFunction(writer, function, classes, urlPath);
             }
 
             // Write root endpoint
-            WriteRootEndpoint(writer);
+            WriteRootEndpoint(writer, urlPath);
 
             writer.WriteEndObject();
         }
 
-        private static void WritePathForFunction(Utf8JsonWriter writer, FunctionInfo function, List<ClassInfo> classes)
+        private static void WritePathForFunction(Utf8JsonWriter writer, FunctionInfo function, List<ClassInfo> classes, string urlPath)
         {
-            writer.WritePropertyName("/" + function.Name);
+            string basePath = NormalizeBasePath(urlPath);
+            string fullPath = basePath == "" ? "/" + function.Name : basePath + "/" + function.Name;
+            writer.WritePropertyName(fullPath);
             writer.WriteStartObject();
 
             writer.WritePropertyName("post");
@@ -437,9 +440,11 @@ namespace m0.Network.Server
             return "#/components/schemas/" + function.Name + "Response";
         }
 
-        private static void WriteRootEndpoint(Utf8JsonWriter writer)
+        private static void WriteRootEndpoint(Utf8JsonWriter writer, string urlPath)
         {
-            writer.WritePropertyName("/");
+            string basePath = NormalizeBasePath(urlPath);
+            string fullPath = basePath == "" ? "/" : basePath + "/";
+            writer.WritePropertyName(fullPath);
             writer.WriteStartObject();
 
             writer.WritePropertyName("get");
@@ -709,6 +714,21 @@ namespace m0.Network.Server
             public IVertex TypeVertex { get; set; }
             public bool IsArray { get; set; }
             public bool IsNullable { get; set; }
+        }
+
+        private static string NormalizeBasePath(string urlPath)
+        {
+            if (string.IsNullOrWhiteSpace(urlPath) || urlPath == "/")
+                return "";
+
+            string normalized = urlPath.Trim();
+            if (!normalized.StartsWith("/"))
+                normalized = "/" + normalized;
+
+            if (normalized.EndsWith("/"))
+                normalized = normalized.TrimEnd('/');
+
+            return normalized;
         }
     }
 }
