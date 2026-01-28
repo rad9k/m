@@ -7,6 +7,7 @@ The -zero is a complete graph database / back-end execution platform, where you 
 Two platform instance types support different workflows: 
 - console instances for Linux/OS X/Docker environments
 - GUI instances (Windows WPF) providing unified drag-and-drop, bulk operations, and advanced editors where all GUI elements are themselves manipulable graph fragments
+
 Built-in GVM libraries support REST endpoint exposure and consumption, HTTP/Markdown web server, and JSON processing → enabling graph-based web services and documentation publishing.
 
 ## Use cases
