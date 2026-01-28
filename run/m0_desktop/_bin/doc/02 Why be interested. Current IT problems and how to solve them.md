@@ -110,7 +110,7 @@ _**Impact:**_ System evolution itself is at risk. Companies get locked into thei
 
 For sure a lot of the above problems seems to be solvable by the AI. With the 2026-01-01 state of the art, we would say that above problems stays the same with AI and... 
 
-> ...AI just delivers more junior- and mid- minded set of hands that automatically try to deal with the above problems.
+> ...AI just delivers more junior- and mid- minded set of hands that try to automatically deal with the above problems.
 
 So maybe instead of putting all the eggs in the AI nest, we should try to redefine the IT systems fundaments? Perhaps than there will be less work (and errors) for AI powered devs. **This is especially critical when implementing IT systems evolution to catch changeing business needs.**
 
