@@ -43,10 +43,15 @@ namespace m0.Network.Server {
         public bool IsRunning => _app != null && _serverTask != null && !_serverTask.IsCompleted;
         
         public string ServerStartTimestamp;
+        public int Port;
 
         public HttpServer(IVertex _thisVertex)
         {
             thisVertex = _thisVertex;
+
+            IVertex portVertex = GraphUtil.GetQueryOutFirst(thisVertex, "Port", null);
+
+            Port = GraphUtil.GetIntegerValueOr0(portVertex);
 
             IVertex doHttpLogVertex = GraphUtil.GetQueryOutFirst(thisVertex, "DoHttpLog", null);
 
@@ -113,14 +118,8 @@ namespace m0.Network.Server {
 
         private void LogHttpRequest(HttpContext context, string method, string url)
         {                     
-            if (HttpLogFilename == "")
-            {
-                IVertex portVertex = GraphUtil.GetQueryOutFirst(thisVertex, "Port", null);
-
-                int port = GraphUtil.GetIntegerValueOr0(portVertex);
-
-                HttpLogFilename = "http_server_" + port + "_" + ServerStartTimestamp + ".log";
-            }
+            if (HttpLogFilename == null || HttpLogFilename == "")
+                HttpLogFilename = "http_server_" + Port + "_" + ServerStartTimestamp + ".log";
 
             try
             {

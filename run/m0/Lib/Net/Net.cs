@@ -46,7 +46,7 @@ namespace m0.Lib.Net
 
             //server.StartAsync("http://localhost:" + port+";https://localhost:" + port);
 
-            server.StartAsync("https://localhost:" + port);
+            server.StartAsync("http://localhost:" + port);
 
             return exe.Stack;
         }

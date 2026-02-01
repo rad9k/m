@@ -66,9 +66,14 @@ namespace m0.Network.Server
                     if (_logWriter == null)
                     {
                         _currentServerTimestamp = server.ServerStartTimestamp;
-                        string logFilename = $"REST-{server.ServerStartTimestamp}.log";
+                        string logFilename;
+                        
+                        if (server.RestLogFilename == null || server.RestLogFilename == "")
+                            logFilename = $"REST-{server.ServerStartTimestamp}.log";
+                        else
+                            logFilename = server.RestLogFilename;
 
-                        FileSystemUtil.CreateDirectoryIfNotExist(MinusZero.Instance.m0DllPath, "log");
+                            FileSystemUtil.CreateDirectoryIfNotExist(MinusZero.Instance.m0DllPath, "log");
                         string httpPath = Path.Combine(MinusZero.Instance.m0DllPath, "log");
                         string logFilePath = Path.Combine(httpPath, logFilename);
 
