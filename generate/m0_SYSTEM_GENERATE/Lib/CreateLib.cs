@@ -212,22 +212,19 @@ namespace m0_SYSTEM_GENERATE.Lib
             IVertex httpServerVertex = GraphUtil.AddClass(LibNet, "HttpServer");
 
             GraphUtil.AddAttribute(httpServerVertex, "Mapping", httpMapingVertex, 1, 1);
-            GraphUtil.AddAttribute(httpServerVertex, "Port", IntegerType, 1, 1);
+            GraphUtil.AddAttribute(httpServerVertex, "Port", IntegerType, 0, 1);
 
             IVertex doHttpLogAttributeVertex = GraphUtil.AddAttribute(httpServerVertex, "DoHttpLog", BooleanType, 0, 1);
             doHttpLogAttributeVertex.AddVertex(defaultValue_meta, "True");
 
-            IVertex httpLogFilenameVertex = GraphUtil.AddAttribute(httpServerVertex, "HttpLogFilename", BooleanType, 0, 1);
-            httpLogFilenameVertex.AddVertex(defaultValue_meta, "");
+            IVertex httpLogFilenameVertex = GraphUtil.AddAttribute(httpServerVertex, "HttpLogFilename", StringType, 0, 1);            
 
             IVertex doRestLogAttributeVertex = GraphUtil.AddAttribute(httpServerVertex, "DoRestLog", BooleanType, 0, 1);
             doRestLogAttributeVertex.AddVertex(defaultValue_meta, "True");
 
-            IVertex restLogFilenameVertex = GraphUtil.AddAttribute(httpServerVertex, "RestLogFilename", BooleanType, 0, 1);
-            restLogFilenameVertex.AddVertex(defaultValue_meta, "");
+            IVertex restLogFilenameVertex = GraphUtil.AddAttribute(httpServerVertex, "RestLogFilename", StringType, 0, 1);            
 
-            IVertex doHttpsVertex = GraphUtil.AddAttribute(httpServerVertex, "DoHttps", BooleanType, 0, 1);
-            restLogFilenameVertex.AddVertex(defaultValue_meta, "");
+            IVertex doHttpsVertex = GraphUtil.AddAttribute(httpServerVertex, "DoHttps", BooleanType, 0, 1);            
 
             IVertex httpServer_InitVertex = AddMethod(httpServerVertex, "HttpServer", null, new TypeName[] { new TypeName("p_mapping", httpMapingVertex, 0, -1), new TypeName("p_port", "Integer", 0, 1) });
 
