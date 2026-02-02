@@ -1,4 +1,4 @@
-﻿using m0.Foundation;
+using m0.Foundation;
 using m0.Graph;
 using System;
 using System.Buffers;
@@ -202,7 +202,13 @@ namespace m0.Lib.StdView
                 return operationId.GetString();
             }
 
-            // Generate name from method and path
+            string lastPathSegment = GetLastPathSegment(path);
+            if (!string.IsNullOrWhiteSpace(lastPathSegment))
+            {
+                return lastPathSegment;
+            }
+
+            // Fallback: generate name from method and full path
             string sanitizedPath = path
                 .Replace("/", "_")
                 .Replace("{", "")
@@ -211,6 +217,22 @@ namespace m0.Lib.StdView
                 .Trim('_');
 
             return $"{method.ToLowerInvariant()}_{sanitizedPath}".Trim('_');
+        }
+
+        private static string GetLastPathSegment(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                return "";
+
+            string[] segments = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            if (segments.Length == 0)
+                return "";
+
+            return segments[segments.Length - 1]
+                .Replace("{", "")
+                .Replace("}", "")
+                .Replace("-", "_")
+                .Trim('_');
         }
 
         private static void AddInputParameters(IVertex functionVertex, JsonElement operation, OpenApiContext context)

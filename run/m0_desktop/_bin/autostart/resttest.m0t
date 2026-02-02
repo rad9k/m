@@ -2,6 +2,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 "resttest"
 	import @System\Lib\Net\Rest direct meta
 	import @System\Lib\Std direct meta
+	"http://localhost:5000/swagger/v1/swagger.json"
 	class "niepoczebne"
 		attribute "Name" @String
 	class "User"
