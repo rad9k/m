@@ -40,6 +40,8 @@ namespace m0.Lib.Net
 
             HttpServer server = GetServer(thisVertex);
 
+            //
+
             IVertex portVertex = GraphUtil.GetQueryOutFirst(thisVertex, "Port", null);
 
             int port = GraphUtil.GetIntegerValueOr0(portVertex);
@@ -85,6 +87,8 @@ namespace m0.Lib.Net
                 return exe.Stack;
 
             HttpServer server = GetServer(thisVertex);
+
+            //
 
             server.StopAsync();
 

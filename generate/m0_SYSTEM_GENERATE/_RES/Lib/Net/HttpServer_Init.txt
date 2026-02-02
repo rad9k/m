@@ -1,3 +1,2 @@
 "STORE"
 	this\Mapping = p_mapping
-	this\Port = p_port

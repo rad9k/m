@@ -1,10 +1,14 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\",
+  "WorkspaceRootPath": "C:\\Users\\teres\\source\\repos\\m\\generate\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|c:\\users\\rad9k\\source\\repos\\m\\generate\\m0_system_generate\\lib\\createlib.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|c:\\users\\teres\\source\\repos\\m\\generate\\m0_system_generate\\lib\\createlib.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|solutionrelative:m0_system_generate\\lib\\createlib.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|C:\\Users\\teres\\source\\repos\\m\\generate\\m0_system_generate\\legacysystem\\m0.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|solutionrelative:m0_system_generate\\legacysystem\\m0.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,8 +18,24 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 6,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:130:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:131:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{13b12e3e-c1b4-4539-9371-4fe9a0d523fc}"
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:129:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
@@ -25,25 +45,29 @@
               "Name": "ST:131:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:131:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:128:0:{13b12e3e-c1b4-4539-9371-4fe9a0d523fc}"
-            },
-            {
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "CreateLib.cs",
-              "DocumentMoniker": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs",
+              "DocumentMoniker": "C:\\Users\\teres\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs",
               "RelativeDocumentMoniker": "m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs",
-              "ToolTip": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs*",
-              "RelativeToolTip": "m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs*",
-              "ViewState": "AgIAANAAAAAAAAAAAAAkwNsAAAB6AAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\teres\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs",
+              "RelativeToolTip": "m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs",
+              "ViewState": "AgIAAMsAAAAAAAAAAAAowOIAAABmAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-16T14:37:31.962Z",
+              "WhenOpened": "2026-02-01T12:00:35.614Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "m0.cs",
+              "DocumentMoniker": "C:\\Users\\teres\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\LegacySystem\\m0.cs",
+              "RelativeDocumentMoniker": "m0_SYSTEM_GENERATE\\LegacySystem\\m0.cs",
+              "ToolTip": "C:\\Users\\teres\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\LegacySystem\\m0.cs",
+              "RelativeToolTip": "m0_SYSTEM_GENERATE\\LegacySystem\\m0.cs",
+              "ViewState": "AgIAADQCAAAAAAAAAAAmwEICAACFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-01T11:12:57.217Z"
             }
           ]
         },

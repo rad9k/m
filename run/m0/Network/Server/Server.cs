@@ -25,6 +25,7 @@ namespace m0.Network.Server {
     public class HttpServer
     {
         private IVertex url_meta = MinusZero.Instance.Root.Get(false, @"System\Lib\Net\HttpHandler\url");
+        private IVertex port_meta = MinusZero.Instance.Root.Get(false, @"System\Lib\Net\HttpServer\Port");
 
         public IVertex thisVertex = null;
 
@@ -44,14 +45,11 @@ namespace m0.Network.Server {
         
         public string ServerStartTimestamp;
         public int Port;
+        public bool DoHttps = false;
 
         public HttpServer(IVertex _thisVertex)
         {
             thisVertex = _thisVertex;
-
-            IVertex portVertex = GraphUtil.GetQueryOutFirst(thisVertex, "Port", null);
-
-            Port = GraphUtil.GetIntegerValueOr0(portVertex);
 
             IVertex doHttpLogVertex = GraphUtil.GetQueryOutFirst(thisVertex, "DoHttpLog", null);
 
@@ -74,6 +72,30 @@ namespace m0.Network.Server {
 
             if (restLogFilenameVertex != null)
                 RestLogFilename = GraphUtil.GetStringValueOrNull(restLogFilenameVertex);
+
+            //
+
+            IVertex doHttpsVertex = GraphUtil.GetQueryOutFirst(thisVertex, "DoHttps", null);
+
+            if (doHttpsVertex != null)
+                DoHttps = GraphUtil.GetBooleanValueOrFalse(doHttpsVertex);
+
+            //
+
+            IVertex portVertex = GraphUtil.GetQueryOutFirst(thisVertex, "Port", null);
+
+            if (portVertex != null)
+                Port = GraphUtil.GetIntegerValueOr0(portVertex);
+            else {
+                if (DoHttps)
+                    Port = 443;
+                else
+                    Port = 80;
+
+                thisVertex.AddVertex(port_meta, Port);
+            }
+
+            
         }
 
         private readonly object _lockObject = new object();

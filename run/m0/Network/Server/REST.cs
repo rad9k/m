@@ -69,7 +69,7 @@ namespace m0.Network.Server
                         string logFilename;
                         
                         if (server.RestLogFilename == null || server.RestLogFilename == "")
-                            logFilename = $"REST-{server.ServerStartTimestamp}.log";
+                            logFilename = "REST_server_" + server.Port + "_" + server.ServerStartTimestamp + ".log";
                         else
                             logFilename = server.RestLogFilename;
 
