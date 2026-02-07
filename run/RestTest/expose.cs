@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
@@ -44,6 +44,11 @@ public class expose
         public static string Concat(string str1, string str2)
         {
             return str1 + str2;
+        }
+
+        public static string Test()
+        {
+            return "hello from rest";
         }
     }
 }

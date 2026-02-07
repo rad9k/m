@@ -39,6 +39,22 @@ namespace RestTest.Controllers
             }
         }
 
+        [HttpGet("test")]
+        [ProducesResponseType(typeof(TestResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public IActionResult Test()
+        {
+            try
+            {
+                var result = expose.Test();
+                return Ok(new TestResponse { Result = result });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ErrorResponse { Error = ex.Message });
+            }
+        }
+
         [HttpPost("processuser")]
         [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -76,6 +92,11 @@ namespace RestTest.Controllers
     }
 
     public class ConcatResponse
+    {
+        public string Result { get; set; } = string.Empty;
+    }
+
+    public class TestResponse
     {
         public string Result { get; set; } = string.Empty;
     }
