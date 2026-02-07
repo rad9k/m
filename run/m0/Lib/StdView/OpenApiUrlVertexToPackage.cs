@@ -229,8 +229,11 @@ namespace m0.Lib.StdView
                 "m0.Lib.REST.RemoteServer, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
                 "CallRemoteRestServer");
 
+            // Collect input parameter info while creating GVM input parameters
+            var inputParameterInfos = new List<InputParameterInfo>();
+
             // Add input parameters
-            AddInputParameters(functionVertex, operation, context);
+            AddInputParameters(functionVertex, operation, context, inputParameterInfos);
 
             // Add output
             AddOutput(functionVertex, operation, context);
@@ -238,8 +241,8 @@ namespace m0.Lib.StdView
             // Add RemoteEndpointPath (path only)
             functionVertex.AddVertex(RemoteEndpointPath_meta, path);
 
-            // Add RemoteEndpointParameters (JSON with operation details)
-            string endpointParametersJson = CreateEndpointParametersJson(method, path, operation);
+            // Add RemoteEndpointParameters (JSON with processed parameter list)
+            string endpointParametersJson = CreateEndpointParametersJson(method, path, inputParameterInfos);
             functionVertex.AddVertex(RemoteEndpointParameters_meta, endpointParametersJson);
         }
 
@@ -284,25 +287,25 @@ namespace m0.Lib.StdView
                 .Trim('_');
         }
 
-        private static void AddInputParameters(IVertex functionVertex, JsonElement operation, OpenApiContext context)
+        private static void AddInputParameters(IVertex functionVertex, JsonElement operation, OpenApiContext context, IList<InputParameterInfo> inputParameterInfos)
         {
-            // Process parameters from operation
+            // Process parameters from operation (path, query, header, cookie)
             if (operation.TryGetProperty("parameters", out JsonElement parameters))
             {
                 foreach (JsonElement parameter in parameters.EnumerateArray())
                 {
-                    AddParameterFromOpenApi(functionVertex, parameter, context);
+                    AddParameterFromOpenApi(functionVertex, parameter, context, inputParameterInfos);
                 }
             }
 
             // Process requestBody (OpenAPI 3.x)
             if (operation.TryGetProperty("requestBody", out JsonElement requestBody))
             {
-                AddRequestBodyParameter(functionVertex, requestBody, context);
+                AddRequestBodyParameter(functionVertex, requestBody, context, inputParameterInfos);
             }
         }
 
-        private static void AddParameterFromOpenApi(IVertex functionVertex, JsonElement parameter, OpenApiContext context)
+        private static void AddParameterFromOpenApi(IVertex functionVertex, JsonElement parameter, OpenApiContext context, IList<InputParameterInfo> inputParameterInfos)
         {
             string parameterName = "";
             if (parameter.TryGetProperty("name", out JsonElement nameElement))
@@ -326,6 +329,13 @@ namespace m0.Lib.StdView
                 }
             }
 
+            // Determine parameter location
+            string parameterLocation = "query";
+            if (parameter.TryGetProperty("in", out JsonElement inElement))
+            {
+                parameterLocation = inElement.GetString();
+            }
+
             // Get parameter type
             IVertex parameterType = GetParameterType(parameter, context);
 
@@ -347,9 +357,12 @@ namespace m0.Lib.StdView
             // Set cardinality
             inputParameterVertex.AddVertex(MinCardinality_meta, IsParameterRequired(parameter) ? 1 : 0);
             inputParameterVertex.AddVertex(MaxCardinality_meta, isArray ? -1 : 1);
+
+            // Record parameter info for RemoteEndpointParameters
+            inputParameterInfos.Add(new InputParameterInfo { Name = parameterName, Location = parameterLocation });
         }
 
-        private static void AddRequestBodyParameter(IVertex functionVertex, JsonElement requestBody, OpenApiContext context)
+        private static void AddRequestBodyParameter(IVertex functionVertex, JsonElement requestBody, OpenApiContext context, IList<InputParameterInfo> inputParameterInfos)
         {
             // Check if this is a reference
             if (requestBody.TryGetProperty("$ref", out JsonElement refElement))
@@ -404,6 +417,9 @@ namespace m0.Lib.StdView
 
             inputParameterVertex.AddVertex(MinCardinality_meta, isRequired ? 1 : 0);
             inputParameterVertex.AddVertex(MaxCardinality_meta, isArray ? -1 : 1);
+
+            // Record parameter info for RemoteEndpointParameters
+            inputParameterInfos.Add(new InputParameterInfo { Name = "body", Location = "body" });
         }
 
         private static IVertex GetParameterType(JsonElement parameter, OpenApiContext context)
@@ -624,7 +640,7 @@ namespace m0.Lib.StdView
             return GetZeroType("String");
         }
 
-        private static string CreateEndpointParametersJson(string method, string path, JsonElement operation)
+        private static string CreateEndpointParametersJson(string method, string path, IList<InputParameterInfo> inputParameterInfos)
         {
             var buffer = new ArrayBufferWriter<byte>();
             using (var writer = new Utf8JsonWriter(buffer, new JsonWriterOptions { Indented = false }))
@@ -634,38 +650,31 @@ namespace m0.Lib.StdView
                 writer.WriteString("method", method);
                 writer.WriteString("path", path);
 
-                // Write parameters if present
-                if (operation.TryGetProperty("parameters", out JsonElement parameters))
+                // Write processed input parameters list
+                writer.WritePropertyName("inputParameters");
+                writer.WriteStartArray();
+                foreach (var paramInfo in inputParameterInfos)
                 {
-                    writer.WritePropertyName("parameters");
-                    parameters.WriteTo(writer);
+                    writer.WriteStartObject();
+                    writer.WriteString("name", paramInfo.Name);
+                    writer.WriteString("in", paramInfo.Location);
+                    writer.WriteEndObject();
                 }
-
-                // Write requestBody if present (OpenAPI 3.x)
-                if (operation.TryGetProperty("requestBody", out JsonElement requestBody))
-                {
-                    writer.WritePropertyName("requestBody");
-                    requestBody.WriteTo(writer);
-                }
-
-                // Write responses
-                if (operation.TryGetProperty("responses", out JsonElement responses))
-                {
-                    writer.WritePropertyName("responses");
-                    responses.WriteTo(writer);
-                }
-
-                // Write security if present
-                if (operation.TryGetProperty("security", out JsonElement security))
-                {
-                    writer.WritePropertyName("security");
-                    security.WriteTo(writer);
-                }
+                writer.WriteEndArray();
 
                 writer.WriteEndObject();
             }
 
             return Encoding.UTF8.GetString(buffer.WrittenSpan);
+        }
+
+        /// <summary>
+        /// Holds information about a function input parameter and its HTTP location.
+        /// </summary>
+        private class InputParameterInfo
+        {
+            public string Name;
+            public string Location; // "path", "query", "header", "body"
         }
 
         /// <summary>

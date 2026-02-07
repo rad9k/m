@@ -34,7 +34,7 @@ namespace m0.Lib.StdView
             return exe.Stack;
         }
 
-        static string VertexToJson_Process(IVertex baseVertex)
+        public static string VertexToJson_Process(IVertex baseVertex)
         {
             var buffer = new ArrayBufferWriter<byte>();
             var options = new JsonWriterOptions

@@ -69,6 +69,101 @@ namespace m0.Lib.StdView
             CreateData(document.RootElement, dataRoot, context);
         }
 
+        /// <summary>
+        /// Maps a JSON response string to GVM vertices using a known output type.
+        /// Used by remote REST endpoint calls where the output class is already defined.
+        /// </summary>
+        public static void MapJsonResponseToVertex(string json, IVertex targetVertex, IVertex outputTypeVertex, IVertex classesRoot)
+        {
+            if (targetVertex == null || string.IsNullOrWhiteSpace(json))
+                return;
+
+            JsonDocument document;
+            try
+            {
+                document = JsonDocument.Parse(json);
+            }
+            catch (JsonException)
+            {
+                // Response is not valid JSON, add as plain string
+                targetVertex.AddVertex(null, json);
+                return;
+            }
+
+            bool isPrimitive = IsPrimitiveTypeVertex(outputTypeVertex);
+
+            var existingClassesRoots = new List<IVertex>();
+            if (classesRoot != null)
+                existingClassesRoots.Add(classesRoot);
+
+            IVertex classesRootToUse = classesRoot ?? targetVertex;
+            var context = new SchemaContext(classesRootToUse, existingClassesRoots, null);
+
+            JsonElement root = document.RootElement;
+
+            if (root.ValueKind == JsonValueKind.Array)
+            {
+                foreach (JsonElement item in root.EnumerateArray())
+                {
+                    if (item.ValueKind == JsonValueKind.Null)
+                        continue;
+
+                    if (isPrimitive || item.ValueKind != JsonValueKind.Object)
+                    {
+                        targetVertex.AddVertex(null, TypeConverter.ConvertJsonElementToPrimitive(item));
+                    }
+                    else
+                    {
+                        MapJsonObjectToVertex(item, targetVertex, outputTypeVertex, context);
+                    }
+                }
+            }
+            else if (root.ValueKind == JsonValueKind.Object)
+            {
+                if (isPrimitive)
+                {
+                    targetVertex.AddVertex(null, root.ToString());
+                }
+                else
+                {
+                    MapJsonObjectToVertex(root, targetVertex, outputTypeVertex, context);
+                }
+            }
+            else if (root.ValueKind != JsonValueKind.Null)
+            {
+                targetVertex.AddVertex(null, TypeConverter.ConvertJsonElementToPrimitive(root));
+            }
+        }
+
+        private static void MapJsonObjectToVertex(JsonElement obj, IVertex parentVertex, IVertex classVertex, SchemaContext context)
+        {
+            string className = GraphUtil.GetStringValue(classVertex);
+            SchemaClass schemaClass = context.FindOrCreateSchemaClassForVertex(classVertex, className);
+
+            IVertex instanceVertex = parentVertex.AddVertex(classVertex, "");
+            instanceVertex.AddEdge(MinusZero.Instance.Is, classVertex);
+
+            PopulateObjectData(obj, instanceVertex, schemaClass, context);
+        }
+
+        private static bool IsPrimitiveTypeVertex(IVertex typeVertex)
+        {
+            if (typeVertex == null)
+                return true;
+
+            string typeName = GraphUtil.GetStringValue(typeVertex);
+
+            if (typeName == "String" || typeName == "Integer" || typeName == "Double" ||
+                typeName == "Boolean" || typeName == "Float" || typeName == "Decimal")
+                return true;
+
+            // Enums are also primitive (stored as string values)
+            if (GraphUtil.GetQueryOutCount(typeVertex, "$Inherits", "EnumBase") > 0)
+                return true;
+
+            return false;
+        }
+
         private enum SchemaValueKind
         {
             Primitive,
@@ -415,7 +510,7 @@ namespace m0.Lib.StdView
                 }
             }
 
-            private SchemaClass FindOrCreateSchemaClassForVertex(IVertex classVertex, string className)
+            public SchemaClass FindOrCreateSchemaClassForVertex(IVertex classVertex, string className)
             {
                 // Check if we already have this class in our cache
                 foreach (var kvp in classesByPath)
