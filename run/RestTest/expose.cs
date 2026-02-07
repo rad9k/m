@@ -7,10 +7,19 @@ using System.Threading.Tasks;
 
 namespace RestTest
 {
+    public enum IsWise {
+        Yes,
+        No,
+        Unknown,
+        PreferNotToSay
+    }
+
     public class User
     {
         public string Name { get; set; } = string.Empty;
         public int Age { get; set; }
+
+        public IsWise IsWise { get; set; }
 
         public IList<Product> Products { get; set; } = new List<Product>();
     }

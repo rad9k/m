@@ -15,7 +15,8 @@ namespace m0.Lib.StdView
     {
         static IVertex root = MinusZero.Instance.Root;
 
-        static IVertex RemoteEndpointUrl_meta = root.Get(false, @"System\Lib\Net\Rest\RemoteEndpointUrl");
+        static IVertex RemoteServerUrl_meta = root.Get(false, @"System\Lib\Net\Rest\RemoteServerUrl");
+        static IVertex RemoteEndpointPath_meta = root.Get(false, @"System\Lib\Net\Rest\RemoteEndpointPath");
         static IVertex RemoteEndpointParameters_meta = root.Get(false, @"System\Lib\Net\Rest\RemoteEndpointParameters");
         static IVertex Function_meta = root.Get(false, @"System\Meta\ZeroUML\Function");
         static IVertex InputParameter_meta = root.Get(false, @"System\Meta\ZeroUML\Function\InputParameter");
@@ -64,6 +65,11 @@ namespace m0.Lib.StdView
 
             // Determine base URL from openApiUrl (strip the path to openapi.json)
             string baseUrl = GetBaseUrl(openApiUrl, document.RootElement);
+            string remoteServerUrl = GetRemoteServerUrl(openApiUrl, document.RootElement);
+            if (!string.IsNullOrWhiteSpace(remoteServerUrl))
+            {
+                to.AddVertex(RemoteServerUrl_meta, remoteServerUrl);
+            }
 
             // Determine where to create new classes
             IVertex newClassDefinitionsVertex = GraphUtil.GetQueryOutFirst(to, "$NewClassDefinitions", null);
@@ -137,6 +143,42 @@ namespace m0.Lib.StdView
             return $"{uri.Scheme}://{uri.Host}{(uri.Port != 80 && uri.Port != 443 ? ":" + uri.Port : "")}";
         }
 
+        private static string GetRemoteServerUrl(string openApiUrl, JsonElement rootElement)
+        {
+            string serverUrl = null;
+
+            if (rootElement.TryGetProperty("servers", out JsonElement servers) && servers.GetArrayLength() > 0)
+            {
+                var firstServer = servers.EnumerateArray().First();
+                if (firstServer.TryGetProperty("url", out JsonElement serverUrlElement))
+                {
+                    serverUrl = serverUrlElement.GetString();
+                }
+            }
+            else if (rootElement.TryGetProperty("host", out JsonElement host))
+            {
+                string scheme = "https";
+                if (rootElement.TryGetProperty("schemes", out JsonElement schemes) && schemes.GetArrayLength() > 0)
+                {
+                    scheme = schemes.EnumerateArray().First().GetString();
+                }
+                serverUrl = $"{scheme}://{host.GetString()}";
+            }
+
+            if (!string.IsNullOrWhiteSpace(serverUrl) &&
+                Uri.TryCreate(serverUrl, UriKind.Absolute, out Uri serverUri))
+            {
+                return $"{serverUri.Scheme}://{serverUri.Host}{(serverUri.Port != 80 && serverUri.Port != 443 ? ":" + serverUri.Port : "")}";
+            }
+
+            if (Uri.TryCreate(openApiUrl, UriKind.Absolute, out Uri openApiUri))
+            {
+                return $"{openApiUri.Scheme}://{openApiUri.Host}{(openApiUri.Port != 80 && openApiUri.Port != 443 ? ":" + openApiUri.Port : "")}";
+            }
+
+            return "";
+        }
+
         private static void ProcessPaths(JsonElement rootElement, IVertex to, string baseUrl, OpenApiContext context)
         {
             if (!rootElement.TryGetProperty("paths", out JsonElement paths))
@@ -187,7 +229,7 @@ namespace m0.Lib.StdView
 
             // Add RemoteEndpointUrl
             string fullEndpointUrl = baseUrl.TrimEnd('/') + path;
-            functionVertex.AddVertex(RemoteEndpointUrl_meta, fullEndpointUrl);
+            functionVertex.AddVertex(RemoteEndpointPath_meta, fullEndpointUrl);
 
             // Add RemoteEndpointParameters (JSON with operation details)
             string endpointParametersJson = CreateEndpointParametersJson(method, path, operation);
