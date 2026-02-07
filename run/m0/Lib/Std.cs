@@ -2,6 +2,7 @@
 using m0.Graph;
 using m0.Util;
 using m0.ZeroCode.Helpers;
+using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -208,7 +209,7 @@ namespace m0.Lib
 
         public static INoInEdgeInOutVertexVertex Concatenate(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.Stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;            
 
             IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "input", null);
 
@@ -226,7 +227,7 @@ namespace m0.Lib
 
         public static INoInEdgeInOutVertexVertex CharacterSplit(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.Stack;
+            INoInEdgeInOutVertexVertex stack = exe.Stack;            
 
             IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "input", null);
 

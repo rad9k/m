@@ -224,6 +224,10 @@ namespace m0.Lib.StdView
             // Create function vertex
             IVertex functionVertex = to.AddVertex(Function_meta, functionName);
             functionVertex.AddEdge(MinusZero.Instance.Is, Function_meta);
+            m0.Graph.ExecutionFlow.ExecutionFlowHelper.DecorateWithDotNetStaticMethod(
+                functionVertex,
+                "m0.Lib.REST.RemoteServer, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                "CallRemoteRestServer");
 
             // Add input parameters
             AddInputParameters(functionVertex, operation, context);
@@ -231,9 +235,8 @@ namespace m0.Lib.StdView
             // Add output
             AddOutput(functionVertex, operation, context);
 
-            // Add RemoteEndpointUrl
-            string fullEndpointUrl = baseUrl.TrimEnd('/') + path;
-            functionVertex.AddVertex(RemoteEndpointPath_meta, fullEndpointUrl);
+            // Add RemoteEndpointPath (path only)
+            functionVertex.AddVertex(RemoteEndpointPath_meta, path);
 
             // Add RemoteEndpointParameters (JSON with operation details)
             string endpointParametersJson = CreateEndpointParametersJson(method, path, operation);

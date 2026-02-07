@@ -2,6 +2,7 @@
 using m0.Graph;
 using m0.Util;
 using m0.ZeroCode.Helpers;
+using Microsoft.AspNetCore.StaticAssets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,15 @@ namespace m0.ZeroTypes
     {
         static string[] NoCopyCountViewMetaValue = {"$GraphChangeTrigger"};
         static string[] NoCopyCountViewVertexIsValue = { "GraphChangeTrigger" };
+
+        public static IVertex GetTargetFromStackTop(INoInEdgeInOutVertexVertex stack)
+        {
+            foreach (IEdge e in stack.OutEdgesRaw)
+                if (GeneralUtil.CompareStrings(e.Meta, "Target"))
+                    return e.To;
+
+            return null;
+        }
 
         public static bool IsSpecialVertex(IVertex v)
         {
