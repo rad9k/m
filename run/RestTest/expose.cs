@@ -34,10 +34,13 @@ public class expose
     {
         public User ProcessUser(User input)
         {
+            Console.WriteLine("Received user data:");
+            Console.WriteLine($"Processing user: {input.Name}, Age: {input.Age}, IsWise: {input.IsWise}");
             return input;
         }
         public static int Add(int a, int b)
         {
+            Console.WriteLine($"Adding {a} and {b}");
             return a + b;
         }
 

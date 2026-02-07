@@ -235,14 +235,15 @@ namespace m0.Lib.StdView
             // Add input parameters
             AddInputParameters(functionVertex, operation, context, inputParameterInfos);
 
-            // Add output
-            AddOutput(functionVertex, operation, context);
+            // Add output (with potential *Response unwrapping)
+            string responseUnwrapProperty = null;
+            AddOutput(functionVertex, operation, context, out responseUnwrapProperty);
 
             // Add RemoteEndpointPath (path only)
             functionVertex.AddVertex(RemoteEndpointPath_meta, path);
 
             // Add RemoteEndpointParameters (JSON with processed parameter list)
-            string endpointParametersJson = CreateEndpointParametersJson(method, path, inputParameterInfos);
+            string endpointParametersJson = CreateEndpointParametersJson(method, path, inputParameterInfos, responseUnwrapProperty);
             functionVertex.AddVertex(RemoteEndpointParameters_meta, endpointParametersJson);
         }
 
@@ -400,9 +401,13 @@ namespace m0.Lib.StdView
             if (schema.ValueKind == JsonValueKind.Undefined)
                 return;
 
+            // Check if the schema is a request wrapper class (name ends with "Request")
+            if (TryUnwrapRequestBody(functionVertex, schema, context, inputParameterInfos))
+                return;
+
+            // Not a wrapper - create single "body" parameter
             IVertex parameterType = GetTypeFromSchema(schema, context, "RequestBody");
 
-            // Create input parameter for body
             IVertex inputParameterVertex = functionVertex.AddVertex(InputParameter_meta, "body");
             inputParameterVertex.AddEdge(MinusZero.Instance.Is, InputParameter_meta);
             inputParameterVertex.AddEdge(EdgeTarget_meta, parameterType);
@@ -418,8 +423,115 @@ namespace m0.Lib.StdView
             inputParameterVertex.AddVertex(MinCardinality_meta, isRequired ? 1 : 0);
             inputParameterVertex.AddVertex(MaxCardinality_meta, isArray ? -1 : 1);
 
-            // Record parameter info for RemoteEndpointParameters
             inputParameterInfos.Add(new InputParameterInfo { Name = "body", Location = "body" });
+        }
+
+        /// <summary>
+        /// Detects if a request body schema is a flat wrapper (all properties are primitive/enum)
+        /// and unwraps it into individual InputParameters. This is a common REST pattern where
+        /// frameworks wrap multiple primitive function parameters into a single DTO class.
+        /// Returns true if unwrapped, false if the body is a real domain object.
+        /// </summary>
+        private static bool TryUnwrapRequestBody(IVertex functionVertex, JsonElement schema, OpenApiContext context, IList<InputParameterInfo> inputParameterInfos)
+        {
+            // Resolve the schema definition (handles both $ref and inline)
+            JsonElement resolvedSchema = schema;
+            if (schema.TryGetProperty("$ref", out JsonElement refEl))
+            {
+                resolvedSchema = context.ResolveReference(refEl.GetString());
+                if (resolvedSchema.ValueKind == JsonValueKind.Undefined)
+                    return false;
+            }
+
+            // Must be an object type, not an array
+            if (resolvedSchema.TryGetProperty("type", out JsonElement typeEl) && typeEl.GetString() != "object")
+                return false;
+
+            // Must have properties
+            if (!resolvedSchema.TryGetProperty("properties", out JsonElement properties))
+                return false;
+
+            // Structural check: a wrapper has ONLY primitive/enum properties.
+            // If any property is a complex object, array, or $ref to a non-enum class,
+            // the body is a real domain object and should not be unwrapped.
+            if (!AreAllSchemaPropertiesPrimitive(properties, context))
+                return false;
+
+            // It's a wrapper - create individual InputParameters for each property
+            HashSet<string> requiredProps = new HashSet<string>();
+            if (resolvedSchema.TryGetProperty("required", out JsonElement required))
+            {
+                foreach (JsonElement reqProp in required.EnumerateArray())
+                {
+                    requiredProps.Add(reqProp.GetString());
+                }
+            }
+
+            foreach (JsonProperty prop in properties.EnumerateObject())
+            {
+                string propName = prop.Name;
+                IVertex propType = GetTypeFromSchema(prop.Value, context, propName);
+
+                IVertex inputParameterVertex = functionVertex.AddVertex(InputParameter_meta, propName);
+                inputParameterVertex.AddEdge(MinusZero.Instance.Is, InputParameter_meta);
+                inputParameterVertex.AddEdge(EdgeTarget_meta, propType);
+                inputParameterVertex.AddVertex(MinCardinality_meta, requiredProps.Contains(propName) ? 1 : 0);
+                inputParameterVertex.AddVertex(MaxCardinality_meta, 1);
+
+                inputParameterInfos.Add(new InputParameterInfo { Name = propName, Location = "body" });
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Checks if all properties in a JSON schema "properties" object are primitive/enum types.
+        /// Returns false if any property is a complex object, array, or $ref to a non-enum class.
+        /// </summary>
+        private static bool AreAllSchemaPropertiesPrimitive(JsonElement properties, OpenApiContext context)
+        {
+            foreach (JsonProperty prop in properties.EnumerateObject())
+            {
+                if (!IsSchemaPropertyPrimitive(prop.Value, context))
+                    return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Determines if a single property schema represents a primitive/enum type.
+        /// Checks for: inline enums, $ref to enum schemas, and simple OpenAPI types
+        /// (string, integer, number, boolean). Arrays and objects are considered non-primitive.
+        /// </summary>
+        private static bool IsSchemaPropertyPrimitive(JsonElement propertySchema, OpenApiContext context)
+        {
+            // Inline enum → primitive
+            if (propertySchema.TryGetProperty("enum", out _))
+                return true;
+
+            // $ref to another schema
+            if (propertySchema.TryGetProperty("$ref", out JsonElement refEl))
+            {
+                JsonElement resolved = context.ResolveReference(refEl.GetString());
+                if (resolved.ValueKind != JsonValueKind.Undefined)
+                {
+                    // Enum reference → primitive
+                    if (resolved.TryGetProperty("enum", out _))
+                        return true;
+                }
+                // Any other $ref → complex type (class)
+                return false;
+            }
+
+            // Check declared type
+            if (propertySchema.TryGetProperty("type", out JsonElement typeEl))
+            {
+                string type = typeEl.GetString();
+                return type == "string" || type == "integer" || type == "number" || type == "boolean";
+            }
+
+            // Unknown structure → treat as complex (conservative)
+            return false;
         }
 
         private static IVertex GetParameterType(JsonElement parameter, OpenApiContext context)
@@ -554,13 +666,53 @@ namespace m0.Lib.StdView
             return false;
         }
 
-        private static void AddOutput(IVertex functionVertex, JsonElement operation, OpenApiContext context)
+        private static void AddOutput(IVertex functionVertex, JsonElement operation, OpenApiContext context, out string responseUnwrapProperty)
         {
+            responseUnwrapProperty = null;
             IVertex outputType = GetOutputType(operation, context);
+
+            // Structural check: if the output class has exactly one primitive attribute
+            // and no associations/aggregations, it's a thin wrapper around a single value.
+            // This is a common REST pattern where frameworks wrap return values in DTO classes.
+            if (outputType != null)
+            {
+                IVertex unwrappedType = TryUnwrapResponseClass(outputType, out string propertyName);
+                if (unwrappedType != null)
+                {
+                    outputType = unwrappedType;
+                    responseUnwrapProperty = propertyName;
+                }
+            }
 
             IVertex outputVertex = functionVertex.AddVertex(Output_meta, "");
             outputVertex.AddEdge(MinusZero.Instance.Is, Output_meta);
             outputVertex.AddEdge(EdgeTarget_meta, outputType);
+        }
+
+        /// <summary>
+        /// Detects if a response class is a thin wrapper around a single value.
+        /// A wrapper is identified structurally: exactly one Attribute, zero Associations,
+        /// zero Aggregations. Real domain objects have multiple properties or complex relationships.
+        /// Returns the inner type and property name for JSON extraction at runtime.
+        /// </summary>
+        private static IVertex TryUnwrapResponseClass(IVertex classVertex, out string propertyName)
+        {
+            propertyName = null;
+
+            IList<IEdge> attributes = GraphUtil.GetQueryOut(classVertex, "Attribute", null);
+            IList<IEdge> associations = GraphUtil.GetQueryOut(classVertex, "Association", null);
+            IList<IEdge> aggregations = GraphUtil.GetQueryOut(classVertex, "Aggregation", null);
+
+            // Only unwrap if class has exactly one primitive attribute
+            // and no complex properties (associations/aggregations)
+            if (attributes.Count != 1 || associations.Count != 0 || aggregations.Count != 0)
+                return null;
+
+            IEdge attributeEdge = attributes[0];
+            propertyName = GraphUtil.GetStringValue(attributeEdge.To);
+            IVertex propertyType = GraphUtil.GetQueryOutFirst(attributeEdge.To, "$EdgeTarget", null);
+
+            return propertyType;
         }
 
         private static IVertex GetOutputType(JsonElement operation, OpenApiContext context)
@@ -640,7 +792,7 @@ namespace m0.Lib.StdView
             return GetZeroType("String");
         }
 
-        private static string CreateEndpointParametersJson(string method, string path, IList<InputParameterInfo> inputParameterInfos)
+        private static string CreateEndpointParametersJson(string method, string path, IList<InputParameterInfo> inputParameterInfos, string responseUnwrapProperty)
         {
             var buffer = new ArrayBufferWriter<byte>();
             using (var writer = new Utf8JsonWriter(buffer, new JsonWriterOptions { Indented = false }))
@@ -661,6 +813,12 @@ namespace m0.Lib.StdView
                     writer.WriteEndObject();
                 }
                 writer.WriteEndArray();
+
+                // Write response unwrap property name if output was unwrapped from a *Response class
+                if (responseUnwrapProperty != null)
+                {
+                    writer.WriteString("responseUnwrapProperty", responseUnwrapProperty);
+                }
 
                 writer.WriteEndObject();
             }
@@ -926,7 +1084,7 @@ namespace m0.Lib.StdView
                 // Determine if it's a primitive or complex type
                 bool isPrimitive = IsPrimitiveType(propertyType);
 
-                int minCardinality = isRequired ? 1 : 0;
+                int minCardinality = 1;
                 int maxCardinality = isArray ? -1 : 1;
 
                 if (isPrimitive)

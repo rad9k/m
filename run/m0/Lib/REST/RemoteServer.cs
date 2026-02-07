@@ -44,6 +44,7 @@ namespace m0.Lib.REST
             string httpMethod = "GET";
             string resolvedPath = endpointPath;
             JsonElement inputParametersArray = default;
+            string responseUnwrapProperty = null;
 
             if (!string.IsNullOrEmpty(parametersJson))
             {
@@ -57,6 +58,9 @@ namespace m0.Lib.REST
 
                     if (paramsRoot.TryGetProperty("inputParameters", out JsonElement paramsEl))
                         inputParametersArray = paramsEl.Clone();
+
+                    if (paramsRoot.TryGetProperty("responseUnwrapProperty", out JsonElement unwrapEl))
+                        responseUnwrapProperty = unwrapEl.GetString();
                 }
                 catch (JsonException)
                 {
@@ -148,6 +152,12 @@ namespace m0.Lib.REST
 
                 if (!string.IsNullOrEmpty(responseBody))
                 {
+                    // If the response was unwrapped from a *Response class, extract the inner property
+                    if (responseUnwrapProperty != null)
+                    {
+                        responseBody = ExtractResponseProperty(responseBody, responseUnwrapProperty);
+                    }
+
                     // Get output type from function definition
                     IVertex outputVertex = GraphUtil.GetQueryOutFirst(target, "Output", null);
                     IVertex outputType = outputVertex != null
@@ -170,8 +180,37 @@ namespace m0.Lib.REST
         }
 
         /// <summary>
-        /// Builds a single JSON request body from one or more body parameters.
-        /// Single parameter is serialized directly. Multiple parameters are combined
+        /// Extracts a single property value from a JSON response object.
+        /// Used when a *Response wrapper class was unwrapped during schema generation.
+        /// </summary>
+        private static string ExtractResponseProperty(string responseJson, string propertyName)
+        {
+            try
+            {
+                using (JsonDocument doc = JsonDocument.Parse(responseJson))
+                {
+                    if (doc.RootElement.ValueKind == JsonValueKind.Object &&
+                        doc.RootElement.TryGetProperty(propertyName, out JsonElement propertyValue))
+                    {
+                        // Re-serialize the extracted value to valid JSON
+                        var buffer = new ArrayBufferWriter<byte>();
+                        using (var writer = new Utf8JsonWriter(buffer))
+                        {
+                            propertyValue.WriteTo(writer);
+                        }
+                        return Encoding.UTF8.GetString(buffer.WrittenSpan);
+                    }
+                }
+            }
+            catch (JsonException) { }
+
+            return responseJson;
+        }
+
+        /// <summary>
+        /// Builds a single JSON request body from collected body parameters.
+        /// Single complex parameter is serialized via VertexToJson.
+        /// Multiple parameters (e.g. unwrapped from *Request class) are combined
         /// into one JSON object with parameter names as keys.
         /// </summary>
         private static string BuildRequestBodyJson(IList<KeyValuePair<string, IVertex>> bodyParams)
@@ -181,38 +220,82 @@ namespace m0.Lib.REST
 
             if (bodyParams.Count == 1)
             {
-                return VertexToJson.VertexToJson_Process(bodyParams[0].Value);
+                // Single body param - try VertexToJson for complex objects
+                IVertex vertex = bodyParams[0].Value;
+                string json = VertexToJson.VertexToJson_Process(vertex);
+                if (!string.IsNullOrWhiteSpace(json))
+                    return json;
+
+                // Fallback for primitive vertex (VertexToJson returns empty for primitives)
+                return SerializePrimitiveAsJson(vertex.Value);
             }
 
-            // Multiple body parameters: combine into a single JSON object
+            // Multiple body params - combine into a single JSON object
             var buffer = new ArrayBufferWriter<byte>();
-            using (var writer = new Utf8JsonWriter(buffer, new JsonWriterOptions { Indented = false }))
+            using (var writer = new Utf8JsonWriter(buffer))
             {
                 writer.WriteStartObject();
-
                 foreach (var kvp in bodyParams)
                 {
                     writer.WritePropertyName(kvp.Key);
-
-                    string paramJson = VertexToJson.VertexToJson_Process(kvp.Value);
-
-                    try
-                    {
-                        using (JsonDocument paramDoc = JsonDocument.Parse(paramJson))
-                        {
-                            paramDoc.RootElement.WriteTo(writer);
-                        }
-                    }
-                    catch (JsonException)
-                    {
-                        // If serialized value is not valid JSON, write as string
-                        writer.WriteStringValue(paramJson);
-                    }
+                    WriteVertexValueToJson(kvp.Value, writer);
                 }
-
                 writer.WriteEndObject();
             }
+            return Encoding.UTF8.GetString(buffer.WrittenSpan);
+        }
 
+        /// <summary>
+        /// Writes a vertex value to a Utf8JsonWriter.
+        /// For complex objects (value == ""), uses VertexToJson.
+        /// For primitives, writes the value directly.
+        /// </summary>
+        private static void WriteVertexValueToJson(IVertex vertex, Utf8JsonWriter writer)
+        {
+            object value = vertex.Value;
+
+            // Empty string value typically means a complex GVM object instance
+            if (value is string s && s == "")
+            {
+                string json = VertexToJson.VertexToJson_Process(vertex);
+                if (!string.IsNullOrWhiteSpace(json))
+                {
+                    try
+                    {
+                        using (JsonDocument doc = JsonDocument.Parse(json))
+                        {
+                            doc.RootElement.WriteTo(writer);
+                            return;
+                        }
+                    }
+                    catch (JsonException) { }
+                }
+                writer.WriteNullValue();
+                return;
+            }
+
+            WritePrimitiveToJson(value, writer);
+        }
+
+        private static void WritePrimitiveToJson(object value, Utf8JsonWriter writer)
+        {
+            if (value is int i) writer.WriteNumberValue(i);
+            else if (value is long l) writer.WriteNumberValue(l);
+            else if (value is double d) writer.WriteNumberValue(d);
+            else if (value is float f) writer.WriteNumberValue(f);
+            else if (value is bool b) writer.WriteBooleanValue(b);
+            else if (value is string str) writer.WriteStringValue(str);
+            else if (value == null) writer.WriteNullValue();
+            else writer.WriteStringValue(value.ToString());
+        }
+
+        private static string SerializePrimitiveAsJson(object value)
+        {
+            var buffer = new ArrayBufferWriter<byte>();
+            using (var writer = new Utf8JsonWriter(buffer))
+            {
+                WritePrimitiveToJson(value, writer);
+            }
             return Encoding.UTF8.GetString(buffer.WrittenSpan);
         }
     }
