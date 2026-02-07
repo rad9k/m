@@ -20,6 +20,8 @@ namespace m0.ZeroUML.Instructions
         static IVertex thisMeta = r.Get(false, @"System\Meta\ZeroUML\this");
         static IVertex isMeta = r.Get(false, @"System\Meta\Base\Vertex\$Is");
 
+        static IVertex functionTarget_meta = r.Get(false, @"System\Meta\ZeroUML\FunctionCall\Target");
+
         static IVertex dolarGraphChangeTriggerMeta = r.Get(false, @"System\Meta\Base\Vertex\$GraphChangeTrigger");
         static IVertex graphChangeTriggerMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger");
         static IVertex graphChangeTrigger_ScopeQueryMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeTrigger\ScopeQuery");
@@ -1782,6 +1784,8 @@ namespace m0.ZeroUML.Instructions
                 return exe.Stack;
 
             exe.AddStackFrame(); // ENTER NEW STACK
+
+            exe.Stack.AddEdge(functionTarget_meta, target); // to be able to know the function target vertex in the function body
 
             IList<IEdge> expressions = GraphUtil.GetQueryOut(instructionVertex, "Expression", null);
             IList<IEdge> inputParameters = GraphUtil.GetQueryOut(target, "InputParameter", null);

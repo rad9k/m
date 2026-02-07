@@ -15,6 +15,10 @@ namespace m0.Lib.StdView
     {
         static IVertex root = MinusZero.Instance.Root;
 
+        static IVertex Enum_meta = root.Get(false, @"System\Meta\ZeroUML\Enum");
+        static IVertex EnumValue_meta = root.Get(false, @"System\Meta\ZeroUML\Enum\EnumValue");
+        static IVertex EnumBase_meta = root.Get(false, @"System\Meta\ZeroTypes\EnumBase");
+
         static IVertex RemoteServerUrl_meta = root.Get(false, @"System\Lib\Net\Rest\RemoteServerUrl");
         static IVertex RemoteEndpointPath_meta = root.Get(false, @"System\Lib\Net\Rest\RemoteEndpointPath");
         static IVertex RemoteEndpointParameters_meta = root.Get(false, @"System\Lib\Net\Rest\RemoteEndpointParameters");
@@ -434,6 +438,11 @@ namespace m0.Lib.StdView
                 return context.GetOrCreateClassFromRef(refPath);
             }
 
+            if (schema.TryGetProperty("enum", out JsonElement enumValues) && enumValues.ValueKind == JsonValueKind.Array)
+            {
+                return context.CreateInlineEnum(fallbackName, schema);
+            }
+
             // Check type
             if (schema.TryGetProperty("type", out JsonElement typeElement))
             {
@@ -761,6 +770,11 @@ namespace m0.Lib.StdView
 
             private IVertex CreateClassFromSchema(string className, JsonElement schema)
             {
+                if (schema.TryGetProperty("enum", out JsonElement enumValues) && enumValues.ValueKind == JsonValueKind.Array)
+                {
+                    return CreateEnumFromSchema(className, schema);
+                }
+
                 // Check if it's actually a simple type
                 if (schema.TryGetProperty("type", out JsonElement typeElement))
                 {
@@ -835,6 +849,10 @@ namespace m0.Lib.StdView
                 if (propertySchema.TryGetProperty("$ref", out JsonElement refElement))
                 {
                     propertyType = GetOrCreateClassFromRef(refElement.GetString());
+                }
+                else if (propertySchema.TryGetProperty("enum", out JsonElement enumValues) && enumValues.ValueKind == JsonValueKind.Array)
+                {
+                    propertyType = CreateInlineEnum(propertyName, propertySchema);
                 }
                 else if (propertySchema.TryGetProperty("type", out JsonElement typeElement))
                 {
@@ -916,6 +934,11 @@ namespace m0.Lib.StdView
                     return GetOrCreateClassFromRef(refElement.GetString());
                 }
 
+                if (schema.TryGetProperty("enum", out JsonElement enumValues) && enumValues.ValueKind == JsonValueKind.Array)
+                {
+                    return CreateInlineEnum(fallbackName, schema);
+                }
+
                 if (schema.TryGetProperty("type", out JsonElement typeElement))
                 {
                     string type = typeElement.GetString();
@@ -937,8 +960,67 @@ namespace m0.Lib.StdView
                     return true;
 
                 string typeName = GraphUtil.GetStringValue(typeVertex);
-                return typeName == "String" || typeName == "Integer" || typeName == "Double" ||
-                       typeName == "Boolean" || typeName == "Float" || typeName == "Decimal";
+                if (typeName == "String" || typeName == "Integer" || typeName == "Double" ||
+                    typeName == "Boolean" || typeName == "Float" || typeName == "Decimal")
+                {
+                    return true;
+                }
+
+                return GraphUtil.GetQueryOutCount(typeVertex, "$Inherits", "EnumBase") > 0;
+            }
+
+            public IVertex CreateInlineEnum(string suggestedName, JsonElement schema)
+            {
+                string enumName = CreateUniqueClassName(suggestedName);
+                return CreateEnumFromSchema(enumName, schema);
+            }
+
+            private IVertex CreateEnumFromSchema(string enumName, JsonElement schema)
+            {
+                IVertex existingEnumVertex = FindExistingEnum(enumName);
+                if (existingEnumVertex != null)
+                {
+                    return existingEnumVertex;
+                }
+
+                if (!schema.TryGetProperty("enum", out JsonElement enumValues) ||
+                    enumValues.ValueKind != JsonValueKind.Array)
+                {
+                    return GetZeroType("String");
+                }
+
+                IVertex enumVertex = newClassesRoot.AddVertex(Enum_meta, enumName);
+                enumVertex.AddEdge(MinusZero.Instance.Inherits, EnumBase_meta);
+
+                foreach (JsonElement enumValue in enumValues.EnumerateArray())
+                {
+                    string value = enumValue.ValueKind == JsonValueKind.String
+                        ? enumValue.GetString()
+                        : enumValue.ToString();
+
+                    if (!string.IsNullOrWhiteSpace(value))
+                    {
+                        enumVertex.AddVertex(EnumValue_meta, value);
+                    }
+                }
+
+                return enumVertex;
+            }
+
+            private IVertex FindExistingEnum(string enumName)
+            {
+                foreach (IVertex root in existingClassesRoots)
+                {
+                    foreach (IEdge edge in root.OutEdges)
+                    {
+                        string metaValue = GraphUtil.GetStringValue(edge.Meta);
+                        if (metaValue == "Enum" && GraphUtil.GetStringValue(edge.To) == enumName)
+                        {
+                            return edge.To;
+                        }
+                    }
+                }
+                return null;
             }
 
             public JsonElement ResolveReference(string refPath)
