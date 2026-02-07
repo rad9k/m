@@ -84,15 +84,16 @@ namespace m0.Network.Server {
 
             IVertex portVertex = GraphUtil.GetQueryOutFirst(thisVertex, "Port", null);
 
-            if (portVertex != null)
-                Port = GraphUtil.GetIntegerValueOr0(portVertex);
-            else {
+            Port = GraphUtil.GetIntegerValueOr0(portVertex);
+
+            if (Port == 0)
+            {
                 if (DoHttps)
                     Port = 443;
                 else
                     Port = 80;
 
-                thisVertex.AddVertex(port_meta, Port);
+                GraphUtil.SetVertexValue(thisVertex, port_meta, Port);
             }
 
             

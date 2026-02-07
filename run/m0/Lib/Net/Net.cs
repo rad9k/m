@@ -40,15 +40,12 @@ namespace m0.Lib.Net
 
             HttpServer server = GetServer(thisVertex);
 
-            //
-
-            IVertex portVertex = GraphUtil.GetQueryOutFirst(thisVertex, "Port", null);
-
-            int port = GraphUtil.GetIntegerValueOr0(portVertex);
-
-            //server.StartAsync("http://localhost:" + port+";https://localhost:" + port);
-
-            server.StartAsync("http://localhost:" + port);
+            //            
+            
+            if (server.DoHttps)
+                server.StartAsync("https://localhost:" + server.Port);
+            else
+                server.StartAsync("http://localhost:" + server.Port);
 
             return exe.Stack;
         }
