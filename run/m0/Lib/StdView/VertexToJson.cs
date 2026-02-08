@@ -61,6 +61,14 @@ namespace m0.Lib.StdView
             ProcessVertexInternal(baseVertex, writer, visited, inArrayContext: true);
         }
 
+        static bool IsEmptyValueComplexVertex(IVertex v)
+        {
+            // In this codebase, complex object instances are often represented
+            // by vertices with Value == "" (empty string). Those must be serialized
+            // as JSON objects, not as atomic string values.
+            return v != null && v.Value is string s && s == "";
+        }
+
         static void ProcessVertexInternal(IVertex baseVertex, Utf8JsonWriter writer, IList<IVertex> visited, bool inArrayContext) {
             if (!VertexOperations.CanCopyCountViewVertex(baseVertex))
                 return;
@@ -103,9 +111,9 @@ namespace m0.Lib.StdView
                         {
                             if (VertexOperations.CanCopyCountViewEdge(edge) && !VertexOperations.IsViewVertex(edge.Meta) && !VertexOperations.IsSpecialVertex(edge.Meta))
                             {
-                                if (VertexOperations.IsAtomicEdge(edge) || VertexOperations.IsLink(edge))
+                                if ((VertexOperations.IsAtomicEdge(edge) || VertexOperations.IsLink(edge)) && !IsEmptyValueComplexVertex(edge.To))
                                     WriteAtomVertex(edge.To, writer);
-                                else if (VertexOperations.IsAtomicVertex(edge.To))
+                                else if (VertexOperations.IsAtomicVertex(edge.To) && !IsEmptyValueComplexVertex(edge.To))
                                     WriteAtomVertex(edge.To, writer);
                                 else if (!TryWriteUnwrappedEmpty(edge.To, writer, inArrayContext: true))
                                     ProcessVertexInArrayContext(edge.To, writer, visited);
@@ -117,9 +125,9 @@ namespace m0.Lib.StdView
                         IEdge edge = (IEdge)kvp.Value;
                         if (VertexOperations.CanCopyCountViewEdge(edge) && !VertexOperations.IsViewVertex(edge.Meta) && !VertexOperations.IsSpecialVertex(edge.Meta))
                         {
-                            if (VertexOperations.IsAtomicEdge(edge) || VertexOperations.IsLink(edge))
+                            if ((VertexOperations.IsAtomicEdge(edge) || VertexOperations.IsLink(edge)) && !IsEmptyValueComplexVertex(edge.To))
                                 WriteAtomVertex(edge.To, writer);
-                            else if (VertexOperations.IsAtomicVertex(edge.To))
+                            else if (VertexOperations.IsAtomicVertex(edge.To) && !IsEmptyValueComplexVertex(edge.To))
                                 WriteAtomVertex(edge.To, writer);
                             else if (!TryWriteUnwrappedEmpty(edge.To, writer, inArrayContext: true))
                                 ProcessVertexInArrayContext(edge.To, writer, visited);
@@ -208,10 +216,10 @@ namespace m0.Lib.StdView
             foreach (IEdge e in (List_VertexBase)kvp.Value)
                 if (VertexOperations.CanCopyCountViewEdge(e) && !VertexOperations.IsViewVertex(e.Meta) && !VertexOperations.IsSpecialVertex(e.Meta))
                 {
-                    if (VertexOperations.IsAtomicEdge(e) || VertexOperations.IsLink(e))
+                    if ((VertexOperations.IsAtomicEdge(e) || VertexOperations.IsLink(e)) && !IsEmptyValueComplexVertex(e.To))
                         WriteAtomVertex(e.To, writer);
-                    else if (VertexOperations.IsAtomicVertex(e.To))
-                        // If To is atomic, write it directly instead of processing as vertex (which would create array)
+                    else if (VertexOperations.IsAtomicVertex(e.To) && !IsEmptyValueComplexVertex(e.To))
+                        // If To is atomic (and not an empty-value complex object), write it directly
                         WriteAtomVertex(e.To, writer);
                     else if (!TryWriteUnwrappedEmpty(e.To, writer, inArrayContext: true))
                         ProcessVertexInArrayContext(e.To, writer, visited);
@@ -223,6 +231,11 @@ namespace m0.Lib.StdView
         private static bool TryWriteUnwrappedEmpty(IVertex v, Utf8JsonWriter writer, bool inArrayContext = false)
         {
             var dict = v.GetOutOdgesByMeta();
+
+            // Never unwrap or atomize complex object instances represented as Value == "".
+            // Those should be serialized as JSON objects.
+            if (IsEmptyValueComplexVertex(v))
+                return false;
             
             // Check if this vertex would create an array structure (homogenic with only $Empty)
             bool wouldCreateArray = true;
@@ -261,9 +274,9 @@ namespace m0.Lib.StdView
                         // Write all items from the inner array directly to the current array
                         foreach (IEdge edge in list)
                         {
-                            if (VertexOperations.IsAtomicEdge(edge) || VertexOperations.IsLink(edge))
+                            if ((VertexOperations.IsAtomicEdge(edge) || VertexOperations.IsLink(edge)) && !IsEmptyValueComplexVertex(edge.To))
                                 WriteAtomVertex(edge.To, writer);
-                            else if (VertexOperations.IsAtomicVertex(edge.To))
+                            else if (VertexOperations.IsAtomicVertex(edge.To) && !IsEmptyValueComplexVertex(edge.To))
                                 WriteAtomVertex(edge.To, writer);
                             else
                                 return false; // Can't unwrap, need to process normally
@@ -273,12 +286,12 @@ namespace m0.Lib.StdView
                     else
                     {
                         IEdge edge = (IEdge)kvp.Value;
-                        if (VertexOperations.IsAtomicEdge(edge) || VertexOperations.IsLink(edge))
+                        if ((VertexOperations.IsAtomicEdge(edge) || VertexOperations.IsLink(edge)) && !IsEmptyValueComplexVertex(edge.To))
                         {
                             WriteAtomVertex(edge.To, writer);
                             return true;
                         }
-                        else if (VertexOperations.IsAtomicVertex(edge.To))
+                        else if (VertexOperations.IsAtomicVertex(edge.To) && !IsEmptyValueComplexVertex(edge.To))
                         {
                             WriteAtomVertex(edge.To, writer);
                             return true;
@@ -333,10 +346,10 @@ namespace m0.Lib.StdView
             
             if (VertexOperations.CanCopyCountViewEdge(e) && !VertexOperations.IsViewVertex(e.Meta) && !VertexOperations.IsSpecialVertex(e.Meta))
             {
-                if (VertexOperations.IsAtomicEdge(e) || VertexOperations.IsLink(e))
+                if ((VertexOperations.IsAtomicEdge(e) || VertexOperations.IsLink(e)) && !IsEmptyValueComplexVertex(e.To))
                     WriteAtomVertex(e.To, writer);
-                else if (VertexOperations.IsAtomicVertex(e.To))
-                    // If To is atomic, write it directly instead of processing as vertex (which would create array)
+                else if (VertexOperations.IsAtomicVertex(e.To) && !IsEmptyValueComplexVertex(e.To))
+                    // If To is atomic (and not an empty-value complex object), write it directly
                     WriteAtomVertex(e.To, writer);
                 else if (!TryWriteUnwrappedEmpty(e.To, writer, inArrayContext: true))
                     ProcessVertexInArrayContext(e.To, writer, visited);

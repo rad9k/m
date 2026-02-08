@@ -82,7 +82,7 @@ namespace m0.UIWpf.Dialog
 
                 IVertex v = VertexOperations.AddInstance(Vertex, meta);
 
-                //v.Value = this.Content.Text;
+                v.Value = this.Content.Text;
 
                 if (VertexOperations.GetChildEdges(meta).Any())
                     MinusZero.Instance.UserInteraction.EditEdge(v);
