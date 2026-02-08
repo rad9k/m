@@ -19,7 +19,7 @@ namespace m0.Lib.StdView
         static IVertex EnumValue_meta = root.Get(false, @"System\Meta\ZeroUML\Enum\EnumValue");
         static IVertex EnumBase_meta = root.Get(false, @"System\Meta\ZeroTypes\EnumBase");
 
-        static IVertex RemoteServerUrl_meta = root.Get(false, @"System\Lib\Net\Rest\RemoteServerUrl");
+        static IVertex RemoteRestServerUrl_meta = root.Get(false, @"System\Lib\Net\Rest\RemoteRestServerUrl");
         static IVertex RemoteEndpointPath_meta = root.Get(false, @"System\Lib\Net\Rest\RemoteEndpointPath");
         static IVertex RemoteEndpointParameters_meta = root.Get(false, @"System\Lib\Net\Rest\RemoteEndpointParameters");
         static IVertex Function_meta = root.Get(false, @"System\Meta\ZeroUML\Function");
@@ -69,10 +69,10 @@ namespace m0.Lib.StdView
 
             // Determine base URL from openApiUrl (strip the path to openapi.json)
             string baseUrl = GetBaseUrl(openApiUrl, document.RootElement);
-            string remoteServerUrl = GetRemoteServerUrl(openApiUrl, document.RootElement);
-            if (!string.IsNullOrWhiteSpace(remoteServerUrl))
+            string RemoteRestServerUrl = GetRemoteRestServerUrl(openApiUrl, document.RootElement);
+            if (!string.IsNullOrWhiteSpace(RemoteRestServerUrl))
             {
-                to.AddVertex(RemoteServerUrl_meta, remoteServerUrl);
+                to.AddVertex(RemoteRestServerUrl_meta, RemoteRestServerUrl);
             }
 
             // Determine where to create new classes
@@ -147,7 +147,7 @@ namespace m0.Lib.StdView
             return $"{uri.Scheme}://{uri.Host}{(uri.Port != 80 && uri.Port != 443 ? ":" + uri.Port : "")}";
         }
 
-        private static string GetRemoteServerUrl(string openApiUrl, JsonElement rootElement)
+        private static string GetRemoteRestServerUrl(string openApiUrl, JsonElement rootElement)
         {
             string serverUrl = null;
 

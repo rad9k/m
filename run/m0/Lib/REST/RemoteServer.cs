@@ -59,11 +59,11 @@ namespace m0.Lib.REST
 
             IVertex PackageVertex = GraphUtil.GetQueryInFirst(target, "Function", null);
 
-            IVertex RemoteServerUrlVertex = GraphUtil.GetQueryOutFirst(PackageVertex, "RemoteServerUrl", null);
+            IVertex RemoteRestServerUrlVertex = GraphUtil.GetQueryOutFirst(PackageVertex, "RemoteRestServerUrl", null);
 
             INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
 
-            string serverUrl = GraphUtil.GetStringValueOrNull(RemoteServerUrlVertex);
+            string serverUrl = GraphUtil.GetStringValueOrNull(RemoteRestServerUrlVertex);
             string endpointPath = GraphUtil.GetStringValueOrNull(RemoteEndpointPathVertex);
             string parametersJson = GraphUtil.GetStringValueOrNull(RemoteEndpointParametersVertex);
 
