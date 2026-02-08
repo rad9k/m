@@ -36,6 +36,10 @@ public class expose
         {
             Console.WriteLine("Received user data:");
             Console.WriteLine($"Processing user: {input.Name}, Age: {input.Age}, IsWise: {input.IsWise}");
+
+            input.Products.Add(new Product { ProductName = "Sample Product", Price = 9.99 });
+            input.Products.Add(new Product { ProductName = "Sample Product2", Price = 9.999 });
+
             return input;
         }
         public static int Add(int a, int b)
