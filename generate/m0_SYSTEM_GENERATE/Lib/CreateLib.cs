@@ -242,7 +242,7 @@ namespace m0_SYSTEM_GENERATE.Lib
             IVertex restVertex = LibNet.AddVertex(null, "Rest");
             restVertex.AddVertex(null, "Endpoint");
             restVertex.AddVertex(null, "DoRemoteRestServerLog");
-            restVertex.AddVertex(null, "RemoteRestServerLog");
+            restVertex.AddVertex(null, "RemoteRestServerLogFilename");
             restVertex.AddVertex(null, "RemoteRestServerUrl");
             restVertex.AddVertex(null, "RemoteEndpointPath");
             restVertex.AddVertex(null, "RemoteEndpointParameters");

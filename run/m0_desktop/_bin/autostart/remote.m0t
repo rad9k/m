@@ -1,0 +1,14 @@
+System\FormalTextLanguage\ZeroCode_VertexAndManyLines
+"remote"
+	import @System\Lib\StdView direct meta
+	variable "x" @VertexType
+	variable "u" @VertexType
+	x = "http://localhost:5000/swagger/v1/swagger.json"
+	x +< @@OpenApiUrlVertexToPackage :: "remote"
+	u = new x\:remote\:User[]
+	u\name = "imie"
+	u\age = "5"	
+	:Temp +< x\:remote\:processuser[u]
+	:Temp +< x\:remote\:add["1","10000"]
+	:Temp +< x\:remote\:concat["1","10000"]
+	:Temp +< x\:remote

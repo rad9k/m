@@ -12,6 +12,7 @@ using System.IO;
 using System.Text;
 using System.Text.Json;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace m0.Lib.REST
@@ -20,32 +21,156 @@ namespace m0.Lib.REST
     {
         private static readonly HttpClient httpClient = new HttpClient();
         private static readonly UTF8Encoding Utf8NoBom = new UTF8Encoding(false);
-        private static readonly object logLock = new object();
-        private static readonly string logFilePath = Path.Combine(Environment.CurrentDirectory, "remoterest.log");
 
-        private static void Log(string message, params object[] args)
+        private sealed class ReferenceEqualityComparer<T> : IEqualityComparer<T>
+            where T : class
         {
+            public static readonly ReferenceEqualityComparer<T> Instance = new ReferenceEqualityComparer<T>();
+            public bool Equals(T x, T y) => ReferenceEquals(x, y);
+            public int GetHashCode(T obj) => RuntimeHelpers.GetHashCode(obj);
+        }
+
+        private sealed class PackageLogger
+        {
+            public bool Enabled;
+            public string LogFilePath;
+            public object FileLock = new object();
+        }
+
+        private static readonly object loggerMapLock = new object();
+        private static readonly Dictionary<IVertex, PackageLogger> loggerByPackage =
+            new Dictionary<IVertex, PackageLogger>(ReferenceEqualityComparer<IVertex>.Instance);
+
+        private static readonly object sharedDefaultLogLock = new object();
+        private static string sharedDefaultLogFilePathForRun = null;
+
+        private static PackageLogger GetLoggerForPackage(IVertex packageVertex)
+        {
+            if (packageVertex == null)
+                return new PackageLogger { Enabled = false, LogFilePath = null };
+
+            lock (loggerMapLock)
+            {
+                if (loggerByPackage.TryGetValue(packageVertex, out PackageLogger existing))
+                    return existing;
+
+                // (1) If DoRemoteRestServer exists and is False -> disable logging (and never create files)
+                IVertex doRemoteVertex = GraphUtil.GetQueryOutFirst(packageVertex, "DoRemoteRestServer", null);
+                if (doRemoteVertex != null && !GraphUtil.GetBooleanValueOrFalse(doRemoteVertex))
+                {
+                    var disabled = new PackageLogger { Enabled = false, LogFilePath = null };
+                    loggerByPackage[packageVertex] = disabled;
+                    return disabled;
+                }
+
+                // (2) If RemoteRestServerLogFilename exists and Value != "" -> use it
+                IVertex filenameVertex = GraphUtil.GetQueryOutFirst(packageVertex, "RemoteRestServerLogFilename", null);
+                string filename = filenameVertex?.Value?.ToString() ?? "";
+
+                // (3) Otherwise use default "remote_REST_[TIMESTAMP].log"
+                if (string.IsNullOrEmpty(filename))
+                {
+                    // If we already created a default log filename during this app run,
+                    // keep using it (do not create a new timestamped file).
+                    lock (sharedDefaultLogLock)
+                    {
+                        if (sharedDefaultLogFilePathForRun == null)
+                        {
+                            string defaultFilename = string.Format(CultureInfo.InvariantCulture,
+                                "remote_REST_{0:yyyyMMdd_HHmmss_fff}.log",
+                                System.DateTime.Now);
+
+                            sharedDefaultLogFilePathForRun = Path.Combine(Environment.CurrentDirectory, defaultFilename);
+                        }
+
+                        filename = sharedDefaultLogFilePathForRun;
+                    }
+                }
+
+                string resolvedPath = Path.IsPathRooted(filename)
+                    ? filename
+                    : Path.Combine(Environment.CurrentDirectory, filename);
+
+                var logger = new PackageLogger { Enabled = true, LogFilePath = resolvedPath };
+                loggerByPackage[packageVertex] = logger;
+                return logger;
+            }
+        }
+
+        private static void LogEntry(PackageLogger logger, string what, string oneLine, string multiLine = null)
+        {
+            if (logger == null || !logger.Enabled)
+                return;
+
             try
             {
-                string formatted = (args != null && args.Length > 0)
-                    ? string.Format(CultureInfo.InvariantCulture, message, args)
-                    : message;
+                string ts = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
 
-                string line = string.Format(CultureInfo.InvariantCulture,
-                    "[{0:yyyy-MM-dd HH:mm:ss.fff}] {1}{2}",
-                    System.DateTime.Now,
-                    formatted,
-                    Environment.NewLine);
+                var sb = new StringBuilder();
+                sb.Append('[').Append(what).Append(' ').Append(ts).Append("] ").Append(oneLine ?? "").Append(Environment.NewLine);
 
-                lock (logLock)
+                if (!string.IsNullOrEmpty(multiLine))
                 {
-                    File.AppendAllText(logFilePath, line, Utf8NoBom);
+                    sb.Append(multiLine);
+                    if (!multiLine.EndsWith(Environment.NewLine, StringComparison.Ordinal))
+                        sb.Append(Environment.NewLine);
+                }
+
+                lock (logger.FileLock)
+                {
+                    File.AppendAllText(logger.LogFilePath, sb.ToString(), Utf8NoBom);
                 }
             }
             catch
             {
                 // Never fail the remote call due to logging problems.
             }
+        }
+
+        private static string FormatRequestLog(HttpRequestMessage request, string requestBodyJson)
+        {
+            var sb = new StringBuilder();
+
+            sb.AppendLine("HTTP headers:");
+            foreach (var h in request.Headers)
+                sb.Append(h.Key).Append(": ").AppendLine(string.Join(", ", h.Value));
+
+            if (request.Content != null)
+            {
+                foreach (var h in request.Content.Headers)
+                    sb.Append(h.Key).Append(": ").AppendLine(string.Join(", ", h.Value));
+            }
+
+            if (requestBodyJson != null)
+            {
+                sb.AppendLine("Request JSON:");
+                sb.AppendLine(requestBodyJson);
+            }
+
+            return sb.ToString();
+        }
+
+        private static string FormatResponseLog(HttpResponseMessage response, string responseBody)
+        {
+            var sb = new StringBuilder();
+
+            sb.AppendLine("HTTP headers:");
+            foreach (var h in response.Headers)
+                sb.Append(h.Key).Append(": ").AppendLine(string.Join(", ", h.Value));
+
+            if (response.Content != null)
+            {
+                foreach (var h in response.Content.Headers)
+                    sb.Append(h.Key).Append(": ").AppendLine(string.Join(", ", h.Value));
+            }
+
+            if (!string.IsNullOrEmpty(responseBody))
+            {
+                sb.AppendLine("Response JSON:");
+                sb.AppendLine(responseBody);
+            }
+
+            return sb.ToString();
         }
 
         public static INoInEdgeInOutVertexVertex CallRemoteRestServer(IExecution exe)
@@ -58,6 +183,7 @@ namespace m0.Lib.REST
             IVertex RemoteEndpointParametersVertex = GraphUtil.GetQueryOutFirst(target, "RemoteEndpointParameters", null);
 
             IVertex PackageVertex = GraphUtil.GetQueryInFirst(target, "Function", null);
+            PackageLogger logger = GetLoggerForPackage(PackageVertex);
 
             IVertex RemoteRestServerUrlVertex = GraphUtil.GetQueryOutFirst(PackageVertex, "RemoteRestServerUrl", null);
 
@@ -69,8 +195,12 @@ namespace m0.Lib.REST
 
             if (string.IsNullOrEmpty(serverUrl) || string.IsNullOrEmpty(endpointPath))
             {
-                Log("[RemoteServer] ERROR: Missing serverUrl or endpointPath. serverUrl={0}, endpointPath={1}",
-                    serverUrl ?? "(null)", endpointPath ?? "(null)");
+                LogEntry(logger, "Error", "Missing serverUrl or endpointPath",
+                    string.Format(CultureInfo.InvariantCulture,
+                        "serverUrl: {0}{1}endpointPath: {2}{1}",
+                        serverUrl ?? "(null)",
+                        Environment.NewLine,
+                        endpointPath ?? "(null)"));
                 return newStack;
             }
 
@@ -123,13 +253,19 @@ namespace m0.Lib.REST
                     IVertex paramVertex = GraphUtil.GetQueryOutFirst(stack, paramName, null);
                     if (paramVertex == null)
                     {
-                        Log("[RemoteServer] WARNING: Parameter '{0}' (in:{1}) not found on stack", paramName, paramIn);
+                        LogEntry(logger, "Warn",
+                            string.Format(CultureInfo.InvariantCulture, "Parameter not found: {0}", paramName),
+                            string.Format(CultureInfo.InvariantCulture, "in: {0}{1}", paramIn, Environment.NewLine));
                         continue;
                     }
 
-                    Log("[RemoteServer] Parameter '{0}' (in:{1}) = '{2}' (type:{3})",
-                        paramName, paramIn, paramVertex.Value ?? "(null)",
-                        paramVertex.Value?.GetType().Name ?? "null");
+                    LogEntry(logger, "Param",
+                        string.Format(CultureInfo.InvariantCulture, "{0} (in:{1})", paramName, paramIn),
+                        string.Format(CultureInfo.InvariantCulture,
+                            "value: {0}{1}type: {2}{1}",
+                            paramVertex.Value ?? "(null)",
+                            Environment.NewLine,
+                            paramVertex.Value?.GetType().Name ?? "null"));
 
                     switch (paramIn)
                     {
@@ -171,10 +307,6 @@ namespace m0.Lib.REST
 
             string fullUrl = serverUrl.TrimEnd('/') + resolvedPath;
 
-            Log("[RemoteServer] {0} {1}", httpMethod, fullUrl);
-            if (requestBodyJson != null)
-                Log("[RemoteServer] Request body: {0}", requestBodyJson);
-
             // Execute HTTP request
             try
             {
@@ -192,22 +324,27 @@ namespace m0.Lib.REST
                     request.Content = new StringContent(requestBodyJson, Utf8NoBom, "application/json");
                 }
 
+                // (4) Log URL + HTTP headers + full JSON request (if any)
+                LogEntry(logger, "Request",
+                    string.Format(CultureInfo.InvariantCulture, "{0} {1}", httpMethod, fullUrl),
+                    FormatRequestLog(request, requestBodyJson));
+
                 HttpResponseMessage response = httpClient.SendAsync(request).GetAwaiter().GetResult();
                 string responseBody = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
-                Log("[RemoteServer] Response: {0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
+                // (4) Log status + HTTP headers + full JSON response (if any)
+                LogEntry(logger, "Response",
+                    string.Format(CultureInfo.InvariantCulture, "{0} ({1})", (int)response.StatusCode, response.ReasonPhrase),
+                    FormatResponseLog(response, responseBody));
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    Log("[RemoteServer] ERROR response body: {0}", responseBody);
                     // Do not attempt to map error responses as success data
                     return newStack;
                 }
 
                 if (!string.IsNullOrEmpty(responseBody))
                 {
-                    Log("[RemoteServer] Response body: {0}", responseBody);
-
                     // If the response was unwrapped from a *Response class, extract the inner property
                     if (responseUnwrapProperty != null)
                     {
@@ -229,7 +366,7 @@ namespace m0.Lib.REST
             }
             catch (Exception ex)
             {
-                Log("[RemoteServer] EXCEPTION: {0}", ex);
+                LogEntry(logger, "Exception", "CallRemoteRestServer failed", ex.ToString());
             }
 
             return newStack;

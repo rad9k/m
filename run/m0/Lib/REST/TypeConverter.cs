@@ -1,3 +1,4 @@
+using m0.Graph;
 using System.Collections.Generic;
 using System.Text.Json;
 
@@ -19,7 +20,7 @@ namespace m0.Lib.REST
         /// </summary>
         public static bool IsPrimitiveType(string typeName)
         {
-            return PrimitiveTypes.Contains(typeName);
+            return PrimitiveTypes.Contains(typeName);                  
         }
 
         /// <summary>
