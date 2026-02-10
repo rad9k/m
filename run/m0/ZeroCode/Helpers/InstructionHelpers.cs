@@ -151,8 +151,7 @@ namespace m0.ZeroCode.Helpers
             if (CheckIfIsAtomType_WRONG(edgeToCopy.To))
                 copyTo.AddVertex(edgeToCopy.Meta, edgeToCopy.To.Value);            
             else            
-                GraphUtil.DeepCopy(edgeToCopy, copyTo);
-            
+                GraphUtil.DeepCopy(edgeToCopy, copyTo);            
         }
 
         public static bool CheckIfHasExecutableEndPoint(IVertex is_v)
