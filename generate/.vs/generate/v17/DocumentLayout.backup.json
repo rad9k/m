@@ -7,6 +7,14 @@
       "RelativeMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|solutionrelative:m0_system_generate\\legacysystem\\m0.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_system_generate\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|solutionrelative:m0_system_generate\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A8A00DED-611C-4FF5-8B12-5ECC14242B23}|m0\\m0.csproj|C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0\\zerotypes\\vertexoperations.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A8A00DED-611C-4FF5-8B12-5ECC14242B23}|m0\\m0.csproj|solutionrelative:m0\\zerotypes\\vertexoperations.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_system_generate\\lib\\createlib.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{9B9BB19E-AE6D-46E7-9508-523AC253CBD4}|m0_SYSTEM_GENERATE\\m0_SYSTEM_GENERATE.csproj|solutionrelative:m0_system_generate\\lib\\createlib.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
@@ -18,7 +26,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 7,
           "Children": [
             {
               "$type": "Bookmark",
@@ -39,6 +47,30 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\Program.cs",
+              "RelativeDocumentMoniker": "m0_SYSTEM_GENERATE\\Program.cs",
+              "ToolTip": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\Program.cs",
+              "RelativeToolTip": "m0_SYSTEM_GENERATE\\Program.cs",
+              "ViewState": "AgIAADIAAAAAAAAAAADgvz0AAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-11T08:28:03.807Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "VertexOperations.cs",
+              "DocumentMoniker": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0\\ZeroTypes\\VertexOperations.cs",
+              "RelativeDocumentMoniker": "m0\\ZeroTypes\\VertexOperations.cs",
+              "ToolTip": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0\\ZeroTypes\\VertexOperations.cs",
+              "RelativeToolTip": "m0\\ZeroTypes\\VertexOperations.cs",
+              "ViewState": "AgIAAPkAAAAAAAAAAADgv/oAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-10T23:10:17.678Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "CreateLib.cs",
               "DocumentMoniker": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs",
               "RelativeDocumentMoniker": "m0_SYSTEM_GENERATE\\Lib\\CreateLib.cs",
@@ -56,7 +88,7 @@
               "RelativeDocumentMoniker": "m0_SYSTEM_GENERATE\\LegacySystem\\m0.cs",
               "ToolTip": "C:\\Users\\rad9k\\source\\repos\\m\\generate\\m0_SYSTEM_GENERATE\\LegacySystem\\m0.cs",
               "RelativeToolTip": "m0_SYSTEM_GENERATE\\LegacySystem\\m0.cs",
-              "ViewState": "AgIAAMkXAAAAAAAAAADwv98XAACHAAAAAAAAAA==",
+              "ViewState": "AgIAAO8XAAAAAAAAAAAwwAUYAABVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-02-01T11:12:57.217Z",
               "EditorCaption": ""
