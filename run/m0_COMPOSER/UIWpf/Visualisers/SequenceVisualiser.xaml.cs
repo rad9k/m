@@ -577,9 +577,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             IVertex clipboardMeta;
 
             if (onlyCopy)
-                clipboardMeta = m0.MinusZero.Instance.root.Get(false, @"System\Meta\User\Session\ClipboardCopy");
+                clipboardMeta = m0.MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\User\Session\ClipboardCopy");
             else
-                clipboardMeta = m0.MinusZero.Instance.root.Get(false, @"System\Meta\User\Session\ClipboardCut");
+                clipboardMeta = m0.MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\User\Session\ClipboardCut");
 
             bool isNull = false;
 

@@ -33,9 +33,9 @@ namespace m0.User
             IVertex clipboard = null;
 
             if(isCut)
-                clipboard = m0.MinusZero.Instance.root.Get(false, @"System\Meta\User\Session\ClipboardCut");
+                clipboard = m0.MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\User\Session\ClipboardCut");
             else
-                clipboard = m0.MinusZero.Instance.root.Get(false, @"System\Meta\User\Session\ClipboardCopy");
+                clipboard = m0.MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\User\Session\ClipboardCopy");
 
             foreach (IEdge e in edges)
                 currenSession.AddEdge(clipboard, e.To);

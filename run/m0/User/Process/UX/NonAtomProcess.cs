@@ -13,9 +13,9 @@ namespace m0.User.Process.UX
         {
             IVertex r = MinusZero.Instance.Root;
 
-            IVertex process = ZeroTypes.VertexOperations.AddInstance(r.Get(false, @"User\CurrentUser:\CurrentSession:"), r.Get(false, @"System\Meta\User\NonAtomProcess"), r.Get(false, @"System\Meta\User\Session\Process"));
+            IVertex process = ZeroTypes.VertexOperations.AddInstance(r.Get(false, @"User\CurrentUser:\CurrentSession:"), r.Get(false, @"System\Meta\ZeroTypes\User\NonAtomProcess"), r.Get(false, @"System\Meta\ZeroTypes\User\Session\Process"));
 
-            process.AddVertex(r.Get(false, @"System\Meta\User\NonAtomProcess\StartTimeStamp"), "");
+            process.AddVertex(r.Get(false, @"System\Meta\ZeroTypes\User\NonAtomProcess\StartTimeStamp"), "");
 
             ZeroTypes.DateTime.FillDateTime(process.Get(false, "StartTimeStamp:"), DateTime.Now);
         }
