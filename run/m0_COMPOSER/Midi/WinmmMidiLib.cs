@@ -1,4 +1,4 @@
-﻿// docs https://www.midi.org/specifications/item/table-1-summary-of-midi-message
+// docs https://www.midi.org/specifications/item/table-1-summary-of-midi-message
 //
 // note table https://www.codeguru.com/columns/dotnet/making-music-with-midi-and-c.html
 
@@ -38,16 +38,16 @@ namespace m0_COMPOSER.Midi
         [DllImport("winmm.dll")]
         public static extern int midiOutGetDevCaps(Int32 uDeviceID, ref MidiOutCaps lpMidiOutCaps, UInt32 cbMidiOutCaps);
 
-        [DllImport("winmm.dll")]
-        private static extern int midiOutOpen(ref int handle, int deviceID, MidiCallBack proc, int instance, int flags);
+        [DllImport("winmm.dll", ExactSpelling = true)]
+        private static extern int midiOutOpen(out IntPtr handle, int deviceID, IntPtr proc, IntPtr instance, uint flags);
 
-        [DllImport("winmm.dll")]
-        private static extern int midiOutShortMsg(int handle, int message);
+        [DllImport("winmm.dll", ExactSpelling = true)]
+        private static extern int midiOutShortMsg(IntPtr handle, uint message);
 
-        [DllImport("winmm.dll")]
-        private static extern int midiOutClose(int handle);
+        [DllImport("winmm.dll", ExactSpelling = true)]
+        private static extern int midiOutClose(IntPtr handle);
 
-        public delegate void MidiCallBack(int handle, int msg, int instance, int param1, int param2);
+        public delegate void MidiCallBack(IntPtr handle, int msg, IntPtr instance, IntPtr param1, IntPtr param2);
 
         private static string Mci(string command)
         {
@@ -57,15 +57,18 @@ namespace m0_COMPOSER.Midi
             return reply.ToString();
         }
 
-        static Dictionary<int, int> deviceHandles = new Dictionary<int, int>();
+        static Dictionary<int, IntPtr> deviceHandles = new Dictionary<int, IntPtr>();
 
-        static int getHandle(int deviceNumber)
+        static IntPtr getHandle(int deviceNumber)
         {
             if (deviceHandles.ContainsKey(deviceNumber))
                 return deviceHandles[deviceNumber];
 
-            int handle = 0;            
-            var res = midiOutOpen(ref handle, deviceNumber, null, 0, 0);
+            IntPtr handle;
+            int res = midiOutOpen(out handle, deviceNumber, IntPtr.Zero, IntPtr.Zero, 0);
+
+            if (res != 0)
+                throw new InvalidOperationException($"midiOutOpen failed for device {deviceNumber}, MMRESULT={res}");
 
             deviceHandles.Add(deviceNumber, handle);
 
@@ -74,13 +77,17 @@ namespace m0_COMPOSER.Midi
 
         public static void Close()
         {            
-            foreach(int handle in deviceHandles.Values)
+            foreach(IntPtr handle in deviceHandles.Values)
                 midiOutClose(handle);
+
+            deviceHandles.Clear();
         }
        
         static void midiOut(int deviceNumber, int message)
         {
-            midiOutShortMsg(getHandle(deviceNumber), message);
+            int res = midiOutShortMsg(getHandle(deviceNumber), unchecked((uint)message));
+            if (res != 0)
+                throw new InvalidOperationException($"midiOutShortMsg failed for device {deviceNumber}, MMRESULT={res}, msg=0x{message:X8}");
         }
 
         static void midiOut(int deviceNumber, int channel, int command, int note, int velocity)
@@ -90,7 +97,9 @@ namespace m0_COMPOSER.Midi
             byte _velocity = (byte) velocity;
             int message = (_velocity << 16) + (_note << 8) + _command;
 
-            midiOutShortMsg(getHandle(deviceNumber), message);
+            int res = midiOutShortMsg(getHandle(deviceNumber), unchecked((uint)message));
+            if (res != 0)
+                throw new InvalidOperationException($"midiOutShortMsg failed for device {deviceNumber}, MMRESULT={res}, msg=0x{message:X8}");
         }
 
         public static void NoteOn(int deviceNumber, int channel, int note, int velocity)
