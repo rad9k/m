@@ -2095,26 +2095,7 @@ namespace m0.ZeroUML.Instructions
                 CopyVertex(e, newStack);
 
             return newStack;
-        }
-
-        public static INoInEdgeInOutVertexVertex DeepCopySet(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
-        {
-            isStackFrameReturn = false;
-
-            IVertex expression = GetExpression(instructionVertex);
-
-            if (expression == null)
-                return exe.Stack;
-
-            INoInEdgeInOutVertexVertex expressionResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, expression);
-
-            INoInEdgeInOutVertexVertex newStack = CreateStack();
-
-            foreach (IEdge e in expressionResult)
-                CopyVertex(e, newStack);
-
-            return newStack;
-        }
+        }        
 
         // old, stackForNextExpression based version is in int the DoubleSemicolonOperator below
         public static INoInEdgeInOutVertexVertex DoubleColonOperator(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)

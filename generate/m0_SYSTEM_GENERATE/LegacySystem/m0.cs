@@ -497,7 +497,7 @@ namespace m0
                 ",FunctionCall{Target{$MinCardinality:1,$MaxCardinality:1}}" +
                 ",MethodCall{Target{$MinCardinality:1,$MaxCardinality:1}},New{Target{$MinCardinality:1,$MaxCardinality:1}}" +
                 ",SetIndex,SetCount" +
-                ",\"{}\",InnerCreation,EdgeSetAdd,EdgeSetSubstract,+,-,Mul,/,?,\"\\ \",InEdgesSlash,Colon,DoubleColon,DoubleSemicolon,CopySet,DeepCopySet,MetaToTo,()" +
+                ",\"{}\",InnerCreation,EdgeSetAdd,EdgeSetSubstract,+,-,Mul,/,?,\"\\ \",InEdgesSlash,Colon,DoubleColon,DoubleSemicolon,CopySet,MetaToTo,()" +
                 ",RedirectLeftEdgesToRightVertices,AddLeftEdgesToRightVertices,AddRightEdgesIntoLeftEdges,DeleteRightVertices,DeleteRightEdgesFromLeftEdges,DeleteRightVerticesFromLeftEdges" +
                 ",SetLeftVertexesToFirstRightVertexValue,AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex,AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphIncludingLinksAsIsInLeftVertex" +
                 ",Equal,ExactEqual,VertexEqual,NotEqual,Negation,And,Or,MoreThan,LessThan,MoreOrEqualThan,LessOrEqualThan" +
@@ -602,8 +602,7 @@ namespace m0
             AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleColon"), "DoubleColonOperator");
             AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleSemicolon"), "DoubleSemicolonOperator");
             AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "InnerCreation"), "InnerCreation");
-            AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "CopySet"), "CopySet");
-            AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "DeepCopySet"), "DeepCopySet");
+            AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "CopySet"), "CopySet");            
             AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "MetaToTo"), "MetaToTo");
 
             // meta
@@ -770,10 +769,7 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleOperator"));
             LegacySystem.Graph.EasyVertex.Get(smu, false, "CopySet").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
-                LegacySystem.Graph.EasyVertex.Get(smu, false, "ZeroOperator"));
-            LegacySystem.Graph.EasyVertex.Get(smu, false, "DeepCopySet").AddEdge(
-                LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
-                LegacySystem.Graph.EasyVertex.Get(smu, false, "ZeroOperator"));
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "ZeroOperator"));            
             LegacySystem.Graph.EasyVertex.Get(smu, false, "MetaToTo").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "ZeroOperator"));
@@ -2155,27 +2151,20 @@ namespace m0
             o_colon3_any_targetExpr.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$LocalRoot"), kgd_SlashMarkIndexMethod);
 
 
-            // %copy%
-            //
-            //  %copy%(?<expr>)
-
-            AddSingleOperator(k, smu, smb, keyword, any, "%copy%(?<expr>)", "CopySet");
-
-            LegacySystem.Graph.EasyVertex.Get(k, false, "%copy%(?<expr>)").AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall);
-
             // %
             //
             //  %(?<expr>)
 
-            AddSingleOperator(k, smu, smb, keyword, any, "%deep%(?<expr>)", "DeepCopySet");
+            AddSingleOperator(k, smu, smb, keyword, any, "%(?<expr>)", "CopySet");
 
-            LegacySystem.Graph.EasyVertex.Get(k, false, "%deep%(?<expr>)").AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall);
+            LegacySystem.Graph.EasyVertex.Get(k, false, "%(?<expr>)").AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall);
+            
 
             // `
             //
             //  `(?<expr>)
 
-            AddSingleOperator(k, smu, smb, keyword, any, "%meta%(?<expr>)", "MetaToTo");
+            AddSingleOperator(k, smu, smb, keyword, any, "`(?<expr>)", "MetaToTo");
 
             //////////////////// common
 
