@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.User.Process.UX;
 using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,10 @@ namespace m0.User
     {
         public static void ClearClipboard()
         {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+            
             IVertex currenSession = m0.MinusZero.Instance.root.Get(false, @"User\CurrentUser:\CurrentSession:");
 
             IEnumerable<IEdge> allClipboard = currenSession.GetAll(false, @"ClipboardCut:");
@@ -24,10 +29,18 @@ namespace m0.User
 
             foreach (IEdge e in allClipboard)
                 currenSession.DeleteEdge(e);
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
         }
 
         public static void PutToClipboard(IEnumerable<IEdge> edges, bool isCut)
         {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+            
             IVertex currenSession = m0.MinusZero.Instance.root.Get(false, @"User\CurrentUser:\CurrentSession:");
 
             IVertex clipboard = null;
@@ -39,10 +52,18 @@ namespace m0.User
 
             foreach (IEdge e in edges)
                 currenSession.AddEdge(clipboard, e.To);
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
         }
 
         public static IEnumerable<IEdge> GetFromClipboard()
         {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+            
             List<IEdge> ret = new List<IEdge>();
 
             IVertex currentSession = m0.MinusZero.Instance.root.Get(false, @"User\CurrentUser:\CurrentSession:");
@@ -60,8 +81,12 @@ namespace m0.User
             List<IEdge> retEdges = new List<IEdge>();
 
             foreach (IEdge e in ret)
-                retEdges.Add(EdgeHelper.FindEdgeVertexByToVertex(currentSession, e.To.Get(false, "To:")));
+                retEdges.Add(EdgeHelper.FindEdgeVertexByToVertex(currentSession, e.To.Get(false, "To:")));            
 
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
+            
             return retEdges;
         }
 
