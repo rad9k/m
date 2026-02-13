@@ -150,56 +150,43 @@ namespace m0.UIWpf.Commands
 
             MinusZero.Instance.UserInteraction.EditEdge(Visualiser_Vertex);
         }
-
-        static void ClearClipboard()
-        {
-            IVertex CurrentUser = MinusZero.Instance.Root.Get(false, @"User\CurrentUser:");
-
-            IList<IEdge> ClipboardEntries = GraphUtil.GetQueryOut(CurrentUser, "ClipboardEntry", null);
-
-            CurrentUser.DeleteEdgesList(ClipboardEntries);
-        }
-
-        static IList<IEdge> GetClipboard()
-        {
-            IVertex CurrentUser = MinusZero.Instance.Root.Get(false, @"User\CurrentUser:");
-
-            return GraphUtil.GetQueryOut(CurrentUser, "ClipboardEntry", null);            
-        }
-
-        static void AddToClipboard(IVertex v)
-        {
-            IVertex CurrentUser = MinusZero.Instance.Root.Get(false, @"User\CurrentUser:");
-
-            CurrentUser.AddEdge(ClipboardEntry_meta, v);
-        }
-
-        protected static bool DoCut;
  
         public static void Cut(IVertex baseVertex, IVertex inputVertex)
         {
-            Copy(baseVertex, inputVertex);
-            
-            DoCut = true;
-        }
-
-        public static void Copy(IVertex baseVertex, IVertex inputVertex)
-        {
-            DoCut = false;
-
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
 
-            ClearClipboard();
+            User.Clipboard.ClearClipboard();
 
             //
 
             if (inputVertex.Get(false, "SelectedEdges:") == null || inputVertex.Get(false, "SelectedEdges:").Count() == 0)
-                AddToClipboard(baseVertex);
+                User.Clipboard.PutToClipboard(baseVertex, true);
             else
                 foreach (IEdge e in inputVertex.Get(false, "SelectedEdges:"))
-                    AddToClipboard(e.To);
+                    User.Clipboard.PutToClipboard(e.To, true);
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
+        }
+
+        public static void Copy(IVertex baseVertex, IVertex inputVertex)
+        {            
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
+            User.Clipboard.ClearClipboard();            
+
+            //
+
+            if (inputVertex.Get(false, "SelectedEdges:") == null || inputVertex.Get(false, "SelectedEdges:").Count() == 0)
+                User.Clipboard.PutToClipboard(baseVertex, false);            
+            else
+                foreach (IEdge e in inputVertex.Get(false, "SelectedEdges:"))
+                    User.Clipboard.PutToClipboard(e.To, false);            
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
@@ -214,18 +201,15 @@ namespace m0.UIWpf.Commands
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
             
-            foreach (IEdge e in GetClipboard())
+            foreach (IEdge e in User.Clipboard.GetFromClipboard())
             {
                 IVertex v = e.To;
 
-                if (DoCut)
+                if (GeneralUtil.CompareStrings(e.Meta, "ClipboardCut"))
                     VertexOperations.DeleteOneEdge(v.Get(false, "From:"), v.Get(false, "Meta:"), v.Get(false, "To:"));
 
                 baseVertex.Get(false, "To:").AddEdge(v.Get(false, "Meta:"), v.Get(false, "To:"));
-            }
-
-            if (!DoCut)
-                ClearClipboard();
+            }            
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();

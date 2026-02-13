@@ -3096,9 +3096,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             IEnumerable<IEdge> selectedEdges = GetEdgesForClipboard();
 
-            SessionClipboard.ClearClipboard();            
+            m0.User.Clipboard.ClearClipboard();
 
-            SessionClipboard.PutToClipboard(selectedEdges, true);
+            m0.User.Clipboard.PutToClipboard(selectedEdges, true);
 
             PositionMark = MusicTimeSnapCorrect_Up(FindLastPosition(selectedEdges));
         }
@@ -3107,9 +3107,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             IEnumerable<IEdge> selectedEdges = GetEdgesForClipboard();
 
-            SessionClipboard.ClearClipboard();
+            m0.User.Clipboard.ClearClipboard();
 
-            SessionClipboard.PutToClipboard(selectedEdges, false);
+            m0.User.Clipboard.PutToClipboard(selectedEdges, false);
 
             PositionMark = MusicTimeSnapCorrect_Up(FindLastPosition(selectedEdges));
         }
@@ -3121,7 +3121,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void Paste()
         {
-            IEnumerable<IEdge> edges = SessionClipboard.GetFromClipboard();
+            IEnumerable<IEdge> edges = m0.User.Clipboard.GetFromClipboard();
 
             //VertexChangeOff = true;
 

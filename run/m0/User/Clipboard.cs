@@ -10,8 +10,11 @@ using System.Threading.Tasks;
 
 namespace m0.User
 {
-    public class SessionClipboard
+    public class Clipboard
     {
+        static IVertex ClipboardCut_meta = m0.MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\User\Session\ClipboardCut");
+        static IVertex ClipboardCopy_meta = m0.MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\User\Session\ClipboardCopy");
+
         public static void ClearClipboard()
         {
             ////////////////////////////////////////
@@ -46,12 +49,34 @@ namespace m0.User
             IVertex clipboard = null;
 
             if(isCut)
-                clipboard = m0.MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\User\Session\ClipboardCut");
+                clipboard = ClipboardCut_meta;
             else
-                clipboard = m0.MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\User\Session\ClipboardCopy");
+                clipboard = ClipboardCopy_meta;
 
             foreach (IEdge e in edges)
                 currenSession.AddEdge(clipboard, e.To);
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
+        }
+
+        public static void PutToClipboard(IVertex vertex, bool isCut)
+        {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
+            IVertex currenSession = m0.MinusZero.Instance.root.Get(false, @"User\CurrentUser:\CurrentSession:");
+
+            IVertex clipboard = null;
+
+            if (isCut)
+                clipboard = ClipboardCut_meta;
+            else
+                clipboard = ClipboardCopy_meta;
+
+            currenSession.AddEdge(clipboard, vertex);
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
