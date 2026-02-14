@@ -206,9 +206,28 @@ namespace m0.UIWpf.Commands
                 IVertex v = e.To;
 
                 if (GeneralUtil.CompareStrings(e.Meta, "ClipboardCut"))
-                    VertexOperations.DeleteOneEdge(v.Get(false, "From:"), v.Get(false, "Meta:"), v.Get(false, "To:"));
+                {
+                    IVertex v_From = GraphUtil.GetQueryOutFirst(v, "From", null);
+                    IVertex v_Meta = GraphUtil.GetQueryOutFirst(v, "Meta", null);
+                    IVertex v_To = GraphUtil.GetQueryOutFirst(v, "To", null);
 
-                baseVertex.Get(false, "To:").AddEdge(v.Get(false, "Meta:"), v.Get(false, "To:"));
+                    VertexOperations.DeleteOneEdge(v_From, v_Meta, v_To);
+
+                    IVertex baseVertex_To = GraphUtil.GetQueryOutFirst(baseVertex, "To", null);
+
+                    baseVertex_To.AddEdge(v_Meta, v_To);
+                }
+
+                if (GeneralUtil.CompareStrings(e.Meta, "ClipboardCopy"))
+                {
+                    IVertex baseVertex_To = GraphUtil.GetQueryOutFirst(baseVertex, "To", null);
+
+                    IVertex v_To = GraphUtil.GetQueryOutFirst(v, "To", null);
+
+                    IEdge v_To_Edge = EdgeHelper.GetIEdgeByEdgeVertex(v);
+
+                    VertexOperations.CopyVertex(v_To_Edge, baseVertex_To);
+                }
             }            
 
             ////////////////////////////////////////

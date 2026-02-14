@@ -384,12 +384,7 @@ namespace m0.ZeroUML.Instructions
 
             exe.NewVertexCreationSpace = leftStack;
 
-            INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, leftExpression);
-
-            if (GeneralUtil.CompareStrings(leftExpression.Value, "val"))
-            {
-                int x = 0;
-            }
+            INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, leftExpression);            
 
             // right
 
@@ -398,8 +393,8 @@ namespace m0.ZeroUML.Instructions
             INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, rightExpression);
 
             exe.NewVertexCreationSpace = newVertexCreationSpace_copy;
-            // NEW
 
+            // NEW
 
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 

@@ -17,6 +17,7 @@ using System.Runtime.InteropServices;
 using System.Security.Claims;
 using System.Threading;
 using System.Xml.Linq;
+using static m0_SYSTEM_GENERATE.Util.GenerateUtil;
 
 namespace m0
 {
@@ -6056,14 +6057,29 @@ namespace m0
 
         void CreateSystemMetaStoreFileSystem()
         {
-            FileSystemStore.FillSystemMeta();
+            FileSystemStore.FillSystemMeta();            
+        }
+
+        void CreateSystemMetaStoreFileSystem_UserCommands()
+        {
+            IVertex smzu = Root.Get(false, @"System\Meta\ZeroUML");
+
+            IVertex sms = Root.Get(false, @"System\Meta\Store");
+
+            IVertex uc = sms.AddVertex(smzu.Get(false, "Package"), "UserCommands");
+
+            string type = "m0.Store.UserCommands.StoreUserCommands, m0_COMPOSER, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+
+            AddFunction(uc, "OnNewM0JStore", type, "OnNewM0JStore", null, new TypeName[] { new TypeName("baseVertex", "VertexType", 1, 1) });
+            AddFunction(uc, "OnNewM0XStore", type, "OnNewM0XStore", null, new TypeName[] { new TypeName("baseVertex", "VertexType", 1, 1) });
+            AddFunction(uc, "OnNewM0TStore", type, "OnNewM0TStore", null, new TypeName[] { new TypeName("baseVertex", "VertexType", 1, 1) });
         }
 
         void CreateSystemMetaCommands()
         {
             IVertex sm = Root.Get(false, @"System\Meta");
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, sm, "{Commands{VisualiserClass,SynchronisedVisualiser}}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, sm, "{UserCommands{VisualiserClass,SynchronisedVisualiser}}");
         }
 
         void CreateUserMeta()
@@ -7392,6 +7408,11 @@ namespace m0
 
             //_CreateSystemDataUXZeroUMLTemplate();
 
+            //
+            ExecutionFlowHelper.Initialize();
+
+            CreateSystemMetaStoreFileSystem_UserCommands();
+            //
 
             AddIsAttribute("Attribute");
 

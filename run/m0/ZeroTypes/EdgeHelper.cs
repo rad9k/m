@@ -32,9 +32,13 @@ namespace m0.ZeroTypes
 
             edge.AddEdge(vIs, EdgeMeta);
 
-            edge.AddEdge(FromMeta, EdgeVertex.Get(false, "From:"));
-            edge.AddEdge(MetaMeta, EdgeVertex.Get(false, "Meta:"));
-            edge.AddEdge(ToMeta, EdgeVertex.Get(false, "To:"));   
+            IVertex EdgeVertex_From = GraphUtil.GetQueryOutFirst(EdgeVertex, "From", null);
+            IVertex EdgeVertex_Meta = GraphUtil.GetQueryOutFirst(EdgeVertex, "Meta", null);
+            IVertex EdgeVertex_To = GraphUtil.GetQueryOutFirst(EdgeVertex, "To", null);
+
+            edge.AddEdge(FromMeta, EdgeVertex_From);
+            edge.AddEdge(MetaMeta, EdgeVertex_Meta);
+            edge.AddEdge(ToMeta, EdgeVertex_To);   
         }
 
         static public void CreateOrReplaceEdgeVertexFromIEdgeByMeta(IVertex baseVertex, IVertex metaVertex, IEdge Edge)
@@ -113,7 +117,7 @@ namespace m0.ZeroTypes
 
         static public IVertex AddEdgeVertex(IVertex baseVertex, IEdge edge)
         {
-            IVertex r=MinusZero.Instance.Root;
+            IVertex r = MinusZero.Instance.Root;
 
             IVertex ev = baseVertex.AddVertex(EdgeMeta, null);
 
@@ -325,9 +329,13 @@ namespace m0.ZeroTypes
 
         static public IEdge CreateIEdgeFromEdgeVertex(IVertex edgeVertex)
         {
-            return new EasyEdge(edgeVertex.Get(false, "From:"),
-                edgeVertex.Get(false, "Meta:"),
-                edgeVertex.Get(false, "To:"));
+            IVertex edgeVertex_From = GraphUtil.GetQueryOutFirst(edgeVertex, "From", null);
+            IVertex edgeVertex_Meta = GraphUtil.GetQueryOutFirst(edgeVertex, "Meta", null);
+            IVertex edgeVertex_To = GraphUtil.GetQueryOutFirst(edgeVertex, "To", null);
+
+            return new EasyEdge(edgeVertex_From,
+                edgeVertex_Meta,
+                edgeVertex_To);
         }
     }
 }

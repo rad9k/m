@@ -123,6 +123,8 @@ namespace m0_SYSTEM_GENERATE.Music
             AddMusicSpace();
 
             AddFromFiles();
+
+            AddUserCommands();
         }
 
         private static void AddData()
@@ -777,6 +779,15 @@ namespace m0_SYSTEM_GENERATE.Music
 
             Chord.DeleteEdge(toDelete1);
             Chord.DeleteEdge(toDelete2);
+        }
+
+        public static void AddUserCommands()
+        {
+            IVertex commands = Music.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Package"), "UserCommands");
+
+            string type = "m0_COMPOSER.UserCommands.ComposerUserCommands, m0_COMPOSER, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+
+            AddFunction(commands, "OnNewMusicSpaceStore", type, "OnNewMusicSpaceStore", null, new TypeName[] { new TypeName("baseVertex", "VertexType", 1, 1) });
         }
     }
 }
