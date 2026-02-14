@@ -16,6 +16,14 @@ namespace m0.ZeroTypes
         static string[] NoCopyCountViewMetaValue = {"$GraphChangeTrigger"};
         static string[] NoCopyCountViewVertexIsValue = { "GraphChangeTrigger" };
 
+        public static void CopyVertex(IEdge edgeToCopy, IVertex copyTo)
+        {
+            if (InstructionHelpers.CheckIfIsAtomType(edgeToCopy.To))
+                copyTo.AddVertex(edgeToCopy.Meta, edgeToCopy.To.Value);
+            else
+                GraphUtil.DeepCopy(edgeToCopy, copyTo);
+        }
+
         public static IVertex GetTargetFromStackTop(INoInEdgeInOutVertexVertex stack)
         {
             foreach (IEdge e in stack.OutEdgesRaw)

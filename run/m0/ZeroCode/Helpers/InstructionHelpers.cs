@@ -136,23 +136,15 @@ namespace m0.ZeroCode.Helpers
             return false;
         }
 
-        public static bool CheckIfIsAtomType_WRONG(IVertex is_v) // need to recursively check $Inheritence
+        public static bool CheckIfIsAtomType(IVertex is_v) 
         {
             if (is_v == null)
                 return true;
 
-            return CheckIfIsOrInherits_WRONG(is_v, "AtomType");
+            return CheckIfIsOrInherits(is_v, "AtomType");
         }
 
         // WRONG END
-
-        public static void CopyVertex(IEdge edgeToCopy, IVertex copyTo)
-        {
-            if (CheckIfIsAtomType_WRONG(edgeToCopy.To))
-                copyTo.AddVertex(edgeToCopy.Meta, edgeToCopy.To.Value);            
-            else            
-                GraphUtil.DeepCopy(edgeToCopy, copyTo);            
-        }
 
         public static bool CheckIfHasExecutableEndPoint(IVertex is_v)
         {
