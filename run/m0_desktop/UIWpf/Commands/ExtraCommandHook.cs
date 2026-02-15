@@ -35,6 +35,29 @@ namespace m0.UIWpf.Commands
             if (baseVertex == null)
                 return;
 
+            IVertex metaVertex = GraphUtil.GetQueryOutFirst(baseVertex, "Meta", null);
+
+            IList<IEdge> userCommands = GraphUtil.GetQueryOut(baseVertex, "UserCommand", null);
+            
+            foreach (IEdge userCommand in userCommands)
+            {
+                IVertex commandVertex = userCommand.To;
+                MenuItem newMenuItem = m0ContextMenu.createMenuItem(commandVertex.Value.ToString());
+                newMenuItem.Click += (sender, e) =>
+                {
+                  //  UserInteractionUtil.ExecuteCommand(commandVertex);
+                };
+                contextMenu.Items.Add(newMenuItem);
+            }
+
+
+            return;
+            /*
+            IVertex baseVertex = contextMenu.EdgeVertex;
+
+            if (baseVertex == null)
+                return;
+
             IVertex metaVertex = baseVertex.Get(false, "Meta:");
 
             if (GeneralUtil.CompareStrings(metaVertex.Value, "Directory") ||
@@ -72,7 +95,7 @@ namespace m0.UIWpf.Commands
 
 
                 contextMenu.AddSeparator();
-            }
+            }*/
         }
 
         void OnNewMusicSpaceStore(object sender, System.Windows.RoutedEventArgs e)

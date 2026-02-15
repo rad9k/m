@@ -25,6 +25,8 @@ namespace m0
 {
     public class MinusZero : IStoreUniverse, IDisposable
     {
+        bool BuildVariant_m0_COMPOSER = true;
+
         public string m0DllPath;
 
         public IEnumerable<IVertex> BootstrapVertexes;
@@ -510,6 +512,8 @@ namespace m0
 
             CreateTempWorkServer();
 
+            BuildVariantsInitialize();
+
             CreateAutostart();
 
 
@@ -520,6 +524,12 @@ namespace m0
             IsInitialized = true;
 
             ExecutionFlowHelper.StartTransaction();
+        }
+
+        public void BuildVariantsInitialize()
+        {
+            if (BuildVariant_m0_COMPOSER)
+                BuildVariants.m0_COMPOSER.RuntimeInitialize();
         }
 
         public void Initialize_AfterUXInitialized()

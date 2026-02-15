@@ -54,7 +54,7 @@ namespace m0_SYSTEM_GENERATE.Util
             }
         }
 
-        public static void AddFunction(IVertex baseVertex, string name, string typeName, string methodName, string ret, IList<TypeName> pars)
+        public static IVertex AddFunction(IVertex baseVertex, string name, string typeName, string methodName, string ret, IList<TypeName> pars)
         {
             IVertex zu = m0.MinusZero.Instance.root.Get(false, "System\\Meta\\ZeroUML");
 
@@ -84,6 +84,8 @@ namespace m0_SYSTEM_GENERATE.Util
 
             if (methodName != null)
                 ExecutionFlowHelper.DecorateWithDotNetStaticMethod(f, typeName, methodName);
+
+            return f;
         }
 
         public static IVertex AddMethod(IVertex baseVertex, string name, string typeName, string methodName, string ret, IList<TypeName> pars)
