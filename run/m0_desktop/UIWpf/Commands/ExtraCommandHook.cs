@@ -37,16 +37,25 @@ namespace m0.UIWpf.Commands
 
             IVertex metaVertex = GraphUtil.GetQueryOutFirst(baseVertex, "Meta", null);
 
-            IList<IEdge> userCommands = GraphUtil.GetQueryOut(baseVertex, "UserCommand", null);
+            IList<IEdge> userCommands = GraphUtil.GetQueryOut(metaVertex, "UserCommand", null);
             
             foreach (IEdge userCommand in userCommands)
             {
                 IVertex commandVertex = userCommand.To;
-                MenuItem newMenuItem = m0ContextMenu.createMenuItem(commandVertex.Value.ToString());
+                string name = GraphUtil.GetStringValue(commandVertex);
+
+                IVertex nameVertex = GraphUtil.GetQueryOutFirst(commandVertex, "$Name", null);
+
+                if (nameVertex != null)
+                    name = GraphUtil.GetStringValue(nameVertex);
+
+                MenuItem newMenuItem = m0ContextMenu.createMenuItem(name);
+
                 newMenuItem.Click += (sender, e) =>
                 {
                   //  UserInteractionUtil.ExecuteCommand(commandVertex);
                 };
+
                 contextMenu.Items.Add(newMenuItem);
             }
 

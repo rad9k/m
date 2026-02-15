@@ -6073,8 +6073,13 @@ namespace m0
             string type = "m0.Store.UserCommands.StoreUserCommands, m0_COMPOSER, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
             IVertex OnNewM0JStore_Vertex = AddFunction(uc, "OnNewM0JStore", type, "OnNewM0JStore", null, new TypeName[] { new TypeName("baseVertex", "VertexType", 1, 1) });
+            OnNewM0JStore_Vertex.AddVertex(r.Get(false, @"System\Meta\Base\Vertex\$Name"), "New M0J store (json)");
+
             IVertex OnNewM0XStore_Vertex = AddFunction(uc, "OnNewM0XStore", type, "OnNewM0XStore", null, new TypeName[] { new TypeName("baseVertex", "VertexType", 1, 1) });
+            OnNewM0XStore_Vertex.AddVertex(r.Get(false, @"System\Meta\Base\Vertex\$Name"), "New M0X store (binary)");
+
             IVertex OnNewM0TStore_Vertex = AddFunction(uc, "OnNewM0TStore", type, "OnNewM0TStore", null, new TypeName[] { new TypeName("baseVertex", "VertexType", 1, 1) });
+            OnNewM0TStore_Vertex.AddVertex(r.Get(false, @"System\Meta\Base\Vertex\$Name"), "New M0T store (text language)");
 
             IVertex directory_Vertex = r.Get(false, @"System\Meta\Store\FileSystem\Directory");
 
