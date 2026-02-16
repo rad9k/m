@@ -6070,7 +6070,7 @@ namespace m0
 
             IVertex uc = sms.AddVertex(smzu.Get(false, "Package"), "UserCommands");
 
-            string type = "m0.Store.UserCommands.StoreUserCommands, m0_COMPOSER, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+            string type = "m0.Store.UserCommands.StoreUserCommands, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
             IVertex OnNewM0JStore_Vertex = AddFunction(uc, "OnNewM0JStore", type, "OnNewM0JStore", null, new TypeName[] { new TypeName("baseVertex", "VertexType", 1, 1) });
             OnNewM0JStore_Vertex.AddVertex(r.Get(false, @"System\Meta\Base\Vertex\$Name"), "New M0J store (json)");
@@ -6093,6 +6093,8 @@ namespace m0
             IVertex sm = Root.Get(false, @"System\Meta");
 
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, sm, "{UserCommands{VisualiserClass,SynchronisedVisualiser}}");
+
+            IVertex OnNewM0TStore_Vertex = AddFunction(sm.Get(false,"UserCommands"), "OnUserCommand", null, null, null, new TypeName[] { new TypeName("baseVertex", "VertexType", 1, 1) });
         }
 
         void CreateUserMeta()
