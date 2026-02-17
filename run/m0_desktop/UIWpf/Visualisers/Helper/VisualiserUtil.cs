@@ -15,7 +15,7 @@ namespace m0.UIWpf.Visualisers.Helper
         {
             IVertex selectedEdges = visualiser.Vertex.Get(false, "SelectedEdges:");
 
-            foreach (IEdge e in selectedEdges.GetAll(false, @"\{$Is:Edge}"))
+            foreach (IEdge e in selectedEdges.GetAll(false, @"{$Is:Edge}"))
                 selectedEdges.DeleteEdge(e);
         }
 

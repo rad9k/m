@@ -50,7 +50,8 @@ namespace m0.Store.FileSystem
 
                         _Identifier = newFileName;
 
-                        System.IO.Directory.Move(DI.FullName, newFileName);
+                        //System.IO.Directory.Move(DI.FullName, newFileName);
+                        throw new Exception("trying to rename directory, not implemented yet");
 
                         DI = new DirectoryInfo(newFileName);
 

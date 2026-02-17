@@ -274,8 +274,8 @@ namespace m0.UIWpf.Visualisers.Helper
         }
 
         // Should be corrected as uncommeted makes dnd from tree to UXContainer not working
-
-        /*private override void dndDrop(object sender, DragEventArgs e)
+        // QQQ below two methods were commented out and now 2026.02.17 theyy are working and we are checking what is going on
+        protected override void dndDrop(object sender, DragEventArgs e)
         {
             IVertex v = Visualiser.GetEdgeByPoint(e.GetPosition(VisualiserAsFrameworkElement));
 
@@ -288,9 +288,9 @@ namespace m0.UIWpf.Visualisers.Helper
             e.Handled = true;
         }
 
-        private override void dndMouseEnter(object sender, MouseEventArgs e)
+        protected override void dndMouseEnter(object sender, MouseEventArgs e)
         {
             hasButtonBeenDown = false;
-        }*/
+        }
     }
 }

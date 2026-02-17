@@ -159,13 +159,13 @@ namespace m0.UIWpf.Commands
         {
             object sender = e.Data.GetData("DragSource");
 
-            if (sender==null || orgin == sender)
+            if (sender == null /*|| orgin == sender*/)
                 return;
 
             bool doCopy = false;
 
-            if(GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\Settings:\CopyOnDragAndDrop:").Value, "True"))
-                doCopy=true;
+            if (GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\Settings:\CopyOnDragAndDrop:").Value, "True"))
+                doCopy = true;
 
 
             if (e.Data.GetDataPresent("Vertex"))
