@@ -1,4 +1,4 @@
-﻿using m0.Foundation;
+using m0.Foundation;
 using m0.Graph;
 using m0.UIWpf.Commands;
 using m0.ZeroUML;
@@ -309,6 +309,8 @@ namespace m0.UIWpf.Visualisers
             {
                 isDisposed = true;
 
+                this.SizeChanged -= FormVisualiser_SizeChanged;
+
                 VisualiserHelper.Dispose();
             }
         }
@@ -322,6 +324,8 @@ namespace m0.UIWpf.Visualisers
             VisualiserHelper.ForceVertexChangeOff = true;
 
             //ExecutionFlowHelper.
+
+            this.SizeChanged -= FormVisualiser_SizeChanged;
 
             VisualiserHelper.DisposeAllChildVisualisersExceptWrap();
 
@@ -431,13 +435,10 @@ namespace m0.UIWpf.Visualisers
 
         protected void CorrectWidth(TabInfo i)
         {
-            if (i.WidthCorrectionDone)
-                return;
-
             if (i.ControlInfos.Count() == 0)
                 return;
 
-            if (!HasTabs)
+            if (!HasTabs && !i.WidthCorrectionDone)
                 this.UpdateLayout();
 
            if (i.ControlInfos.First().Value.MetaControl.ActualWidth == 0)
@@ -542,16 +543,14 @@ namespace m0.UIWpf.Visualisers
                     t.Value.TabItem = i;
                     i.Tag = t.Value;
 
-                    if(MetaOnLeft)
-                        i.SizeChanged += tabItem_SizeChanged;
-                        //i.RequestBringIntoView += tabItem_SizeChanged;
-                            
-
                     i.Content = CreateColumnedContent();
                 }
             }
             else
                 Content = CreateColumnedContent();
+
+            if (MetaOnLeft)
+                this.SizeChanged += FormVisualiser_SizeChanged;
 
            // Content = new Button();
         }
@@ -561,12 +560,13 @@ namespace m0.UIWpf.Visualisers
             TabControlSelectedItem = (TabItem)TabControl.SelectedItem;
         }
 
-        private void tabItem_SizeChanged(object sender, EventArgs e)
+        private void FormVisualiser_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            TabItem i = (TabItem)sender;
-            TabInfo t = (TabInfo)i.Tag;
+            if (TabList == null)
+                return;
 
-            CorrectWidth(t);
+            foreach (TabInfo tabInfo in TabList.Values)
+                CorrectWidth(tabInfo);
         }
 
         protected Panel GetUIPlace(string group,string section, ControlInfo ci)
