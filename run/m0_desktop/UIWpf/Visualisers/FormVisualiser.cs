@@ -77,6 +77,8 @@ namespace m0.UIWpf.Visualisers
         double metaVsDataSeparator = 4;
         double controlLineVsControlLineSeparator = 4;
 
+        double lastCorrectedWidth = 0;
+
 
         TabItem TabControlSelectedItem;
 
@@ -240,13 +242,11 @@ namespace m0.UIWpf.Visualisers
 
         }
 
-        private void PreFillForm()
+        private void PreFillForm(IVertex metaForForm)
         {
             TabList = new Dictionary<string, TabInfo>();
 
             IVertex basTo = Vertex.Get(false, @"BaseEdge:\To:");
-
-            IVertex metaForForm = getMetaForForm();
 
             List<IEdge> childs = new List<IEdge>();            
 
@@ -363,7 +363,7 @@ namespace m0.UIWpf.Visualisers
 
                 IVertex metaForForm = getMetaForForm();
 
-                PreFillForm();
+                PreFillForm(metaForForm);
 
                 InitializeControlContent();
 
@@ -558,15 +558,35 @@ namespace m0.UIWpf.Visualisers
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             TabControlSelectedItem = (TabItem)TabControl.SelectedItem;
+
+            if (MetaOnLeft && TabControlSelectedItem != null && TabControlSelectedItem.Tag is TabInfo tabInfo)
+                CorrectWidth(tabInfo);
         }
 
         private void FormVisualiser_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            if (!e.WidthChanged)
+                return;
+
             if (TabList == null)
                 return;
 
-            foreach (TabInfo tabInfo in TabList.Values)
-                CorrectWidth(tabInfo);
+            if (this.ActualWidth == lastCorrectedWidth)
+                return;
+
+            lastCorrectedWidth = this.ActualWidth;
+
+            if (HasTabs)
+            {
+                TabInfo activeTab = getActiveTabInfo();
+                if (activeTab != null)
+                    CorrectWidth(activeTab);
+            }
+            else
+            {
+                if (TabList.ContainsKey(""))
+                    CorrectWidth(TabList[""]);
+            }
         }
 
         protected Panel GetUIPlace(string group,string section, ControlInfo ci)
