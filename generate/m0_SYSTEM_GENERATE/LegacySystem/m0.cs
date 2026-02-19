@@ -3387,9 +3387,15 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\VertexType"));
 
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\HasSelectedEdges\SelectedEdges").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$Section"), HasBaseEdge_BaseEdge_section);
+
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\HasSelectedEdges\ShowSelectedEdgesBaseEdge").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Boolean"));
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\HasSelectedEdges\ShowSelectedEdgesBaseEdge").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$Section"), HasBaseEdge_BaseEdge_section);
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\HasFilter\FilterQuery").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
@@ -4078,14 +4084,54 @@ namespace m0
                 "Class:CodeView{Attribute:ContentQuery{$MinCardinality:0,$MaxCardinality:1},Attribute:FontSize{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:12,MinValue:1,MaxValue:40,$DisplayLarger:},Association:FormalTextLanguageProcessing{$MinCardinality:1,$MaxCardinality:1}}" +
                 "}");
 
+            IVertex View_section;
+            IVertex Nesting_section;
+            IVertex Layout_section;
+            IVertex Style_section;
+            IVertex Content_section;
+
 
             // UXItem [EXTENSION]
 
             smzu.Get(false, @"UXItem\UXTemplate").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\UX\UXTemplate"));
+            
+            //
+
+            View_section = smzu.Get(false, @"UXItem\Scale").AddVertex(sm.Get(false, @"?$Section"), "View");
+            smzu.Get(false, @"UXItem\Size").AddEdge(sm.Get(false, @"?$Section"), View_section);
+
+            Layout_section = smzu.Get(false, @"UXItem\Position").AddVertex(sm.Get(false, @"?$Section"), "Layout");
+            smzu.Get(false, @"UXItem\Layout").AddEdge(sm.Get(false, @"?$Section"), Layout_section);
+            smzu.Get(false, @"UXItem\Gap").AddEdge(sm.Get(false, @"?$Section"), Layout_section);
+
+            Style_section = smzu.Get(false, @"UXItem\BackgroundColor").AddVertex(sm.Get(false, @"?$Section"), "Style");
+            smzu.Get(false, @"UXItem\ForegroundColor").AddEdge(sm.Get(false, @"?$Section"), Style_section);
+            smzu.Get(false, @"UXItem\BorderColor").AddEdge(sm.Get(false, @"?$Section"), Style_section);
+            smzu.Get(false, @"UXItem\BorderSize").AddEdge(sm.Get(false, @"?$Section"), Style_section);
+
+            Content_section = smzu.Get(false, @"UXItem\Decorator").AddVertex(sm.Get(false, @"?$Section"), "Content");
+            smzu.Get(false, @"UXItem\VolatileItem").AddEdge(sm.Get(false, @"?$Section"), Content_section);
+
+            //
+
+            smzu.Get(false, @"UXItem\DesignMode").AddEdge(sm.Get(false, @"?$Section"), HasBaseEdge_BaseEdge_section);
+            smzu.Get(false, @"UXItem\UXTemplate").AddEdge(sm.Get(false, @"?$Section"), HasBaseEdge_BaseEdge_section);
+
+            // Item [EXTENSION]
+
+            smzu.Get(false, @"Item\Item").AddEdge(sm.Get(false, @"?$Section"), Content_section);
 
             // UXContainer [EXTENSION]
 
             smzu.Get(false, @"UXContainer\NewItemUXTemplate").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\UX\UXTemplate"));
+
+            //
+
+            smzu.Get(false, @"UXContainer\NewItemUXTemplate").AddEdge(sm.Get(false, @"?$Section"), HasBaseEdge_BaseEdge_section);
+            Nesting_section = smzu.Get(false, @"UXContainer\IsExpanded").AddVertex(sm.Get(false, @"?$Section"), "Nesting");
+            smzu.Get(false, @"UXContainer\CollapsedSize").AddEdge(sm.Get(false, @"?$Section"), Nesting_section);
+            smzu.Get(false, @"UXContainer\ExpandedSize").AddEdge(sm.Get(false, @"?$Section"), Nesting_section);
+            smzu.Get(false, @"UXContainer\SubItemsNotVisible").AddEdge(sm.Get(false, @"?$Section"), Nesting_section);
 
             // enums
 
@@ -4299,7 +4345,6 @@ namespace m0
                 "Class:Tree," +
                 "Class:Graph{Attribute:VisualiserCircleSize{$MinCardinality:1,$MaxCardinality:1},Attribute:NumberOfCircles{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd:},Attribute:ShowOutEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowInEdges{$MinCardinality:1,$MaxCardinality:1},Attribute:FastMode{$MinCardinality:1,$MaxCardinality:1},Attribute:MetaLabels{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:Class,Class:String,Class:StringView,Class:Vertex,Class:Edge,Class:Integer,Class:Decimal,Class:Float,Class:Boolean,Class:ListAndEnum,Class:Debug," +
-                "Class:Diagram{Attribute:SizeX{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd:},Attribute:SizeY{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd},Attribute:Item{$MinCardinality:0,$MaxCardinality:-1,$Hide:0},Association:CreationPool{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:Wrap," +
                 "Class:List{Attribute:IsMetaRightAlign{$MinCardinality:1,$MaxCardinality:1},Attribute:IsAllVisualisersEdit{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowMeta{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Association:GridStyle{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:Set2D{Attribute:CanEdit{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ConnectPoints{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowArrowLines{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ScaleLinesDensity{$MinCardinality:1,$MaxCardinality:1,MinValue:1,MaxValue:5,$DefaultValue:1},Attribute:VerticalAxisMax{$MinCardinality:1,$MaxCardinality:1},Attribute:VerticalAxisMin{$MinCardinality:1,$MaxCardinality:1},Attribute:HorizontalAxisMin{$MinCardinality:1,$MaxCardinality:1},Attribute:HorizontalAxisMax{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowToolbarNames{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False}}," +
@@ -4485,31 +4530,6 @@ namespace m0
             sm.Get(false, @"Visualiser\Debug").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
             sm.Get(false, @"Visualiser\Debug").AddEdge(sm.Get(false, @"Visualiser\BaseEdgeTarget"), sm.Get(false, @"Visualiser\BaseEdgeTarget\Any"));
 
-            sm.Get(false, @"Visualiser\Diagram").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\UX\UXItem"));
-            sm.Get(false, @"Visualiser\Diagram").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\HasSelectedEdges"));
-            sm.Get(false, @"Visualiser\Diagram").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
-            sm.Get(false, @"Visualiser\Diagram").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.UIWpf.Visualisers.Diagram.Diagram, m0_desktop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            sm.Get(false, @"Visualiser\Diagram\Item").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"?DiagramItemBase"));
-            sm.Get(false, @"Visualiser\Diagram\SizeX").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"?Integer"));
-            sm.Get(false, @"Visualiser\Diagram\SizeX").AddVertex(sm.Get(false, @"?$DefaultValue"), 1000);
-            sm.Get(false, @"Visualiser\Diagram\SizeX").AddVertex(sm.Get(false, @"?MinValue"), 0);
-            sm.Get(false, @"Visualiser\Diagram\SizeX").AddVertex(sm.Get(false, @"?MaxValue"), 4000);
-            sm.Get(false, @"Visualiser\Diagram\SizeY").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"?Integer"));
-            sm.Get(false, @"Visualiser\Diagram\SizeY").AddVertex(sm.Get(false, @"?$DefaultValue"), 1000);
-            sm.Get(false, @"Visualiser\Diagram\SizeY").AddVertex(sm.Get(false, @"?MinValue"), 0);
-            sm.Get(false, @"Visualiser\Diagram\SizeY").AddVertex(sm.Get(false, @"?MaxValue"), 4000);
-            sm.Get(false, @"Visualiser\Diagram\CreationPool").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\VertexType"));
-            sm.Get(false, @"Visualiser\Diagram").AddEdge(sm.Get(false, "ZeroUML?$DefaultOpenVisualiser"), sm.Get(false, @"Visualiser\Diagram"));
-
-            IVertex diagramGeneralGroup = sm.Get(false, @"Visualiser\Diagram").AddVertex(sm.Get(false, @"?$Group"), "General");
-            sm.Get(false, @"Visualiser\Diagram\CreationPool").AddEdge(sm.Get(false, @"?$Group"), diagramGeneralGroup);
-
-            //IVertex diagramDetailsGroup = sm.Get(false, @"Visualiser\Diagram\Scale").AddVertex(sm.Get(false, @"?$Group"), "Details");
-            IVertex diagramDetailsGroup = sm.Get(false, @"Visualiser\Diagram\SizeX").AddVertex(sm.Get(false, @"?$Group"), "Details");
-            sm.Get(false, @"Visualiser\Diagram\SizeY").AddEdge(sm.Get(false, @"?$Group"), diagramDetailsGroup);
-            sm.Get(false, @"Visualiser\Diagram\SelectedEdges").AddEdge(sm.Get(false, @"?$Group"), diagramDetailsGroup);
-
-            sm.Get(false, @"Visualiser\Diagram").AddEdge(sm.Get(false, @"Visualiser\BaseEdgeTarget"), sm.Get(false, @"Visualiser\BaseEdgeTarget\Specyfic"));
 
             sm.Get(false, @"Visualiser\Set2D").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\UX\UXItem"));
             sm.Get(false, @"Visualiser\Set2D").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\HasSelectedEdges"));
