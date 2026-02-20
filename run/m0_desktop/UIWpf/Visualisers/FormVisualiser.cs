@@ -78,6 +78,7 @@ namespace m0.UIWpf.Visualisers
         double controlLineVsControlLineSeparator = 4;
 
         double lastCorrectedWidth = 0;
+        bool correctWidthPending = false;
 
 
         TabItem TabControlSelectedItem;
@@ -310,6 +311,7 @@ namespace m0.UIWpf.Visualisers
                 isDisposed = true;
 
                 this.SizeChanged -= FormVisualiser_SizeChanged;
+                correctWidthPending = false;
 
                 VisualiserHelper.Dispose();
             }
@@ -326,6 +328,7 @@ namespace m0.UIWpf.Visualisers
             //ExecutionFlowHelper.
 
             this.SizeChanged -= FormVisualiser_SizeChanged;
+            correctWidthPending = false;
 
             VisualiserHelper.DisposeAllChildVisualisersExceptWrap();
 
@@ -425,7 +428,12 @@ namespace m0.UIWpf.Visualisers
                 
                 if (MetaOnLeft){
                     if (!HasTabs && TabList.ContainsKey(""))
+                    {
+                        this.SizeChanged -= FormVisualiser_SizeChanged;
                         CorrectWidth(TabList[""]);
+                        lastCorrectedWidth = this.ActualWidth;
+                        this.SizeChanged += FormVisualiser_SizeChanged;
+                    }
                 }
                 
             }
@@ -433,12 +441,12 @@ namespace m0.UIWpf.Visualisers
             VisualiserHelper.ForceVertexChangeOff = false;
         }
 
-        protected void CorrectWidth(TabInfo i)
+        protected void CorrectWidth(TabInfo i, bool allowUpdateLayout = true)
         {
             if (i.ControlInfos.Count() == 0)
                 return;
 
-            if (!HasTabs && !i.WidthCorrectionDone)
+            if (allowUpdateLayout && !HasTabs && !i.WidthCorrectionDone)
                 this.UpdateLayout();
 
            if (i.ControlInfos.First().Value.MetaControl.ActualWidth == 0)
@@ -447,22 +455,25 @@ namespace m0.UIWpf.Visualisers
             i.WidthCorrectionDone = true;
            
 
-            double oneColumnWidth = ((this.ActualWidth - marginOnRight) / ColumnNumber) - marginBetweenColumns;
+            double oneColumnWidth = Math.Floor(((this.ActualWidth - marginOnRight) / ColumnNumber) - marginBetweenColumns);
                       
                     double[] maxMetaWidthInColumn = new double[ColumnNumber];
 
                     foreach (ControlInfo ci in i.ControlInfos.Values)
                         if (ci.MetaControl.ActualWidth > maxMetaWidthInColumn[ci.Column])
-                            maxMetaWidthInColumn[ci.Column] = ci.MetaControl.ActualWidth;
+                            maxMetaWidthInColumn[ci.Column] = Math.Floor(ci.MetaControl.ActualWidth);
 
-            
+                    for (int c = 0; c < ColumnNumber; c++)
+                        if (maxMetaWidthInColumn[c] > oneColumnWidth - metaVsDataSeparator - 5)
+                            maxMetaWidthInColumn[c] = Math.Floor(oneColumnWidth * 0.5);
+
             if(i.Sections.Count()==0)
             foreach (KeyValuePair<IVertex, ControlInfo> ci in i.ControlInfos) // if there are no sections
                     {                       
                         ci.Value.MetaControl.Width = maxMetaWidthInColumn[ci.Value.Column];
                         ci.Value.GapControl.Width = 0;
 
-                    double ci_Value_DataControl_Width_to_be = oneColumnWidth - maxMetaWidthInColumn[ci.Value.Column] - metaVsDataSeparator - 5;
+                    double ci_Value_DataControl_Width_to_be = Math.Floor(oneColumnWidth - maxMetaWidthInColumn[ci.Value.Column] - metaVsDataSeparator - 5);
 
                     if (ci_Value_DataControl_Width_to_be < 0)
                         ci_Value_DataControl_Width_to_be = 0;
@@ -477,12 +488,12 @@ namespace m0.UIWpf.Visualisers
                     if (getSection(ci.Key) == null)
                     {
                         ci.Value.GapControl.Width = (sectionControlBorderWidth / 2) - 2;
-                        ci.Value.DataControl.Width = Math.Abs(oneColumnWidth - maxMetaWidthInColumn[ci.Value.Column] - metaVsDataSeparator - 9 - sectionControlBorderWidth / 2);
+                        ci.Value.DataControl.Width = Math.Max(0, Math.Floor(oneColumnWidth - maxMetaWidthInColumn[ci.Value.Column] - metaVsDataSeparator - 9 - sectionControlBorderWidth / 2));
                     }
                     else
                     {
                         ci.Value.GapControl.Width = 0;
-                        ci.Value.DataControl.Width = Math.Abs(oneColumnWidth - maxMetaWidthInColumn[ci.Value.Column] - metaVsDataSeparator - sectionControlBorderWidth);
+                        ci.Value.DataControl.Width = Math.Max(0, Math.Floor(oneColumnWidth - maxMetaWidthInColumn[ci.Value.Column] - metaVsDataSeparator - sectionControlBorderWidth));
                     }
                 }
         }
@@ -560,7 +571,12 @@ namespace m0.UIWpf.Visualisers
             TabControlSelectedItem = (TabItem)TabControl.SelectedItem;
 
             if (MetaOnLeft && TabControlSelectedItem != null && TabControlSelectedItem.Tag is TabInfo tabInfo)
+            {
+                this.SizeChanged -= FormVisualiser_SizeChanged;
                 CorrectWidth(tabInfo);
+                lastCorrectedWidth = this.ActualWidth;
+                this.SizeChanged += FormVisualiser_SizeChanged;
+            }
         }
 
         private void FormVisualiser_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -571,21 +587,48 @@ namespace m0.UIWpf.Visualisers
             if (TabList == null)
                 return;
 
-            if (this.ActualWidth == lastCorrectedWidth)
+            if (!correctWidthPending)
+            {
+                correctWidthPending = true;
+                this.Dispatcher.BeginInvoke(
+                    new Action(PerformDeferredWidthCorrection),
+                    System.Windows.Threading.DispatcherPriority.Input);
+            }
+        }
+
+        private void PerformDeferredWidthCorrection()
+        {
+            correctWidthPending = false;
+
+            if (isDisposed || TabList == null)
+                return;
+
+            if (this.ActualWidth < 1)
+                return;
+
+            if (Math.Abs(this.ActualWidth - lastCorrectedWidth) < 3)
                 return;
 
             lastCorrectedWidth = this.ActualWidth;
 
-            if (HasTabs)
+            this.SizeChanged -= FormVisualiser_SizeChanged;
+            try
             {
-                TabInfo activeTab = getActiveTabInfo();
-                if (activeTab != null)
-                    CorrectWidth(activeTab);
+                if (HasTabs)
+                {
+                    TabInfo activeTab = getActiveTabInfo();
+                    if (activeTab != null)
+                        CorrectWidth(activeTab, false);
+                }
+                else
+                {
+                    if (TabList.ContainsKey(""))
+                        CorrectWidth(TabList[""], false);
+                }
             }
-            else
+            finally
             {
-                if (TabList.ContainsKey(""))
-                    CorrectWidth(TabList[""]);
+                this.SizeChanged += FormVisualiser_SizeChanged;
             }
         }
 
