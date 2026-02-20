@@ -57,8 +57,7 @@ namespace m0_COMPOSER.UserCommands
 
 
         static IVertex musicSpaceMeta = r.Get(false, @"System\Lib\Music\MusicSpace");
-        static IVertex songMeta = r.Get(false, @"System\Lib\Music\Song");
-        static IVertex creationPoolMeta = r.Get(false, @"System\Meta\Visualiser\Diagram\CreationPool");
+        static IVertex songMeta = r.Get(false, @"System\Lib\Music\Song");        
 
         static IVertex classMeta = r.Get(false, @"System\Meta\ZeroUML\Class");
         static IVertex linkMeta = r.Get(false, @"System\Meta\Base\Link");
@@ -100,9 +99,7 @@ namespace m0_COMPOSER.UserCommands
             ms.AddEdge(linkMeta, MinusZero.Instance.root.Get(false, @"System\Lib\Music\Instrument"));
 
             ms.AddEdge(linkMeta, MinusZero.Instance.root.Get(false, @"System\Lib\Music\Chord"));
-
-
-            GraphUtil.CreateOrReplaceEdge(uxcontainer, creationPoolMeta, ms);
+            
 
             IVertex song = VertexOperations.AddInstance(ms, songMeta);
 

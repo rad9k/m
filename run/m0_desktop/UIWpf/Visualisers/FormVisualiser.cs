@@ -78,7 +78,6 @@ namespace m0.UIWpf.Visualisers
         double controlLineVsControlLineSeparator = 4;
 
         double lastCorrectedWidth = 0;
-        bool correctWidthPending = false;
 
 
         TabItem TabControlSelectedItem;
@@ -311,7 +310,6 @@ namespace m0.UIWpf.Visualisers
                 isDisposed = true;
 
                 this.SizeChanged -= FormVisualiser_SizeChanged;
-                correctWidthPending = false;
 
                 VisualiserHelper.Dispose();
             }
@@ -328,7 +326,6 @@ namespace m0.UIWpf.Visualisers
             //ExecutionFlowHelper.
 
             this.SizeChanged -= FormVisualiser_SizeChanged;
-            correctWidthPending = false;
 
             VisualiserHelper.DisposeAllChildVisualisersExceptWrap();
 
@@ -585,22 +582,6 @@ namespace m0.UIWpf.Visualisers
                 return;
 
             if (TabList == null)
-                return;
-
-            if (!correctWidthPending)
-            {
-                correctWidthPending = true;
-                this.Dispatcher.BeginInvoke(
-                    new Action(PerformDeferredWidthCorrection),
-                    System.Windows.Threading.DispatcherPriority.Input);
-            }
-        }
-
-        private void PerformDeferredWidthCorrection()
-        {
-            correctWidthPending = false;
-
-            if (isDisposed || TabList == null)
                 return;
 
             if (this.ActualWidth < 1)
