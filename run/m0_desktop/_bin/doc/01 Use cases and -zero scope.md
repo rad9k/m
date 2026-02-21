@@ -1,6 +1,6 @@
 # Use cases and -zero scope
 
-The -zero is a complete graph database / back-end execution platform, where you can express your system design and implementation by models and diagrams, graph programing languages or any combination of both.
+The -zero is a complete graph database / back-end execution platform, where you can express your system design and implementation by models and diagrams, graph programing languages or any combination of them.
 
 > The -zero platform is built on Meta-Vertex Edge Graph (MVEG), a core data structure providing extreme simplicity with unlimited semantic expressivity and coherent behavior across all meta-levels. Based on MVEG Graph Database, the platform unifies representations of the underlying graph as diagrams (visual representation with rich primitives and nested views) and text languages (built-in and custom with language algebra supporting text languages inheritance and mixing). Graph can also be executed by the Graph Virtual Machine. GVM operates at high abstraction levels where code runs alongside data and meta-models with no impedance mismatch, achieving full structural homoiconicity - code and data share identical structures, enabling reflection, auto-modification, and metaprogramming as core features rather than extensions.
 
