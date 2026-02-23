@@ -8,55 +8,12 @@ using m0.Graph;
 using m0.ZeroTypes;
 using m0.Util;
 using m0.UIWpf.Dialog;
+using m0.UIWpf.Commands;
 using m0.User.Process.UX;
 using m0.ZeroTypes.UX;
 
 namespace m0.UIWpf.Commands
 {
-    class BaseSelectedSynchronisedHelper
-    {
-        IVertex baseSynchronisedVertex;
-        IVertex selectSynchronisedVisualiser;
-
-        public BaseSelectedSynchronisedHelper(IVertex BaseSynchronisedVertex, IVertex SelectSynchronisedVisualiser)
-        {
-            this.baseSynchronisedVertex = BaseSynchronisedVertex;
-            this.selectSynchronisedVisualiser = SelectSynchronisedVisualiser;
-        }
-
-        public void SynchronisedVisualiserChange(object sender, VertexChangeEventArgs e){
-            if (
-                ((sender == selectSynchronisedVisualiser) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "SelectedEdges")))
-            ||
-            (sender is IVertex && GraphUtil.FindEdgeByToVertex(selectSynchronisedVisualiser.GetAll(false, @"SelectedEdges:\"),(IVertex)sender)!=null && ((e.Type == VertexChangeType.EdgeAdded) || (e.Type == VertexChangeType.EdgeRemoved)))
-             ||
-            (sender is IVertex && selectSynchronisedVisualiser.Get(false, @"SelectedEdges:")==(IVertex)sender && ((e.Type == VertexChangeType.EdgeAdded) || (e.Type == VertexChangeType.EdgeRemoved)))
-                ){
-                    if (baseSynchronisedVertex.Get(false, @"BaseEdge:\To:") == null) // if Disposed
-                    {
-                  //      PlatformClass.RemoveVertexChangeListeners(selectSynchronisedVisualiser, new VertexChange(this.SynchronisedVisualiserChange));
-                    }
-                    else
-                    {
-                        IVertex selEdgesFirst = selectSynchronisedVisualiser.Get(false, @"SelectedEdges:\");
-
-                        if (selEdgesFirst != null)
-                        {
-                            IVertex firstSelectedVertexEdgeTo = selEdgesFirst.Get(false, "To:");
-
-                            if (firstSelectedVertexEdgeTo != null)
-                                GraphUtil.ReplaceEdge(baseSynchronisedVertex.Get(false, "BaseEdge:"), "To", firstSelectedVertexEdgeTo);
-
-                            IVertex firstSelectedVertexEdgeMeta = selEdgesFirst.Get(false, "Meta:");
-
-                            if (firstSelectedVertexEdgeMeta != null)
-                                GraphUtil.ReplaceEdge(baseSynchronisedVertex.Get(false, "BaseEdge:"), "Meta", firstSelectedVertexEdgeMeta);
-                        }                        
-                    }
-            }                
-        }
-    }
-
     public class BaseCommands
     {
         static IVertex ClipboardEntry_meta = MinusZero.Instance.Root.Get(false, @"System\Meta\ZeroTypes\User\ClipboardEntry");
@@ -401,17 +358,17 @@ namespace m0.UIWpf.Commands
             ////////////////////////////////////////
         }
 
-        public static void OpenVisualiserSelectedBase(IVertex baseVertex, IVertex inputVertex)
+        public static void OpenVisualiserFirstSelectedEdgeSynchronised(IVertex baseVertex, IVertex inputVertex)
         {
             IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, baseVertex.Get(false, "Meta:"), baseVertex.Get(false, "To:"));
 
             IPlatformClass pc = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex.Get(false, "VisualiserClass:"), baseEdgeVertex);
             
-            IVertex synchronisedVisualiser = inputVertex.Get(false, "SynchronisedVisualiser:");
+            IVertex synchroniseMasterVisualiser = inputVertex.Get(false, "SynchroniseMasterVisualiser:");
 
-            BaseSelectedSynchronisedHelper helper = new BaseSelectedSynchronisedHelper(pc.Vertex, synchronisedVisualiser);            
+            FirstSelectedEdgeSynchronisedHelper helper = new FirstSelectedEdgeSynchronisedHelper(pc.Vertex, synchroniseMasterVisualiser);            
             
-            IVertex firstSelectedVertex = synchronisedVisualiser.Get(false, @"SelectedEdges:\");
+            IVertex firstSelectedVertex = synchroniseMasterVisualiser.Get(false, @"SelectedEdges:\");
 
             if (firstSelectedVertex != null)
                 GraphUtil.ReplaceEdge(pc.Vertex, "BaseEdge", firstSelectedVertex);
@@ -423,7 +380,7 @@ namespace m0.UIWpf.Commands
         {
             IPlatformClass pc = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex.Get(false, "VisualiserClass:"), baseVertex);            
 
-            GraphUtil.ReplaceEdge(pc.Vertex, "SelectedEdges", inputVertex.Get(false, @"SynchronisedVisualiser:\SelectedEdges:"));
+            GraphUtil.ReplaceEdge(pc.Vertex, "SelectedEdges", inputVertex.Get(false, @"SynchroniseMasterVisualiser:\SelectedEdges:"));
 
             MinusZero.Instance.UserInteraction.ShowContent(pc); 
         }

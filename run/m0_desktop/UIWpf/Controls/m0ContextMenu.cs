@@ -15,7 +15,7 @@ namespace m0.UIWpf.Controls
 {
     public class m0ContextMenu : ContextMenu
     {
-        IPlatformClass PlatformClass;
+        IPlatformClass PlatformClassOfVisualiserMenuHasBeenOpenedOn;
         IVertex root;
         public IVertex EdgeVertex;
 
@@ -23,7 +23,7 @@ namespace m0.UIWpf.Controls
         {
             root = MinusZero.Instance.Root;
 
-            PlatformClass = pc;                        
+            PlatformClassOfVisualiserMenuHasBeenOpenedOn = pc;                        
 
             this.Opened += m0ContextMenu_Opened;
         }
@@ -67,10 +67,10 @@ namespace m0.UIWpf.Controls
         {
             EdgeVertex=null;
 
-            if (PlatformClass is IHasLocalizableEdges && PlatformClass is IInputElement)
+            if (PlatformClassOfVisualiserMenuHasBeenOpenedOn is IHasLocalizableEdges && PlatformClassOfVisualiserMenuHasBeenOpenedOn is IInputElement)
             {
-                Point p = Mouse.GetPosition((IInputElement)PlatformClass);
-                EdgeVertex = ((IHasLocalizableEdges)PlatformClass).GetEdgeByPoint(p);
+                Point p = Mouse.GetPosition((IInputElement)PlatformClassOfVisualiserMenuHasBeenOpenedOn);
+                EdgeVertex = ((IHasLocalizableEdges)PlatformClassOfVisualiserMenuHasBeenOpenedOn).GetEdgeByPoint(p);
                 
 
                 //EnableMenuItems();
@@ -438,9 +438,9 @@ namespace m0.UIWpf.Controls
 
         void OnCut(object sender, System.Windows.RoutedEventArgs e)
         {
-            BaseCommands.Cut(this.EdgeVertex, PlatformClass.Vertex);
+            BaseCommands.Cut(this.EdgeVertex, PlatformClassOfVisualiserMenuHasBeenOpenedOn.Vertex);
 
-            FromCopyPlatformClass = PlatformClass;
+            FromCopyPlatformClass = PlatformClassOfVisualiserMenuHasBeenOpenedOn;
         }
 
 
@@ -448,14 +448,14 @@ namespace m0.UIWpf.Controls
 
         void OnCopy(object sender, System.Windows.RoutedEventArgs e)
         {
-            BaseCommands.Copy(this.EdgeVertex, PlatformClass.Vertex);
+            BaseCommands.Copy(this.EdgeVertex, PlatformClassOfVisualiserMenuHasBeenOpenedOn.Vertex);
 
-            FromCopyPlatformClass = PlatformClass;
+            FromCopyPlatformClass = PlatformClassOfVisualiserMenuHasBeenOpenedOn;
         }
 
         void OnPaste(object sender, System.Windows.RoutedEventArgs e)
         {
-            BaseCommands.Paste(this.EdgeVertex, PlatformClass.Vertex);
+            BaseCommands.Paste(this.EdgeVertex, PlatformClassOfVisualiserMenuHasBeenOpenedOn.Vertex);
 
             if (FromCopyPlatformClass is IHasSelectableEdges)
                 ((IHasSelectableEdges)FromCopyPlatformClass).UnselectAllSelectedEdges();
@@ -463,10 +463,10 @@ namespace m0.UIWpf.Controls
 
         void OnDelete(object sender, System.Windows.RoutedEventArgs e)
         {
-            BaseCommands.Delete(this.EdgeVertex, PlatformClass.Vertex);
+            BaseCommands.Delete(this.EdgeVertex, PlatformClassOfVisualiserMenuHasBeenOpenedOn.Vertex);
 
-            if (PlatformClass is IHasSelectableEdges)
-                ((IHasSelectableEdges)PlatformClass).UnselectAllSelectedEdges();
+            if (PlatformClassOfVisualiserMenuHasBeenOpenedOn is IHasSelectableEdges)
+                ((IHasSelectableEdges)PlatformClassOfVisualiserMenuHasBeenOpenedOn).UnselectAllSelectedEdges();
         }
 
         void OnQuery(object sender, System.Windows.RoutedEventArgs e)
@@ -506,9 +506,9 @@ namespace m0.UIWpf.Controls
             IVertex root = MinusZero.Instance.Root;
 
             input.AddEdge(root.Get(false, @"System\Meta\UserCommands\VisualiserClass"), ((IVertex)((MenuItem)sender).Tag));
-            input.AddEdge(root.Get(false, @"System\Meta\UserCommands\SynchronisedVisualiser"), PlatformClass.Vertex);
+            input.AddEdge(root.Get(false, @"System\Meta\UserCommands\SynchronisedVisualiser"), PlatformClassOfVisualiserMenuHasBeenOpenedOn.Vertex);
 
-            BaseCommands.OpenVisualiserSelectedBase(this.EdgeVertex, input);
+            BaseCommands.OpenVisualiserFirstSelectedEdgeSynchronised(this.EdgeVertex, input);
         }
 
         void OnOpenVisualiserSelectedSelected(object sender, System.Windows.RoutedEventArgs e)
@@ -518,7 +518,7 @@ namespace m0.UIWpf.Controls
             IVertex root=MinusZero.Instance.Root;
 
             input.AddEdge(root.Get(false, @"System\Meta\Commands\VisualiserClass"), ((IVertex)((MenuItem)sender).Tag));
-            input.AddEdge(root.Get(false, @"System\Meta\Commands\SynchronisedVisualiser"), PlatformClass.Vertex);
+            input.AddEdge(root.Get(false, @"System\Meta\Commands\SynchronisedVisualiser"), PlatformClassOfVisualiserMenuHasBeenOpenedOn.Vertex);
 
             BaseCommands.OpenVisualiserSelectedSelected(this.EdgeVertex, input);
         }
