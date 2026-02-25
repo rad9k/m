@@ -375,9 +375,27 @@ namespace m0.UIWpf.Commands
 
         public static void OpenVisualiserSelectedSelected(IVertex baseVertex, IVertex inputVertex)
         {
-            IPlatformClass pc = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex.Get(false, "VisualiserClass:"), baseVertex);            
+            /*IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, baseVertex.Get(false, "Meta:"), baseVertex.Get(false, "To:"));
 
-            GraphUtil.ReplaceEdge(pc.Vertex, "SelectedEdges", inputVertex.Get(false, @"SynchroniseMasterVisualiser:\SelectedEdges:"));
+            IPlatformClass pc = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex.Get(false, "VisualiserClass:"), baseEdgeVertex);
+
+            IVertex masterVisualiser = inputVertex.Get(false, "MasterVisualiser:");
+
+            SellectedSelectedSynchronisedHelper helper = new SellectedSelectedSynchronisedHelper(masterVisualiser, pc.Vertex);
+
+            MinusZero.Instance.UserInteraction.ShowContent(pc);
+
+            helper.DoSynchronise();
+
+            return;
+            //*/
+
+            IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, baseVertex.Get(false, "Meta:"), baseVertex.Get(false, "To:"));
+
+            IPlatformClass pc = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex.Get(false, "VisualiserClass:"), baseEdgeVertex);
+
+
+            GraphUtil.ReplaceEdge(pc.Vertex, "SelectedEdges", inputVertex.Get(false, @"MasterVisualiser:\SelectedEdges:"));
 
             MinusZero.Instance.UserInteraction.ShowContent(pc); 
         }

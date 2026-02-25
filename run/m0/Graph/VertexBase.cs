@@ -159,25 +159,6 @@ namespace m0.Graph
             throw new NotImplementedException();
         }
 
-        public event VertexChange Change;
-
-        public virtual Delegate[] GetChangeDelegateInvocationList()
-        {
-            if (Change != null)
-                return Change.GetInvocationList();
-            else
-                return null;
-        }
-
-        protected void ChangeRemoveAllHandlers()
-        {
-            if(Change != null)
-                foreach (Delegate d in Change.GetInvocationList())
-                {
-                    Change -= (VertexChange)d;
-                }
-        }
-
         public bool CanFireChangeEvent = true;
 
         /*public virtual void FireChange(VertexChangeEventArgs e) {

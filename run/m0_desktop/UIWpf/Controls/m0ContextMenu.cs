@@ -343,6 +343,7 @@ namespace m0.UIWpf.Controls
                 OpenMetaVisualiser.Items.Add(v);
             }
 
+            /*
             /////////////////////// floating
 
             MenuItem OpenVisualiserFloating = createMenuItem("Open Floating Visualiser");
@@ -357,7 +358,7 @@ namespace m0.UIWpf.Controls
                 v.Click += OnOpenVisualiserFloating;
 
                 OpenVisualiserFloating.Items.Add(v);
-            }            
+            } */           
 
             /////////////////////// base synchronised
 
@@ -388,7 +389,7 @@ namespace m0.UIWpf.Controls
 
                 v.Tag = vis.To;
 
-                v.Click += OnOpenVisualiserSelectedSelected;
+                v.Click += OnOpenVisualiserSelectedSelectedSynchronised;
 
                 OpenVisualiserSelectedSelected.Items.Add(v);
             }
@@ -511,7 +512,7 @@ namespace m0.UIWpf.Controls
             BaseCommands.OpenVisualiserFirstSelectedEdgeSynchronised(this.EdgeVertex, input);
         }
 
-        void OnOpenVisualiserSelectedSelected(object sender, System.Windows.RoutedEventArgs e)
+        void OnOpenVisualiserSelectedSelectedSynchronised(object sender, System.Windows.RoutedEventArgs e)
         {            
             IVertex input = MinusZero.Instance.CreateTempVertex();
 

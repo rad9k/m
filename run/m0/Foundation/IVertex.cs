@@ -34,8 +34,6 @@ namespace m0.Foundation
 
         bool IsRoot { get; set; }        
 
-        Delegate[] GetChangeDelegateInvocationList();
-
         object Identifier { get; }
 
         object Value {get; set;}

@@ -525,8 +525,6 @@ namespace m0.Graph
 
             GraphUtil.Debug(this, DebugOperationEnum.Dispose);
 
-            ChangeRemoveAllHandlers();
-
             DeleteAllInEdges();
             DeleteAllMetaInEdges();
             DeleteAllEdges();

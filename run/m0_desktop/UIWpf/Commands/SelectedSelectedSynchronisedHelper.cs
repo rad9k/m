@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace m0.UIWpf.Commands
 {
-    public class FirstSelectedEdgeSynchronisedHelper
+    public class SellectedSelectedSynchronisedHelper
     {
         IVertex masterVisualiserVertex;
         IVertex detailVisualiserVertex;
@@ -15,7 +15,7 @@ namespace m0.UIWpf.Commands
         IEdge selectedEdgesVertex_Listener;
         IEdge detailVisuliserVertex_Listener;
 
-        public FirstSelectedEdgeSynchronisedHelper(IVertex masterVisualiserVertex, IVertex detailVisualiserVertex)
+        public SellectedSelectedSynchronisedHelper(IVertex masterVisualiserVertex, IVertex detailVisualiserVertex)
         {
             this.masterVisualiserVertex = masterVisualiserVertex;
             this.detailVisualiserVertex = detailVisualiserVertex;
@@ -29,10 +29,13 @@ namespace m0.UIWpf.Commands
         {
             selectedEdgesVertex_Listener = ExecutionFlowHelper.AddTriggerAndListener(selectedEdgesVertex, synchroniseMasterVisualiser_VertexChange);
 
-            detailVisuliserVertex_Listener = ExecutionFlowHelper.AddTriggerAndListener(detailVisualiserVertex,
+            IEdge detailVisualiserVertexIncomingEdge = detailVisualiserVertex.InEdges[0];
+
+            detailVisuliserVertex_Listener = ExecutionFlowHelper.AddTriggerAndListener(detailVisualiserVertexIncomingEdge.From,
                 new List<string> { },
                 new List<GraphChangeFilterEnum> {
-                         GraphChangeFilterEnum.OutputEdgeDisposed
+                        GraphChangeFilterEnum.OutputEdgeRemoved,
+                        GraphChangeFilterEnum.OutputEdgeDisposed
                 },
                 "SimpleDirectDisposeTrigger",
                 detailVisualiser_Dispose);
@@ -53,8 +56,6 @@ namespace m0.UIWpf.Commands
         public void DoSynchronise()
         {
             IVertex selectedEdgesVertex = GraphUtil.GetQueryOutFirst(masterVisualiserVertex, "SelectedEdges", null);
-
-            AddGraphChangeTrigger(selectedEdgesVertex);
 
             Synchronise(selectedEdgesVertex);
         }
