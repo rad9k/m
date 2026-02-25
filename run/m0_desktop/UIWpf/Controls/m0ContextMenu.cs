@@ -370,7 +370,7 @@ namespace m0.UIWpf.Controls
 
                 v.Tag = vis.To;
 
-                v.Click += OnOpenVisualiserSelectedBase;
+                v.Click += OnOpenVisualiserFirstSelectedEdge;
 
                 OpenVisualiserSelectedBase.Items.Add(v);
             }
@@ -499,14 +499,14 @@ namespace m0.UIWpf.Controls
             BaseCommands.OpenVisualiserFloating(this.EdgeVertex, ((IVertex)((MenuItem)sender).Tag));
         }
 
-        void OnOpenVisualiserSelectedBase(object sender, System.Windows.RoutedEventArgs e)
+        void OnOpenVisualiserFirstSelectedEdge(object sender, System.Windows.RoutedEventArgs e)
         {            
             IVertex input = MinusZero.Instance.CreateTempVertex();
 
             IVertex root = MinusZero.Instance.Root;
 
             input.AddEdge(root.Get(false, @"System\Meta\UserCommands\VisualiserClass"), ((IVertex)((MenuItem)sender).Tag));
-            input.AddEdge(root.Get(false, @"System\Meta\UserCommands\SynchronisedVisualiser"), PlatformClassOfVisualiserMenuHasBeenOpenedOn.Vertex);
+            input.AddEdge(root.Get(false, @"System\Meta\UserCommands\MasterVisualiser"), PlatformClassOfVisualiserMenuHasBeenOpenedOn.Vertex);
 
             BaseCommands.OpenVisualiserFirstSelectedEdgeSynchronised(this.EdgeVertex, input);
         }
@@ -518,7 +518,7 @@ namespace m0.UIWpf.Controls
             IVertex root=MinusZero.Instance.Root;
 
             input.AddEdge(root.Get(false, @"System\Meta\Commands\VisualiserClass"), ((IVertex)((MenuItem)sender).Tag));
-            input.AddEdge(root.Get(false, @"System\Meta\Commands\SynchronisedVisualiser"), PlatformClassOfVisualiserMenuHasBeenOpenedOn.Vertex);
+            input.AddEdge(root.Get(false, @"System\Meta\Commands\MasterVisualiser"), PlatformClassOfVisualiserMenuHasBeenOpenedOn.Vertex);
 
             BaseCommands.OpenVisualiserSelectedSelected(this.EdgeVertex, input);
         }

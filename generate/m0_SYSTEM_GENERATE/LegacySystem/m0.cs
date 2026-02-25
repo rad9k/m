@@ -5965,7 +5965,7 @@ namespace m0
         {
             IVertex sm = Root.Get(false, @"System\Meta");
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, sm, "{UserCommands{VisualiserClass,SynchroniseMasterVisualiser}}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, sm, "{UserCommands{VisualiserClass,MasterVisualiser}}");
 
             IVertex OnNewM0TStore_Vertex = AddFunction(sm.Get(false,"UserCommands"), "OnUserCommand", null, null, null, new TypeName[] { new TypeName("baseVertex", "VertexType", 1, 1) });
         }

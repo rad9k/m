@@ -4,74 +4,78 @@ using m0.Graph.ExecutionFlow;
 using m0.Util;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace m0.UIWpf.Commands
 {
     public class FirstSelectedEdgeSynchronisedHelper
     {
-        IVertex synchroniseMasterVisualiserVertex;
-        IVertex selectSynchronisedVisualiser;
+        IVertex masterVisualiserVertex;
+        IVertex detailVisualiserVertex;
 
-        public FirstSelectedEdgeSynchronisedHelper(IVertex synchroniseMaserVisualiserVertex, IVertex SelectSynchronisedVisualiserVertex)
+        IEdge selectedEdgesVertex_Listener;
+        IEdge detailVisuliserVertex_Listener;
+
+        public FirstSelectedEdgeSynchronisedHelper(IVertex masterVisualiserVertex, IVertex detailVisualiserVertex)
         {
-            this.synchroniseMasterVisualiserVertex = synchroniseMaserVisualiserVertex;
-            this.selectSynchronisedVisualiser = SelectSynchronisedVisualiserVertex;
+            this.masterVisualiserVertex = masterVisualiserVertex;
+            this.detailVisualiserVertex = detailVisualiserVertex;
 
-            AddGraphChangeTrigger();
+            IVertex selectedEdgesVertex = GraphUtil.GetQueryOutFirst(masterVisualiserVertex, "SelectedEdges", null);
+
+            AddGraphChangeTrigger(selectedEdgesVertex);
         }
 
-        void AddGraphChangeTrigger()
+        void AddGraphChangeTrigger(IVertex selectedEdgesVertex)
         {
-            ExecutionFlowHelper.AddTriggerAndListener(synchroniseMasterVisualiserVertex, synchroniseMasterVisualiser_VertexChange);
+            selectedEdgesVertex_Listener = ExecutionFlowHelper.AddTriggerAndListener(selectedEdgesVertex, synchroniseMasterVisualiser_VertexChange);
+
+            detailVisuliserVertex_Listener = ExecutionFlowHelper.AddTriggerAndListener(detailVisualiserVertex,
+                new List<string> { },
+                new List<GraphChangeFilterEnum> {
+                         GraphChangeFilterEnum.OutputEdgeDisposed
+                },
+                "SimpleDirectDisposeTrigger",
+                detailVisualiser_Dispose);
         }
 
-        protected virtual INoInEdgeInOutVertexVertex synchroniseMasterVisualiser_VertexChange(IExecution exe)
+        protected INoInEdgeInOutVertexVertex synchroniseMasterVisualiser_VertexChange(IExecution exe)
         {
             INoInEdgeInOutVertexVertex stack = exe.Stack;
 
-            if (ExecutionFlowHelper.IsEdgeAddedRemovedDiscardedFrom(stack, synchroniseMasterVisualiserVertex))
-            {
-                //IVertex base
-            }
+            IVertex selectedEdgesVertex = GraphUtil.GetQueryOutFirst(masterVisualiserVertex, "SelectedEdges", null);
+
+            if (ExecutionFlowHelper.IsEdgeAddedRemovedDiscardedFrom(stack, selectedEdgesVertex))
+                Synchronise(selectedEdgesVertex);
 
             return exe.Stack;
         }
 
-        public void SynchronisedVisualiserChange(object sender, VertexChangeEventArgs e)
+        public void DoSynchronise()
         {
-            if (
-                ((sender == selectSynchronisedVisualiser) && (e.Type == VertexChangeType.EdgeAdded) && (GeneralUtil.CompareStrings(e.Edge.Meta.Value, "SelectedEdges")))
-            ||
-            (sender is IVertex && GraphUtil.FindEdgeByToVertex(selectSynchronisedVisualiser.GetAll(false, @"SelectedEdges:\"), (IVertex)sender) != null && ((e.Type == VertexChangeType.EdgeAdded) || (e.Type == VertexChangeType.EdgeRemoved)))
-             ||
-            (sender is IVertex && selectSynchronisedVisualiser.Get(false, @"SelectedEdges:") == (IVertex)sender && ((e.Type == VertexChangeType.EdgeAdded) || (e.Type == VertexChangeType.EdgeRemoved)))
-                )
+            IVertex selectedEdgesVertex = GraphUtil.GetQueryOutFirst(masterVisualiserVertex, "SelectedEdges", null);
+
+            AddGraphChangeTrigger(selectedEdgesVertex);
+
+            Synchronise(selectedEdgesVertex);
+        }
+
+        void Synchronise(IVertex selectedEdgesVertex)
+        {
+            if (selectedEdgesVertex != null)
             {
-                if (synchroniseMasterVisualiserVertex.Get(false, @"BaseEdge:\To:") == null) // if Disposed
-                {
-                    //      PlatformClass.RemoveVertexChangeListeners(selectSynchronisedVisualiser, new VertexChange(this.SynchronisedVisualiserChange));
-                }
-                else
-                {
-                    IVertex selEdgesFirst = selectSynchronisedVisualiser.Get(false, @"SelectedEdges:\");
+                IVertex firstSelectedEdgeEdgeVertex = GraphUtil.GetQueryOutFirst(selectedEdgesVertex, "Edge", null);
 
-                    if (selEdgesFirst != null)
-                    {
-                        IVertex firstSelectedVertexEdgeTo = selEdgesFirst.Get(false, "To:");
-
-                        if (firstSelectedVertexEdgeTo != null)
-                            GraphUtil.ReplaceEdge(synchroniseMasterVisualiserVertex.Get(false, "BaseEdge:"), "To", firstSelectedVertexEdgeTo);
-
-                        IVertex firstSelectedVertexEdgeMeta = selEdgesFirst.Get(false, "Meta:");
-
-                        if (firstSelectedVertexEdgeMeta != null)
-                            GraphUtil.ReplaceEdge(synchroniseMasterVisualiserVertex.Get(false, "BaseEdge:"), "Meta", firstSelectedVertexEdgeMeta);
-                    }
-                }
+                if (firstSelectedEdgeEdgeVertex != null)
+                    GraphUtil.ReplaceEdge(detailVisualiserVertex, "BaseEdge", firstSelectedEdgeEdgeVertex);
             }
         }
+
+        protected INoInEdgeInOutVertexVertex detailVisualiser_Dispose(IExecution exe)
+        {
+            ExecutionFlowHelper.RemoveGraphChangeListener(selectedEdgesVertex_Listener);
+
+            return exe.Stack;
+        }
+
     }
 }

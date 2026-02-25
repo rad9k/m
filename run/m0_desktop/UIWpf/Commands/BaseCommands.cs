@@ -364,16 +364,13 @@ namespace m0.UIWpf.Commands
 
             IPlatformClass pc = (IPlatformClass)PlatformClass.CreatePlatformObject(inputVertex.Get(false, "VisualiserClass:"), baseEdgeVertex);
             
-            IVertex synchroniseMasterVisualiser = inputVertex.Get(false, "SynchroniseMasterVisualiser:");
+            IVertex masterVisualiser = inputVertex.Get(false, "MasterVisualiser:");
 
-            FirstSelectedEdgeSynchronisedHelper helper = new FirstSelectedEdgeSynchronisedHelper(pc.Vertex, synchroniseMasterVisualiser);            
-            
-            IVertex firstSelectedVertex = synchroniseMasterVisualiser.Get(false, @"SelectedEdges:\");
-
-            if (firstSelectedVertex != null)
-                GraphUtil.ReplaceEdge(pc.Vertex, "BaseEdge", firstSelectedVertex);
+            FirstSelectedEdgeSynchronisedHelper helper = new FirstSelectedEdgeSynchronisedHelper(masterVisualiser, pc.Vertex);            
 
             MinusZero.Instance.UserInteraction.ShowContent(pc);
+
+            helper.DoSynchronise();
         }
 
         public static void OpenVisualiserSelectedSelected(IVertex baseVertex, IVertex inputVertex)

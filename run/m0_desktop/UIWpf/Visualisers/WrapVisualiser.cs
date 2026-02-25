@@ -43,7 +43,7 @@ namespace m0.UIWpf.Visualisers
 
         public string[] MetaTriggeringUpdateView { get; }
 
-        public WrapVisualiser(IVertex baseEdgeVertex, IVertex parentVertex) : this(baseEdgeVertex, 1.0, parentVertex, false) { }
+        public WrapVisualiser(IVertex baseEdgeVertex, IVertex parentVertex, bool isVolatile) : this(baseEdgeVertex, 1.0, parentVertex, isVolatile) { }
 
         // TypedEdge START
         public WrapVisualiser(IEdge _edge)
