@@ -4090,6 +4090,8 @@ namespace m0
             IVertex Style_section;
             IVertex Content_section;
 
+            IVertex Extended_group;            
+
 
             // UXItem [EXTENSION]
 
@@ -4128,10 +4130,15 @@ namespace m0
             //
 
             smzu.Get(false, @"UXContainer\NewItemUXTemplate").AddEdge(sm.Get(false, @"?$Section"), HasBaseEdge_BaseEdge_section);
+
             Nesting_section = smzu.Get(false, @"UXContainer\IsExpanded").AddVertex(sm.Get(false, @"?$Section"), "Nesting");
             smzu.Get(false, @"UXContainer\CollapsedSize").AddEdge(sm.Get(false, @"?$Section"), Nesting_section);
             smzu.Get(false, @"UXContainer\ExpandedSize").AddEdge(sm.Get(false, @"?$Section"), Nesting_section);
             smzu.Get(false, @"UXContainer\SubItemsNotVisible").AddEdge(sm.Get(false, @"?$Section"), Nesting_section);
+
+            Extended_group = smzu.Get(false, @"UXContainer\IsExpanded").AddVertex(sm.Get(false, @"?$Group"), "Extended");
+
+            smzu.Get(false, @"UXContainer\CollapsedSize").AddEdge(sm.Get(false, @"?$Group"), Extended_group);
 
             // enums
 
