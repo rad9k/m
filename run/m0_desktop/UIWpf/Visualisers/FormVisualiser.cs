@@ -141,6 +141,12 @@ namespace m0.UIWpf.Visualisers
             {
                 TabItem i = TabControlSelectedItem;
 
+                if (i == null && TabControl != null)
+                    i = TabControl.SelectedItem as TabItem;
+
+                if (i == null)
+                    return TabList.Values.FirstOrDefault();
+
                 foreach (TabInfo tie in TabList.Values)
                     if (tie.TabItem.Header == i.Header)
                         return tie;
@@ -424,7 +430,11 @@ namespace m0.UIWpf.Visualisers
                             AddEdge(e.To, false);
                 
                 if (MetaOnLeft){
-                    if (!HasTabs && TabList.ContainsKey(""))
+                    if (HasTabs)
+                    {
+                        ScheduleActiveTabCorrection();
+                    }
+                    else if (TabList.ContainsKey(""))
                     {
                         this.SizeChanged -= FormVisualiser_SizeChanged;
                         CorrectWidth(TabList[""]);
@@ -553,6 +563,14 @@ namespace m0.UIWpf.Visualisers
 
                     i.Content = CreateColumnedContent();
                 }
+
+                if (TabControl.Items.Count > 0)
+                    TabControl.SelectedIndex = 0;
+
+                TabControlSelectedItem = TabControl.SelectedItem as TabItem;
+
+                if (MetaOnLeft)
+                    ScheduleActiveTabCorrection();
             }
             else
                 Content = CreateColumnedContent();
@@ -561,6 +579,35 @@ namespace m0.UIWpf.Visualisers
                 this.SizeChanged += FormVisualiser_SizeChanged;
 
            // Content = new Button();
+        }
+
+        private void ScheduleActiveTabCorrection()
+        {
+            if (!HasTabs || !MetaOnLeft || isDisposed || TabList == null)
+                return;
+
+            this.Dispatcher.BeginInvoke(
+                new Action(() =>
+                {
+                    if (!HasTabs || !MetaOnLeft || isDisposed || TabList == null)
+                        return;
+
+                    TabInfo activeTab = getActiveTabInfo();
+                    if (activeTab == null)
+                        return;
+
+                    this.SizeChanged -= FormVisualiser_SizeChanged;
+                    try
+                    {
+                        CorrectWidth(activeTab, false);
+                        lastCorrectedWidth = this.ActualWidth;
+                    }
+                    finally
+                    {
+                        this.SizeChanged += FormVisualiser_SizeChanged;
+                    }
+                }),
+                System.Windows.Threading.DispatcherPriority.Loaded);
         }
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -573,6 +620,8 @@ namespace m0.UIWpf.Visualisers
                 CorrectWidth(tabInfo);
                 lastCorrectedWidth = this.ActualWidth;
                 this.SizeChanged += FormVisualiser_SizeChanged;
+
+                ScheduleActiveTabCorrection();
             }
         }
 
