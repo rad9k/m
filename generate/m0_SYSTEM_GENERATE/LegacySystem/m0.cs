@@ -4089,8 +4089,10 @@ namespace m0
             IVertex Layout_section;
             IVertex Style_section;
             IVertex Content_section;
+            IVertex Labeled_section;
+            IVertex Rectangle_section;
 
-            IVertex Extended_group;            
+            IVertex Extended_group;
 
 
             // UXItem [EXTENSION]
@@ -4137,8 +4139,9 @@ namespace m0
             smzu.Get(false, @"UXContainer\SubItemsNotVisible").AddEdge(sm.Get(false, @"?$Section"), Nesting_section);
 
             Extended_group = smzu.Get(false, @"UXContainer\IsExpanded").AddVertex(sm.Get(false, @"?$Group"), "Extended");
-
             smzu.Get(false, @"UXContainer\CollapsedSize").AddEdge(sm.Get(false, @"?$Group"), Extended_group);
+            smzu.Get(false, @"UXContainer\ExpandedSize").AddEdge(sm.Get(false, @"?$Section"), Extended_group);
+            smzu.Get(false, @"UXContainer\SubItemsNotVisible").AddEdge(sm.Get(false, @"?$Section"), Extended_group);
 
             // enums
 
@@ -4147,6 +4150,13 @@ namespace m0
             smzu.Get(false, @"OrientationEnum").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));
 
             // UXTemplate
+
+            IVertex Vertex_filter_section;
+            IVertex Item_creation_section;
+            IVertex Sub_item_section;
+            IVertex Container_section;
+            IVertex Content_section_UXTemplate;
+            IVertex Extra_section;
 
             smzu.Get(false, @"UXTemplate").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
             smzu.Get(false, @"UXTemplate").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.UXTemplate, m0_desktop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
@@ -4161,6 +4171,26 @@ namespace m0
             smzu.Get(false, @"UXTemplate\ForceShowEditForm").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             smzu.Get(false, @"UXTemplate\ContainerEdgeMetaVertex").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\VertexType"));
             smzu.Get(false, @"UXTemplate\BaseEdgeQuery").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
+
+            Vertex_filter_section = smzu.Get(false, @"UXTemplate\DirectVertexTestQuery").AddVertex(sm.Get(false, @"?$Section"), "Vertex filter");
+            smzu.Get(false, @"UXTemplate\DirectVertexTestQuery").AddEdge(sm.Get(false, @"?$Section"), Vertex_filter_section);
+            smzu.Get(false, @"UXTemplate\MetaVertexTestQuery").AddEdge(sm.Get(false, @"?$Section"), Vertex_filter_section);
+            smzu.Get(false, @"UXTemplate\InstanceCreation").AddEdge(sm.Get(false, @"?$Section"), Vertex_filter_section);
+
+            Item_creation_section = smzu.Get(false, @"UXTemplate\ItemClass").AddVertex(sm.Get(false, @"?$Section"), "Item creation");
+            smzu.Get(false, @"UXTemplate\ItemVertex").AddEdge(sm.Get(false, @"?$Section"), Item_creation_section);
+
+            Sub_item_section = smzu.Get(false, @"UXTemplate\BaseEdgeQuery").AddVertex(sm.Get(false, @"?$Section"), "Sub item");
+
+            Container_section = smzu.Get(false, @"UXTemplate\ContainerEdgeMetaVertex").AddVertex(sm.Get(false, @"?$Section"), "Container");
+
+            Content_section_UXTemplate = smzu.Get(false, @"UXTemplate\UXTemplate").AddVertex(sm.Get(false, @"?$Section"), "Content");
+            smzu.Get(false, @"UXTemplate\UXDecoratorTemplate").AddEdge(sm.Get(false, @"?$Section"), Content_section_UXTemplate);
+
+            Extra_section = smzu.Get(false, @"UXTemplate\DoNotShowInherited").AddVertex(sm.Get(false, @"?$Section"), "Extra");
+            smzu.Get(false, @"UXTemplate\ForceShowEditForm").AddEdge(sm.Get(false, @"?$Section"), Extra_section);
+
+
 
             // InstanceCreationEnum
 
@@ -4181,6 +4211,9 @@ namespace m0
             smzu.Get(false, @"LineDecoratorBase\LineWidth").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Float"));
             smzu.Get(false, @"LineDecoratorBase\ToItem").AddEdge(sm.Get(false, @"?$EdgeTarget"), smzu.Get(false, @"UXItem"));
 
+            IVertex LineDecorator_section = smzu.Get(false, @"LineDecoratorBase\LineWidth").AddVertex(sm.Get(false, @"?$Section"), "Extra");
+            smzu.Get(false, @"LineDecoratorBase\ToItem").AddEdge(sm.Get(false, @"?$Section"), LineDecorator_section);
+
             // UXDecoratorTemplate
 
             smzu.Get(false, @"UXDecoratorTemplate").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
@@ -4195,8 +4228,20 @@ namespace m0
             smzu.Get(false, @"UXDecoratorTemplate\EdgeTargetInEdgePointingToTargetItemBaseEdgeTo").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             smzu.Get(false, @"UXDecoratorTemplate").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.UXDecoratorTemplate, m0_desktop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
 
+            IVertex Decorator_edge_filter_section = smzu.Get(false, @"UXDecoratorTemplate\SupportEmptyMetaEdge").AddVertex(sm.Get(false, @"?$Section"), "Decorator edge filter");
+            smzu.Get(false, @"UXDecoratorTemplate\SupportAnyMetaEdge").AddEdge(sm.Get(false, @"?$Section"), Decorator_edge_filter_section);
+            smzu.Get(false, @"UXDecoratorTemplate\SupportAnyMetaEdge").AddEdge(sm.Get(false, @"?$Section"), Decorator_edge_filter_section);
+            smzu.Get(false, @"UXDecoratorTemplate\EdgeTestQuery").AddEdge(sm.Get(false, @"?$Section"), Decorator_edge_filter_section);
+            smzu.Get(false, @"UXDecoratorTemplate\ToDiagramItemTestQuery").AddEdge(sm.Get(false, @"?$Section"), Decorator_edge_filter_section);
 
-            // LabeledItem
+            IVertex Decorator_creation_section = smzu.Get(false, @"UXDecoratorTemplate\DecoratorClass").AddVertex(sm.Get(false, @"?$Section"), "Decorator creation");
+            smzu.Get(false, @"UXDecoratorTemplate\DecoratorVertex").AddEdge(sm.Get(false, @"?$Section"), Decorator_creation_section);
+
+            IVertex Decorator_extra_section = smzu.Get(false, @"UXDecoratorTemplate\EdgeTargetInEdgePointingToTargetItemBaseEdgeTo").AddVertex(sm.Get(false, @"?$Section"), "Decorator extra");
+
+
+
+            // LabeledItem            
 
             smzu.Get(false, @"LabeledItem").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
             smzu.Get(false, @"LabeledItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"UXItem"));
@@ -4206,17 +4251,32 @@ namespace m0
             smzu.Get(false, @"LabeledItem\ShowMeta").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             smzu.Get(false, @"LabeledItem\HideLabel").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
 
+            Labeled_section = smzu.Get(false, @"LabeledItem\ConstantLabel").AddVertex(sm.Get(false, @"?$Section"), "Labeled");
+            smzu.Get(false, @"LabeledItem\ConstantLabel").AddEdge(sm.Get(false, @"?$Section"), Labeled_section);
+            smzu.Get(false, @"LabeledItem\UseCodeLabel").AddEdge(sm.Get(false, @"?$Section"), Labeled_section);
+            smzu.Get(false, @"LabeledItem\ShowMeta").AddEdge(sm.Get(false, @"?$Section"), Labeled_section);
+            smzu.Get(false, @"LabeledItem\HideLabel").AddEdge(sm.Get(false, @"?$Section"), Labeled_section);
+
+            smzu.Get(false, @"LabeledItem\ConstantLabel").AddEdge(sm.Get(false, @"?$Group"), Extended_group);
+            smzu.Get(false, @"LabeledItem\ConstantLabel").AddEdge(sm.Get(false, @"?$Group"), Extended_group);
+            smzu.Get(false, @"LabeledItem\UseCodeLabel").AddEdge(sm.Get(false, @"?$Group"), Extended_group);
+            smzu.Get(false, @"LabeledItem\ShowMeta").AddEdge(sm.Get(false, @"?$Group"), Extended_group);
+            smzu.Get(false, @"LabeledItem\HideLabel").AddEdge(sm.Get(false, @"?$Group"), Extended_group);
+
 
             // RectangleItem
 
             smzu.Get(false, @"RectangleItem").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
             smzu.Get(false, @"RectangleItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"UXItem"));
             smzu.Get(false, @"RectangleItem").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.RectangleItem, m0_desktop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+
             smzu.Get(false, @"RectangleItem\RoundEdgeSize").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Integer"));
-            //smzu.Get(false, @"RectangleItem\RoundEdgeSize").AddEdge(sm.Get(false, @"?$Section"), lookSection);
+            Rectangle_section = smzu.Get(false, @"RectangleItem\RoundEdgeSize").AddVertex(sm.Get(false, @"?$Section"), "Rectangle");
+            smzu.Get(false, @"RectangleItem\RoundEdgeSize").AddEdge(sm.Get(false, @"?$Group"), Extended_group);
 
             smzu.Get(false, @"RectangleItem\HideHeader").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
-            //smzu.Get(false, @"RectangleItem\ShowHeader").AddEdge(sm.Get(false, @"?$Section"), lookSection);
+            smzu.Get(false, @"RectangleItem\HideHeader").AddEdge(sm.Get(false, @"?$Section"), Rectangle_section);
+            smzu.Get(false, @"RectangleItem\HideHeader").AddEdge(sm.Get(false, @"?$Group"), Extended_group);
 
 
             // ImageItem
@@ -4226,6 +4286,9 @@ namespace m0
             smzu.Get(false, @"ImageItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"LabeledItem"));
             smzu.Get(false, @"ImageItem").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.ImageItem, m0_desktop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             smzu.Get(false, @"ImageItem\Filename").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
+
+            IVertex Image_section = smzu.Get(false, @"ImageItem\Filename").AddVertex(sm.Get(false, @"?$Section"), "Image");
+            smzu.Get(false, @"ImageItem\Filename").AddEdge(sm.Get(false, @"?$Group"), Extended_group);
 
 
             // OvalItem
@@ -4257,11 +4320,13 @@ namespace m0
             smzu.Get(false, @"RectangleVisualiserItem").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.RectangleVisualiserItem, m0_desktop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
 
             smzu.Get(false, @"RectangleVisualiserItem\VisualiserClass").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroUML\Class"));
-            //IVertex visualiserSection = smzu.Get(false, @"RectangleVisualiserItem\VisualiserClass").AddVertex(sm.Get(false, @"?$Section"), "Visualiser");
-
             smzu.Get(false, @"RectangleVisualiserItem\VisualiserVertex").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\VertexType"));
-            //smzu.Get(false, @"RectangleVisualiserItem\VisualiserVertex").AddEdge(sm.Get(false, @"?$Section"), visualiserSection);
 
+            IVertex Rectangle_visualiser_section = smzu.Get(false, @"RectangleVisualiserItem\VisualiserClass").AddVertex(sm.Get(false, @"?$Section"), "Rectangle visualiser");
+            smzu.Get(false, @"RectangleVisualiserItem\VisualiserVertex").AddEdge(sm.Get(false, @"?$Section"), Rectangle_visualiser_section);
+
+            smzu.Get(false, @"RectangleVisualiserItem\VisualiserClass").AddEdge(sm.Get(false, @"?$Group"), Extra_section);
+            smzu.Get(false, @"RectangleVisualiserItem\VisualiserVertex").AddEdge(sm.Get(false, @"?$Group"), Extra_section);
 
             // LineDecorator
 
@@ -4270,18 +4335,19 @@ namespace m0
             smzu.Get(false, @"LineDecorator").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.LineDecorator, m0_desktop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
 
             smzu.Get(false, @"LineDecorator\StartAnchor").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"?LineEndEnum"));
-            // smzu.Get(false, @"LineDecorator\StartAnchor").AddEdge(sm.Get(false, @"?$Section"), lookSection);
+            IVertex Line_section = smzu.Get(false, @"LineDecorator\StartAnchor").AddVertex(sm.Get(false, @"?$Section"), "Line");
 
             smzu.Get(false, @"LineDecorator\EndAnchor").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"?LineEndEnum"));
-            // smzu.Get(false, @"LineDecorator\EndAnchor").AddEdge(sm.Get(false, @"?$Section"), lookSection);
+            smzu.Get(false, @"LineDecorator\EndAnchor").AddEdge(sm.Get(false, @"?$Section"), Line_section);
 
             smzu.Get(false, @"LineDecorator\IsDashed").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"?Boolean"));
-            //smzu.Get(false, @"LineDecorator\IsDashed").AddEdge(sm.Get(false, @"?$Section"), lookSection);
+            smzu.Get(false, @"LineDecorator\IsDashed").AddEdge(sm.Get(false, @"?$Section"), Line_section);
 
             smzu.Get(false, @"LineDecorator\HideLabel").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"?Boolean"));
-            //smzu.Get(false, @"LineDecorator\IsDashed").AddEdge(sm.Get(false, @"?$Section"), lookSection);
+            smzu.Get(false, @"LineDecorator\HideLabel").AddEdge(sm.Get(false, @"?$Section"), Line_section);
 
             smzu.Get(false, @"LineDecorator\ConstantLabel").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"?String"));
+            smzu.Get(false, @"LineDecorator\ConstantLabel").AddEdge(sm.Get(false, @"?$Section"), Line_section);
 
             // MetaExtendedLineDecorator
 
@@ -4306,11 +4372,15 @@ namespace m0
             smzu.Get(false, @"MultiContainerItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"LabeledItem"));
             smzu.Get(false, @"MultiContainerItem").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.MultiContainerItem, m0_desktop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
 
-            smzu.Get(false, @"MultiContainerItem\Orientation").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\UX\OrientationEnum"));
-            smzu.Get(false, @"MultiContainerItem\SubFontSize").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Float"));
-            smzu.Get(false, @"MultiContainerItem\SubBackgroundColor").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\UX\Color"));
-            smzu.Get(false, @"MultiContainerItem\SubForegroundColor").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\UX\Color"));
+            IVertex Multi_container_item_section = smzu.Get(false, @"MultiContainerItem\Orientation").AddVertex(sm.Get(false, @"?$Section"), "Multi container item");
+            smzu.Get(false, @"MultiContainerItem\SubFontSize").AddEdge(sm.Get(false, @"?$Section"), Multi_container_item_section);
+            smzu.Get(false, @"MultiContainerItem\SubBackgroundColor").AddEdge(sm.Get(false, @"?$Section"), Multi_container_item_section);
+            smzu.Get(false, @"MultiContainerItem\SubForegroundColor").AddEdge(sm.Get(false, @"?$Section"), Multi_container_item_section);
 
+            smzu.Get(false, @"MultiContainerItem\Orientation").AddEdge(sm.Get(false, @"?$Group"), Extended_group);
+            smzu.Get(false, @"MultiContainerItem\SubFontSize").AddEdge(sm.Get(false, @"?$Group"), Extended_group);
+            smzu.Get(false, @"MultiContainerItem\SubBackgroundColor").AddEdge(sm.Get(false, @"?$Group"), Extended_group);
+            smzu.Get(false, @"MultiContainerItem\SubForegroundColor").AddEdge(sm.Get(false, @"?$Group"), Extended_group);
 
             // MultiContainerSubItem
 
@@ -4321,6 +4391,9 @@ namespace m0
 
             smzu.Get(false, @"MultiContainerSubItem\NotExistingContentQueryEdge").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\VertexType"));
 
+            IVertex Multi_container_sub_item = smzu.Get(false, @"MultiContainerSubItem\NotExistingContentQueryEdge").AddVertex(sm.Get(false, @"?$Section"), "Multi container sub item");
+            smzu.Get(false, @"MultiContainerSubItem\NotExistingContentQueryEdge").AddEdge(sm.Get(false, @"?$Group"), Extended_group);
+
 
             // CodeView
 
@@ -4329,6 +4402,12 @@ namespace m0
             smzu.Get(false, @"CodeView\FormalTextLanguageProcessing").AddEdge(sm.Get(false, @"?$EdgeTarget"), smz.Get(false, @"FormalTextLanguageProcessing"));
             smzu.Get(false, @"CodeView\FormalTextLanguageProcessing").AddVertex(sm.Get(false, @"?$TargetQuery"), @"System\FormalTextLanguage\FormalTextLanguageProcessing:");
             smzu.Get(false, @"CodeView\FormalTextLanguageProcessing").AddEdge(sm.Get(false, @"?$DefaultValue"), Root.Get(false, @"System\FormalTextLanguage\ZeroCode_VertexAndManyLines"));
+
+            IVertex Code_view_section = smzu.Get(false, @"CodeView\ContentQuery").AddVertex(sm.Get(false, @"?$Section"), "Code view");
+            smzu.Get(false, @"CodeView\FontSize").AddEdge(sm.Get(false, @"?$Section"), Code_view_section);
+            smzu.Get(false, @"CodeView\FormalTextLanguageProcessing").AddEdge(sm.Get(false, @"?$Section"), Code_view_section);
+            smzu.Get(false, @"CodeView\FormalTextLanguageProcessing").AddEdge (sm.Get(false, @"?$Section"), Code_view_section);
+            smzu.Get(false, @"CodeView\FormalTextLanguageProcessing").AddEdge(sm.Get(false, @"?$Section"), Code_view_section);
 
 
         }
@@ -4345,7 +4424,7 @@ namespace m0
                 "Enum:GridStyleEnum{EnumValue:None,EnumValue:Vertical,EnumValue:Horizontal,EnumValue:All,EnumValue:AllAndRound,EnumValue:Round}," +
                 "Enum:SongSnapToGridEnum{EnumValue:1 bar,EnumValue:1/2 bar,EnumValue:1/4 bar,EnumValue:1/8 bar,EnumValue:1/16 bar,EnumValue:1/32 bar,EnumValue:no snap}," +
                 "Enum:SnapToGridEnum{EnumValue:1/16 bar,EnumValue:1/32 bar,EnumValue:1/64 bar,EnumValue:1/128 bar,EnumValue:1/256 bar,EnumValue:1/512 bar,EnumValue:no snap}," +
-                "Class:Form{Attribute:ExpertMode{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ColumnNumber{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:1},Attribute:MetaOnLeft{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:MetaAlignLeft{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:SectionsAsTabs{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False}}," +
+                "Class:Form{Attribute:ExpertMode{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ColumnNumber{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:1},Attribute:MetaOnLeft{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:MetaAlignRight{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:SectionsAsTabs{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False}}," +
                 "Class:Code{Attribute:ShowWhiteSpace{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowLineNumbers{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:HighlightedLine{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowFolding{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:TextMemoryCurrent{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:0},Attribute:TextMemoryMax{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:0}}," +
                 "Class:Table{Attribute:ToShowEdgesMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:ExpertMode{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:IsAllVisualisersEdit{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowHeader{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Association:GridStyle{$MinCardinality:1,$MaxCardinality:1},Attribute:AlternatingRows{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:TableFast{Attribute:ToShowEdgesMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:IsAllVisualisersEdit{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowHeader{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Association:GridStyle{$MinCardinality:1,$MaxCardinality:1},Attribute:AlternatingRows{$MinCardinality:1,$MaxCardinality:1}}," +
@@ -4377,7 +4456,7 @@ namespace m0
             sm.Get(false, @"Visualiser\Form\ColumnNumber").AddVertex(sm.Get(false, @"?MinValue"), 1);
             sm.Get(false, @"Visualiser\Form\ColumnNumber").AddVertex(sm.Get(false, @"?MaxValue"), 8);
             sm.Get(false, @"Visualiser\Form\MetaOnLeft").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
-            sm.Get(false, @"Visualiser\Form\MetaAlignLeft").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
+            sm.Get(false, @"Visualiser\Form\MetaAlignRight").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             sm.Get(false, @"Visualiser\Form\SectionsAsTabs").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             sm.Get(false, @"Visualiser\Form").AddEdge(sm.Get(false, @"Visualiser\BaseEdgeTarget"), sm.Get(false, @"Visualiser\BaseEdgeTarget\Any"));
             //sm.Get(false, @"ZeroUML\Class").AddEdge(sm.Get(false, "ZeroUML*$DefaultOpenVisualiser"), sm.Get(false, @"Visualiser\Form"));

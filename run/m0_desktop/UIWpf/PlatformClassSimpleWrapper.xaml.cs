@@ -45,7 +45,7 @@ namespace m0.UIWpf
         static IVertex showLineNumbers_meta = r.Get(false, @"System\Meta\Visualiser\Code\ShowLineNumbers");
         static IVertex scale_meta = r.Get(false, @"System\Meta\ZeroTypes\UX\UXItem\Scale");
         static IVertex baseEdge_meta = r.Get(false, @"System\Meta\ZeroTypes\HasBaseEdge\BaseEdge");
-        static IVertex metaAlignLeft_meta = r.Get(false, @"System\Meta\Visualiser\Form\MetaAlignLeft");
+        static IVertex metaAlignRight_meta = r.Get(false, @"System\Meta\Visualiser\Form\MetaAlignRight");
 
         public PlatformClassSimpleWrapper()
         {
@@ -287,7 +287,7 @@ namespace m0.UIWpf
                     
                     Visualiser_Right = new FormVisualiser(baseEdge, platformClassObject.Vertex, true);
 
-                    GraphUtil.SetVertexValue(Visualiser_Right.Vertex, metaAlignLeft_meta, "False");
+                    GraphUtil.SetVertexValue(Visualiser_Right.Vertex, metaAlignRight_meta, "False");
                     GraphUtil.SetVertexValue(Visualiser_Right.Vertex, scale_meta, 80);
 
                     //////////////////////////////////////

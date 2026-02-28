@@ -62,7 +62,7 @@ namespace m0.UIWpf.Visualisers
 
         bool SectionsAsTabs;
         bool MetaOnLeft;
-        bool MetaAlignLeft;
+        bool MetaAlignRight;
         bool ExpertMode;
 
         bool HasTabs { get; set; }
@@ -83,7 +83,7 @@ namespace m0.UIWpf.Visualisers
         TabItem TabControlSelectedItem;
 
 
-        static string[] _MetaTriggeringUpdateVertex = new string[] { "ExpertMode", "ColumnNumber", "MetaOnLeft", "MetaAlignLeft", "SectionsAsTabs" };
+        static string[] _MetaTriggeringUpdateVertex = new string[] { "ExpertMode", "ColumnNumber", "MetaOnLeft", "MetaAlignRight", "SectionsAsTabs" };
         
         public string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
@@ -352,10 +352,10 @@ namespace m0.UIWpf.Visualisers
                 else
                     MetaOnLeft = false;
 
-                if ((string)Vertex.Get(false, @"MetaAlignLeft:").Value == "True")
-                    MetaAlignLeft = true;
+                if ((string)Vertex.Get(false, @"MetaAlignRight:").Value == "True")
+                    MetaAlignRight = true;
                 else
-                    MetaAlignLeft = false;
+                    MetaAlignRight = false;
 
                 if ((string)Vertex.Get(false, @"ExpertMode:").Value == "True")
                     ExpertMode = true;
@@ -849,7 +849,7 @@ namespace m0.UIWpf.Visualisers
             
             Panel place = GetUIPlace(group,section,ci);
 
-            if (MetaAlignLeft)
+            if (MetaAlignRight)
                 metaControl.TextAlignment = TextAlignment.Right;
             else
                 metaControl.TextAlignment = TextAlignment.Left;
