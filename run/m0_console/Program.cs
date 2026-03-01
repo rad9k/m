@@ -1,1 +1,3 @@
-﻿m0.console.ConsoleRunner.RUN();
+using m0.console;
+
+ConsoleRunner.RUN(args);

@@ -28,6 +28,7 @@ namespace m0
         bool BuildVariant_m0_COMPOSER = true;
 
         public string m0DllPath;
+        public CommandLineParameters CommandLineParameters = new CommandLineParameters();
 
         public IEnumerable<IVertex> BootstrapVertexes;
 
@@ -422,9 +423,17 @@ namespace m0
 
         void CreateAutostart()
         {
-            FileSystemUtil.CreateDirectoryIfNotExist(m0DllPath, "autostart");
+            if (CommandLineParameters != null && CommandLineParameters.NoAutostart)
+                return;
 
-            string autostartPath = Path.Combine(m0DllPath, "autostart");
+            string autostartDirectory = "autostart";
+
+            if (CommandLineParameters != null && !string.IsNullOrWhiteSpace(CommandLineParameters.Autostart))
+                autostartDirectory = CommandLineParameters.Autostart;
+
+            FileSystemUtil.CreateDirectoryIfNotExist(m0DllPath, autostartDirectory);
+
+            string autostartPath = Path.Combine(m0DllPath, autostartDirectory);
 
             FileSystemLoader fsl = new FileSystemLoader(autostartPath);
 
@@ -450,7 +459,13 @@ namespace m0
 
         void Autostart()
         {
+            if (CommandLineParameters != null && CommandLineParameters.NoAutostart)
+                return;
+
             IVertex autostartVertex = root.Get(false, "Autostart");
+
+            if (autostartVertex == null)
+                return;
 
             IExecution exe = new ZeroCodeExecution(autostartVertex);
 
@@ -468,7 +483,7 @@ namespace m0
             if (IsInitialized)
                 return;
 
-            LogLevel = 2;
+            LogLevel = CommandLineParameters.GetM0LogLevel();
 
             m0DllPath = Path.GetDirectoryName(typeof(MinusZero).Assembly.Location);            
 
