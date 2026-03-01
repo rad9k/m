@@ -4092,7 +4092,7 @@ namespace m0
             IVertex Labeled_section;
             IVertex Rectangle_section;
 
-            IVertex Extended_group;
+            IVertex Extra_group;
 
 
             // UXItem [EXTENSION]
@@ -4138,10 +4138,10 @@ namespace m0
             smzu.Get(false, @"UXContainer\ExpandedSize").AddEdge(sm.Get(false, @"?$Section"), Nesting_section);
             smzu.Get(false, @"UXContainer\SubItemsNotVisible").AddEdge(sm.Get(false, @"?$Section"), Nesting_section);
 
-            Extended_group = smzu.Get(false, @"UXContainer\IsExpanded").AddVertex(sm.Get(false, @"?$Group"), "Extended");
-            smzu.Get(false, @"UXContainer\CollapsedSize").AddEdge(sm.Get(false, @"?$Group"), Extended_group);
-            smzu.Get(false, @"UXContainer\ExpandedSize").AddEdge(sm.Get(false, @"?$Section"), Extended_group);
-            smzu.Get(false, @"UXContainer\SubItemsNotVisible").AddEdge(sm.Get(false, @"?$Section"), Extended_group);
+            Extra_group = smzu.Get(false, @"UXContainer\IsExpanded").AddVertex(sm.Get(false, @"?$Group"), "Extra");
+            smzu.Get(false, @"UXContainer\CollapsedSize").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
+            smzu.Get(false, @"UXContainer\ExpandedSize").AddEdge(sm.Get(false, @"?$Section"), Extra_group);
+            smzu.Get(false, @"UXContainer\SubItemsNotVisible").AddEdge(sm.Get(false, @"?$Section"), Extra_group);
 
             // enums
 
@@ -4257,11 +4257,11 @@ namespace m0
             smzu.Get(false, @"LabeledItem\ShowMeta").AddEdge(sm.Get(false, @"?$Section"), Labeled_section);
             smzu.Get(false, @"LabeledItem\HideLabel").AddEdge(sm.Get(false, @"?$Section"), Labeled_section);
 
-            smzu.Get(false, @"LabeledItem\ConstantLabel").AddEdge(sm.Get(false, @"?$Group"), Extended_group);
-            smzu.Get(false, @"LabeledItem\ConstantLabel").AddEdge(sm.Get(false, @"?$Group"), Extended_group);
-            smzu.Get(false, @"LabeledItem\UseCodeLabel").AddEdge(sm.Get(false, @"?$Group"), Extended_group);
-            smzu.Get(false, @"LabeledItem\ShowMeta").AddEdge(sm.Get(false, @"?$Group"), Extended_group);
-            smzu.Get(false, @"LabeledItem\HideLabel").AddEdge(sm.Get(false, @"?$Group"), Extended_group);
+            smzu.Get(false, @"LabeledItem\ConstantLabel").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
+            smzu.Get(false, @"LabeledItem\ConstantLabel").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
+            smzu.Get(false, @"LabeledItem\UseCodeLabel").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
+            smzu.Get(false, @"LabeledItem\ShowMeta").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
+            smzu.Get(false, @"LabeledItem\HideLabel").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
 
 
             // RectangleItem
@@ -4272,11 +4272,11 @@ namespace m0
 
             smzu.Get(false, @"RectangleItem\RoundEdgeSize").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Integer"));
             Rectangle_section = smzu.Get(false, @"RectangleItem\RoundEdgeSize").AddVertex(sm.Get(false, @"?$Section"), "Rectangle");
-            smzu.Get(false, @"RectangleItem\RoundEdgeSize").AddEdge(sm.Get(false, @"?$Group"), Extended_group);
+            smzu.Get(false, @"RectangleItem\RoundEdgeSize").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
 
             smzu.Get(false, @"RectangleItem\HideHeader").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             smzu.Get(false, @"RectangleItem\HideHeader").AddEdge(sm.Get(false, @"?$Section"), Rectangle_section);
-            smzu.Get(false, @"RectangleItem\HideHeader").AddEdge(sm.Get(false, @"?$Group"), Extended_group);
+            smzu.Get(false, @"RectangleItem\HideHeader").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
 
 
             // ImageItem
@@ -4288,7 +4288,7 @@ namespace m0
             smzu.Get(false, @"ImageItem\Filename").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\String"));
 
             IVertex Image_section = smzu.Get(false, @"ImageItem\Filename").AddVertex(sm.Get(false, @"?$Section"), "Image");
-            smzu.Get(false, @"ImageItem\Filename").AddEdge(sm.Get(false, @"?$Group"), Extended_group);
+            smzu.Get(false, @"ImageItem\Filename").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
 
 
             // OvalItem
@@ -4325,8 +4325,8 @@ namespace m0
             IVertex Rectangle_visualiser_section = smzu.Get(false, @"RectangleVisualiserItem\VisualiserClass").AddVertex(sm.Get(false, @"?$Section"), "Rectangle visualiser");
             smzu.Get(false, @"RectangleVisualiserItem\VisualiserVertex").AddEdge(sm.Get(false, @"?$Section"), Rectangle_visualiser_section);
 
-            smzu.Get(false, @"RectangleVisualiserItem\VisualiserClass").AddEdge(sm.Get(false, @"?$Group"), Extra_section);
-            smzu.Get(false, @"RectangleVisualiserItem\VisualiserVertex").AddEdge(sm.Get(false, @"?$Group"), Extra_section);
+            smzu.Get(false, @"RectangleVisualiserItem\VisualiserClass").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
+            smzu.Get(false, @"RectangleVisualiserItem\VisualiserVertex").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
 
             // LineDecorator
 
@@ -4377,10 +4377,10 @@ namespace m0
             smzu.Get(false, @"MultiContainerItem\SubBackgroundColor").AddEdge(sm.Get(false, @"?$Section"), Multi_container_item_section);
             smzu.Get(false, @"MultiContainerItem\SubForegroundColor").AddEdge(sm.Get(false, @"?$Section"), Multi_container_item_section);
 
-            smzu.Get(false, @"MultiContainerItem\Orientation").AddEdge(sm.Get(false, @"?$Group"), Extended_group);
-            smzu.Get(false, @"MultiContainerItem\SubFontSize").AddEdge(sm.Get(false, @"?$Group"), Extended_group);
-            smzu.Get(false, @"MultiContainerItem\SubBackgroundColor").AddEdge(sm.Get(false, @"?$Group"), Extended_group);
-            smzu.Get(false, @"MultiContainerItem\SubForegroundColor").AddEdge(sm.Get(false, @"?$Group"), Extended_group);
+            smzu.Get(false, @"MultiContainerItem\Orientation").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
+            smzu.Get(false, @"MultiContainerItem\SubFontSize").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
+            smzu.Get(false, @"MultiContainerItem\SubBackgroundColor").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
+            smzu.Get(false, @"MultiContainerItem\SubForegroundColor").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
 
             // MultiContainerSubItem
 
@@ -4392,7 +4392,7 @@ namespace m0
             smzu.Get(false, @"MultiContainerSubItem\NotExistingContentQueryEdge").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\VertexType"));
 
             IVertex Multi_container_sub_item = smzu.Get(false, @"MultiContainerSubItem\NotExistingContentQueryEdge").AddVertex(sm.Get(false, @"?$Section"), "Multi container sub item");
-            smzu.Get(false, @"MultiContainerSubItem\NotExistingContentQueryEdge").AddEdge(sm.Get(false, @"?$Group"), Extended_group);
+            smzu.Get(false, @"MultiContainerSubItem\NotExistingContentQueryEdge").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
 
 
             // CodeView
@@ -4409,7 +4409,11 @@ namespace m0
             smzu.Get(false, @"CodeView\FormalTextLanguageProcessing").AddEdge (sm.Get(false, @"?$Section"), Code_view_section);
             smzu.Get(false, @"CodeView\FormalTextLanguageProcessing").AddEdge(sm.Get(false, @"?$Section"), Code_view_section);
 
-
+            smzu.Get(false, @"CodeView\ContentQuery").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
+            smzu.Get(false, @"CodeView\FontSize").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
+            smzu.Get(false, @"CodeView\FormalTextLanguageProcessing").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
+            smzu.Get(false, @"CodeView\FormalTextLanguageProcessing").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
+            smzu.Get(false, @"CodeView\FormalTextLanguageProcessing").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
         }
 
         void CreateSystemMetaVisualiser()
