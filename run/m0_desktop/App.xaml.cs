@@ -16,43 +16,15 @@ namespace m0_RUN
     /// </summary>
     public partial class App : Application
     {
+        public static StartupEventArgs args;
+
         protected override void OnStartup(StartupEventArgs e)
         {
-            CommandLineParameters commandLineParameters;
-
-            try
-            {
-                commandLineParameters = CommandLineParameters.Parse(e.Args);
-            }
-            catch (ArgumentException ex)
-            {
-                MessageBox.Show(
-                    ex.Message + Environment.NewLine + Environment.NewLine + CommandLineParameters.GetHelpText("m0_desktop"),
-                    "m0_desktop",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-
-                Shutdown();
-                return;
-            }
-
-            MinusZero.Instance.CommandLineParameters = commandLineParameters;
-
-            if (commandLineParameters.Help)
-            {
-                MessageBox.Show(
-                    CommandLineParameters.GetHelpText("m0_desktop"),
-                    "m0_desktop",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
-
-                Shutdown();
-                return;
-            }
-
+            args = e;
+            
             base.OnStartup(e);
 
-            StartWindow startWindow = new StartWindow();          
+            StartWindow startWindow = new StartWindow();     
         }
     }
 }
