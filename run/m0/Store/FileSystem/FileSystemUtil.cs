@@ -1,4 +1,4 @@
-﻿using m0.Foundation;
+using m0.Foundation;
 using m0.Graph;
 using m0.Util;
 using m0.ZeroCode;
@@ -17,27 +17,55 @@ namespace m0.Store.FileSystem
         public static IVertex GetDirectoryFromFileSystem(string path)
         {
             bool isWindows = Environment.OSVersion.Platform == PlatformID.Win32NT;
-            bool isLinux = Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX;
             
             if (Directory.Exists(path))
             {
-                string[] directories = path.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
+                string fullPath = Path.GetFullPath(path);
+                string[] directories = fullPath.Split(
+                    new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar },
+                    StringSplitOptions.RemoveEmptyEntries);
 
                 IVertex vertex = MinusZero.Instance.root;
 
                 foreach (string directory in directories)
                 {
+                    if (vertex == null)
+                        return null;
+
                     string query = directory;
 
                     if (query.EndsWith(":"))
                         query = query[0].ToString();
 
-                    vertex = GraphUtil.GetQueryOutFirst(vertex, null, query);
+                    IVertex nextVertex = GraphUtil.GetQueryOutFirst(vertex, null, query);
+
+                    if (nextVertex == null && isWindows)
+                        nextVertex = GetQueryOutFirstCaseInsensitive(vertex, query);
+
+                    if (nextVertex == null)
+                        return null;
+
+                    vertex = nextVertex;
                 }
 
                 return vertex;
             }
             
+            return null;
+        }
+
+        private static IVertex GetQueryOutFirstCaseInsensitive(IVertex baseVertex, string value)
+        {
+            if (baseVertex == null || value == null)
+                return null;
+
+            foreach (IEdge edge in baseVertex.OutEdges)
+            {
+                if (edge?.To?.Value is string toValue &&
+                    string.Equals(toValue, value, StringComparison.OrdinalIgnoreCase))
+                    return edge.To;
+            }
+
             return null;
         }
 
