@@ -4406,13 +4406,9 @@ namespace m0
             IVertex Code_view_section = smzu.Get(false, @"CodeView\ContentQuery").AddVertex(sm.Get(false, @"?$Section"), "Code view");
             smzu.Get(false, @"CodeView\FontSize").AddEdge(sm.Get(false, @"?$Section"), Code_view_section);
             smzu.Get(false, @"CodeView\FormalTextLanguageProcessing").AddEdge(sm.Get(false, @"?$Section"), Code_view_section);
-            smzu.Get(false, @"CodeView\FormalTextLanguageProcessing").AddEdge (sm.Get(false, @"?$Section"), Code_view_section);
-            smzu.Get(false, @"CodeView\FormalTextLanguageProcessing").AddEdge(sm.Get(false, @"?$Section"), Code_view_section);
 
             smzu.Get(false, @"CodeView\ContentQuery").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
             smzu.Get(false, @"CodeView\FontSize").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
-            smzu.Get(false, @"CodeView\FormalTextLanguageProcessing").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
-            smzu.Get(false, @"CodeView\FormalTextLanguageProcessing").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
             smzu.Get(false, @"CodeView\FormalTextLanguageProcessing").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
         }
 
