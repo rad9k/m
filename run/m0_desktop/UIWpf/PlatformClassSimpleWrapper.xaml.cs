@@ -502,7 +502,7 @@ namespace m0.UIWpf
                 EnsureContentReady_Right();
 
                 if (Double.IsNaN(Content_Right.Height)) {
-                    if (this.ActualWidth < 350)
+                    if (this.ActualWidth < 300)
                         Content_Right.Width = this.ActualWidth - 50;
                     else
                         Content_Right.Width = 230;
