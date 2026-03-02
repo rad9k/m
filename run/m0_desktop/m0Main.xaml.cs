@@ -35,6 +35,8 @@ namespace m0
     /// </summary>
     public partial class m0Main : Window, IUserInteraction
     {
+        public bool HasBeenShown = false;
+
         public static m0Main Instance;
 
         public static TreeVisualiser mainTree;
@@ -114,6 +116,8 @@ namespace m0
             //
 
             MinusZero.Instance.Initialize_AfterUXInitialized();
+
+            HasBeenShown = true;
         }
 
         static m0Main this_static;

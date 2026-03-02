@@ -22,7 +22,8 @@ namespace m0.UIWpf.Dialog
         {
             InitializeComponent();
 
-            Owner = m0Main.Instance;
+            if (m0Main.Instance.HasBeenShown)
+                Owner = m0Main.Instance;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

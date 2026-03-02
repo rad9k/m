@@ -28,6 +28,8 @@ namespace m0.Desktop
 
             MinusZero.Instance.SetUserInteraction(mainWindow);
 
+            HandleArgs();            
+
             MinusZero.Instance.Initialize();
 
             mainWindow.Init();
@@ -54,25 +56,33 @@ namespace m0.Desktop
             }
             catch (ArgumentException ex)
             {
-                MessageBox.Show(
+                MinusZero.Instance.UserInteraction.InteractionOutput(ex.Message + Environment.NewLine + Environment.NewLine + CommandLineParameters.GetHelpText("m0_desktop"));
+
+                // left in case user interaction code do not work
+
+                /*MessageBox.Show(
                     ex.Message + Environment.NewLine + Environment.NewLine + CommandLineParameters.GetHelpText("m0_desktop"),
                     "m0_desktop",
                     MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                    MessageBoxImage.Error);*/
                 
                 return;
             }
 
             MinusZero.Instance.CommandLineParameters = commandLineParameters;
 
-            if (commandLineParameters.Help)
+            if (commandLineParameters.DoHelp)
             {
-                MessageBox.Show(
+                MinusZero.Instance.UserInteraction.InteractionOutput(CommandLineParameters.GetHelpText("m0_desktop"));
+
+                // left in case user interaction code do not work
+
+                /*MessageBox.Show(
                     CommandLineParameters.GetHelpText("m0_desktop"),
                     "m0_desktop",
                     MessageBoxButton.OK,
-                    MessageBoxImage.Information);
-                
+                    MessageBoxImage.Information);*/
+
                 return;
             }
         }

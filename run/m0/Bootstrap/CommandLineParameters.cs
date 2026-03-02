@@ -16,7 +16,7 @@ namespace m0.Bootstrap
 
     public class CommandLineParameters
     {
-        public bool Help;
+        public bool DoHelp;
         public bool NoAutostart;
         public string Autostart;
         public LogLevelEnum LogLevel = LogLevelEnum.Warning;
@@ -38,7 +38,7 @@ namespace m0.Bootstrap
 
                 if (arg == "-h" || arg == "--help")
                 {
-                    result.Help = true;
+                    result.DoHelp = true;
                     result.UsedArguments.Add(arg);
                 }
                 else if (arg == "-n" || arg == "--no-autostart")

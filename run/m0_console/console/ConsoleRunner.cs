@@ -14,6 +14,19 @@ namespace m0.console
     {
         public static void RUN(string[] args)
         {
+            MinusZero.Instance.SetUserInteraction(new ConsoleUserInteraction());
+
+            HandleArgs(args);
+
+            MinusZero.Instance.Initialize();
+
+            MinusZero.Instance.Initialize_AfterUXInitialized();
+
+            MinusZero.Instance.Dispose();
+        }
+
+        public static void HandleArgs(string[] args)
+        {
             CommandLineParameters commandLineParameters;
 
             try
@@ -22,26 +35,17 @@ namespace m0.console
             }
             catch (ArgumentException ex)
             {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine();
-                Console.WriteLine(CommandLineParameters.GetHelpText("m0_console"));
+                MinusZero.Instance.UserInteraction.InteractionOutput("[ERROR] " + ex.Message);
+
+                MinusZero.Instance.UserInteraction.InteractionOutput("[INFO] " + CommandLineParameters.GetHelpText("m0_desktop"));
+
                 return;
             }
 
-            if (commandLineParameters.Help)
-            {
-                Console.WriteLine(CommandLineParameters.GetHelpText("m0_console"));
-                return;
-            }
+            if (commandLineParameters.DoHelp)            
+                MinusZero.Instance.UserInteraction.InteractionOutput("[INFO] " + CommandLineParameters.GetHelpText("m0_desktop"));                
 
             MinusZero.Instance.CommandLineParameters = commandLineParameters;
-            MinusZero.Instance.SetUserInteraction(new ConsoleUserInteraction());
-
-            MinusZero.Instance.Initialize();
-
-            MinusZero.Instance.Initialize_AfterUXInitialized();
-
-            MinusZero.Instance.Dispose();
         }
     }
 }

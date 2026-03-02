@@ -34,6 +34,11 @@ namespace m0_console.console
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine(line);
                 }
+                else if (line.Contains("[ERROR]"))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(line);
+                }
                 else if (line.Contains("[USER]"))
                 {
                     Console.ForegroundColor = ConsoleColor.DarkYellow; // Closest to orange
@@ -41,7 +46,7 @@ namespace m0_console.console
                 }
                 else if (line.Contains("[INFO]"))
                 {
-                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.ForegroundColor = ConsoleColor.Blue;
                     Console.WriteLine(line);
                 }
                 else if (line.Contains("[SYSTEM]"))
@@ -95,7 +100,7 @@ namespace m0_console.console
             const string Reset = "\u001b[0m";
             string coloredLine;
 
-            if (line.Contains("[EXCEPTION]"))
+            if (line.Contains("[EXCEPTION]") || line.Contains("[ERROR]"))
                 coloredLine = "\u001b[31m\u001b[1m" + line + Reset; // Red
             else if (line.Contains("[USER]"))
                 coloredLine = "\u001b[38;5;214m\u001b[1m" + line + Reset; // Orange
