@@ -115,7 +115,7 @@ namespace m0
 
             //
 
-            MinusZero.Instance.Initialize_AfterUXInitialized();
+            MinusZero.Instance.Initialize_AfterPossibleUXInitialized();
 
             HasBeenShown = true;
         }

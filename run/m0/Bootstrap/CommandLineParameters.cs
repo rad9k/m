@@ -146,5 +146,16 @@ namespace m0.Bootstrap
             throw new ArgumentException(
                 "Unknown log level: " + value + ". Allowed values: trace, debug, info, warning, error, fatal, off.");
         }
+
+        public void AfterInitialisationCommandLineExecute()
+        {
+            if (CreateUser != null)
+                CommandLineExecution.CreateUser(CreateUser);
+
+            if (RunUser != null)
+                CommandLineExecution.RunUser(RunUser);
+            else
+                CommandLineExecution.RunUser("root");
+        }
     }
 }
