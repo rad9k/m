@@ -1,5 +1,7 @@
-﻿using m0.Network.Server;
+﻿using m0.Bootstrap;
+using m0.Network.Server;
 using m0.Util;
+using m0_RUN;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace m0.Desktop
 {
@@ -25,6 +28,8 @@ namespace m0.Desktop
 
             MinusZero.Instance.SetUserInteraction(mainWindow);
 
+            HandleArgs();            
+
             MinusZero.Instance.Initialize();
 
             mainWindow.Init();
@@ -37,6 +42,49 @@ namespace m0.Desktop
             mainWindow.Show();
 
             m0Main.mainTree.BaseEdgeToUpdated();
+        }
+
+        //
+
+        public static void HandleArgs()
+        {
+            CommandLineParameters commandLineParameters;
+
+            try
+            {
+                commandLineParameters = CommandLineParameters.Parse(App.args.Args);
+            }
+            catch (ArgumentException ex)
+            {
+                MinusZero.Instance.UserInteraction.InteractionOutput(ex.Message + Environment.NewLine + Environment.NewLine + CommandLineParameters.GetHelpText("m0_desktop"));
+
+                // left in case user interaction code do not work
+
+                /*MessageBox.Show(
+                    ex.Message + Environment.NewLine + Environment.NewLine + CommandLineParameters.GetHelpText("m0_desktop"),
+                    "m0_desktop",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);*/
+                
+                return;
+            }
+
+            MinusZero.Instance.CommandLineParameters = commandLineParameters;
+
+            if (commandLineParameters.DoHelp)
+            {
+                MinusZero.Instance.UserInteraction.InteractionOutput(CommandLineParameters.GetHelpText("m0_desktop"));
+
+                // left in case user interaction code do not work
+
+                /*MessageBox.Show(
+                    CommandLineParameters.GetHelpText("m0_desktop"),
+                    "m0_desktop",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);*/
+
+                return;
+            }
         }
     }
 }

@@ -19,6 +19,8 @@ namespace m0.Bootstrap
         public bool DoHelp;
         public bool NoAutostart;
         public string Autostart;
+        public string RunUser;
+        public string CreateUser;
         public LogLevelEnum LogLevel = LogLevelEnum.Warning;
 
         public IList<string> RawArguments = new List<string>();
@@ -68,6 +70,28 @@ namespace m0.Bootstrap
                     result.UsedArguments.Add(logLevelValue);
                     result.LogLevel = ParseLogLevel(logLevelValue);
                 }
+                else if (arg == "-u" || arg == "--user")
+                {
+                    if (i + 1 >= args.Length)
+                        throw new ArgumentException("Missing value for parameter " + arg + ".");
+
+                    string userName = args[++i];
+                    result.RawArguments.Add(userName);
+                    result.UsedArguments.Add(arg);
+                    result.UsedArguments.Add(userName);
+                    result.RunUser = userName;
+                }
+                else if (arg == "-c" || arg == "--create-user")
+                {
+                    if (i + 1 >= args.Length)
+                        throw new ArgumentException("Missing value for parameter " + arg + ".");
+
+                    string userName = args[++i];
+                    result.RawArguments.Add(userName);
+                    result.UsedArguments.Add(arg);
+                    result.UsedArguments.Add(userName);
+                    result.CreateUser = userName;
+                }
                 else
                 {
                     throw new ArgumentException("Unknown parameter: " + arg + ".");
@@ -92,6 +116,12 @@ namespace m0.Bootstrap
                 "      Disable autostart execution." + Environment.NewLine +
                 "  -a, --autostart \"directory\"" + Environment.NewLine +
                 "      Set autostart directory name (relative to m0 location)." + Environment.NewLine +
+                "  -u, --user <user name>" + Environment.NewLine +
+                "      Run -zero with given user context." + Environment.NewLine +
+                "  -c, --create-user <user name>" + Environment.NewLine +
+                "      Create new user with the name \"user name\". " + Environment.NewLine +
+                "      If the \"user name\" exist, the whole \"user name\" environment is re-created from scratch." + Environment.NewLine +
+                "      You can use this option for resetting the user environment." + Environment.NewLine +
                 "  -l, --log-level <trace|debug|info|warning|error|fatal|off>" + Environment.NewLine +
                 "      Set logging verbosity.";
         }
