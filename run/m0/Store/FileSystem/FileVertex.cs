@@ -66,7 +66,7 @@ namespace m0.Store.FileSystem
                         {
                             GraphUtil.RemoveAllEdges(this);
 
-                            UpdateFileSystemVertex();
+                            Refresh();
                         }
 
                         if (CanEmitGraphChangeEvents)
@@ -100,7 +100,7 @@ namespace m0.Store.FileSystem
             }
         }                        
 
-        protected override void UpdateFileSystemVertex()
+        public override void Refresh()
         {            
             GraphUtil.RemoveAllEdges(FileSystemVertex);
 

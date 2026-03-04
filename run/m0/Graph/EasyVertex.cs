@@ -562,7 +562,7 @@ namespace m0.Graph
                 MetaInEdgesRaw.Remove(edge);
         }
 
-        private void DeleteAllEdges()
+        public void DeleteAllEdges()
         {
             if (DisposedState == DisposeStateEnum.Disposed)
                 throw new Exception("Vertex not live");

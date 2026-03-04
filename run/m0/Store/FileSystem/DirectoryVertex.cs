@@ -67,8 +67,10 @@ namespace m0.Store.FileSystem
             }
         }
 
-        protected override void UpdateFileSystemVertex()
+        public override void Refresh()
         {
+            FileSystemVertex.DeleteAllEdges();
+
             AddVertexToFileSystemVertex(MinusZero.Instance.Is, FileSystemStore.Directory);
 
             AddVertexToFileSystemVertex(FileSystemStore.Directory_Filename, DI.Name);

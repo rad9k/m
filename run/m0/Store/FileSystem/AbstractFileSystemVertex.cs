@@ -28,7 +28,7 @@ namespace m0.Store.FileSystem
             {
                 if (!FileSystemVertexFilled)
                 {
-                    UpdateFileSystemVertex();
+                    Refresh();
                     FileSystemVertexFilled = true;
                 }
 
@@ -42,7 +42,7 @@ namespace m0.Store.FileSystem
             }
         }
 
-        protected virtual void UpdateFileSystemVertex() { }
+        public virtual void Refresh() { }
 
         public override IVertex AddVertex(IVertex metaVertex, object val)
         {
