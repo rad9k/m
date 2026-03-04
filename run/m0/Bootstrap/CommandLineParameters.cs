@@ -147,7 +147,13 @@ namespace m0.Bootstrap
                 "Unknown log level: " + value + ". Allowed values: trace, debug, info, warning, error, fatal, off.");
         }
 
-        public void AfterInitialisationCommandLineExecute()
+        public void CommandLineExecute_BeforeInitialisation()
+        {
+            if (CreateUser != null)
+                CommandLineExecution.CreateUser_BeforeInitialisation(CreateUser);
+        }
+
+        public void CommandLineExecute_AfterInitialisation()
         {
             if (CreateUser != null)
                 CommandLineExecution.CreateUser(CreateUser);

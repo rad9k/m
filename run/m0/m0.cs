@@ -522,7 +522,11 @@ namespace m0
 
             AddDrives();
 
+            //
 
+            CommandLineParameters.CommandLineExecute_BeforeInitialisation();
+
+            //
 
             CreateStart();
 
@@ -552,7 +556,7 @@ namespace m0
         {
             ExecutionFlowHelper.StartTransaction();
 
-            CommandLineParameters.AfterInitialisationCommandLineExecute();
+            CommandLineParameters.CommandLineExecute_AfterInitialisation();
 
             Autostart();
 

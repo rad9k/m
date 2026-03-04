@@ -20,26 +20,26 @@ namespace m0.Bootstrap
 
         }
 
-        public static void CreateUser(string userName) 
+        public static void CreateUser_BeforeInitialisation(string userName) 
         { 
             string filename = $"home-{userName}.m0j";
             string filePath = Path.Combine(MinusZero.Instance.m0DllPath, filename);
 
             if (File.Exists(filePath))
                 File.Delete(filePath);
+        }
+
+        public static void CreateUser(string userName)
+        {
+            string filename = $"home{userName}.m0j";
 
             IVertex start = root.Get(false, @"Start:");
-
-            if (start is DirectoryVertex)
-                ((DirectoryVertex)start).Refresh();
-
+         
             IVertex fileVertex = start.AddVertex(file_meta, filename);
 
-          //  IVertex store = fileVertex.Get(false, "$Store:");
+         //   IVertex store = fileVertex.Get(false, "$Store:");
 
-          //  CreateUser_internal(store, userName);
-
-
+         //   CreateUser_internal(store, userName);
         }
 
         static void CreateUser_internal(IVertex baseVertex, string userName)
