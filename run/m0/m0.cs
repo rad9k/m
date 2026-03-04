@@ -28,6 +28,7 @@ namespace m0
         bool BuildVariant_m0_COMPOSER = true;
 
         public string m0DllPath;
+
         public CommandLineParameters CommandLineParameters = new CommandLineParameters();
 
         public IEnumerable<IVertex> BootstrapVertexes;
@@ -450,7 +451,7 @@ namespace m0
                 root.AddEdge(root.Get(false, @"System\Meta\Store\FileSystem\Start"), startVertex);            
         }
 
-        void CreateTempWorkServer()
+        void CreateTempAndWorkAndServer()
         {                                   
             root.AddVertex(null, "Temp");
             root.AddVertex(null, "Work");
@@ -525,7 +526,7 @@ namespace m0
 
             CreateStart();
 
-            CreateTempWorkServer();
+            CreateTempAndWorkAndServer();
 
             BuildVariantsInitialize();
 
