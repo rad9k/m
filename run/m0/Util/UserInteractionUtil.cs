@@ -11,31 +11,26 @@ namespace m0.Util
 {
     public class UserInteractionUtil
     {
+        public enum ExceptionLevel { trace, debug, info, warning, error, fatal };
+
         public static string Ask(string question)
-        {
-            /*IVertex v = m0.MinusZero.Instance.CreateTempVertex();
-
-            IVertex c = GraphUtil.AddClass(v, question);
-
-            IVertex a=GraphUtil.AddAttribute(c, question+"2", MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\String"), 1, 1);
-
-            a.AddVertex(MinusZero.Instance.root.Get(false, @"System\Meta\Presentation\$Hide"), null);
-
-            IVertex o = VertexOperations.AddInstance(v, c);*/            
-
-            //return o.Get(false, @"\").Value.ToString();
-
+        {            
             return MinusZero.Instance.UserInteraction.InteractionInput(question);
-
         }
 
-        public static void ShowError(object where, string what)
+        public static void ShowException(object where, string what)
         {
             MinusZero.Instance.UserInteraction.InteractionOutputException(
-                UserInteractionUtil.CreateErrorVertex(where, what));
+                UserInteractionUtil.CreateExceptionVertex(where, what));
         }
-        
-        public static IVertex CreateErrorVertex(object where, string what)
+
+        public static void ShowException(object where, string what, ExceptionLevel level)
+        {
+
+        }
+
+
+        public static IVertex CreateExceptionVertex(object where, string what)
         {            
             IVertex _exception, _where, _type, _what, _error;
 

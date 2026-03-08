@@ -93,7 +93,7 @@ namespace m0.Store.Text
         {            
             if (!properlyLoaded)
             {
-                UserInteractionUtil.ShowError("Text serlialisation to " + fileName, "As text file " + fileName + " has not been properly loaded, commit (saving) is disabled for the file. This will protect existing file content.");
+                UserInteractionUtil.ShowException("Text serlialisation to " + fileName, "As text file " + fileName + " has not been properly loaded, commit (saving) is disabled for the file. This will protect existing file content.");
                 return;
             }
 

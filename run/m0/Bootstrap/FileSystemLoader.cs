@@ -57,7 +57,7 @@ namespace m0.Bootstrap
             }
             catch (Exception e)
             {
-                UserInteractionUtil.ShowError("FilesystemLoader", "Error while loading autostart files.");
+                UserInteractionUtil.ShowException("FilesystemLoader", "Error while loading autostart files.");
             }
         }
 

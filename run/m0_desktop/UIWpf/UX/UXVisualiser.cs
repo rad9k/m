@@ -159,7 +159,7 @@ namespace m0.UIWpf.UX
         {
             if (VisualisersList.GetVisualiser(baseEdgeVertex.Get(false, "To:")) != null)
             {
-                UserInteractionUtil.ShowError("Diagram Visualiser", "There is allready Diagram Visualiser opened for this Edge");
+                UserInteractionUtil.ShowException("Diagram Visualiser", "There is allready Diagram Visualiser opened for this Edge");
 
                 canLoad = false;
 
@@ -527,7 +527,7 @@ namespace m0.UIWpf.UX
             }
             catch (Exception ex) 
             {
-                UserInteractionUtil.ShowError("UXVisualiser", "Item allready opened in another visualiser instance");
+                UserInteractionUtil.ShowException("UXVisualiser", "Item allready opened in another visualiser instance");
             }
 
             item.NestingLevel = host.NestingLevel + 1;
@@ -1886,11 +1886,11 @@ namespace m0.UIWpf.UX
                                         ndi.BaseEdge);
                         }
                         else
-                            UserInteractionUtil.ShowError(Vertex.Value + "UXAggregtor","There is allready UX Item, that visualises dropped vertex.\n\nNow, it is not possible to add second representation of same vertex.\n\nOne can change this limitation by changing \"User\\CurrentUser:\\Settings:\\AllowManyUXItemsWithSameBaseEdgeTo:\" setting.");
+                            UserInteractionUtil.ShowException(Vertex.Value + "UXAggregtor","There is allready UX Item, that visualises dropped vertex.\n\nNow, it is not possible to add second representation of same vertex.\n\nOne can change this limitation by changing \"User\\CurrentUser:\\Settings:\\AllowManyUXItemsWithSameBaseEdgeTo:\" setting.");
                         
                     }
                     else
-                        UserInteractionUtil.ShowError(Vertex.Value + "UXAggregator","There is allready \"" + ndi.UXTemplate.Vertex.Value + "\" UX Item, that visualises dropped vertex.\n\nIt is not possible to add second representation of same vertex, with the same UX Item type.");
+                        UserInteractionUtil.ShowException(Vertex.Value + "UXAggregator","There is allready \"" + ndi.UXTemplate.Vertex.Value + "\" UX Item, that visualises dropped vertex.\n\nIt is not possible to add second representation of same vertex, with the same UX Item type.");
                 }
             }
 
@@ -1940,7 +1940,7 @@ namespace m0.UIWpf.UX
             }
 
             if (v.Count() == 0)
-                UserInteractionUtil.ShowError(Vertex.Value + "Diagram", "There is no diagram line definition matching selected source and target items.");
+                UserInteractionUtil.ShowException(Vertex.Value + "Diagram", "There is no diagram line definition matching selected source and target items.");
 
             IVertex info = m0.MinusZero.Instance.CreateTempVertex();
             info.Value = "choose diagram line:";
@@ -2004,7 +2004,7 @@ namespace m0.UIWpf.UX
                     return true;
                 }
                 else
-                    UserInteractionUtil.ShowError(Vertex.Value + "Diagram", "Adding new diagram line  \"" + selected.Value + "\" is not possible.\n\n" + test.Value);
+                    UserInteractionUtil.ShowException(Vertex.Value + "Diagram", "Adding new diagram line  \"" + selected.Value + "\" is not possible.\n\n" + test.Value);
             }
 
             return false;

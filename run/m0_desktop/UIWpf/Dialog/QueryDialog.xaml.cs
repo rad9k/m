@@ -82,7 +82,7 @@ namespace m0.UIWpf.Dialog
 
             if (Content.Text != "")
             {
-                z.Root.Get(false, @"Home:\CurrentUser:\QueriesRoot").AddVertex(null, Content.Text);
+                z.Root.Get(false, @"Home:\CurrentUser:\QueriesRoot:").AddVertex(null, Content.Text);
             }
         }
 

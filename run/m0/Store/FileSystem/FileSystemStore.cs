@@ -95,7 +95,7 @@ namespace m0.Store.FileSystem
         {
             if(!(VertexIdentifier is string))
             {
-                UserInteractionUtil.ShowError("trying to create FileSystemStore vertex from identifier " + VertexIdentifier + " in the "+Identifier+" store", "identifier is not string");
+                UserInteractionUtil.ShowException("trying to create FileSystemStore vertex from identifier " + VertexIdentifier + " in the "+Identifier+" store", "identifier is not string");
                 return null;
             }
 
@@ -117,7 +117,7 @@ namespace m0.Store.FileSystem
                 return new DirectoryVertex(this, fileName);
             }
 
-            UserInteractionUtil.ShowError("trying to create FileSystemStore vertex from identifier " + fileName + "in the " + Identifier + " store", "file or directory not found");
+            UserInteractionUtil.ShowException("trying to create FileSystemStore vertex from identifier " + fileName + "in the " + Identifier + " store", "file or directory not found");
             return null;
         }
 

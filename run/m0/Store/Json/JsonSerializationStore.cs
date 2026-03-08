@@ -230,7 +230,7 @@ namespace m0.Store.Json
                 catch (Exception ex)
                 {
                     canWrite = false;
-                    UserInteractionUtil.ShowError("Json Deserialization from " + Identifier,
+                    UserInteractionUtil.ShowException("Json Deserialization from " + Identifier,
                         "Failed to load file: " + ex.Message);
 
                     // Fallback to creating new
@@ -327,7 +327,7 @@ namespace m0.Store.Json
                     {
                         if (!data.StoreIdDictionary.ContainsKey(je.MetaStoreId))
                         {
-                            UserInteractionUtil.ShowError("Json Deserialisation from " + Identifier, "MetaStoreId " + je.MetaStoreId + " not found in StoreIdDictionary");
+                            UserInteractionUtil.ShowException("Json Deserialisation from " + Identifier, "MetaStoreId " + je.MetaStoreId + " not found in StoreIdDictionary");
                             return;
                         }
                         else
@@ -348,7 +348,7 @@ namespace m0.Store.Json
                     {
                         if (!data.StoreIdDictionary.ContainsKey(je.ToStoreId))
                         {
-                            UserInteractionUtil.ShowError("Json Deserialisation from " + Identifier, "ToStoreId " + je.ToStoreId + " not found in StoreIdDictionary");
+                            UserInteractionUtil.ShowException("Json Deserialisation from " + Identifier, "ToStoreId " + je.ToStoreId + " not found in StoreIdDictionary");
                             return;
                         }
                         else
@@ -394,7 +394,7 @@ namespace m0.Store.Json
         {
             if (!canWrite)
             {
-                UserInteractionUtil.ShowError("Json Serialisation to " + fileName, "As json serialisation file " + fileName + " has not been properly loaded, commit (saving) is disabled for the file. This will protect existing file content.");
+                UserInteractionUtil.ShowException("Json Serialisation to " + fileName, "As json serialisation file " + fileName + " has not been properly loaded, commit (saving) is disabled for the file. This will protect existing file content.");
                 return;
             }
 
