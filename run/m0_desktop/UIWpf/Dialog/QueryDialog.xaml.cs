@@ -38,7 +38,7 @@ namespace m0.UIWpf.Dialog
 
             this.baseVertex = baseVertex;
 
-            GraphUtil.ReplaceEdge(this.Queries.Vertex.Get(false, "BaseEdge:"), "To", z.Root.Get(false, @"User\CurrentUser:\Queries:"));
+            GraphUtil.ReplaceEdge(this.Queries.Vertex.Get(false, "BaseEdge:"), "To", z.Root.Get(false, @"Home:\CurrentUser:\Queries:"));
 
            // PlatformClass.RegisterVertexChangeListeners(Queries.Vertex, QueriesVertexChange, new string[] { "BaseEdge", "SelectedEdges" });
 
@@ -82,7 +82,7 @@ namespace m0.UIWpf.Dialog
 
             if (Content.Text != "")
             {
-                z.Root.Get(false, @"User\CurrentUser:\Queries").AddVertex(null, Content.Text);
+                z.Root.Get(false, @"Home:\CurrentUser:\QueriesRoot").AddVertex(null, Content.Text);
             }
         }
 

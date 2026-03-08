@@ -392,7 +392,7 @@ namespace m0.UIWpf.Visualisers
 
             // DO WANT THIS FEATURE ?
             //
-            if (GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "StartAndEnd"))
+            if (GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"Home:\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "StartAndEnd"))
                 return Vertex.Get(false, "BaseEdge:");
             else
                 return null;            

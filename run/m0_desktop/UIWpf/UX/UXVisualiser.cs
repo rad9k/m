@@ -1879,7 +1879,7 @@ namespace m0.UIWpf.UX
                     if (ThereIsDiagramItemOfThisClassAndThisBaseEdgeTo == false)
                     {
                         if (ThereIsDiagramItemOfThisBaseEdgeTo == false ||
-                            GeneralUtil.CompareStrings(r.Get(false, @"User\CurrentUser:\Settings:\AllowManyUXItemsWithSameBaseEdgeTo:").Value, "True"))
+                            GeneralUtil.CompareStrings(r.Get(false, @"Home:\CurrentUser:\Settings:\AllowManyUXItemsWithSameBaseEdgeTo:").Value, "True"))
                         {
                             newUXItem = AddDiagramItem(p,
                                         ndi.UXTemplate,

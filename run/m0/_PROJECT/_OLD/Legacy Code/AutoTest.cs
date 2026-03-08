@@ -25,7 +25,7 @@ namespace m0
 
         public static void ParserTest()
         {
-            IVertex DefaultFormalTextLanguage = MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\DefaultFormalTextLanguage:");
+            IVertex DefaultFormalTextLanguage = MinusZero.Instance.Root.Get(false, @"Home:\CurrentUser:\DefaultFormalTextLanguage:");
 
             Text2GraphProcessing parser = new Text2GraphProcessing(DefaultFormalTextLanguage);
 

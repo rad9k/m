@@ -851,7 +851,7 @@ namespace m0.UIWpf.Visualisers
             }
 
             // DO WANT THIS FEATURE
-            if (vertexByLocationToReturn == null&&GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "StartAndEnd"))
+            if (vertexByLocationToReturn == null&&GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"Home:\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "StartAndEnd"))
                 vertexByLocationToReturn = Vertex.Get(false, @"BaseEdge:");
 
             return vertexByLocationToReturn;
@@ -923,7 +923,7 @@ namespace m0.UIWpf.Visualisers
         {
             IVertex v = GetEdgeByPoint(e.GetPosition(this));
 
-            if (v == null && GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "OnlyEnd"))
+            if (v == null && GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"Home:\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "OnlyEnd"))
                 v = Vertex.Get(false, "BaseEdge:");
 
             if (v != null)

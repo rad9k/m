@@ -112,11 +112,11 @@ namespace m0_SYSTEM_GENERATE
 
             //
 
-            print("* saving User to \"user.m0j\"");
+            //print("* saving User to \"user.m0j\"");
 
-            GeneralUtil.CreateM0JAndMoveEdgesIntoIt_IncludeEverythingBesidesList("user.m0j", User, new HashSet<IVertex>(systemSubGraphWithLinks), storeOverride);
+            //GeneralUtil.CreateM0JAndMoveEdgesIntoIt_IncludeEverythingBesidesList("user.m0j", User, new HashSet<IVertex>(systemSubGraphWithLinks), storeOverride);
 
-            print("* User saved to \"user.m0j\"");
+            //print("* User saved to \"user.m0j\"");
 
             //
 

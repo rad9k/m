@@ -18,7 +18,7 @@ namespace m0.UIWpf.Visualisers.Helper
     {
         static Dictionary<IVertex, VisualiserData> Visualisers = new Dictionary<IVertex, VisualiserData>();
 
-        static IVertex UserCurrentUserSessionVisualisers_vertex = MinusZero.Instance.root.Get(false, @"User\CurrentUser:\Session:\Visualisers:");
+        static IVertex UserCurrentUserSessionVisualisers_vertex = MinusZero.Instance.root.Get(false, @"Home:\CurrentUser:\Session:\Visualisers:");
         static IVertex SystemMetaZeroTypexUXItem_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Item");
         static IVertex SystemMetaZeroTypexUXVolatileItem_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\Item\VolatileItem");
 

@@ -194,15 +194,12 @@ namespace m0
 
             dolar = GraphUtil.GetQueryOutFirst(Base, null, "$");
 
-            //
+            //            
 
-            IVertex User = GraphUtil.GetQueryOutFirst(Root, null, "User");
+            IVertex FormalTextLanguage = GraphUtil.GetQueryOutFirst(System, null, "FormalTextLanguage");
+            IVertex ZeroCode = GraphUtil.GetQueryOutFirst(FormalTextLanguage, null, "ZeroCode");
 
-            IVertex CurrentUser = GraphUtil.GetQueryOutFirst(User, "CurrentUser", null);
-
-            _DefaultFormalTextLanguage = GraphUtil.GetQueryOutFirst(CurrentUser, "DefaultFormalTextLanguage", null);
-
-            //_DefaultFormalTextLanguage = MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\DefaultFormalTextLanguage:");
+            _DefaultFormalTextLanguage = ZeroCode;            
 
             //
 
@@ -536,7 +533,11 @@ namespace m0
 
             CreateAutostart();
 
+            //
 
+            CommandLineParameters.CommandLineExecute_AfterInitialisation();
+
+            //
 
 
             ExecutionFlowHelper.CommitTransaction();
@@ -554,9 +555,7 @@ namespace m0
 
         public void Initialize_AfterPossibleUXInitialized()
         {
-            ExecutionFlowHelper.StartTransaction();
-
-            CommandLineParameters.CommandLineExecute_AfterInitialisation();
+            ExecutionFlowHelper.StartTransaction();            
 
             Autostart();
 

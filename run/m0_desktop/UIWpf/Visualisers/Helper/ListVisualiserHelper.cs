@@ -279,7 +279,7 @@ namespace m0.UIWpf.Visualisers.Helper
         {
             IVertex v = Visualiser.GetEdgeByPoint(e.GetPosition(VisualiserAsFrameworkElement));
 
-            if (v == null && GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "OnlyEnd"))
+            if (v == null && GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"Home:\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "OnlyEnd"))
                 v = Vertex.Get(false, "BaseEdge:");
 
             if (v != null)

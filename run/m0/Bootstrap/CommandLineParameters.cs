@@ -148,20 +148,20 @@ namespace m0.Bootstrap
         }
 
         public void CommandLineExecute_BeforeInitialisation()
-        {
+        {            
             if (CreateUser != null)
                 CommandLineExecution.CreateUser_BeforeInitialisation(CreateUser);
         }
 
         public void CommandLineExecute_AfterInitialisation()
-        {
+        {        
             if (CreateUser != null)
                 CommandLineExecution.CreateUser(CreateUser);
 
             if (RunUser != null)
-                CommandLineExecution.RunUser(RunUser);
+                CommandLineExecution.RunUser(RunUser, false);
             else
-                CommandLineExecution.RunUser("root");
+                CommandLineExecution.RunUser("root", true);
         }
     }
 }

@@ -25,8 +25,8 @@ namespace m0_SYSTEM_GENERATE
             IVertex system = r.AddVertex(null, "System");
             system.AddVertex(null, "system.m0j");
 
-            IVertex user = r.AddVertex(null, "User");
-            user.AddVertex(null, "user.m0j");
+            //IVertex user = r.AddVertex(null, "User");
+            //user.AddVertex(null, "user.m0j");
 
             IVertex quick = r.AddVertex(null, "Quick");
             quick.AddVertex(null, "quick.m0j");

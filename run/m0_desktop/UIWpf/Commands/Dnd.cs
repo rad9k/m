@@ -164,7 +164,7 @@ namespace m0.UIWpf.Commands
 
             bool doCopy = false;
 
-            if (GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\Settings:\CopyOnDragAndDrop:").Value, "True"))
+            if (GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"Home:\CurrentUser:\Settings:\CopyOnDragAndDrop:").Value, "True"))
                 doCopy = true;
 
 

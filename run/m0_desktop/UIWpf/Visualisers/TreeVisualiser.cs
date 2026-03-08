@@ -692,7 +692,7 @@ namespace m0.UIWpf.Visualisers
             GetVertexByLocation_Reccurent(this.Items, p);
 
             // DO NOT WANT THIS FEATURE            
-            if (vertexByLocationToReturn == null && GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"User\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "StartAndEnd"))
+            if (vertexByLocationToReturn == null && GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"Home:\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "StartAndEnd"))
                 vertexByLocationToReturn = Vertex.Get(false, @"BaseEdge:");
 
             return vertexByLocationToReturn;

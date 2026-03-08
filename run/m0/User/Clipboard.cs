@@ -21,7 +21,7 @@ namespace m0.User
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
             
-            IVertex currenSession = m0.MinusZero.Instance.root.Get(false, @"User\CurrentUser:\CurrentSession:");
+            IVertex currenSession = m0.MinusZero.Instance.root.Get(false, @"Home:\CurrentUser:\CurrentSession:");
 
             IEnumerable<IEdge> allClipboard = currenSession.GetAll(false, @"ClipboardCut:");
 
@@ -44,7 +44,7 @@ namespace m0.User
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
             
-            IVertex currenSession = m0.MinusZero.Instance.root.Get(false, @"User\CurrentUser:\CurrentSession:");
+            IVertex currenSession = m0.MinusZero.Instance.root.Get(false, @"Home:\CurrentUser:\CurrentSession:");
 
             IVertex clipboard = null;
 
@@ -67,7 +67,7 @@ namespace m0.User
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
 
-            IVertex currenSession = m0.MinusZero.Instance.root.Get(false, @"User\CurrentUser:\CurrentSession:");
+            IVertex currenSession = m0.MinusZero.Instance.root.Get(false, @"Home:\CurrentUser:\CurrentSession:");
 
             IVertex clipboard = null;
 
@@ -91,7 +91,7 @@ namespace m0.User
             
             List<IEdge> ret = new List<IEdge>();
 
-            IVertex currentSession = m0.MinusZero.Instance.root.Get(false, @"User\CurrentUser:\CurrentSession:");
+            IVertex currentSession = m0.MinusZero.Instance.root.Get(false, @"Home:\CurrentUser:\CurrentSession:");
 
             IVertex cut = currentSession.GetAll(false, @"ClipboardCut:");
 
@@ -117,7 +117,7 @@ namespace m0.User
 
         public static IEnumerable<IEdge> GetFromClipboard(string meta)
         {
-            return m0.MinusZero.Instance.root.Get(false, @"User\CurrentUser:\CurrentSession:\Clipboard:\$Is:"+meta);
+            return m0.MinusZero.Instance.root.Get(false, @"Home:\CurrentUser:\CurrentSession:\Clipboard:\$Is:"+meta);
         }
     }
 }
