@@ -1942,7 +1942,8 @@ namespace m0.UIWpf.UX
             }
 
             if (v.Count() == 0)
-                UserInteractionUtil.ShowException(Vertex.Value + "Diagram", "There is no diagram line definition matching selected source and target items.");
+                UserInteractionUtil.ShowException(Vertex.Value + "Diagram", "There is no diagram line definition matching selected source and target items."
+                    , ExceptionLevelEnum.Warning);
 
             IVertex info = m0.MinusZero.Instance.CreateTempVertex();
             info.Value = "choose diagram line:";
@@ -2006,7 +2007,8 @@ namespace m0.UIWpf.UX
                     return true;
                 }
                 else
-                    UserInteractionUtil.ShowException(Vertex.Value + "Diagram", "Adding new diagram line  \"" + selected.Value + "\" is not possible.\n\n" + test.Value);
+                    UserInteractionUtil.ShowException(Vertex.Value + "Diagram", "Adding new diagram line  \"" + selected.Value + "\" is not possible.\n\n" + test.Value
+                        , ExceptionLevelEnum.Warning);
             }
 
             return false;

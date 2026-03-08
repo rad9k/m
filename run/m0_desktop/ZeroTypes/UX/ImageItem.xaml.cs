@@ -56,7 +56,8 @@ namespace m0.ZeroTypes.UX
                     int q = b.PixelHeight; // will not load without this
                     Image.Source = b;
                 } catch {
-                    UserInteractionUtil.ShowException("ImageItem", "images\\" + Filename + " not found");
+                    UserInteractionUtil.ShowException("ImageItem", "images\\" + Filename + " not found",
+                        ExceptionLevelEnum.Error);
 
                     shouldTryToLoad = false;
                 }
