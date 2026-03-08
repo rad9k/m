@@ -45,7 +45,7 @@ namespace m0.Bootstrap
                 File.Copy(filePath, filePath + ".backup", true);
             else
             {
-                UserInteractionUtil.ShowException("CommandLineExecution", $"User {userName} not found.");
+                UserInteractionUtil.ShowException("CommandLineExecution", $"User {userName} not found.", ExceptionLevelEnum.Fatal);
             }
 
             IVertex startVertex = GraphUtil.GetQueryOutFirst(root, "Start", null);

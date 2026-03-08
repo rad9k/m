@@ -10,29 +10,21 @@ using System.Threading.Tasks;
 namespace m0.Util
 {
     public class UserInteractionUtil
-    {
-        public enum ExceptionLevel { trace, debug, info, warning, error, fatal };
-
+    {        
         public static string Ask(string question)
         {            
             return MinusZero.Instance.UserInteraction.InteractionInput(question);
         }
 
-        public static void ShowException(object where, string what)
+        public static void ShowException(object where, string what, ExceptionLevelEnum type)
         {
             MinusZero.Instance.UserInteraction.InteractionOutputException(
-                UserInteractionUtil.CreateExceptionVertex(where, what));
+                UserInteractionUtil.CreateExceptionVertex(where, what, type));
         }
 
-        public static void ShowException(object where, string what, ExceptionLevel level)
-        {
-
-        }
-
-
-        public static IVertex CreateExceptionVertex(object where, string what)
+        public static IVertex CreateExceptionVertex(object where, string what, ExceptionLevelEnum level)
         {            
-            IVertex _exception, _where, _type, _what, _error;
+            IVertex _exception, _where, _type, _what;
 
             if (MinusZero.Instance.Root.Store.DetachState!=DetachStateEnum.Attached) // we are in detached mode
             {
@@ -46,10 +38,7 @@ namespace m0.Util
                 _type.Value = "Type";
 
                 _what = MinusZero.Instance.CreateTempVertex();
-                _what.Value = "What";
-
-                _error = MinusZero.Instance.CreateTempVertex();
-                _error.Value = "Error";
+                _what.Value = "What";                
             }
             else
             {
@@ -58,14 +47,13 @@ namespace m0.Util
                 _exception = smz.Get(false, "Exception");
                 _where = smz.Get(false, @"Exception\Where");
                 _type = smz.Get(false, @"Exception\Type");
-                _what = smz.Get(false, @"Exception\What");
-                _error = smz.Get(false, @"ExceptionTypeEnum\Error");
+                _what = smz.Get(false, @"Exception\What");                
             }
 
             IVertex error = VertexOperations.AddInstance(null, _exception);
 
             GraphUtil.SetVertexValue(error, _where, where);
-            GraphUtil.CreateOrReplaceEdge(error, _type, _error);
+            GraphUtil.CreateOrReplaceEdge(error, _type, ExceptionLevelEnumHelper.GetVertex(level));
             GraphUtil.SetVertexValue(error, _what, what);            
 
             return error;

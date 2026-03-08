@@ -159,7 +159,7 @@ namespace m0.UIWpf.UX
         {
             if (VisualisersList.GetVisualiser(baseEdgeVertex.Get(false, "To:")) != null)
             {
-                UserInteractionUtil.ShowException("Diagram Visualiser", "There is allready Diagram Visualiser opened for this Edge");
+                UserInteractionUtil.ShowException("Diagram Visualiser", "There is allready Diagram Visualiser opened for this Edge", ExceptionLevelEnum.Warning);
 
                 canLoad = false;
 
@@ -527,7 +527,7 @@ namespace m0.UIWpf.UX
             }
             catch (Exception ex) 
             {
-                UserInteractionUtil.ShowException("UXVisualiser", "Item allready opened in another visualiser instance");
+                UserInteractionUtil.ShowException("UXVisualiser", "Item allready opened in another visualiser instance", ExceptionLevelEnum.Warning);
             }
 
             item.NestingLevel = host.NestingLevel + 1;
@@ -1886,11 +1886,13 @@ namespace m0.UIWpf.UX
                                         ndi.BaseEdge);
                         }
                         else
-                            UserInteractionUtil.ShowException(Vertex.Value + "UXAggregtor","There is allready UX Item, that visualises dropped vertex.\n\nNow, it is not possible to add second representation of same vertex.\n\nOne can change this limitation by changing \"User\\CurrentUser:\\Settings:\\AllowManyUXItemsWithSameBaseEdgeTo:\" setting.");
+                            UserInteractionUtil.ShowException(Vertex.Value + "UXAggregtor","There is allready UX Item, that visualises dropped vertex.\n\nNow, it is not possible to add second representation of same vertex.\n\nOne can change this limitation by changing \"User\\CurrentUser:\\Settings:\\AllowManyUXItemsWithSameBaseEdgeTo:\" setting."
+                                , ExceptionLevelEnum.Warning);
                         
                     }
                     else
-                        UserInteractionUtil.ShowException(Vertex.Value + "UXAggregator","There is allready \"" + ndi.UXTemplate.Vertex.Value + "\" UX Item, that visualises dropped vertex.\n\nIt is not possible to add second representation of same vertex, with the same UX Item type.");
+                        UserInteractionUtil.ShowException(Vertex.Value + "UXAggregator","There is allready \"" + ndi.UXTemplate.Vertex.Value + "\" UX Item, that visualises dropped vertex.\n\nIt is not possible to add second representation of same vertex, with the same UX Item type."
+                            , ExceptionLevelEnum.Warning);
                 }
             }
 

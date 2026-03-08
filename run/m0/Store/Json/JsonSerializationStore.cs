@@ -231,7 +231,7 @@ namespace m0.Store.Json
                 {
                     canWrite = false;
                     UserInteractionUtil.ShowException("Json Deserialization from " + Identifier,
-                        "Failed to load file: " + ex.Message);
+                        "Failed to load file: " + ex.Message, ZeroTypes.ExceptionLevelEnum.Error);
 
                     // Fallback to creating new
                     EasyVertex __root = new EasyVertex(this);
@@ -327,7 +327,8 @@ namespace m0.Store.Json
                     {
                         if (!data.StoreIdDictionary.ContainsKey(je.MetaStoreId))
                         {
-                            UserInteractionUtil.ShowException("Json Deserialisation from " + Identifier, "MetaStoreId " + je.MetaStoreId + " not found in StoreIdDictionary");
+                            UserInteractionUtil.ShowException("Json Deserialisation from " + Identifier, "MetaStoreId " + je.MetaStoreId 
+                                + " not found in StoreIdDictionary", ZeroTypes.ExceptionLevelEnum.Error);
                             return;
                         }
                         else
@@ -348,7 +349,8 @@ namespace m0.Store.Json
                     {
                         if (!data.StoreIdDictionary.ContainsKey(je.ToStoreId))
                         {
-                            UserInteractionUtil.ShowException("Json Deserialisation from " + Identifier, "ToStoreId " + je.ToStoreId + " not found in StoreIdDictionary");
+                            UserInteractionUtil.ShowException("Json Deserialisation from " + Identifier, "ToStoreId " + je.ToStoreId 
+                                + " not found in StoreIdDictionary", ZeroTypes.ExceptionLevelEnum.Error);
                             return;
                         }
                         else
@@ -394,7 +396,9 @@ namespace m0.Store.Json
         {
             if (!canWrite)
             {
-                UserInteractionUtil.ShowException("Json Serialisation to " + fileName, "As json serialisation file " + fileName + " has not been properly loaded, commit (saving) is disabled for the file. This will protect existing file content.");
+                UserInteractionUtil.ShowException("Json Serialisation to " + fileName, "As json serialisation file " + fileName 
+                    + " has not been properly loaded, commit (saving) is disabled for the file. This will protect existing file content."
+                    , ZeroTypes.ExceptionLevelEnum.Warning);
                 return;
             }
 

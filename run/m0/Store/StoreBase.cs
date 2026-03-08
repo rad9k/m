@@ -208,7 +208,8 @@ namespace m0.Store
         {
             if (!VertexIdentifiersDictionary.ContainsKey(VertexIdentifier))
             {                
-                UserInteractionUtil.ShowException("Store " + Identifier, VertexIdentifier + " not found in Vertex Identifiers Dictionary");
+                UserInteractionUtil.ShowException("Store " + Identifier, VertexIdentifier + " not found in Vertex Identifiers Dictionary"
+                    , ZeroTypes.ExceptionLevelEnum.Error);
 
                 return null;
             }

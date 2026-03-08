@@ -165,7 +165,7 @@ namespace m0.Store.FileSystem
         {
             if (GeneralUtil.CompareStrings(edge.Meta.Value,"File"))
             {
-                UserInteractionUtil.ShowException(Identifier + " file", "tried to delete file");
+                UserInteractionUtil.ShowException(Identifier + " file", "tried to delete file", ZeroTypes.ExceptionLevelEnum.Warning);
                 return;// not sure if there will be not unwanted file deletion
 
                 FileInfo fi= new FileInfo(Identifier.ToString() + Path.DirectorySeparatorChar + edge.To.Value);
@@ -175,7 +175,7 @@ namespace m0.Store.FileSystem
 
             if (GeneralUtil.CompareStrings(edge.Meta.Value, "Directory"))
             {
-                UserInteractionUtil.ShowException(Identifier + " directory", "tried to delete directory");
+                UserInteractionUtil.ShowException(Identifier + " directory", "tried to delete directory", ZeroTypes.ExceptionLevelEnum.Warning);
                 return;// not sure if there will be not unwanted file deletion
 
                 DirectoryInfo di = new DirectoryInfo(Identifier.ToString() + Path.DirectorySeparatorChar + edge.To.Value);
