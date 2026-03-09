@@ -81,6 +81,8 @@ namespace m0.Store.Binary
         public override void CommitTransaction()
         {
             CommitTransaction(Identifier);
+
+            File.Copy(Identifier, Identifier + ".backup", true);
         }
 
         List<IEdge> temporaryRemovedEdges;
