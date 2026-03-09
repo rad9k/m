@@ -1,5 +1,3 @@
-﻿#pragma warning disable SYSLIB0011
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -57,7 +55,7 @@ namespace m0.Store.Binary
                     VertexIdentifierCount = (long)formatter.Deserialize(readStream);
 
 
-                    RestoreStoreDataInVertices();                    
+                    RestoreStoreDataInVertices();
 
                     root = GetVertexByIdentifier(RootIdentifier);
 
@@ -136,12 +134,12 @@ namespace m0.Store.Binary
             VertexIdentifiersDictionary.Remove(e.To.Identifier);
         }
 
-        void addTemporaryRemovedEdges() 
+        void addTemporaryRemovedEdges()
         {
             if (temporaryRemovedEdges == null)
                 return;
 
-            foreach(IEdge e in temporaryRemovedEdges)
+            foreach (IEdge e in temporaryRemovedEdges)
             {
                 e.From.AddEdge(e.Meta, e.To);
                 VertexIdentifiersDictionary.Add(e.To.Identifier, e.To);
@@ -165,7 +163,7 @@ namespace m0.Store.Binary
         public void CommitTransaction(string fileName)
         {
             if (DetachState != DetachStateEnum.Detached)
-                throw new Exception("Store not Detached");            
+                throw new Exception("Store not Detached");
 
             FileStream writeStream = new FileStream(Identifier, FileMode.Create);
             BinaryFormatter formatter = new BinaryFormatter();
@@ -180,7 +178,7 @@ namespace m0.Store.Binary
 
             base.CommitTransaction();
 
-            RestoreStoreDataInVertices();            
+            RestoreStoreDataInVertices();
         }
 
         public BinaryStore(String identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList)

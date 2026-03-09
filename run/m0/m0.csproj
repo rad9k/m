@@ -28,7 +28,8 @@
   <ItemGroup>
     <AppDesigner Include="Properties\" />
 	<PackageReference Include="Microsoft.AspNetCore.App" />       
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />    
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />       
+    <PackageReference Include="protobuf-net" Version="3.2.56" />    
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>

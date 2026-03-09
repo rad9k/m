@@ -88,7 +88,7 @@ namespace m0.Store.Text
         {
             CommitTransaction(Identifier);
 
-            System.IO.File.Copy(Identifier, Identifier + ".backup", true);
+            //System.IO.File.Copy(Identifier, Identifier + ".backup", true);
         }
 
         public void CommitTransaction(string fileName)

@@ -1636,6 +1636,8 @@ namespace m0.UIWpf.UX
 
         private void SaveDiagram()
         {
+            return;
+
             string path = GraphUtil.GetQueryBetweenVertexes_byInEdges(this.Vertex, MinusZero.Instance.Root);
 
             string pathEncoded = Lib.StdView.Html.DiagramQueryToDiagramId_internal(path);
