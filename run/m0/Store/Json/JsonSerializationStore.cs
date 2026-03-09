@@ -389,7 +389,11 @@ namespace m0.Store.Json
 
         public override void CommitTransaction()
         {
+            string fileName = GetIdentifierToUse();
+
             CommitTransaction(GetIdentifierToUse(), true);
+
+            File.Copy(fileName, fileName + ".backup", true);
         }
 
         public void CommitTransaction(string fileName, bool checkIfIsDetached)
