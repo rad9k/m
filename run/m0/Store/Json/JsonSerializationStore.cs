@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -391,9 +391,10 @@ namespace m0.Store.Json
         {
             string fileName = GetIdentifierToUse();
 
-            CommitTransaction(GetIdentifierToUse(), true);
+            if (MinusZero.Instance.CommandLineParameters == null || !MinusZero.Instance.CommandLineParameters.NoBackup)
+                File.Copy(fileName, fileName + ".backup", true);
 
-            File.Copy(fileName, fileName + ".backup", true);
+            CommitTransaction(GetIdentifierToUse(), true);            
         }
 
         public void CommitTransaction(string fileName, bool checkIfIsDetached)
@@ -581,6 +582,9 @@ namespace m0.Store.Json
 
         public override void Backup()
         {
+            if (MinusZero.Instance.CommandLineParameters != null && MinusZero.Instance.CommandLineParameters.NoBackup)
+                return;
+
             if (DetachState == DetachStateEnum.Attached)
             {
                 UpdateDetachStateData();

@@ -17,6 +17,7 @@ namespace m0.Bootstrap
     public class CommandLineParameters
     {
         public bool DoHelp;
+        public bool NoBackup;
         public bool NoAutostart;
         public string Autostart;
         public string RunUser;
@@ -46,6 +47,11 @@ namespace m0.Bootstrap
                 else if (arg == "-n" || arg == "--no-autostart")
                 {
                     result.NoAutostart = true;
+                    result.UsedArguments.Add(arg);
+                }
+                else if (arg == "-nb" || arg == "--no-backup")
+                {
+                    result.NoBackup = true;
                     result.UsedArguments.Add(arg);
                 }
                 else if (arg == "-a" || arg == "--autostart")
@@ -114,6 +120,8 @@ namespace m0.Bootstrap
                 "      Show this help message." + Environment.NewLine +
                 "  -n, --no-autostart" + Environment.NewLine +
                 "      Disable autostart execution." + Environment.NewLine +
+                "  -nb, --no-backup" + Environment.NewLine +
+                "      Turns off automatic *.m0?.backup file creation when saving *.m0? stores." + Environment.NewLine +
                 "  -a, --autostart \"directory\"" + Environment.NewLine +
                 "      Set autostart directory name (relative to m0 location)." + Environment.NewLine +
                 "  -u, --user <user name>" + Environment.NewLine +

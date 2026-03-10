@@ -268,9 +268,10 @@ namespace m0.Store.Binary
         {
             string fileName = GetIdentifierToUse();
 
-            CommitTransaction(fileName, true);
+            if (MinusZero.Instance.CommandLineParameters == null || !MinusZero.Instance.CommandLineParameters.NoBackup)
+                File.Copy(fileName, fileName + ".backup", true);
 
-            File.Copy(fileName, fileName + ".backup", true);
+            CommitTransaction(fileName, true);            
         }
 
         public void CommitTransaction(string fileName, bool checkIfIsDetached)
@@ -427,6 +428,9 @@ namespace m0.Store.Binary
 
         public override void Backup()
         {
+            if (MinusZero.Instance.CommandLineParameters != null && MinusZero.Instance.CommandLineParameters.NoBackup)
+                return;
+
             if (DetachState == DetachStateEnum.Attached)
             {
                 UpdateDetachStateData();

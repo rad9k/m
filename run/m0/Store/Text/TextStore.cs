@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -122,6 +122,11 @@ namespace m0.Store.Text
 
             //
 
+            if (MinusZero.Instance.CommandLineParameters == null || !MinusZero.Instance.CommandLineParameters.NoBackup)
+                System.IO.File.Copy(fileName, fileName + ".backup", true);
+
+            //
+
             StreamWriter writeStream = new StreamWriter(fileName);
 
             writeStream.WriteLine(formalTextLanguageProcessing_Query);
@@ -150,6 +155,9 @@ namespace m0.Store.Text
 
         public override void Backup()
         {
+            if (MinusZero.Instance.CommandLineParameters != null && MinusZero.Instance.CommandLineParameters.NoBackup)
+                return;
+
             if (DetachState == DetachStateEnum.Attached)
             {
                 UpdateDetachStateData();

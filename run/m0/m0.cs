@@ -535,7 +535,7 @@ namespace m0
 
             //
 
-            CommandLineParameters.CommandLineExecute_AfterInitialisation();
+            CommandLineParameters.CommandLineExecute_AfterInitialisation();            
 
             //
 
