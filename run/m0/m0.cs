@@ -309,6 +309,8 @@ namespace m0
             ExecutionFlowHelper.CommitTransaction();
 
             CommitTransaction();
+
+            Environment.Exit(-1);
         }
 
         
