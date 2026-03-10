@@ -41,12 +41,12 @@ namespace m0.Bootstrap
             if (createIfNotExist && (fileDoesNotExist || fileIsEmpty))
                 CreateUser(userName);
 
-           /* if (File.Exists(filePath))
-                File.Copy(filePath, filePath + ".backup", true);
-            else
+            if (!File.Exists(filePath))
             {
                 UserInteractionUtil.ShowException("CommandLineExecution", $"User {userName} not found.", ExceptionLevelEnum.Fatal);
-            }*/
+                MinusZero.Instance.Fatal();
+            }
+            
 
             IVertex startVertex = GraphUtil.GetQueryOutFirst(root, "Start", null);
             IVertex homeFileVertex = GraphUtil.GetQueryOutFirst(startVertex, "File", GetFileName(userName));

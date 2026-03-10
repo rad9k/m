@@ -64,7 +64,7 @@ namespace m0.Util
                 _where = smz.Get(false, @"Exception\Where");
                 _type = smz.Get(false, @"Exception\Type");
                 _what = smz.Get(false, @"Exception\What");
-                _error = smz.Get(false, @"ExceptionTypeEnum\Error");
+                _error = smz.Get(false, @"ExceptionLevelEnum\Error");
             }
 
             IVertex error = VertexOperations.AddInstance(null, _exception);

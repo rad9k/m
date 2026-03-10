@@ -3071,9 +3071,9 @@ namespace m0.ZeroCode
 
             error.AddVertex(GraphUtil.GetQueryOutFirst(Exception, null, "Where"), lineNumber.ToString());
 
-            IVertex ExceptionTypeEnum = GraphUtil.GetQueryOutFirst(smz, null, "ExceptionTypeEnum");
+            IVertex ExceptionLevelEnum = GraphUtil.GetQueryOutFirst(smz, null, "ExceptionLevelEnum");
 
-            error.AddEdge(GraphUtil.GetQueryOutFirst(Exception, null, "Type"), GraphUtil.GetQueryOutFirst(ExceptionTypeEnum, null, "Error"));
+            error.AddEdge(GraphUtil.GetQueryOutFirst(Exception, null, "Type"), GraphUtil.GetQueryOutFirst(ExceptionLevelEnum, null, "Error"));
 
             GraphUtil.SetVertexValue(error, GraphUtil.GetQueryOutFirst(Exception, null, "What"), value);
         }

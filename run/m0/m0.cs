@@ -294,6 +294,11 @@ namespace m0
             }
         }
 
+        public void Fatal()
+        {
+            Finalize();
+        }
+
         void Finalize()
         {
             UserInteraction.UserInteractionFinalize();

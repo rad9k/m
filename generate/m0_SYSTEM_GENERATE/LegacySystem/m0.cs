@@ -3233,7 +3233,7 @@ namespace m0
                 "Class:Exception{Attribute:CodeEdge{$MinCardinality:0,$MaxCardinality:1},Attribute:DataEdge{$MinCardinality:0,$MaxCardinality:-1},Attribute:Where{$MinCardinality:0,$MaxCardinality:1},Attribute:Type{$MinCardinality:0,$MaxCardinality:1},Attribute:What{$MinCardinality:1,$MaxCardinality:1}},"+
                 "Class:FormalTextLanguageProcessing{Attribute:ParserHandler{$MinCardinality:0,$MaxCardinality:1},Attribute:GeneratorHandler{$MinCardinality:0,$MaxCardinality:1},Aggregation:LanguageParameterFirst{$MinCardinality:0,$MaxCardinality:1},Aggregation:LanguageParameterSecond{$MinCardinality:0,$MaxCardinality:1}},"+
                 "Class:TextToken{Attribute:IsBold,Attribute:IsItalic}," +
-                "Enum:ExceptionTypeEnum{EnumValue:Trace,EnumValue:Debug,EnumValue:Info,EnumValue:Warning,EnumValue:Error,EnumValue:Fatal}," +
+                "Enum:ExceptionLevelEnum{EnumValue:Trace,EnumValue:Debug,EnumValue:Info,EnumValue:Warning,EnumValue:Error,EnumValue:Fatal}," +
                 "Enum:CodeRepresentationEnum{EnumValue:EdgeOneLine,EnumValue:LinearizedManyLines,EnumValue:ManyLinesExcludingParent,EnumValue:VertexAndManyLines,EnumValue:EdgeAndManyLines}}}");
 
             // TextToken
@@ -3405,7 +3405,7 @@ namespace m0
                  LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                  LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\VertexType"));
 
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\ExceptionTypeEnum").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\ExceptionLevelEnum").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\EnumBase"));
 
@@ -3421,7 +3421,7 @@ namespace m0
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Exception\Type").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\ExceptionTypeEnum"));
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\ExceptionLevelEnum"));
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Exception\What").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
