@@ -1,7 +1,13 @@
-﻿using System;
+using m0;
+using m0.Foundation;
+using m0.Graph;
+using m0.UIWpf.Controls;
+using m0.User.Process.UX;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -11,19 +17,17 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using m0.Foundation;
-using m0.Graph;
-using m0.ZeroTypes;
-using m0.Util;
 
 namespace m0.UIWpf.Dialog
 {
     /// <summary>
-    /// Interaction logic for ZeroCodeEditorDialog.xaml
+    /// Interaction logic for QueryDialog.xaml
     /// </summary>
     public partial class QueryDialog : UserControl
     {
         IVertex baseVertex;
+        CodeControl codeControl;
+        IVertex queryEditorVertex;
 
         public override string ToString()
         {
@@ -38,9 +42,13 @@ namespace m0.UIWpf.Dialog
 
             this.baseVertex = baseVertex;
 
-            GraphUtil.ReplaceEdge(this.Queries.Vertex.Get(false, "BaseEdge:"), "To", z.Root.Get(false, @"Home:\CurrentUser:\Queries:"));
+            queryEditorVertex = z.CreateTempVertex();
+            codeControl = new CodeControl(queryEditorVertex, true);
+            codeControl.GenerateAfterParse = false;
+            ContentHost.Child = codeControl;
 
-           // PlatformClass.RegisterVertexChangeListeners(Queries.Vertex, QueriesVertexChange, new string[] { "BaseEdge", "SelectedEdges" });
+            GraphUtil.ReplaceEdge(this.Queries.Vertex.Get(false, "BaseEdge:"), "To", z.Root.Get(false, @"Home:\CurrentUser:\Queries:"));
+            this.Queries.SelectedEdgesChange += Queries_SelectedEdgesChange;
 
             this.Loaded += new RoutedEventHandler(OnLoad);
 
@@ -48,27 +56,35 @@ namespace m0.UIWpf.Dialog
 
         void OnLoad(object sender, RoutedEventArgs e)
         {
-            Content.Focus();
+            codeControl.editor.Focus();
         }
-       
-        
+
         private void Run_Click(object sender, RoutedEventArgs e)
         {
             e.Handled = true;
 
             MinusZero z = MinusZero.Instance;
 
-            GraphUtil.ReplaceEdge(this.Resoult.Vertex.Get(false, "BaseEdge:"),"To",z.Empty);            
-                       
-            IVertex res = baseVertex.GetAll(false, Content.Text);
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
+            GraphUtil.ReplaceEdge(this.Resoult.Vertex.Get(false, "BaseEdge:"), "To", z.Empty);
+
+            IVertex res = baseVertex.GetAll(false, codeControl.editor.Text);
 
             if (res != null)
             {
                 this.Resoult.UnselectAllSelectedEdges();
 
-                GraphUtil.ReplaceEdge(this.Resoult.Vertex.Get(false, "BaseEdge:"), "To", res);                
+                GraphUtil.ReplaceEdge(this.Resoult.Vertex.Get(false, "BaseEdge:"), "To", res);
             }
-            
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
+
+            BottomTabs.SelectedItem = ResoultTab;
         }
 
         private void Select_Click(object sender, RoutedEventArgs e)
@@ -80,15 +96,29 @@ namespace m0.UIWpf.Dialog
         {
             MinusZero z = MinusZero.Instance;
 
-            if (Content.Text != "")
+            if (codeControl.editor.Text != "")
             {
-                z.Root.Get(false, @"Home:\CurrentUser:\QueriesRoot:").AddVertex(null, Content.Text);
+
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
+                
+                z.Root.Get(false, @"Home:\CurrentUser:\QueriesRoot:").AddVertex(null, codeControl.editor.Text);
+
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                ////////////////////////////////////////
             }
         }
 
-        private void QueriesVertexChange(object sender, VertexChangeEventArgs e){
-            if(sender==Queries.Vertex.Get(false, @"SelectedEdges:\")&&e.Type==VertexChangeType.EdgeAdded&&GeneralUtil.CompareStrings(e.Edge.Meta.Value,"To"))
-                Content.Text=Queries.Vertex.Get(false, @"SelectedEdges:\\To:").Value.ToString();
+        private void Queries_SelectedEdgesChange()
+        {
+            IVertex selectedQuery = Queries.Vertex.Get(false, @"SelectedEdges:\\To:");
+
+            if (selectedQuery != null)
+            {
+                codeControl.editor.Text = selectedQuery.Value?.ToString() ?? "";
+            }
         }
     }
 }
