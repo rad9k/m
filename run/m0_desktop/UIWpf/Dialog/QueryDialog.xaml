@@ -11,9 +11,9 @@
              Foreground="{StaticResource 0ForegroundBrush}">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
+            <RowDefinition Height="60" />
             <RowDefinition Height="12" />
-            <RowDefinition Height="2*" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0">
@@ -32,16 +32,16 @@
                 <Button Click="Run_Click"
                         Margin="0,0,8,0"
                         Padding="10,4">
-                    Run
+                    Run Query
                 </Button>
                 <Button Click="Copy_Click"
                         Margin="0,0,8,0"
                         Padding="10,4">
-                    Copy to User Queries
+                    Copy Query to User Queries
                 </Button>
                 <Button Click="Select_Click"
                         Padding="10,4">
-                    Select All
+                    Select All (from Results)
                 </Button>
             </StackPanel>
         </Grid>
@@ -50,7 +50,7 @@
                       Height="4"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Bottom"
-                      Background="{StaticResource 0ForegroundBrush}"
+                      Background="Aquamarine"
                       ResizeDirection="Rows" />
 
         <TabControl Grid.Row="2"

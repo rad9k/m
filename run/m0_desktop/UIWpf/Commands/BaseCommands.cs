@@ -244,7 +244,7 @@ namespace m0.UIWpf.Commands
         {
             QueryDialog d = new QueryDialog(baseVertex.Get(false, "To:"));
 
-            MinusZero.Instance.UserInteraction.ShowContentFloating(d, FloatingWindowSize.Small);
+            MinusZero.Instance.UserInteraction.ShowContentFloating(d, FloatingWindowSize.Medium);
         }
 
         public static void OpenDefaultVisualiser(IVertex baseVertex, bool isFloating)

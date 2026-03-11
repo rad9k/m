@@ -239,7 +239,7 @@ namespace m0
 
         public void ShowContentFloating(object obj, FloatingWindowSize size)
         {
-            int width=0, height=0;
+            int width = 0, height = 0;
 
             switch (size)
             {
