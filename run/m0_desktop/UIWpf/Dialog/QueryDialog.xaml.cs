@@ -67,18 +67,18 @@ namespace m0.UIWpf.Dialog
 
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
-            ////////////////////////////////////////
-
-            GraphUtil.ReplaceEdge(this.Resoult.Vertex.Get(false, "BaseEdge:"), "To", z.Empty);
+            ////////////////////////////////////////            
 
             IVertex res = baseVertex.GetAll(false, codeControl.editor.Text);
 
-            if (res != null)
-            {
-                this.Resoult.UnselectAllSelectedEdges();
+            if (res == null)
+                GraphUtil.ReplaceEdge(this.Resoult.Vertex.Get(false, "BaseEdge:"), "To", z.Empty);
+            else
+                {
+                    this.Resoult.UnselectAllSelectedEdges();
 
-                GraphUtil.ReplaceEdge(this.Resoult.Vertex.Get(false, "BaseEdge:"), "To", res);
-            }
+                    GraphUtil.ReplaceEdge(this.Resoult.Vertex.Get(false, "BaseEdge:"), "To", res);
+                }
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();

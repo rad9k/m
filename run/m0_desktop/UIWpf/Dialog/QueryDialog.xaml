@@ -11,9 +11,9 @@
              Foreground="{StaticResource 0ForegroundBrush}">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="60" />
-            <RowDefinition Height="12" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="5*" />
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0">
@@ -24,9 +24,13 @@
 
             <Border Grid.Row="0"
                     x:Name="ContentHost"
-                    Margin="0,0,0,8" />
+                    Margin="3,3,3,8"
+                    Padding="3"
+                    BorderBrush="{StaticResource 0ForegroundBrush}"
+                    BorderThickness="1" />
 
             <StackPanel Grid.Row="1"
+                        Margin="0,0,0,8"
                         Orientation="Horizontal"
                         HorizontalAlignment="Left">
                 <Button Click="Run_Click"
@@ -49,9 +53,10 @@
         <GridSplitter Grid.Row="1"
                       Height="4"
                       HorizontalAlignment="Stretch"
-                      VerticalAlignment="Bottom"
+                      VerticalAlignment="Stretch"
                       Background="Aquamarine"
-                      ResizeDirection="Rows" />
+                      ResizeDirection="Rows"
+                      ResizeBehavior="PreviousAndNext" />
 
         <TabControl Grid.Row="2"
                     x:Name="BottomTabs">
