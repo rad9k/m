@@ -48,7 +48,18 @@ namespace m0.UIWpf.Dialog
             codeControl.GenerateAfterParse = false;
             ContentHost.Child = codeControl;
 
-            GraphUtil.ReplaceEdge(this.Queries.Vertex.Get(false, "BaseEdge:"), "To", z.Root.Get(false, @"Home:\CurrentUser:\Queries:"));
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////     
+
+            GraphUtil.ReplaceEdge(this.Queries.Vertex.Get(false, "BaseEdge:"), "To", z.Root.Get(false, @"Home:\CurrentUser:\QueriesRoot:"));
+
+            GraphUtil.ReplaceEdge(this.Resoult.Vertex.Get(false, "BaseEdge:"), "To", z.Empty);
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
+
             this.Queries.SelectedEdgesChange += Queries_SelectedEdgesChange;
 
             this.Loaded += new RoutedEventHandler(OnLoad);
@@ -66,6 +77,8 @@ namespace m0.UIWpf.Dialog
 
             MinusZero z = MinusZero.Instance;
 
+            codeControl.ExecuteParse();
+
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////            
@@ -75,13 +88,10 @@ namespace m0.UIWpf.Dialog
             if (res == null)
                 GraphUtil.ReplaceEdge(this.Resoult.Vertex.Get(false, "BaseEdge:"), "To", z.Empty);
             else
-                {
+            {
+                GraphUtil.ReplaceEdge(this.Resoult.Vertex.Get(false, "BaseEdge:"), "To", res);
 
-                IVertex newBaseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, null, res);
-
-                GraphUtil.ReplaceEdge(this.Resoult.Vertex, "BaseEdge", newBaseEdgeVertex);
-
-               // this.Resoult.UnselectAllSelectedEdges();
+                this.Resoult.UnselectAllSelectedEdges();
             }
 
             ////////////////////////////////////////
@@ -94,6 +104,8 @@ namespace m0.UIWpf.Dialog
         private void Select_Click(object sender, RoutedEventArgs e)
         {
             this.Resoult.SelectAllInBaseEdge();
+
+            BottomTabs.SelectedItem = ResoultTab;
         }
 
         private void Copy_Click(object sender, RoutedEventArgs e)

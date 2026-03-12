@@ -145,6 +145,9 @@ namespace m0.UIWpf.Controls
             if (baseEdgeFinal != null)
                 return baseEdgeFinal;
 
+            if (GraphUtil.GetQueryOutFirst(Vertex, "BaseEdge", null) == null)
+                return MinusZero.Instance.CreateTempEdge();
+
             IEdge BaseEdge = EdgeHelper.CreateIEdgeFromEdgeVertex(Vertex.Get(false, @"BaseEdge:"));
 
             string ContentQuery = GraphUtil.GetStringValueOrNull(Vertex.Get(false, @"ContentQuery:"));
@@ -183,7 +186,7 @@ namespace m0.UIWpf.Controls
                 return CodeRepresentationEnum.VertexAndManyLines;
         }
 
-        private void ExecuteParse()
+        public void ExecuteParse()
         {            
             editor_Text = editor.Text;
 

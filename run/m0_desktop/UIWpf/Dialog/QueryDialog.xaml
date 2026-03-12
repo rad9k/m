@@ -34,7 +34,7 @@
                         Orientation="Horizontal"
                         HorizontalAlignment="Left">
                 <Button Click="Run_Click"
-                        Margin="0,0,8,0"
+                        Margin="4,0,8,0"
                         Padding="10,4">
                     Run Query
                 </Button>
@@ -65,7 +65,7 @@
                 <visualisers:TreeVisualiser x:Name="Resoult" />
             </TabItem>
             <TabItem x:Name="QueriesTab"
-                     Header="Queries">
+                     Header="User Queries">
                 <visualisers:TreeVisualiser x:Name="Queries" />
             </TabItem>
         </TabControl>
