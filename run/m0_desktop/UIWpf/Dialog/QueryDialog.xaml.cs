@@ -3,6 +3,7 @@ using m0.Foundation;
 using m0.Graph;
 using m0.UIWpf.Controls;
 using m0.User.Process.UX;
+using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,10 +76,13 @@ namespace m0.UIWpf.Dialog
                 GraphUtil.ReplaceEdge(this.Resoult.Vertex.Get(false, "BaseEdge:"), "To", z.Empty);
             else
                 {
-                    this.Resoult.UnselectAllSelectedEdges();
 
-                    GraphUtil.ReplaceEdge(this.Resoult.Vertex.Get(false, "BaseEdge:"), "To", res);
-                }
+                IVertex newBaseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, null, res);
+
+                GraphUtil.ReplaceEdge(this.Resoult.Vertex, "BaseEdge", newBaseEdgeVertex);
+
+               // this.Resoult.UnselectAllSelectedEdges();
+            }
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
