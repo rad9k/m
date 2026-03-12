@@ -59,6 +59,16 @@ namespace m0.UIWpf.Dialog
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////
+            
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////     
+
+            GraphUtil.ReplaceEdge(this.Queries.Vertex.Get(false, "BaseEdge:"), "To", z.Root.Get(false, @"Home:\CurrentUser:\QueriesRoot:"));
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
 
             this.Queries.SelectedEdgesChange += Queries_SelectedEdgesChange;
 

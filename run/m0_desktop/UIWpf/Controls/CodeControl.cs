@@ -237,7 +237,7 @@ namespace m0.UIWpf.Controls
                 //else
                 //  errorList = MinusZero.Instance.DefaultFormalTextParser.Parse(ftl, BaseEdge, editor_Text, GetCodeRepresentation(), out baseEdge_new);
 
-                if (ftlp == null)
+                if (ftlp != null)
                     errorList = ZeroCodeProcessingHelper.Parse(ftlp, BaseEdge, editor_Text, out baseEdge_new);
                 else
                     errorList = ZeroCodeProcessingHelper.Parse(BaseEdge, editor_Text, out baseEdge_new);
