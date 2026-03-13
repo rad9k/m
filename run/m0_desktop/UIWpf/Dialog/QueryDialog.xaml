@@ -34,7 +34,7 @@
                         Orientation="Horizontal"
                         HorizontalAlignment="Left">
                 <Button Click="Run_Click"
-                        Margin="4,0,8,0"
+                        Margin="3,0,8,0"
                         Padding="10,4">
                     Run Query
                 </Button>
@@ -54,7 +54,7 @@
                       Height="4"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"
-                      Background="Aquamarine"
+                      Background="{StaticResource 0GripBrush}"
                       ResizeDirection="Rows"
                       ResizeBehavior="PreviousAndNext" />
 

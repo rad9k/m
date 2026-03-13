@@ -87,8 +87,6 @@ namespace m0.UIWpf.Dialog
 
             MinusZero z = MinusZero.Instance;
 
-            codeControl.ExecuteParse();
-
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////            
