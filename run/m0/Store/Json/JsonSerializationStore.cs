@@ -48,77 +48,128 @@ namespace m0.Store.Json
         public List<JsonVertex> Vertices { get; set; } = new();
     }
 
+    public class IdentifierObjectJsonConverter : JsonConverter<object>
+    {
+        public override object Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            switch (reader.TokenType)
+            {
+                case JsonTokenType.String:
+                    return reader.GetString();
+                case JsonTokenType.Number:
+                    if (reader.TryGetInt64(out long longValue))
+                        return longValue;
+
+                    throw new JsonException("Identifier number must fit into Int64.");
+                case JsonTokenType.Null:
+                    return null;
+                default:
+                    throw new JsonException("Only string and Int64 identifiers are supported.");
+            }
+        }
+
+        public override void Write(Utf8JsonWriter writer, object value, JsonSerializerOptions options)
+        {
+            if (value == null)
+            {
+                writer.WriteNullValue();
+                return;
+            }
+
+            switch (value)
+            {
+                case string stringValue:
+                    writer.WriteStringValue(stringValue);
+                    break;
+                case int intValue:
+                    writer.WriteNumberValue(intValue);
+                    break;
+                case long longValue:
+                    writer.WriteNumberValue(longValue);
+                    break;
+                default:
+                    throw new JsonException("Only string and integer identifiers are supported.");
+            }
+        }
+    }
+
+    public class PrimitiveValueJsonConverter : JsonConverter<object>
+    {
+        public override object Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            switch (reader.TokenType)
+            {
+                case JsonTokenType.String:
+                    return reader.GetString();
+                case JsonTokenType.True:
+                case JsonTokenType.False:
+                    return reader.GetBoolean();
+                case JsonTokenType.Number:
+                    if (reader.TryGetInt32(out int intValue))
+                        return intValue;
+
+                    if (reader.TryGetInt64(out long longValue))
+                        return longValue;
+
+                    if (reader.TryGetDecimal(out decimal decimalValue))
+                        return decimalValue;
+
+                    return reader.GetDouble();
+                case JsonTokenType.Null:
+                    return null;
+                default:
+                    throw new JsonException("Only primitive json values are supported.");
+            }
+        }
+
+        public override void Write(Utf8JsonWriter writer, object value, JsonSerializerOptions options)
+        {
+            if (value == null)
+            {
+                writer.WriteNullValue();
+                return;
+            }
+
+            switch (value)
+            {
+                case string stringValue:
+                    writer.WriteStringValue(stringValue);
+                    break;
+                case bool boolValue:
+                    writer.WriteBooleanValue(boolValue);
+                    break;
+                case int intValue:
+                    writer.WriteNumberValue(intValue);
+                    break;
+                case long longValue:
+                    writer.WriteNumberValue(longValue);
+                    break;
+                case double doubleValue:
+                    writer.WriteNumberValue(doubleValue);
+                    break;
+                case decimal decimalValue:
+                    writer.WriteNumberValue(decimalValue);
+                    break;
+                default:
+                    throw new JsonException("Only primitive clr values are supported.");
+            }
+        }
+    }
+
     public class JsonVertex
     {
         [JsonPropertyName("Id")]
+        [JsonConverter(typeof(IdentifierObjectJsonConverter))]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public object Id { get; set; }
 
         [JsonPropertyName("Value")]
+        [JsonConverter(typeof(PrimitiveValueJsonConverter))]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public object Value { get; set; }
 
-        [JsonPropertyName("ValueDouble")]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public double? ValueDouble { get; set; }
-
-        [JsonPropertyName("ValueDecimal")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public decimal? ValueDecimal { get; set; }
-
         public List<JsonEdge> Edges { get; set; } = new();
-
-        // Helper properties for backward compatibility
-        [JsonIgnore]
-        public string IdString
-        {
-            get => Id switch
-            {
-                string s => s,
-                JsonElement je when je.ValueKind == JsonValueKind.String => je.GetString(),
-                _ => null
-            };
-            set => Id = value;
-        }
-
-        [JsonIgnore]
-        public long? IdLong
-        {
-            get => Id switch
-            {
-                long l => l,
-                int i => i,
-                JsonElement je when je.ValueKind == JsonValueKind.Number && je.TryGetInt64(out long val) => val,
-                JsonElement je when je.ValueKind == JsonValueKind.String && long.TryParse(je.GetString(), out long val) => val,
-                _ => null
-            };
-            set => Id = value;
-        }
-
-        [JsonIgnore]
-        public string ValueString
-        {
-            get => Value switch
-            {
-                string s => s,
-                JsonElement je when je.ValueKind == JsonValueKind.String => je.GetString(),
-                _ => null
-            };
-            set => Value = value;
-        }
-
-        [JsonIgnore]
-        public int? ValueInt
-        {
-            get => Value switch
-            {
-                int i => i,
-                JsonElement je when je.ValueKind == JsonValueKind.Number && je.TryGetInt32(out int val) => val,
-                JsonElement je when je.ValueKind == JsonValueKind.String && int.TryParse(je.GetString(), out int val) => val,
-                _ => null
-            };
-            set => Value = value;
-        }
     }
 
     public class JsonEdge
@@ -126,67 +177,16 @@ namespace m0.Store.Json
         public int MetaStoreId { get; set; }
 
         [JsonPropertyName("MetaId")]
+        [JsonConverter(typeof(IdentifierObjectJsonConverter))]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public object MetaId { get; set; }
 
         public int ToStoreId { get; set; }
 
         [JsonPropertyName("ToId")]
+        [JsonConverter(typeof(IdentifierObjectJsonConverter))]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public object ToId { get; set; }
-
-        // Helper properties for backward compatibility
-        [JsonIgnore]
-        public string MetaIdString
-        {
-            get => MetaId switch
-            {
-                string s => s,
-                JsonElement je when je.ValueKind == JsonValueKind.String => je.GetString(),
-                _ => null
-            };
-            set => MetaId = value;
-        }
-
-        [JsonIgnore]
-        public long? MetaIdLong
-        {
-            get => MetaId switch
-            {
-                long l => l,
-                int i => i,
-                JsonElement je when je.ValueKind == JsonValueKind.Number && je.TryGetInt64(out long val) => val,
-                JsonElement je when je.ValueKind == JsonValueKind.String && long.TryParse(je.GetString(), out long val) => val,
-                _ => null
-            };
-            set => MetaId = value;
-        }
-
-        [JsonIgnore]
-        public string ToIdString
-        {
-            get => ToId switch
-            {
-                string s => s,
-                JsonElement je when je.ValueKind == JsonValueKind.String => je.GetString(),
-                _ => null
-            };
-            set => ToId = value;
-        }
-
-        [JsonIgnore]
-        public long? ToIdLong
-        {
-            get => ToId switch
-            {
-                long l => l,
-                int i => i,
-                JsonElement je when je.ValueKind == JsonValueKind.Number && je.TryGetInt64(out long val) => val,
-                JsonElement je when je.ValueKind == JsonValueKind.String && long.TryParse(je.GetString(), out long val) => val,
-                _ => null
-            };
-            set => ToId = value;
-        }
     }
 
     public class JsonSerializationStore : StoreBase
@@ -284,46 +284,27 @@ namespace m0.Store.Json
             {
                 object toBeIdentifier;
 
-                if (jv.IdString == null)
+                if (jv.Id is string)
+                    toBeIdentifier = jv.Id;
+                else
                 {
-                    toBeIdentifier = jv.IdLong;
+                    toBeIdentifier = jv.Id;
 
                     if (toBeIdentifier is long longId && longId > maxVertexIdentifierCount)
                         maxVertexIdentifierCount = longId;
                 }
-                else
-                    toBeIdentifier = jv.IdString;
 
                 EasyVertex v = new EasyVertex(this, toBeIdentifier);
 
-                if (jv.ValueString != null)
-                    v.Value = jv.ValueString;
-
-                if (jv.ValueInt != null)
-                    v.Value = jv.ValueInt;
-
-                if (jv.ValueDouble != null)
-                    v.Value = jv.ValueDouble;
-
-                if (jv.ValueDecimal != null)
-                    v.Value = jv.ValueDecimal;
+                v.Value = jv.Value;
 
                 v._Store = this;
 
+                if (jv.Edges != null)
                 foreach (JsonEdge je in jv.Edges)
                 {
-                    object MetaId;
-                    object ToId;
-
-                    if (je.MetaIdString == null)
-                        MetaId = je.MetaIdLong;
-                    else
-                        MetaId = je.MetaIdString;
-
-                    if (je.ToIdString == null)
-                        ToId = je.ToIdLong;
-                    else
-                        ToId = je.ToIdString;
+                    object MetaId = je.MetaId;
+                    object ToId = je.ToId;
 
                     StoreId MetaStoreId = null;
 
@@ -449,35 +430,13 @@ namespace m0.Store.Json
             {
                 JsonVertex jv = new JsonVertex();
 
-                if (v.Identifier is string)
-                    jv.IdString = (string)v.Identifier;
-                else
-                    jv.IdLong = (long)v.Identifier;
+                jv.Id = v.Identifier;
 
-                if (v.Value != null)
-                {
-                    if (v.Value is string)
-                        jv.ValueString = (string)v.Value;
-
-                    if (v.Value is double)
-                        jv.ValueDouble = (double)v.Value;
-
-                    if (v.Value is int)
-                        jv.ValueInt = (int)v.Value;
-
-                    if (v.Value is decimal)
-                        jv.ValueDecimal = (decimal)v.Value;
-
-                    if (v.Value is bool)
-                        if ((bool)v.Value)
-                            jv.ValueString = "True";
-                        else
-                            jv.ValueString = "False";
-                }
+                jv.Value = v.Value;
 
                 data.Vertices.Add(jv);
 
-                jv.Edges = new List<JsonEdge>();
+                List<JsonEdge> edges = new List<JsonEdge>();
 
                 foreach (IEdge e in v.OutEdgesRaw)
                     if (e is IDetachableEdge)
@@ -488,23 +447,16 @@ namespace m0.Store.Json
 
                         je.MetaStoreId = GetStoreId(data, de.MetaStoreTypeName, de.MetaStoreIdentifier, de.MetaIdentifier);
 
-                        if (de.MetaIdentifier != null)
-                        {
-                            if (de.MetaIdentifier is string)
-                                je.MetaIdString = (string)de.MetaIdentifier;
-                            else
-                                je.MetaIdLong = (long)de.MetaIdentifier;
-                        }
+                        je.MetaId = de.MetaIdentifier;
 
                         je.ToStoreId = GetStoreId(data, de.ToStoreTypeName, de.ToStoreIdentifier, de.ToIdentifier);
 
-                        if (de.ToIdentifier is string)
-                            je.ToIdString = (string)de.ToIdentifier;
-                        else
-                            je.ToIdLong = (long)de.ToIdentifier;
+                        je.ToId = de.ToIdentifier;
 
-                        jv.Edges.Add(je);
+                        edges.Add(je);
                     }
+
+                jv.Edges = edges.Count > 0 ? edges : null;
             }
 
             return data;
