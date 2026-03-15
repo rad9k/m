@@ -51,15 +51,19 @@ namespace m0.Store.Json
     public class JsonVertex
     {
         [JsonPropertyName("Id")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public object Id { get; set; }
 
         [JsonPropertyName("Value")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public object Value { get; set; }
 
         [JsonPropertyName("ValueDouble")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public double? ValueDouble { get; set; }
 
         [JsonPropertyName("ValueDecimal")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public decimal? ValueDecimal { get; set; }
 
         public List<JsonEdge> Edges { get; set; } = new();
@@ -122,11 +126,13 @@ namespace m0.Store.Json
         public int MetaStoreId { get; set; }
 
         [JsonPropertyName("MetaId")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public object MetaId { get; set; }
 
         public int ToStoreId { get; set; }
 
         [JsonPropertyName("ToId")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public object ToId { get; set; }
 
         // Helper properties for backward compatibility
