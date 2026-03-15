@@ -78,7 +78,6 @@ C:\Users\rad9k\source\repos\m\generate\m0_SYSTEM_GENERATE\bin\Debug\Jil.xml
 C:\Users\rad9k\source\repos\m\generate\m0_SYSTEM_GENERATE\bin\Debug\Sigil.pdb
 C:\Users\rad9k\source\repos\m\generate\m0_SYSTEM_GENERATE\bin\Debug\Sigil.xml
 C:\Users\rad9k\source\repos\m\generate\m0_SYSTEM_GENERATE\obj\Debug\m0_SYSTEM_GENERATE.csproj.AssemblyReference.cache
-C:\Users\rad9k\source\repos\m\generate\m0_SYSTEM_GENERATE\obj\Debug\m0_SYSTEM_GENERATE.exe.config
 C:\Users\rad9k\source\repos\m\generate\m0_SYSTEM_GENERATE\obj\Debug\m0_SYSTEM_GENERATE.csproj.CoreCompileInputs.cache
 C:\Users\rad9k\source\repos\m\generate\m0_SYSTEM_GENERATE\obj\Debug\m0_SYSTE.C9B09BA0.Up2Date
 C:\Users\rad9k\source\repos\m\generate\m0_SYSTEM_GENERATE\obj\Debug\m0_SYSTEM_GENERATE.exe

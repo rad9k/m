@@ -1,2 +1,2 @@
-copy c:\Users\teres\Source\Repos\m\generate\m0_SYSTEM_GENERATE\bin\Debug\*.m0j c:\Users\teres\Source\Repos\m\run\m0_desktop\bin\Debug\net9.0-windows
-copy c:\Users\teres\Source\Repos\m\generate\m0_SYSTEM_GENERATE\bin\Debug\*.m0j c:\Users\teres\Source\Repos\m\run\m0_console\bin\Debug\net9.0
+copy c:\Users\teres\Source\Repos\m\generate\m0_SYSTEM_GENERATE\bin\Debug\*.m0j c:\Users\teres\Source\Repos\m\run\m0_desktop\bin\Debug\net10.0-windows7.0\
+copy c:\Users\teres\Source\Repos\m\generate\m0_SYSTEM_GENERATE\bin\Debug\*.m0j c:\Users\teres\Source\Repos\m\run\m0_console\bin\Debug\net10.0\

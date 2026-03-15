@@ -31,6 +31,17 @@ namespace m0.Bootstrap
             return $"home-{userName}.m0j";                        
         }
 
+        public static void RunUser_BeforeInitialisation(string userName)
+        {
+            string filePath = GetFilePath(userName);
+
+            bool fileDoesExist = File.Exists(filePath);
+            bool fileIsEmpty = fileDoesExist && new FileInfo(filePath).Length == 0;
+
+            if (fileDoesExist && fileIsEmpty)
+                File.Delete(filePath);
+        }
+
         public static void RunUser(string userName, bool createIfNotExist)
         {
             string filePath = GetFilePath(userName);
@@ -66,7 +77,7 @@ namespace m0.Bootstrap
 
             if (File.Exists(filePath))
                 File.Delete(filePath);
-        }
+        }        
 
         public static void CreateUser(string userName)
         {

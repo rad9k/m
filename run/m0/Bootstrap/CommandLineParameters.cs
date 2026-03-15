@@ -159,6 +159,11 @@ namespace m0.Bootstrap
         {            
             if (CreateUser != null)
                 CommandLineExecution.CreateUser_BeforeInitialisation(CreateUser);
+
+            if (RunUser != null)
+                CommandLineExecution.RunUser_BeforeInitialisation(RunUser);
+            else
+                CommandLineExecution.RunUser_BeforeInitialisation("root");
         }
 
         public void CommandLineExecute_AfterInitialisation()
