@@ -25,6 +25,8 @@ namespace m0
 {
     public class MinusZero : IStoreUniverse, IDisposable
     {
+        public CancellationTokenSource GracefullExitToken = new CancellationTokenSource();
+
         bool BuildVariant_m0_COMPOSER = true;
 
         public string m0DllPath;
@@ -490,7 +492,9 @@ namespace m0
 
             LogLevel = CommandLineParameters.GetM0LogLevel();
 
-            m0DllPath = Path.GetDirectoryName(typeof(MinusZero).Assembly.Location);            
+            m0DllPath = Path.GetDirectoryName(typeof(MinusZero).Assembly.Location);
+
+            InitializeGracefullExit();
 
             InitializeLog();
 
@@ -552,6 +556,23 @@ namespace m0
             IsInitialized = true;
 
             ExecutionFlowHelper.StartTransaction();
+        }
+
+        private void InitializeGracefullExit()
+        {
+            // gdy przyjdzie SIGTERM lub Ctrl+C — anuluj
+            Console.CancelKeyPress += (s, e) =>
+            {
+                e.Cancel = true;
+                GracefullExitToken.Cancel();        // "naciśnij przycisk"
+            };
+
+            AppDomain.CurrentDomain.ProcessExit += (s, e) =>
+            {
+                GracefullExitToken.Cancel();        // "naciśnij przycisk"
+                Thread.Sleep(5000);  // poczekaj na cleanup
+            };
+
         }
 
         public void BuildVariantsInitialize()

@@ -94,6 +94,7 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             string type = "m0.Lib.Sys, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
+            AddFunction(LibSys, "SleepUntilGracefullExit", type, "SleepUntilGracefullExit", null, new TypeName[] { });
             AddFunction(LibSys, "StartTransaction", type, "StartTransaction", null, new TypeName[] { });
             AddFunction(LibSys, "CommitTransaction", type, "CommitTransaction", null, new TypeName[] { });
             AddFunction(LibSys, "RollbackTransaction", type, "RollbackTransaction", null, new TypeName[] { });

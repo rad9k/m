@@ -1,15 +1,22 @@
-﻿using m0.Foundation;
+using m0.Foundation;
 using m0.Graph.ExecutionFlow;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace m0.Lib
 {
     public class Sys
     {
+        public static INoInEdgeInOutVertexVertex SleepUntilGracefullExit(IExecution exe)
+        {
+            MinusZero.Instance.GracefullExitToken.Token.WaitHandle.WaitOne();
+
+            return exe.Stack;
+        }
+
         public static INoInEdgeInOutVertexVertex StartTransaction(IExecution exe)
         {
             ITransaction prevTransaction = MinusZero.Instance.GetTopTransaction();
@@ -20,7 +27,7 @@ namespace m0.Lib
 
             MinusZero.Instance.SetTopTransaction(newTransaction);
 
-            return null;
+            return exe.Stack;
         }
 
         public static INoInEdgeInOutVertexVertex CommitTransaction(IExecution exe)
@@ -33,7 +40,7 @@ namespace m0.Lib
 
             MinusZero.Instance.SetTopTransaction(prevTransaction);
 
-            return null;
+            return exe.Stack;
         }
 
         public static INoInEdgeInOutVertexVertex RollbackTransaction(IExecution exe)
@@ -46,7 +53,7 @@ namespace m0.Lib
 
             MinusZero.Instance.SetTopTransaction(prevTransaction);
 
-            return null;
+            return exe.Stack;
         }
     }
 }

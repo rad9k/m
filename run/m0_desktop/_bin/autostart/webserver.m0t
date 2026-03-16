@@ -1,6 +1,7 @@
 System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 "webserver"
 	import @System\Lib\Net direct meta
+	import @System\Lib\Sys direct meta
 	
 	variable "map" @VertexType
 	variable "server" @HttpServer
@@ -15,4 +16,6 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 		mapping @@HttpActionEnum\REST "/api/*" @@Autostart\resttest
 	}
 	server = new @@HttpServer[map\:map]
-	server.Start[]	
+	server.Start[]
+	
+	@@SleepUntilGracefullExit[]
