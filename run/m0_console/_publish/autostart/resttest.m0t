@@ -1,0 +1,31 @@
+System\FormalTextLanguage\ZeroCode_VertexAndManyLines
+"resttest"
+	import @System\Lib\Net\Rest direct meta
+	import @System\Lib\Std direct meta
+	"https://petstore3.swagger.io/api/v3/openapi.json"
+	"http://localhost:5000/swagger/v1/swagger.json"
+	class "niepoczebne"
+		attribute "Name" @String
+	class "User"
+		attribute "Name" @String
+		attribute "Age" @Integer
+		aggregation "Product" @Product
+			<@$MaxCardinality :: "-1">
+		aggregation "Friend" @User			
+	class "Product"
+		attribute "Name" @String
+		attribute "Price" @Float
+	class "niepoczebne2"
+		attribute "Name" @String
+	function "Add" @Integer(@Integer "a", @Integer "b")
+		return a + b
+	function "Concat" @String(@String "str1", @String "str2")
+		<@Endpoint :: @$Empty>
+		variable "x" @String
+		x = str1
+		x += "kupka"
+		x += str2
+		return @@Concatenate[x]
+	function "ProcessUser" @User(@User "input")
+		<@Endpoint :: @$Empty>
+		return 'input'
