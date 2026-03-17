@@ -1,4 +1,5 @@
-﻿using System;
+﻿using m0.ZeroTypes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,9 @@ namespace m0.Foundation
     public enum FloatingWindowSize {Micro, Small, Medium, Large };
 
     public interface IUserInteraction
-    {        
+    {
+        PlatformTypeEnum GetPlatformType();
+
         void ShowContent(object obj);
         
         void ShowContentFloating(object obj, FloatingWindowSize size);

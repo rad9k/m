@@ -88,6 +88,40 @@ namespace m0_SYSTEM_GENERATE.Util
             return f;
         }
 
+        public static IVertex AddFunction_VertexAsReturnType(IVertex baseVertex, string name, string typeName, string methodName, IVertex ret, IList<TypeName> pars)
+        {
+            IVertex zu = m0.MinusZero.Instance.root.Get(false, "System\\Meta\\ZeroUML");
+
+            IVertex zt = m0.MinusZero.Instance.root.Get(false, "System\\Meta\\ZeroTypes");
+
+            IVertex bv = m0.MinusZero.Instance.root.Get(false, "System\\Meta\\Base\\Vertex");
+
+            IVertex f = baseVertex.AddVertex(zu.Get(false, "Function"), name);
+
+            f.AddEdge(m0.MinusZero.Instance.Is, zu.Get(false, "Function"));
+
+            if (ret != null)
+                f.AddEdge(zu.Get(false, "Function\\Output"),  ret);
+
+            foreach (TypeName tn in pars)
+            {
+                IVertex ip = f.AddVertex(zu.Get(false, "Function\\InputParameter"), tn.Name);
+
+                if (tn.Type != null)
+                    ip.AddEdge(bv.Get(false, "$EdgeTarget"), zt.Get(false, tn.Type));
+                else
+                    ip.AddEdge(bv.Get(false, "$EdgeTarget"), tn.TypeVertex);
+
+                //  ip.AddVertex(bv.Get(false, "$MinCardinality"), tn.MinCardinality); // must be a reson for not using those now
+                //  ip.AddVertex(bv.Get(false, "$MaxCardinality"), tn.MaxCardinality);
+            }
+
+            if (methodName != null)
+                ExecutionFlowHelper.DecorateWithDotNetStaticMethod(f, typeName, methodName);
+
+            return f;
+        }
+
         public static IVertex AddMethod(IVertex baseVertex, string name, string typeName, string methodName, string ret, IList<TypeName> pars)
         {
             IVertex zu = m0.MinusZero.Instance.root.Get(false, "System\\Meta\\ZeroUML");

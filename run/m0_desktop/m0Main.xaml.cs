@@ -41,6 +41,11 @@ namespace m0
 
         public static TreeVisualiser mainTree;
 
+        public PlatformTypeEnum GetPlatformType()
+        {
+            return PlatformTypeEnum.Desktop;
+        }
+
         public m0Main()
         {
             Instance = this;

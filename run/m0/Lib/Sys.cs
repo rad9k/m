@@ -1,5 +1,8 @@
 using m0.Foundation;
+using m0.Graph;
 using m0.Graph.ExecutionFlow;
+using m0.ZeroCode.Helpers;
+using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +18,17 @@ namespace m0.Lib
             MinusZero.Instance.GracefullExitToken.Token.WaitHandle.WaitOne();
 
             return exe.Stack;
+        }
+
+        public static INoInEdgeInOutVertexVertex GetPlatformType(IExecution exe)
+        {
+            IVertex PlatformTypeEnumVertex = PlatformTypeEnumHelper.GetVertex(m0.MinusZero.Instance.UserInteraction.GetPlatformType());
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+             newStack.AddEdge(null, PlatformTypeEnumVertex);
+
+            return newStack;
         }
 
         public static INoInEdgeInOutVertexVertex StartTransaction(IExecution exe)

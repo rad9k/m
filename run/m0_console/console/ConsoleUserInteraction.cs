@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -14,6 +15,11 @@ namespace m0_console.console
     public class ConsoleUserInteraction : IUserInteraction
     {
         private bool IsAnsiSupported = false;
+
+        public PlatformTypeEnum GetPlatformType()
+        {
+            return PlatformTypeEnum.Console;
+        }
 
         private void WriteLine(string line)
         {

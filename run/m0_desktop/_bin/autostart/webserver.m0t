@@ -2,6 +2,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 "webserver"
 	import @System\Lib\Net direct meta
 	import @System\Lib\Sys direct meta
+	import @System\Lib\StdUI direct meta
 	
 	variable "map" @VertexType
 	variable "server" @HttpServer
@@ -18,4 +19,5 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 	server = new @@HttpServer[map\:map]
 	server.Start[]
 	
-	@@SleepUntilGracefullExit[]
+	if (@@GetPlatformType[] == @@PlatformTypeEnum\Console)
+		@@SleepUntilGracefullExit[]
