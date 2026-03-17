@@ -217,15 +217,20 @@ namespace m0
         {
             IVertex localComputer = root.Get(false, @"Hardware\LocalComputer:");
 
-            string[] drives = System.IO.Directory.GetLogicalDrives();
+            IEnumerable<DriveInfo> drives = DriveInfo.GetDrives()
+                .Where(d => d.DriveType == DriveType.Fixed
+                || d.DriveType == DriveType.Removable
+                || d.DriveType == DriveType.Network);
+
+                //System.IO.Directory.GetLogicalDrives();
 
             IVertex DriveMeta = Root.Get(false, @"System\Meta\Store\FileSystem\Drive");
 
             IVertex ComputerDrive = Root.Get(false, @"System\Meta\Hardware\Computer\Drive");
 
-            foreach (string str in drives)
+            foreach (DriveInfo di in drives)
             {
-                FileSystemStore fss = new FileSystemStore(str, this, new AccessLevelEnum[] { AccessLevelEnum.NoRestrictions });
+                FileSystemStore fss = new FileSystemStore(di.Name, this, new AccessLevelEnum[] { AccessLevelEnum.NoRestrictions });
 
                 //fss.IncludeFileContent = true;                
 
