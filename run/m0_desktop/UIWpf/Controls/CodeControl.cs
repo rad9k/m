@@ -1,4 +1,4 @@
-﻿using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Highlighting;
 using m0.FormalTextLanguage;
@@ -316,23 +316,41 @@ namespace m0.UIWpf.Controls
             }
         }
 
+        private static Key GetEffectiveKey(KeyEventArgs e)
+        {
+            if (e.Key == Key.System)
+                return e.SystemKey;
+
+            return e.Key;
+        }
+
+        private static bool IsAltPressed(KeyEventArgs e)
+        {
+            return (e.KeyboardDevice.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt;
+        }
+
         private void CodeVisualiser_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Escape)
+            Key effectiveKey = GetEffectiveKey(e);
+
+            if (effectiveKey == Key.Escape)
             {
                 ExecuteParse();
+                e.Handled = true;
                 return;
             }
 
-            if (e.Key == Key.Left && Keyboard.IsKeyDown(Key.LeftAlt))
+            if (effectiveKey == Key.Left && IsAltPressed(e))
             {
                 ReferenceTextMemoryLeft();
+                e.Handled = true;
                 return;
             }
 
-            if (e.Key == Key.Right && Keyboard.IsKeyDown(Key.LeftAlt))
+            if (effectiveKey == Key.Right && IsAltPressed(e))
             {
                 ReferenceTextMemoryRight();
+                e.Handled = true;
                 return;
             }
         }
