@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -100,28 +100,23 @@ namespace m0.Store.FileSystem
 
             try
             {
-                foreach (FileSystemInfo fsi in DI.EnumerateFileSystemInfos())
+                foreach (DirectoryInfo directoryInfo in DI.EnumerateDirectories().OrderBy(d => d.Name, StringComparer.OrdinalIgnoreCase))
                 {
+                    IVertex DirectoryVertex = new DirectoryVertex(this.Store, directoryInfo.FullName);
 
-                    if (fsi is DirectoryInfo)
-                    {
-                        IVertex DirectoryVertex = new DirectoryVertex(this.Store, fsi.FullName);
+                    //base.AddEdge(DirectoryMetaVertex, DirectoryVertex);
+                    AddVertexToFileSystemVertex(DirectoryMetaVertex, DirectoryVertex);
+                }
 
-                        //base.AddEdge(DirectoryMetaVertex, DirectoryVertex);
-                        AddVertexToFileSystemVertex(DirectoryMetaVertex, DirectoryVertex);
-                    }
+                foreach (FileInfo fileInfo in DI.EnumerateFiles().OrderBy(f => f.Name, StringComparer.OrdinalIgnoreCase))
+                {
+                    IVertex FileVertex = new FileVertex(this.Store, fileInfo.FullName);                        
 
-                    if (fsi is FileInfo)
-                    {
-                        IVertex FileVertex = new FileVertex(this.Store, fsi.FullName);                        
-
-                        //base.AddEdge(FileMetaVertex, FileVertex);
-                        AddVertexToFileSystemVertex(FileMetaVertex, FileVertex);
-                    }
-
+                    //base.AddEdge(FileMetaVertex, FileVertex);
+                    AddVertexToFileSystemVertex(FileMetaVertex, FileVertex);
                 }
             }
-            catch (Exception e) { } // no access
+            catch (Exception) { } // no access
         }
 
         public override IEdge AddVertexAndReturnEdge(IVertex metaVertex, object val)
