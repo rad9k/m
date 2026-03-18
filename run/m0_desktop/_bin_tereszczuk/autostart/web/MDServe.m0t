@@ -1,0 +1,141 @@
+System\FormalTextLanguage\ZeroCode_VertexAndManyLines
+"MDServe"
+	import @System\Lib\Std direct meta
+	import @System\Lib\Net direct meta
+	function "MDServeHandler" (@VertexType "startDir", @String "url")
+		if url == ""
+			return @@getIndex[]
+			
+		if url == "script.js"
+			return @@getScript[]
+			
+		if url == "tree.json"
+			return @@getCache[startDir]\TreeJson
+			
+		return @@getFile[startDir, url]
+		
+	function "getIndex" @String()
+		return Start\:web\:'index.html'\Content
+		
+	function "getScript" @String()
+		return Start\:web\:'script.js'\Content
+		
+	"Meta"
+		"MDServeCache"
+			"TreeJson"
+			"Id"
+				"Html"
+		"id"
+		"title"
+		"children"
+			<@System\Lib\StdView\Json\$IsJsonArray :: "">
+			
+	function "getCache" @VertexType(@String "startDir")
+		variable "startDirId" @String
+		variable "cache" @VertexType
+		variable "tree" @VertexType
+		
+		startDirId = startDir\FullFilename
+		
+		if :Server\:'(startDirId)'<> != "0"
+			return :Server\:'(startDirId)'
+			
+		tree +< @@getTree_Recursive[startDir, "True", ""]
+		tree +< :System\:Lib\:StdView\:VertexToJson :: ""
+			
+		cache = @@Meta\MDServeCache :: %startDirId
+		:Server +< cache
+		
+		cache +< @@Meta\MDServeCache\TreeJson :: tree\VertexToJson
+		
+		return cache	
+		
+	function "getTree_Recursive" @VertexType(@VertexType "dir", @Boolean "isFirstLevel", @String "path")
+		variable "tree" @VertexType
+		variable "id" @String
+		variable "idConcatenated" @String
+				
+		if isFirstLevel == "True"
+			for vertex "e" in @@AlphabeticalSort[dir\]
+				if (e\$Is:Directory<> != "0") | (e\$Is:File<> != "0")
+					tree +< ::> @@getTree_Recursive[e, "False"]
+			return tree\
+		
+		if isFirstLevel == "False"			
+			test path == ""
+				case "true"
+					id = ""					
+				case "false"
+					id = path
+					id += "/"
+					
+			id += dir\Basename
+			idConcatenated = @@Concatenate[id]
+			
+			tree +< @@Meta\id :: idConcatenated
+			tree +< @@Meta\title :: @@removeNumeric[dir\Basename]
+									
+			if dir\$Is:Directory<> != "0"
+				for vertex "e" in @@AlphabeticalSort[dir\]
+					if (e\$Is:Directory<> != "0") | (e\$Is:File<> != "0")
+						tree +< @@Meta\children ::> @@getTree_Recursive[e, "False", idConcatenated]
+		
+		return tree
+		
+	function "removeNumeric" @String(@String "input")
+		variable "firstTwo" @String
+		
+		firstTwo = @@Substring['input', "1", "2"]
+		
+		if @@IsNumeric[firstTwo]
+			return @@Substring['input', "4", "-1"]
+			
+		return 'input'
+		
+	function "getFile" (@String "startDir", @String "url")
+		variable "cache" @VertexType
+		variable "html" @String
+		variable "concatenatedHtml" @String
+		variable "splittedUrl" @String
+		variable "split" @String
+		variable "splitCounter" @Integer
+		variable "splitIterator" @VertexType
+		variable "fileName" @String
+		
+		cache = @@getCache[startDir]
+		
+		if cache\Id:'(url)'<> != "0"
+			return cache\Id:'(url)'\Html:
+			
+		splittedUrl = @@Split[@@UrlDecode[url],"/"]
+		
+		splitCounter = "1"
+		splitIterator = startDir
+		
+		while splitCounter < splittedUrl<>			
+			split = splittedUrl<<splitCounter>>
+			splitIterator = splitIterator\:'(split)'			
+			splitCounter = splitCounter + "1"
+
+		split = splittedUrl<<splitCounter>>
+		split += ".md"
+		fileName = @@Concatenate[split]
+		splitIterator = splitIterator\:'(fileName)'
+
+		splitIterator\Content +< :System\:Lib\:StdView\:MdStringToMdTokenVertexes :: ""
+		splitIterator\Content\MdStringToMdTokenVertexes +< :System\:Lib\:StdView\:MdTokenVertexesToHtmlString :: ""
+		
+		html = Start\:web\:'_doc_page_top.html'\Content
+		html += splitIterator\Content\MdStringToMdTokenVertexes\MdTokenVertexesToHtmlString
+		html += Start\:web\:'_doc_page_bottom.html'\Content
+		
+		concatenatedHtml = @@Concatenate[html]
+		
+		@@Meta\MDServeCache\Id :: url
+		
+		cache +< Id
+		
+		Id +< @@Meta\MDServeCache\Id\Html ::> concatenatedHtml
+		Id +< "split" ::> splitIterator
+	
+		return concatenatedHtml
