@@ -1,4 +1,4 @@
-﻿using m0.Foundation;
+using m0.Foundation;
 using m0.Graph;
 using m0.Network.Server;
 using m0.ZeroCode.Helpers;
@@ -41,11 +41,19 @@ namespace m0.Lib.Net
             HttpServer server = GetServer(thisVertex);
 
             //            
-            
-            if (server.DoHttps)
-                server.StartAsync("https://localhost:" + server.Port);
-            else
-                server.StartAsync("http://localhost:" + server.Port);
+
+            string urls = Environment.GetEnvironmentVariable("ASPNETCORE_URLS");
+
+            if (string.IsNullOrWhiteSpace(urls))
+            {
+                if (server.DoHttps)
+                    urls = "https://localhost:" + server.Port;
+                else
+                    urls = "http://localhost:" + server.Port;
+            }
+
+            server.StartAsync(urls);
+
 
             return exe.Stack;
         }
