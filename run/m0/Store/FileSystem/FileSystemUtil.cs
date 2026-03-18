@@ -16,42 +16,93 @@ namespace m0.Store.FileSystem
     {
         public static IVertex GetDirectoryFromFileSystem(string path)
         {
-            bool isWindows = Environment.OSVersion.Platform == PlatformID.Win32NT;
-            
-            if (Directory.Exists(path))
-            {
-                string fullPath = Path.GetFullPath(path);
-                string[] directories = fullPath.Split(
-                    new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar },
-                    StringSplitOptions.RemoveEmptyEntries);
+            if (string.IsNullOrWhiteSpace(path) || !Directory.Exists(path))
+                return null;
 
-                IVertex vertex = MinusZero.Instance.root;
+            string fullPath = Path.GetFullPath(path);
 
-                foreach (string directory in directories)
-                {
-                    if (vertex == null)
-                        return null;
+            IStore bestStore = FindBestMatchingFileSystemStore(fullPath);
 
-                    string query = directory;
+            if (bestStore == null)
+                return null;
 
-                    if (query.EndsWith(":"))
-                        query = query[0].ToString();
+            IVertex directVertex = bestStore.GetVertexByIdentifier(fullPath);
 
-                    IVertex nextVertex = GraphUtil.GetQueryOutFirst(vertex, null, query);
+            if (directVertex != null)
+                return directVertex;
 
-                    if (nextVertex == null && isWindows)
-                        nextVertex = GetQueryOutFirstCaseInsensitive(vertex, query);
+            IVertex vertex = bestStore.Root;
 
-                    if (nextVertex == null)
-                        return null;
+            if (vertex == null)
+                return null;
 
-                    vertex = nextVertex;
-                }
+            string storeId = bestStore.Identifier.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            string pathTrimmed = fullPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 
+            string relativePath = pathTrimmed.Length > storeId.Length
+                ? pathTrimmed.Substring(storeId.Length)
+                : "";
+
+            if (string.IsNullOrEmpty(relativePath))
                 return vertex;
+
+            string[] directories = relativePath.Split(
+                new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar },
+                StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (string directory in directories)
+            {
+                IVertex nextVertex = GraphUtil.GetQueryOutFirst(vertex, null, directory);
+
+                if (nextVertex == null && IsWindows())
+                    nextVertex = GetQueryOutFirstCaseInsensitive(vertex, directory);
+
+                if (nextVertex == null)
+                    return null;
+
+                vertex = nextVertex;
             }
-            
-            return null;
+
+            return vertex;
+        }
+
+        private static IStore FindBestMatchingFileSystemStore(string fullPath)
+        {
+            string fullPathNormalized = fullPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            StringComparison comparison = IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+
+            IStore bestStore = null;
+            int bestLength = -1;
+
+            foreach (IStore store in MinusZero.Instance.Stores)
+            {
+                if (!(store is FileSystemStore))
+                    continue;
+
+                string storeId = store.Identifier.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+                bool isMatch = fullPathNormalized.Equals(storeId, comparison)
+                    || (fullPathNormalized.StartsWith(storeId, comparison)
+                        && fullPathNormalized.Length > storeId.Length
+                        && (fullPathNormalized[storeId.Length] == Path.DirectorySeparatorChar
+                            || fullPathNormalized[storeId.Length] == Path.AltDirectorySeparatorChar));
+
+                if (storeId.Length == 0 && store.Identifier == "/")
+                    isMatch = fullPathNormalized.StartsWith("/");
+
+                if (isMatch && storeId.Length > bestLength)
+                {
+                    bestStore = store;
+                    bestLength = storeId.Length;
+                }
+            }
+
+            return bestStore;
+        }
+
+        private static bool IsWindows()
+        {
+            return Environment.OSVersion.Platform == PlatformID.Win32NT;
         }
 
         private static IVertex GetQueryOutFirstCaseInsensitive(IVertex baseVertex, string value)
