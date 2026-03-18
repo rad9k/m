@@ -16,8 +16,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 	map +< create http mapping "map"{
 		mapping @@HttpActionEnum\GET "/files/*" @@Start:\files
 		mapping @@HttpActionEnum\GET "/diagrams/*" @@Start:\diagrams
-		mapping @@HttpActionEnum\GET "/*" @@handler_http
 		mapping @@HttpActionEnum\GET "/zero/*" @@handler_minuszero
+		mapping @@HttpActionEnum\GET "/*" @@handler_http		
 		mapping @@HttpActionEnum\REST "/api/*" @@Autostart\resttest
 	}
 	server = new @@HttpServer[map\:map]
