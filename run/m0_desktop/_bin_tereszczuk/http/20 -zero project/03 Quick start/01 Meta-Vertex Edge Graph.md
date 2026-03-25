@@ -1,6 +1,6 @@
-# Meta-Vertex Edge Graph (MVEG) - Summary
+# Fractal Graph - Summary
 
-> MVEG = directed cyclic graph where edges use meta vertices instead of edge's labels.
+> Fractal Graph is a directed cyclic graph where edges use meta vertices instead of edge's labels.
 
 ## Example model
 

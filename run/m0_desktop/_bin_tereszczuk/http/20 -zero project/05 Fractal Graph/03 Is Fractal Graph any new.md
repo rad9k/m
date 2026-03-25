@@ -1,14 +1,14 @@
-# Is MVEG any new?
+# Is Fractal Graph any new?
 
-There has been several attempts to do something more than pure _edge labeling_. Is _MVEG_ any new than?
+There has been several attempts to do something more than pure _edge labeling_. Is _Fractal Graph_ any new than?
 
 > Most if not all other knowledge represenation schemas shares common limitation: edges and their metadata require different access mechanisms → you cannot navigate from an edge to its type definition through the same pointer-based traversal used for data navigation. 
 >
-> Existing paradigms have struggled with the "Ontological Wall" - the separation between the data being described and the mechanisms used to describe it. MVEG creates a breach in this wall not by adding features, but by a radical structural simplification.
+> Existing paradigms have struggled with the "Ontological Wall" - the separation between the data being described and the mechanisms used to describe it. Fractal Graph creates a breach in this wall not by adding features, but by a radical structural simplification.
 
 ## State of the art context
 
-Let's analyze leading historic and modern aproaches to the data and knowledge modeling and compare them to the _MVEG_.
+Let's analyze leading historic and modern aproaches to the data and knowledge modeling and compare them to the _Fractal Graph_.
 
 ### Hypergraphs (standard)
 
@@ -26,9 +26,9 @@ Modern recursive hypergraph implementations like Graphbrain's Semantic Hypergrap
 
 Conceptual Graphs use a bipartite structure that strictly separates concept nodes from relation nodes. Because relations belong to a different ontological category than concepts, a relation cannot directly describe another relation. Although concepts and relations can both be classified in type hierarchies and have subtypes, the operational semantics treat them differently - relation nodes have arity constraints and numbered arcs, while concept nodes have referents and can be coreferenced, creating "ontological bloat" with separate rules for each category.
 
-_MVEG_ differs from Conceptual Graphs by using a single ontological primitive instead of a bipartite concept–relation split. Relations in MVEG are edges instantiated from relation classes represented by meta-vertices, not relation nodes acting as events. Meta-vertices describe entire classes of relations and can be related recursively using the same graph structure. This preserves ontological uniformity and avoids role-based relation modeling. As a result, MVEG supports structural meta-recursion with lower conceptual overhead. 
+_Fractal Graph_ differs from Conceptual Graphs by using a single ontological primitive instead of a bipartite concept–relation split. Relations in Fractal Graph are edges instantiated from relation classes represented by meta-vertices, not relation nodes acting as events. Meta-vertices describe entire classes of relations and can be related recursively using the same graph structure. This preserves ontological uniformity and avoids role-based relation modeling. As a result, Fractal Graph supports structural meta-recursion with lower conceptual overhead. 
 
-> Conceptual Graphs enforce a strict bipartite ontology with disjoint concept and relation type hierarchies, whereas MVEG uses a single uniform structure that enables recursive meta-relations without ontological separation.
+> Conceptual Graphs enforce a strict bipartite ontology with disjoint concept and relation type hierarchies, whereas Fractal Graph uses a single uniform structure that enables recursive meta-relations without ontological separation.
 
 ### Datalog / HiLog
 
@@ -66,11 +66,11 @@ TypeDB implements the PERA model with strict tripartite separation: entity types
 
 > TypeDB enforces rigid tripartite separation where only object types (entities and relations) can own attributes or play roles while attribute types are excluded from relations, combined with mandatory single inheritance and lack of homoiconicity - preventing the graph structure from defining its own modification logic and limiting the flexibility needed for uniform recursive meta-programming where semantics, data, and execution logic share identical structural representations.
 
-## MVEG Value Proposition
+## Fractal Graph Value Proposition
 
-MVEG addresses a fundamental limitation present across existing graph and knowledge representation systems: edges and their metadata require different access mechanisms. You cannot navigate from an edge to its type definition through the same pointer-based traversal used for data navigation.
+Fractal Graph addresses a fundamental limitation present across existing graph and knowledge representation systems: edges and their metadata require different access mechanisms. You cannot navigate from an edge to its type definition through the same pointer-based traversal used for data navigation.
 
-Unlike approaches that try to give every edge a unique identity through reification, MVEG takes a more efficient path: the meta vertex on an edge identifies the **relation type**, not the edge instance. Multiple edges can share the same meta vertex, making the model lightweight while supporting infinite meta-levels.
+Unlike approaches that try to give every edge a unique identity through reification, Fractal Graph takes a more efficient path: the meta vertex on an edge identifies the **relation type**, not the edge instance. Multiple edges can share the same meta vertex, making the model lightweight while supporting infinite meta-levels.
 
 **Key properties:**
 
@@ -84,7 +84,7 @@ Unlike approaches that try to give every edge a unique identity through reificat
 
 > **The practical impact** is not primarily about computational performance—modern implementations of RDF, Topic Maps, and Property Graphs can achieve similar efficiency with proper indexing. 
 
-Rather, MVEG provides **conceptual simplicity**: 
+Rather, Fractal Graph provides **conceptual simplicity**: 
 
 - A single primitive (vertex) instead of multiple ontological categories
 - A single navigation mechanism (pointer traversal) instead of separate query patterns for data vs. metadata
@@ -92,11 +92,11 @@ Rather, MVEG provides **conceptual simplicity**:
 
 This eliminates the conceptual overhead accumulated through decades of evolution in other paradigms.
 
-## MVEG comparsion to the state of the art
+## Fractal Graph comparsion to the state of the art
 
-The following table situates the _Meta-Vertex Edge Graph (MVEG)_ within the historical context of knowledge representation and graph data models. It highlights the specific "Structural Gap" in existing approaches—typically a lack of ontological uniformity or executable semantics—and demonstrates how MVEG resolves this through **Structural Homoiconicity** (the physical reification of relation types as navigational vertices).
+The following table situates the _Fractal Graph_ within the historical context of knowledge representation and graph data models. It highlights the specific "Structural Gap" in existing approaches—typically a lack of ontological uniformity or executable semantics—and demonstrates how Fractal Graph resolves this through **Structural Homoiconicity** (the physical reification of relation types as navigational vertices).
 
-| Approach / Model | Year (≈) | Relations as nodes | Ontological uniformity | Any number of meta | Approach limitation | MVEG Resolution |
+| Approach / Model | Year (≈) | Relations as nodes | Ontological uniformity | Any number of meta | Approach limitation | Fractal Graph Resolution |
 | **Hypergraphs** (standard) | 1970s | ❌ No | ❌ No | ❌ No | Hyperedges are mathematical sets without semantic identity. Metadata exists externally requiring separate query mechanisms. No native support for hyperedges about hyperedges. | Every _edge_ has a _meta vertex_ pointer. Semantics are navigable graph elements, not external annotations. |
 | **Hypergraphs** (extension) | 2014 | ⚠️ Positional | ⚠️ Partial | ⚠️ Syntactic | Recursion is syntactic composition (hyperedges as list elements). No uniform semantics - implementation-specific pattern matching required instead of direct pointer traversal. | _Meta vertex_ is an addressable entity with direct pointer. Uniform semantics across all meta-levels through standard graph traversal. |
 | **Conceptual Graphs** | 1976 | ✅ Yes | ❌ No | ⚠️ Limited | Bipartite structure: concepts and relations are disjoint ontological categories with separate type hierarchies. Cannot use a relation to describe another relation without conversion. | Single primitive (_vertex_) for both concepts and relations. Relations describe other relations through standard _edge_ mechanisms. |
@@ -107,12 +107,12 @@ The following table situates the _Meta-Vertex Edge Graph (MVEG)_ within the hist
 | **OpenCog AtomSpace** | ~2008 | ✅ Yes | ⚠️ Partial | ✅ Yes | Type system dualism: hardcoded system types (EvaluationLink, PlusLink) have built-in execution semantics. Custom types lack such native functionality, creating split between native and user relations. | No system types - all relation types are _meta vertexes_. User-defined relations are structurally identical to any other relation, with semantics defined by graph structure. |
 | **TypeDB** | ~2016 | ⚠️ Partial | ❌ No | ⚠️ Limited | Tripartite separation: attributes cannot own attributes or play roles. Single inheritance only. Lacks homoiconicity - cannot use graph structure to define modification logic. | Single _vertex_ primitive unifies entities, relations, and attributes. Graph structure can define its own execution logic (triggers, views) through standard edge mechanisms. |
 
-> RDF, Topic Maps, and Datalog have proven their value, but share inherited limitations: predicates distinct from subjects, associations requiring reification to participate in other associations, edges categorically separate from nodes. MVEG achieves equivalent expressiveness by eliminating these categorical boundaries entirely—using a single uniform primitive where every relation type is simply a vertex, accessible through the same pointer-based traversal used for data.
+> RDF, Topic Maps, and Datalog have proven their value, but share inherited limitations: predicates distinct from subjects, associations requiring reification to participate in other associations, edges categorically separate from nodes. Fractal Graph achieves equivalent expressiveness by eliminating these categorical boundaries entirely—using a single uniform primitive where every relation type is simply a vertex, accessible through the same pointer-based traversal used for data.
 
 ## Summary and Conclusions
 
 The evolution of knowledge representation reveals a recurring pattern: systems introduce categorical distinctions (predicates vs. subjects, associations vs. topics, edges vs. nodes) to solve specific problems, then require additional mechanisms (reification, intermediate nodes, dual-role constructs) to bridge the gaps those distinctions create.
 
-MVEG demonstrates these boundaries are unnecessary. By treating relation types as vertices accessible through standard pointer traversal, it achieves structural homoiconicity where semantics and data share identical representations. This enables triggers on semantic entities, updatable views across meta-levels, and graph-defined execution logic as native operations—not external bolt-ons.
+Fractal Graph demonstrates these boundaries are unnecessary. By treating relation types as vertices accessible through standard pointer traversal, it achieves structural homoiconicity where semantics and data share identical representations. This enables triggers on semantic entities, updatable views across meta-levels, and graph-defined execution logic as native operations—not external bolt-ons.
 
-> The value is conceptual parsimony: one primitive, one navigation mechanism, uniform treatment across all meta-levels. Where other paradigms accumulated complexity over 25 years, MVEG provides a structurally simpler foundation that naturally supports recursive meta-programming without reification or categorical conversions.
+> The value is conceptual parsimony: one primitive, one navigation mechanism, uniform treatment across all meta-levels. Where other paradigms accumulated complexity over 25 years, Fractal Graph provides a structurally simpler foundation that naturally supports recursive meta-programming without reification or categorical conversions.

@@ -2,7 +2,7 @@
 
 The -zero is a complete graph database / back-end execution platform, where you can express your system design and implementation by models and diagrams, graph programing languages or any combination of them.
 
-> The -zero platform is built on Meta-Vertex Edge Graph (MVEG), a core data structure providing extreme simplicity with unlimited semantic expressivity and coherent behavior across all meta-levels. Based on MVEG Graph Database, the platform unifies representations of the underlying graph as diagrams (visual representation with rich primitives and nested views) and text languages (built-in and custom with language algebra supporting text languages inheritance and mixing). Graph can also be executed by the Graph Virtual Machine. GVM operates at high abstraction levels where code runs alongside data and meta-models with no impedance mismatch, achieving full structural homoiconicity - code and data share identical structures, enabling reflection, auto-modification, and metaprogramming as core features rather than extensions.
+> The -zero platform is built on Fractal Graph, a core data structure providing extreme simplicity with unlimited semantic expressivity and coherent behavior across all meta-levels. Based on Fractal Graph Database, the platform unifies representations of the underlying graph as diagrams (visual representation with rich primitives and nested views) and text languages (built-in and custom with language algebra supporting text languages inheritance and mixing). Graph can also be executed by the Graph Virtual Machine. GVM operates at high abstraction levels where code runs alongside data and meta-models with no impedance mismatch, achieving full structural homoiconicity - code and data share identical structures, enabling reflection, auto-modification, and metaprogramming as core features rather than extensions.
 
 Two platform instance types support different workflows: 
 - console instances for Linux/OS X/Docker environments
@@ -53,7 +53,7 @@ Built-in GVM libraries support REST endpoint exposure and consumption, HTTP/Mark
 
 The -zero platform is built on several interconnected core capabilities:
 
-**Meta-Vertex Edge Graph (MVEG)** - _The Foundation_
+**Fractal Graph** - _The Foundation_
 * Core data structure with extreme simplicity and unlimited semantic expressivity
 * Coherent behavior, properties, and tooling across all data instances and meta-levels
 
@@ -63,7 +63,7 @@ The -zero platform is built on several interconnected core capabilities:
 * Built directly on MVEG
 
 **Modeling** - _Unlimited Meta-levels_
-* Represent complex data and knowledge (static properties, dynamic processes, anything expressible in language or mathematics) as MVEG
+* Represent complex data and knowledge (static properties, dynamic processes, anything expressible in language or mathematics) as Fractal Graph
 * Meta-modeling with any number of levels and custom relations between instances, models, and meta-models
 * Model querying and transformations (built-in and custom)
 * Built-in and easily defined custom meta-models (defined as a graph fragments)
@@ -108,7 +108,7 @@ The -zero platform is built on several interconnected core capabilities:
 
 ## Summary
 
-> -zero is a complete graph database and execution platform where system design and implementation can be expressed through models, diagrams, text and graph programming languages code, or any combination thereof. The platform is built on Meta-Vertex Edge Graph (MVEG), a structure that provides extreme simplicity with unlimited semantic expressivity, unifying graph representation as visual diagrams, text, and executable code. -zero example use cases are: backend exposing REST API, AI/data processing pipeline, business process orchestration, and an environment for enterprise architecture with instant documentation via built-in HTTP server.
+> -zero is a complete graph database and execution platform where system design and implementation can be expressed through models, diagrams, text and graph programming languages code, or any combination thereof. The platform is built on Fractal Graph, a structure that provides extreme simplicity with unlimited semantic expressivity, unifying graph representation as visual diagrams, text, and executable code. -zero example use cases are: backend exposing REST API, AI/data processing pipeline, business process orchestration, and an environment for enterprise architecture with instant documentation via built-in HTTP server.
 
 ## Future
 

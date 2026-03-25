@@ -1,6 +1,6 @@
 # How to shape data - trees and graphs
 
-> In this chapter, we will introduce _Meta-Vertex Edge Graph_ (_MVEG_), but before that we will start with simplier structures and their limitations analysis.
+> In this chapter, we will introduce _Fractal Graph_, but before that we will start with simplier structures and their limitations analysis.
 
 
 ## Trees, acyclic graphs, cyclic graphs
