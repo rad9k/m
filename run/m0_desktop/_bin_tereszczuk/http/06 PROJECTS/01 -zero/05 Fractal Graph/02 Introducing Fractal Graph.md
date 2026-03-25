@@ -10,6 +10,12 @@ Simple _edge labeling_ is not sufficient to express semantics required to manage
 
 Fractal Graph addresses this problem by making **semantics a structural element of the graph**, not an external layer.
 
+> **Why do we call those graphs "Fractal" ?**
+>
+> This is becouse instances of such graphs have tendency to form fractal like structures with possibly infinite number of "deepnes" levels. Those "deepnes" levels are just different conceptual meta levels. As each _edge_ has a _meta vertex_, this _meta vertex_ leads to another "deepnes" level. Becouse the target object of this "going deeper" operation, is another graph, that, by having _edges_ (and thus _meta vertexes_) can lead to another "deeper" level for each of the _edges_, in the end defining possibly infinitely-deep structure.
+>
+> In current usage of the Fractal Graph, we usu maximum three levels of "deepnes" (meta), but there is nothing (except cognitive and memory limits) stopping to have bigger "deepnes" level in the Fractal Graph instance.
+
 ### Core properties of Fractal Graph
 
 Fractal Graph provides several key properties that make it effective for base structure of complex systems:
