@@ -334,6 +334,29 @@ namespace m0.Network.Server {
             };
         }
 
+        private static bool ShouldServeInline(string contentType)
+        {
+            return string.Equals(contentType, "application/pdf", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static string GetInlineContentDisposition(string filePath)
+        {
+            string safeFileName = Path.GetFileName(filePath).Replace("\"", string.Empty);
+            return $"inline; filename=\"{safeFileName}\"";
+        }
+
+        private static void ApplyFileResponseHeaders(HttpContext context, string filePath, string contentType, long? contentLength = null)
+        {
+            context.Response.Headers["Accept-Ranges"] = "bytes";
+            context.Response.ContentType = contentType;
+
+            if (contentLength.HasValue)
+                context.Response.Headers["Content-Length"] = contentLength.Value.ToString();
+
+            if (ShouldServeInline(contentType))
+                context.Response.Headers["Content-Disposition"] = GetInlineContentDisposition(filePath);
+        }
+
         private IResult HandleFileRequest(HttpContext context, string url, IVertex handler)
         {            
             string method = context.Request.Method.ToUpperInvariant();
@@ -374,9 +397,9 @@ namespace m0.Network.Server {
             {
                 string contentType = GetContentType(filePath);
                 var fileInfo = new FileInfo(filePath);
-                context.Response.Headers["Content-Type"] = contentType;
-                context.Response.Headers["Content-Length"] = fileInfo.Length.ToString();
-                return Results.Ok();
+                ApplyFileResponseHeaders(context, filePath, contentType, fileInfo.Length);
+                context.Response.StatusCode = StatusCodes.Status200OK;
+                return Results.Empty;
             }
 
             string fileContentType = GetContentType(filePath);
@@ -385,41 +408,9 @@ namespace m0.Network.Server {
 
         private IResult HandleFileRequestWithRange(HttpContext context, string filePath, string contentType)
         {
-            var fileInfo = new FileInfo(filePath);
-            long fileSize = fileInfo.Length;
-
-            var rangeHeader = context.Request.Headers["Range"].ToString();
-
-            if (string.IsNullOrEmpty(rangeHeader))
-            {
-                // Normalne żądanie - cały plik
-                var fileStream = File.OpenRead(filePath);
-                context.Response.Headers["Accept-Ranges"] = "bytes";
-                return Results.File(fileStream, contentType, Path.GetFileName(filePath));
-            }
-
-            // Parsowanie Range header: "bytes=1234-5678" lub "bytes=1234-"
-            var range = rangeHeader.Replace("bytes=", "").Split('-');
-            long start = long.Parse(range[0]);
-            long end = range.Length > 1 && !string.IsNullOrEmpty(range[1])
-                ? long.Parse(range[1])
-                : fileSize - 1;
-
-            long contentLength = end - start + 1;
-
-            // Otwórz plik i przeskocz do pozycji start
-            var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-            stream.Seek(start, SeekOrigin.Begin);
-
-            // Ustaw nagłówki dla partial content
-            context.Response.StatusCode = 206; // Partial Content
-            context.Response.Headers["Content-Range"] = $"bytes {start}-{end}/{fileSize}";
-            context.Response.Headers["Accept-Ranges"] = "bytes";
-            context.Response.Headers["Content-Length"] = contentLength.ToString();
-            context.Response.ContentType = contentType;
-
-            // Zwróć fragment pliku
-            return Results.Stream(stream, contentType);
+            ApplyFileResponseHeaders(context, filePath, contentType);
+            var fileStream = File.OpenRead(filePath);
+            return Results.File(fileStream, contentType, enableRangeProcessing: true);
         }
 
         // FILE HANDLING END

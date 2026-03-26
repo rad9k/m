@@ -1,4 +1,4 @@
-# Mobile decice localization
+# Mobile device localization
 
 I am a inventor of two patents focused on **practical mobile phone localization in GSM networks**. Together, they address a specific limitation of conventional cellular positioning: standard methods work reasonably well when the network is trying to locate a **known subscriber or device**, but they are much less useful when the goal is to detect **which phones are present in a specific physical place**.
 
@@ -14,7 +14,7 @@ This is the harder problem in location-aware services, presence detection, venue
 
 ## Patent 1: Localization by Low-Power Mini BTS
 
-!PDF(url)[files/research/patent.pdf]
+!PDF[url](files/research/patent_pl.pdf)
 
 The first patent proposes a simple but powerful idea: instead of trying to infer position only from large, city-scale BTS cells, place a **low-power mini BTS** at the location of interest. When a phone moves close enough to that mini BTS, the received signal from it becomes stronger than the signal from the surrounding high-power urban BTS stations. As a result, the phone attaches through the mini BTS, and the network can treat the phone’s location as the location of that mini BTS.
 
@@ -33,6 +33,8 @@ This improves localization accuracy from the typical **300–500 m** range of st
 The key innovation is not only better accuracy. It is the ability to detect **phones present in a specific place without needing to know their numbers beforehand**. The place itself becomes the trigger. Instead of asking, “Where is this known phone?”, the system can answer, “Which phones have entered this monitored micro-area?” That is the conceptual shift introduced by the first patent.
 
 ## Patent 2: Faster and More Reliable Detection Using the SIM Card
+
+!PDF[url](files/research/patent.pdf)
 
 The second patent extends the original concept and makes it more robust. It observes that relying on a full network log-in or location update via the mini BTS can be too slow in practice. A moving phone may pass through the mini BTS coverage area before the standard GSM connection procedure fully completes. In that case, the localization opportunity can be missed. The European patent identifies this as a core weakness of the earlier approach.
 
