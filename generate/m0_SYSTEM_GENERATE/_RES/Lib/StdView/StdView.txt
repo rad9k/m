@@ -79,6 +79,12 @@
 			html += ".png%">"><BR><span class=%"description%">"
 			html += label
 			html += "</span></center>"
+		function "HandleGeneric_PDF" (@String "url")
+			html += "<div class=\"pdf-container\"><object data=%""
+			html += url
+			html += "\" type=\"application/pdf\" class=\"pdf-embed\"><p class=\"pdf-fallback\">Can not visualise PDF. <a href=%""
+			html += url
+			html += "\">Pobierz plik</a></p></object></div>"
 		function "MdTokenVertexesToHtmlString_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
 			variable "html" @String
 			
@@ -193,6 +199,8 @@
 								@@Html\HandleGeneric_AUDIO[e\To\{Name:url}\Value]
 							case "DIAGRAM"
 								@@Html\HandleGeneric_DIAGRAM[e\To\{Name:Query}\Value, e\To\{Name:label}\Value]
+							case "PDF"
+								@@Html\HandleGeneric_PDF[e\To\{Name:url}\Value]
 					
 					case "BlockquoteStart"
 						html += "<blockquote>"
