@@ -490,6 +490,31 @@ body {
     margin: 10px 0; 
 }
 
+.markdown-body .pdf-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 10px auto;
+}
+
+.markdown-body .pdf-embed {
+    width: 100%;
+    height: min(1273px, calc(100vh - 40px));
+    border: 2px solid #4a5568;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: block;
+}
+
+.markdown-body .pdf-fallback {
+    padding: 20px;
+    background: #f8f6f2;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    text-align: center;
+    color: #718096;
+    font-style: italic;
+}
+
 /* ===== SCROLLBAR STYLING ===== */
 .tree-container::-webkit-scrollbar,
 .markdown-body::-webkit-scrollbar {
