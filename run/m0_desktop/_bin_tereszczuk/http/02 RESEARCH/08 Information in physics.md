@@ -2,7 +2,7 @@
 
 > **WARNING**
 >
-> This area of research lies outside the currently accepted body of science.
+> This area of research lives outside the currently accepted body of science.
 >
 > It should be understood as a boundary activity, or perhaps a form of proto-science. The legitimacy of this approach, its methods of knowledge exploration, and its methodology remain highly questionable. **However**, we did not find any better framework for investigating phenomena that are currently excluded from mainstream scientific inquiry.
 >
@@ -10,11 +10,11 @@
 >
 > *I personally decided not to devote more time to these highly interesting questions, because I consider them deeply non-conclusive.*
 >
-> Most members of the original core group are now deceased.
+> Most members of the our research group are now dead.
 
 # Executive Summary: The Exhaustion of the Bio-Mechanical Model
 
-For over 14 years, our research group—comprising academics and specialists from the **Warsaw University of Technology**, **IBM Poland**, the **Nature Laboratory**, and the **Subtle Energies Laboratory**—pursued an experimental and theoretical program centered on one core conviction: that modern science has approached the limits of the traditional **bio-mechanical model**.
+For over 14 years, our research group-comprising academics and specialists from the **Warsaw University of Technology**, **IBM Poland**, the **Nature Laboratory**, and the **Subtle Energies Laboratory**-pursued an experimental and theoretical program centered on one core conviction: that modern science is approching the limits of the traditional **bio-mechanical model**.
 
 During the last century, physics and biology became highly successful in studying matter and energy. Yet they largely ignored **Information** as an active constituent of reality. In our view, Information is not merely a mathematical description of state, as in Shannon’s framework, but a physical factor capable of shaping the behavior of complex systems. Our long-term aim was to move such phenomena out of the domains labeled “paranormal” or “fringe” and into a space of rational, critical, and eventually reproducible inquiry.
 
@@ -31,7 +31,7 @@ Our research was anchored in a set of radical but, in our view, experimentally m
 * **Information as a Physical Foundation:** We propose that Information is a basic element of the Universe, standing alongside matter/energy and space/time. If Information is integrated into fundamental physical law, then phenomena usually classified as “paranormal” may instead be reinterpreted as lawful but insufficiently understood.
 * **Qualia and the Limits of Classical Theory:** The nature of information in complex systems goes far beyond what classical information theory can describe. In our framework, information can be *experienced* or *felt* by a subject, which creates a bridge between the physical and the mental.
 * **The Measurement Paradigm:** Information can, in principle, be measured, modified, and created within a controlled laboratory environment. This requires a new measurement paradigm in which the measuring apparatus and the observed system are linked through informational resonance.
-* **Regulatory Dominance in Complex Systems:** In systems of high internal complexity—such as ecosystems, industrial installations, or living organisms—information acts as the primary regulator of performance, independently of raw flows of energy and matter.
+* **Regulatory Dominance in Complex Systems:** In systems of high internal complexity-such as ecosystems, industrial installations, or living organisms-information acts as the primary regulator of performance, independently of raw flows of energy and matter.
 * **Informational Resonance:** Complex informational structures may resonate with subtler levels of reality, facilitating the emergence of higher-order phenomena such as intuition, divination, and consciousness itself.
 * **The New Great Unification:** While 20th-century physics sought the unification of the fundamental forces, we propose a broader unification: **Nature and the Aware Mind**.
 
@@ -39,7 +39,7 @@ Our research was anchored in a set of radical but, in our view, experimentally m
 
 ### Information as a Fundamental Pillar
 
-* **Beyond Carriers:** Traditional science studies the carriers—matter and energy—but ignores the **content**, that is, Information itself.
+* **Beyond Carriers:** Traditional science studies the carriers-matter and energy-but ignores the **content**, that is, Information itself.
 * **The Third Element:** Information should be treated as a fundamental constituent of the Universe, equal in ontological status to space-time and energy.
 * **Non-Linear Dynamics:** Information regulates complex systems through what might be called a “science of qualities,” shaping the pathways through which energy flows and matter circulates.
 
@@ -138,17 +138,17 @@ Why did we consider this line of inquiry potentially revolutionary?
 3. **A New Ecology:** If ecosystems are structured not only by matter and energy but also by stored and transmitted information, then biodiversity, mineral structure, and biological complexity acquire a deeper functional significance.
 4. **A Broader Epistemology:** Science may need to acknowledge that subjectivity is not always noise to be eliminated, but may in some cases be part of the phenomenon itself.
 
-Science, like religion, can become trapped in the defense of inherited dogma. Our work was motivated by the belief that scientific inquiry must remain open to poorly understood phenomena, provided they are approached critically and honestly—even when the available methods remain imperfect.
+Science, like religion, can become trapped in the defense of inherited dogma. Our work was motivated by the belief that scientific inquiry must remain open to poorly understood phenomena, provided they are approached critically and honestly-even when the available methods remain imperfect.
 
 # Research Group
 
 This work emerged from more than 14 years of cross-disciplinary inquiry spanning Physics, Biology, Mathematics/IT, Ecology, and Cognitive Science.
 
-* **† Włodzimierz Zylbertal** — Subtle Energies Laboratory
-* **Radosław Tereszczuk** — Complex Systems & IT, IBM Poland
-* **† Wojciech Puchalski** — The Nature Laboratory, Ecology
-* **Michał Urbański** — Warsaw University of Technology
-* **† Rafał Ciołek** — Warsaw University of Technology
+* **† Włodzimierz Zylbertal** - Subtle Energies Laboratory
+* **Radosław Tereszczuk** - Complex Systems & IT, IBM Poland
+* **† Wojciech Puchalski** - The Nature Laboratory, Ecology
+* **Michał Urbański** - Warsaw University of Technology
+* **† Rafał Ciołek** - Warsaw University of Technology
 
 # Example research papers
 

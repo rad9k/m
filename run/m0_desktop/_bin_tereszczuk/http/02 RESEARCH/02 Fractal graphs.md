@@ -8,7 +8,7 @@ The result is a system with fractal depth: each relation can lead to another lev
 
 From a theoretical perspective, Fractal Graphs introduce structural homoiconicity, where data, semantics, and execution share the same representation. This removes the need for separate abstraction layers and enables recursive reasoning, reflection, and transformation directly within the structure.
 
-From a practical perspective, this enables a new class of systems in which traditionally separate artifacts-data, code, architecture, and documentation—can be unified into a single, queryable graph.
+From a practical perspective, this enables a new class of systems in which traditionally separate artifacts-data, code, architecture, and documentation-can be unified into a single, queryable graph.
 
 ## Key application domains
 
@@ -22,7 +22,7 @@ Complex pipelines involving multiple components, conditional logic, and iterativ
 
 **Business process orchestration**
 
-High-level processes—such as risk scoring, decision systems, or workflow automation—can be modeled, executed, and continuously updated as graph structures, with direct linkage between business semantics and operational logic.
+High-level processes-such as risk scoring, decision systems, or workflow automation-can be modeled, executed, and continuously updated as graph structures, with direct linkage between business semantics and operational logic.
 
 **Enterprise architecture and system modeling**
 
@@ -36,9 +36,9 @@ As a foundation for graph-based computation (e.g., Graph Virtual Machines), Frac
 
 Across these domains, the key advantage is not only expressive power but conceptual unification. Instead of synchronizing multiple representations of a system (requirements, models, code, data), Fractal Graphs allow them to exist as different projections of the same structure.
 
-Ultimately, Fractal Graphs propose a shift from fragmented system design to self-describing, executable knowledge structures—where complexity is managed not by adding layers, but by eliminating the boundaries between them.
+Ultimately, Fractal Graphs propose a shift from fragmented system design to self-describing, executable knowledge structures-where complexity is managed not by adding layers, but by eliminating the boundaries between them.
 
-## -zero — Implementation of Fractal Graphs
+## -zero - Implementation of Fractal Graphs
 
 >-zero is a computational platform built as a practical implementation of Fractal Graphs, transforming the theoretical model into a unified environment for designing, executing, and evolving complex systems.
 >
@@ -46,18 +46,18 @@ Ultimately, Fractal Graphs propose a shift from fragmented system design to self
 
 At its core, -zero is a graph database and execution platform where **data, semantics, code, and architecture coexist within a single structure**. Instead of separating concerns across multiple layers and technologies, the platform represents all system elements as fragments of one Fractal Graph, ensuring consistency, transparency, and immediate traceability.
 
-This enables a fundamental shift in how systems are built. In -zero, **requirements evolve into architecture, and architecture into implementation**, without losing their connections. There is no need to synchronize documentation, models, and code—they are simply different views of the same underlying graph.
+This enables a fundamental shift in how systems are built. In -zero, **requirements evolve into architecture, and architecture into implementation**, without losing their connections. There is no need to synchronize documentation, models, and code-they are simply different views of the same underlying graph.
 
 The platform combines several capabilities into a coherent whole:
 
-- **Graph Database** — persistent storage with querying, constraints, triggers, and updatable views, all operating directly on Fractal Graph structures  
-- **Modeling Environment** — support for unlimited meta-levels, enabling seamless transitions between data, models, and meta-models  
-- **Diagrammatic Interface** — visual representation where diagrams are not abstractions but direct views of the underlying graph  
-- **Textual Languages** — built-in and extensible languages that map directly to graph structures, allowing hybrid visual–text workflows  
-- **Graph Virtual Machine (GVM)** — execution layer where graph structures act as code, enabling computation directly on the same structure that stores data and semantics  
+- **Graph Database** - persistent storage with querying, constraints, triggers, and updatable views, all operating directly on Fractal Graph structures  
+- **Modeling Environment** - support for unlimited meta-levels, enabling seamless transitions between data, models, and meta-models  
+- **Diagrammatic Interface** - visual representation where diagrams are not abstractions but direct views of the underlying graph  
+- **Textual Languages** - built-in and extensible languages that map directly to graph structures, allowing hybrid visual–text workflows  
+- **Graph Virtual Machine (GVM)** - execution layer where graph structures act as code, enabling computation directly on the same structure that stores data and semantics  
 
 
-Through this integration, -zero eliminates the traditional fragmentation of IT systems. There is no distinction between “data layer,” “application logic,” or “architecture description”—all are expressed within the same formal system.
+Through this integration, -zero eliminates the traditional fragmentation of IT systems. There is no distinction between “data layer,” “application logic,” or “architecture description”-all are expressed within the same formal system.
 
 **Practical outcomes include:**
 
