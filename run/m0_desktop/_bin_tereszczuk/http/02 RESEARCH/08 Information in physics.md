@@ -1,16 +1,20 @@
 # Information in Physics
 
-> **WARNING**
->
-> This area of research lives outside the currently accepted body of science.
->
+## Summary
+
+>  Over 14 years, a cross-disciplinary group from Warsaw University of Technology and associated laboratories pursued the hypothesis that Information is a fundamental constituent of reality - not merely a mathematical abstraction, but an active physical factor capable of measurably altering complex systems, from the ignition temperature of carbon to the metabolic efficiency of aquatic ecosystems. Our experiments, involving informational encoding of mineral carriers and light, produced striking results — including apparent reductions in water's specific heat and significant boosts in ecosystem oxygen production - but remained irreproducible under standard conditions, as outcomes appeared to depend on the extrasensory abilities and focused intention of the operator. This work does not meet contemporary scientific standards. We frames it as proto-science at the boundary of legitimate inquiry.
+
+## WARNING
+
+This area of research lives outside the currently accepted body of science.
+
 > It should be understood as a boundary activity, or perhaps a form of proto-science. The legitimacy of this approach, its methods of knowledge exploration, and its methodology remain highly questionable. **However**, we did not find any better framework for investigating phenomena that are currently excluded from mainstream scientific inquiry.
 >
 > The decision to continue in this direction was motivated by the suspicion that these phenomena may be of fundamental importance. That suspicion is only partly grounded in scientific reasoning, because full scientific reasoning cannot yet be applied here: basic concepts remain insufficiently defined, and the field still lacks a stable conceptual vocabulary.
->
-> *I personally decided not to devote more time to these highly interesting questions, because I consider them deeply non-conclusive.*
->
-> Most members of the our research group are now dead.
+
+*I personally decided not to devote more time to these highly interesting questions, because I consider them deeply non-conclusive.*
+
+Most members of the our research group are now dead.
 
 # Executive Summary: The Exhaustion of the Bio-Mechanical Model
 

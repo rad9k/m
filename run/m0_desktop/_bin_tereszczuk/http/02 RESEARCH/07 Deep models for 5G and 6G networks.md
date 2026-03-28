@@ -1,5 +1,9 @@
 # Deep models for 5G and 6G networks
 
+## Summary
+
+> In cellular networks, random noise can mimic connection requests and cause base stations to waste resources on "ghost preambles" — this research addresses that problem by replacing traditional detection algorithms with a deep neural network that achieved 90% detection efficiency and a 10dB improvement over standard 5G methods, meaning it handles ten times more noise than conventional approaches. The key architectural insight was a hybrid input design: rather than feeding the network raw antenna data alone, it also receives intermediate outputs from classical signal processing stages, letting the DNN focus on the hard non-linear discrimination task rather than relearning established physics from scratch. This aligns directly with the 6G vision of AI-native, GPU-equipped base stations — and the same edge computing infrastructure opens further possibilities such as renting spare GPU capacity to nearby devices for tasks like visual positioning when GPS is unavailable.
+
 ## The Context: Node-B, 5G, and the Vision for 6G
 
 To understand the problem, it helps to understand the basic infrastructure of mobile networks:

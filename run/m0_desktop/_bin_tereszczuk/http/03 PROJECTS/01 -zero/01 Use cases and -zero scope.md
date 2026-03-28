@@ -48,6 +48,16 @@ Built-in GVM libraries support REST endpoint exposure and consumption, HTTP/Mark
 
 	_CI/CD:_ can use git to have diagrams versioning
 	_deployment:_ -zero desktop instance running on the architects machines, documentation server running -zero console instance exposing the HTTP server
+	
+- **Platform for Platforms**
+
+	Most sufficiently complex software systems, as they mature, independently converge on the same set of needs: an internal scripting or automation language, a growing customization layer that gradually evolves into a user-definable type system, form scaffolding auto-generated from types or metadata, the ability to express advanced user intent as a diagram - a workflow, a decision tree, a process. Also there is a need for some mechanism for persisting complex structured state, and REST-based integration with external systems, both as a client and as a server.
+	
+	These aren't incidental features. They are the natural gravitational endpoints of complex platform development — and they are precisely what -zero is built on, at its core and what is enabled for power-user for further customisation.
+	This makes -zero an ideal foundation for building complex platforms. Rather than reinventing each of these capabilities in isolation, a platform built on -zero inherits scripting (with possibility to create own text languages), a meta-level type system with user-defined extensions, automatic form scaffolding, diagram editors - including ability to create own diagram types, a graph database for state persistence, and full REST plumbing — all coherently unified. When building platform on -zero, the result is a system that doesn't grow toward these features over years of accumulation, but starts with them as first-class primitives.
+
+	_CI/CD:_ can use git to have code/diagrams versioning
+	_deployment:_  -zero desktop instance running user's machine
 
 ## -zero scope
 

@@ -1,5 +1,11 @@
 # Mobile device localization
 
+## Summary
+
+> Standard GSM localization can estimate where a known device is, but cannot detect which arbitrary phones have entered a specific small area - these my two patents solve exactly that problem. The core idea is to place a low-power mini BTS at a location of interest: when a phone enters its range, it preferentially attaches to it, turning presence detection into a controlled infrastructure event with 20–50 m accuracy rather than the typical 300–500 m. The second patent strengthens this by adding SIM-resident software that monitors received signal lists and triggers a localization event as soon as a mini BTS becomes visible - making detection faster and reliable even when full network attachment doesn't complete in time.
+
+## Introduction
+
 I am a inventor of two patents focused on **practical mobile phone localization in GSM networks**. Together, they address a specific limitation of conventional cellular positioning: standard methods work reasonably well when the network is trying to locate a **known subscriber or device**, but they are much less useful when the goal is to detect **which phones are present in a specific physical place**.
 
 ## The Problem

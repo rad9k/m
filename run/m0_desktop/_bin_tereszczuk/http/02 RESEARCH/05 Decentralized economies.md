@@ -1,5 +1,9 @@
 # Decentralized economies
 
+## Summary
+
+> This research explores the architecture of fully decentralized economic systems, covering cryptoeconomic incentive design, decentralized cloud infrastructure, confidential computing via hardware enclaves, and decentralized ML inference - with the unifying goal of replacing centralized intermediaries with protocol-level guarantees. A recurring theme is the use of capital locking (staking) as a trust primitive: locked assets create economic disincentives for malicious behavior, serve as a Sybil-resistance mechanism, and can underpin governance influence and reputation - all without requiring identity verification or a central arbiter. The staking identity paper formalizes this into a mathematical framework, showing that correctly calibrated stake requirements can make fraud unprofitable by design, producing self-regulating peer-to-peer markets where honest behavior is enforced by economic self-interest alone.
+
 ## Research Portfolio: Decentralized Economic Systems & Digital Infrastructure
 
 The following sections outline the core research areas and technical investigations conducted within the field of Decentralized Economic Systems. This work focuses on the intersection of protocol architecture, cryptoeconomic incentives, decentralized cloud infrastructure, and privacy-preserving computation.

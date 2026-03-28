@@ -1,5 +1,11 @@
 # Generative UX
 
+## Summary
+
+> When a domain model changes, traditional UIs require extensive manual updates across forms, views, and navigation - this project addresses that cost by generating interfaces directly from the live runtime object graph rather than maintaining hand-written UI code around it. The key innovations are runtime generation (so the UI adapts automatically as the model evolves) and object-centric interaction (exposing not just fields and relations but also domain methods). The result is a framework where a pure domain model is enough to produce a functional UI by default, metadata can progressively refine the experience, and the same model can drive multiple interface targets — reducing UI maintenance to a problem of model design rather than repetitive re-encoding.
+
+## The paper
+
 !PDF[url](files/research/tereszczuk_zero.pdf)
 
 ## Why this problem matters

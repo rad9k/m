@@ -1,5 +1,11 @@
 # Fractal Graphs
 
+## Summary
+
+> Fractal Graphs extend directed graphs by describing every edge with a meta-vertex, making semantics intrinsic to the structure rather than external — so data, metadata, and meta-models are all represented uniformly within a single, self-consistent framework. This enables structural homoiconicity, where data, code, and architecture become different projections of the same underlying graph, eliminating the need to synchronize separate representations across layers. The -zero platform is a practical implementation of this idea, unifying a graph database, modeling environment, diagram editor, textual languages, and a Graph Virtual Machine into one coherent system where requirements, implementation, and documentation coexist without fragmentation.
+
+## Introduction
+
 Fractal Graphs are a novel mathematical and computational structure designed to unify data and semantics within a single, coherent framework. They extend directed cyclic graphs through a minimal yet fundamental modification: every edge is described by a meta-vertex, turning relationships into first-class, navigable entities.
 
 This structural shift eliminates the traditional separation between data and its description. In most existing systems, semantics are external-implemented through labels, schemas, or auxiliary models. In Fractal Graphs, semantics become intrinsic to the structure itself. They can be queried, transformed, and recursively extended using exactly the same mechanisms as data.
@@ -12,13 +18,11 @@ From a practical perspective, this enables a new class of systems in which tradi
 
 ## Key application domains
 
+As Fractal Graphs are ment to change IT fragments, it's proper usage and possible domains are quite broad. Some of the impacted areas are:
+
 **Graph databases and back-end systems**
 
 Fractal Graphs enable storage of both data and logic within the same structure, eliminating impedance mismatch between database and application layers. APIs, schemas, and execution logic can be derived directly from the graph.
-
-**AI and data processing pipelines**
-
-Complex pipelines involving multiple components, conditional logic, and iterative processing can be represented as executable graph structures. This allows seamless integration of data, control flow, and metadata within a single model.
 
 **Business process orchestration**
 
@@ -31,6 +35,10 @@ Fractal Graphs provide a unified representation of systems across all abstractio
 **Programming languages and execution models**
 
 As a foundation for graph-based computation (e.g., Graph Virtual Machines), Fractal Graphs support fully homoiconic programming environments where code and data are structurally identical, enabling native metaprogramming, reflection, and self-modifying systems.
+
+**Complex platform development**
+
+Most sufficiently complex software systems, as they mature, independently converge on the same set of needs: internal scripting, a user-definable type system, form scaffolding, diagram-based expression of user intent, structured state persistence, and REST integration with external systems. These are not incidental features — they are the natural gravitational endpoints of platform evolution, and precisely what Fractal Graphs enable at their core. A platform built on -zero inherits all of these as first-class primitives, coherently unified, rather than accumulating them piecemeal over years of development.
 
 ## Fractal Graphs added value
 
@@ -56,8 +64,7 @@ The platform combines several capabilities into a coherent whole:
 - **Textual Languages** - built-in and extensible languages that map directly to graph structures, allowing hybrid visual–text workflows  
 - **Graph Virtual Machine (GVM)** - execution layer where graph structures act as code, enabling computation directly on the same structure that stores data and semantics  
 
-
-Through this integration, -zero eliminates the traditional fragmentation of IT systems. There is no distinction between “data layer,” “application logic,” or “architecture description”-all are expressed within the same formal system.
+Through this integration, -zero eliminates the traditional fragmentation of IT systems. There is no distinction between "data layer," "application logic," or "architecture description"-all are expressed within the same formal system.
 
 **Practical outcomes include:**
 

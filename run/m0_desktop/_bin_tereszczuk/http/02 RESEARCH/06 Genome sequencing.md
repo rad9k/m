@@ -1,5 +1,8 @@
 # Genome sequencing
 
+## Summary
+
+> This work spans two sequencing platforms, applying machine learning and algorithmic optimization to different bottlenecks in each. On the Sanger side, classical ML techniques were combined to rescue accurate base calls from degraded late-read signals, while a custom CNN was explored but found limited by the physical noise ceiling of the raw data. On the Whole Genome Sequencing side, the challenge shifted from signal quality to computational scale - where aggressive parallelization and CPU matrix operation optimizations delivered spectacular performance gains across standard WGS analysis pipelines.
 
 ## Sanger Sequencing
 

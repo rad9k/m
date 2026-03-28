@@ -1,8 +1,14 @@
 # Aspect based music composition
 
+## Summary
+
+> Aspect-based composition decomposes a musical part into three independent components — harmonic, melodic, and rhythmic — each represented and edited separately. The harmonic aspect defines the pitch, the melodic aspect describes movement across possible piches, and the rhythmic aspect provides the temporal structure. Combining these three aspects produces a complete instrumental part, while keeping the originals intact — allowing free recombination and experimentation across different harmonic, melodic, and rhythmic configurations.
+
+## Introduction
+
 Traditionally, a musical composition is defined as a collection of instrumental parts, where each instrument is assigned a set of events such as the onset and ending of a sound, together with its pitch and, optionally, additional information about articulation. In this framework, an instrumental part may be represented either as standard notation on a musical staff or as a piano roll, where notes are shown as rectangles arranged along time and pitch axes. This is a complete and useful way of representing musical material, but it is certainly not the only possible perspective.
 
-> The aspect-based composition model proposes a decomposition of instrumental parts into separate and independent components such as the harmonic aspect, the melodic aspect, and the rhythmic aspect. Together, these three aspects form a complete description of a given instrumental part within a musical work. Each of these aspects can be represented and edited independently in a graphical form, potentially opening up new and interesting possibilities for musical composition.
+The aspect-based composition model proposes a decomposition of instrumental parts into separate and independent components such as the harmonic aspect, the melodic aspect, and the rhythmic aspect. Together, these three aspects form a complete description of a given instrumental part within a musical work. Each of these aspects can be represented and edited independently in a graphical form, potentially opening up new and interesting possibilities for musical composition.
 
 Let us consider them one by one.
 
