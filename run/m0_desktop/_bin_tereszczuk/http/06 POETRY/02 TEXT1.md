@@ -1,9 +1,38 @@
 # TEXT1
 
 ```InlineHTML
-<table cellSpacing=0 cellPadding=0 border=0 width=400 style="all: revert;" onfocus="null">
+<style>
+  .markdown-body table.moja {
+    border-collapse: separate !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: none !important;
+    margin: 0 auto !important;
+    width: 400px !important;
+  }
+  .markdown-body table.moja td,
+  .markdown-body table.moja th {
+    border: none !important;
+    padding: 0 !important;
+    background: none !important;
+    box-shadow: none !important;
+  }
+  .markdown-body table.moja a {
+    text-decoration: none !important;
+    color: inherit !important;
+  }
+  .markdown-body table.moja tr:hover {
+	background: none !important;
+  }
+  .markdown-body table.moja .title {
+  font-weight: 600 !important;
+}
+</style>
+
+<table class=moja>
 <tr><td>
 
+<BR><BR><BR><BR><BR>
 
 <a name=7072002>
 <div align=right><span class=title>7072002</span></div>
