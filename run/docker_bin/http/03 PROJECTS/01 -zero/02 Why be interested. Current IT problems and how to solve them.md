@@ -2,17 +2,17 @@
 
 -zero unifies requirements, code, data, and architecture into a single queryable graph, making IT systems transparent, consistent, and instantly analyzable.
 
-Modern IT systems are plagued by fragmentation—requirements, architecture, code, and data drift apart, creating inefficiency, risk, and complexity. -zero, powered by the Meta-Vertex Edge Graph (MVEG), unifies all system elements into a single, coherent, queryable structure, allowing instant visualization, real-time updates, and seamless analysis across every layer. This is not just an improvement—it’s a paradigm shift, turning IT chaos into clarity and enabling systems that are smarter, more adaptable, and future-ready from day one.
+Modern IT systems are plagued by fragmentation—requirements, architecture, code, and data drift apart, creating inefficiency, risk, and complexity. -zero, powered by the Fractal Graph, unifies all system elements into a single, coherent, queryable structure, allowing instant visualization, real-time updates, and seamless analysis across every layer. This is not just an improvement—it’s a paradigm shift, turning IT chaos into clarity and enabling systems that are smarter, more adaptable, and future-ready from day one.
 
 > in -zero **architecture becomes (higher level of) implementation, requirements become code scaffolding filled with technical details, eliminating requirements ⇔ implementation ⇔ architecture synchronization hell**
 
--zero is a fundamental game-change. The revolution starts with reshaping the basic universe atom - fundamental data structure. The Meta-Vertex Edge Graph (MVEG) brings simplicity, coherence and extreme expression power. And it shines everywhere used. Complex structures becomes more coherent and transparent. Universal properties and behaviour enables same powerfull mechanics (like meta-data, queries and updatable views) and tooling (like diagram view/edit, extensive visualisation) for every asset in the platform.
+-zero is a fundamental game-change. The revolution starts with reshaping the basic universe atom - fundamental data structure. The Fractal Graph brings simplicity, coherence and extreme expression power. And it shines everywhere used. Complex structures becomes more coherent and transparent. Universal properties and behaviour enables same powerfull mechanics (like meta-data, queries and updatable views) and tooling (like diagram view/edit, extensive visualisation) for every asset in the platform.
 
-**_MVEG when applied to old IT concepts like database, query language, model, meta-model, virtual machine and programming language results in fundamental changes among those concepts and system paradigm-shift:_**
+**_Fractal Graph when applied to old IT concepts like database, query language, model, meta-model, virtual machine and programming language results in fundamental changes among those concepts and system paradigm-shift:_**
 
 > **old** (_current IT_): abstraction is lost in the implementation
 >
-> **new** (_-zero_): abstraction and its implementation are just two views of the same interconnected MVEG structure
+> **new** (_-zero_): abstraction and its implementation are just two views of the same interconnected Fractal Graph structure
 
 ## The problems
 
@@ -116,7 +116,7 @@ So maybe instead of putting all the eggs in the AI nest, we should try to redefi
 
 ## The paradigm shift
 
--zero doesn't fix the old paradigm – it offers a new one thanks to MVEG minimal structural extension that brings unlimited complexity handling. MVEG applied to classical ideas like database, query language, model, meta-model, virtual machine and programming language creates emergent solution with coherent properties:
+-zero doesn't fix the old paradigm – it offers a new one thanks to Fractal Graph minimal structural extension that brings unlimited complexity handling. Fractal Graph applied to classical ideas like database, query language, model, meta-model, virtual machine and programming language creates emergent solution with coherent properties:
 
 - **One structure** instead of many (requirements docs, architecture models, code, data). Ontological unification: no split between data and metadata.
 - **No synchronization problems** and **One truth**. No need to sync assets, as we just have multiple views (diagrams, text) of the same graph structure.
@@ -141,4 +141,4 @@ This isn't incremental improvement. It's rethinking what a software platform can
 
 ## Summary
 
-> -zero unifies requirements, code, data, and architecture into a single graph, eliminating synchronization chaos and the drift between documentation and reality. Through the Meta-Vertex Edge Graph (MVEG) structure, architecture becomes implementation and requirements become code scaffolding—everything is the same graph viewed from different perspectives. This isn't an improvement of current IT, but a fundamental paradigm shift where abstraction and implementation are no longer separate worlds requiring constant manual alignment.
+> -zero unifies requirements, code, data, and architecture into a single graph, eliminating synchronization chaos and the drift between documentation and reality. Through the Fractal Graph structure, architecture becomes implementation and requirements become code scaffolding—everything is the same graph viewed from different perspectives. This isn't an improvement of current IT, but a fundamental paradigm shift where abstraction and implementation are no longer separate worlds requiring constant manual alignment.

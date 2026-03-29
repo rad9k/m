@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>-zero</title>
+    <title>radek tereszczuk</title>
     <style>
 * {
     margin: 0;
@@ -140,12 +140,17 @@ body {
 
 .tree-content {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     padding: 2px 8px;
     cursor: pointer;
     border-radius: 4px;
     transition: all 0.2s ease;
     font-size: 0.95em;
+}
+
+.tree-content > span {
+    flex: 1;
+    min-width: 0;
 }
 
 .tree-content:hover {
@@ -194,10 +199,16 @@ body {
 .tree-toggle.leaf {
     width: 16px;
     margin-right: 6px;
+    flex: 0 0 16px;
+    align-self: flex-start;
 }
 
 .tree-toggle.leaf::before {
-    display: none;
+    content: "•";
+    display: block;
+    font-size: 11px;
+    line-height: 1.2;
+    color: #718096;
 }
 
 .tree-children {
@@ -409,6 +420,7 @@ body {
     margin: 0.5em auto;
     border-radius: 4px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	background: #f5f3ef;
 }
 
 .markdown-body .description {
@@ -479,6 +491,31 @@ body {
     margin: 10px 0; 
 }
 
+.markdown-body .pdf-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 10px auto;
+}
+
+.markdown-body .pdf-embed {
+    width: 100%;
+    height: min(1273px, calc(100vh - 40px));
+    border: 2px solid #4a5568;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: block;
+}
+
+.markdown-body .pdf-fallback {
+    padding: 20px;
+    background: #f8f6f2;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    text-align: center;
+    color: #718096;
+    font-style: italic;
+}
+
 /* ===== SCROLLBAR STYLING ===== */
 .tree-container::-webkit-scrollbar,
 .markdown-body::-webkit-scrollbar {
@@ -507,7 +544,7 @@ body {
         <div class="resize-handle" id="resizeHandle"></div>
        
         <div class="sidebar-header">
-            <h3>-zero</h3>
+            <h4><a href="http://tereszczuk.com" style="color: #C40FEA;">tereszczuk.com</a></h4>
             <div class="sidebar-controls">
                 <button class="btn" id="collapseAll">Collapse</button>
                 <button class="btn" id="expandAll">Expand</button>
@@ -529,16 +566,26 @@ body {
 <script src="script.js"></script>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {  
+  document.body.addEventListener("play", (e) => {
+    if (!e.target.classList.contains("player")) return;
+
+    document.querySelectorAll("audio.player").forEach((player) => {
+      if (player !== e.target) {
+        player.pause();
+      }
+    });
+  }, true); 
+  
   document.body.addEventListener("ended", (e) => {
     if (!e.target.classList.contains("player")) return;
-    
-    const players = Array.from(document.querySelectorAll(".player"));
+
+    const players = Array.from(document.querySelectorAll("audio.player"));
     const currentIndex = players.indexOf(e.target);
     const next = players[currentIndex + 1];
-    
+
     if (next) next.play();
-  }, true); // true = capture phase
+  }, true);
 });
 </script>
 </body>

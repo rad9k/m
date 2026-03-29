@@ -7,14 +7,21 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 	variable "map" @VertexType
 	variable "server" @HttpServer
 	
-	function "handler"(@String "url")
-		return @@Autostart\web\MDServe\MDServeHandler[Start\:doc, url]
+	function "handler_minuszero"(@String "url")
+		return @@Autostart\web\MDServe\MDServeHandler[Start\:http\:'06 PROJECTS'\:'01 -zero', url]
+		
+	function "handler_minuscomposer"(@String "url")
+		return @@Autostart\web\MDServe\MDServeHandler[Start\:http\:'06 PROJECTS'\:'02 -composer', url]
+		
+	function "handler_http"(@String "url")
+		return @@Autostart\web\MDServe\MDServeHandler[Start\:http, url]
 		
 	map +< create http mapping "map"{
 		mapping @@HttpActionEnum\GET "/files/*" @@Start:\files
 		mapping @@HttpActionEnum\GET "/diagrams/*" @@Start:\diagrams
-		mapping @@HttpActionEnum\GET "/doc/*" @@handler
-		mapping @@HttpActionEnum\REST "/api/*" @@Autostart\resttest
+		mapping @@HttpActionEnum\GET "/-zero/*" @@handler_minuszero
+		mapping @@HttpActionEnum\GET "/-composer/*" @@handler_minuscomposer
+		mapping @@HttpActionEnum\GET "/*" @@handler_http		
 	}
 	server = new @@HttpServer[map\:map]
 	server.Start[]

@@ -1,18 +1,24 @@
-# Introducing Meta-Vertex Edge Graph (_MVEG_)
+# Introducing Fractal Graph
 
-> **Meta-Vertex Edge Graph (MVEG)** is a _directed cyclic graph_ where each _edge_, insted of a label has additional vertex, called _meta vertex_. 
+> **Fractal Graph** is a _directed cyclic graph_ where each _edge_, insted of a label has additional vertex, called _meta vertex_. 
 
 ...and that is. Now let's see where it takes us...
 
-## Why MVEG
+## Why Fractal Graph
 
 Simple _edge labeling_ is not sufficient to express semantics required to manage the complexity of typical IT systems. As systems grow, semantics often becomes as complex as data itself — and treating it as mere annotations no longer works.
 
-MVEG addresses this problem by making **semantics a structural element of the graph**, not an external layer.
+Fractal Graph addresses this problem by making **semantics a structural element of the graph**, not an external layer.
 
-### Core properties of MVEG
+> **Why do we call those graphs "Fractal" ?**
+>
+> This is becouse instances of such graphs have tendency to form fractal like structures with possibly infinite number of "deepnes" levels. Those "deepnes" levels are just different conceptual meta levels. As each _edge_ has a _meta vertex_, this _meta vertex_ leads to another "deepnes" level. Becouse the target object of this "going deeper" operation, is another graph, that, by having _edges_ (and thus _meta vertexes_) can lead to another "deeper" level for each of the _edges_, in the end defining possibly infinitely-deep structure.
+>
+> In current usage of the Fractal Graph, we usu maximum three levels of "deepnes" (meta), but there is nothing (except cognitive and memory limits) stopping to have bigger "deepnes" level in the Fractal Graph instance.
 
-MVEG provides several key properties that make it effective for base structure of complex systems:
+### Core properties of Fractal Graph
+
+Fractal Graph provides several key properties that make it effective for base structure of complex systems:
 
 **Minimal structural extension**
 - A simple directed cyclic graph
@@ -79,7 +85,7 @@ To express any complex multi meta hierarchies of data / semantics entities and a
 
 ### Structural homoiconicity
 
-_MVEG_ can serve as a foundation for a new class of programming languages — graph programming languages — that exhibit full structural homoiconicity:
+_Fractal Graph_ can serve as a foundation for a new class of programming languages — graph programming languages — that exhibit full structural homoiconicity:
 - code and data structures are identical
 - the execution structure (Graph Virtual Machine code) is the same structure the programmer directly manipulates
 - code structure represents execution flow
@@ -87,9 +93,9 @@ _MVEG_ can serve as a foundation for a new class of programming languages — gr
 - code and data share the same ontology
 - metaprogramming is a core feature, not an extension
 	
-## MVEG definition
+## Fractal Graph definition
 
-Meta-Vertex Edge Graph consists of _vertexes_ and _edges_.
+Fractal Graph consists of _vertexes_ and _edges_.
 
 **Vertex**
 
@@ -109,7 +115,7 @@ An _edge_ has the following properties:
 - edge's _meta vertex_ 
 	- reffering _vertex_ that describes given _edge_
 	- describing the semantics of the _edge_
-	- _meta vertex_ in MVEG always represent not individual edge's desciption but rather relation class - that's why we have _meta_ in its name 
+	- _meta vertex_ in Fractal Graph always represent not individual edge's desciption but rather relation class - that's why we have _meta_ in its name 
 - _to vertex_
 
 In most cases the _incoming edges_ are less important, and many of the graph alghoritms in _-zero_ use only _outgoing edges_. 
