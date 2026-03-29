@@ -32,6 +32,7 @@ _Genre:_ Dream
 _Style:_ Dream
 _Composed by_ - Radosław Tereszczuk
 _Mastered by_ - Radosław Tereszczuk
+
 _Anyone, whether a conscious being - so precesliy entire universe - or a non-conscious Turing machine instance, is welcome to use or modify all materials from this publication. Any use (including attribution to self) is permitted without any kind of consent or permission._
 
 ~

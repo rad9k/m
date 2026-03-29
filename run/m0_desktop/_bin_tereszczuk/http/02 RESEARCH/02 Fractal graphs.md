@@ -16,29 +16,84 @@ From a theoretical perspective, Fractal Graphs introduce structural homoiconicit
 
 From a practical perspective, this enables a new class of systems in which traditionally separate artifacts-data, code, architecture, and documentation-can be unified into a single, queryable graph.
 
-## Key application domains
+## Core Properties
 
-As Fractal Graphs are ment to change IT fragments, it's proper usage and possible domains are quite broad. Some of the impacted areas are:
+### Minimal Structural Extension
+- Based on a simple directed cyclic graph
+- The only addition: a meta vertex on every edge
 
-**Graph databases and back-end systems**
+### Very Simple Data Model
+- A minimal set of concepts
+- Capable of expressing highly complex data and semantic structures
 
-Fractal Graphs enable storage of both data and logic within the same structure, eliminating impedance mismatch between database and application layers. APIs, schemas, and execution logic can be derived directly from the graph.
+### Semantics as a First-Class Citizen
+- Data and semantics are treated identically
+- Semantics can be queried the same way as data
+- Multiple meta levels can be mixed within a single query
 
-**Business process orchestration**
+### Semantics Is Data. Data Is Semantics.
+Both follow the same rules for:
+- validation & constraints
+- graphical and textual representation
+- persistent storage
+- relationships to other assets
+- programmable event triggers
+- updatable views with trigger-based consistency
 
-High-level processes-such as risk scoring, decision systems, or workflow automation-can be modeled, executed, and continuously updated as graph structures, with direct linkage between business semantics and operational logic.
+### Unified Tooling
+The same tools apply at every meta level (instance, meta model, meta-meta model, etc.) for:
+viewing, editing, querying, and transformation.
 
-**Enterprise architecture and system modeling**
+### Ontological Unification
+No split between "data" and "metadata" — expressing semantics and expressing data are the same operation, including recursive relationships between semantic entities.
 
-Fractal Graphs provide a unified representation of systems across all abstraction levels. Architecture, data models, and implementation become different views of the same underlying structure, enabling real-time consistency, analysis, and transformation.
+### Arbitrary Meta Levels
+- Any number of meta levels supported
+- Semantics can be defined at any level
+- Abstraction hierarchies of any shape
+- Cross-level relationships between entities
 
-**Programming languages and execution models**
+### Reduction of Ontological Complexity
+All expressive power is available without separate abstraction frameworks or external definitions.
+Only **three special meta vertices** are required to express any multi-meta hierarchy:
+- `$Is`
+- `$EdgeTarget`
+- `$VertexTarget`
 
-As a foundation for graph-based computation (e.g., Graph Virtual Machines), Fractal Graphs support fully homoiconic programming environments where code and data are structurally identical, enabling native metaprogramming, reflection, and self-modifying systems.
+### Structural Homoiconicity
+Fractal Graph can serve as the foundation for graph programming languages where:
+- code and data structures are identical
+- execution structure = directly manipulable structure
+- reflection and self-modification are native
+- metaprogramming is a core feature, not an add-on
 
-**Complex platform development**
+## Why "Fractal"?
 
-Most sufficiently complex software systems, as they mature, independently converge on the same set of needs: internal scripting, a user-definable type system, form scaffolding, diagram-based expression of user intent, structured state persistence, and REST integration with external systems. These are not incidental features — they are the natural gravitational endpoints of platform evolution, and precisely what Fractal Graphs enabled while implemented as -zero. A platform built on -zero inherits all of these as first-class primitives, coherently unified, rather than accumulating them piecemeal over years of development.
+Each meta vertex leads to another conceptual level, which in turn can have its own meta vertices — producing a potentially **infinitely deep**, fractal-like structure. In practice, up to three depth levels are commonly used.
+
+## Fractal Graphs core use cases
+
+Fractal Graphs is a simple theoretical concept with highly practical real-world applications.
+
+### Datasets
+Fractal Graphs are well-suited for representing datasets at the most concrete level — the instance level. They provide a natural and clean way to model raw data without any structural workarounds.
+
+### Data Modeling
+Fractal Graphs excel at modeling complex data structures. No tricks, hacks, special cases, or ad-hoc workarounds are needed — models built on Fractal Graphs remain clean, coherent, and principled regardless of complexity.
+
+### Meta Models
+By their very nature, Fractal Graphs are not limited to instance-level models. They seamlessly support meta models — and meta models of meta models — to an arbitrary depth. This recursive "going deeper" property is precisely what gives them the name *fractal*.
+
+### Relationships Between Meta Levels
+Because Fractal Graphs unify the way relationships are expressed across meta levels — from instance-to-model up to model-to-meta-model — multiple meta levels can coexist within a single coherent data structure. This structure can carry rich information about inter-level relationships, which opens the door to advanced applications such as **meta model algebra**.
+
+### Expressing Semantics
+Wherever there is a need to express the semantics of relationships, Fractal Graphs shine. Generalizing semantic expression is, in fact, the core purpose of this mathematical structure — making it a natural fit for any domain where meaning, not just structure, needs to be captured.
+
+### An Exciting Direction — Fractal Graph Based Deep Neural Networks (FGBDNN)
+The elegant mathematical simplicity of Fractal Graphs opens up possibilities well beyond data modeling. One particularly intriguing direction is using Fractal Graphs to formally express the behavior of neurons in artificial neural networks.
+
+There is significant unexplored potential here — the main constraint being the need to ensure differentiability of the resulting model, which does impose some boundaries. But the space is wide open and waiting to be explored. *If this topic interests you, let's talk!*
 
 ## Fractal Graphs added value
 
@@ -72,8 +127,31 @@ Through this integration, -zero eliminates the traditional fragmentation of IT s
 - real-time synchronization between requirements, implementation, and documentation  
 - ability to query and transform systems across all abstraction levels  
 - native support for metaprogramming, reflection, and system evolution  
-- unified tooling across modeling, execution, and visualization  
+- unified tooling across modeling, execution, and visualization
 
+## -zero key application domains
+
+As -zero is ment to change IT fragments, it's proper usage and possible domains are quite broad. Some of the impacted areas are:
+
+**Graph databases and back-end systems**
+
+Fractal Graphs enable storage of both data and logic within the same structure, eliminating impedance mismatch between database and application layers. APIs, schemas, and execution logic can be derived directly from the graph.
+
+**Business process orchestration**
+
+High-level processes-such as risk scoring, decision systems, or workflow automation-can be modeled, executed, and continuously updated as graph structures, with direct linkage between business semantics and operational logic.
+
+**Enterprise architecture and system modeling**
+
+Fractal Graphs provide a unified representation of systems across all abstraction levels. Architecture, data models, and implementation become different views of the same underlying structure, enabling real-time consistency, analysis, and transformation.
+
+**Programming languages and execution models**
+
+As a foundation for graph-based computation (e.g., Graph Virtual Machines), Fractal Graphs support fully homoiconic programming environments where code and data are structurally identical, enabling native metaprogramming, reflection, and self-modifying systems.
+
+**Complex platform development**
+
+Most sufficiently complex software systems, as they mature, independently converge on the same set of needs: internal scripting, a user-definable type system, form scaffolding, diagram-based expression of user intent, structured state persistence, and REST integration with external systems. These are not incidental features — they are the natural gravitational endpoints of platform evolution, and precisely what Fractal Graphs enabled while implemented as -zero. A platform built on -zero inherits all of these as first-class primitives, coherently unified, rather than accumulating them piecemeal over years of development.
 
 >The -zero project is not an incremental improvement over existing platforms. It represents a shift toward **self-describing, executable systems**, where the structure used to model reality is the same structure used to implement and run it.
 >
