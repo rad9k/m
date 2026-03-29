@@ -38,7 +38,7 @@ As a foundation for graph-based computation (e.g., Graph Virtual Machines), Frac
 
 **Complex platform development**
 
-Most sufficiently complex software systems, as they mature, independently converge on the same set of needs: internal scripting, a user-definable type system, form scaffolding, diagram-based expression of user intent, structured state persistence, and REST integration with external systems. These are not incidental features — they are the natural gravitational endpoints of platform evolution, and precisely what Fractal Graphs enable at their core. A platform built on -zero inherits all of these as first-class primitives, coherently unified, rather than accumulating them piecemeal over years of development.
+Most sufficiently complex software systems, as they mature, independently converge on the same set of needs: internal scripting, a user-definable type system, form scaffolding, diagram-based expression of user intent, structured state persistence, and REST integration with external systems. These are not incidental features — they are the natural gravitational endpoints of platform evolution, and precisely what Fractal Graphs enabled while implemented as -zero. A platform built on -zero inherits all of these as first-class primitives, coherently unified, rather than accumulating them piecemeal over years of development.
 
 ## Fractal Graphs added value
 

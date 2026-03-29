@@ -358,18 +358,19 @@ namespace m0.Network.Server {
         }
 
         private IResult HandleFileRequest(HttpContext context, string url, IVertex handler)
-        {            
+        {
             string method = context.Request.Method.ToUpperInvariant();
+            string decodedUrl = Uri.UnescapeDataString(url);
 
             if ((method != "GET" && method != "HEAD") 
-                || url.Contains("./")
-                || url.Contains(@".\")
-                || url.Contains("../")
-                || url.Contains(@"..\")
+                || decodedUrl.Contains("./")
+                || decodedUrl.Contains(@".\")
+                || decodedUrl.Contains("../")
+                || decodedUrl.Contains(@"..\")
                 )            
                 return Results.StatusCode(405); // Method Not Allowed            
 
-            string[] urlSplit = url.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] urlSplit = decodedUrl.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
             IVertex directoryIterator = handler;
 
