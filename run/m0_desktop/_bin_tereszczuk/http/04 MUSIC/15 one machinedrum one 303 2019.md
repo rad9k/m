@@ -31,6 +31,26 @@
 
 ~
 
+!(files/music/one machinedrum one 303 2019/c1.png)
+
+!(files/music/one machinedrum one 303 2019/c2.png)
+
+!(files/music/one machinedrum one 303 2019/c3.png)
+
+!(files/music/one machinedrum one 303 2019/c4.png)
+
+!(files/music/one machinedrum one 303 2019/c5.png)
+
+!(files/music/one machinedrum one 303 2019/c6.png)
+
+!(files/music/one machinedrum one 303 2019/c7.png)
+
+!(files/music/one machinedrum one 303 2019/c8.png)
+
+!(files/music/one machinedrum one 303 2019/c9.png)
+
+~
+
 **[DOWNLOAD WHOLE RELEASE AS A ZIP FILE](files/music/one machinedrum one 303 2019.zip)**
 
 **Radosław Tereszczuk - one machinedrum one 303**
@@ -41,7 +61,7 @@ _Genre:_ Dream
 _Style:_ Dream
 _Composed by_ - Radosław Tereszczuk
 _Mastered by_ - Radosław Tereszczuk
-_last track (180804 rework) remixed and mastered by Patryk Gęgniewicz (revisq)_
+last track (180804 rework) remixed and mastered by Patryk Gęgniewicz (revisq)
 
 _Anyone, whether a conscious being - so precesliy entire universe - or a non-conscious Turing machine instance, is welcome to use or modify all materials from this publication. Any use (including attribution to self) is permitted without any kind of consent or permission._
 

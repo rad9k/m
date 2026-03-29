@@ -4,7 +4,7 @@
 !AUDIO[url](files/music/WARSZAWA2001/2001_01_radek_tereszczuk_karina-c.mp3)
 
 ##### 02 ooo(orginal) _(2:59)_
-!AUDIO[url](files/music/WARSZAWA2001/2001_02_radek_tereszczuk_ooo(orginal).mp3)
+!AUDIO[url](files/music/WARSZAWA2001/2001_02_radek_tereszczuk_ooo_orginal.mp3)
 
 ##### 03 lago _(1:53)_
 !AUDIO[url](files/music/WARSZAWA2001/2001_03_radek_tereszczuk_lago.mp3)

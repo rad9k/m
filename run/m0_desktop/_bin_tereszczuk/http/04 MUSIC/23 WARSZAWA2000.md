@@ -18,7 +18,7 @@
 !AUDIO[url](files/music/WARSZAWA2000/2000_05_radek_tereszczuk_teri2.mp3)
 
 ##### 06 a e2(edit) _(2:12)_
-!AUDIO[url](files/music/WARSZAWA2000/2000_06_radek_tereszczuk_a_e2(edit).mp3)
+!AUDIO[url](files/music/WARSZAWA2000/2000_06_radek_tereszczuk_a_e2_edit.mp3)
 
 ##### 07 boski _(2:34)_
 !AUDIO[url](files/music/WARSZAWA2000/2000_07_radek_tereszczuk_boski.mp3)
