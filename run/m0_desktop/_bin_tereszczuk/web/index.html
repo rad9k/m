@@ -21,12 +21,22 @@ body {
     line-height: 1.5;
 }
 
+:root {
+    --sidebar-default-width: 305px;
+}
+
+@media (max-width: 768px) {
+    :root {
+        --sidebar-default-width: 120px;
+    }
+}
+
 /* ===== SIDEBAR ===== */
 .sidebar {
     background: #fefdfb;
     border-right: 2px solid #4a5568;
     max-width: 400px;
-    width: 305px;
+    width: var(--sidebar-default-width);
     display: flex;
     flex-direction: column;
     position: relative;
@@ -243,6 +253,29 @@ body {
     box-sizing: content-box;
     box-shadow: inset 4px 0 12px rgba(0, 0, 0, 0.05);
 	text-align: justify;
+}
+
+@media (max-width: 768px) {
+    .tree-container {
+        padding: 15px 0px 15px 0px;
+    }
+
+    .tree-content {
+        padding: 2px 4px 2px 1px;
+    }
+
+    .tree-toggle,
+    .tree-toggle.leaf {
+        margin-right: 4px;
+    }
+
+    .tree-children {
+        margin-left: 6px;
+    }
+
+    .markdown-body {
+        padding: 10px 6px 24px 6px;
+    }
 }
 
 .document-placeholder {
@@ -544,7 +577,7 @@ body {
         <div class="resize-handle" id="resizeHandle"></div>
        
         <div class="sidebar-header">
-            <h4><a href="http://tereszczuk.com" style="color: #C40FEA;">tereszczuk.com</a></h4>
+            <h5><a href="http://tereszczuk.com" style="color: #C40FEA;">tereszczuk.com</a></h5> &nbsp; &nbsp;
             <div class="sidebar-controls">
                 <button class="btn" id="collapseAll">Collapse</button>
                 <button class="btn" id="expandAll">Expand</button>
