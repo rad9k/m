@@ -256,7 +256,7 @@ namespace m0_console.console
             AnsiConsole.EnableAnsiSupport();
             IsAnsiSupported = AnsiConsole.IsAnsiSupported();
 
-            WriteLine("[SYSTEM] -zero, version 0.98");
+            WriteLine("[SYSTEM] -zero, version 0.99");
             WriteLine("[SYSTEM] public domain software by radek@tereszczuk.com");
             WriteLine("[LINK]   http://tereszczuk.com");
             //WriteLine("[SYSTEM] UserInteractionInitialize called. ConsoleUserInteraction initialized.");
