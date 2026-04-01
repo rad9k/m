@@ -27,7 +27,7 @@ body {
 
 @media (max-width: 768px) {
     :root {
-        --sidebar-default-width: 120px;
+        --sidebar-default-width: 300px;
     }
 }
 
@@ -130,6 +130,7 @@ body {
     width: 5px;
     background-color: transparent;
     cursor: col-resize;
+    touch-action: none;
 }
 
 .resize-handle:hover {
@@ -256,6 +257,10 @@ body {
 }
 
 @media (max-width: 768px) {
+    .resize-handle {
+        width: 12px;
+    }
+
     .tree-container {
         padding: 15px 0px 15px 0px;
     }
@@ -577,7 +582,7 @@ body {
         <div class="resize-handle" id="resizeHandle"></div>
        
         <div class="sidebar-header">
-            <h5><a href="http://tereszczuk.com" style="color: #C40FEA;">tereszczuk.com</a></h5> &nbsp; &nbsp;
+            <h5><a href="http://tereszczuk.com" style="color: #C40FEA;">tereszczuk.com</a></h5>
             <div class="sidebar-controls">
                 <button class="btn" id="collapseAll">Collapse</button>
                 <button class="btn" id="expandAll">Expand</button>
