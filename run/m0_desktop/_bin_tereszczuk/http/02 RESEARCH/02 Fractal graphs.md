@@ -113,11 +113,20 @@ This enables a fundamental shift in how systems are built. In -zero, **requireme
 
 The platform combines several capabilities into a coherent whole:
 
-- **Graph Database** - persistent storage with querying, constraints, triggers, and updatable views, all operating directly on Fractal Graph structures  
-- **Modeling Environment** - support for unlimited meta-levels, enabling seamless transitions between data, models, and meta-models  
-- **Diagrammatic Interface** - visual representation where diagrams are not abstractions but direct views of the underlying graph  
-- **Textual Languages** - built-in and extensible languages that map directly to graph structures, allowing hybrid visual–text workflows  
-- **Graph Virtual Machine (GVM)** - execution layer where graph structures act as code, enabling computation directly on the same structure that stores data and semantics  
+### Graph Database
+Persistent storage with querying, constraints, triggers, and updatable views, all operating directly on Fractal Graph structures
+ 
+### Modeling Environment
+Support for unlimited meta-levels, enabling seamless transitions between data, models, and meta-models  
+
+### Diagrammatic Interface
+Visual representation where diagrams are not abstractions but direct views of the underlying graph  
+
+### Textual Languages
+Built-in and extensible languages that map directly to graph structures, allowing hybrid visual–text workflows  
+
+### Graph Virtual Machine (GVM)
+Execution layer where graph structures act as code, enabling computation directly on the same structure that stores data and semantics  
 
 Through this integration, -zero eliminates the traditional fragmentation of IT systems. There is no distinction between "data layer," "application logic," or "architecture description"-all are expressed within the same formal system.
 
