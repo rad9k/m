@@ -85,6 +85,10 @@
 			html += "%" type=%"application/pdf%" class=%"pdf-embed%"><p class=%"pdf-fallback%">Can not visualise PDF. <a href=%""
 			html += url
 			html += "%">Pobierz plik</a></p></object></div>"
+		function "HandleGeneric_PDF2" (@String "url")
+			html += "<div class=%"pdf-container%"><iframe src=%"https://docs.google.com/gview?embedded=1&url="
+			html += url
+			html += "%"></iframe></div>"			
 		function "MdTokenVertexesToHtmlString_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
 			variable "html" @String
 			
@@ -201,6 +205,8 @@
 								@@Html\HandleGeneric_DIAGRAM[e\To\{Name:Query}\Value, e\To\{Name:label}\Value]
 							case "PDF"
 								@@Html\HandleGeneric_PDF[e\To\{Name:url}\Value]
+							case "PDF2"
+								@@Html\HandleGeneric_PDF2[e\To\{Name:url}\Value]
 					
 					case "BlockquoteStart"
 						html += "<blockquote>"

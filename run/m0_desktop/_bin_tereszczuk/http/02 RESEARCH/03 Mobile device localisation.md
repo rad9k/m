@@ -20,7 +20,7 @@ This is the harder problem in location-aware services, presence detection, venue
 
 ## Patent 1: Localization by Low-Power Mini BTS
 
-!PDF[url](files/research/patent_pl.pdf)
+!PDF2[url](files/research/patent_pl.pdf)
 
 The first patent proposes a simple but powerful idea: instead of trying to infer position only from large, city-scale BTS cells, place a **low-power mini BTS** at the location of interest. When a phone moves close enough to that mini BTS, the received signal from it becomes stronger than the signal from the surrounding high-power urban BTS stations. As a result, the phone attaches through the mini BTS, and the network can treat the phone’s location as the location of that mini BTS.
 
@@ -40,7 +40,7 @@ The key innovation is not only better accuracy. It is the ability to detect **ph
 
 ## Patent 2: Faster and More Reliable Detection Using the SIM Card
 
-!PDF[url](files/research/patent.pdf)
+!PDF2[url](https://tereszczuk.com/files/research/patent.pdf)
 
 The second patent extends the original concept and makes it more robust. It observes that relying on a full network log-in or location update via the mini BTS can be too slow in practice. A moving phone may pass through the mini BTS coverage area before the standard GSM connection procedure fully completes. In that case, the localization opportunity can be missed. The European patent identifies this as a core weakness of the earlier approach.
 

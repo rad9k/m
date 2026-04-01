@@ -137,6 +137,10 @@ function isMobileViewport() {
     return window.matchMedia('(max-width: 768px)').matches;
 }
 
+function syncMobileViewClass() {
+    document.body.classList.toggle('mobile-view', isMobileViewport());
+}
+
 function getDefaultSidebarWidth() {
     return isMobileViewport() ? 110 : 305;
 }
@@ -199,6 +203,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	// Initialize toggle button position
 	const sidebar = document.getElementById('sidebar');
 	const toggleBtn = document.getElementById('toggleBtn');
+	syncMobileViewClass();
 	applySidebarWidth(sidebar, toggleBtn, getDefaultSidebarWidth());
 	toggleBtn.classList.add('sidebar-visible');
 	toggleBtn.style.left = sidebar.offsetWidth + 'px';
@@ -245,6 +250,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     window.addEventListener('resize', () => {
+        syncMobileViewClass();
+
         if (isCollapsed || isResizing) {
             return;
         }

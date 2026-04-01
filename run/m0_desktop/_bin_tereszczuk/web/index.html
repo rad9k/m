@@ -21,6 +21,43 @@ body {
     line-height: 1.5;
 }
 
+body.mobile-view {
+    font-size: 0.8em;
+}
+
+body.mobile-view .tree-container {
+    font-size: 0.875em;
+}
+
+body.mobile-view .sidebar-controls {
+    display: none;
+}
+
+body.mobile-view .tree-toggle,
+body.mobile-view .tree-toggle.leaf::before {
+    font-size: 7.7px;
+}
+
+body.mobile-view .btn {
+    font-size: 9.6px;
+}
+
+body.mobile-view .toggle-btn {
+    font-size: 11.2px;
+}
+
+body.mobile-view .markdown-body h1 {
+    font-size: 2.1875em;
+}
+
+body.mobile-view .markdown-body h2 {
+    font-size: 1.75em;
+}
+
+body.mobile-view .markdown-body h3 {
+    font-size: 1.4em;
+}
+
 :root {
     --sidebar-default-width: 305px;
 }
@@ -279,7 +316,7 @@ body {
     }
 
     .markdown-body {
-        padding: 10px 6px 24px 6px;
+        padding: 10px 6px 60px 6px;
     }
 }
 
