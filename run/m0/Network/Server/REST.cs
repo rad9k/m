@@ -73,8 +73,8 @@ namespace m0.Network.Server
                         else
                             logFilename = server.RestLogFilename;
 
-                            FileSystemUtil.CreateDirectoryIfNotExist(MinusZero.Instance.m0DllPath, "log");
-                        string httpPath = Path.Combine(MinusZero.Instance.m0DllPath, "log");
+                            FileSystemUtil.CreateDirectoryIfNotExist(MinusZero.Instance.ApplicationPath, "log");
+                        string httpPath = Path.Combine(MinusZero.Instance.ApplicationPath, "log");
                         string logFilePath = Path.Combine(httpPath, logFilename);
 
                         _logWriter = new StreamWriter(logFilePath, true);

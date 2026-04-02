@@ -21,7 +21,7 @@ namespace m0.Bootstrap
         static string GetFilePath(string userName)
         {
             string filename = $"home-{userName}.m0j";
-            string filePath = Path.Combine(MinusZero.Instance.m0DllPath, filename);
+            string filePath = Path.Combine(MinusZero.Instance.ApplicationPath, filename);
 
             return filePath;
         }

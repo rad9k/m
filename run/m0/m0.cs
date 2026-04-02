@@ -29,7 +29,7 @@ namespace m0
 
         bool BuildVariant_m0_COMPOSER = true;
 
-        public string m0DllPath;
+        public string ApplicationPath;
 
         public CommandLineParameters CommandLineParameters = new CommandLineParameters();
 
@@ -443,9 +443,9 @@ namespace m0
             if (CommandLineParameters != null && !string.IsNullOrWhiteSpace(CommandLineParameters.Autostart))
                 autostartDirectory = CommandLineParameters.Autostart;
 
-            FileSystemUtil.CreateDirectoryIfNotExist(m0DllPath, autostartDirectory);
+            FileSystemUtil.CreateDirectoryIfNotExist(ApplicationPath, autostartDirectory);
 
-            string autostartPath = Path.Combine(m0DllPath, autostartDirectory);
+            string autostartPath = Path.Combine(ApplicationPath, autostartDirectory);
 
             FileSystemLoader fsl = new FileSystemLoader(autostartPath);
 
@@ -456,7 +456,7 @@ namespace m0
 
         void CreateStart()
         {
-            IVertex startVertex = FileSystemUtil.GetDirectoryFromFileSystem(m0DllPath);
+            IVertex startVertex = FileSystemUtil.GetDirectoryFromFileSystem(ApplicationPath);
 
             if (startVertex != null)  
                 root.AddEdge(root.Get(false, @"System\Meta\Store\FileSystem\Start"), startVertex);            
@@ -497,7 +497,8 @@ namespace m0
 
             LogLevel = CommandLineParameters.GetM0LogLevel();
 
-            m0DllPath = Path.GetDirectoryName(typeof(MinusZero).Assembly.Location);
+            ApplicationPath = AppContext.BaseDirectory;
+                //Path.GetDirectoryName(typeof(MinusZero).Assembly.Location);
 
             InitializeGracefullExit();
 

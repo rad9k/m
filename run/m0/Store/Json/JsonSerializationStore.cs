@@ -202,7 +202,7 @@ namespace m0.Store.Json
             if (Identifier.Contains(System.IO.Path.DirectorySeparatorChar.ToString()))
                 return Identifier;
             else
-                return MinusZero.Instance.m0DllPath + System.IO.Path.DirectorySeparatorChar + Identifier;
+                return MinusZero.Instance.ApplicationPath + System.IO.Path.DirectorySeparatorChar + Identifier;
         }
 
         void Load()
