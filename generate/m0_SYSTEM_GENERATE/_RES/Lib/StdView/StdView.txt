@@ -86,7 +86,7 @@
 			html += url
 			html += "%">Pobierz plik</a></p></object></div>"
 		function "HandleGeneric_PDF2" (@String "url")
-			html += "<div class=%"pdf-container%"><iframe src=%"https://docs.google.com/gview?embedded=1&url="
+			html += "<div class=%"pdf-container%"><iframe src=%"https://mozilla.github.io/pdf.js/web/viewer.html?file="
 			html += url
 			html += "%"></iframe></div>"			
 		function "MdTokenVertexesToHtmlString_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
