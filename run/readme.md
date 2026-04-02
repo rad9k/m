@@ -1,3 +1,8 @@
+for full documentation go here [http://tereszczuk.com/-zero](http://tereszczuk.com/-zero)
+
+also there is local documentation in _docker_bin/http
+
+
 # common user summary
 
 - Windows desktop executable with WPF front-end

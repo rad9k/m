@@ -8,10 +8,10 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 	variable "server" @HttpServer
 	
 	function "handler_minuszero"(@String "url")
-		return @@Autostart\web\MDServe\MDServeHandler[Start\:http\:'20 -zero project', url]
+		return @@Autostart\web\MDServe\MDServeHandler[Start\:http\:'03 PROJECTS'\:'01 -zero', url]
 		
 	function "handler_minuscomposer"(@String "url")
-		return @@Autostart\web\MDServe\MDServeHandler[Start\:http\:'21 -composer project', url]
+		return @@Autostart\web\MDServe\MDServeHandler[Start\:http\:'03 PROJECTS'\:'02 -composer', url]
 		
 	function "handler_http"(@String "url")
 		return @@Autostart\web\MDServe\MDServeHandler[Start\:http, url]

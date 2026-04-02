@@ -29,7 +29,7 @@ FROM base AS final
 USER root
 WORKDIR /app
 COPY --from=publish /app/publish .
-COPY docker_bin_tereszczuk/ .
+COPY _docker_bin_tereszczuk/ .
 RUN mkdir -p /app/log && chmod -R 777 /app/log
 ENV ASPNETCORE_URLS=http://0.0.0.0:80
 ENTRYPOINT ["dotnet", "m0_console.dll"]
