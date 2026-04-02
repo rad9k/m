@@ -133,6 +133,33 @@ let treeView;
 let isResizing = false;
 let startX, startWidth;
 
+function isMobileViewport() {
+    return window.matchMedia('(max-width: 768px)').matches;
+}
+
+function syncMobileViewClass() {
+    document.body.classList.toggle('mobile-view', isMobileViewport());
+}
+
+function getDefaultSidebarWidth() {
+    return isMobileViewport() ? 110 : 305;
+}
+
+function applySidebarWidth(sidebar, toggleBtn, width) {
+    sidebar.style.width = width + 'px';
+    if (!sidebar.classList.contains('collapsed')) {
+        toggleBtn.style.left = width + 'px';
+    }
+}
+
+function getSidebarMinWidth() {
+    return isMobileViewport() ? 110 : 160;
+}
+
+function getSidebarMaxWidth() {
+    return Math.min(400, Math.max(getSidebarMinWidth(), window.innerWidth - 40));
+}
+
 // Load tree data from JSON file
 async function loadTreeData() {
     try {
@@ -176,6 +203,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 	// Initialize toggle button position
 	const sidebar = document.getElementById('sidebar');
 	const toggleBtn = document.getElementById('toggleBtn');
+	syncMobileViewClass();
+	applySidebarWidth(sidebar, toggleBtn, getDefaultSidebarWidth());
 	toggleBtn.classList.add('sidebar-visible');
 	toggleBtn.style.left = sidebar.offsetWidth + 'px';
 	
@@ -201,8 +230,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 			}, 300);
 		}else{
 			isCollapsed = false;
-			const widthToRestore = savedWidth || '250px';
-			const widthValue = parseInt(widthToRestore) || 250;
+			const widthToRestore = savedWidth || (getDefaultSidebarWidth() + 'px');
+			const widthValue = parseInt(widthToRestore) || getDefaultSidebarWidth();
 			
 			// Restore width first so sidebar can expand
 			sidebar.style.width = widthToRestore;
@@ -220,34 +249,58 @@ document.addEventListener('DOMContentLoaded', async () => {
 		}
     });
 
+    window.addEventListener('resize', () => {
+        syncMobileViewClass();
+
+        if (isCollapsed || isResizing) {
+            return;
+        }
+
+        const defaultWidth = getDefaultSidebarWidth();
+        applySidebarWidth(sidebar, toggleBtn, defaultWidth);
+        savedWidth = defaultWidth + 'px';
+    });
+
     // Resize handle
     const resizeHandle = document.getElementById('resizeHandle');
 
-    resizeHandle.addEventListener('mousedown', (e) => {
+    resizeHandle.addEventListener('pointerdown', (e) => {
+        if (isCollapsed) {
+            return;
+        }
+
         isResizing = true;
         startX = e.clientX;
         startWidth = sidebar.offsetWidth;
         sidebar.classList.add('no-transition');
         document.body.style.cursor = 'col-resize';
+        resizeHandle.setPointerCapture(e.pointerId);
         e.preventDefault();
     });
 
-    document.addEventListener('mousemove', (e) => {
+    document.addEventListener('pointermove', (e) => {
         if (!isResizing) return;
         
         const deltaX = e.clientX - startX;
-        const newWidth = Math.max(200, Math.min(400, startWidth + deltaX));
+        const minWidth = getSidebarMinWidth();
+        const maxWidth = getSidebarMaxWidth();
+        const newWidth = Math.max(minWidth, Math.min(maxWidth, startWidth + deltaX));
         sidebar.style.width = newWidth + 'px';
         toggleBtn.style.left = newWidth + 'px';
+        savedWidth = newWidth + 'px';
+        e.preventDefault();
     });
 
-    document.addEventListener('mouseup', () => {
+    const stopResizing = () => {
         if (isResizing) {
             isResizing = false;
             sidebar.classList.remove('no-transition');
             document.body.style.cursor = '';
         }
-    });
+    };
+
+    document.addEventListener('pointerup', stopResizing);
+    document.addEventListener('pointercancel', stopResizing);
 });
 
 function loadDocument_index() {

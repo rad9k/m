@@ -1,14 +1,3 @@
- 
- 
- 
- 
- 
- 
- !(files/radek.png)
- 
- 
- 
- 
- you will die
- someday. remember
- 
+# -zero documentation
+
+you will be good. you are
