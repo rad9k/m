@@ -2,11 +2,17 @@
 
 you will be good. you are
 
-# Modern Dev is Broken. Fix it with **-zero**.
+## Modern Dev is Broken. Fix it with **-zero**.
 
 > We’re in 2026, and we’re still spending 80% of our time fighting "glue code," syncing schemas, and debugging ORMs. We’ve added layers of AI and cloud abstraction, but the core—the way we represent data and logic—is still stuck in the 70s.
 
 **-zero** is the hard reset. It’s not a library. It’s not a framework. It’s a **Fractal Graph Database and Execution Platform** that treats your system as a single, living organism.
+
+## -zero is public domain 
+
+**- zero platform is a public domain software. All possible use cases of Fractal Graph idea and -zero platform code, including attribution to self or selling as your own creation are allowed without any further allowance.**
+
+Be inspired and feel welcomed! This idea is too good to keep it closed.
 
 ## New fundations
 
