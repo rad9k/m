@@ -16,7 +16,15 @@ This area of research lives outside the currently accepted body of science.
 
 Most members of the our research group are now dead.
 
-# Executive Summary: The Exhaustion of the Bio-Mechanical Model
+## Where is p-value?
+
+One of returning comments I had to my colleagues was _"where is p-value in your results? this is not science"_. And it is not. And yes, we could have p-values here with just a bit more effort, so ...._why we had not done that?_ Two reasons:
+- There were more fundamental problems than lack of p-value. Let's just say that definig basic terms (_information_ for example) or some fundamental hypotheses to be verified was problematic.
+- Sole introduction of p-value would be kind of cheating. This is becouse of nature of those phenomena. We had some intuitions (_scary_) what more is need, although so far this is fundamentally non formalizable.
+
+> We progressed a lot towards proper methodology, for example objective measurement methodology was invented by Włodzimierz Zylbertal but still our activity was more of a experimental evidence that lack proper formal methodology
+
+## Executive Summary: The Exhaustion of the Bio-Mechanical Model
 
 For over 14 years, our research group-comprising academics and specialists from the **Warsaw University of Technology**, **IBM Poland**, the **Nature Laboratory**, and the **Subtle Energies Laboratory**-pursued an experimental and theoretical program centered on one core conviction: that modern science is approching the limits of the traditional **bio-mechanical model**.
 
@@ -28,7 +36,7 @@ At the same time, we fully acknowledge that the research presented here does **n
 
 This means that the observer is not passive, as classical science would prefer, but instead becomes an active part of the experimental system.
 
-# Foundational Research Hypotheses
+## Foundational Research Hypotheses
 
 Our research was anchored in a set of radical but, in our view, experimentally motivated hypotheses that challenge the present scientific status quo:
 
@@ -38,6 +46,10 @@ Our research was anchored in a set of radical but, in our view, experimentally m
 * **Regulatory Dominance in Complex Systems:** In systems of high internal complexity-such as ecosystems, industrial installations, or living organisms-information acts as the primary regulator of performance, independently of raw flows of energy and matter.
 * **Informational Resonance:** Complex informational structures may resonate with subtler levels of reality, facilitating the emergence of higher-order phenomena such as intuition, divination, and consciousness itself.
 * **The New Great Unification:** While 20th-century physics sought the unification of the fundamental forces, we propose a broader unification: **Nature and the Aware Mind**.
+
+## Is information local?
+
+And of course.... _is consciousness local?_ But as, we can not define precisely _information_ we were working with in our experiments, we don't try to define _conciousness_. Coming back to _information_ itelf and the question _is information local?_, unfortunatelly our experiments were quite non-conclusive. Some of the results suggested that there is some form of local-effects based correlations (physical closeness as a trigger), some of the results suggested some form on non-local information field (symbol resonance - say hello to _Carl_).
 
 ## Synthesis: The Information Paradigm in Complex Systems
 
