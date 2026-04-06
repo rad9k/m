@@ -191,13 +191,13 @@ namespace m0_SYSTEM_GENERATE
             print("execution succesfull finish");
 
             if (System.IO.Directory.Exists(@"c:\Users\rad9k"))
-                System.Diagnostics.Process.Start(@"c:\Users\rad9k\source\repos\m\generate\m0j_copy_rad9k.bat");
+                System.Diagnostics.Process.Start(@"c:\Users\rad9k\source\repos\m\src\generate\m0j_copy_rad9k.bat");
 
             if (System.IO.Directory.Exists(@"c:\Users\radoslaw.tereszczuk"))
-                System.Diagnostics.Process.Start(@"c:\Users\radoslaw.tereszczuk\source\repos\m\generate\m0j_copy_radoslaw.bat");
+                System.Diagnostics.Process.Start(@"c:\Users\radoslaw.tereszczuk\source\repos\m\src\generate\m0j_copy_radoslaw.bat");
 
             if (System.IO.Directory.Exists(@"c:\Users\teres"))
-                System.Diagnostics.Process.Start(@"c:\Users\teres\source\repos\m\generate\m0j_copy_teres.bat");
+                System.Diagnostics.Process.Start(@"c:\Users\teres\source\repos\m\src\generate\m0j_copy_teres.bat");
         }
     }
 }
