@@ -43,21 +43,6 @@ Another key idea is that generation should happen **at runtime**, not only durin
 
 That makes the approach much more resilient to model evolution. If a type changes, the system does not necessarily require manual UI rewrites in multiple places.
 
-### 3. A semantic layer between model and UI
-
-Additional contribution of the project is **TypeSchema**: an internal schema abstraction that represents a type, its fields, methods, metadata, and interaction capabilities.
-
-This matters because it decouples:
-
-- the source model
-- the generation logic
-- the rendering target
-
-Instead of tying UI generation directly to raw reflection or one framework-specific representation, the project introduces a richer intermediate layer. This makes the system more modular and more portable.
-
-> The important step is not “generate a form from a class,” but “translate domain semantics into a stable schema that multiple generators can use.”
-
-
 ## Metadata as refinement, not a requirement
 
 A practical strength of the project is that it does **not** assume heavy annotation as a starting point. A pure domain model is enough to generate a functional UI. Metadata can then be added to refine the experience where needed.
