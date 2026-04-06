@@ -242,7 +242,7 @@ body {
 /* ===== MAIN CONTENT ===== */
 .markdown-body {
     flex: 1;
-    padding: 10px 60px 40px 60px;
+    padding: 10px 60px 80px 60px;
     overflow-y: auto;
     background: #fefdfb;
     box-sizing: content-box;
@@ -361,12 +361,21 @@ body {
 
     .sidebar .sidebar-header {
         display: flex !important;
-        justify-content: flex-end !important;
-        padding: 8px 10px !important;
+        justify-content: space-between !important;
+        gap: 8px;
+        padding: 8px 10px 8px 64px !important;
     }
 
     .sidebar-header h5 {
-        display: none !important;
+        display: block !important;
+        font-size: 0.7em;
+        margin: 0;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .sidebar-controls .btn {
+        padding: 6px 9px;
     }
 
     .sidebar .tree-container {
@@ -386,7 +395,7 @@ body {
     }
 
     .markdown-body {
-        padding: 60px 14px 40px 14px !important;
+        padding: 60px 14px 80px 14px !important;
     }
 }
 
