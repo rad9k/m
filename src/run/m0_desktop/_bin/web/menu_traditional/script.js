@@ -64,17 +64,23 @@ class TreeView {
             const children = treeItem.querySelector('.tree-children');
 
             if (toggle && toggle.classList.contains('collapsed')) {
-                // Expand
                 toggle.classList.remove('collapsed');
                 toggle.classList.add('expanded');
                 if (children) {
                     children.classList.add('expanded');
+                    setTimeout(() => {
+                        this.container.querySelectorAll('.tree-children.expanded').forEach(el => {
+                            el.style.maxHeight = 'none';
+                        });
+                    }, 350);
                 }
             } else if (toggle && toggle.classList.contains('expanded')) {
-                // Collapse
                 toggle.classList.remove('expanded');
                 toggle.classList.add('collapsed');
                 if (children) {
+                    children.style.maxHeight = children.scrollHeight + 'px';
+                    children.offsetHeight;
+                    children.style.maxHeight = '';
                     children.classList.remove('expanded');
                 }
             }
@@ -100,6 +106,10 @@ class TreeView {
     }
 
     collapseAll() {
+        this.container.querySelectorAll('.tree-children.expanded').forEach(el => {
+            el.style.maxHeight = '';
+        });
+
         const toggles = this.container.querySelectorAll('.tree-toggle.expanded');
         const children = this.container.querySelectorAll('.tree-children.expanded');
         
@@ -124,6 +134,10 @@ class TreeView {
         
         children.forEach(child => {
             child.classList.add('expanded');
+        });
+
+        this.container.querySelectorAll('.tree-children.expanded').forEach(el => {
+            el.style.maxHeight = 'none';
         });
     }
 }
