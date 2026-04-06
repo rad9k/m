@@ -29,6 +29,11 @@
   .markdown-body table.moja .title {
   font-weight: 600 !important;
 }
+
+@media (max-width: 768px) {
+  .markdown-body table.moja {
+    font-size: 0.8em !important;
+  }
 </style>
 
 <table class=moja>
