@@ -85,10 +85,6 @@ class TreeView {
             // Load document
             const itemId = treeItem.dataset.id;
             loadDocument(itemId);
-
-            if (!treeItem.querySelector('.tree-children') && isMobileViewport()) {
-                closeHamburgerMenu();
-            }
         });
     }
 
@@ -141,20 +137,12 @@ function isMobileViewport() {
     return window.matchMedia('(max-width: 768px)').matches;
 }
 
-function openHamburgerMenu() {
-    document.getElementById('sidebar').classList.add('hamburger-open');
-    document.getElementById('hamburgerOverlay').classList.add('active');
-    document.getElementById('hamburgerBtn').classList.add('active');
-}
-
-function closeHamburgerMenu() {
-    document.getElementById('sidebar').classList.remove('hamburger-open');
-    document.getElementById('hamburgerOverlay').classList.remove('active');
-    document.getElementById('hamburgerBtn').classList.remove('active');
+function syncMobileViewClass() {
+    document.body.classList.toggle('mobile-view', isMobileViewport());
 }
 
 function getDefaultSidebarWidth() {
-    return 305;
+    return isMobileViewport() ? 110 : 305;
 }
 
 function applySidebarWidth(sidebar, toggleBtn, width) {
@@ -165,7 +153,7 @@ function applySidebarWidth(sidebar, toggleBtn, width) {
 }
 
 function getSidebarMinWidth() {
-    return 160;
+    return isMobileViewport() ? 110 : 160;
 }
 
 function getSidebarMaxWidth() {
@@ -212,39 +200,29 @@ document.addEventListener('DOMContentLoaded', async () => {
 	let isCollapsed = false;
 	let savedWidth = 0;
 	
+	// Initialize toggle button position
 	const sidebar = document.getElementById('sidebar');
 	const toggleBtn = document.getElementById('toggleBtn');
-	const hamburgerBtn = document.getElementById('hamburgerBtn');
-	const hamburgerOverlay = document.getElementById('hamburgerOverlay');
-
-	if (!isMobileViewport()) {
-		applySidebarWidth(sidebar, toggleBtn, getDefaultSidebarWidth());
-		toggleBtn.classList.add('sidebar-visible');
-		toggleBtn.style.left = sidebar.offsetWidth + 'px';
-	}
-
-	hamburgerBtn.addEventListener('click', () => {
-		if (sidebar.classList.contains('hamburger-open')) {
-			closeHamburgerMenu();
-		} else {
-			openHamburgerMenu();
-		}
-	});
-
-	hamburgerOverlay.addEventListener('click', () => {
-		closeHamburgerMenu();
-	});
-
+	syncMobileViewClass();
+	applySidebarWidth(sidebar, toggleBtn, getDefaultSidebarWidth());
+	toggleBtn.classList.add('sidebar-visible');
+	toggleBtn.style.left = sidebar.offsetWidth + 'px';
+	
+    // Panel hide button
     toggleBtn.addEventListener('click', () => {
+				
 		if(isCollapsed==false){
 			isCollapsed = true;
 			savedWidth = sidebar.style.width || sidebar.offsetWidth + 'px';
+			const currentWidth = sidebar.offsetWidth;
 			
+			// Start both animations simultaneously
 			sidebar.classList.add('collapsed');
 			toggleBtn.classList.remove('sidebar-visible');
 			toggleBtn.textContent = '▶';
 			toggleBtn.style.left = '0px';
 			
+			// After transform animation, reduce width
 			setTimeout(() => {
 				sidebar.style.width = '0px';
 				sidebar.style.padding = '0';
@@ -255,12 +233,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 			const widthToRestore = savedWidth || (getDefaultSidebarWidth() + 'px');
 			const widthValue = parseInt(widthToRestore) || getDefaultSidebarWidth();
 			
+			// Restore width first so sidebar can expand
 			sidebar.style.width = widthToRestore;
 			sidebar.style.padding = '';
 			sidebar.style.minWidth = '';
 			
+			// Trigger reflow to ensure width is applied before removing collapsed class
 			sidebar.offsetWidth;
 			
+			// Remove collapsed class and animate toggle button simultaneously
 			sidebar.classList.remove('collapsed');
 			toggleBtn.classList.add('sidebar-visible');
 			toggleBtn.style.left = widthValue + 'px';
@@ -269,10 +250,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     window.addEventListener('resize', () => {
-        if (isMobileViewport()) {
-            closeHamburgerMenu();
-            return;
-        }
+        syncMobileViewClass();
 
         if (isCollapsed || isResizing) {
             return;
