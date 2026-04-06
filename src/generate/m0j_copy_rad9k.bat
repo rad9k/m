@@ -1,2 +1,2 @@
-copy c:\Users\rad9k\Source\Repos\m\generate\m0_SYSTEM_GENERATE\bin\Debug\*.m0j c:\Users\rad9k\Source\Repos\m\run\m0_desktop\bin\Debug\net10.0-windows7.0\
-copy c:\Users\rad9k\Source\Repos\m\generate\m0_SYSTEM_GENERATE\bin\Debug\*.m0j c:\Users\rad9k\Source\Repos\m\run\m0_console\bin\Debug\net10.0\
+copy c:\Users\rad9k\Source\Repos\m\src\generate\m0_SYSTEM_GENERATE\bin\Debug\*.m0j c:\Users\rad9k\Source\Repos\m\src\run\m0_desktop\bin\Debug\net10.0-windows7.0\
+copy c:\Users\rad9k\Source\Repos\m\src\generate\m0_SYSTEM_GENERATE\bin\Debug\*.m0j c:\Users\rad9k\Source\Repos\m\src\run\m0_console\bin\Debug\net10.0\
