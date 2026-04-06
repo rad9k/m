@@ -38,9 +38,9 @@ _Anyone, whether a conscious being - so precesliy entire universe - or a non-con
 ~
 
 
-all tracks composed during 01-02.02.2020 weekend
-
-played and recorded live @ konkret / MS1 ŁÓDź 07.02.2020
+> all tracks composed during 01-02.02.2020 weekend
+> 
+> played and recorded live @ konkret / MS1 ŁÓDź 07.02.2020
 
 ~
 

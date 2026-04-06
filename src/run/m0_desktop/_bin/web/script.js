@@ -186,6 +186,24 @@ function getSidebarMaxWidth() {
     return Math.min(400, Math.max(getSidebarMinWidth(), window.innerWidth - 40));
 }
 
+function refreshIOSPdfEmbeds() {
+    (function () {
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+        if (!isIOS) return;
+
+        const frames = document.querySelectorAll('iframe.pdf-embed');
+        const mozillaViewerPrefix = 'https://mozilla.github.io/pdf.js/web/viewer.html?file=';
+
+        frames.forEach(frame => {
+            const src = frame.getAttribute('src') || '';
+            if (src.startsWith(mozillaViewerPrefix)) {
+                frame.remove();
+            }
+        });
+    })();
+}
+
 // Load tree data from JSON file
 async function loadTreeData() {
     try {
@@ -356,6 +374,7 @@ function loadDocument_index() {
         })
         .then(content => {
             mainContent.innerHTML = content;
+            refreshIOSPdfEmbeds();
         })
         .catch(error => {
             console.error('Error loading document:', error);
@@ -382,6 +401,7 @@ function loadDocument(docId) {
         })
         .then(content => {
             mainContent.innerHTML = content;
+            refreshIOSPdfEmbeds();
             // Opcjonalnie: przewiń ponownie po załadowaniu treści
             mainContent.scrollTop = 0;
         })

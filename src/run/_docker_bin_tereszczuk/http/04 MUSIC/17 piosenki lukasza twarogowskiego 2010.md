@@ -31,9 +31,4 @@ _Anyone, whether a conscious being - so precesliy entire universe - or a non-con
 
 ~
 
-
-made on a machinedrum, avalon bassline (303) and a presonus 16.0.4
-
-~
-
 [http://tereszczuk.com](http://tereszczuk.com) public domain since 1995 // from Ursynuw with love

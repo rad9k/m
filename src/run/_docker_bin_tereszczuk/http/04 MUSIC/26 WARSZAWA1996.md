@@ -29,5 +29,4 @@ _Anyone, whether a conscious being - so precesliy entire universe - or a non-con
 
 ~
 
-
 [http://tereszczuk.com](http://tereszczuk.com) public domain since 1995 // from Ursynuw with love

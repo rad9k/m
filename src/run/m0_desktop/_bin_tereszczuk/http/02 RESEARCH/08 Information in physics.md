@@ -45,11 +45,10 @@ Our research was anchored in a set of radical but, in our view, experimentally m
 * **The Measurement Paradigm:** Information can, in principle, be measured, modified, and created within a controlled laboratory environment. This requires a new measurement paradigm in which the measuring apparatus and the observed system are linked through informational resonance.
 * **Regulatory Dominance in Complex Systems:** In systems of high internal complexity-such as ecosystems, industrial installations, or living organisms-information acts as the primary regulator of performance, independently of raw flows of energy and matter.
 * **Informational Resonance:** Complex informational structures may resonate with subtler levels of reality, facilitating the emergence of higher-order phenomena such as intuition, divination, and consciousness itself.
-* **The New Great Unification:** While 20th-century physics sought the unification of the fundamental forces, we propose a broader unification: **Nature and the Aware Mind**.
 
 ## Is information local?
 
-And of course.... _is consciousness local?_ But as, we can not define precisely _information_ we were working with in our experiments, we don't try to define _conciousness_. Coming back to _information_ itelf and the question _is information local?_, unfortunatelly our experiments were quite non-conclusive. Some of the results suggested that there is some form of local-effects based correlations (physical closeness as a trigger), some of the results suggested some form on non-local information field (symbol resonance - say hello to _Carl_).
+And of course.... _is consciousness local?_ But as, we can not define precisely _information_ we were working with in our experiments, we don't try to define _conciousness_. Coming back to _information_ itelf and the question _is information local?_, unfortunatelly our experiments were quite non-conclusive. Some of the results suggested that there is some form of local-effects based correlations (physical closeness as a trigger), some of the results suggested some form of non-local information field (symbol resonance - say hello to _Carl_).
 
 ## Synthesis: The Information Paradigm in Complex Systems
 
@@ -205,7 +204,7 @@ The team plans to test this using aquatic microcosms by:
 
 **The Takeaway:** This research challenges the reductionist, DNA-only paradigm of biology, proposing a "Science of Qualities" where the human mind and natural systems are part of a single, informational reality.
 
-!PDF[url](files/research/InformationAsTheMainDriver.pdf)
+!PDF2[url](https://tereszczuk.com/files/research/InformationAsTheMainDriver.pdf)
 
 ## Information in Complex Systems: A Summary
 

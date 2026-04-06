@@ -42,31 +42,31 @@ _Anyone, whether a conscious being - so precesliy entire universe - or a non-con
 ~
 
 
-ten odnaleziony po latach album wydajemy dla wsparcia książki i projektu "30 lat polskiej sceny techno": wspieram.to/techno
-cały dochód ze sprzedaży idzie na ten cel.
-
-even after the crowdfunding ends all the income from this album will fund "30 years of Polish techno scene" book project wspieram.to/techno
-
-dzięki/thanks
-
-~
-
-there is something in the universe
-
-share of
-
-imagine an a perfect day
-in time and space
-it is beautiful
-the secret is because
-of love. future is caused by
-
-kolor to bedzie jedno i na dodatek bedziecie mogli ksztaltowac sobie sami rzeczywistosc
-i wanna i dzwiek
-
-what i was waiting for
-here it comes
-share of lov
+> ten odnaleziony po latach album wydajemy dla wsparcia książki i projektu "30 lat polskiej sceny techno": wspieram.to/techno
+> cały dochód ze sprzedaży idzie na ten cel.
+> 
+> even after the crowdfunding ends all the income from this album will fund "30 years of Polish techno scene" book project wspieram.to/techno
+> 
+> dzięki/thanks
+> 
+> 
+> 
+> there is something in the universe
+> 
+> share of
+> 
+> imagine an a perfect day
+> in time and space
+> it is beautiful
+> the secret is because
+> of love. future is caused by
+> 
+> kolor to bedzie jedno i na dodatek bedziecie mogli ksztaltowac sobie sami rzeczywistosc
+> i wanna i dzwiek
+> 
+> what i was waiting for
+> here it comes
+> share of lov
 
 ~
 
