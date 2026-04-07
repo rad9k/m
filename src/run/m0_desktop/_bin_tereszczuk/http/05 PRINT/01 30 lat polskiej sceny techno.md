@@ -42,6 +42,12 @@ Seen from this perspective, the project becomes more than an editorial achieveme
 
 For all these reasons, *30 Years of the Polish Techno Scene* stands as a rare kind of book: not an outside description of a milieu, but a self-portrait created by that milieu itself. Its ambition was not to close the story, but to open it as widely as possible. And that openness-messy, generous, unsynthesized, and collective-is precisely what makes it true.
 
+## Music Archive
+
+The book also have living music archive part. It is materialized as a _soundcloud_ page where DJ sets and live acts of inivited scene contributors are presented.
+
+[soundcloud.com/30latpolskiejscenytechno](https://soundcloud.com/30latpolskiejscenytechno)
+
 ## Techno Rzeczpospolita - theatre play
 
 !(files/print/technorzeczpospolita.jpg)
