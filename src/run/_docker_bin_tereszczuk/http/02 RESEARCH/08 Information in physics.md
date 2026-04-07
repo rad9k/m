@@ -202,7 +202,7 @@ The team plans to test this using aquatic microcosms by:
 1. **Extracting "Memory":** Transferring hopanoids from stressed environments to healthy ones to observe metabolic changes.
 2. **Conscious Encoding:** Using a specialized "programming language" to load information into minerals via human consciousness, then measuring the biophysical effects on plants and microbes.
 
-**The Takeaway:** This research challenges the reductionist, DNA-only paradigm of biology, proposing a "Science of Qualities" where the human mind and natural systems are part of a single, informational reality.
+> **The Takeaway:** This research challenges the reductionist, DNA-only paradigm of biology, proposing a "Science of Qualities" where the human mind and natural systems are part of a single, informational reality.
 
 !PDF2[url](https://tereszczuk.com/files/research/InformationAsTheMainDriver.pdf)
 
@@ -231,7 +231,7 @@ This study investigates whether supplementing growth media with **"information c
 ### Current Status & Limitations:
 The findings are currently **hypothesis-generating** rather than conclusive. While the results from the "Laboratory of Subtle Energies" are encouraging, the study lacks detailed quantitative data and standardized statistical analysis.
 
-**The Takeaway:** The research proposes a shift toward an informational model of agronomy, but it requires rigorous, independent validation to move beyond the laboratory stage.
+> **The Takeaway:** The research proposes a shift toward an informational model of agronomy, but it requires rigorous, independent validation to move beyond the laboratory stage.
 
 !PDF2[url](https://tereszczuk.com/files/research/InformationalModification.pdf)
 
