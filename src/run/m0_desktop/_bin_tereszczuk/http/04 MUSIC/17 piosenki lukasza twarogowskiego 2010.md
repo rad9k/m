@@ -18,10 +18,10 @@
 
 **[DOWNLOAD WHOLE RELEASE AS A ZIP FILE](files/music/piosenki lukasza twarogowskiego 2010.zip)**
 
-**Radosław Tereszczuk - one machinedrum one 303**
+**Radosław Tereszczuk - piosenki lukasza twarogowskiego**
 
 _Format:_ File, MP3, EP
-_Released:_ 12 Jul 219
+_Released:_ 1 Jan 2011
 _Genre:_ Dream
 _Style:_ Dream
 _Composed by_ - Radosław Tereszczuk
