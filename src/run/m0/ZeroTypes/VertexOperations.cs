@@ -447,7 +447,7 @@ namespace m0.ZeroTypes
             ///
 
             if (GraphUtil.ExistQueryOut(metaVertex,"$IsAggregation",null))
-                nv.AddEdge(MinusZero.Instance.IsAggregation, MinusZero.Instance.Empty);
+                nv.AddEdge(MinusZero.Instance.IsAggregation, MinusZero.Instance.Empty); // 2026.04.09 wtf
 
             ///
 
