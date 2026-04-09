@@ -625,7 +625,15 @@ namespace m0.ZeroCode
 
 
                     if (found != null)
-                        return found;                    
+                        return found;
+
+                    IVertex edgeTargetVertex = GraphUtil.GetQueryOutFirst(inEdge.Meta, "$EdgeTarget", null);
+                    if (edgeTargetVertex != null)
+                    {
+                        found = edgeTargetVertex.Get(false, link);
+                        if (found != null)
+                            return found;
+                    }
                 }
             }
 
