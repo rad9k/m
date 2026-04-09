@@ -1,4 +1,4 @@
-﻿using m0.Foundation;
+using m0.Foundation;
 using m0.Graph;
 using m0.Util;
 using m0.ZeroCode.Helpers;
@@ -19,6 +19,7 @@ namespace m0.ZeroCode
         Graph2TextProcessing zcg2sp;
 
         HashSet<IVertex> linkBeenList;
+        Dictionary<IVertex, int> shortestPathToVertex;
 
         IEdge parent;
 
@@ -26,6 +27,63 @@ namespace m0.ZeroCode
         int shortestLinkLength;
 
         FormalTextLanguageDictinaries dict;
+
+        void LinkSearchLog(string where, string what)
+        {
+            MinusZero.Instance.Log(0, "LinkSearch." + where, what);
+        }
+
+        string DescribeVertex(IVertex v)
+        {
+            if (v == null)
+                return "<null>";
+
+            string value = "<null>";
+
+            if (v.Value != null)
+                value = v.Value.ToString();
+
+            return "[" + v.Identifier + "] \"" + value + "\"";
+        }
+
+        string DescribeEdge(IEdge e)
+        {
+            if (e == null)
+                return "<null>";
+
+            string fromValue = "<null>";
+            string metaValue = "<null>";
+            string toValue = "<null>";
+
+            if (e.From != null && e.From.Value != null)
+                fromValue = e.From.Value.ToString();
+
+            if (e.Meta != null && e.Meta.Value != null)
+                metaValue = e.Meta.Value.ToString();
+
+            if (e.To != null && e.To.Value != null)
+                toValue = e.To.Value.ToString();
+
+            return "\"" + fromValue + "\" --" + metaValue + "--> \"" + toValue + "\"";
+        }
+
+        string DescribePath(List<IEdge> edgesList)
+        {
+            if (edgesList == null || edgesList.Count == 0)
+                return "<empty>";
+
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0; i < edgesList.Count; i++)
+            {
+                if (i > 0)
+                    sb.Append(" | ");
+
+                sb.Append(DescribeEdge(edgesList[i]));
+            }
+
+            return sb.ToString();
+        }
 
         public string Process(FormalTextLanguageDictinaries _dict, Graph2TextProcessing _zcg2sp, IVertex v, IEdge _parent)
         {
@@ -37,6 +95,8 @@ namespace m0.ZeroCode
 
             Vertex = v;
 
+            LinkSearchLog("Process.Start", "vertex=" + DescribeVertex(v) + " parent=" + DescribeEdge(_parent));
+
             if (_parent != null)
             {
                 //IVertex Is = _parent.To.Get(false, "$Is:");
@@ -44,21 +104,31 @@ namespace m0.ZeroCode
 
                 //if (Is != null && Is.Get(false, ZeroCodeCommon.stringToPossiblyEscapedString(dict, v.Value.ToString()) ) == v)
                 if (Is != null && GraphUtil.GetQueryOutFirst(Is, null, v.Value.ToString()) == v)
+                {
+                    LinkSearchLog("Process.FastReturn.Is", "vertex=" + DescribeVertex(v) + " result=" + v.Value.ToString());
                     return (v.Value.ToString());
+                }
             }
 
             if (_parent != null)
             {
                 foreach (IEdge e in VertexOperations.GetChildEdges(_parent.Meta))
                     if (v == e.To)
+                    {
+                        LinkSearchLog("Process.FastReturn.Child", "vertex=" + DescribeVertex(v) + " result=" + v.Value.ToString());
                         return (v.Value.ToString());
+                    }
             }
 
 
             if (zcg2sp.VerticesDictionary.ContainsKey(v))
+            {
+                LinkSearchLog("Process.CacheHit", "vertex=" + DescribeVertex(v) + " result=" + zcg2sp.VerticesDictionary[v].LinkString);
                 return zcg2sp.VerticesDictionary[v].LinkString;
+            }
 
             linkBeenList = new HashSet<IVertex>();
+            shortestPathToVertex = new Dictionary<IVertex, int>();
 
             shortestLink = "LINK NOT FOUND";
             shortestLinkLength = 99999;
@@ -71,16 +141,23 @@ namespace m0.ZeroCode
 
 
             if (shortestLinkLength != 99999)
+            {
                 zcg2sp.VerticesDictionary.Add(v, new VertexData(shortestLink, shortestLinkLength));
+                LinkSearchLog("Process.BestFound", "vertex=" + DescribeVertex(v) + " best=" + shortestLink + " length=" + shortestLinkLength);
+            }
 
             if (shortestLinkLength == 99999 && zcg2sp.SubGraphVerticesDictionary.ContainsKey(v))
+            {
+                LinkSearchLog("Process.SubGraphFallback", "vertex=" + DescribeVertex(v) + " result=" + zcg2sp.SubGraphVerticesDictionary[v].LinkString);
                 return zcg2sp.SubGraphVerticesDictionary[v].LinkString;
+            }
 
             if (shortestLink == "LINK NOT FOUND")
             {
-                int x = 0;
+                LinkSearchLog("Process.NotFound", "vertex=" + DescribeVertex(v) + " path=<none>");
             }
 
+            LinkSearchLog("Process.End", "vertex=" + DescribeVertex(v) + " result=" + shortestLink + " length=" + shortestLinkLength);
             return shortestLink;
         }
 
@@ -190,6 +267,40 @@ namespace m0.ZeroCode
 
         void GetLinkString_Recurrect(IVertex v, List<IEdge> edgesList, ref bool isMetaDirect)
         {
+            int currentPathLength = edgesList.Count();
+
+            LinkSearchLog("Recur.Enter", "vertex=" + DescribeVertex(v) + " pathLength=" + currentPathLength + " bestLength=" + shortestLinkLength + " path=" + DescribePath(edgesList));
+
+            if (currentPathLength >= shortestLinkLength)
+            {
+                LinkSearchLog("Recur.PruneByBestLength", "vertex=" + DescribeVertex(v) + " pathLength=" + currentPathLength + " bestLength=" + shortestLinkLength);
+                return;
+            }
+
+            if (shortestPathToVertex.ContainsKey(v) && shortestPathToVertex[v] < currentPathLength)
+            {
+                LinkSearchLog("Recur.PruneByVertex", "vertex=" + DescribeVertex(v) + " previousLength=" + shortestPathToVertex[v] + " currentLength=" + currentPathLength);
+                return;
+            }
+
+            shortestPathToVertex[v] = currentPathLength;
+
+            if (v == MinusZero.Instance.Root)
+            {
+                if (edgesList.Count() > 0)
+                {
+                    isMetaDirect = false;
+
+                    string s = GetStringFromEdgesList(dict, edgesList, false);
+
+                    LinkSearchLog("Recur.Root", "vertex=" + DescribeVertex(v) + " candidate=" + s + " length=" + edgesList.Count());
+
+                    checkIfNewBest(edgesList.Count(), false, s);
+
+                    return;
+                }
+            }
+
             foreach (IVertex ikv in zcg2sp.Imports.Keys)
                 foreach (IVertex iv in zcg2sp.Imports[ikv])
                     if (v == iv)
@@ -201,7 +312,9 @@ namespace m0.ZeroCode
 
                                 string s = GetStringFromEdgesList(dict, edgesList, false);
 
-                                checkIfNewBest(edgesList, false, s);
+                                LinkSearchLog("Recur.ImportDirect", "importMeta=" + DescribeVertex(ikv) + " vertex=" + DescribeVertex(v) + " candidate=" + s + " length=" + edgesList.Count());
+
+                                checkIfNewBest(edgesList.Count(), false, s);
 
                                 return;
                             }
@@ -214,7 +327,9 @@ namespace m0.ZeroCode
 
                                 string s = GetStringFromEdgesList(dict, edgesList, true);
 
-                                checkIfNewBest(edgesList, true, s);
+                                LinkSearchLog("Recur.ImportDirectMeta", "importMeta=" + DescribeVertex(ikv) + " vertex=" + DescribeVertex(v) + " candidate=" + s + " length=" + edgesList.Count());
+
+                                checkIfNewBest(edgesList.Count(), true, s);
 
                                 return;
                             }
@@ -230,11 +345,14 @@ namespace m0.ZeroCode
                             IEdge ee = new EdgeBase(null, ikv, null);
                             edgesList.Add(ee);
                             string s = GetStringFromEdgesList(dict, edgesList, isMeta);
+                            int candidateLength = edgesList.Count();
                             edgesList.RemoveAt(edgesList.Count - 1);
 
                             isMetaDirect = isMeta;
 
-                            checkIfNewBest(edgesList, isMeta, s);
+                            LinkSearchLog("Recur.Import", "importMeta=" + DescribeVertex(ikv) + " vertex=" + DescribeVertex(v) + " candidate=" + s + " length=" + candidateLength + " isMeta=" + isMeta);
+
+                            checkIfNewBest(candidateLength, isMeta, s);
 
                             return;
                         }
@@ -247,6 +365,8 @@ namespace m0.ZeroCode
                 {
                     IEdge ee = new EdgeBase(e.From, e.Meta, e.To);
 
+                    LinkSearchLog("Recur.FollowInEdge", "from=" + DescribeVertex(e.From) + " to=" + DescribeVertex(v) + " edge=" + DescribeEdge(ee));
+
                     edgesList.Add(ee);
 
                     bool _isMetaDirect = false;
@@ -255,11 +375,17 @@ namespace m0.ZeroCode
 
                     edgesList.RemoveAt(edgesList.Count - 1);
                 }
+                else
+                    LinkSearchLog("Recur.SkipCycle", "current=" + DescribeVertex(v) + " blockedFrom=" + DescribeVertex(e.From) + " edge=" + DescribeEdge(e));
+
+            linkBeenList.Remove(v);
+
+            LinkSearchLog("Recur.Exit", "vertex=" + DescribeVertex(v) + " pathLength=" + currentPathLength);
 
             return;
         }
 
-        private void checkIfNewBest(List<IEdge> edgesList, bool _isMetaDirect, string returnedLink)
+        private void checkIfNewBest(int candidateLength, bool _isMetaDirect, string returnedLink)
         {
             if (returnedLink != null)
             {
@@ -286,12 +412,15 @@ namespace m0.ZeroCode
                 }
 
                 //if (r.Length < shortestLinkLength)
-                if (edgesList.Count() < shortestLinkLength && canUse)
+                if (candidateLength < shortestLinkLength && canUse)
                 {
+                    LinkSearchLog("Best.Update", "vertex=" + DescribeVertex(Vertex) + " candidate=" + returnedLink + " length=" + candidateLength + " previousBest=" + shortestLink + " previousLength=" + shortestLinkLength + " isMetaDirect=" + _isMetaDirect);
                     shortestLink = returnedLink;
                     //shortestLinkLength = shortestLink.Length;
-                    shortestLinkLength = edgesList.Count(); // worse approach
+                    shortestLinkLength = candidateLength; // worse approach
                 }
+                else
+                    LinkSearchLog("Best.Reject", "vertex=" + DescribeVertex(Vertex) + " candidate=" + returnedLink + " length=" + candidateLength + " bestLength=" + shortestLinkLength + " canUse=" + canUse + " isMetaDirect=" + _isMetaDirect);
             }
         }
     }
