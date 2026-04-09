@@ -454,6 +454,7 @@ namespace m0.ZeroCode
         IList<IVertex> emptyKeywordVertexList;
 
         FormalTextLanguageDictinaries dict;
+        bool shouldUseCurrentPathForFirstVertexAppend;
 
         public Graph2TextProcessing(IVertex formalTextLanguage)
         {
@@ -1143,8 +1144,7 @@ namespace m0.ZeroCode
             //if (match.Value.Contains("(?<")) // do not need all that ?A and ?V
             if (e != km.BaseEdge)
                 if (KeywordMatchedSubGraphEdges.ContainsKey(e)
-                    && KeywordMatchedSubGraphEdges[e].BaseEdge == e
-                    && isVertexNew(e, GetPathFromKeywordMatchAndKeywordEdge(km, e, null)))
+                    && KeywordMatchedSubGraphEdges[e].BaseEdge == e)
                 {
                     AppendKeyword(e, true, ParentKmHasTabAddingOmmit);
 
@@ -1324,6 +1324,15 @@ namespace m0.ZeroCode
 
             if (eVertexData.LinkString == "") // root
                 return true;
+
+            if (!eVertexData.VertexHasBeenAppendedAsNew && shouldUseCurrentPathForFirstVertexAppend)
+            {
+                if (path != null)
+                    eVertexData.LinkString = path;
+
+                eVertexData.VertexHasBeenAppendedAsNew = true;
+                return true;
+            }
 
             if ((path == null || eVertexData.LinkString == path) && !eVertexData.VertexHasBeenAppendedAsNew)
             {
@@ -1854,6 +1863,7 @@ namespace m0.ZeroCode
 
         public string Process_EdgeAndManyLines_Inner(IEdge _graphBaseEdge)
         {
+            shouldUseCurrentPathForFirstVertexAppend = false;
             ommitOnce_AppendNewLineAndTabs = true;
             ommitOnce_baseEdgePath = true;
 
@@ -1943,6 +1953,7 @@ namespace m0.ZeroCode
 
         public string Process_LinearizedManyLines_Inner(IEdge _graphBaseEdge)
         {
+            shouldUseCurrentPathForFirstVertexAppend = false;
             ommitOnce_AppendNewLineAndTabs = true;
 
             //
@@ -1990,6 +2001,7 @@ namespace m0.ZeroCode
 
         public string Process_VertexAndManyLines(IEdge _graphBaseEdge)
         {
+            shouldUseCurrentPathForFirstVertexAppend = true;
             prepareBaseEdge(_graphBaseEdge);
 
             BeenList = new HashSet<IEdge>();
@@ -2007,6 +2019,7 @@ namespace m0.ZeroCode
 
             //             
 
+            GetLinksForSubGraphVertices_BaseEdge();
             GetLinksForSubGraphVertices_subVertexes(BaseEdge, null, 0);
 
             BeenList.Clear();
@@ -2021,13 +2034,10 @@ namespace m0.ZeroCode
 
             //
 
-            //ImportImports(FormalTextLanguage.Get(false, "DefaultImports:"));
             ImportImports(GraphUtil.GetQueryOutFirst(FormalTextLanguage, "DefaultImports", null));
             ImportImports(BaseEdge.To);
 
-            //AppendPrefix();
             AppendAsNew(BaseEdge.To);
-            //AppendSuffix();            
 
             foreach (IEdge e in BaseEdge.To.OutEdgesRaw)
                 ZeroCodeGraph2String_Reccurent(e, 1, BaseEdge, null);
@@ -2037,6 +2047,7 @@ namespace m0.ZeroCode
 
         public string Process_ManyLinesExcludingParent(IEdge _graphBaseEdge)
         {
+            shouldUseCurrentPathForFirstVertexAppend = false;
             string txt = Process_EdgeAndManyLines_Inner(_graphBaseEdge);
 
             MultiLineString multiLineString = new MultiLineString(txt);
