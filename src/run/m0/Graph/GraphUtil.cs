@@ -997,7 +997,7 @@ namespace m0.Graph
         static public void CopyShallow(IVertex source, IVertex destination)
         {
             foreach (IEdge e in source.OutEdgesRaw)
-                if (VertexOperations.CanCopyCountViewEdge(e))
+                if (VertexOperations.CanCopy_ByEdge(e))
                     destination.AddEdge(e.Meta, e.To);
         }
 
@@ -1006,7 +1006,7 @@ namespace m0.Graph
             IEdge newEdge = destination.AddVertexAndReturnEdge(source.Meta, source.To.Value);
 
             foreach (IEdge e in source.To)
-                if (VertexOperations.CanCopyCountViewEdge(e))
+                if (VertexOperations.CanCopy_ByEdge(e))
                     newEdge.To.AddVertex(e.Meta, e.To.Value);
 
             return newEdge;
@@ -1333,7 +1333,7 @@ namespace m0.Graph
             visited.Add(vertexToCopy);
 
             foreach (IEdge e in vertexToCopy.OutEdgesRaw)
-                if (VertexOperations.CanCopyCountViewEdge(e))
+                if (VertexOperations.CanCopy_ByEdge(e))
                 {
                     if (!visited.Contains(e.To) && !VertexOperations.IsLink(e))
                     {

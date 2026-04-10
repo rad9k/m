@@ -104,16 +104,16 @@ namespace m0.Store.FileSystem
                 {
                     IVertex DirectoryVertex = new DirectoryVertex(this.Store, directoryInfo.FullName);
 
-                    base.AddEdge(DirectoryMetaVertex, DirectoryVertex);
-                    //AddVertexToFileSystemVertex(DirectoryMetaVertex, DirectoryVertex);
+                    //base.AddEdge(DirectoryMetaVertex, DirectoryVertex);
+                    AddVertexToFileSystemVertex(DirectoryMetaVertex, DirectoryVertex);
                 }
 
                 foreach (FileInfo fileInfo in DI.EnumerateFiles().OrderBy(f => f.Name, StringComparer.OrdinalIgnoreCase))
                 {
                     IVertex FileVertex = new FileVertex(this.Store, fileInfo.FullName);                        
 
-                    base.AddEdge(FileMetaVertex, FileVertex);
-                    //AddVertexToFileSystemVertex(FileMetaVertex, FileVertex);
+                    //base.AddEdge(FileMetaVertex, FileVertex);
+                    AddVertexToFileSystemVertex(FileMetaVertex, FileVertex);
                 }
             }
             catch (Exception) { } // no access

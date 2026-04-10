@@ -421,6 +421,8 @@ namespace m0.Store.Json
         private JsonSerializationData GetJsonSerializationData()
         {
             JsonSerializationData data = new JsonSerializationData();
+            HashSet<object> excludedVertexIdentifiers = GetExcludedVerticesForJsonSerialization();
+            IVertex graphChangeTriggerMeta = MinusZero.Instance.root.Get(false, @"System\Meta\Base\Vertex\$GraphChangeTrigger");
 
             data.Vertices = new List<JsonVertex>();
 
@@ -428,6 +430,9 @@ namespace m0.Store.Json
 
             foreach (IVertex v in VertexIdentifiersDictionary.Values)
             {
+                if (excludedVertexIdentifiers.Contains(v.Identifier))
+                    continue;
+
                 JsonVertex jv = new JsonVertex();
 
                 jv.Id = v.Identifier;
@@ -442,6 +447,12 @@ namespace m0.Store.Json
                     if (e is IDetachableEdge)
                     {
                         IDetachableEdge de = (IDetachableEdge)e;
+
+                        if (IsGraphChangeTriggerEdge(de, graphChangeTriggerMeta))
+                            continue;
+
+                        if (excludedVertexIdentifiers.Contains(de.ToIdentifier))
+                            continue;
 
                         JsonEdge je = new JsonEdge();
 
@@ -460,6 +471,44 @@ namespace m0.Store.Json
             }
 
             return data;
+        }
+
+        private HashSet<object> GetExcludedVerticesForJsonSerialization()
+        {
+            HashSet<object> excludedVertexIdentifiers = new HashSet<object>();
+            Stack<object> toProcess = new Stack<object>();
+            IVertex graphChangeTriggerMeta = MinusZero.Instance.root.Get(false, @"System\Meta\Base\Vertex\$GraphChangeTrigger");
+
+            foreach (IVertex vertex in VertexIdentifiersDictionary.Values)
+                foreach (IEdge edge in vertex.OutEdgesRaw)
+                    if (edge is IDetachableEdge detachableEdge && IsGraphChangeTriggerEdge(detachableEdge, graphChangeTriggerMeta))
+                        if (excludedVertexIdentifiers.Add(detachableEdge.ToIdentifier))
+                            toProcess.Push(detachableEdge.ToIdentifier);
+
+            while (toProcess.Count > 0)
+            {
+                object vertexIdentifier = toProcess.Pop();
+
+                if (!VertexIdentifiersDictionary.ContainsKey(vertexIdentifier))
+                    continue;
+
+                foreach (IEdge edge in VertexIdentifiersDictionary[vertexIdentifier].OutEdgesRaw)
+                    if (edge is IDetachableEdge detachableEdge)
+                        if (excludedVertexIdentifiers.Add(detachableEdge.ToIdentifier))
+                            toProcess.Push(detachableEdge.ToIdentifier);
+            }
+
+            return excludedVertexIdentifiers;
+        }
+
+        private bool IsGraphChangeTriggerEdge(IDetachableEdge edge, IVertex graphChangeTriggerMeta)
+        {
+            if (graphChangeTriggerMeta == null)
+                return false;
+
+            return edge.MetaStoreTypeName == graphChangeTriggerMeta.Store.TypeName
+                && edge.MetaStoreIdentifier == graphChangeTriggerMeta.Store.Identifier
+                && Equals(edge.MetaIdentifier, graphChangeTriggerMeta.Identifier);
         }
 
         private int GetStoreId(JsonSerializationData data, string StoreTypeName, string StoreIdentifier, object vertexIdentifier)

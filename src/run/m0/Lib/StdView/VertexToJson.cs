@@ -70,7 +70,7 @@ namespace m0.Lib.StdView
         }
 
         static void ProcessVertexInternal(IVertex baseVertex, Utf8JsonWriter writer, IList<IVertex> visited, bool inArrayContext) {
-            if (!VertexOperations.CanCopyCountViewVertex(baseVertex))
+            if (!VertexOperations.CanCopy_ByVertex(baseVertex))
                 return;
 
             if (visited.Contains(baseVertex))
@@ -90,7 +90,7 @@ namespace m0.Lib.StdView
             {
                 string meta = kvp.Key.ToString();
                 
-                if (VertexOperations.CanCopyCountViewMetaString(meta) 
+                if (VertexOperations.CanCopy_ByMetaString(meta) 
                     && meta != "$Empty" 
                     && !VertexOperations.DoOutEdgesDictionaryValueContainViewVertex(kvp.Value))
                     IsHomogenicAndMultipleAndOnlyEmptyMeta = false;
@@ -109,7 +109,7 @@ namespace m0.Lib.StdView
                     {
                         foreach (IEdge edge in list)
                         {
-                            if (VertexOperations.CanCopyCountViewEdge(edge) && !VertexOperations.IsViewVertex(edge.Meta) && !VertexOperations.IsSpecialVertex(edge.Meta))
+                            if (VertexOperations.CanCopy_ByEdge(edge) && !VertexOperations.IsViewVertex(edge.Meta) && !VertexOperations.IsSpecialVertex(edge.Meta))
                             {
                                 if ((VertexOperations.IsAtomicEdge(edge) || VertexOperations.IsLink(edge)) && !IsEmptyValueComplexVertex(edge.To))
                                     WriteAtomVertex(edge.To, writer);
@@ -123,7 +123,7 @@ namespace m0.Lib.StdView
                     else
                     {
                         IEdge edge = (IEdge)kvp.Value;
-                        if (VertexOperations.CanCopyCountViewEdge(edge) && !VertexOperations.IsViewVertex(edge.Meta) && !VertexOperations.IsSpecialVertex(edge.Meta))
+                        if (VertexOperations.CanCopy_ByEdge(edge) && !VertexOperations.IsViewVertex(edge.Meta) && !VertexOperations.IsSpecialVertex(edge.Meta))
                         {
                             if ((VertexOperations.IsAtomicEdge(edge) || VertexOperations.IsLink(edge)) && !IsEmptyValueComplexVertex(edge.To))
                                 WriteAtomVertex(edge.To, writer);
@@ -170,7 +170,7 @@ namespace m0.Lib.StdView
                     bool hasValidEdges = false;
                     foreach (IEdge e in (List_VertexBase)kvp.Value)
                     {
-                        if (VertexOperations.CanCopyCountViewEdge(e) && !VertexOperations.IsViewVertex(e.Meta) && !VertexOperations.IsSpecialVertex(e.Meta))
+                        if (VertexOperations.CanCopy_ByEdge(e) && !VertexOperations.IsViewVertex(e.Meta) && !VertexOperations.IsSpecialVertex(e.Meta))
                         {
                             hasValidEdges = true;
                             break;
@@ -214,7 +214,7 @@ namespace m0.Lib.StdView
             writer.WriteStartArray();
 
             foreach (IEdge e in (List_VertexBase)kvp.Value)
-                if (VertexOperations.CanCopyCountViewEdge(e) && !VertexOperations.IsViewVertex(e.Meta) && !VertexOperations.IsSpecialVertex(e.Meta))
+                if (VertexOperations.CanCopy_ByEdge(e) && !VertexOperations.IsViewVertex(e.Meta) && !VertexOperations.IsSpecialVertex(e.Meta))
                 {
                     if ((VertexOperations.IsAtomicEdge(e) || VertexOperations.IsLink(e)) && !IsEmptyValueComplexVertex(e.To))
                         WriteAtomVertex(e.To, writer);
@@ -242,7 +242,7 @@ namespace m0.Lib.StdView
             foreach (var kvp in dict)
             {
                 string meta = kvp.Key.ToString();
-                if (!VertexOperations.CanCopyCountViewMetaString(meta))
+                if (!VertexOperations.CanCopy_ByMetaString(meta))
                     continue;
                 if (VertexOperations.DoOutEdgesDictionaryValueContainViewVertex(kvp.Value))
                     continue;
@@ -262,7 +262,7 @@ namespace m0.Lib.StdView
                 foreach (var kvp in dict)
                 {
                     string meta = kvp.Key.ToString();
-                    if (!VertexOperations.CanCopyCountViewMetaString(meta))
+                    if (!VertexOperations.CanCopy_ByMetaString(meta))
                         continue;
                     if (VertexOperations.DoOutEdgesDictionaryValueContainViewVertex(kvp.Value))
                         continue;
@@ -309,7 +309,7 @@ namespace m0.Lib.StdView
             foreach (var kvp in dict)
             {
                 string meta = kvp.Key.ToString();
-                if (!VertexOperations.CanCopyCountViewMetaString(meta))
+                if (!VertexOperations.CanCopy_ByMetaString(meta))
                     continue;
                 if (VertexOperations.DoOutEdgesDictionaryValueContainViewVertex(kvp.Value))
                     continue;
@@ -344,7 +344,7 @@ namespace m0.Lib.StdView
         {
             writer.WriteStartArray();
             
-            if (VertexOperations.CanCopyCountViewEdge(e) && !VertexOperations.IsViewVertex(e.Meta) && !VertexOperations.IsSpecialVertex(e.Meta))
+            if (VertexOperations.CanCopy_ByEdge(e) && !VertexOperations.IsViewVertex(e.Meta) && !VertexOperations.IsSpecialVertex(e.Meta))
             {
                 if ((VertexOperations.IsAtomicEdge(e) || VertexOperations.IsLink(e)) && !IsEmptyValueComplexVertex(e.To))
                     WriteAtomVertex(e.To, writer);
@@ -360,7 +360,7 @@ namespace m0.Lib.StdView
 
         private static void ProcessVertex_NoArray(Utf8JsonWriter writer, IList<IVertex> visited, IEdge e)
         {
-            if (VertexOperations.CanCopyCountViewEdge(e) && !VertexOperations.IsViewVertex(e.Meta) && !VertexOperations.IsSpecialVertex(e.Meta)) 
+            if (VertexOperations.CanCopy_ByEdge(e) && !VertexOperations.IsViewVertex(e.Meta) && !VertexOperations.IsSpecialVertex(e.Meta)) 
             {
                 string metaValue = GraphUtil.GetStringValue(e.Meta);
 

@@ -21,8 +21,11 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Store\FileSystem\OLD\**" />
     <Compile Remove="_PROJECT\AI\**" />
+    <EmbeddedResource Remove="Store\FileSystem\OLD\**" />
     <EmbeddedResource Remove="_PROJECT\AI\**" />
+    <None Remove="Store\FileSystem\OLD\**" />
     <None Remove="_PROJECT\AI\**" />
   </ItemGroup>
   <ItemGroup>
