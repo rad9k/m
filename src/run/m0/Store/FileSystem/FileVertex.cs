@@ -133,6 +133,8 @@ namespace m0.Store.FileSystem
 
             string extension_lower = FI.Extension.ToLower();
 
+            DeleteStoreEdges();
+
             if (extension_lower == ".m0j")
             {
                 JsonStore = (JsonSerializationStore)Store.StoreUniverse.GetStore("m0.Store.Json.JsonSerializationStore, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", Identifier.ToString());
@@ -159,7 +161,14 @@ namespace m0.Store.FileSystem
                 //AddEdge(FileSystemStore.File_Content, new FileContentVertex(FI.FullName, this.Store));
                 AddEdge(FileSystemStore.File_Content, new FileContentVertex(FI.FullName, MinusZero.Instance.TempStore));
             }
-        }        
+        }
+
+        void DeleteStoreEdges()
+        {
+            foreach (IEdge e in OutEdgesRaw.ToList())
+                if (e.Meta == FileSystemStore.Store)
+                    DeleteEdge(e);
+        }
 
         public FileVertex(IStore store, string identifier)
             : base(store, identifier)
