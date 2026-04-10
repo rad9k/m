@@ -46,6 +46,27 @@ namespace m0.ZeroCode
             return "[" + v.Identifier + "] \"" + value + "\"";
         }
 
+        string DescribeStore(IStore store)
+        {
+            if (store == null)
+                return "<null>";
+
+            if (store.Identifier == null)
+                return "<null>";
+
+            return "\"" + store.Identifier + "\"";
+        }
+
+        string DescribeVertexDetailed(IVertex v)
+        {
+            if (v == null)
+                return "<null>";
+
+            return DescribeVertex(v)
+                + " store=" + DescribeStore(v.Store)
+                + " isRoot=" + v.IsRoot;
+        }
+
         string DescribeEdge(IEdge e)
         {
             if (e == null)
@@ -65,6 +86,17 @@ namespace m0.ZeroCode
                 toValue = e.To.Value.ToString();
 
             return "\"" + fromValue + "\" --" + metaValue + "--> \"" + toValue + "\"";
+        }
+
+        string DescribeEdgeDetailed(IEdge e)
+        {
+            if (e == null)
+                return "<null>";
+
+            return "from=" + DescribeVertexDetailed(e.From)
+                + " meta=" + DescribeVertexDetailed(e.Meta)
+                + " to=" + DescribeVertexDetailed(e.To)
+                + " edge=" + DescribeEdge(e);
         }
 
         string DescribePath(List<IEdge> edgesList)
@@ -95,7 +127,7 @@ namespace m0.ZeroCode
 
             Vertex = v;
 
-            LinkSearchLog("Process.Start", "vertex=" + DescribeVertex(v) + " parent=" + DescribeEdge(_parent));
+            LinkSearchLog("Process.Start", "vertex=" + DescribeVertexDetailed(v) + " parent=" + DescribeEdgeDetailed(_parent));
 
             if (_parent != null)
             {
@@ -269,7 +301,7 @@ namespace m0.ZeroCode
         {
             int currentPathLength = edgesList.Count();
 
-            LinkSearchLog("Recur.Enter", "vertex=" + DescribeVertex(v) + " pathLength=" + currentPathLength + " bestLength=" + shortestLinkLength + " path=" + DescribePath(edgesList));
+            LinkSearchLog("Recur.Enter", "vertex=" + DescribeVertexDetailed(v) + " pathLength=" + currentPathLength + " bestLength=" + shortestLinkLength + " path=" + DescribePath(edgesList));
 
             if (currentPathLength >= shortestLinkLength)
             {
@@ -293,7 +325,7 @@ namespace m0.ZeroCode
 
                     string s = GetStringFromEdgesList(dict, edgesList, false);
 
-                    LinkSearchLog("Recur.Root", "vertex=" + DescribeVertex(v) + " candidate=" + s + " length=" + edgesList.Count());
+                    LinkSearchLog("Recur.Root", "vertex=" + DescribeVertexDetailed(v) + " candidate=" + s + " length=" + edgesList.Count());
 
                     checkIfNewBest(edgesList.Count(), false, s);
 
@@ -365,7 +397,7 @@ namespace m0.ZeroCode
                 {
                     IEdge ee = new EdgeBase(e.From, e.Meta, e.To);
 
-                    LinkSearchLog("Recur.FollowInEdge", "from=" + DescribeVertex(e.From) + " to=" + DescribeVertex(v) + " edge=" + DescribeEdge(ee));
+                    LinkSearchLog("Recur.FollowInEdge", "current=" + DescribeVertexDetailed(v) + " nextFrom=" + DescribeVertexDetailed(e.From) + " inEdge={" + DescribeEdgeDetailed(ee) + "}");
 
                     edgesList.Add(ee);
 
@@ -376,11 +408,11 @@ namespace m0.ZeroCode
                     edgesList.RemoveAt(edgesList.Count - 1);
                 }
                 else
-                    LinkSearchLog("Recur.SkipCycle", "current=" + DescribeVertex(v) + " blockedFrom=" + DescribeVertex(e.From) + " edge=" + DescribeEdge(e));
+                    LinkSearchLog("Recur.SkipCycle", "current=" + DescribeVertexDetailed(v) + " blockedFrom=" + DescribeVertexDetailed(e.From) + " inEdge={" + DescribeEdgeDetailed(e) + "}");
 
             linkBeenList.Remove(v);
 
-            LinkSearchLog("Recur.Exit", "vertex=" + DescribeVertex(v) + " pathLength=" + currentPathLength);
+            LinkSearchLog("Recur.Exit", "vertex=" + DescribeVertexDetailed(v) + " pathLength=" + currentPathLength);
 
             return;
         }
