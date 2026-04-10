@@ -33,17 +33,20 @@ namespace m0.ZeroCode
             MinusZero.Instance.Log(0, "LinkSearch." + where, what);
         }
 
+        string DescribeObjectValue(object value)
+        {
+            if (value == null)
+                return "<null>";
+
+            return "\"" + value.ToString() + "\"";
+        }
+
         string DescribeVertex(IVertex v)
         {
             if (v == null)
                 return "<null>";
 
-            string value = "<null>";
-
-            if (v.Value != null)
-                value = v.Value.ToString();
-
-            return "[" + v.Identifier + "] \"" + value + "\"";
+            return "[" + DescribeObjectValue(v.Identifier) + "] " + DescribeObjectValue(v.Value);
         }
 
         string DescribeStore(IStore store)
@@ -51,10 +54,7 @@ namespace m0.ZeroCode
             if (store == null)
                 return "<null>";
 
-            if (store.Identifier == null)
-                return "<null>";
-
-            return "\"" + store.Identifier + "\"";
+            return DescribeObjectValue(store.Identifier);
         }
 
         string DescribeVertexDetailed(IVertex v)
@@ -65,6 +65,25 @@ namespace m0.ZeroCode
             return DescribeVertex(v)
                 + " store=" + DescribeStore(v.Store)
                 + " isRoot=" + v.IsRoot;
+        }
+
+        string DescribeTraversalVertex(IVertex v)
+        {
+            if (v == null)
+                return "{id=<null> store=<null> value=<null>}";
+
+            return "{id=" + DescribeObjectValue(v.Identifier)
+                + " store=" + DescribeStore(v.Store)
+                + " value=" + DescribeObjectValue(v.Value)
+                + "}";
+        }
+
+        string DescribeTraversalMeta(IVertex v)
+        {
+            if (v == null)
+                return "{value=<null>}";
+
+            return "{value=" + DescribeObjectValue(v.Value) + "}";
         }
 
         string DescribeEdge(IEdge e)
@@ -93,9 +112,9 @@ namespace m0.ZeroCode
             if (e == null)
                 return "<null>";
 
-            return "from=" + DescribeVertexDetailed(e.From)
-                + " meta=" + DescribeVertexDetailed(e.Meta)
-                + " to=" + DescribeVertexDetailed(e.To)
+            return "From=" + DescribeTraversalVertex(e.From)
+                + " Meta=" + DescribeTraversalMeta(e.Meta)
+                + " To=" + DescribeTraversalVertex(e.To)
                 + " edge=" + DescribeEdge(e);
         }
 
@@ -111,7 +130,7 @@ namespace m0.ZeroCode
                 if (i > 0)
                     sb.Append(" | ");
 
-                sb.Append(DescribeEdge(edgesList[i]));
+                sb.Append(DescribeEdgeDetailed(edgesList[i]));
             }
 
             return sb.ToString();
@@ -392,12 +411,21 @@ namespace m0.ZeroCode
 
             linkBeenList.Add(v);
 
-            foreach (IEdge e in v.InEdgesRaw.ToList()) // XXX toList added
-                if (!linkBeenList.Contains(e.From))
+            List<IEdge> inEdges = v.InEdgesRaw.ToList(); // XXX toList added
+
+            LinkSearchLog("Recur.ScanInEdges", "vertex=" + DescribeVertexDetailed(v) + " inEdgesRawCount=" + inEdges.Count + " inEdgesCount=" + v.InEdges.Count + " pathLength=" + currentPathLength);
+
+            foreach (IEdge e in inEdges)
+            {
+                bool alreadyVisited = linkBeenList.Contains(e.From);
+
+                LinkSearchLog("Recur.ConsiderInEdge", "current=" + DescribeVertexDetailed(v) + " alreadyVisited=" + alreadyVisited + " edge={" + DescribeEdgeDetailed(e) + "}");
+
+                if (!alreadyVisited)
                 {
                     IEdge ee = new EdgeBase(e.From, e.Meta, e.To);
 
-                    LinkSearchLog("Recur.FollowInEdge", "current=" + DescribeVertexDetailed(v) + " nextFrom=" + DescribeVertexDetailed(e.From) + " inEdge={" + DescribeEdgeDetailed(ee) + "}");
+                    LinkSearchLog("Recur.FollowInEdge", "current=" + DescribeVertexDetailed(v) + " next=" + DescribeVertexDetailed(e.From) + " newPathLength=" + (currentPathLength + 1) + " edge={" + DescribeEdgeDetailed(ee) + "}");
 
                     edgesList.Add(ee);
 
@@ -406,9 +434,12 @@ namespace m0.ZeroCode
                     GetLinkString_Recurrect(e.From, edgesList, ref _isMetaDirect);
 
                     edgesList.RemoveAt(edgesList.Count - 1);
+
+                    LinkSearchLog("Recur.ReturnFromInEdge", "current=" + DescribeVertexDetailed(v) + " returnedFrom=" + DescribeVertexDetailed(e.From) + " pathLength=" + currentPathLength + " edge={" + DescribeEdgeDetailed(ee) + "}");
                 }
                 else
-                    LinkSearchLog("Recur.SkipCycle", "current=" + DescribeVertexDetailed(v) + " blockedFrom=" + DescribeVertexDetailed(e.From) + " inEdge={" + DescribeEdgeDetailed(e) + "}");
+                    LinkSearchLog("Recur.SkipCycle", "current=" + DescribeVertexDetailed(v) + " blockedFrom=" + DescribeVertexDetailed(e.From) + " reason=from-already-on-path edge={" + DescribeEdgeDetailed(e) + "}");
+            }
 
             linkBeenList.Remove(v);
 
