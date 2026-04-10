@@ -91,7 +91,7 @@ namespace m0.ZeroCode
             s.Append(ZeroCodeCommon.stringToPossiblyEscapedString(dict, v.Value.ToString()));
         }
 
-        public static string GetStringFromEdgesList(FormalTextLanguageDictinaries dict, List<IEdge> edgesList, bool isImportMeta)
+        public static string GetStringFromEdgesList(FormalTextLanguageDictinaries dict, List<IEdge> edgesList, bool isImportMeta, bool isRelativeToImport = false)
         {
             StringBuilder s = new StringBuilder();
 
@@ -108,6 +108,7 @@ namespace m0.ZeroCode
                     s.Append(ZeroCodeCommon.stringToPossiblyEscapedString(dict, e.Meta.Value.ToString()));
 
                 StringBuilder toAppend = new StringBuilder();
+                string possibleMetaSeparator = "";
 
                 if (e.To != null)
                 {
@@ -128,6 +129,8 @@ namespace m0.ZeroCode
                     {
                         if (e.Meta == null || GeneralUtil.CompareStrings(e.Meta, "$Empty"))
                         {
+                            if (isRelativeToImport)
+                                possibleMetaSeparator = dict.MetaSeparator;
                             Append(dict, toAppend, e.To);
                         }
                         else
@@ -135,15 +138,23 @@ namespace m0.ZeroCode
                             if (!VertexOperations.IsToVertexEnoughToIdentifyEdge(e.From, e.To))
                             {
                                 Append(dict, toAppend, e.Meta);
-                                toAppend.Append(dict.MetaSeparator);
+
+                                if (Graph2TextProcessing.IsNullOrEmpty(e.To))
+                                    toAppend.Append(dict.MetaSeparator);
+                                else if (isRelativeToImport)
+                                    possibleMetaSeparator = dict.MetaSeparator;
+                                else
+                                    toAppend.Append(dict.MetaSeparator);
                             }
+                            else if (isRelativeToImport)
+                                possibleMetaSeparator = dict.MetaSeparator;
 
                             Append(dict, toAppend, e.To);
                         }
                     }
 
                     if (VertexOperations.IsMetaAndToVertexEnoughToIdentifyEdge(e.From, e.Meta, e.To))
-                        s.Append(toAppend.ToString());
+                        s.Append(possibleMetaSeparator + toAppend.ToString());
                     else
                     {
                         int pos = 0;
@@ -172,7 +183,7 @@ namespace m0.ZeroCode
                             pos++;
                         } while (tv != e.To);
 
-                        s.Append(toAppend.ToString() + dict.SetIndexPrefix + "\"" + pos + "\"" + dict.SetIndexPostfix);
+                        s.Append(possibleMetaSeparator + toAppend.ToString() + dict.SetIndexPrefix + "\"" + pos + "\"" + dict.SetIndexPostfix);
                     }
                 }
 
@@ -200,7 +211,7 @@ namespace m0.ZeroCode
                 {
                     isMetaDirect = false;
 
-                    string s = GetStringFromEdgesList(dict, edgesList, false);
+                    string s = GetStringFromEdgesList(dict, edgesList, false, false);
 
                     checkIfNewBest(edgesList.Count(), false, s);
 
@@ -217,7 +228,7 @@ namespace m0.ZeroCode
                             {
                                 isMetaDirect = false;
 
-                                string s = GetStringFromEdgesList(dict, edgesList, false);
+                                string s = GetStringFromEdgesList(dict, edgesList, false, true);
 
                                 checkIfNewBest(edgesList.Count(), false, s);
 
@@ -230,7 +241,7 @@ namespace m0.ZeroCode
                             {
                                 isMetaDirect = true;
 
-                                string s = GetStringFromEdgesList(dict, edgesList, true);
+                                string s = GetStringFromEdgesList(dict, edgesList, true, true);
 
                                 checkIfNewBest(edgesList.Count(), true, s);
 
@@ -247,7 +258,7 @@ namespace m0.ZeroCode
 
                             IEdge ee = new EdgeBase(null, ikv, null);
                             edgesList.Add(ee);
-                            string s = GetStringFromEdgesList(dict, edgesList, isMeta);
+                            string s = GetStringFromEdgesList(dict, edgesList, isMeta, true);
                             int candidateLength = edgesList.Count();
                             edgesList.RemoveAt(edgesList.Count - 1);
 
