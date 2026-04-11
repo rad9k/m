@@ -606,14 +606,7 @@ namespace m0.ZeroCode
                     if (tryIf != null)
                         return tryIf;
                 }
-            }
-
-            // try from local root
-
-            tryIf = queryMetaImport(baseVertex, @"$ParseRoot" + dict.MetaSeparator + @"\\" + link);
-
-            if (tryIf != null && !(tryIf is ToVertexMock))
-                return tryIf;
+            }            
 
             // normal direct link
 
@@ -641,7 +634,14 @@ namespace m0.ZeroCode
             tryIf = queryMetaImport(dict.importDirectMetaList, @"\" + link);
             
             if (tryIf != null)
-                return tryIf;                        
+                return tryIf;
+
+            // try from local root
+
+            tryIf = queryMetaImport(baseVertex, @"$ParseRoot" + dict.MetaSeparator + @"\\" + link);
+
+            if (tryIf != null && !(tryIf is ToVertexMock))
+                return tryIf;
 
             return MinusZero.Instance.Empty;
         }
@@ -651,8 +651,10 @@ namespace m0.ZeroCode
             if (GeneralUtil.CompareStrings(inEdge.Meta.Value, link)) // 2026.04.11 wtf ?
                 return inEdge.Meta;
 
-            IVertex found = inEdge.Meta.Get(false, link); // ??? for sure XXX I do not know why it works, but it should be there. perhaps
+            //IVertex found = inEdge.Meta.Get(false, link); // ??? for sure XXX I do not know why it works, but it should be there. perhaps
                                                           // YYY huston fisttPart variable to be simple run time query                                                                     
+
+            IVertex found = GraphUtil.GetQueryOutFirst(inEdge.Meta, null, link);
 
             if (found != null)
                 return found;
