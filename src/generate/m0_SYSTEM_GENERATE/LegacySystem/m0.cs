@@ -4104,14 +4104,24 @@ namespace m0
             View_section = smzu.Get(false, @"UXItem\Scale").AddVertex(sm.Get(false, @"?$Section"), "View");
             smzu.Get(false, @"UXItem\Size").AddEdge(sm.Get(false, @"?$Section"), View_section);
 
+            //
+
             Layout_section = smzu.Get(false, @"UXItem\Position").AddVertex(sm.Get(false, @"?$Section"), "Layout");
             smzu.Get(false, @"UXItem\Layout").AddEdge(sm.Get(false, @"?$Section"), Layout_section);
             smzu.Get(false, @"UXItem\Gap").AddEdge(sm.Get(false, @"?$Section"), Layout_section);
+
+            Extra_group = smzu.Get(false, @"UXItem\Position").AddVertex(sm.Get(false, @"?$Group"), "Extra");
+            smzu.Get(false, @"UXItem\Layout").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
+            smzu.Get(false, @"UXItem\Gap").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
+
+            //
 
             Style_section = smzu.Get(false, @"UXItem\BackgroundColor").AddVertex(sm.Get(false, @"?$Section"), "Style");
             smzu.Get(false, @"UXItem\ForegroundColor").AddEdge(sm.Get(false, @"?$Section"), Style_section);
             smzu.Get(false, @"UXItem\BorderColor").AddEdge(sm.Get(false, @"?$Section"), Style_section);
             smzu.Get(false, @"UXItem\BorderSize").AddEdge(sm.Get(false, @"?$Section"), Style_section);
+
+            //
 
             Content_section = smzu.Get(false, @"UXItem\Decorator").AddVertex(sm.Get(false, @"?$Section"), "Content");
             smzu.Get(false, @"UXItem\VolatileItem").AddEdge(sm.Get(false, @"?$Section"), Content_section);
@@ -4138,10 +4148,10 @@ namespace m0
             smzu.Get(false, @"UXContainer\ExpandedSize").AddEdge(sm.Get(false, @"?$Section"), Nesting_section);
             smzu.Get(false, @"UXContainer\SubItemsNotVisible").AddEdge(sm.Get(false, @"?$Section"), Nesting_section);
 
-            Extra_group = smzu.Get(false, @"UXContainer\IsExpanded").AddVertex(sm.Get(false, @"?$Group"), "Extra");
+            smzu.Get(false, @"UXContainer\IsExpanded").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
             smzu.Get(false, @"UXContainer\CollapsedSize").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
-            smzu.Get(false, @"UXContainer\ExpandedSize").AddEdge(sm.Get(false, @"?$Section"), Extra_group);
-            smzu.Get(false, @"UXContainer\SubItemsNotVisible").AddEdge(sm.Get(false, @"?$Section"), Extra_group);
+            smzu.Get(false, @"UXContainer\ExpandedSize").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
+            smzu.Get(false, @"UXContainer\SubItemsNotVisible").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
 
             // enums
 

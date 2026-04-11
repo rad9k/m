@@ -662,7 +662,10 @@ namespace m0.ZeroCode
             IVertex edgeTargetVertex = GraphUtil.GetQueryOutFirst(inEdge.Meta, "$EdgeTarget", null);
             if (edgeTargetVertex != null)
             {
-                found = edgeTargetVertex.Get(false, link);
+                //found = edgeTargetVertex.Get(false, link);
+
+                found = GraphUtil.GetQueryOutFirst(edgeTargetVertex, null, link);
+
                 if (found != null)
                     return found;
             }
