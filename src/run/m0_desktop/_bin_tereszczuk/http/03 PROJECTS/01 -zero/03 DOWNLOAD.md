@@ -23,8 +23,8 @@ The code and releases are publicly avaiable at github here: **[https://github.co
 
 |File|OS|Hardware|Size|
 |-|-|-|-|
-|[m0_desktop-0.99-win-x64.zip](https://github.com/rad9k/-zero/releases/download/0.99/m0_desktop-0.99-win-x64.zip)|Linux|arm64|84 MB|
-|[m0_desktop-0.99-win-arm64.zip](https://github.com/rad9k/-zero/releases/download/0.99/m0_desktop-0.99-win-arm64.zip)|Linux|arm64|78 MB|
+|[m0_desktop-0.99-win-x64.zip](https://github.com/rad9k/-zero/releases/download/0.99/m0_desktop-0.99-win-x64.zip)|Windows|x64|84 MB|
+|[m0_desktop-0.99-win-arm64.zip](https://github.com/rad9k/-zero/releases/download/0.99/m0_desktop-0.99-win-arm64.zip)|Windows|arm64|78 MB|
 	
 ### console version
 
@@ -32,7 +32,7 @@ The code and releases are publicly avaiable at github here: **[https://github.co
 
 |File|OS|Hardware|Size|
 |-|-|-|-|
-|[m0_console-0.99-win-x64.zip](https://github.com/rad9k/-zero/releases/download/0.99/m0_console-0.99-win-x64.zip)|Windows|arm64|45 MB|
+|[m0_console-0.99-win-x64.zip](https://github.com/rad9k/-zero/releases/download/0.99/m0_console-0.99-win-x64.zip)|Windows|x64|45 MB|
 |[m0_console-0.99-win-arm64.zip](https://github.com/rad9k/-zero/releases/download/0.99/m0_console-0.99-win-arm64.zip)|Windows|arm64|43 MB|
 |[m0_console-0.99-linux-x64.tar.gz](https://github.com/rad9k/-zero/releases/download/0.99/m0_console-0.99-linux-x64.tar.gz)|Linux|x64|45 MB|
 |[m0_console-0.99-linux-arm64.tar.gz](https://github.com/rad9k/-zero/releases/download/0.99/m0_console-0.99-linux-arm64.tar.gz)|Linux|arm64|42 MB|

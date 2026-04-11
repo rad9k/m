@@ -1,4 +1,4 @@
-﻿using m0.Foundation;
+using m0.Foundation;
 using m0.Graph;
 using m0.Util;
 using m0.ZeroCode.Helpers;
@@ -339,6 +339,7 @@ namespace m0.ZeroCode
         // PROCESS dependent
 
         public IVertex baseVertex;
+        IVertex processBaseEdgeTo;
 
         string text;
         zstring ztext;
@@ -517,7 +518,15 @@ namespace m0.ZeroCode
 
         IVertex ToVertexMock2VertexByLinkString(ToVertexMock mock)
         {
-            string link = mock.mockData.ToString();
+            string link = "";
+            if (mock.mockData != null)
+                link = mock.mockData.ToString();
+
+            if (link.Length == 0)
+                return MinusZero.Instance.Root;
+
+            if (GeneralUtil.CompareStrings(link, "$CodeRoot"))
+                return processBaseEdgeTo;
 
             // try named link
 
@@ -2814,6 +2823,9 @@ namespace m0.ZeroCode
                 {
                     string afterColon = currentLineInner.Trim();
 
+                    if (afterColon.Length == 0)
+                        return AddEdge(s, _baseVertex, null, processLink("", _baseVertex)).To;
+
                     if (afterColon[0] == dict.NewVertexPrefix) // if is new value
                         return AddVertex(s, _baseVertex, null, ZeroCodeCommon.stringFromNewVertexString(dict, afterColon));
 
@@ -3153,6 +3165,8 @@ namespace m0.ZeroCode
         // used by ZeroUML diagram representation
         public IVertex Process_EdgeOneLine(IEdge _baseEdge, string _text, out IEdge rootEdge_new)
         {
+            processBaseEdgeTo = _baseEdge.To;
+
             string vertexAndManyLines = MinusZero.Instance.DefaultFormalTextGenerator.Generate(_baseEdge, CodeRepresentationEnum.EdgeAndManyLines);
 
             MultiLineString mls = new MultiLineString(vertexAndManyLines);
@@ -3165,6 +3179,8 @@ namespace m0.ZeroCode
         // used by ZeroUML diagram representation
         public IVertex Process_LinearizedManyLines(IEdge _baseEdge, string _text, out IEdge rootEdge_new)
         {
+            processBaseEdgeTo = _baseEdge.To;
+
             IVertex _baseEdge_meta = _baseEdge.Meta;
 
             MultiLineString mls = new MultiLineString(_text);
@@ -3204,6 +3220,8 @@ namespace m0.ZeroCode
         // used by ZeroUML diagram representation
         public IVertex Process_EdgeAndManyLines(IEdge _baseEdge, string _text, out IEdge rootEdge_new)
         {
+            processBaseEdgeTo = _baseEdge.To;
+
             MultiLineString mls = new MultiLineString(_text);
 
             mls.AddLeftTab(1);
@@ -3229,6 +3247,9 @@ namespace m0.ZeroCode
 
         public IVertex Process_VertexAndManyLines(IEdge _baseEdge, string _text)
         {            
+            if (processBaseEdgeTo == null)
+                processBaseEdgeTo = _baseEdge.To;
+
             ZeroCodeUtil.ClearZeroCodeUtilDicionaries();
 
             baseVertex = _baseEdge.To;
@@ -3288,6 +3309,8 @@ namespace m0.ZeroCode
         // used by ZeroUML diagram representation
         public IVertex Process_ManyLinesExcludingParent(IEdge _baseEdge, string _text)
         {
+            processBaseEdgeTo = _baseEdge.To;
+
             IEdge nextEdge = GraphUtil.GetQueryOutFirstEdge(_baseEdge.To, "Next", null);
 
             if (nextEdge != null)
@@ -3325,6 +3348,7 @@ namespace m0.ZeroCode
         public IVertex Process(IEdge _baseEdge, string _text, CodeRepresentationEnum codeRepresentation, out IEdge rootEdge_new)
         {
             rootEdge_new = null;
+            processBaseEdgeTo = _baseEdge.To;
 
             switch (codeRepresentation)
             {

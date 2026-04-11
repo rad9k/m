@@ -14,9 +14,9 @@ you will be good. you are
 
 Be inspired and feel welcomed! This idea is too good to keep it closed.
 
-## New fundations
+## New fundations - One structure
 
-> One structure. Every layer — requirements, architecture, data, logic — is just a different *view* of the same graph. Edit the diagram, the code changes. Change the code, the diagram updates. No sync. No drift. No lies.
+> Every layer — requirements, architecture, data, logic — is just a different *view* of the same graph. Edit the diagram, the code changes. Change the code, the diagram updates. No sync. No drift. No lies.
 >
 > **The graph is executable. The graph is the schema. The graph the architecture. Also the graph is the text language definition ..and the graph defines how graph maps to diagram.**
 > 
@@ -39,13 +39,14 @@ Be inspired and feel welcomed! This idea is too good to keep it closed.
 > **The -zero philosophy: Stop translating business intent into low-level boilerplate. Start modeling your system at the level of reality.**
 
 ## What’s in the menu?
+
 * **GVM:** A Turing-complete virtual machine for high-abstraction execution.
 * **Unified UI:** A WPF-based editor where every GUI element is a manipulable graph fragment.
 * **Instant Plumbing:** REST, JSON, Markdown, and HTTP servers built-in. Just tag a vertex as an `Endpoint` and you're live.
 
-If you're tired of "standard" development and want to touch the future of system architecture, you need to see the **Fractal Graph** in action.
+## Get the release for your box
 
-**Get the release for your box, check the docs, and see how deep the rabbit hole goes. It's time to build differently.**
+**Check the docs, and see how deep the rabbit hole goes. It's time to build differently.**
 
 - **desktop binary** Windows ([x64](https://github.com/rad9k/-zero/releases/download/0.99/m0_desktop-0.99-win-x64.zip), [arm64](https://github.com/rad9k/-zero/releases/download/0.99/m0_desktop-0.99-win-arm64.zip))
 - **console binary** Windows ([x64](https://github.com/rad9k/-zero/releases/download/0.99/m0_console-0.99-win-x64.zip), [arm64](https://github.com/rad9k/-zero/releases/download/0.99/m0_console-0.99-win-arm64.zip)), OS X ([x64](https://github.com/rad9k/-zero/releases/download/0.99/m0_console-0.99-linux-x64.tar.gz), [arm64](https://github.com/rad9k/-zero/releases/download/0.99/m0_console-0.99-linux-arm64.tar.gz)), Linux ([x64](https://github.com/rad9k/-zero/releases/download/0.99/m0_console-0.99-osx-x64.tar.gz), [arm64](https://github.com/rad9k/-zero/releases/download/0.99/m0_console-0.99-osx-arm64.tar.gz))

@@ -207,16 +207,15 @@ namespace m0.ZeroCode
 
             if (v == MinusZero.Instance.Root)
             {
+                isMetaDirect = false;
+
+                string s = "";
                 if (edgesList.Count() > 0)
-                {
-                    isMetaDirect = false;
+                    s = GetStringFromEdgesList(dict, edgesList, false, false);
 
-                    string s = GetStringFromEdgesList(dict, edgesList, false, false);
+                checkIfNewBest(edgesList.Count(), false, s);
 
-                    checkIfNewBest(edgesList.Count(), false, s);
-
-                    return;
-                }
+                return;
             }
 
             foreach (IVertex ikv in zcg2sp.Imports.Keys)
