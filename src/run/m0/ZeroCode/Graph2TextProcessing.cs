@@ -639,13 +639,12 @@ namespace m0.ZeroCode
                 SourceAppend(ZeroCodeCommon.stringToNewVertexString(dict, v.Value.ToString())); // XXX we are catching newVertices as keywords so...
         }
 
-        void AppendIs(IEdge e)
+        void AppendIs(IEdge e, IEdge parent)
         {
             SourceAppend("@$Is");
             AppendDoubleColon();
 
-            //SourceAppend(ZeroCodeCommon.stringToLinkString(ZeroCodeCommon.stringToPossiblyEscapedString(e.To.Value.ToString()), true));
-            SourceAppend(ZeroCodeCommon.stringToLinkString(dict, ZeroCodeCommon.stringToPossiblyEscapedString(dict, e.To.Value.ToString()), false));
+            AppendAsLink(e.To, parent, false);
         }
 
         void AppendDoubleColon()
@@ -1806,7 +1805,7 @@ namespace m0.ZeroCode
                 AppendNewLineAndTabs();
 
                 AppendPrefix();
-                AppendIs(baseEdge);
+                    AppendIs(baseEdge, parent);
                 AppendSuffix();
 
                 BeenList.Add(baseEdge);
