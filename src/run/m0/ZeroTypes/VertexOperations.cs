@@ -132,6 +132,11 @@ namespace m0.ZeroTypes
         public static bool IsLink_OldVersion(IVertex e_Meta) // not handling IsAssiciation. and now: yes IsLink_OldVersion and IsLink needs to be aligned
                                                              // BUT: to align them we migh need to have conistent "link" theory and for now it seems that there are holes in in (at least need two different versions)
         {
+            if (e_Meta.Value.ToString() == "FormalTextLanguageProcessing")
+            {
+                int x = 0;
+            }
+
             if (GeneralUtil.CompareStrings(e_Meta.Value, "$EdgeTarget"))
                 return true;            
 
@@ -146,6 +151,11 @@ namespace m0.ZeroTypes
 
         public static bool IsLink(IVertex e_Meta)
         {
+            if (e_Meta.Value.ToString() == "FormalTextLanguageProcessing")
+            {
+                int x = 0;
+            }
+
             if (GeneralUtil.CompareStrings(e_Meta.Value, "$EdgeTarget"))
                 return true;
 

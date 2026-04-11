@@ -528,6 +528,27 @@ namespace m0.ZeroCode
             if (GeneralUtil.CompareStrings(link, "$CodeRoot"))
                 return processBaseEdgeTo;
 
+            // $Is
+
+            if (mock.parentVertex != null)
+            {
+                foreach (IEdge inEdge in GraphUtil.GetQueryOut(mock.parentVertex, "$Is", null))
+                {
+                    IVertex value = SearchForParentLink_Is(link, inEdge);
+
+                    if (value != null)
+                        return value;
+                }
+
+                foreach (IEdge inEdge in mock.parentVertex.InEdges)
+                {
+                    IVertex value = SearchForParentLink(link, inEdge);
+
+                    if (value != null)
+                        return value;
+                }
+            }
+
             // try named link
 
             string secondPart;
@@ -620,33 +641,36 @@ namespace m0.ZeroCode
             tryIf = queryMetaImport(dict.importDirectMetaList, @"\" + link);
             
             if (tryIf != null)
-                return tryIf;            
-
-            if (mock.parentVertex != null)
-            {
-                foreach (IEdge inEdge in mock.parentVertex.InEdges)
-                {
-                    if (GeneralUtil.CompareStrings(inEdge.Meta.Value, link))
-                        return inEdge.Meta;
-
-                    IVertex found = inEdge.Meta.Get(false, link); // ??? for sure XXX I do not know why it works, but it should be there. perhaps
-                                                                  // YYY huston fisttPart variable to be simple run time query
-
-
-                    if (found != null)
-                        return found;
-
-                    IVertex edgeTargetVertex = GraphUtil.GetQueryOutFirst(inEdge.Meta, "$EdgeTarget", null);
-                    if (edgeTargetVertex != null)
-                    {
-                        found = edgeTargetVertex.Get(false, link);
-                        if (found != null)
-                            return found;
-                    }
-                }
-            }
+                return tryIf;                        
 
             return MinusZero.Instance.Empty;
+        }
+
+        private static IVertex SearchForParentLink(string link, IEdge inEdge)
+        {
+            if (GeneralUtil.CompareStrings(inEdge.Meta.Value, link)) // 2026.04.11 wtf ?
+                return inEdge.Meta;
+
+            IVertex found = inEdge.Meta.Get(false, link); // ??? for sure XXX I do not know why it works, but it should be there. perhaps
+                                                          // YYY huston fisttPart variable to be simple run time query                                                                     
+
+            if (found != null)
+                return found;
+
+            IVertex edgeTargetVertex = GraphUtil.GetQueryOutFirst(inEdge.Meta, "$EdgeTarget", null);
+            if (edgeTargetVertex != null)
+            {
+                found = edgeTargetVertex.Get(false, link);
+                if (found != null)
+                    return found;
+            }
+
+            return null;
+        }
+
+        private static IVertex SearchForParentLink_Is(string link, IEdge isEdge)
+        {            
+            return isEdge.To.Get(false, link);
         }
 
         IVertex processLink(string link, IVertex parent)
