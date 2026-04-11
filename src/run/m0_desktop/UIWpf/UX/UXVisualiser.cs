@@ -466,10 +466,15 @@ namespace m0.UIWpf.UX
             foreach (IEdge e in definitionEdges.OutEdgesRaw)
                 if(!(GraphUtil.ExistQueryOut(e.Meta, "$NoCopy", null) || GraphUtil.ExistQueryOut(e.To, "$NoCopy", null)))
                 {
-                    if(VertexOperations.IsAtomicVertex(e.To))
+                    if (VertexOperations.IsAtomicVertex(e.To))
                         GraphUtil.SetVertexValue(baseVertex, e.Meta, e.To.Value); // shallow copy
                     else
-                        GraphUtil.CreateOrReplaceEdge_DeepCopy(baseVertex, e.Meta, e.To); // deep BUT NOT COPY
+                    {
+                        if (e.Meta.Value.ToString() == "$Inherits")
+                            baseVertex.AddEdge(e.Meta, e.To);
+                        else
+                            GraphUtil.CreateOrReplaceEdge_DeepCopy(baseVertex, e.Meta, e.To); // deep BUT NOT COPY
+                    }
                 }
         }
 

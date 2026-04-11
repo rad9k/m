@@ -9,7 +9,7 @@
 
   <Color name="grey"  foreground="#999999" />
   <Color name="keyword" fontWeight="bold" foreground="#00C2CF" /> 
-	<Color name="DolarKeyword" foreground="#00008F" /> 
+	<Color name="DolarKeyword" fontWeight="bold" foreground="#00008F" /> 
 	<Color name="String" fontWeight="bold" foreground="#6733D5" /> 
 	<Color name="Operator" fontWeight="bold" foreground="#FF0000" /> 
 	<Color name="DoubleColon" fontWeight="bold" foreground="#255867" /> 
