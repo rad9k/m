@@ -583,7 +583,7 @@ namespace m0.Graph
                 {
                     tv = q.ElementAt(pos).To;
                     pos++;
-                } while (tv != e.To && pos > q.Count);
+                } while (tv != e.To && pos < q.Count);
 
                 return GetQueryStringPart_MetaMode(dict, e.Meta, e.To) + dict.SetIndexPrefix + "\"" + pos + "\"" + dict.SetIndexPostfix;
             }

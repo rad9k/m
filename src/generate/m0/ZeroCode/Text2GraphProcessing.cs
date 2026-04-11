@@ -2728,7 +2728,7 @@ namespace m0.ZeroCode
 
                 if (toAdd != null)
                     for (int x = 0; x < s.newLineCount; x++)
-                        toAdd.AddEdge(NewLine_meta, MinusZero.Instance.Empty);                        
+                        toAdd.AddVertex(NewLine_meta, "");
 
                 s.newLineCount = 0;
             }  

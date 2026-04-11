@@ -1365,7 +1365,15 @@ namespace m0.ZeroCode
             if (!eVertexData.VertexHasBeenAppendedAsNew && shouldUseCurrentPathForFirstVertexAppend)
             {
                 if (path != null)
-                    eVertexData.LinkString = path;
+                {
+                    // SubGraphVerticesDictionary may already hold a relative link (e.g. "\Item:"). Do not
+                    // replace it with a non-relative path (e.g. "Item:") from a later traversal — same
+                    // IVertex ref would then emit @\Item: first and @Item: later (getLinkString fallback).
+                    bool existingRelative = eVertexData.LinkString.Length > 0 && eVertexData.LinkString[0] == '\\';
+                    bool pathRelative = path.Length > 0 && path[0] == '\\';
+                    if (!existingRelative || pathRelative)
+                        eVertexData.LinkString = path;
+                }
 
                 eVertexData.VertexHasBeenAppendedAsNew = true;
                 return true;
