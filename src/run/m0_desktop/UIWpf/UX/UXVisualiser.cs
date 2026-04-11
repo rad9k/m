@@ -472,8 +472,8 @@ namespace m0.UIWpf.UX
                     {
                         if (e.Meta.Value.ToString() == "$Inherits")
                             baseVertex.AddEdge(e.Meta, e.To);
-                        else
-                            GraphUtil.CreateOrReplaceEdge_DeepCopy(baseVertex, e.Meta, e.To); // deep BUT NOT COPY
+                        else                                                    
+                            GraphUtil.CreateOrReplaceEdge_DeepCopy(baseVertex, e.Meta, e.To); // deep BUT NOT COPY                        
                     }
                 }
         }
