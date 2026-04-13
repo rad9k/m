@@ -950,6 +950,9 @@ namespace m0.ZeroCode
                         foreach (IEdge e in be.To.OutEdgesRaw)
                             if (!km.MatchedEdges.Contains(e))
                             {
+                                if (ShouldSkipOutboundUnderLinearizedUxBaseEdge(be, e))
+                                    continue;
+
                                 int tabTimes_copy = tabTimes;
 
                                 //if(log)
@@ -1040,6 +1043,39 @@ namespace m0.ZeroCode
             return null;
 
         }
+
+        static bool BaseEdgeOutboundMetaAllowedForLinearizedUx(string metaValue)
+        {
+            if (metaValue == null)
+                return false;
+            return GeneralUtil.CompareStrings(metaValue, "$Is")
+                || GeneralUtil.CompareStrings(metaValue, "From")
+                || GeneralUtil.CompareStrings(metaValue, "Meta")
+                || GeneralUtil.CompareStrings(metaValue, "To")
+                || GeneralUtil.CompareStrings(metaValue, "BackgroundColor");
+        }
+
+        /// <summary>
+        /// Under UX Item with FormalTextLanguageProcessing → LinearizedManyLines, only serialize structural
+        /// BaseEdge children in VertexAndManyLines; skip Next / keyword / code-flow edges (they belong to nested linearized text).
+        /// </summary>
+        /// 
+        // this is some crazy shit. ItemHasFormalTextLanguageProcessingLinearizedManyLines(baseEdge.From is not working as there has been codeprocesing model change
+        // this needs to be refactored BUT lets first hit this problem once again
+        bool ShouldSkipOutboundUnderLinearizedUxBaseEdge(IEdge baseEdge, IEdge childOutboundEdge)
+        {
+            if (baseEdge == null || childOutboundEdge == null)
+                return false;
+            if (!GeneralUtil.CompareStrings(baseEdge.Meta, "BaseEdge"))
+                return false;
+            string m = childOutboundEdge.Meta != null && childOutboundEdge.Meta.Value != null
+                ? childOutboundEdge.Meta.Value.ToString()
+                : null;
+            bool allow = BaseEdgeOutboundMetaAllowedForLinearizedUx(m);
+
+            return !allow;
+        }
+
 
         private bool ProcessSingleKeywordSentencePart(KeywordMatch km, string sentence, bool wasThereNewLine, out bool zeroMatch, bool ParentKmHasTabAddingOmmit)
         {
@@ -1217,6 +1253,9 @@ namespace m0.ZeroCode
             {
                 if (km.BaseEdge != baseEdge && !km.MatchedEdges.Contains(e))
                 {
+                    if (ShouldSkipOutboundUnderLinearizedUxBaseEdge(baseEdge, e))
+                        continue;
+
                     if (KeywordMatchedSubGraphEdges.ContainsKey(e))
                     { // XXX do not quite know what I'm doing, but this is for this below to work :/
                         //	"10"
@@ -1235,7 +1274,12 @@ namespace m0.ZeroCode
                 }
 
                 if (km.DoKeywordDefinitionContainLocalRoot && km.MatchedEdges.Contains(e) && KeywordMatchedSubGraphEdges[e] != km)
+                {
+                    if (ShouldSkipOutboundUnderLinearizedUxBaseEdge(baseEdge, e))
+                        continue;
+
                     AppendEdge(e, null, basePath + "\\" + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(dict, e), km.WasHereTabAddingOmmit);
+                }
 
             }
 
@@ -1851,6 +1895,9 @@ namespace m0.ZeroCode
                 foreach (IEdge e in baseEdge.To.OutEdgesRaw)
                 //foreach (IEdge e in ZeroCodeView.Linearize(baseEdge.To))
                 {
+                    if (ShouldSkipOutboundUnderLinearizedUxBaseEdge(baseEdge, e))
+                        continue;
+
                     int newLevel = level + 1;
 
                     if (KeywordMatchedSubGraphEdges.ContainsKey(e))
