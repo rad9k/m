@@ -753,6 +753,29 @@ namespace m0.ZeroUML.Instructions
             return localStack;
         }
 
+        private static string GetVertexDebugInfo(IVertex vertex)
+        {
+            if (vertex == null)
+                return "<null>";
+
+            return GraphUtil.GetVertexIdString(vertex) + " value=" + (vertex.Value == null ? "<null>" : vertex.Value.ToString());
+        }
+
+        private static string GetEdgeDebugInfo(IEdge edge)
+        {
+            if (edge == null)
+                return "<null>";
+
+            return "from=" + GetVertexDebugInfo(edge.From)
+                + " meta=" + GetVertexDebugInfo(edge.Meta)
+                + " to=" + GetVertexDebugInfo(edge.To);
+        }
+
+        private static string GetEdgesDebugInfo(IEnumerable<IEdge> edges)
+        {
+            return string.Join(" | ", edges.Select((edge, index) => (index + 1) + ":" + GetEdgeDebugInfo(edge)));
+        }
+
         public static INoInEdgeInOutVertexVertex SetIndex(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
@@ -766,12 +789,31 @@ namespace m0.ZeroUML.Instructions
 
             INoInEdgeInOutVertexVertex localStack = CreateStack();
 
+            MinusZero.Instance.Log(1, "ZeroUML.SetIndex",
+                "InputStack count=" + inputStack.OutEdges.Count()
+                + " edges=" + GetEdgesDebugInfo(inputStack.OutEdges));
+
             foreach (IEdge e in executeResult)
             {
                 int? index = GraphUtil.GetIntegerValue(e.To);
 
+                MinusZero.Instance.Log(1, "ZeroUML.SetIndex",
+                    "Requested index=" + (index == null ? "<null>" : index.ToString())
+                    + " from executeResult edge=" + GetEdgeDebugInfo(e));
+
                 if (index != null && index >= 1 && index <= inputStack.OutEdges.Count())
-                    localStack.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(inputStack.OutEdges[(int)index - 1]);
+                {
+                    IEdge selectedEdge = inputStack.OutEdges[(int)index - 1];
+
+                    MinusZero.Instance.Log(1, "ZeroUML.SetIndex",
+                        "Selected edge for index=" + index + " edge=" + GetEdgeDebugInfo(selectedEdge));
+
+                    localStack.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(selectedEdge);
+                }
+                else
+                    MinusZero.Instance.Log(1, "ZeroUML.SetIndex",
+                        "Index out of range index=" + (index == null ? "<null>" : index.ToString())
+                        + " inputCount=" + inputStack.OutEdges.Count());
             }
 
             return NextExpressionHandle(exe, localStack, instructionVertex);

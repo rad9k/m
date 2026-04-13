@@ -57,7 +57,12 @@ namespace m0.ZeroCode
 
 
             if (zcg2sp.VerticesDictionary.ContainsKey(v))
+            {
+                MinusZero.Instance.Log(1, "Graph2Text.LinkResolution",
+                    "VerticesDictionary hit vertex=" + GetVertexDebugInfo(v)
+                    + " link=" + zcg2sp.VerticesDictionary[v].LinkString);
                 return zcg2sp.VerticesDictionary[v].LinkString;
+            }
 
             linkBeenList = new HashSet<IVertex>();
             shortestPathToVertex = new Dictionary<IVertex, int>();
@@ -73,10 +78,27 @@ namespace m0.ZeroCode
 
 
             if (shortestLinkLength != 99999)
+            {
+                MinusZero.Instance.Log(1, "Graph2Text.LinkResolution",
+                    "Store shortest link vertex=" + GetVertexDebugInfo(v)
+                    + " link=" + shortestLink
+                    + " length=" + shortestLinkLength);
                 zcg2sp.VerticesDictionary.Add(v, new VertexData(shortestLink, shortestLinkLength));
+            }
 
             if (shortestLinkLength == 99999 && zcg2sp.SubGraphVerticesDictionary.ContainsKey(v))
+            {
+                MinusZero.Instance.Log(1, "Graph2Text.LinkResolution",
+                    "SubGraphVerticesDictionary fallback vertex=" + GetVertexDebugInfo(v)
+                    + " link=" + zcg2sp.SubGraphVerticesDictionary[v].LinkString);
                 return zcg2sp.SubGraphVerticesDictionary[v].LinkString;
+            }
+
+            MinusZero.Instance.Log(1, "Graph2Text.LinkResolution",
+                "Return shortest link vertex=" + GetVertexDebugInfo(v)
+                + " link=" + shortestLink
+                + " length=" + shortestLinkLength);
+
             return shortestLink;
         }
 
@@ -91,7 +113,49 @@ namespace m0.ZeroCode
             s.Append(ZeroCodeCommon.stringToPossiblyEscapedString(dict, v.Value.ToString()));
         }
 
-        public static string GetStringFromEdgesList(FormalTextLanguageDictinaries dict, List<IEdge> edgesList, bool isImportMeta, bool isRelativeToImport = false)
+        static string GetVertexDebugInfo(IVertex vertex)
+        {
+            if (vertex == null)
+                return "<null>";
+
+            return GraphUtil.GetVertexIdString(vertex) + " value=" + (vertex.Value == null ? "<null>" : vertex.Value.ToString());
+        }
+
+        static string GetEdgesDebugInfo(IList<IEdge> edges)
+        {
+            StringBuilder debug = new StringBuilder();
+
+            for (int i = 0; i < edges.Count; i++)
+            {
+                if (i > 0)
+                    debug.Append(" | ");
+
+                debug.Append(i + 1);
+                debug.Append(": meta=");
+                debug.Append(GetVertexDebugInfo(edges[i].Meta));
+                debug.Append(" to=");
+                debug.Append(GetVertexDebugInfo(edges[i].To));
+            }
+
+            return debug.ToString();
+        }
+
+        static string GetEdgeDebugInfo(IEdge edge)
+        {
+            if (edge == null)
+                return "<null>";
+
+            return "from=" + GetVertexDebugInfo(edge.From)
+                + " meta=" + GetVertexDebugInfo(edge.Meta)
+                + " to=" + GetVertexDebugInfo(edge.To);
+        }
+
+        static string GetEdgesDebugInfo(IEnumerable<IEdge> edges)
+        {
+            return string.Join(" | ", edges.Select((edge, index) => (index + 1) + ":" + GetEdgeDebugInfo(edge)));
+        }
+
+        public static string GetStringFromEdgesList(FormalTextLanguageDictinaries dict, Graph2TextProcessing processing, List<IEdge> edgesList, bool isImportMeta, bool isRelativeToImport = false)
         {
             StringBuilder s = new StringBuilder();
 
@@ -100,46 +164,47 @@ namespace m0.ZeroCode
             for (int x = edgesList.Count - 1; x != -1; x--)
             {
                 IEdge e = edgesList[x];
+                IEdge edgeForIdentification = processing == null ? e : processing.GetSourceEdgeForIdentification(e);
 
                 if (wasPrevious)
                     s.Append("\\");
 
-                if (e.Meta != null && e.To == null)
-                    s.Append(ZeroCodeCommon.stringToPossiblyEscapedString(dict, e.Meta.Value.ToString()));
+                if (edgeForIdentification.Meta != null && edgeForIdentification.To == null)
+                    s.Append(ZeroCodeCommon.stringToPossiblyEscapedString(dict, edgeForIdentification.Meta.Value.ToString()));
 
                 StringBuilder toAppend = new StringBuilder();
                 string possibleMetaSeparator = "";
 
-                if (e.To != null)
+                if (edgeForIdentification.To != null)
                 {
                     if (isImportMeta)
                     {
-                        if (!VertexOperations.IsToVertexEnoughToIdentifyEdge(e.From, e.To)
-                            && !Graph2TextProcessing.IsNullOrEmpty(e.Meta))
+                        if (!VertexOperations.IsToVertexEnoughToIdentifyEdge(edgeForIdentification.From, edgeForIdentification.To)
+                            && !Graph2TextProcessing.IsNullOrEmpty(edgeForIdentification.Meta))
                         {
-                            Append(dict, toAppend, e.Meta);
+                            Append(dict, toAppend, edgeForIdentification.Meta);
 
                             toAppend.Append(dict.MetaSeparator);
                         }
 
-                        Append(dict, toAppend, e.To);
+                        Append(dict, toAppend, edgeForIdentification.To);
 
                     }
                     else
                     {
-                        if (e.Meta == null || GeneralUtil.CompareStrings(e.Meta, "$Empty"))
+                        if (edgeForIdentification.Meta == null || GeneralUtil.CompareStrings(edgeForIdentification.Meta, "$Empty"))
                         {
                             if (isRelativeToImport)
                                 possibleMetaSeparator = dict.MetaSeparator;
-                            Append(dict, toAppend, e.To);
+                            Append(dict, toAppend, edgeForIdentification.To);
                         }
                         else
                         {
-                            if (!VertexOperations.IsToVertexEnoughToIdentifyEdge(e.From, e.To))
+                            if (!VertexOperations.IsToVertexEnoughToIdentifyEdge(edgeForIdentification.From, edgeForIdentification.To))
                             {
-                                Append(dict, toAppend, e.Meta);
+                                Append(dict, toAppend, edgeForIdentification.Meta);
 
-                                if (Graph2TextProcessing.IsNullOrEmpty(e.To))
+                                if (Graph2TextProcessing.IsNullOrEmpty(edgeForIdentification.To))
                                     toAppend.Append(dict.MetaSeparator);
                                 else if (isRelativeToImport)
                                     possibleMetaSeparator = dict.MetaSeparator;
@@ -149,12 +214,27 @@ namespace m0.ZeroCode
                             else if (isRelativeToImport)
                                 possibleMetaSeparator = dict.MetaSeparator;
 
-                            Append(dict, toAppend, e.To);
+                            Append(dict, toAppend, edgeForIdentification.To);
                         }
                     }
 
-                    if (VertexOperations.IsMetaAndToVertexEnoughToIdentifyEdge(e.From, e.Meta, e.To))
+                    bool isToEnough = VertexOperations.IsToVertexEnoughToIdentifyEdge(edgeForIdentification.From, edgeForIdentification.To);
+                    bool isMetaAndToEnough = VertexOperations.IsMetaAndToVertexEnoughToIdentifyEdge(edgeForIdentification.From, edgeForIdentification.Meta, edgeForIdentification.To);
+
+                    MinusZero.Instance.Log(1, "Graph2Text.SetIndex",
+                        "Evaluate edge=" + GetEdgeDebugInfo(edgeForIdentification)
+                        + " isImportMeta=" + isImportMeta
+                        + " isRelativeToImport=" + isRelativeToImport
+                        + " isToEnough=" + isToEnough
+                        + " isMetaAndToEnough=" + isMetaAndToEnough
+                        + " partial=" + (possibleMetaSeparator + toAppend.ToString()));
+
+                    if (isMetaAndToEnough)
+                    {
+                        MinusZero.Instance.Log(1, "Graph2Text.SetIndex",
+                            "Skip index because meta+to uniquely identify edge edge=" + GetEdgeDebugInfo(edgeForIdentification));
                         s.Append(possibleMetaSeparator + toAppend.ToString());
+                    }
                     else
                     {
                         int pos = 0;
@@ -162,7 +242,7 @@ namespace m0.ZeroCode
                         IEdge result;
                         IList<IEdge> results;
 
-                        e.From.QueryOutEdges(e.Meta.Value, e.To.Value, out result, out results);
+                        edgeForIdentification.From.QueryOutEdges(edgeForIdentification.Meta.Value, edgeForIdentification.To.Value, out result, out results);
 
 
                         IList<IEdge> listToUse;
@@ -181,7 +261,14 @@ namespace m0.ZeroCode
                         {
                             tv = listToUse.ElementAt(pos).To;
                             pos++;
-                        } while (tv != e.To);
+                        } while (tv != edgeForIdentification.To);
+
+                        MinusZero.Instance.Log(1, "Graph2Text.SetIndex",
+                            "Emit index=" + pos
+                            + " from=" + GetVertexDebugInfo(edgeForIdentification.From)
+                            + " meta=" + GetVertexDebugInfo(edgeForIdentification.Meta)
+                            + " to=" + GetVertexDebugInfo(edgeForIdentification.To)
+                            + " candidates=" + GetEdgesDebugInfo(listToUse));
 
                         s.Append(possibleMetaSeparator + toAppend.ToString() + dict.SetIndexPrefix + "\"" + pos + "\"" + dict.SetIndexPostfix);
                     }
@@ -211,7 +298,7 @@ namespace m0.ZeroCode
 
                 string s = "";
                 if (edgesList.Count() > 0)
-                    s = GetStringFromEdgesList(dict, edgesList, false, false);
+                    s = GetStringFromEdgesList(dict, zcg2sp, edgesList, false, false);
 
                 checkIfNewBest(edgesList.Count(), false, s);
 
@@ -227,7 +314,7 @@ namespace m0.ZeroCode
                             {
                                 isMetaDirect = false;
 
-                                string s = GetStringFromEdgesList(dict, edgesList, false, true);
+                                string s = GetStringFromEdgesList(dict, zcg2sp, edgesList, false, true);
 
                                 checkIfNewBest(edgesList.Count(), false, s);
 
@@ -240,7 +327,7 @@ namespace m0.ZeroCode
                             {
                                 isMetaDirect = true;
 
-                                string s = GetStringFromEdgesList(dict, edgesList, true, true);
+                                string s = GetStringFromEdgesList(dict, zcg2sp, edgesList, true, true);
 
                                 checkIfNewBest(edgesList.Count(), true, s);
 
@@ -257,7 +344,7 @@ namespace m0.ZeroCode
 
                             IEdge ee = new EdgeBase(null, ikv, null);
                             edgesList.Add(ee);
-                            string s = GetStringFromEdgesList(dict, edgesList, isMeta, true);
+                            string s = GetStringFromEdgesList(dict, zcg2sp, edgesList, isMeta, true);
                             int candidateLength = edgesList.Count();
                             edgesList.RemoveAt(edgesList.Count - 1);
 
@@ -374,7 +461,7 @@ namespace m0.ZeroCode
 
             if (v == MinusZero.Instance.Root)
             {
-                string toReturn = getLinkStringProcessing.GetStringFromEdgesList(dict, edgesList, true); // this is temporary as .Get does not support meta quey syntax
+                string toReturn = getLinkStringProcessing.GetStringFromEdgesList(dict, zcg2sp, edgesList, true); // this is temporary as .Get does not support meta quey syntax
 
                 if (toReturn.Length < shortestLinkLength)
                 {
@@ -493,6 +580,7 @@ namespace m0.ZeroCode
 
         FormalTextLanguageDictinaries dict;
         bool shouldUseCurrentPathForFirstVertexAppend;
+        IDictionary<IVertex, IVertex> linearizedToSourceVertices;
 
         public Graph2TextProcessing(IVertex formalTextLanguage)
         {
@@ -507,6 +595,115 @@ namespace m0.ZeroCode
         string Tab = "\t";
 
         string NewLine = "\r\n";
+
+        static string GetVertexDebugInfo(IVertex vertex)
+        {
+            if (vertex == null)
+                return "<null>";
+
+            return GraphUtil.GetVertexIdString(vertex) + " value=" + (vertex.Value == null ? "<null>" : vertex.Value.ToString());
+        }
+
+        static string GetEdgeDebugInfo(IEdge edge)
+        {
+            if (edge == null)
+                return "<null>";
+
+            return "from=" + GetVertexDebugInfo(edge.From)
+                + " meta=" + GetVertexDebugInfo(edge.Meta)
+                + " to=" + GetVertexDebugInfo(edge.To);
+        }
+
+        static string GetEdgesDebugInfo(IEnumerable<IEdge> edges)
+        {
+            return string.Join(" | ", edges.Select((edge, index) => (index + 1) + ":" + GetEdgeDebugInfo(edge)));
+        }
+
+        void ResetLinearizedGraphMappings()
+        {
+            linearizedToSourceVertices = new Dictionary<IVertex, IVertex>();
+        }
+
+        IVertex CreateLinearizedGraphWithMapping(IVertex sourceBaseVertex)
+        {
+            ResetLinearizedGraphMappings();
+
+            IDictionary<IVertex, IVertex> sourceLinearizedDict = new Dictionary<IVertex, IVertex>();
+            IList<IVertex> beenList = new List<IVertex>();
+
+            IEnumerable<IVertex> subGraph = GraphUtil.GetSubGraphWithoutLinksAsList(sourceBaseVertex);
+
+            foreach (IVertex v in subGraph)
+            {
+                IVertex linearizedVertex = MinusZero.Instance.CreateTempVertex();
+
+                linearizedVertex.Value = v.Value;
+
+                sourceLinearizedDict.Add(v, linearizedVertex);
+                linearizedToSourceVertices.Add(linearizedVertex, v);
+            }
+
+            return CreateLinearizedGraphWithMapping_Reccurent(sourceBaseVertex, sourceLinearizedDict, beenList);
+        }
+
+        IVertex CreateLinearizedGraphWithMapping_Reccurent(IVertex sourceVertex, IDictionary<IVertex, IVertex> sourceLinearizedDict, IList<IVertex> beenList)
+        {
+            if (!sourceLinearizedDict.ContainsKey(sourceVertex))
+                return sourceVertex;
+
+            if (beenList.Contains(sourceVertex))
+                return sourceVertex;
+
+            beenList.Add(sourceVertex);
+
+            IVertex linearizedVertex = sourceLinearizedDict[sourceVertex];
+
+            foreach (IEdge e in ZeroCodeView.LinearizeVertex(sourceVertex))
+            {
+                IVertex linearizedMeta;
+
+                if (e.Meta == dict.NextAtomMeta)
+                    linearizedMeta = MinusZero.Instance.Empty;
+                else if (sourceLinearizedDict.ContainsKey(e.Meta))
+                    linearizedMeta = sourceLinearizedDict[e.Meta];
+                else
+                    linearizedMeta = e.Meta;
+
+                IVertex linearizedTo;
+
+                if (sourceLinearizedDict.ContainsKey(e.To))
+                    linearizedTo = sourceLinearizedDict[e.To];
+                else
+                    linearizedTo = e.To;
+
+                if (VertexOperations.CanCopy_ByMeta(linearizedMeta))
+                    linearizedVertex.AddEdge(linearizedMeta, linearizedTo);
+
+                CreateLinearizedGraphWithMapping_Reccurent(e.To, sourceLinearizedDict, beenList);
+            }
+
+            return linearizedVertex;
+        }
+
+        public IEdge GetSourceEdgeForIdentification(IEdge edge)
+        {
+            if (edge == null || linearizedToSourceVertices == null || linearizedToSourceVertices.Count == 0)
+                return edge;
+
+            IVertex sourceFrom;
+            IVertex sourceTo;
+
+            if (!linearizedToSourceVertices.TryGetValue(edge.From, out sourceFrom)
+                || !linearizedToSourceVertices.TryGetValue(edge.To, out sourceTo))
+                return edge;
+
+            IVertex sourceMeta = edge.Meta;
+
+            if (edge.Meta != null && linearizedToSourceVertices.ContainsKey(edge.Meta))
+                sourceMeta = linearizedToSourceVertices[edge.Meta];
+
+            return new EdgeBase(sourceFrom, sourceMeta, sourceTo);
+        }
 
         void SourceAppend(string s)
         {
@@ -1758,13 +1955,28 @@ namespace m0.ZeroCode
             foreach (IEdge ee in e.To.OutEdgesRaw)
                 if (!VertexOperations.IsLink_OldVersion(ee))
                 {
-                    string LinkString = path + suffix + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(dict, ee);
+                    IEdge edgeForIdentification = GetSourceEdgeForIdentification(ee);
+                    string LinkString = path + suffix + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(dict, edgeForIdentification);
+
+                    MinusZero.Instance.Log(1, "Graph2Text.SubGraphLink",
+                        "Candidate path=" + (path ?? "<root>")
+                        + " nestedLevel=" + nestedLevel
+                        + " edge=" + GetEdgeDebugInfo(ee)
+                        + " sourceEdge=" + GetEdgeDebugInfo(edgeForIdentification)
+                        + " link=" + LinkString);
 
                     bool beenThereButNeedToReEnter = false;
 
                     if (SubGraphVerticesDictionary.ContainsKey(ee.To))
                     {
                         VertexData l = SubGraphVerticesDictionary[ee.To];
+
+                        MinusZero.Instance.Log(1, "Graph2Text.SubGraphLink",
+                            "Existing entry vertex=" + GetVertexDebugInfo(ee.To)
+                            + " existingLink=" + l.LinkString
+                            + " existingLevel=" + l.NestedLevel
+                            + " candidateLink=" + LinkString
+                            + " candidateLevel=" + nestedLevel);
 
                         if (nestedLevel < l.NestedLevel)
                         {
@@ -1773,11 +1985,23 @@ namespace m0.ZeroCode
                             vd.LinkString = LinkString;
                             vd.NestedLevel = nestedLevel;
 
+                            MinusZero.Instance.Log(1, "Graph2Text.SubGraphLink",
+                                "Updated entry vertex=" + GetVertexDebugInfo(ee.To)
+                                + " newLink=" + vd.LinkString
+                                + " newLevel=" + vd.NestedLevel);
+
                             beenThereButNeedToReEnter = true;
                         }
                     }
                     else
+                    {
                         SubGraphVerticesDictionary.Add(ee.To, new VertexData(LinkString, nestedLevel));
+
+                        MinusZero.Instance.Log(1, "Graph2Text.SubGraphLink",
+                            "Added entry vertex=" + GetVertexDebugInfo(ee.To)
+                            + " link=" + LinkString
+                            + " level=" + nestedLevel);
+                    }
 
                     if (beenThereButNeedToReEnter || !BeenList.Contains(ee))
                         GetLinksForSubGraphVertices_subVertexes(ee, LinkString, nestedLevel + 1);
@@ -1802,7 +2026,8 @@ namespace m0.ZeroCode
 
         private void MatchKeywords_inner(IEdge e, string path, string suffix, IEdge ee)
         {
-            string LinkString = path + suffix + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(dict, ee);
+            IEdge edgeForIdentification = GetSourceEdgeForIdentification(ee);
+            string LinkString = path + suffix + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(dict, edgeForIdentification);
 
             CheckVertexIfItMachesAnyKeywordGraphs(ee, LinkString, e);
 
@@ -1927,16 +2152,24 @@ namespace m0.ZeroCode
 
         public void prepareBaseEdge(IEdge _graphBaseEdge)
         {
-            IVertex v = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(_graphBaseEdge.To);
+            MinusZero.Instance.Log(1, "Graph2Text.Process",
+                "prepareBaseEdge input=" + GetEdgeDebugInfo(_graphBaseEdge)
+                + " inputOutEdges=" + GetEdgesDebugInfo(_graphBaseEdge.To.OutEdgesRaw));
+
+            IVertex v = CreateLinearizedGraphWithMapping(_graphBaseEdge.To);
 
             BaseEdge = new EasyEdge(_graphBaseEdge.From, _graphBaseEdge.Meta, v); // this is some crazy hybrid. this is non consistent and might not work!
+
+            MinusZero.Instance.Log(1, "Graph2Text.Process",
+                "prepareBaseEdge linearizedBase=" + GetEdgeDebugInfo(BaseEdge)
+                + " linearizedOutEdges=" + GetEdgesDebugInfo(BaseEdge.To.OutEdgesRaw));
 
             //BaseEdge = _graphBaseEdge;
         }
 
         public void prepareBaseEdge_EdgeAndManyLines(IEdge _graphBaseEdge)
         {
-            IVertex linearized = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(_graphBaseEdge.To);
+            IVertex linearized = CreateLinearizedGraphWithMapping(_graphBaseEdge.To);
 
             IVertex startingVertex = MinusZero.Instance.CreateTempVertex();
 
@@ -2022,11 +2255,13 @@ namespace m0.ZeroCode
 
         public void prepareBaseEdge_LinearizedManyLines(IEdge _graphBaseEdge)
         {
+            ResetLinearizedGraphMappings();
+
             IVertex startingVertex = MinusZero.Instance.CreateTempVertex();
 
             startingVertex.AddEdge(null, _graphBaseEdge.To);
 
-            IVertex v = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(startingVertex);
+            IVertex v = CreateLinearizedGraphWithMapping(startingVertex);
 
             IVertex articifialParent = MinusZero.Instance.CreateTempVertex();
 
@@ -2101,6 +2336,9 @@ namespace m0.ZeroCode
 
         public string Process_VertexAndManyLines(IEdge _graphBaseEdge)
         {
+            MinusZero.Instance.Log(1, "Graph2Text.Process",
+                "Process_VertexAndManyLines start input=" + GetEdgeDebugInfo(_graphBaseEdge));
+
             shouldUseCurrentPathForFirstVertexAppend = true;
             prepareBaseEdge(_graphBaseEdge);
 
@@ -2142,6 +2380,10 @@ namespace m0.ZeroCode
             foreach (IEdge e in BaseEdge.To.OutEdgesRaw)
                 ZeroCodeGraph2String_Reccurent(e, 1, BaseEdge, null);
 
+            MinusZero.Instance.Log(1, "Graph2Text.Process",
+                "Process_VertexAndManyLines done base=" + GetEdgeDebugInfo(BaseEdge)
+                + " source=" + Source.ToString());
+
             return Source.ToString();
         }
 
@@ -2162,6 +2404,10 @@ namespace m0.ZeroCode
 
         public string Process(IEdge _graphBaseEdge, CodeRepresentationEnum codeRepresentation)
         {
+            MinusZero.Instance.Log(1, "Graph2Text.Process",
+                "Process entry codeRepresentation=" + codeRepresentation
+                + " input=" + GetEdgeDebugInfo(_graphBaseEdge));
+
             switch (codeRepresentation)
             {
                 case CodeRepresentationEnum.EdgeOneLine: return Process_EdgeOneLine(_graphBaseEdge);
