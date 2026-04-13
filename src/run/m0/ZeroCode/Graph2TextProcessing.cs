@@ -950,7 +950,9 @@ namespace m0.ZeroCode
                         foreach (IEdge e in be.To.OutEdgesRaw)
                             if (!km.MatchedEdges.Contains(e))
                             {
-                                if (ShouldSkipOutboundUnderLinearizedUxBaseEdge(be, e))
+                                bool shouldSkip = ShouldSkipOutboundUnderLinearizedUxBaseEdge(be, e);
+
+                                if (shouldSkip)
                                     continue;
 
                                 int tabTimes_copy = tabTimes;
@@ -1253,7 +1255,9 @@ namespace m0.ZeroCode
             {
                 if (km.BaseEdge != baseEdge && !km.MatchedEdges.Contains(e))
                 {
-                    if (ShouldSkipOutboundUnderLinearizedUxBaseEdge(baseEdge, e))
+                    bool shouldSkip = ShouldSkipOutboundUnderLinearizedUxBaseEdge(baseEdge, e);
+
+                    if (shouldSkip)
                         continue;
 
                     if (KeywordMatchedSubGraphEdges.ContainsKey(e))
@@ -1275,7 +1279,9 @@ namespace m0.ZeroCode
 
                 if (km.DoKeywordDefinitionContainLocalRoot && km.MatchedEdges.Contains(e) && KeywordMatchedSubGraphEdges[e] != km)
                 {
-                    if (ShouldSkipOutboundUnderLinearizedUxBaseEdge(baseEdge, e))
+                    bool shouldSkip = ShouldSkipOutboundUnderLinearizedUxBaseEdge(baseEdge, e);
+
+                    if (shouldSkip)
                         continue;
 
                     AppendEdge(e, null, basePath + "\\" + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(dict, e), km.WasHereTabAddingOmmit);
@@ -1295,7 +1301,7 @@ namespace m0.ZeroCode
         bool ShouldAppendKeywordHere(IEdge e, string path)
         {
             if (VertexOperations.IsLink_OldVersion(e)) // XXX should work
-                return true;
+                return false; // 20260413. that was oposite but ...should be that way obviously. now lets check what it breakes (needed for BaseEdge g2t bug)
 
             if (SubGraphVerticesDictionary.ContainsKey(e.To) && SubGraphVerticesDictionary[e.To].LinkString == path)
                 return true;
@@ -1895,7 +1901,9 @@ namespace m0.ZeroCode
                 foreach (IEdge e in baseEdge.To.OutEdgesRaw)
                 //foreach (IEdge e in ZeroCodeView.Linearize(baseEdge.To))
                 {
-                    if (ShouldSkipOutboundUnderLinearizedUxBaseEdge(baseEdge, e))
+                    bool shouldSkip = ShouldSkipOutboundUnderLinearizedUxBaseEdge(baseEdge, e);
+
+                    if (shouldSkip)
                         continue;
 
                     int newLevel = level + 1;
