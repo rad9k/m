@@ -1123,14 +1123,14 @@ namespace m0.Graph
         }
 
         static public IEdge CreateOrReplaceEdge_DeepCopy(IVertex Vertex, IVertex metaVertex, IVertex NewEdgeToVertex)
-        {
-            //if (VertexOperations.IsLink(metaVertex))            
-              //  return Vertex.AddEdge(metaVertex, NewEdgeToVertex);
-                           
+        {                              
             IEdge toReplace = FindEdgeByMetaVertex(Vertex, metaVertex);
 
             if (toReplace != null)
                 Vertex.DeleteEdge(toReplace);
+
+            if (VertexOperations.IsLink(metaVertex))
+                return Vertex.AddEdge(metaVertex, NewEdgeToVertex);
 
             IEdge newEdge = Vertex.AddVertexAndReturnEdge(metaVertex, NewEdgeToVertex.Value);
 
