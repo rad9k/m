@@ -885,13 +885,6 @@ namespace m0.ZeroCode
             return HasFocusedIndexedOrderEdge(rememberedEdges);
         }
 
-        private bool IsIndexedMockVertex(IVertex vertex)
-        {
-            string link = GetMockLinkDebugInfo(vertex);
-
-            return IsIndexedLinkString(link);
-        }
-
         private bool TryParseIndexedLink(string link, out string baseLink, out int requestedIndex)
         {
             baseLink = "";
@@ -1023,59 +1016,6 @@ namespace m0.ZeroCode
                 parents.Add(baseVertex);
 
             return parents;
-        }
-
-        private IVertex TryResolveIndexedLinkFromParentOrder(string link, ToVertexMock mock)
-        {
-            string baseLink;
-            int requestedIndex;
-
-            if (!TryParseIndexedLink(link, out baseLink, out requestedIndex)
-                || !ShouldLogFocusedIndexedLink(link))
-                return null;
-
-            foreach (IVertex parent in GetIndexedResolutionParents(mock))
-            {
-                IList<IEdge> matches = GetIndexedResolutionEdgesInTextualOrder(parent)
-                    .Where(edge => edge != null
-                        && edge.To != null
-                        && !VertexOperations.IsLink(edge)
-                        && GeneralUtil.CompareStrings(edge.To, baseLink))
-                    .ToList();
-
-                MinusZero.Instance.Log(1, "Text2Graph.SetIndex",
-                    "stage=parent-order-scan"
-                    + " link=" + link
-                    + " mock=" + GetVertexDebugInfo(mock)
-                    + " mockParent=" + GetVertexDebugInfo(mock == null ? null : mock.parentVertex)
-                    + " baseLink=" + baseLink
-                    + " requestedIndex=" + requestedIndex
-                    + " candidateParent=" + GetVertexDebugInfo(parent)
-                    + " candidateParentRemembered=" + GetRememberedTextualChildrenDebugInfo(parent)
-                    + " candidateParentMatches=" + string.Join(" | ", matches.Select((edge, index) => (index + 1) + ":" + GetEdgeDebugInfo(edge))));
-
-                if (matches.Count >= requestedIndex)
-                {
-                    MinusZero.Instance.Log(1, "Text2Graph.SetIndex",
-                        "stage=parent-order-hit"
-                        + " link=" + link
-                        + " mock=" + GetVertexDebugInfo(mock)
-                        + " baseLink=" + baseLink
-                        + " requestedIndex=" + requestedIndex
-                        + " candidateParent=" + GetVertexDebugInfo(parent)
-                        + " resolvedVertex=" + GetVertexDebugInfo(matches[requestedIndex - 1].To));
-                    return matches[requestedIndex - 1].To;
-                }
-            }
-
-            MinusZero.Instance.Log(1, "Text2Graph.SetIndex",
-                "stage=parent-order-miss"
-                + " link=" + link
-                + " mock=" + GetVertexDebugInfo(mock)
-                + " baseLink=" + baseLink
-                + " requestedIndex=" + requestedIndex);
-
-            return null;
         }
 
         private void LogIndexedLinkResolutionState(string stage, string link, ToVertexMock mock, IVertex resolvedVertex)
@@ -4143,7 +4083,6 @@ namespace m0.ZeroCode
                 LogOrderState("Process.afterRestoreOutgoingEdgesToTextualOrder");
 
                 ProcessToVertexMocksToLinks();
-                RestoreOutgoingEdgesToTextualOrder();
                 LogOrderState("Process.afterProcessToVertexMocksToLinks");
 
                 MoveInEdgesComingFromOutsideOfSubGraphToParseRoot();
