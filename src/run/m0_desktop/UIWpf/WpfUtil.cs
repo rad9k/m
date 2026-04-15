@@ -33,8 +33,8 @@ namespace m0.UIWpf
 
         public static void InitializeUIWpf()
         {
-            Dnd.MinimumHorizontalDragDistance = SystemParameters.MinimumHorizontalDragDistance * 2;
-            Dnd.MinimumVerticalDragDistance = SystemParameters.MinimumVerticalDragDistance * 2;
+            Dnd.MinimumHorizontalDragDistance = SystemParameters.MinimumHorizontalDragDistance * 4;
+            Dnd.MinimumVerticalDragDistance = SystemParameters.MinimumVerticalDragDistance * 4;
         }
 
         public static void DecorateWithCustomCursor(FrameworkElement e, System.Windows.Input.Cursor cursor)
