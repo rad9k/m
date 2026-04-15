@@ -308,14 +308,14 @@ namespace m0.ZeroCode
             if (returnedLink != null)
             {
                 bool canUse = true;
+                string properVertexLink = "<not-in-subgraph>";
+                string toTestLink = returnedLink;
 
                 if (this.zcg2sp.SubGraphVerticesDictionary.ContainsKey(Vertex))
                 {
                     canUse = false;
 
-                    string properVertexLink = this.zcg2sp.SubGraphVerticesDictionary[Vertex].LinkString;
-
-                    string toTestLink = returnedLink;
+                    properVertexLink = this.zcg2sp.SubGraphVerticesDictionary[Vertex].LinkString;
 
                     if (_isMetaDirect == false)
                     {
@@ -514,27 +514,33 @@ namespace m0.ZeroCode
 
         string NewLine = "\r\n";
 
-        static string GetVertexDebugInfo(IVertex vertex)
+        internal string TryConvertToCurrentBaseRelativeLink(string linkToConvert, IVertex linkedVertex)
         {
-            if (vertex == null)
-                return "<null>";
+            if (!shouldUseCurrentPathForFirstVertexAppend)
+                return linkToConvert;
 
-            return GraphUtil.GetVertexIdString(vertex) + " value=" + (vertex.Value == null ? "<null>" : vertex.Value.ToString());
-        }
+            if (string.IsNullOrEmpty(linkToConvert))
+                return linkToConvert;
 
-        static string GetEdgeDebugInfo(IEdge edge)
-        {
-            if (edge == null)
-                return "<null>";
+            if (linkedVertex == null || linkedVertex.Value == null || SubGraphVerticesDictionary == null)
+                return linkToConvert;
 
-            return "from=" + GetVertexDebugInfo(edge.From)
-                + " meta=" + GetVertexDebugInfo(edge.Meta)
-                + " to=" + GetVertexDebugInfo(edge.To);
-        }
+            string matchingLocalAlias = SubGraphVerticesDictionary
+                .Where(kvp => kvp.Key != null
+                    && kvp.Key.Value != null
+                    && kvp.Value != null
+                    && !string.IsNullOrEmpty(kvp.Value.LinkString)
+                    && GeneralUtil.CompareStrings(kvp.Key.Value, linkedVertex.Value)
+                    && (linkToConvert == kvp.Value.LinkString || linkToConvert.EndsWith("\\" + kvp.Value.LinkString)))
+                .OrderBy(kvp => kvp.Value.NestedLevel)
+                .ThenBy(kvp => kvp.Value.LinkString.Length)
+                .Select(kvp => kvp.Value.LinkString)
+                .FirstOrDefault();
 
-        static string GetEdgesDebugInfo(IEnumerable<IEdge> edges)
-        {
-            return string.Join(" | ", edges.Select((edge, index) => (index + 1) + ":" + GetEdgeDebugInfo(edge)));
+            if (matchingLocalAlias != null)
+                return matchingLocalAlias;
+
+            return linkToConvert;
         }
 
         void SourceAppend(string s)
@@ -655,6 +661,8 @@ namespace m0.ZeroCode
                 getLinkStringProcessing glsp = new getLinkStringProcessing();
                 toAppend = glsp.Process(dict, this, v, parent);
             }
+
+            toAppend = TryConvertToCurrentBaseRelativeLink(toAppend, v);
 
             if (hideLinkPrefix)
                 SourceAppend(ZeroCodeCommon.stringToLinkString(dict, toAppend, true));
@@ -2148,7 +2156,7 @@ namespace m0.ZeroCode
             DoKeywordDefinitionContainLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
             DoKeywordDefinitionContainStartInLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
 
-            //             
+            //
 
             GetLinksForSubGraphVertices_BaseEdge();
             GetLinksForSubGraphVertices_subVertexes(BaseEdge, null, 0);
