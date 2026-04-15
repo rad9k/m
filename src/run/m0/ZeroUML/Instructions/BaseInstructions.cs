@@ -1,4 +1,4 @@
-using m0.Foundation;
+﻿using m0.Foundation;
 using m0.Graph;
 using m0.Graph.ExecutionFlow;
 using m0.Util;
@@ -753,44 +753,6 @@ namespace m0.ZeroUML.Instructions
             return localStack;
         }
 
-        private static string GetVertexDebugInfo(IVertex vertex)
-        {
-            if (vertex == null)
-                return "<null>";
-
-            return GraphUtil.GetVertexIdString(vertex) + " value=" + (vertex.Value == null ? "<null>" : vertex.Value.ToString());
-        }
-
-        private static string GetEdgeDebugInfo(IEdge edge)
-        {
-            if (edge == null)
-                return "<null>";
-
-            return "from=" + GetVertexDebugInfo(edge.From)
-                + " meta=" + GetVertexDebugInfo(edge.Meta)
-                + " to=" + GetVertexDebugInfo(edge.To);
-        }
-
-        private static string GetEdgesDebugInfo(IEnumerable<IEdge> edges)
-        {
-            return string.Join(" | ", edges.Select((edge, index) => (index + 1) + ":" + GetEdgeDebugInfo(edge)));
-        }
-
-        private static string GetRepeatedToValuesDebugInfo(IEnumerable<IEdge> edges)
-        {
-            if (edges == null)
-                return "";
-
-            return string.Join(" | ",
-                edges
-                    .Select((edge, index) => new { edge, index })
-                    .Where(x => x.edge != null && x.edge.To != null)
-                    .GroupBy(x => x.edge.To.Value == null ? "<null>" : x.edge.To.Value.ToString())
-                    .Where(group => group.Count() > 1)
-                    .Select(group => group.Key + "=[" + string.Join(", ",
-                        group.Select(x => (x.index + 1) + ":" + GraphUtil.GetVertexIdString(x.edge.To))) + "]"));
-        }
-
         public static INoInEdgeInOutVertexVertex SetIndex(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
@@ -806,44 +768,16 @@ namespace m0.ZeroUML.Instructions
             IList<IEdge> inputEdges = inputStack.OutEdges;
             IList<IEdge> executeEdges = executeResult.OutEdges;
 
-            MinusZero.Instance.Log(1, "ZeroUML.SetIndex",
-                "instructionVertex=" + GetVertexDebugInfo(instructionVertex)
-                + " expression=" + GetVertexDebugInfo(expression)
-                + " inputStackCount=" + inputEdges.Count
-                + " inputStackEdges=" + GetEdgesDebugInfo(inputEdges)
-                + " inputStackRepeatedToValues=" + GetRepeatedToValuesDebugInfo(inputEdges)
-                + " executeResultCount=" + executeEdges.Count
-                + " executeResultEdges=" + GetEdgesDebugInfo(executeEdges));
-
             foreach (IEdge e in executeEdges)
             {
                 int? index = GraphUtil.GetIntegerValue(e.To);
-
-                MinusZero.Instance.Log(1, "ZeroUML.SetIndex",
-                    "Requested index=" + (index == null ? "<null>" : index.ToString())
-                    + " from executeResult edge=" + GetEdgeDebugInfo(e)
-                    + " inputStackRepeatedToValues=" + GetRepeatedToValuesDebugInfo(inputEdges));
 
                 if (index != null && index >= 1 && index <= inputEdges.Count)
                 {
                     IEdge selectedEdge = inputEdges[(int)index - 1];
 
-                    MinusZero.Instance.Log(1, "ZeroUML.SetIndex",
-                        "Selected edge for index=" + index
-                        + " edge=" + GetEdgeDebugInfo(selectedEdge)
-                        + " selectedToPositionInInputStack=" + inputEdges
-                            .Select((edge, position) => new { edge, position })
-                            .Where(x => x.edge != null && x.edge.To == selectedEdge.To)
-                            .Select(x => (x.position + 1).ToString())
-                            .FirstOrDefault());
-
                     localStack.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(selectedEdge);
                 }
-                else
-                    MinusZero.Instance.Log(1, "ZeroUML.SetIndex",
-                        "Index out of range index=" + (index == null ? "<null>" : index.ToString())
-                        + " inputCount=" + inputEdges.Count
-                        + " inputStackRepeatedToValues=" + GetRepeatedToValuesDebugInfo(inputEdges));
             }
 
             return NextExpressionHandle(exe, localStack, instructionVertex);

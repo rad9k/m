@@ -616,14 +616,6 @@ namespace m0.ZeroCode
                 if (HasSameEdgeReferencesInTheSameOrder(currentEdges, reorderedEdges))
                     continue;
 
-                if (HasFocusedIndexedOrderEdge(currentEdges) || HasFocusedIndexedOrderEdge(reorderedEdges))
-                    MinusZero.Instance.Log(1, "Text2Graph.TextualOrder",
-                        "Restore parent=" + GetVertexDebugInfo(parent)
-                        + " before=" + GetEdgesDebugInfo(currentEdges)
-                        + " beforeRepeatedToValues=" + GetRepeatedToValuesDebugInfo(currentEdges)
-                        + " after=" + GetEdgesDebugInfo(reorderedEdges)
-                        + " afterRepeatedToValues=" + GetRepeatedToValuesDebugInfo(reorderedEdges));
-
                 List<IEdge> recreatedEdges = new List<IEdge>();
                 foreach (IEdge edge in reorderedEdges)
                     recreatedEdges.Add(parent.AddEdge(edge.Meta, edge.To));
@@ -633,92 +625,6 @@ namespace m0.ZeroCode
 
                 textualChildrenOrderByParent[parent] = recreatedEdges;
             }
-        }
-
-        private static string GetVertexDebugInfo(IVertex vertex)
-        {
-            if (vertex == null)
-                return "<null>";
-
-            return GraphUtil.GetVertexIdString(vertex) + " value=" + (vertex.Value == null ? "<null>" : vertex.Value.ToString());
-        }
-
-        private static string GetEdgeDebugInfo(IEdge edge)
-        {
-            if (edge == null)
-                return "<null>";
-
-            return "from=" + GetVertexDebugInfo(edge.From)
-                + " meta=" + GetVertexDebugInfo(edge.Meta)
-                + " to=" + GetVertexDebugInfo(edge.To);
-        }
-
-        private static string GetEdgesDebugInfo(IEnumerable<IEdge> edges)
-        {
-            return string.Join(" | ", edges.Select((edge, index) => (index + 1) + ":" + GetEdgeDebugInfo(edge)));
-        }
-
-        private static string GetRepeatedToValuesDebugInfo(IEnumerable<IEdge> edges)
-        {
-            if (edges == null)
-                return "";
-
-            return string.Join(" | ",
-                edges
-                    .Select((edge, index) => new { edge, index })
-                    .Where(x => x.edge != null && x.edge.To != null)
-                    .GroupBy(x => x.edge.To.Value == null ? "<null>" : x.edge.To.Value.ToString())
-                    .Where(group => group.Count() > 1)
-                    .Select(group => group.Key + "=[" + string.Join(", ",
-                        group.Select(x => (x.index + 1) + ":" + GraphUtil.GetVertexIdString(x.edge.To))) + "]"));
-        }
-
-        private static string GetRepeatedToValuesDebugInfo(IVertex parent)
-        {
-            if (parent == null)
-                return "";
-
-            return GetRepeatedToValuesDebugInfo(parent.OutEdgesRaw);
-        }
-
-        private string GetRememberedTextualChildrenDebugInfo(IVertex parent)
-        {
-            if (parent == null || textualChildrenOrderByParent == null)
-                return "";
-
-            List<IEdge> rememberedEdges;
-            if (!textualChildrenOrderByParent.TryGetValue(parent, out rememberedEdges))
-                return "";
-
-            return GetEdgesDebugInfo(rememberedEdges);
-        }
-
-        private static string GetEdgePositionDebugInfo(IVertex parent, IEdge edge)
-        {
-            if (parent == null || edge == null)
-                return "<none>";
-
-            IList<IEdge> edges = parent.OutEdgesRaw;
-
-            for (int i = 0; i < edges.Count; i++)
-                if (object.ReferenceEquals(edges[i], edge))
-                    return (i + 1).ToString();
-
-            return "<not-found>";
-        }
-
-        private static string GetMatchingEdgesByMetaAndToDebugInfo(IVertex parent, IEdge referenceEdge)
-        {
-            if (parent == null || referenceEdge == null)
-                return "";
-
-            return string.Join(" | ",
-                parent.OutEdgesRaw
-                    .Select((edge, index) => new { edge, index })
-                    .Where(x => x.edge != null
-                        && GeneralUtil.CompareStrings(x.edge.Meta, referenceEdge.Meta)
-                        && GeneralUtil.CompareStrings(x.edge.To, referenceEdge.To))
-                    .Select(x => (x.index + 1) + ":" + GetEdgeDebugInfo(x.edge)));
         }
 
         private static int GetMatchingEdgeOccurrence(IVertex parent, IEdge referenceEdge)
@@ -742,352 +648,11 @@ namespace m0.ZeroCode
             return -1;
         }
 
-        private IVertex GetParseRootPayloadVertex()
-        {
-            if (parseRoot == null)
-                return null;
-
-            IEdge parseRootEdge = parseRoot.FirstOrDefault();
-            if (parseRootEdge == null)
-                return null;
-
-            return parseRootEdge.To;
-        }
-
-        private void LogOrderState(string stage)
-        {
-            IVertex parseRootPayload = GetParseRootPayloadVertex();
-
-            if (!ParentHasFocusedIndexedOrder(baseVertex)
-                && !ParentHasFocusedIndexedOrder(parseRootPayload))
-                return;
-
-            MinusZero.Instance.Log(1, "Text2Graph.OrderState",
-                "stage=" + stage
-                + " baseVertex=" + GetVertexDebugInfo(baseVertex)
-                + " baseOutEdges=" + GetEdgesDebugInfo(baseVertex == null ? Enumerable.Empty<IEdge>() : baseVertex.OutEdgesRaw)
-                + " parseRoot=" + GetVertexDebugInfo(parseRoot)
-                + " parseRootOutEdges=" + GetEdgesDebugInfo(parseRoot == null ? Enumerable.Empty<IEdge>() : parseRoot.OutEdgesRaw)
-                + " parseRootPayload=" + GetVertexDebugInfo(parseRootPayload)
-                + " parseRootPayloadOutEdges=" + GetEdgesDebugInfo(parseRootPayload == null ? Enumerable.Empty<IEdge>() : parseRootPayload.OutEdgesRaw)
-                + " parseRootPayloadRepeatedToValues=" + GetRepeatedToValuesDebugInfo(parseRootPayload)
-                + " rememberedBase=" + GetRememberedTextualChildrenDebugInfo(baseVertex)
-                + " rememberedParseRootPayload=" + GetRememberedTextualChildrenDebugInfo(parseRootPayload)
-                + " baseRepeatedToValues=" + GetRepeatedToValuesDebugInfo(baseVertex));
-        }
-
-        private void LogOrderMutationState(string stage, IVertex parent, IEdge edge)
-        {
-            IVertex parseRootPayload = GetParseRootPayloadVertex();
-
-            if (!ParentHasFocusedIndexedOrder(parent)
-                && !ParentHasFocusedIndexedOrder(parseRootPayload)
-                && !ParentHasFocusedIndexedOrder(baseVertex)
-                && !IsFocusedIndexedOrderEdge(edge))
-                return;
-
-            MinusZero.Instance.Log(1, "Text2Graph.OrderMutation",
-                "stage=" + stage
-                + " parent=" + GetVertexDebugInfo(parent)
-                + " parentOutEdges=" + GetEdgesDebugInfo(parent == null ? Enumerable.Empty<IEdge>() : parent.OutEdgesRaw)
-                + " parentRepeatedToValues=" + GetRepeatedToValuesDebugInfo(parent)
-                + " edge=" + GetEdgeDebugInfo(edge)
-                + " parseRootPayload=" + GetVertexDebugInfo(parseRootPayload)
-                + " parseRootPayloadOutEdges=" + GetEdgesDebugInfo(parseRootPayload == null ? Enumerable.Empty<IEdge>() : parseRootPayload.OutEdgesRaw)
-                + " parseRootPayloadRepeatedToValues=" + GetRepeatedToValuesDebugInfo(parseRootPayload)
-                + " baseVertex=" + GetVertexDebugInfo(baseVertex)
-                + " baseOutEdges=" + GetEdgesDebugInfo(baseVertex == null ? Enumerable.Empty<IEdge>() : baseVertex.OutEdgesRaw)
-                + " baseRepeatedToValues=" + GetRepeatedToValuesDebugInfo(baseVertex));
-        }
-
-        private static string GetMockLinkDebugInfo(IVertex vertex)
-        {
-            ToVertexMock mock = vertex as ToVertexMock;
-
-            if (mock == null || mock.mockData == null)
-                return "";
-
-            return mock.mockData.ToString();
-        }
-
-        private bool IsIndexedLinkString(string link)
-        {
-            return !string.IsNullOrEmpty(link)
-                && link.Contains(dict.SetIndexPrefix)
-                && link.Contains(dict.SetIndexPostfix);
-        }
-
-        // Keep indexed debug narrow to the problematic link family.
-        private bool ShouldLogFocusedIndexedLink(string link)
-        {
-            string baseLink;
-            int requestedIndex;
-
-            if (TryParseIndexedLink(link, out baseLink, out requestedIndex))
-                return GeneralUtil.CompareStrings(baseLink, @"UXContainer:\Item:");
-
-            return !string.IsNullOrEmpty(link)
-                && link.IndexOf(@"UXContainer:\Item:", StringComparison.Ordinal) >= 0;
-        }
-
-        private bool ShouldLogFocusedMockVertex(IVertex vertex)
-        {
-            return ShouldLogFocusedIndexedLink(GetMockLinkDebugInfo(vertex));
-        }
-
-        private bool IsFocusedIndexedVertex(IVertex vertex)
-        {
-            if (vertex == null)
-                return false;
-
-            if (GeneralUtil.CompareStrings(vertex, @"UXContainer:\Item:"))
-                return true;
-
-            return ShouldLogFocusedMockVertex(vertex);
-        }
-
-        private bool IsFocusedIndexedOrderEdge(IEdge edge)
-        {
-            if (edge == null)
-                return false;
-
-            return IsFocusedIndexedVertex(edge.Meta)
-                || IsFocusedIndexedVertex(edge.To);
-        }
-
-        private bool HasFocusedIndexedOrderEdge(IEnumerable<IEdge> edges)
-        {
-            if (edges == null)
-                return false;
-
-            foreach (IEdge edge in edges)
-                if (IsFocusedIndexedOrderEdge(edge))
-                    return true;
-
-            return false;
-        }
-
-        private bool ParentHasFocusedIndexedOrder(IVertex parent)
-        {
-            if (parent == null)
-                return false;
-
-            if (HasFocusedIndexedOrderEdge(parent.OutEdgesRaw))
-                return true;
-
-            if (textualChildrenOrderByParent == null)
-                return false;
-
-            List<IEdge> rememberedEdges;
-            if (!textualChildrenOrderByParent.TryGetValue(parent, out rememberedEdges))
-                return false;
-
-            return HasFocusedIndexedOrderEdge(rememberedEdges);
-        }
-
-        private bool TryParseIndexedLink(string link, out string baseLink, out int requestedIndex)
-        {
-            baseLink = "";
-            requestedIndex = -1;
-
-            if (string.IsNullOrEmpty(link))
-                return false;
-
-            int prefixPos = link.LastIndexOf(dict.SetIndexPrefix, StringComparison.Ordinal);
-            if (prefixPos < 0)
-                return false;
-
-            int indexStartPos = prefixPos + dict.SetIndexPrefix.Length;
-            int postfixPos = link.IndexOf(dict.SetIndexPostfix, indexStartPos, StringComparison.Ordinal);
-            if (postfixPos < 0)
-                return false;
-
-            string indexString = link.Substring(indexStartPos, postfixPos - indexStartPos).Trim('"');
-
-            int parsedIndex;
-            if (!int.TryParse(indexString, out parsedIndex) || parsedIndex < 1)
-                return false;
-
-            baseLink = link.Substring(0, prefixPos);
-            requestedIndex = parsedIndex;
-
-            return baseLink.Length > 0;
-        }
-
-        private string GetIndexedLinkParseDebugInfo(string link)
-        {
-            string baseLink;
-            int requestedIndex;
-
-            if (!TryParseIndexedLink(link, out baseLink, out requestedIndex))
-                return "parse=failed";
-
-            return "parse=ok baseLink=" + baseLink + " requestedIndex=" + requestedIndex;
-        }
-
-        private string GetIndexedResolutionMatchesDebugInfo(IVertex parent, string baseLink)
-        {
-            if (parent == null || string.IsNullOrEmpty(baseLink))
-                return "";
-
-            return string.Join(" | ",
-                GetIndexedResolutionEdgesInTextualOrder(parent)
-                    .Select((edge, index) => new { edge, index })
-                    .Where(x => x.edge != null
-                        && x.edge.To != null
-                        && !VertexOperations.IsLink(x.edge)
-                        && GeneralUtil.CompareStrings(x.edge.To, baseLink))
-                    .Select(x => (x.index + 1) + ":" + GetEdgeDebugInfo(x.edge)));
-        }
-
-        private void LogIndexedResolutionCandidates(string stage, string link, ToVertexMock mock)
-        {
-            if (!ShouldLogFocusedIndexedLink(link))
-                return;
-
-            string baseLink;
-            int requestedIndex;
-
-            if (!TryParseIndexedLink(link, out baseLink, out requestedIndex))
-            {
-                MinusZero.Instance.Log(1, "Text2Graph.SetIndex",
-                    "stage=" + stage
-                    + " link=" + link
-                    + " mock=" + GetVertexDebugInfo(mock)
-                    + " mockParent=" + GetVertexDebugInfo(mock == null ? null : mock.parentVertex)
-                    + " parse=failed");
-                return;
-            }
-
-            foreach (IVertex parent in GetIndexedResolutionParents(mock))
-                MinusZero.Instance.Log(1, "Text2Graph.SetIndex",
-                    "stage=" + stage
-                    + " link=" + link
-                    + " mock=" + GetVertexDebugInfo(mock)
-                    + " mockParent=" + GetVertexDebugInfo(mock == null ? null : mock.parentVertex)
-                    + " baseLink=" + baseLink
-                    + " requestedIndex=" + requestedIndex
-                    + " candidateParent=" + GetVertexDebugInfo(parent)
-                    + " candidateParentOutEdges=" + GetEdgesDebugInfo(parent == null ? Enumerable.Empty<IEdge>() : parent.OutEdgesRaw)
-                    + " candidateParentRemembered=" + GetRememberedTextualChildrenDebugInfo(parent)
-                    + " candidateParentMatches=" + GetIndexedResolutionMatchesDebugInfo(parent, baseLink));
-        }
-
-        private IEnumerable<IEdge> GetIndexedResolutionEdgesInTextualOrder(IVertex parent)
-        {
-            if (parent == null)
-                return Enumerable.Empty<IEdge>();
-
-            List<IEdge> rememberedEdges;
-            if (textualChildrenOrderByParent != null
-                && textualChildrenOrderByParent.TryGetValue(parent, out rememberedEdges)
-                && rememberedEdges != null
-                && rememberedEdges.Count > 0)
-                return rememberedEdges;
-
-            return parent.OutEdgesRaw;
-        }
-
-        private IEnumerable<IVertex> GetIndexedResolutionParents(ToVertexMock mock)
-        {
-            List<IVertex> parents = new List<IVertex>();
-
-            if (mock == null || mock.parentVertex == null)
-                return parents;
-
-            foreach (IEdge inEdge in mock.parentVertex.InEdgesRaw)
-                if (inEdge != null
-                    && inEdge.From != null
-                    && !parents.Contains(inEdge.From)
-                    && !VertexOperations.IsLink(inEdge))
-                    parents.Add(inEdge.From);
-
-            foreach (IEdge inEdge in mock.parentVertex.InEdgesRaw)
-                if (inEdge != null
-                    && inEdge.From != null
-                    && !parents.Contains(inEdge.From))
-                    parents.Add(inEdge.From);
-
-            IVertex parseRootPayload = GetParseRootPayloadVertex();
-            if (parseRootPayload != null && !parents.Contains(parseRootPayload))
-                parents.Add(parseRootPayload);
-
-            if (baseVertex != null && !parents.Contains(baseVertex))
-                parents.Add(baseVertex);
-
-            return parents;
-        }
-
-        private void LogIndexedLinkResolutionState(string stage, string link, ToVertexMock mock, IVertex resolvedVertex)
-        {
-            if (!ShouldLogFocusedIndexedLink(link))
-                return;
-
-            IVertex parseRootPayload = GetParseRootPayloadVertex();
-            IVertex parentVertex = mock == null ? null : mock.parentVertex;
-
-            MinusZero.Instance.Log(1, "Text2Graph.SetIndex",
-                "stage=" + stage
-                + " link=" + link
-                + " linkDetails=" + GetIndexedLinkParseDebugInfo(link)
-                + " mock=" + GetVertexDebugInfo(mock)
-                + " parent=" + GetVertexDebugInfo(parentVertex)
-                + " parentOutEdges=" + GetEdgesDebugInfo(parentVertex == null ? Enumerable.Empty<IEdge>() : parentVertex.OutEdgesRaw)
-                + " parentRepeatedToValues=" + GetRepeatedToValuesDebugInfo(parentVertex)
-                + " parentRemembered=" + GetRememberedTextualChildrenDebugInfo(parentVertex)
-                + " parseRootPayload=" + GetVertexDebugInfo(parseRootPayload)
-                + " parseRootPayloadOutEdges=" + GetEdgesDebugInfo(parseRootPayload == null ? Enumerable.Empty<IEdge>() : parseRootPayload.OutEdgesRaw)
-                + " parseRootPayloadRepeatedToValues=" + GetRepeatedToValuesDebugInfo(parseRootPayload)
-                + " parseRootPayloadRemembered=" + GetRememberedTextualChildrenDebugInfo(parseRootPayload)
-                + " baseVertex=" + GetVertexDebugInfo(baseVertex)
-                + " baseOutEdges=" + GetEdgesDebugInfo(baseVertex == null ? Enumerable.Empty<IEdge>() : baseVertex.OutEdgesRaw)
-                + " baseRepeatedToValues=" + GetRepeatedToValuesDebugInfo(baseVertex)
-                + " baseRemembered=" + GetRememberedTextualChildrenDebugInfo(baseVertex)
-                + " resolvedVertex=" + GetVertexDebugInfo(resolvedVertex));
-        }
-
-        private void LogIndexedRepinState(string stage, IEdge edge, IVertex metaVertex, IVertex toVertex)
-        {
-            bool hasIndexedMetaMock = ShouldLogFocusedMockVertex(edge == null ? null : edge.Meta);
-            bool hasIndexedToMock = ShouldLogFocusedMockVertex(edge == null ? null : edge.To);
-
-            if (!hasIndexedMetaMock && !hasIndexedToMock)
-                return;
-
-            IVertex parseRootPayload = GetParseRootPayloadVertex();
-
-            MinusZero.Instance.Log(1, "Text2Graph.SetIndex.Repin",
-                "stage=" + stage
-                + " edgeFrom=" + GetVertexDebugInfo(edge == null ? null : edge.From)
-                + " edgeMeta=" + GetVertexDebugInfo(edge == null ? null : edge.Meta)
-                + " edgeMetaLink=" + GetMockLinkDebugInfo(edge == null ? null : edge.Meta)
-                + " edgeTo=" + GetVertexDebugInfo(edge == null ? null : edge.To)
-                + " edgeToLink=" + GetMockLinkDebugInfo(edge == null ? null : edge.To)
-                + " resolvedMeta=" + GetVertexDebugInfo(metaVertex)
-                + " resolvedTo=" + GetVertexDebugInfo(toVertex)
-                + " edgeFromOutEdges=" + GetEdgesDebugInfo(edge == null || edge.From == null ? Enumerable.Empty<IEdge>() : edge.From.OutEdgesRaw)
-                + " edgeFromRepeatedToValues=" + GetRepeatedToValuesDebugInfo(edge == null ? null : edge.From)
-                + " parseRootPayload=" + GetVertexDebugInfo(parseRootPayload)
-                + " parseRootPayloadOutEdges=" + GetEdgesDebugInfo(parseRootPayload == null ? Enumerable.Empty<IEdge>() : parseRootPayload.OutEdgesRaw)
-                + " parseRootPayloadRepeatedToValues=" + GetRepeatedToValuesDebugInfo(parseRootPayload)
-                + " baseVertex=" + GetVertexDebugInfo(baseVertex)
-                + " baseOutEdges=" + GetEdgesDebugInfo(baseVertex == null ? Enumerable.Empty<IEdge>() : baseVertex.OutEdgesRaw)
-                + " baseRepeatedToValues=" + GetRepeatedToValuesDebugInfo(baseVertex));
-        }
-
         IVertex ToVertexMock2VertexByLinkString(ToVertexMock mock)
         {
             string link = "";
             if (mock.mockData != null)
                 link = mock.mockData.ToString();
-
-            bool isIndexedLink = IsIndexedLinkString(link);
-
-            if (isIndexedLink)
-            {
-                LogIndexedLinkResolutionState("resolve.start", link, mock, null);
-                LogIndexedResolutionCandidates("resolve.start.candidates", link, mock);
-            }
 
             if (link.Length == 0)
                 return MinusZero.Instance.Root;
@@ -1104,11 +669,7 @@ namespace m0.ZeroCode
                     IVertex value = SearchForParentLink_Is(link, inEdge);
 
                     if (value != null)
-                    {
-                        if (isIndexedLink)
-                            LogIndexedLinkResolutionState("resolve.via.$Is", link, mock, value);
                         return value;
-                    }
                 }
 
                 foreach (IEdge inEdge in mock.parentVertex.InEdges)
@@ -1116,11 +677,7 @@ namespace m0.ZeroCode
                     IVertex value = SearchForParentLink(link, inEdge);
 
                     if (value != null)
-                    {
-                        if (isIndexedLink)
-                            LogIndexedLinkResolutionState("resolve.via.parent-in-edge", link, mock, value);
                         return value;
-                    }
                 }
             }
 
@@ -1146,11 +703,7 @@ namespace m0.ZeroCode
                     tryIf = query(importLink, secondPart);
 
                     if (tryIf != null)
-                    {
-                        if (isIndexedLink)
-                            LogIndexedLinkResolutionState("resolve.via.import", link, mock, tryIf);
                         return tryIf;
-                    }
                 }
 
                 // dict importList
@@ -1161,11 +714,7 @@ namespace m0.ZeroCode
                     tryIf = query(importLink, secondPart);
 
                     if (tryIf != null)
-                    {
-                        if (isIndexedLink)
-                            LogIndexedLinkResolutionState("resolve.via.dict-import", link, mock, tryIf);
                         return tryIf;
-                    }
                 }
 
                 // normal importMetaList
@@ -1176,11 +725,7 @@ namespace m0.ZeroCode
                     tryIf = queryMetaImport(importMetaLink, secondPart);
 
                     if (tryIf != null)
-                    {
-                        if (isIndexedLink)
-                            LogIndexedLinkResolutionState("resolve.via.import-meta", link, mock, tryIf);
                         return tryIf;
-                    }
                 }
 
                 // dict importMetaList
@@ -1191,11 +736,7 @@ namespace m0.ZeroCode
                     tryIf = queryMetaImport(importMetaLink, secondPart);
 
                     if (tryIf != null)
-                    {
-                        if (isIndexedLink)
-                            LogIndexedLinkResolutionState("resolve.via.dict-import-meta", link, mock, tryIf);
                         return tryIf;
-                    }
                 }
             }            
 
@@ -1204,61 +745,35 @@ namespace m0.ZeroCode
             tryIf = query(importDirectList, @"\" + link);
 
             if (tryIf != null)
-            {
-                if (isIndexedLink)
-                    LogIndexedLinkResolutionState("resolve.via.direct-import", link, mock, tryIf);
                 return tryIf;
-            }
 
             // dict direct link
 
             tryIf = query(dict.importDirectList, @"\" + link);
 
             if (tryIf != null)
-            {
-                if (isIndexedLink)
-                    LogIndexedLinkResolutionState("resolve.via.dict-direct-import", link, mock, tryIf);
                 return tryIf;
-            }
 
             // normal direct link meta
 
             tryIf = queryMetaImport(importDirectMetaList, @"\" + link);
 
             if (tryIf != null)
-            {
-                if (isIndexedLink)
-                    LogIndexedLinkResolutionState("resolve.via.direct-meta-import", link, mock, tryIf);
                 return tryIf;
-            }
 
             // dict direct link meta
 
             tryIf = queryMetaImport(dict.importDirectMetaList, @"\" + link);
             
             if (tryIf != null)
-            {
-                if (isIndexedLink)
-                    LogIndexedLinkResolutionState("resolve.via.dict-direct-meta-import", link, mock, tryIf);
                 return tryIf;
-            }
 
             // try from local root
 
             tryIf = queryMetaImport(baseVertex, @"$ParseRoot" + dict.MetaSeparator + @"\\" + link);
 
             if (tryIf != null && !(tryIf is ToVertexMock))
-            {
-                if (isIndexedLink)
-                    LogIndexedLinkResolutionState("resolve.via.local-parse-root", link, mock, tryIf);
                 return tryIf;
-            }
-
-            if (isIndexedLink)
-            {
-                LogIndexedResolutionCandidates("resolve.failed.candidates", link, mock);
-                LogIndexedLinkResolutionState("resolve.failed", link, mock, MinusZero.Instance.Empty);
-            }
 
             return MinusZero.Instance.Empty;
         }
@@ -1297,13 +812,6 @@ namespace m0.ZeroCode
 
         IVertex processLink(string link, IVertex parent)
         {
-            if (ShouldLogFocusedIndexedLink(link))
-                MinusZero.Instance.Log(1, "Text2Graph.SetIndex",
-                    "stage=create-process-link"
-                    + " link=" + link
-                    + " linkDetails=" + GetIndexedLinkParseDebugInfo(link)
-                    + " parent=" + GetVertexDebugInfo(parent));
-
             return new ToVertexMock(link, parent);            
         }
 
@@ -1763,13 +1271,6 @@ namespace m0.ZeroCode
                     toUseVertexList = possible_linkKeyword;
                     string rawLinkKeyword = value == null ? "" : value.ToString();
                     string normalizedLinkKeyword = ZeroCodeCommon.stringFromLinkKeywordString(dict, rawLinkKeyword);
-
-                    if (ShouldLogFocusedIndexedLink(normalizedLinkKeyword))
-                        MinusZero.Instance.Log(1, "Text2Graph.SetIndex",
-                            "stage=create-special-keyword"
-                            + " rawLinkKeyword=" + rawLinkKeyword
-                            + " normalizedLink=" + normalizedLinkKeyword
-                            + " linkDetails=" + GetIndexedLinkParseDebugInfo(normalizedLinkKeyword));
 
                     value = new ToVertexMock(normalizedLinkKeyword,null);
                     break;
@@ -2531,15 +2032,6 @@ namespace m0.ZeroCode
                                 {
                                     ktd.waitingUntilPositionInText = _newPos;
 
-                                    if (ShouldLogFocusedIndexedLink(foundLink))
-                                        MinusZero.Instance.Log(1, "Text2Graph.SetIndex",
-                                            "stage=create-found-parameter"
-                                            + " foundLink=" + foundLink
-                                            + " linkDetails=" + GetIndexedLinkParseDebugInfo(foundLink)
-                                            + " keywordVertex=" + GetVertexDebugInfo(ktd.keywordVertex)
-                                            + " parameterName=" + ktd.currentlyProcessedParameterName
-                                            + " waitingUntil=" + ktd.waitingUntilPositionInText);
-
                                     foundParameter = new ToVertexMock(foundLink, null);
      
                                   //  MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "FOUND PARAMETER LINK:" + foundParameter.ToString() + " waitUntil:" + ktd.waitingUntilPositionInText);
@@ -3016,32 +2508,6 @@ namespace m0.ZeroCode
             }
 
             return newPos;
-        }
-
-        void log_keywords(List<keywordTryingData> examinedKeywords, int pos, string LOGPREFIX)
-        {
-            string pre = "";
-
-            for (int x = 0; x < pos; x++)
-                pre += " ";
-
-            foreach (keywordTryingData ktd in examinedKeywords)
-            {
-                MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+pre + "-keyword:" + ktd.keyword + " sub count:" + ktd.parameters.Count);
-
-                foreach (KeyValuePair<string, List<object>> o in ktd.parameters)
-                {
-                    MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+pre + "-sub:" + o);
-
-                    foreach(object oo in o.Value)
-                    if (oo is keywordTryingData)
-                    {
-                        List<keywordTryingData> l = new List<keywordTryingData>();
-                        l.Add((keywordTryingData)oo);
-                        //log_keywords(l, pos + 1, LOGPREFIX);
-                    }
-                }
-            }
         }
 
         IVertex AddKeywordVertex(ParsingStack s, IVertex parent, keywordTryingData ktd)
@@ -3603,8 +3069,6 @@ namespace m0.ZeroCode
 
         private bool ProcessToVertexMocksToLinks_Delegate(IEdge edge)
         {
-            LogIndexedRepinState("before", edge, edge == null ? null : edge.Meta, edge == null ? null : edge.To);
-
             if(edge.Meta is ToVertexMock || edge.To is ToVertexMock)
             {
                 IVertex metaVertex = edge.Meta;
@@ -3616,13 +3080,10 @@ namespace m0.ZeroCode
 
                 if (toVertex is ToVertexMock)
                     toVertex = ToVertexMock2VertexByLinkString((ToVertexMock)toVertex);
-
-                LogIndexedRepinState("after-resolve-before-add", edge, metaVertex, toVertex);
                 IEdge newEdge = edge.From.AddEdge(metaVertex, toVertex);
                 ReplaceRememberedTextualChildEdge(edge.From, edge, newEdge);
                 edge.From.DeleteEdge(edge);
                 RestoreOutgoingEdgesToTextualOrder(edge.From);
-                LogIndexedRepinState("after-add-delete", edge, metaVertex, toVertex);
 
                 return true;
             }
@@ -3685,41 +3146,10 @@ namespace m0.ZeroCode
                 {
                     visited.Add(e.To);
 
-                    if (IsFocusedIndexedOrderEdge(e))
-                        MinusZero.Instance.Log(1, "Text2Graph.FindSimilarEdge",
-                            "stage=before-find"
-                            + " iterationRoot=" + GetVertexDebugInfo(iterationRoot)
-                            + " parsedVertex=" + GetVertexDebugInfo(parsedVertex)
-                            + " edgeToMatch=" + GetEdgeDebugInfo(e)
-                            + " edgeToMatchPosition=" + GetEdgePositionDebugInfo(iterationRoot, e)
-                            + " iterationRootOutEdges=" + GetEdgesDebugInfo(iterationRoot == null ? Enumerable.Empty<IEdge>() : iterationRoot.OutEdgesRaw)
-                            + " parsedVertexOutEdges=" + GetEdgesDebugInfo(parsedVertex == null ? Enumerable.Empty<IEdge>() : parsedVertex.OutEdgesRaw)
-                            + " parsedVertexRepeatedToValues=" + GetRepeatedToValuesDebugInfo(parsedVertex)
-                            + " parsedVertexSameMetaAndToCandidates=" + GetMatchingEdgesByMetaAndToDebugInfo(parsedVertex, e));
-
                     IEdge foundInParsed = FindSimilarEdge(parsedVertex, e);
-
-                    if (IsFocusedIndexedOrderEdge(e) || IsFocusedIndexedOrderEdge(foundInParsed))
-                        MinusZero.Instance.Log(1, "Text2Graph.FindSimilarEdge",
-                            "stage=after-find"
-                            + " iterationRoot=" + GetVertexDebugInfo(iterationRoot)
-                            + " parsedVertex=" + GetVertexDebugInfo(parsedVertex)
-                            + " edgeToMatch=" + GetEdgeDebugInfo(e)
-                            + " matchedEdge=" + GetEdgeDebugInfo(foundInParsed)
-                            + " matchedEdgePosition=" + GetEdgePositionDebugInfo(parsedVertex, foundInParsed)
-                            + " matchedVertexEqualsOriginal=" + (foundInParsed != null && foundInParsed.To == e.To)
-                            + " parsedVertexSameMetaAndToCandidates=" + GetMatchingEdgesByMetaAndToDebugInfo(parsedVertex, e));
 
                     if (foundInParsed != null && foundInParsed.To != e.To)
                         {
-                            if (IsFocusedIndexedOrderEdge(e) || IsFocusedIndexedOrderEdge(foundInParsed))
-                                MinusZero.Instance.Log(1, "Text2Graph.FindSimilarEdge",
-                                    "stage=move-external-in-edges"
-                                    + " existingVertex=" + GetVertexDebugInfo(e.To)
-                                    + " parsedVertexTarget=" + GetVertexDebugInfo(foundInParsed.To)
-                                    + " sourceEdge=" + GetEdgeDebugInfo(e)
-                                    + " matchedEdge=" + GetEdgeDebugInfo(foundInParsed));
-
                             MoveInEdgesComingFromOutsideOfSubGraphToParseVertex_forOneVertex(e.To, foundInParsed.To);
 
                             MoveInEdgesComingFromOutsideOfSubGraphToParseRoot_Reccurent(e.To, foundInParsed.To, visited);
@@ -3745,16 +3175,6 @@ namespace m0.ZeroCode
                     found = matches[sourceOccurrence - 1];
                 else
                     found = matches[0];
-
-                if (IsFocusedIndexedOrderEdge(toFind) || IsFocusedIndexedOrderEdge(found))
-                    MinusZero.Instance.Log(1, "Text2Graph.FindSimilarEdge",
-                        "stage=first-meta-to-match"
-                        + " findHere=" + GetVertexDebugInfo(findHere)
-                        + " toFind=" + GetEdgeDebugInfo(toFind)
-                        + " sourceOccurrence=" + sourceOccurrence
-                        + " matchedCandidate=" + GetEdgeDebugInfo(found)
-                        + " matchedCandidatePosition=" + GetEdgePositionDebugInfo(findHere, found)
-                        + " allCandidates=" + GetMatchingEdgesByMetaAndToDebugInfo(findHere, toFind));
             }
 
             if(found == null)
@@ -3774,26 +3194,8 @@ namespace m0.ZeroCode
             foreach (IEdge e in InEdgesRaw)
                 if (!SubGraphPreProcessing.Contains(e.From))
                 {
-                    if (IsFocusedIndexedVertex(existing) || IsFocusedIndexedVertex(parsedVertex) || IsFocusedIndexedOrderEdge(e))
-                        MinusZero.Instance.Log(1, "Text2Graph.ExternalInEdges",
-                            "stage=move-in-edge"
-                            + " existing=" + GetVertexDebugInfo(existing)
-                            + " parsedVertex=" + GetVertexDebugInfo(parsedVertex)
-                            + " movedEdge=" + GetEdgeDebugInfo(e)
-                            + " fromOutEdgesBefore=" + GetEdgesDebugInfo(e.From == null ? Enumerable.Empty<IEdge>() : e.From.OutEdgesRaw)
-                            + " fromRepeatedToValuesBefore=" + GetRepeatedToValuesDebugInfo(e.From));
-
                     e.From.AddEdge(e.Meta, parsedVertex);
                     e.From.DeleteEdge(e);
-
-                    if (IsFocusedIndexedVertex(existing) || IsFocusedIndexedVertex(parsedVertex) || IsFocusedIndexedOrderEdge(e))
-                        MinusZero.Instance.Log(1, "Text2Graph.ExternalInEdges",
-                            "stage=move-in-edge.after"
-                            + " existing=" + GetVertexDebugInfo(existing)
-                            + " parsedVertex=" + GetVertexDebugInfo(parsedVertex)
-                            + " movedEdge=" + GetEdgeDebugInfo(e)
-                            + " fromOutEdgesAfter=" + GetEdgesDebugInfo(e.From == null ? Enumerable.Empty<IEdge>() : e.From.OutEdgesRaw)
-                            + " fromRepeatedToValuesAfter=" + GetRepeatedToValuesDebugInfo(e.From));
                 }
 
             IList<IEdge> MetaInEdgesRaw = existing.MetaInEdgesRaw.ToList();
@@ -3804,26 +3206,8 @@ namespace m0.ZeroCode
                     foreach (IEdge ee in e.From.ToList())
                         if (ee.Meta == e.Meta && ee.To == e.To) // no to create non exising edge XXX
                         {
-                            if (IsFocusedIndexedVertex(existing) || IsFocusedIndexedVertex(parsedVertex) || IsFocusedIndexedOrderEdge(e) || IsFocusedIndexedOrderEdge(ee))
-                                MinusZero.Instance.Log(1, "Text2Graph.ExternalInEdges",
-                                    "stage=move-meta-in-edge"
-                                    + " existing=" + GetVertexDebugInfo(existing)
-                                    + " parsedVertex=" + GetVertexDebugInfo(parsedVertex)
-                                    + " metaInEdge=" + GetEdgeDebugInfo(e)
-                                    + " sourceEdge=" + GetEdgeDebugInfo(ee)
-                                    + " fromOutEdgesBefore=" + GetEdgesDebugInfo(e.From == null ? Enumerable.Empty<IEdge>() : e.From.OutEdgesRaw));
-
                             e.From.AddEdge(parsedVertex, e.To);
                             e.From.DeleteEdge(e);
-
-                            if (IsFocusedIndexedVertex(existing) || IsFocusedIndexedVertex(parsedVertex) || IsFocusedIndexedOrderEdge(e) || IsFocusedIndexedOrderEdge(ee))
-                                MinusZero.Instance.Log(1, "Text2Graph.ExternalInEdges",
-                                    "stage=move-meta-in-edge.after"
-                                    + " existing=" + GetVertexDebugInfo(existing)
-                                    + " parsedVertex=" + GetVertexDebugInfo(parsedVertex)
-                                    + " metaInEdge=" + GetEdgeDebugInfo(e)
-                                    + " sourceEdge=" + GetEdgeDebugInfo(ee)
-                                    + " fromOutEdgesAfter=" + GetEdgesDebugInfo(e.From == null ? Enumerable.Empty<IEdge>() : e.From.OutEdgesRaw));
                         }
                 }
         }
@@ -3887,24 +3271,18 @@ namespace m0.ZeroCode
             if (parseRoot.OutEdges.Count == 0)
                 return;
 
-            LogOrderState("MoveAllParseRootEdgesToBaseVertex.before");
-
             object firstValue = parseRoot.FirstOrDefault().To.Value;
 
             foreach(IEdge e in parseRoot.FirstOrDefault().To.ToList())
             {
-                LogOrderMutationState("MoveAllParseRootEdgesToBaseVertex.before-edge-move", baseVertex, e);
                 baseVertex.AddEdge(e.Meta, e.To);
 
                 e.From.DeleteEdge(e);
-                LogOrderMutationState("MoveAllParseRootEdgesToBaseVertex.after-edge-move", baseVertex, e);
             }
 
             GraphUtil.DeleteEdgeByMeta(baseVertex, "$ParseRoot");
 
             baseVertex.Value = firstValue;
-
-            LogOrderState("MoveAllParseRootEdgesToBaseVertex.after");
         }
 
         //
@@ -3997,9 +3375,6 @@ namespace m0.ZeroCode
         // used by ZeroUML diagram representation
         public IVertex Process_EdgeAndManyLines(IEdge _baseEdge, string _text, out IEdge rootEdge_new)
         {
-            MinusZero.Instance.Log(1, "Text2Graph.Process",
-                "Process_EdgeAndManyLines start baseEdge=" + GetEdgeDebugInfo(_baseEdge));
-
             processBaseEdgeTo = _baseEdge.To;
 
             MultiLineString mls = new MultiLineString(_text);
@@ -4020,29 +3395,19 @@ namespace m0.ZeroCode
 
             rootEdge_new = parentEdge.To.OutEdges.FirstOrDefault();
 
-            MinusZero.Instance.Log(1, "Text2Graph.Process",
-                "Process_EdgeAndManyLines rootEdge_new=" + GetEdgeDebugInfo(rootEdge_new));
-
             MoveInEdgesFromOneVertexToAnother(_baseEdge, rootEdge_new);
 
             return returnedVertex;
         }
 
         public IVertex Process_VertexAndManyLines(IEdge _baseEdge, string _text)
-        {            
-            MinusZero.Instance.Log(1, "Text2Graph.Process",
-                "Process_VertexAndManyLines start baseEdge=" + GetEdgeDebugInfo(_baseEdge));
-
+        {
             if (processBaseEdgeTo == null)
                 processBaseEdgeTo = _baseEdge.To;
 
             ZeroCodeUtil.ClearZeroCodeUtilDicionaries();
 
             baseVertex = _baseEdge.To;
-
-            MinusZero.Instance.Log(1, "Text2Graph.Process",
-                "Base vertex before parse baseVertex=" + GetVertexDebugInfo(baseVertex)
-                + " outEdges=" + GetEdgesDebugInfo(baseVertex.OutEdgesRaw));
 
             errorList = MinusZero.Instance.CreateTempVertex();
             ResetTextualChildrenOrder();
@@ -4078,28 +3443,17 @@ namespace m0.ZeroCode
                 if (stack.lineNo > 0)
                     CodeViewProcess();
 
-                LogOrderState("Process.beforeRestoreOutgoingEdgesToTextualOrder");
                 RestoreOutgoingEdgesToTextualOrder();
-                LogOrderState("Process.afterRestoreOutgoingEdgesToTextualOrder");
 
                 ProcessToVertexMocksToLinks();
-                LogOrderState("Process.afterProcessToVertexMocksToLinks");
 
                 MoveInEdgesComingFromOutsideOfSubGraphToParseRoot();
-                LogOrderState("Process.afterMoveInEdgesComingFromOutsideOfSubGraphToParseRoot");
 
                 MoveTriggersToParseRoot();                
-                LogOrderState("Process.afterMoveTriggersToParseRoot");
 
                 DeleteAllEdgesFromBaseVertex();
-                LogOrderState("Process.afterDeleteAllEdgesFromBaseVertex");
 
                 MoveAllParseRootEdgesToBaseVertex();                
-                LogOrderState("Process.afterMoveAllParseRootEdgesToBaseVertex");
-
-                MinusZero.Instance.Log(1, "Text2Graph.Process",
-                    "Base vertex after parse baseVertex=" + GetVertexDebugInfo(baseVertex)
-                    + " outEdges=" + GetEdgesDebugInfo(baseVertex.OutEdgesRaw));
             }
             else
             {
@@ -4157,10 +3511,6 @@ namespace m0.ZeroCode
         {
             rootEdge_new = null;
             processBaseEdgeTo = _baseEdge.To;
-
-            MinusZero.Instance.Log(1, "Text2Graph.Process",
-                "Process entry codeRepresentation=" + codeRepresentation
-                + " baseEdge=" + GetEdgeDebugInfo(_baseEdge));
 
             switch (codeRepresentation)
             {

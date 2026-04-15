@@ -565,54 +565,20 @@ namespace m0.Graph
                 return ZeroCodeCommon.stringToPossiblyEscapedString(dict, meta.ToString()) + dict.MetaSeparator + ZeroCodeCommon.stringToPossiblyEscapedString(dict, to.ToString());
         }
 
-        private static string GetVertexDebugInfo(IVertex vertex)
-        {
-            if (vertex == null)
-                return "<null>";
-
-            return GetVertexIdString(vertex) + " value=" + (vertex.Value == null ? "<null>" : vertex.Value.ToString());
-        }
-
-        private static string GetEdgeDebugInfo(IEdge edge)
-        {
-            if (edge == null)
-                return "<null>";
-
-            return "from=" + GetVertexDebugInfo(edge.From)
-                + " meta=" + GetVertexDebugInfo(edge.Meta)
-                + " to=" + GetVertexDebugInfo(edge.To);
-        }
-
-        private static string GetEdgesDebugInfo(IEnumerable<IEdge> edges)
-        {
-            return string.Join(" | ", edges.Select((edge, index) => (index + 1) + ":" + GetEdgeDebugInfo(edge)));
-        }
-
         public static string GetIdentyfyingQuerySubString_MetaMode(FormalTextLanguageDictinaries dict, IEdge e) // this is used in String2Graph, so we need to reference ZeroCodeCommon.MetaSeparator
         {
             bool isToEnough = VertexOperations.IsToVertexEnoughToIdentifyEdge(e.From, e.To);
             bool isMetaAndToEnough = VertexOperations.IsMetaAndToVertexEnoughToIdentifyEdge(e.From, e.Meta, e.To);
 
-            MinusZero.Instance.Log(1, "GraphUtil.SetIndex",
-                "Evaluate edge=" + GetEdgeDebugInfo(e)
-                + " isToEnough=" + isToEnough
-                + " isMetaAndToEnough=" + isMetaAndToEnough);
-
             if (isToEnough)
             {
                 string result = ZeroCodeCommon.stringToPossiblyEscapedString(dict, e.To.ToString() + ""); // there was no ToString. might cause problems. XXX why this "" as we do not have null To?
-
-                MinusZero.Instance.Log(1, "GraphUtil.SetIndex",
-                    "Return plain to-value result=" + result + " edge=" + GetEdgeDebugInfo(e));
 
                 return result;
             }
             else if (isMetaAndToEnough)
             {
                 string result = GetQueryStringPart_MetaMode(dict, e.Meta, e.To);
-
-                MinusZero.Instance.Log(1, "GraphUtil.SetIndex",
-                    "Return meta+to result=" + result + " edge=" + GetEdgeDebugInfo(e));
 
                 return result;
             }
@@ -630,11 +596,6 @@ namespace m0.Graph
                 } while (tv != e.To && pos < q.Count);
 
                 string result = GetQueryStringPart_MetaMode(dict, e.Meta, e.To) + dict.SetIndexPrefix + "\"" + pos + "\"" + dict.SetIndexPostfix;
-
-                MinusZero.Instance.Log(1, "GraphUtil.SetIndex",
-                    "Return indexed result=" + result
-                    + " edge=" + GetEdgeDebugInfo(e)
-                    + " candidates=" + GetEdgesDebugInfo(q));
 
                 return result;
             }
