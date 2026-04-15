@@ -30,8 +30,7 @@ namespace m0.UIWpf
             IList<IEdge> list = new List<IEdge>();
 
             foreach (IEdge e in GraphUtil.GetQueryOut(metaForForm, "Method", null))
-                if(GraphUtil.GetQueryOutCount(e.To, "InputParameter", null) == 0
-                 && GraphUtil.GetQueryOutCount(e.To, "Output", null) == 0)
+                if (GraphUtil.GetQueryOutCount(e.To, "Output", null) == 0)
                     list.Add(e);
 
             return list;
@@ -39,12 +38,10 @@ namespace m0.UIWpf
 
         public static bool IsExecutableVertex(IVertex v)
         {
-            if (GraphUtil.GetQueryOutCount(v, "$Is", "Method") > 0  
-                 && GraphUtil.GetQueryOutCount(v, "InputParameter", null) == 0
+            if (GraphUtil.GetQueryOutCount(v, "$Is", "Method") > 0
                  && GraphUtil.GetQueryOutCount(v, "Output", null) == 0)
                 return true;
             
-
             return false;
         }
 
@@ -54,13 +51,22 @@ namespace m0.UIWpf
 
         public static FrameworkElement CreateExecutableVisualiser(IEdge baseEdge, IVertex executableVertex)
         {
-            VoidVoidMethodVisualiser vvv = new VoidVoidMethodVisualiser();
+            FrameworkElement visualiser;
 
-            EdgeHelper.ReplaceEdgeVertexEdges(vvv.Vertex.Get(false, "BaseEdge:"), baseEdge);
+            if (GraphUtil.GetQueryOutCount(executableVertex, "InputParameter", null) == 0)
+                visualiser = new VoidVoidMethodVisualiser();
+            else
+                visualiser = new VoidAnyMethodVisualiser();
 
-            GraphUtil.CreateOrReplaceEdge(vvv.Vertex, executableVertexMeta, executableVertex);
+            IPlatformClass platformClass = (IPlatformClass)visualiser;
 
-            return vvv;
+            EdgeHelper.ReplaceEdgeVertexEdges(platformClass.Vertex.Get(false, "BaseEdge:"), baseEdge);
+            GraphUtil.CreateOrReplaceEdge(platformClass.Vertex, executableVertexMeta, executableVertex);
+
+            if (visualiser is VoidAnyMethodVisualiser voidAnyMethodVisualiser)
+                voidAnyMethodVisualiser.RefreshParameters();
+
+            return visualiser;
         }
 
 
