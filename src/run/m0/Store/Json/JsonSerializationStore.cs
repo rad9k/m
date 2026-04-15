@@ -151,7 +151,9 @@ namespace m0.Store.Json
                     writer.WriteNumberValue(decimalValue);
                     break;
                 default:
-                    throw new JsonException("Only primitive clr values are supported.");
+                    writer.WriteStringValue("");
+                    break;
+                    //throw new JsonException("Only primitive clr values are supported.");
             }
         }
     }
