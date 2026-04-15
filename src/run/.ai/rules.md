@@ -6,6 +6,10 @@ If you need to modify source code files not specified by the user you need to as
 
 You can add additonal source code files if needed, but inform me about this.
 
+As the code is very complex, in most cases it is needed to add logging, analyze logs and only than do the code corrections, otherwise, you can do wrong moficications that will be very hard to track down afterwards and that will create a major problem for me.
+
+When you want to add logging use MinusZero.Instance.Log.
+
 Use only english language for writing comments.
 
 Remeber to use meaningfull variable, attributes, functions, metods and classes identifiers/names. If the name needs to be long, is is OK.
