@@ -18,47 +18,42 @@ namespace m0.ZeroTypes.UX
         static IVertex Tree_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\RepositionAlgorithmEnum\Tree");
 
 
-        public static LayoutTypeEnum GetEnum(IVertex v)
+        public static RepositionAlgorithmEnum GetEnum(IVertex v)
         {
             if (v == null || v.Value == null)
-                return LayoutTypeEnum.Auto;
+                return RepositionAlgorithmEnum.Radial;
 
             switch (v.Value.ToString())
             {
-                case "Vertical": return LayoutTypeEnum.Vertical;
+                case "Radial": return RepositionAlgorithmEnum.Radial;
 
-                case "Horizontal": return LayoutTypeEnum.Horizontal;
+                case "Force": return RepositionAlgorithmEnum.Force;
 
-                case "Wrap": return LayoutTypeEnum.Wrap;
+                case "Sugiyama": return RepositionAlgorithmEnum.Sugiyama;
 
-                case "Manual": return LayoutTypeEnum.Manual;
+                case "Kamada": return RepositionAlgorithmEnum.Kamada;
 
-                case "Auto": return LayoutTypeEnum.Auto;
+                case "Tree": return RepositionAlgorithmEnum.Tree;
 
-                case "Hidden": return LayoutTypeEnum.Hidden;
-
-                default: return LayoutTypeEnum.Hidden;
+                default: return RepositionAlgorithmEnum.Radial;
             }
         }
 
-        public static IVertex GetVertex(LayoutTypeEnum e)
+        public static IVertex GetVertex(RepositionAlgorithmEnum e)
         {
             switch(e){
-                case LayoutTypeEnum.Auto: return Auto_meta;
+                case RepositionAlgorithmEnum.Radial: return Radial_meta;
 
-                case LayoutTypeEnum.Horizontal: return Horizontal_meta;
+                case RepositionAlgorithmEnum.Force: return Force_meta;
 
-                case LayoutTypeEnum.Manual: return Manual_meta;
+                case RepositionAlgorithmEnum.Sugiyama: return Sugiyama_meta;
 
-                case LayoutTypeEnum.Vertical: return Vertical_meta;
+                case RepositionAlgorithmEnum.Kamada: return Kamada_meta;
 
-                case LayoutTypeEnum.Wrap: return Wrap_meta;
-
-                case LayoutTypeEnum.Hidden: return Hidden_meta;
+                case RepositionAlgorithmEnum.Tree: return Tree_meta;
             }
 
-            return Auto_meta;
+            return Radial_meta;
         }
     }
-
 }

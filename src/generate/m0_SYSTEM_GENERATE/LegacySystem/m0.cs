@@ -4439,7 +4439,7 @@ namespace m0
                 "Class:Table{Attribute:ToShowEdgesMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:ExpertMode{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:IsAllVisualisersEdit{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowHeader{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Association:GridStyle{$MinCardinality:1,$MaxCardinality:1},Attribute:AlternatingRows{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:TableFast{Attribute:ToShowEdgesMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:IsAllVisualisersEdit{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowHeader{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Association:GridStyle{$MinCardinality:1,$MaxCardinality:1},Attribute:AlternatingRows{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:Tree," +
-                "Class:Graph{Attribute:VisualiserCircleSize{$MinCardinality:1,$MaxCardinality:1},Attribute:NumberOfCircles{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd:},Attribute:ShowOutEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowInEdges{$MinCardinality:1,$MaxCardinality:1},Attribute:FastMode{$MinCardinality:1,$MaxCardinality:1},Attribute:MetaLabels{$MinCardinality:1,$MaxCardinality:1},Method:Reposition{InputParameter:Algorithm}}," +
+                "Class:Graph{Attribute:VisualiserCircleSize{$MinCardinality:1,$MaxCardinality:1},Attribute:NumberOfCircles{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd:},Attribute:ShowOutEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowInEdges{$MinCardinality:1,$MaxCardinality:1},Attribute:FastMode{$MinCardinality:1,$MaxCardinality:1},Attribute:MetaLabels{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:Class,Class:String,Class:StringView,Class:Vertex,Class:Edge,Class:Integer,Class:Decimal,Class:Float,Class:Boolean,Class:ListAndEnum,Class:Debug," +
                 "Class:Wrap," +
                 "Class:List{Attribute:IsMetaRightAlign{$MinCardinality:1,$MaxCardinality:1},Attribute:IsAllVisualisersEdit{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowMeta{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Association:GridStyle{$MinCardinality:1,$MaxCardinality:1}}," +
@@ -4449,7 +4449,7 @@ namespace m0
                 "Class:TriggerSet{Attribute:SnapToGrid{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowVelocity{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowSnapLines{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:DefaultVelocity{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:127,MinValue:-1,MaxValue:127}}," +
                 "Class:ChordProgression{Attribute:ShowLabel{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowArrowLines{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True}}," +
                 "Class:Song{Attribute:SnapToGrid{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowLabel{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowArrowLines{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowSnapLines{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowToolbarNames{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False}}," +
-                "Class:UX{Method:Reposition{InputParameter:Algorithm}}," +
+                "Class:UX," +
                 //"Class:UXTest," +
                 "Class:Test}");
 
@@ -4547,10 +4547,7 @@ namespace m0
             sm.Get(false, @"Visualiser\Graph\ShowInEdges").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             sm.Get(false, @"Visualiser\Graph\FastMode").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             sm.Get(false, @"Visualiser\Graph\MetaLabels").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
-            sm.Get(false, @"Visualiser\Graph").AddEdge(sm.Get(false, @"Visualiser\BaseEdgeTarget"), sm.Get(false, @"Visualiser\BaseEdgeTarget\Any"));
-
-            sm.Get(false, @"Visualiser\Graph\Reposition\Algorithm").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"Visualiser\RepositionAlgorithmEnum"));            
-
+            sm.Get(false, @"Visualiser\Graph").AddEdge(sm.Get(false, @"Visualiser\BaseEdgeTarget"), sm.Get(false, @"Visualiser\BaseEdgeTarget\Any"));                        
 
 
             sm.Get(false, @"Visualiser\Class").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\UX\UXItem"));
@@ -4704,10 +4701,8 @@ namespace m0
             sm.Get(false, @"Visualiser\UX").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.UIWpf.UX.UXVisualiser, m0_desktop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
 
             sm.Get(false, @"Visualiser\UX").AddEdge(sm.Get(false, @" ?$Is"), sm.Get(false, @"ZeroUML\Class"));
-            sm.Get(false, @"Visualiser\UX").AddEdge(sm.Get(false, @"Visualiser\BaseEdgeTarget"), sm.Get(false, @"Visualiser\BaseEdgeTarget\Any"));
+            sm.Get(false, @"Visualiser\UX").AddEdge(sm.Get(false, @"Visualiser\BaseEdgeTarget"), sm.Get(false, @"Visualiser\BaseEdgeTarget\Any"));            
 
-            sm.Get(false, @"Visualiser\UX\Reposition\Algorithm").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"Visualiser\RepositionAlgorithmEnum"));
-            
             sm.Get(false, @"ZeroTypes\UX\UXContainer").AddEdge(sm.Get(false, "ZeroUML?$DefaultOpenVisualiser"), sm.Get(false, @"Visualiser\UX"));            
             sm.Get(false, @"ZeroTypes\UX\UXContainer").AddEdge(sm.Get(false, "ZeroUML?$DefaultViewVisualiser"), sm.Get(false, @"Visualiser\UX"));            
             sm.Get(false, @"ZeroTypes\UX\UXContainer").AddEdge(sm.Get(false, "ZeroUML?$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\UX"));
@@ -4721,6 +4716,21 @@ namespace m0
             sm.Get(false, @"Visualiser\UXTest").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.UIWpf.UX.Generic.UXTestVisualiser, m0_desktop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             sm.Get(false, @"Visualiser\UXTest").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
             sm.Get(false, @"Visualiser\UXTest").AddEdge(sm.Get(false, @"Visualiser\BaseEdgeTarget"), sm.Get(false, @"Visualiser\BaseEdgeTarget\Any"));*/
+        }
+
+        void CreateSystemMetaVisualiser_Additional()
+        {
+            string GraphVisualiserTypeString = "m0.UIWpf.Visualisers.GraphVisualiser, m0_desktop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+            string UXVisualiserTypeString = "m0.UIWpf.UX.UXVisualiser, m0_desktop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+
+            IVertex sm = Root.Get(false, @"System\Meta");
+
+            IVertex Graph = sm.Get(false, @"Visualiser\Graph");
+            IVertex RepositionAlgorithmEnum = sm.Get(false, @"Visualiser\RepositionAlgorithmEnum");
+
+            AddMethod(Graph, "Reposition", GraphVisualiserTypeString, "Reposition", null, new TypeName[] { new TypeName("Algorithm", RepositionAlgorithmEnum, 1, 1) });
+            IVertex UX = sm.Get(false, @"Visualiser\UX");
+            AddMethod(UX, "Reposition", UXVisualiserTypeString, "Reposition", null, new TypeName[] { new TypeName("Algorithm", RepositionAlgorithmEnum, 1, 1) });
         }
 
         void CreateSystemMetaMethodVisualiser()
@@ -4739,7 +4749,7 @@ namespace m0
             sm.Get(false, @"Visualiser\Method\VoidVoidMethod").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\HasBaseEdge"));
             sm.Get(false, @"Visualiser\Method\VoidVoidMethod").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\HasExecutableVertex"));
             sm.Get(false, @"Visualiser\Method\VoidVoidMethod").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.UIWpf.Visualisers.Method.VoidVoidMethod, m0_desktop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            sm.Get(false, @"Visualiser\Method\VoidVoidMethod").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
+            sm.Get(false, @"Visualiser\Method\VoidVoidMethod").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));            
 
             sm.Get(false, @"Visualiser\Method\VoidAnyMethod").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\HasBaseEdge"));
             sm.Get(false, @"Visualiser\Method\VoidAnyMethod").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\HasExecutableVertex"));
@@ -7422,7 +7432,9 @@ namespace m0
 
             CreateQuick();
 
+            //////////////////////////
 
+            CreateSystemMetaVisualiser_Additional();
 
             IsInitialized = true;
         }

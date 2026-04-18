@@ -934,5 +934,12 @@ namespace m0.UIWpf.Visualisers
         {
             hasButtonBeenDown = false;
         }
+
+        // REPOSITION
+
+        public static INoInEdgeInOutVertexVertex Reposition(IExecution exe)
+        {
+            return null;
+        }
     }
 }
