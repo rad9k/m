@@ -144,7 +144,7 @@ namespace m0_SYSTEM_GENERATE.Util
                 if(tn.Type !=null)
                     ip.AddEdge(bv.Get(false, "$EdgeTarget"), zt.Get(false, tn.Type));
                 else
-                    ip.AddEdge(bv.Get(false, "EdgeTarget"), tn.TypeVertex);
+                    ip.AddEdge(bv.Get(false, "$EdgeTarget"), tn.TypeVertex);
 
                 //ip.AddVertex(bv.Get(false, "$MinCardinality"), tn.MinCardinality); // must be a reson for not using those now
                 // ip.AddVertex(bv.Get(false, "$MaxCardinality"), tn.MaxCardinality);

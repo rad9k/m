@@ -104,17 +104,56 @@ namespace m0.UIWpf.Visualisers.Method
             row.HorizontalAlignment = HorizontalAlignment.Stretch;
 
             row.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto, SharedSizeGroup = "ParameterLabel" });
+            row.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
             row.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
 
+            TextBlock label = CreateParameterLabel(inputParameter);
+            Border separator = CreateParameterSeparator();
+            VisualiserEditWrapper wrapper = CreateParameterWrapper(inputParameter);
+
+            Grid.SetColumn(label, 0);
+            Grid.SetColumn(separator, 1);
+            Grid.SetColumn(wrapper, 2);
+
+            row.Children.Add(label);
+            row.Children.Add(separator);
+            row.Children.Add(wrapper);
+
+            parametersPanel.Children.Add(row);
+
+            parameterVisualisers.Add(new ParameterVisualiserInfo()
+            {
+                InputParameter = inputParameter,
+                Label = label,
+                Wrapper = wrapper
+            });
+        }
+
+        private TextBlock CreateParameterLabel(IVertex inputParameter)
+        {
             TextBlock label = new TextBlock();
             label.Text = (string)inputParameter.Value;
             label.FontStyle = FontStyles.Italic;
-            label.Foreground = Brushes.Gray;
+            label.FontWeight = WpfUtil.MetaWeight;
+            label.Foreground = (Brush)FindResource("0GrayBrush");
             label.VerticalAlignment = VerticalAlignment.Center;
-            label.Margin = new Thickness(0, 0, 6, 0);
+            label.Margin = new Thickness(0, 0, 0, 0);
             label.TextAlignment = TextAlignment.Right;
             label.HorizontalAlignment = HorizontalAlignment.Stretch;
 
+            return label;
+        }
+
+        private Border CreateParameterSeparator()
+        {
+            Border separator = new Border();
+            separator.BorderThickness = new Thickness(4, 0, 0, 0);
+
+            return separator;
+        }
+
+        private VisualiserEditWrapper CreateParameterWrapper(IVertex inputParameter)
+        {
             VisualiserEditWrapper wrapper = new VisualiserEditWrapper(Vertex);
             wrapper.VerticalAlignment = VerticalAlignment.Center;
             wrapper.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -127,20 +166,7 @@ namespace m0.UIWpf.Visualisers.Method
             else
                 wrapper.BaseEdge = existingParameterEdge;
 
-            Grid.SetColumn(label, 0);
-            Grid.SetColumn(wrapper, 1);
-
-            row.Children.Add(label);
-            row.Children.Add(wrapper);
-
-            parametersPanel.Children.Add(row);
-
-            parameterVisualisers.Add(new ParameterVisualiserInfo()
-            {
-                InputParameter = inputParameter,
-                Label = label,
-                Wrapper = wrapper
-            });
+            return wrapper;
         }
 
         private void ClearParameterEditors()

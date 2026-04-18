@@ -3031,6 +3031,14 @@ namespace m0.UIWpf.UX
 
         public static INoInEdgeInOutVertexVertex Reposition(IExecution exe)
         {
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
+
+            IVertex AlgorithmVertex = GraphUtil.GetQueryOutFirst(stack, "Algorithm", null);
+
+            RepositionAlgorithmEnum Reposition = RepositionAlgorithmEnumHelper.GetEnum(AlgorithmVertex);
+
+            //
+
             return null;
         }
     }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -93,8 +93,7 @@ namespace m0.UIWpf
             if (Content is IDisposable)
                 ((IDisposable)Content).Dispose();
 
-            if (this.Expander_Top.Content is IDisposable)
-                ((IDisposable)this.Expander_Top.Content).Dispose();
+            DisposeTopContent();
 
             if (this.Expander_Down.Content is IDisposable)
                 ((IDisposable)this.Expander_Down.Content).Dispose();
@@ -109,20 +108,100 @@ namespace m0.UIWpf
         WrapVisualiser Visualiser_Top;
         CodeVisualiser Visualiser_Down;
         IVisualiser Visualiser_Right;
+        List<IDisposable> TopMethodVisualisers = new List<IDisposable>();
 
         Border Dummy_Down = new Border();
         Border Dummy_Right = new Border();
 
         ContentPresenter Content_Top;
+        Border MethodsDivider_Top;
+        ScrollViewer MethodsScrollViewer_Top;
+        StackPanel MethodsPanel_Top;
         ScrollViewer Content_Down;
         ScrollViewer Content_Right;
 
         void SetContentPresenters()
         {
-            Content_Top = ((ContentPresenter)((DockPanel)this.Expander_Top.Content).Children[0]);
+            StackPanel topPanel = (StackPanel)this.Expander_Top.Content;
+
+            Content_Top = (ContentPresenter)topPanel.Children[0];
+            MethodsDivider_Top = (Border)topPanel.Children[1];
+            MethodsScrollViewer_Top = (ScrollViewer)topPanel.Children[2];
+            MethodsPanel_Top = (StackPanel)MethodsScrollViewer_Top.Content;
             Content_Down = (ScrollViewer)this.Expander_Down.Content;
 
             Content_Right = (ScrollViewer)this.Expander_Right.Content;
+        }
+
+        void DisposeTopContent()
+        {
+            if (Visualiser_Top != null)
+            {
+                Visualiser_Top.Dispose();
+                Visualiser_Top = null;
+            }
+
+            Content_Top.Content = null;
+            ClearTopMethodsContent();
+        }
+
+        void ClearTopMethodsContent()
+        {
+            foreach (IDisposable methodVisualiser in TopMethodVisualisers)
+                methodVisualiser.Dispose();
+
+            TopMethodVisualisers.Clear();
+            MethodsPanel_Top.Children.Clear();
+            MethodsDivider_Top.Visibility = Visibility.Collapsed;
+            MethodsScrollViewer_Top.Visibility = Visibility.Collapsed;
+        }
+
+        void EnsureTopMethodsContent()
+        {
+            ClearTopMethodsContent();
+
+            IVertex visualiserDefinitionVertex = platformClassObject.Vertex.Get(false, @"$Is:");
+
+            if (visualiserDefinitionVertex == null)
+                return;
+
+            if (GraphUtil.GetQueryOut(visualiserDefinitionVertex, "Method", null).Count == 0)
+                return;
+
+            IEdge currentBaseEdge = platformClassObject.Vertex.GetAll(false, @"BaseEdge:\To:").FirstOrDefault();
+
+            if (currentBaseEdge == null)
+                return;
+
+            foreach (IEdge methodEdge in ExecutableVisualiserFactory.GetExecutableEdges(visualiserDefinitionVertex))
+            {
+                if (methodEdge.To.Get(false, "$Hide:") != null)
+                    continue;
+
+                FrameworkElement methodVisualiser = ExecutableVisualiserFactory.CreateExecutableVisualiser(currentBaseEdge, methodEdge.To);
+                StackPanel methodContainer = new StackPanel();
+                methodContainer.Margin = new Thickness(0, 0, 12, 0);
+
+                TextBlock methodNameLabel = new TextBlock();
+                methodNameLabel.Foreground = (Brush)FindResource("0GrayBrush");
+
+                if (methodEdge.To.Value != null)
+                    methodNameLabel.Text = methodEdge.To.Value.ToString();
+
+                methodContainer.Children.Add(methodNameLabel);
+                methodContainer.Children.Add(methodVisualiser);
+
+                MethodsPanel_Top.Children.Add(methodContainer);
+
+                if (methodVisualiser is IDisposable disposableMethodVisualiser)
+                    TopMethodVisualisers.Add(disposableMethodVisualiser);
+            }
+
+            if (MethodsPanel_Top.Children.Count == 0)
+                return;
+
+            MethodsDivider_Top.Visibility = Visibility.Visible;
+            MethodsScrollViewer_Top.Visibility = Visibility.Visible;
         }
 
         public void SetContent(IPlatformClass pc){
@@ -163,6 +242,7 @@ namespace m0.UIWpf
             Visualiser_Top = new WrapVisualiser(baseEdgeVertex, 0.6, platformClassObject.Vertex, true);
 
             Content_Top.Content = Visualiser_Top;
+            EnsureTopMethodsContent();
 
             CheckVisibility_DownRight();
         }

@@ -1,24 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Controls;
 using m0.Foundation;
-using m0.ZeroUML;
-using m0.ZeroTypes;
-using System.Windows;
 using m0.Graph;
-using m0.Util;
-using System.Windows.Media;
-using System.Windows.Shapes;
-using m0.UIWpf.Controls.Fast;
-using System.Windows.Input;
-using System.Diagnostics;
-using m0.UIWpf.Foundation;
-using m0.UIWpf.Commands;
 using m0.Graph.ExecutionFlow;
+using m0.UIWpf.Commands;
+using m0.UIWpf.Controls.Fast;
+using m0.UIWpf.Foundation;
 using m0.UIWpf.Visualisers.Helper;
 using m0.User.Process.UX;
+using m0.Util;
+using m0.ZeroTypes;
+using m0.ZeroTypes.UX;
+using m0.ZeroUML;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace m0.UIWpf.Visualisers
 {
@@ -335,7 +336,7 @@ namespace m0.UIWpf.Visualisers
                                    
             l.Stroke = (Brush)FindResource("0LightGrayBrush");
                         
-            l.EndEnding = LineEndEnum.FilledTriangle;
+            l.EndEnding = m0.UIWpf.Controls.Fast.LineEndEnum.FilledTriangle;
             l.Fill = (Brush)FindResource("0LightGrayBrush");            
 
             Panel.SetZIndex(l, 0);            
@@ -939,7 +940,730 @@ namespace m0.UIWpf.Visualisers
 
         public static INoInEdgeInOutVertexVertex Reposition(IExecution exe)
         {
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
+
+            IVertex AlgorithmVertex = GraphUtil.GetQueryOutFirst(stack, "Algorithm", null);
+
+            RepositionAlgorithmEnum Reposition = RepositionAlgorithmEnumHelper.GetEnum(AlgorithmVertex);
+
+            IVertex baseVertexEdge = GraphUtil.GetQueryOutFirst(stack, "baseVertex", null);
+            IVertex baseVertex = baseVertexEdge != null ? GraphUtil.GetQueryOutFirst(baseVertexEdge, "To", null) : null;
+
+            GraphVisualiser visualiser = FindGraphVisualiser(baseVertex);
+
+            if (visualiser == null)
+            {
+                UserInteractionUtil.ShowException("GraphVisualiser", "GraphVisualiser instance not found for baseVertex", ExceptionLevelEnum.Error);
+                
+                return stack;
+            }
+
+            visualiser.Dispatcher.Invoke(() => visualiser.RepositionGraph(Reposition));
+
+            return stack;
+        }
+
+        private static GraphVisualiser FindGraphVisualiser(IVertex baseVertex)
+        {
+            if (baseVertex != null && TypedEdge.vertexDictionary.ContainsKey(baseVertex))
+            {
+                ITypedEdge te = TypedEdge.vertexDictionary[baseVertex];
+                if (te is GraphVisualiser gv) return gv;
+            }
+
+            //foreach (KeyValuePair<IVertex, ITypedEdge> kv in TypedEdge.vertexDictionary)
+                //if (kv.Value is GraphVisualiser gv) return gv;
+
             return null;
+        }
+
+        public void RepositionGraph(RepositionAlgorithmEnum algorithm)
+        {
+            if (DisplayedVerticesUIElements == null || DisplayedVerticesUIElements.Count == 0)
+                return;
+
+            List<SimpleVisualiserWrapper> wrappers = GetDistinctWrappers();
+            if (wrappers.Count == 0) return;
+
+            foreach (SimpleVisualiserWrapper w in wrappers) w.UpdateLayout();
+
+            MinusZero.Instance.Log(1, "GraphVisualiser.RepositionGraph", algorithm.ToString() + " on " + wrappers.Count + " vertices");
+
+            switch (algorithm)
+            {
+                case RepositionAlgorithmEnum.Radial:   ApplyRadialLayout(wrappers);      break;
+                case RepositionAlgorithmEnum.Force:    ApplyForceLayout(wrappers);       break;
+                case RepositionAlgorithmEnum.Sugiyama: ApplySugiyamaLayout(wrappers);    break;
+                case RepositionAlgorithmEnum.Kamada:   ApplyKamadaKawaiLayout(wrappers); break;
+                case RepositionAlgorithmEnum.Tree:     ApplyTreeLayout(wrappers);        break;
+                default:                               ApplyRadialLayout(wrappers);      break;
+            }
+
+            // Post-process (6): rectangle overlap removal - applied for every algorithm
+            ApplyOverlapRemoval(wrappers);
+
+            UpdateAllLines();
+        }
+
+        // HELPERS ============================================================
+
+        private List<SimpleVisualiserWrapper> GetDistinctWrappers()
+        {
+            HashSet<SimpleVisualiserWrapper> seen = new HashSet<SimpleVisualiserWrapper>();
+            List<SimpleVisualiserWrapper> result = new List<SimpleVisualiserWrapper>();
+            foreach (SimpleVisualiserWrapper w in DisplayedVerticesUIElements.Values)
+                if (w != null && w.baseVertex != null && seen.Add(w))
+                    result.Add(w);
+            return result;
+        }
+
+        private void SetWrapperCenter(SimpleVisualiserWrapper w, double cx, double cy)
+        {
+            Canvas.SetLeft(w, cx - w.ActualWidth / 2);
+            Canvas.SetTop(w, cy - w.ActualHeight / 2);
+        }
+
+        private Point GetWrapperCenter(SimpleVisualiserWrapper w)
+        {
+            return new Point(Canvas.GetLeft(w) + w.ActualWidth / 2,
+                             Canvas.GetTop(w) + w.ActualHeight / 2);
+        }
+
+        private Dictionary<SimpleVisualiserWrapper, List<SimpleVisualiserWrapper>> BuildUndirectedAdjacency(List<SimpleVisualiserWrapper> wrappers)
+        {
+            Dictionary<SimpleVisualiserWrapper, List<SimpleVisualiserWrapper>> adj =
+                new Dictionary<SimpleVisualiserWrapper, List<SimpleVisualiserWrapper>>();
+            foreach (SimpleVisualiserWrapper w in wrappers) adj[w] = new List<SimpleVisualiserWrapper>();
+
+            foreach (SimpleVisualiserWrapper w in wrappers)
+                foreach (Shape line in w.Lines)
+                {
+                    LineTagStore lts = line.Tag as LineTagStore;
+                    if (lts == null) continue;
+
+                    SimpleVisualiserWrapper other = lts.FromWrapper == w ? lts.ToWrapper : lts.FromWrapper;
+
+                    if (other == null || other == w) continue;
+                    if (!adj.ContainsKey(other)) continue;
+                    if (!adj[w].Contains(other)) adj[w].Add(other);
+                }
+            return adj;
+        }
+
+        private void BuildDirectedAdjacency(List<SimpleVisualiserWrapper> wrappers,
+            out Dictionary<SimpleVisualiserWrapper, List<SimpleVisualiserWrapper>> outAdj,
+            out Dictionary<SimpleVisualiserWrapper, List<SimpleVisualiserWrapper>> inAdj)
+        {
+            outAdj = new Dictionary<SimpleVisualiserWrapper, List<SimpleVisualiserWrapper>>();
+            inAdj = new Dictionary<SimpleVisualiserWrapper, List<SimpleVisualiserWrapper>>();
+            foreach (SimpleVisualiserWrapper w in wrappers)
+            {
+                outAdj[w] = new List<SimpleVisualiserWrapper>();
+                inAdj[w] = new List<SimpleVisualiserWrapper>();
+            }
+
+            foreach (SimpleVisualiserWrapper w in wrappers)
+                foreach (Shape line in w.Lines)
+                {
+                    LineTagStore lts = line.Tag as LineTagStore;
+                    if (lts == null) continue;
+                    if (lts.FromWrapper != w) continue; // each edge processed once, from its FromWrapper
+                    if (lts.ToWrapper == null || !outAdj.ContainsKey(lts.ToWrapper)) continue;
+                    if (lts.FromWrapper == lts.ToWrapper) continue;
+                    if (!outAdj[w].Contains(lts.ToWrapper))
+                    {
+                        outAdj[w].Add(lts.ToWrapper);
+                        inAdj[lts.ToWrapper].Add(w);
+                    }
+                }
+        }
+
+        private SimpleVisualiserWrapper PickRootWrapper(List<SimpleVisualiserWrapper> wrappers)
+        {
+            IVertex baseTo = Vertex.Get(false, @"BaseEdge:\To:");
+            if (baseTo != null && DisplayedVerticesUIElements.ContainsKey(baseTo))
+            {
+                SimpleVisualiserWrapper w = DisplayedVerticesUIElements[baseTo];
+                if (wrappers.Contains(w)) return w;
+            }
+            return wrappers[0];
+        }
+
+        private double GetCanvasWidth()  { return this.Width  > 0 ? this.Width  : Math.Max(this.ActualWidth,  800); }
+        private double GetCanvasHeight() { return this.Height > 0 ? this.Height : Math.Max(this.ActualHeight, 800); }
+
+        // 1) RADIAL (improved BFS) ==========================================
+
+        private void ApplyRadialLayout(List<SimpleVisualiserWrapper> wrappers)
+        {
+            Dictionary<SimpleVisualiserWrapper, List<SimpleVisualiserWrapper>> adj = BuildUndirectedAdjacency(wrappers);
+            SimpleVisualiserWrapper root = PickRootWrapper(wrappers);
+
+            Dictionary<SimpleVisualiserWrapper, int> level = new Dictionary<SimpleVisualiserWrapper, int>();
+            Queue<SimpleVisualiserWrapper> q = new Queue<SimpleVisualiserWrapper>();
+            q.Enqueue(root);
+            level[root] = 0;
+            while (q.Count > 0)
+            {
+                SimpleVisualiserWrapper c = q.Dequeue();
+                foreach (SimpleVisualiserWrapper n in adj[c])
+                    if (!level.ContainsKey(n)) { level[n] = level[c] + 1; q.Enqueue(n); }
+            }
+
+            int maxLevel = level.Count > 0 ? level.Values.Max() : 0;
+            foreach (SimpleVisualiserWrapper w in wrappers)
+                if (!level.ContainsKey(w)) level[w] = maxLevel + 1;
+
+            int circleSize = (int)GraphUtil.GetIntegerValueOr0(Vertex.Get(false, "VisualiserCircleSize:"));
+            if (circleSize <= 0) circleSize = 200;
+
+            double cx = GetCanvasWidth() / 2;
+            double cy = GetCanvasHeight() / 2;
+
+            IEnumerable<IGrouping<int, KeyValuePair<SimpleVisualiserWrapper, int>>> byLevel =
+                level.GroupBy(kv => kv.Value).OrderBy(g => g.Key);
+
+            foreach (IGrouping<int, KeyValuePair<SimpleVisualiserWrapper, int>> g in byLevel)
+            {
+                int lvl = g.Key;
+                List<SimpleVisualiserWrapper> atLevel = g.Select(kv => kv.Key).ToList();
+
+                if (lvl == 0)
+                {
+                    foreach (SimpleVisualiserWrapper w in atLevel) SetWrapperCenter(w, cx, cy);
+                    continue;
+                }
+
+                // Slice angle based on each node's visual size - bigger node gets bigger slice.
+                const double angularPadding = 15;
+                double totalWeight = atLevel.Sum(w => Math.Max(w.ActualWidth, w.ActualHeight) + angularPadding);
+                if (totalWeight <= 0) totalWeight = atLevel.Count;
+
+                double radiusFromNodes = totalWeight / (2 * Math.PI);
+                double radius = Math.Max(circleSize * lvl, radiusFromNodes);
+
+                double angleAccFraction = 0;
+                foreach (SimpleVisualiserWrapper w in atLevel)
+                {
+                    double weight = Math.Max(w.ActualWidth, w.ActualHeight) + angularPadding;
+                    double share = weight / totalWeight;
+                    double mid = angleAccFraction + share / 2;
+                    double a = mid * 2 * Math.PI;
+                    double x = cx + Math.Cos(a) * radius;
+                    double y = cy + Math.Sin(a) * radius;
+                    SetWrapperCenter(w, x, y);
+                    angleAccFraction += share;
+                }
+            }
+        }
+
+        // 2) FORCE-DIRECTED (Fruchterman-Reingold with rectangle overlap) =====
+
+        private void ApplyForceLayout(List<SimpleVisualiserWrapper> wrappers)
+        {
+            Dictionary<SimpleVisualiserWrapper, List<SimpleVisualiserWrapper>> adj = BuildUndirectedAdjacency(wrappers);
+
+            double width = GetCanvasWidth();
+            double height = GetCanvasHeight();
+            int n = wrappers.Count;
+            double area = width * height;
+            double k = Math.Sqrt(area / Math.Max(1, n));
+
+            Random rand = new Random(42);
+            Dictionary<SimpleVisualiserWrapper, Point> pos = new Dictionary<SimpleVisualiserWrapper, Point>();
+            foreach (SimpleVisualiserWrapper w in wrappers)
+            {
+                double px = Canvas.GetLeft(w); if (double.IsNaN(px)) px = rand.NextDouble() * width;
+                double py = Canvas.GetTop(w);  if (double.IsNaN(py)) py = rand.NextDouble() * height;
+                pos[w] = new Point(px + w.ActualWidth / 2, py + w.ActualHeight / 2);
+            }
+
+            // Collect edges (each pair once, undirected)
+            List<KeyValuePair<SimpleVisualiserWrapper, SimpleVisualiserWrapper>> edges =
+                new List<KeyValuePair<SimpleVisualiserWrapper, SimpleVisualiserWrapper>>();
+            HashSet<string> seen = new HashSet<string>();
+            for (int i = 0; i < wrappers.Count; i++)
+            {
+                SimpleVisualiserWrapper a = wrappers[i];
+                foreach (SimpleVisualiserWrapper b in adj[a])
+                {
+                    int ai = i, bi = wrappers.IndexOf(b);
+                    if (bi < 0) continue;
+                    string key = ai < bi ? ai + ":" + bi : bi + ":" + ai;
+                    if (seen.Add(key)) edges.Add(new KeyValuePair<SimpleVisualiserWrapper, SimpleVisualiserWrapper>(a, b));
+                }
+            }
+
+            int iterations = 200;
+            double temperature = Math.Max(width, height) / 10.0;
+            double cooling = Math.Pow(0.02, 1.0 / iterations); // reach ~2% of initial temp
+
+            Dictionary<SimpleVisualiserWrapper, Vector> disp = new Dictionary<SimpleVisualiserWrapper, Vector>();
+
+            for (int iter = 0; iter < iterations; iter++)
+            {
+                foreach (SimpleVisualiserWrapper w in wrappers) disp[w] = new Vector(0, 0);
+
+                // Repulsion
+                for (int i = 0; i < wrappers.Count; i++)
+                    for (int j = i + 1; j < wrappers.Count; j++)
+                    {
+                        SimpleVisualiserWrapper v = wrappers[i];
+                        SimpleVisualiserWrapper u = wrappers[j];
+                        double dx = pos[v].X - pos[u].X;
+                        double dy = pos[v].Y - pos[u].Y;
+                        double dist = Math.Sqrt(dx * dx + dy * dy);
+                        if (dist < 0.01) { dx = (rand.NextDouble() - 0.5) * 0.1; dy = (rand.NextDouble() - 0.5) * 0.1; dist = 0.01; }
+
+                        // Additional push proportional to rectangle overlap - accounts for node size.
+                        double requiredDx = (v.ActualWidth + u.ActualWidth) / 2 + 10;
+                        double requiredDy = (v.ActualHeight + u.ActualHeight) / 2 + 10;
+                        double overlapX = requiredDx - Math.Abs(dx);
+                        double overlapY = requiredDy - Math.Abs(dy);
+                        double rectPush = 0;
+                        if (overlapX > 0 && overlapY > 0)
+                            rectPush = Math.Min(overlapX, overlapY) * 5;
+
+                        double force = (k * k) / dist + rectPush;
+                        double ux = dx / dist;
+                        double uy = dy / dist;
+                        disp[v] = new Vector(disp[v].X + ux * force, disp[v].Y + uy * force);
+                        disp[u] = new Vector(disp[u].X - ux * force, disp[u].Y - uy * force);
+                    }
+
+                // Attraction along edges
+                foreach (KeyValuePair<SimpleVisualiserWrapper, SimpleVisualiserWrapper> e in edges)
+                {
+                    double dx = pos[e.Key].X - pos[e.Value].X;
+                    double dy = pos[e.Key].Y - pos[e.Value].Y;
+                    double dist = Math.Sqrt(dx * dx + dy * dy);
+                    if (dist < 0.01) dist = 0.01;
+                    double force = (dist * dist) / k;
+                    double ux = dx / dist;
+                    double uy = dy / dist;
+                    disp[e.Key]   = new Vector(disp[e.Key].X   - ux * force, disp[e.Key].Y   - uy * force);
+                    disp[e.Value] = new Vector(disp[e.Value].X + ux * force, disp[e.Value].Y + uy * force);
+                }
+
+                // Apply bounded by temperature
+                foreach (SimpleVisualiserWrapper w in wrappers)
+                {
+                    Vector d = disp[w];
+                    double dlen = Math.Sqrt(d.X * d.X + d.Y * d.Y);
+                    if (dlen > 0)
+                    {
+                        double move = Math.Min(dlen, temperature);
+                        pos[w] = new Point(pos[w].X + (d.X / dlen) * move, pos[w].Y + (d.Y / dlen) * move);
+                    }
+                }
+
+                temperature *= cooling;
+            }
+
+            NormalizePositions(wrappers, pos);
+            foreach (KeyValuePair<SimpleVisualiserWrapper, Point> kv in pos)
+                SetWrapperCenter(kv.Key, kv.Value.X, kv.Value.Y);
+        }
+
+        // 3) SUGIYAMA (layered) ==============================================
+
+        private void ApplySugiyamaLayout(List<SimpleVisualiserWrapper> wrappers)
+        {
+            Dictionary<SimpleVisualiserWrapper, List<SimpleVisualiserWrapper>> outAdj;
+            Dictionary<SimpleVisualiserWrapper, List<SimpleVisualiserWrapper>> inAdj;
+            BuildDirectedAdjacency(wrappers, out outAdj, out inAdj);
+
+            // Layer assignment: longest path from sources. Iterate until no change.
+            Dictionary<SimpleVisualiserWrapper, int> layer = new Dictionary<SimpleVisualiserWrapper, int>();
+            foreach (SimpleVisualiserWrapper w in wrappers) layer[w] = 0;
+
+            bool changed;
+            int guard = 0;
+            do
+            {
+                changed = false;
+                foreach (SimpleVisualiserWrapper w in wrappers)
+                    foreach (SimpleVisualiserWrapper p in inAdj[w])
+                        if (layer[w] <= layer[p])
+                        {
+                            layer[w] = layer[p] + 1;
+                            changed = true;
+                        }
+                guard++;
+            } while (changed && guard < wrappers.Count + 2); // guard also limits cycles impact
+
+            Dictionary<int, List<SimpleVisualiserWrapper>> layers = layer
+                .GroupBy(kv => kv.Value)
+                .ToDictionary(g => g.Key, g => g.Select(kv => kv.Key).ToList());
+
+            int maxLayer = layers.Keys.Max();
+
+            // Barycenter crossing reduction (a few sweeps).
+            for (int sweep = 0; sweep < 16; sweep++)
+            {
+                for (int L = 1; L <= maxLayer; L++)
+                {
+                    List<SimpleVisualiserWrapper> prev = layers.ContainsKey(L - 1) ? layers[L - 1] : new List<SimpleVisualiserWrapper>();
+                    layers[L].Sort((a, b) => Barycenter(a, inAdj, prev).CompareTo(Barycenter(b, inAdj, prev)));
+                }
+                for (int L = maxLayer - 1; L >= 0; L--)
+                {
+                    if (!layers.ContainsKey(L)) continue;
+                    List<SimpleVisualiserWrapper> next = layers.ContainsKey(L + 1) ? layers[L + 1] : new List<SimpleVisualiserWrapper>();
+                    layers[L].Sort((a, b) => Barycenter(a, outAdj, next).CompareTo(Barycenter(b, outAdj, next)));
+                }
+            }
+
+            // Coordinate assignment
+            double xPadding = 40;
+            double yPadding = 140;
+            double cx = GetCanvasWidth() / 2;
+            double startY = 60;
+
+            foreach (KeyValuePair<int, List<SimpleVisualiserWrapper>> kv in layers.OrderBy(k => k.Key))
+            {
+                int L = kv.Key;
+                List<SimpleVisualiserWrapper> nodes = kv.Value;
+                double totalW = nodes.Sum(w => w.ActualWidth + xPadding);
+                double curX = cx - totalW / 2;
+                foreach (SimpleVisualiserWrapper w in nodes)
+                {
+                    double nodeX = curX + (w.ActualWidth + xPadding) / 2;
+                    double nodeY = startY + L * yPadding;
+                    SetWrapperCenter(w, nodeX, nodeY);
+                    curX += w.ActualWidth + xPadding;
+                }
+            }
+        }
+
+        private double Barycenter(SimpleVisualiserWrapper w,
+            Dictionary<SimpleVisualiserWrapper, List<SimpleVisualiserWrapper>> adj,
+            List<SimpleVisualiserWrapper> referenceLayer)
+        {
+            if (!adj.ContainsKey(w) || adj[w].Count == 0 || referenceLayer.Count == 0)
+                return referenceLayer.IndexOf(w);
+
+            double sum = 0;
+            int count = 0;
+            foreach (SimpleVisualiserWrapper n in adj[w])
+            {
+                int idx = referenceLayer.IndexOf(n);
+                if (idx >= 0) { sum += idx; count++; }
+            }
+            if (count == 0) return 0;
+            return sum / count;
+        }
+
+        // 4) KAMADA-KAWAI (stress-based) =====================================
+
+        private void ApplyKamadaKawaiLayout(List<SimpleVisualiserWrapper> wrappers)
+        {
+            int n = wrappers.Count;
+            Dictionary<SimpleVisualiserWrapper, List<SimpleVisualiserWrapper>> adj = BuildUndirectedAdjacency(wrappers);
+
+            // All-pairs shortest paths via BFS.
+            Dictionary<SimpleVisualiserWrapper, Dictionary<SimpleVisualiserWrapper, int>> dist =
+                new Dictionary<SimpleVisualiserWrapper, Dictionary<SimpleVisualiserWrapper, int>>();
+            foreach (SimpleVisualiserWrapper s in wrappers)
+            {
+                Dictionary<SimpleVisualiserWrapper, int> d = new Dictionary<SimpleVisualiserWrapper, int>();
+                Queue<SimpleVisualiserWrapper> q = new Queue<SimpleVisualiserWrapper>();
+                q.Enqueue(s); d[s] = 0;
+                while (q.Count > 0)
+                {
+                    SimpleVisualiserWrapper c = q.Dequeue();
+                    foreach (SimpleVisualiserWrapper nn in adj[c])
+                        if (!d.ContainsKey(nn)) { d[nn] = d[c] + 1; q.Enqueue(nn); }
+                }
+                dist[s] = d;
+            }
+
+            int diameter = 1;
+            foreach (KeyValuePair<SimpleVisualiserWrapper, Dictionary<SimpleVisualiserWrapper, int>> kv in dist)
+                foreach (int v in kv.Value.Values) if (v > diameter) diameter = v;
+
+            double canvasSize = Math.Min(GetCanvasWidth(), GetCanvasHeight());
+            double L = (canvasSize * 0.8) / diameter;
+            double K = 1.0;
+
+            // Initial positions on a circle.
+            Dictionary<SimpleVisualiserWrapper, Point> pos = new Dictionary<SimpleVisualiserWrapper, Point>();
+            double cx = GetCanvasWidth() / 2;
+            double cy = GetCanvasHeight() / 2;
+            double R = canvasSize / 3;
+            for (int i = 0; i < n; i++)
+            {
+                double a = 2 * Math.PI * i / Math.Max(1, n);
+                pos[wrappers[i]] = new Point(cx + R * Math.Cos(a), cy + R * Math.Sin(a));
+            }
+
+            int iterations = 150;
+            for (int iter = 0; iter < iterations; iter++)
+            {
+                double maxDelta = 0;
+                foreach (SimpleVisualiserWrapper m in wrappers)
+                {
+                    double dxSum = 0, dySum = 0;
+                    foreach (SimpleVisualiserWrapper i in wrappers)
+                    {
+                        if (i == m) continue;
+                        if (!dist[m].ContainsKey(i)) continue; // disconnected component
+                        int dmi = dist[m][i];
+                        if (dmi == 0) continue;
+                        double lmi = L * dmi;
+                        double kmi = K / (dmi * dmi);
+                        double dx = pos[m].X - pos[i].X;
+                        double dy = pos[m].Y - pos[i].Y;
+                        double dd = Math.Sqrt(dx * dx + dy * dy);
+                        if (dd < 0.01) dd = 0.01;
+                        dxSum += kmi * (dx - lmi * dx / dd);
+                        dySum += kmi * (dy - lmi * dy / dd);
+                    }
+                    double delta = Math.Sqrt(dxSum * dxSum + dySum * dySum);
+                    if (delta > 0.01)
+                    {
+                        double step = Math.Min(delta * 0.1, 20);
+                        pos[m] = new Point(pos[m].X - (dxSum / delta) * step,
+                                           pos[m].Y - (dySum / delta) * step);
+                        if (delta > maxDelta) maxDelta = delta;
+                    }
+                }
+                if (maxDelta < 0.5) break;
+            }
+
+            NormalizePositions(wrappers, pos);
+            foreach (KeyValuePair<SimpleVisualiserWrapper, Point> kv in pos)
+                SetWrapperCenter(kv.Key, kv.Value.X, kv.Value.Y);
+        }
+
+        // 5) TREE (Reingold-Tilford style - simple subtree-width layout) =====
+
+        private void ApplyTreeLayout(List<SimpleVisualiserWrapper> wrappers)
+        {
+            Dictionary<SimpleVisualiserWrapper, List<SimpleVisualiserWrapper>> adj = BuildUndirectedAdjacency(wrappers);
+            SimpleVisualiserWrapper root = PickRootWrapper(wrappers);
+
+            // BFS spanning tree.
+            Dictionary<SimpleVisualiserWrapper, List<SimpleVisualiserWrapper>> children =
+                new Dictionary<SimpleVisualiserWrapper, List<SimpleVisualiserWrapper>>();
+            foreach (SimpleVisualiserWrapper w in wrappers) children[w] = new List<SimpleVisualiserWrapper>();
+
+            HashSet<SimpleVisualiserWrapper> visited = new HashSet<SimpleVisualiserWrapper> { root };
+            Queue<SimpleVisualiserWrapper> q = new Queue<SimpleVisualiserWrapper>();
+            q.Enqueue(root);
+            while (q.Count > 0)
+            {
+                SimpleVisualiserWrapper c = q.Dequeue();
+                foreach (SimpleVisualiserWrapper nb in adj[c])
+                    if (visited.Add(nb)) { children[c].Add(nb); q.Enqueue(nb); }
+            }
+            // Disconnected nodes: attach as extra roots under the synthetic root.
+            foreach (SimpleVisualiserWrapper w in wrappers)
+                if (visited.Add(w)) children[root].Add(w);
+
+            double xGap = 30;
+            double yGap = 140;
+
+            Dictionary<SimpleVisualiserWrapper, double> subtreeWidth = new Dictionary<SimpleVisualiserWrapper, double>();
+            ComputeSubtreeWidth(root, children, subtreeWidth, xGap);
+
+            double startX = GetCanvasWidth() / 2 - subtreeWidth[root] / 2;
+            PlaceTreeNode(root, children, subtreeWidth, startX, 60, yGap);
+        }
+
+        private double ComputeSubtreeWidth(SimpleVisualiserWrapper w,
+            Dictionary<SimpleVisualiserWrapper, List<SimpleVisualiserWrapper>> children,
+            Dictionary<SimpleVisualiserWrapper, double> cache,
+            double xGap)
+        {
+            if (cache.ContainsKey(w)) return cache[w];
+            double own = w.ActualWidth + xGap;
+            if (children[w].Count == 0) { cache[w] = own; return own; }
+            double sum = 0;
+            foreach (SimpleVisualiserWrapper c in children[w]) sum += ComputeSubtreeWidth(c, children, cache, xGap);
+            double result = Math.Max(own, sum);
+            cache[w] = result;
+            return result;
+        }
+
+        private void PlaceTreeNode(SimpleVisualiserWrapper w,
+            Dictionary<SimpleVisualiserWrapper, List<SimpleVisualiserWrapper>> children,
+            Dictionary<SimpleVisualiserWrapper, double> subtreeWidth,
+            double xLeft, double y, double yGap)
+        {
+            double nodeCx = xLeft + subtreeWidth[w] / 2;
+            SetWrapperCenter(w, nodeCx, y);
+
+            if (children[w].Count == 0) return;
+
+            double totalChildren = 0;
+            foreach (SimpleVisualiserWrapper c in children[w]) totalChildren += subtreeWidth[c];
+
+            double childX = xLeft + (subtreeWidth[w] - totalChildren) / 2;
+            foreach (SimpleVisualiserWrapper c in children[w])
+            {
+                PlaceTreeNode(c, children, subtreeWidth, childX, y + yGap, yGap);
+                childX += subtreeWidth[c];
+            }
+        }
+
+        // 6) POST-PROCESS: OVERLAP REMOVAL ==================================
+
+        private void ApplyOverlapRemoval(List<SimpleVisualiserWrapper> wrappers)
+        {
+            if (wrappers.Count < 2) return;
+
+            const double margin = 6;
+            const int maxIter = 80;
+
+            for (int iter = 0; iter < maxIter; iter++)
+            {
+                bool moved = false;
+                for (int i = 0; i < wrappers.Count; i++)
+                    for (int j = i + 1; j < wrappers.Count; j++)
+                    {
+                        SimpleVisualiserWrapper a = wrappers[i];
+                        SimpleVisualiserWrapper b = wrappers[j];
+
+                        Point ac = GetWrapperCenter(a);
+                        Point bc = GetWrapperCenter(b);
+                        double dx = bc.X - ac.X;
+                        double dy = bc.Y - ac.Y;
+                        double overlapX = (a.ActualWidth + b.ActualWidth) / 2 + margin - Math.Abs(dx);
+                        double overlapY = (a.ActualHeight + b.ActualHeight) / 2 + margin - Math.Abs(dy);
+
+                        if (overlapX > 0 && overlapY > 0)
+                        {
+                            if (overlapX < overlapY)
+                            {
+                                double push = overlapX / 2 + 0.5;
+                                if (dx >= 0) { ac.X -= push; bc.X += push; }
+                                else         { ac.X += push; bc.X -= push; }
+                            }
+                            else
+                            {
+                                double push = overlapY / 2 + 0.5;
+                                if (dy >= 0) { ac.Y -= push; bc.Y += push; }
+                                else         { ac.Y += push; bc.Y -= push; }
+                            }
+                            SetWrapperCenter(a, ac.X, ac.Y);
+                            SetWrapperCenter(b, bc.X, bc.Y);
+                            moved = true;
+                        }
+                    }
+                if (!moved) break;
+            }
+        }
+
+        // LINE REDRAW ========================================================
+
+        private void UpdateAllLines()
+        {
+            HashSet<Shape> seen = new HashSet<Shape>();
+            foreach (SimpleVisualiserWrapper w in GetDistinctWrappers())
+                foreach (Shape s in w.Lines)
+                {
+                    if (!seen.Add(s)) continue;
+                    LineTagStore lts = s.Tag as LineTagStore;
+                    if (lts == null) continue;
+                    UpdateLineEndpoints(s as ArrowLine, lts);
+                }
+        }
+
+        private void UpdateLineEndpoints(ArrowLine l, LineTagStore lts)
+        {
+            if (l == null || lts == null) return;
+
+            SimpleVisualiserWrapper FromWrapper = lts.FromWrapper;
+            SimpleVisualiserWrapper ToWrapper = lts.ToWrapper;
+            if (FromWrapper == null || ToWrapper == null) return;
+
+            // Same geometry as AddLine: line starts at From center and ends at the
+            // intersection with the To-rectangle's border.
+            l.X1 = Canvas.GetLeft(FromWrapper) + FromWrapper.ActualWidth / 2;
+            l.Y1 = Canvas.GetTop(FromWrapper)  + FromWrapper.ActualHeight / 2;
+
+            double tX = Canvas.GetLeft(ToWrapper) + ToWrapper.ActualWidth / 2;
+            double tY = Canvas.GetTop(ToWrapper)  + ToWrapper.ActualHeight / 2;
+
+            double testX = l.X1 - tX;
+            double testY = l.Y1 - tY;
+
+            if (testX == 0) testX = 0.001;
+            if (testY == 0) testY = 0.001;
+
+            if (testY <= 0 && Math.Abs(testX * ToWrapper.ActualHeight) <= Math.Abs(testY * ToWrapper.ActualWidth))
+            {
+                l.X2 = tX - (ToWrapper.ActualHeight / 2 * testX / testY);
+                l.Y2 = tY - ToWrapper.ActualHeight / 2;
+            }
+
+            if (testY > 0 && Math.Abs(testX * ToWrapper.ActualHeight) <= Math.Abs(testY * ToWrapper.ActualWidth))
+            {
+                l.X2 = tX + (ToWrapper.ActualHeight / 2 * testX / testY);
+                l.Y2 = tY + ToWrapper.ActualHeight / 2;
+            }
+
+            if (testX >= 0 && Math.Abs(testX * ToWrapper.ActualHeight) >= Math.Abs(testY * ToWrapper.ActualWidth))
+            {
+                l.X2 = tX + ToWrapper.ActualWidth / 2;
+                l.Y2 = tY + (ToWrapper.ActualWidth / 2 * testY / testX);
+            }
+
+            if (testX <= 0 && Math.Abs(testX * ToWrapper.ActualHeight) >= Math.Abs(testY * ToWrapper.ActualWidth))
+            {
+                l.X2 = tX - ToWrapper.ActualWidth / 2;
+                l.Y2 = tY - (ToWrapper.ActualWidth / 2 * testY / testX);
+            }
+
+            if (lts.MetaLabel != null)
+            {
+                Canvas.SetLeft(lts.MetaLabel, l.X1 + ((l.X2 - l.X1) / 2));
+                Canvas.SetTop(lts.MetaLabel,  l.Y1 + ((l.Y2 - l.Y1) / 2));
+            }
+        }
+
+        private void NormalizePositions(List<SimpleVisualiserWrapper> wrappers, Dictionary<SimpleVisualiserWrapper, Point> positions)
+        {
+            if (positions.Count == 0) return;
+
+            double minX = double.MaxValue, maxX = double.MinValue;
+            double minY = double.MaxValue, maxY = double.MinValue;
+            double maxHalfW = 0, maxHalfH = 0;
+            foreach (SimpleVisualiserWrapper w in wrappers)
+            {
+                Point p = positions[w];
+                if (p.X < minX) minX = p.X;
+                if (p.X > maxX) maxX = p.X;
+                if (p.Y < minY) minY = p.Y;
+                if (p.Y > maxY) maxY = p.Y;
+                if (w.ActualWidth  / 2 > maxHalfW) maxHalfW = w.ActualWidth  / 2;
+                if (w.ActualHeight / 2 > maxHalfH) maxHalfH = w.ActualHeight / 2;
+            }
+
+            double margin = 60;
+            double canvasW = GetCanvasWidth();
+            double canvasH = GetCanvasHeight();
+
+            double spanX = Math.Max(1, maxX - minX);
+            double spanY = Math.Max(1, maxY - minY);
+            double availableX = canvasW - 2 * (margin + maxHalfW);
+            double availableY = canvasH - 2 * (margin + maxHalfH);
+
+            double scaleX = availableX / spanX;
+            double scaleY = availableY / spanY;
+            double scale = Math.Min(scaleX, scaleY);
+            if (double.IsInfinity(scale) || double.IsNaN(scale) || scale <= 0) scale = 1;
+            if (scale > 1) scale = 1; // only shrink, do not stretch small graphs
+
+            List<SimpleVisualiserWrapper> keys = new List<SimpleVisualiserWrapper>(positions.Keys);
+            foreach (SimpleVisualiserWrapper w in keys)
+            {
+                Point p = positions[w];
+                double nx = margin + maxHalfW + (p.X - minX) * scale;
+                double ny = margin + maxHalfH + (p.Y - minY) * scale;
+                positions[w] = new Point(nx, ny);
+            }
         }
     }
 }
