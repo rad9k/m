@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -231,8 +231,8 @@ namespace m0.UIWpf.Visualisers.Helper
                 firstVertexChangeExecuted = true;
                 return exe.Stack;
             }
-          
-            Visualiser.BaseEdgeToUpdated();          
+
+            Visualiser.BaseEdgeToUpdated();
 
             return exe.Stack;
         }        

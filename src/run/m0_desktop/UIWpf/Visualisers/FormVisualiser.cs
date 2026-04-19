@@ -84,7 +84,6 @@ namespace m0.UIWpf.Visualisers
 
         TabItem TabControlSelectedItem;
 
-
         static string[] _MetaTriggeringUpdateVertex = new string[] { "ExpertMode", "ColumnNumber", "MetaOnLeft", "MetaAlignRight", "SectionsAsTabs" };
         
         public string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }

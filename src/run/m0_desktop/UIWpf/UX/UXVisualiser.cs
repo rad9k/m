@@ -1,4 +1,4 @@
-﻿using m0.Foundation;
+using m0.Foundation;
 using m0.Graph;
 using m0.Graph.ExecutionFlow;
 using m0.UIWpf.Controls;
@@ -3044,14 +3044,929 @@ namespace m0.UIWpf.UX
 
             if (visualiser == null)
             {
-                UserInteractionUtil.ShowException("GraphVisualiser", "GraphVisualiser instance not found for baseVertex", ExceptionLevelEnum.Error);
+                UserInteractionUtil.ShowException("UXVisualiser", "UXVisualiser instance not found for baseVertex", ExceptionLevelEnum.Error);
 
                 return stack;
             }
 
-            //visualiser.Dispatcher.Invoke(() => visualiser.RepositionGraph(Reposition));
+            visualiser.Dispatcher.Invoke(() => visualiser.RepositionGraph(Reposition));
 
             return stack;
+        }
+
+        public void RepositionGraph(RepositionAlgorithmEnum algorithm)
+        {
+            List<IUXItem> items = GetTopLevelRepositionItems();
+            if (items.Count == 0) return;
+
+            foreach (IUXItem i in items)
+                if (i is UIElement ue) ue.UpdateLayout();
+
+            MinusZero.Instance.Log(1, "UXVisualiser.RepositionGraph", algorithm.ToString() + " on " + items.Count + " items");
+
+            Interaction.BeginInteractionWithGraph();
+            try
+            {
+                switch (algorithm)
+                {
+                    case RepositionAlgorithmEnum.Radial:   ApplyRadialLayoutUX(items);      break;
+                    case RepositionAlgorithmEnum.Force:    ApplyForceLayoutUX(items);       break;
+                    case RepositionAlgorithmEnum.Sugiyama: ApplySugiyamaLayoutUX(items);    break;
+                    case RepositionAlgorithmEnum.Kamada:   ApplyKamadaKawaiLayoutUX(items); break;
+                    case RepositionAlgorithmEnum.Tree:     ApplyTreeLayoutUX(items);        break;
+                    default:                               ApplyRadialLayoutUX(items);      break;
+                }
+
+                // Post-process (6): rectangle overlap removal - applied for every algorithm
+                ApplyOverlapRemovalUX(items);
+
+                CommitItemPositions(items);
+            }
+            finally
+            {
+                Interaction.EndInteractionWithGraph();
+            }
+
+            CheckAndUpdateDiagramLines();
+        }
+
+        // HELPERS =============================================================
+
+        private List<IUXItem> GetTopLevelRepositionItems()
+        {
+            List<IUXItem> result = new List<IUXItem>();
+            HashSet<IUXItem> seen = new HashSet<IUXItem>();
+            if (Items_all == null) return result;
+            foreach (IUXItem i in Items_all)
+            {
+                if (i == null) continue;
+                if (i is IUXDecorator) continue;          // lines
+                if (i is ILineDecoratorBase) continue;    // lines (double guard)
+                if (!(i.ParentItem is IUXVisualiser)) continue; // only top-level nodes
+                if (!seen.Add(i)) continue;
+                result.Add(i);
+            }
+            return result;
+        }
+
+        private double GetItemWidthEffective(IUXItem item)
+        {
+            // Prefer the user-set Size on the vertex, then fall back to WPF rendered
+            // size, then a sensible constant so algorithms always have a non-zero box.
+            m0.ZeroTypes.UX.Size s = item.Size;
+            if (s != null && s.Width > 0) return s.Width;
+            if (item is FrameworkElement fe && fe.ActualWidth > 0) return fe.ActualWidth;
+            return 100;
+        }
+
+        private double GetItemHeightEffective(IUXItem item)
+        {
+            m0.ZeroTypes.UX.Size s = item.Size;
+            if (s != null && s.Height > 0) return s.Height;
+            if (item is FrameworkElement fe && fe.ActualHeight > 0) return fe.ActualHeight;
+            return 40;
+        }
+
+        private Point GetItemCenterEffective(IUXItem item)
+        {
+            m0.ZeroTypes.UX.Position p = item.Position;
+            double x = p != null ? p.X : 0;
+            double y = p != null ? p.Y : 0;
+            return new Point(x + GetItemWidthEffective(item) / 2, y + GetItemHeightEffective(item) / 2);
+        }
+
+        // Computed centers accumulate here so we write to the graph at the very end
+        // in one batch - avoids triggering a full re-layout for every single move.
+        private Dictionary<IUXItem, Point> _pendingCenters;
+
+        private void ResetPendingCenters(List<IUXItem> items)
+        {
+            _pendingCenters = new Dictionary<IUXItem, Point>(items.Count);
+            foreach (IUXItem i in items) _pendingCenters[i] = GetItemCenterEffective(i);
+        }
+
+        private Point GetPendingCenter(IUXItem item)
+        {
+            if (_pendingCenters != null && _pendingCenters.TryGetValue(item, out Point p)) return p;
+            return GetItemCenterEffective(item);
+        }
+
+        private void SetPendingCenter(IUXItem item, double cx, double cy)
+        {
+            if (_pendingCenters == null) _pendingCenters = new Dictionary<IUXItem, Point>();
+            _pendingCenters[item] = new Point(cx, cy);
+        }
+
+        private void CommitItemPositions(List<IUXItem> items)
+        {
+            if (_pendingCenters == null) return;
+            foreach (IUXItem i in items)
+            {
+                if (!_pendingCenters.TryGetValue(i, out Point c)) continue;
+                double left = c.X - GetItemWidthEffective(i) / 2;
+                double top  = c.Y - GetItemHeightEffective(i) / 2;
+                i.MoveItem(left, top, false);
+            }
+            _pendingCenters = null;
+        }
+
+        private Dictionary<IUXItem, List<IUXItem>> BuildUndirectedAdjacencyUX(List<IUXItem> items)
+        {
+            HashSet<IUXItem> set = new HashSet<IUXItem>(items);
+            Dictionary<IUXItem, List<IUXItem>> adj = new Dictionary<IUXItem, List<IUXItem>>();
+            foreach (IUXItem i in items) adj[i] = new List<IUXItem>();
+
+            // DiagramToLines on UXItem contains incoming lines. Iterating all items and
+            // walking their incoming lines covers every edge exactly once.
+            foreach (IUXItem i in items)
+                foreach (ILineDecoratorBase line in i.DiagramToLines)
+                {
+                    IUXItem from = line.FromDiagramItem;
+                    if (from == null || from == i || !set.Contains(from)) continue;
+                    if (!adj[i].Contains(from)) adj[i].Add(from);
+                    if (!adj[from].Contains(i)) adj[from].Add(i);
+                }
+            return adj;
+        }
+
+        private void BuildDirectedAdjacencyUX(List<IUXItem> items,
+            out Dictionary<IUXItem, List<IUXItem>> outAdj,
+            out Dictionary<IUXItem, List<IUXItem>> inAdj)
+        {
+            HashSet<IUXItem> set = new HashSet<IUXItem>(items);
+            outAdj = new Dictionary<IUXItem, List<IUXItem>>();
+            inAdj = new Dictionary<IUXItem, List<IUXItem>>();
+            foreach (IUXItem i in items)
+            {
+                outAdj[i] = new List<IUXItem>();
+                inAdj[i] = new List<IUXItem>();
+            }
+
+            foreach (IUXItem i in items)
+                foreach (ILineDecoratorBase line in i.DiagramToLines)
+                {
+                    IUXItem from = line.FromDiagramItem;
+                    if (from == null || from == i || !set.Contains(from)) continue;
+                    if (!outAdj[from].Contains(i))
+                    {
+                        outAdj[from].Add(i);
+                        inAdj[i].Add(from);
+                    }
+                }
+        }
+
+        private IUXItem PickRootItem(List<IUXItem> items,
+            Dictionary<IUXItem, List<IUXItem>> adj)
+        {
+            IUXItem best = items[0];
+            int bestDeg = -1;
+            foreach (IUXItem i in items)
+            {
+                int deg = adj.ContainsKey(i) ? adj[i].Count : 0;
+                if (deg > bestDeg) { bestDeg = deg; best = i; }
+            }
+            return best;
+        }
+
+        private double GetUXCanvasWidth()
+        {
+            if (this.Canvas != null)
+            {
+                if (this.Canvas.ActualWidth > 0) return this.Canvas.ActualWidth;
+                if (this.Canvas.Width > 0) return this.Canvas.Width;
+            }
+            if (this.ActualWidth > 0) return this.ActualWidth;
+            return 1200;
+        }
+
+        private double GetUXCanvasHeight()
+        {
+            if (this.Canvas != null)
+            {
+                if (this.Canvas.ActualHeight > 0) return this.Canvas.ActualHeight;
+                if (this.Canvas.Height > 0) return this.Canvas.Height;
+            }
+            if (this.ActualHeight > 0) return this.ActualHeight;
+            return 800;
+        }
+
+        // 1) RADIAL (improved BFS) ===========================================
+
+        private void ApplyRadialLayoutUX(List<IUXItem> items)
+        {
+            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+
+            ResetPendingCenters(items);
+
+            Dictionary<IUXItem, List<IUXItem>> adj = BuildUndirectedAdjacencyUX(items);
+            IUXItem root = PickRootItem(items, adj);
+
+            Dictionary<IUXItem, int> level = new Dictionary<IUXItem, int>();
+            Queue<IUXItem> q = new Queue<IUXItem>();
+            q.Enqueue(root);
+            level[root] = 0;
+            while (q.Count > 0)
+            {
+                IUXItem c = q.Dequeue();
+                foreach (IUXItem n in adj[c])
+                    if (!level.ContainsKey(n)) { level[n] = level[c] + 1; q.Enqueue(n); }
+            }
+            int maxLevel = level.Count > 0 ? level.Values.Max() : 0;
+            foreach (IUXItem i in items)
+                if (!level.ContainsKey(i)) level[i] = maxLevel + 1;
+
+            double baseCircleSize = 220;
+
+            double cx = GetUXCanvasWidth() / 2;
+            double cy = GetUXCanvasHeight() / 2;
+
+            List<IGrouping<int, KeyValuePair<IUXItem, int>>> byLevel =
+                level.GroupBy(kv => kv.Value).OrderBy(g => g.Key).ToList();
+
+            Dictionary<int, double> maxHalfHeight = new Dictionary<int, double>();
+            foreach (IGrouping<int, KeyValuePair<IUXItem, int>> g in byLevel)
+            {
+                double mh = 0;
+                foreach (KeyValuePair<IUXItem, int> kv in g)
+                {
+                    double h = GetItemHeightEffective(kv.Key) / 2;
+                    if (h > mh) mh = h;
+                }
+                maxHalfHeight[g.Key] = mh;
+            }
+
+            const double angularPadding = 20;
+            const double ringPadding = 25;
+            double previousRadius = 0;
+            double previousHalfHeight = 0;
+
+            foreach (IGrouping<int, KeyValuePair<IUXItem, int>> g in byLevel)
+            {
+                int lvl = g.Key;
+                List<IUXItem> atLevel = g.Select(kv => kv.Key).ToList();
+
+                if (lvl == 0)
+                {
+                    foreach (IUXItem i in atLevel) SetPendingCenter(i, cx, cy);
+                    previousRadius = 0;
+                    previousHalfHeight = maxHalfHeight[lvl];
+                    continue;
+                }
+
+                double totalWeight = atLevel.Sum(i => GetItemWidthEffective(i) + angularPadding);
+                if (totalWeight <= 0) totalWeight = atLevel.Count;
+
+                double radiusFromNodes = totalWeight / (2 * Math.PI);
+                double radiusFromPrevious = previousRadius + previousHalfHeight + maxHalfHeight[lvl] + ringPadding;
+                double radius = Math.Max(Math.Max(baseCircleSize * lvl, radiusFromNodes), radiusFromPrevious);
+
+                double angleAcc = 0;
+                foreach (IUXItem i in atLevel)
+                {
+                    double weight = GetItemWidthEffective(i) + angularPadding;
+                    double share = weight / totalWeight;
+                    double mid = angleAcc + share / 2;
+                    double a = mid * 2 * Math.PI;
+                    double x = cx + Math.Cos(a) * radius;
+                    double y = cy + Math.Sin(a) * radius;
+                    SetPendingCenter(i, x, y);
+                    angleAcc += share;
+                }
+
+                previousRadius = radius;
+                previousHalfHeight = maxHalfHeight[lvl];
+            }
+
+            sw.Stop();
+            MinusZero.Instance.Log(1, "UXVisualiser.ApplyRadialLayoutUX",
+                "items=" + items.Count + " rings=" + byLevel.Count + " elapsed_ms=" + sw.ElapsedMilliseconds);
+        }
+
+        // 2) FORCE-DIRECTED ===================================================
+
+        private void ApplyForceLayoutUX(List<IUXItem> items)
+        {
+            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+
+            ResetPendingCenters(items);
+
+            Dictionary<IUXItem, List<IUXItem>> adj = BuildUndirectedAdjacencyUX(items);
+
+            double width = GetUXCanvasWidth();
+            double height = GetUXCanvasHeight();
+            int n = items.Count;
+
+            // Ideal edge length derived from average node size rather than from
+            // canvas area. With the canvas-based formula k = sqrt(area/n), two
+            // connected nodes settle about 'k' pixels apart (repulsion = attraction
+            // at dist = k). For a 1000x500 canvas with 25 items that is ~140 px,
+            // which spreads the cluster over half the canvas. Sizing k from the
+            // node itself gives a compact, readable layout regardless of canvas.
+            double avgItemSize = items.Average(i => Math.Max(GetItemWidthEffective(i), GetItemHeightEffective(i)));
+            if (avgItemSize <= 0) avgItemSize = 80;
+            double k = avgItemSize * 1.3;
+
+            Random rand = new Random(42);
+            Dictionary<IUXItem, Point> pos = new Dictionary<IUXItem, Point>();
+            foreach (IUXItem i in items)
+            {
+                Point c = GetPendingCenter(i);
+                double px = c.X;
+                double py = c.Y;
+                if (double.IsNaN(px) || (px == 0 && py == 0))
+                {
+                    px = rand.NextDouble() * width;
+                    py = rand.NextDouble() * height;
+                }
+                pos[i] = new Point(px, py);
+            }
+
+            List<KeyValuePair<IUXItem, IUXItem>> edges = new List<KeyValuePair<IUXItem, IUXItem>>();
+            HashSet<string> seen = new HashSet<string>();
+            for (int i = 0; i < items.Count; i++)
+            {
+                IUXItem a = items[i];
+                foreach (IUXItem b in adj[a])
+                {
+                    int bi = items.IndexOf(b);
+                    if (bi < 0) continue;
+                    string key = i < bi ? i + ":" + bi : bi + ":" + i;
+                    if (seen.Add(key)) edges.Add(new KeyValuePair<IUXItem, IUXItem>(a, b));
+                }
+            }
+
+            int iterations = 200;
+            double temperature = Math.Max(width, height) / 10.0;
+            double cooling = Math.Pow(0.02, 1.0 / iterations);
+
+            // Gravity is applied only to nodes that have NO edges at all.
+            // The connected cluster organises itself through attractive springs,
+            // and pulling it toward centre too just dissolves the nice layout.
+            // Isolated nodes, by contrast, have nothing attracting them and would
+            // otherwise drift to the canvas borders. Centre of gravity is the
+            // cluster's centroid (recomputed each iteration) - this way isolated
+            // items follow the cluster wherever it settles, not the canvas centre.
+            double isolatedGravityStrength = 0.25;
+
+            // Repulsion cutoff: nodes further than this do not repel each other.
+            // Prevents the main cluster from constantly kicking isolated items
+            // toward the frame.
+            double repulsionCutoff = 3.0 * k;
+
+            HashSet<IUXItem> isolatedItems = new HashSet<IUXItem>();
+            foreach (IUXItem i in items)
+                if (!adj.ContainsKey(i) || adj[i].Count == 0) isolatedItems.Add(i);
+
+            Dictionary<IUXItem, Vector> disp = new Dictionary<IUXItem, Vector>();
+
+            for (int iter = 0; iter < iterations; iter++)
+            {
+                foreach (IUXItem i in items) disp[i] = new Vector(0, 0);
+
+                for (int i = 0; i < items.Count; i++)
+                    for (int j = i + 1; j < items.Count; j++)
+                    {
+                        IUXItem v = items[i];
+                        IUXItem u = items[j];
+
+                        bool vIsolated = isolatedItems.Contains(v);
+                        bool uIsolated = isolatedItems.Contains(u);
+
+                        double dx = pos[v].X - pos[u].X;
+                        double dy = pos[v].Y - pos[u].Y;
+                        double dist = Math.Sqrt(dx * dx + dy * dy);
+                        if (dist < 0.01) { dx = (rand.NextDouble() - 0.5) * 0.1; dy = (rand.NextDouble() - 0.5) * 0.1; dist = 0.01; }
+
+                        double requiredDx = (GetItemWidthEffective(v) + GetItemWidthEffective(u)) / 2 + 10;
+                        double requiredDy = (GetItemHeightEffective(v) + GetItemHeightEffective(u)) / 2 + 10;
+                        double overlapX = requiredDx - Math.Abs(dx);
+                        double overlapY = requiredDy - Math.Abs(dy);
+                        double rectPush = 0;
+                        if (overlapX > 0 && overlapY > 0)
+                            rectPush = Math.Min(overlapX, overlapY) * 5;
+
+                        // Skip the long-range inverse-square repulsion when either of
+                        // the pair is isolated. Isolated nodes must be driven purely
+                        // by gravity, otherwise the cluster keeps kicking them toward
+                        // the frame and gravity never wins. Short-range rectangle
+                        // overlap push is still applied so they do not sit on top of
+                        // cluster nodes.
+                        double inverseSquare = 0;
+                        if (!vIsolated && !uIsolated && dist < repulsionCutoff)
+                            inverseSquare = (k * k) / dist;
+
+                        double force = inverseSquare + rectPush;
+                        double ux = dx / dist;
+                        double uy = dy / dist;
+                        disp[v] = new Vector(disp[v].X + ux * force, disp[v].Y + uy * force);
+                        disp[u] = new Vector(disp[u].X - ux * force, disp[u].Y - uy * force);
+                    }
+
+                foreach (KeyValuePair<IUXItem, IUXItem> e in edges)
+                {
+                    double dx = pos[e.Key].X - pos[e.Value].X;
+                    double dy = pos[e.Key].Y - pos[e.Value].Y;
+                    double dist = Math.Sqrt(dx * dx + dy * dy);
+                    if (dist < 0.01) dist = 0.01;
+                    double force = (dist * dist) / k;
+                    double ux = dx / dist;
+                    double uy = dy / dist;
+                    disp[e.Key]   = new Vector(disp[e.Key].X   - ux * force, disp[e.Key].Y   - uy * force);
+                    disp[e.Value] = new Vector(disp[e.Value].X + ux * force, disp[e.Value].Y + uy * force);
+                }
+
+                // Compute centroid of the connected (non-isolated) cluster. If there
+                // is no connected cluster at all we fall back to the canvas centre.
+                double gravityCenterX;
+                double gravityCenterY;
+                if (isolatedItems.Count < items.Count)
+                {
+                    double sumX = 0, sumY = 0;
+                    int cnt = 0;
+                    foreach (IUXItem i in items)
+                    {
+                        if (isolatedItems.Contains(i)) continue;
+                        sumX += pos[i].X;
+                        sumY += pos[i].Y;
+                        cnt++;
+                    }
+                    gravityCenterX = sumX / cnt;
+                    gravityCenterY = sumY / cnt;
+                }
+                else
+                {
+                    gravityCenterX = width / 2;
+                    gravityCenterY = height / 2;
+                }
+
+                // Gravity applied ONLY to isolated nodes, pulled toward the
+                // connected cluster's centroid.
+                foreach (IUXItem i in isolatedItems)
+                {
+                    double gx = gravityCenterX - pos[i].X;
+                    double gy = gravityCenterY - pos[i].Y;
+                    disp[i] = new Vector(disp[i].X + gx * isolatedGravityStrength,
+                                         disp[i].Y + gy * isolatedGravityStrength);
+                }
+
+                foreach (IUXItem i in items)
+                {
+                    Vector d = disp[i];
+                    double dlen = Math.Sqrt(d.X * d.X + d.Y * d.Y);
+                    if (dlen > 0)
+                    {
+                        double move = Math.Min(dlen, temperature);
+                        pos[i] = new Point(pos[i].X + (d.X / dlen) * move, pos[i].Y + (d.Y / dlen) * move);
+                    }
+                }
+
+                temperature *= cooling;
+            }
+
+            NormalizePositionsUX(items, pos);
+            foreach (KeyValuePair<IUXItem, Point> kv in pos) SetPendingCenter(kv.Key, kv.Value.X, kv.Value.Y);
+
+            sw.Stop();
+            MinusZero.Instance.Log(1, "UXVisualiser.ApplyForceLayoutUX",
+                "items=" + items.Count + " edges=" + edges.Count +
+                " isolated=" + isolatedItems.Count +
+                " k=" + k.ToString("F1") + " avgItemSize=" + avgItemSize.ToString("F1") +
+                " elapsed_ms=" + sw.ElapsedMilliseconds);
+        }
+
+        // 3) SUGIYAMA (layered) ==============================================
+
+        private void ApplySugiyamaLayoutUX(List<IUXItem> items)
+        {
+            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+
+            ResetPendingCenters(items);
+
+            Dictionary<IUXItem, List<IUXItem>> outAdj;
+            Dictionary<IUXItem, List<IUXItem>> inAdj;
+            BuildDirectedAdjacencyUX(items, out outAdj, out inAdj);
+
+            // Layer assignment via Kahn + cycle breaking.
+            Dictionary<IUXItem, int> remainingInDeg = new Dictionary<IUXItem, int>();
+            foreach (IUXItem i in items) remainingInDeg[i] = inAdj[i].Count;
+
+            Dictionary<IUXItem, int> layer = new Dictionary<IUXItem, int>();
+            Queue<IUXItem> readyQueue = new Queue<IUXItem>();
+            HashSet<IUXItem> processed = new HashSet<IUXItem>();
+
+            foreach (IUXItem i in items)
+                if (remainingInDeg[i] == 0) { readyQueue.Enqueue(i); layer[i] = 0; }
+
+            int maxAllowedLayer = Math.Max(1, items.Count - 1);
+            int cyclesBroken = 0;
+
+            while (processed.Count < items.Count)
+            {
+                if (readyQueue.Count == 0)
+                {
+                    IUXItem pick = null;
+                    int minDeg = int.MaxValue;
+                    foreach (IUXItem i in items)
+                    {
+                        if (processed.Contains(i)) continue;
+                        if (remainingInDeg[i] < minDeg) { minDeg = remainingInDeg[i]; pick = i; }
+                    }
+                    if (pick == null) break;
+
+                    int maxP = -1;
+                    foreach (IUXItem p in inAdj[pick])
+                        if (layer.TryGetValue(p, out int lp) && lp > maxP) maxP = lp;
+                    int lw = Math.Min(maxP + 1, maxAllowedLayer);
+                    layer[pick] = lw;
+                    readyQueue.Enqueue(pick);
+                    cyclesBroken++;
+                }
+
+                IUXItem v = readyQueue.Dequeue();
+                if (!processed.Add(v)) continue;
+
+                foreach (IUXItem u in outAdj[v])
+                {
+                    if (processed.Contains(u)) continue;
+                    int currentLayer = layer.ContainsKey(u) ? layer[u] : 0;
+                    int candidate = Math.Min(layer[v] + 1, maxAllowedLayer);
+                    if (candidate > currentLayer) layer[u] = candidate;
+                    else if (!layer.ContainsKey(u)) layer[u] = currentLayer;
+
+                    remainingInDeg[u]--;
+                    if (remainingInDeg[u] <= 0) readyQueue.Enqueue(u);
+                }
+            }
+
+            foreach (IUXItem i in items)
+                if (!layer.ContainsKey(i)) layer[i] = 0;
+
+            Dictionary<int, List<IUXItem>> layers = layer
+                .GroupBy(kv => kv.Value)
+                .ToDictionary(g => g.Key, g => g.Select(kv => kv.Key).ToList());
+
+            int maxLayer = layers.Keys.Max();
+
+            for (int sweep = 0; sweep < 16; sweep++)
+            {
+                for (int L = 1; L <= maxLayer; L++)
+                {
+                    if (!layers.ContainsKey(L)) continue;
+                    List<IUXItem> prev = layers.ContainsKey(L - 1) ? layers[L - 1] : new List<IUXItem>();
+                    layers[L].Sort((a, b) => BarycenterUX(a, inAdj, prev).CompareTo(BarycenterUX(b, inAdj, prev)));
+                }
+                for (int L = maxLayer - 1; L >= 0; L--)
+                {
+                    if (!layers.ContainsKey(L)) continue;
+                    List<IUXItem> next = layers.ContainsKey(L + 1) ? layers[L + 1] : new List<IUXItem>();
+                    layers[L].Sort((a, b) => BarycenterUX(a, outAdj, next).CompareTo(BarycenterUX(b, outAdj, next)));
+                }
+            }
+
+            double xPadding = 40;
+            double canvasH = GetUXCanvasHeight();
+
+            double maxLayerHeight = 0;
+            foreach (KeyValuePair<int, List<IUXItem>> kv in layers)
+                foreach (IUXItem i in kv.Value)
+                {
+                    double h = GetItemHeightEffective(i);
+                    if (h > maxLayerHeight) maxLayerHeight = h;
+                }
+
+            double topMargin = Math.Max(40, maxLayerHeight / 2 + 20);
+            double bottomMargin = Math.Max(40, maxLayerHeight / 2 + 20);
+            double available = Math.Max(100, canvasH - topMargin - bottomMargin);
+            double preferredYPadding = 160;
+            double yPadding = maxLayer > 0 ? Math.Min(preferredYPadding, available / maxLayer) : preferredYPadding;
+            if (yPadding < maxLayerHeight + 20) yPadding = maxLayerHeight + 20;
+
+            double cx = GetUXCanvasWidth() / 2;
+            double startY = topMargin;
+
+            foreach (KeyValuePair<int, List<IUXItem>> kv in layers.OrderBy(k => k.Key))
+            {
+                int L = kv.Key;
+                List<IUXItem> nodes = kv.Value;
+                double totalW = nodes.Sum(i => GetItemWidthEffective(i) + xPadding);
+                double curX = cx - totalW / 2;
+                foreach (IUXItem i in nodes)
+                {
+                    double w = GetItemWidthEffective(i);
+                    double nodeX = curX + (w + xPadding) / 2;
+                    double nodeY = startY + L * yPadding;
+                    SetPendingCenter(i, nodeX, nodeY);
+                    curX += w + xPadding;
+                }
+            }
+
+            sw.Stop();
+            MinusZero.Instance.Log(1, "UXVisualiser.ApplySugiyamaLayoutUX",
+                "items=" + items.Count + " maxLayer=" + maxLayer + " cyclesBroken=" + cyclesBroken +
+                " yPadding=" + yPadding.ToString("F1") + " elapsed_ms=" + sw.ElapsedMilliseconds);
+        }
+
+        private double BarycenterUX(IUXItem w,
+            Dictionary<IUXItem, List<IUXItem>> adj,
+            List<IUXItem> referenceLayer)
+        {
+            if (!adj.ContainsKey(w) || adj[w].Count == 0 || referenceLayer.Count == 0)
+                return referenceLayer.IndexOf(w);
+
+            double sum = 0;
+            int count = 0;
+            foreach (IUXItem n in adj[w])
+            {
+                int idx = referenceLayer.IndexOf(n);
+                if (idx >= 0) { sum += idx; count++; }
+            }
+            if (count == 0) return 0;
+            return sum / count;
+        }
+
+        // 4) KAMADA-KAWAI ====================================================
+
+        private void ApplyKamadaKawaiLayoutUX(List<IUXItem> items)
+        {
+            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+
+            ResetPendingCenters(items);
+
+            int n = items.Count;
+            Dictionary<IUXItem, List<IUXItem>> adj = BuildUndirectedAdjacencyUX(items);
+
+            Dictionary<IUXItem, Dictionary<IUXItem, int>> dist =
+                new Dictionary<IUXItem, Dictionary<IUXItem, int>>();
+            foreach (IUXItem s in items)
+            {
+                Dictionary<IUXItem, int> d = new Dictionary<IUXItem, int>();
+                Queue<IUXItem> q = new Queue<IUXItem>();
+                q.Enqueue(s); d[s] = 0;
+                while (q.Count > 0)
+                {
+                    IUXItem c = q.Dequeue();
+                    foreach (IUXItem nn in adj[c])
+                        if (!d.ContainsKey(nn)) { d[nn] = d[c] + 1; q.Enqueue(nn); }
+                }
+                dist[s] = d;
+            }
+
+            int diameter = 1;
+            foreach (KeyValuePair<IUXItem, Dictionary<IUXItem, int>> kv in dist)
+                foreach (int v in kv.Value.Values) if (v > diameter) diameter = v;
+
+            // Ideal edge length (distance 1 in graph space) = a small multiple of
+            // the average node size. Previously L was derived from canvas size /
+            // diameter, which for small-diameter graphs produced huge gaps
+            // (e.g. diameter=2 on a 1500 px canvas -> L ~= 600 px).
+            double avgItemSize = items.Average(i => Math.Max(GetItemWidthEffective(i), GetItemHeightEffective(i)));
+            if (avgItemSize <= 0) avgItemSize = 80;
+            double L = avgItemSize * 1.6;
+            double K = 1.0;
+
+            Dictionary<IUXItem, Point> pos = new Dictionary<IUXItem, Point>();
+            double cx = GetUXCanvasWidth() / 2;
+            double cy = GetUXCanvasHeight() / 2;
+            // Seed circle radius chosen so initial neighbor distance on the ring
+            // is close to L - the algorithm then only nudges, never has to move
+            // nodes hundreds of pixels.
+            double R = Math.Max(L, (L * n) / (2 * Math.PI));
+            for (int i = 0; i < n; i++)
+            {
+                double a = 2 * Math.PI * i / Math.Max(1, n);
+                pos[items[i]] = new Point(cx + R * Math.Cos(a), cy + R * Math.Sin(a));
+            }
+
+            int iterations = 150;
+            for (int iter = 0; iter < iterations; iter++)
+            {
+                double maxDelta = 0;
+                foreach (IUXItem m in items)
+                {
+                    double dxSum = 0, dySum = 0;
+                    foreach (IUXItem i in items)
+                    {
+                        if (i == m) continue;
+                        if (!dist[m].ContainsKey(i)) continue;
+                        int dmi = dist[m][i];
+                        if (dmi == 0) continue;
+                        double lmi = L * dmi;
+                        double kmi = K / (dmi * dmi);
+                        double dx = pos[m].X - pos[i].X;
+                        double dy = pos[m].Y - pos[i].Y;
+                        double dd = Math.Sqrt(dx * dx + dy * dy);
+                        if (dd < 0.01) dd = 0.01;
+                        dxSum += kmi * (dx - lmi * dx / dd);
+                        dySum += kmi * (dy - lmi * dy / dd);
+                    }
+                    double delta = Math.Sqrt(dxSum * dxSum + dySum * dySum);
+                    if (delta > 0.01)
+                    {
+                        double step = Math.Min(delta * 0.1, 20);
+                        pos[m] = new Point(pos[m].X - (dxSum / delta) * step,
+                                           pos[m].Y - (dySum / delta) * step);
+                        if (delta > maxDelta) maxDelta = delta;
+                    }
+                }
+                if (maxDelta < 0.5) break;
+            }
+
+            NormalizePositionsUX(items, pos);
+            foreach (KeyValuePair<IUXItem, Point> kv in pos) SetPendingCenter(kv.Key, kv.Value.X, kv.Value.Y);
+
+            sw.Stop();
+            MinusZero.Instance.Log(1, "UXVisualiser.ApplyKamadaKawaiLayoutUX",
+                "items=" + items.Count + " diameter=" + diameter +
+                " L=" + L.ToString("F1") + " avgItemSize=" + avgItemSize.ToString("F1") +
+                " elapsed_ms=" + sw.ElapsedMilliseconds);
+        }
+
+        // 5) TREE (Reingold-Tilford style) ==================================
+
+        private void ApplyTreeLayoutUX(List<IUXItem> items)
+        {
+            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+
+            ResetPendingCenters(items);
+
+            Dictionary<IUXItem, List<IUXItem>> adj = BuildUndirectedAdjacencyUX(items);
+            IUXItem root = PickRootItem(items, adj);
+
+            Dictionary<IUXItem, List<IUXItem>> children = new Dictionary<IUXItem, List<IUXItem>>();
+            foreach (IUXItem i in items) children[i] = new List<IUXItem>();
+
+            HashSet<IUXItem> visited = new HashSet<IUXItem> { root };
+            Queue<IUXItem> q = new Queue<IUXItem>();
+            q.Enqueue(root);
+            while (q.Count > 0)
+            {
+                IUXItem c = q.Dequeue();
+                foreach (IUXItem nb in adj[c])
+                    if (visited.Add(nb)) { children[c].Add(nb); q.Enqueue(nb); }
+            }
+            foreach (IUXItem i in items)
+                if (visited.Add(i)) children[root].Add(i);
+
+            double xGap = 40;
+            double yGap = 160;
+
+            Dictionary<IUXItem, double> subtreeWidth = new Dictionary<IUXItem, double>();
+            ComputeSubtreeWidthUX(root, children, subtreeWidth, xGap);
+
+            double startX = GetUXCanvasWidth() / 2 - subtreeWidth[root] / 2;
+            PlaceTreeNodeUX(root, children, subtreeWidth, startX, 80, yGap);
+
+            sw.Stop();
+            MinusZero.Instance.Log(1, "UXVisualiser.ApplyTreeLayoutUX",
+                "items=" + items.Count + " rootChildren=" + children[root].Count + " elapsed_ms=" + sw.ElapsedMilliseconds);
+        }
+
+        private double ComputeSubtreeWidthUX(IUXItem w,
+            Dictionary<IUXItem, List<IUXItem>> children,
+            Dictionary<IUXItem, double> cache,
+            double xGap)
+        {
+            if (cache.ContainsKey(w)) return cache[w];
+            double own = GetItemWidthEffective(w) + xGap;
+            if (children[w].Count == 0) { cache[w] = own; return own; }
+            double sum = 0;
+            foreach (IUXItem c in children[w]) sum += ComputeSubtreeWidthUX(c, children, cache, xGap);
+            double result = Math.Max(own, sum);
+            cache[w] = result;
+            return result;
+        }
+
+        private void PlaceTreeNodeUX(IUXItem w,
+            Dictionary<IUXItem, List<IUXItem>> children,
+            Dictionary<IUXItem, double> subtreeWidth,
+            double xLeft, double y, double yGap)
+        {
+            double nodeCx = xLeft + subtreeWidth[w] / 2;
+            SetPendingCenter(w, nodeCx, y);
+
+            if (children[w].Count == 0) return;
+
+            double totalChildren = 0;
+            foreach (IUXItem c in children[w]) totalChildren += subtreeWidth[c];
+
+            double childX = xLeft + (subtreeWidth[w] - totalChildren) / 2;
+            foreach (IUXItem c in children[w])
+            {
+                PlaceTreeNodeUX(c, children, subtreeWidth, childX, y + yGap, yGap);
+                childX += subtreeWidth[c];
+            }
+        }
+
+        // 6) POST-PROCESS: OVERLAP REMOVAL ==================================
+
+        private void ApplyOverlapRemovalUX(List<IUXItem> items)
+        {
+            if (items.Count < 2) return;
+
+            const double margin = 8;
+            const int maxIter = 40;
+            const double damping = 0.5;
+
+            double convergenceThreshold = 0.25 * items.Count;
+
+            int iterationsUsed = 0;
+            double totalMovement = 0;
+
+            for (int iter = 0; iter < maxIter; iter++)
+            {
+                iterationsUsed = iter + 1;
+                totalMovement = 0;
+
+                for (int i = 0; i < items.Count; i++)
+                    for (int j = i + 1; j < items.Count; j++)
+                    {
+                        IUXItem a = items[i];
+                        IUXItem b = items[j];
+
+                        Point ac = GetPendingCenter(a);
+                        Point bc = GetPendingCenter(b);
+                        double aw = GetItemWidthEffective(a),  ah = GetItemHeightEffective(a);
+                        double bw = GetItemWidthEffective(b),  bh = GetItemHeightEffective(b);
+
+                        double dx = bc.X - ac.X;
+                        double dy = bc.Y - ac.Y;
+                        double overlapX = (aw + bw) / 2 + margin - Math.Abs(dx);
+                        double overlapY = (ah + bh) / 2 + margin - Math.Abs(dy);
+
+                        if (overlapX > 0 && overlapY > 0)
+                        {
+                            double push;
+                            if (overlapX < overlapY)
+                            {
+                                push = overlapX / 2 * damping;
+                                if (dx >= 0) { ac.X -= push; bc.X += push; }
+                                else         { ac.X += push; bc.X -= push; }
+                            }
+                            else
+                            {
+                                push = overlapY / 2 * damping;
+                                if (dy >= 0) { ac.Y -= push; bc.Y += push; }
+                                else         { ac.Y += push; bc.Y -= push; }
+                            }
+                            SetPendingCenter(a, ac.X, ac.Y);
+                            SetPendingCenter(b, bc.X, bc.Y);
+                            totalMovement += push * 2;
+                        }
+                    }
+
+                if (totalMovement < convergenceThreshold) break;
+            }
+
+            MinusZero.Instance.Log(1, "UXVisualiser.ApplyOverlapRemovalUX",
+                "iterations=" + iterationsUsed + " lastTotalMovement=" + totalMovement.ToString("F2") +
+                " items=" + items.Count);
+        }
+
+        // Normalization shared by Force and Kamada-Kawai =====================
+
+        private void NormalizePositionsUX(List<IUXItem> items, Dictionary<IUXItem, Point> positions)
+        {
+            if (positions.Count == 0) return;
+
+            double minX = double.MaxValue, maxX = double.MinValue;
+            double minY = double.MaxValue, maxY = double.MinValue;
+            double maxHalfW = 0, maxHalfH = 0;
+            foreach (IUXItem i in items)
+            {
+                Point p = positions[i];
+                if (p.X < minX) minX = p.X;
+                if (p.X > maxX) maxX = p.X;
+                if (p.Y < minY) minY = p.Y;
+                if (p.Y > maxY) maxY = p.Y;
+                double hw = GetItemWidthEffective(i) / 2;
+                double hh = GetItemHeightEffective(i) / 2;
+                if (hw > maxHalfW) maxHalfW = hw;
+                if (hh > maxHalfH) maxHalfH = hh;
+            }
+
+            double margin = 60;
+            double canvasW = GetUXCanvasWidth();
+            double canvasH = GetUXCanvasHeight();
+
+            double spanX = Math.Max(1, maxX - minX);
+            double spanY = Math.Max(1, maxY - minY);
+            double availableX = canvasW - 2 * (margin + maxHalfW);
+            double availableY = canvasH - 2 * (margin + maxHalfH);
+
+            double scaleX = availableX / spanX;
+            double scaleY = availableY / spanY;
+            double scale = Math.Min(scaleX, scaleY);
+            if (double.IsInfinity(scale) || double.IsNaN(scale) || scale <= 0) scale = 1;
+            if (scale > 1) scale = 1; // only shrink
+
+            List<IUXItem> keys = new List<IUXItem>(positions.Keys);
+            foreach (IUXItem i in keys)
+            {
+                Point p = positions[i];
+                double nx = margin + maxHalfW + (p.X - minX) * scale;
+                double ny = margin + maxHalfH + (p.Y - minY) * scale;
+                positions[i] = new Point(nx, ny);
+            }
         }
     }
 }
