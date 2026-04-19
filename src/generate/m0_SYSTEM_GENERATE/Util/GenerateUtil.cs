@@ -23,6 +23,12 @@ namespace m0_SYSTEM_GENERATE.Util
 
             public int MaxCardinality;
 
+            public int MinValue;
+
+            public int MaxValue;
+
+            public int DefaultValue;
+
             public TypeName(string _name, string _type)
             {
                 Name = _name;
@@ -41,6 +47,22 @@ namespace m0_SYSTEM_GENERATE.Util
                 MinCardinality = _MinCardinality;
 
                 MaxCardinality = _MaxCardinality;
+            }
+
+            public TypeName(string _name, string _type, int _MinCardinality, int _MaxCardinality, int _MinValue, int _MaxValue, int _DefaultValue)
+            {
+                Name = _name;
+                Type = _type;
+
+                MinCardinality = _MinCardinality;
+
+                MaxCardinality = _MaxCardinality;
+
+                MinValue = _MinValue; 
+                
+                MaxValue = _MaxValue;
+
+                DefaultValue = _DefaultValue;
             }
 
             public TypeName(string _name, IVertex _typeVertex, int _MinCardinality, int _MaxCardinality)

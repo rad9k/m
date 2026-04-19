@@ -4729,9 +4729,11 @@ namespace m0
             IVertex Graph = sm.Get(false, @"Visualiser\Graph");
             IVertex RepositionAlgorithmEnum = sm.Get(false, @"Visualiser\RepositionAlgorithmEnum");
 
-            AddMethod(Graph, "Reposition", GraphVisualiserTypeString, "Reposition", null, new TypeName[] { new TypeName("Algorithm", RepositionAlgorithmEnum, 1, 1) });
+            IVertex Graph_Reposition = AddMethod(Graph, "Reposition", GraphVisualiserTypeString, "Reposition", null, new TypeName[] { new TypeName("Algorithm", RepositionAlgorithmEnum, 1, 1), 
+                new TypeName("Spacing", "Integer", 1,1,10,200,30)});
+         
             IVertex UX = sm.Get(false, @"Visualiser\UX");
-            AddMethod(UX, "Reposition", UXVisualiserTypeString, "Reposition", null, new TypeName[] { new TypeName("Algorithm", RepositionAlgorithmEnum, 1, 1) });
+            IVertex UX_Reposition = AddMethod(UX, "Reposition", UXVisualiserTypeString, "Reposition", null, new TypeName[] { new TypeName("Algorithm", RepositionAlgorithmEnum, 1, 1) });
         }
 
         void CreateSystemMetaMethodVisualiser()

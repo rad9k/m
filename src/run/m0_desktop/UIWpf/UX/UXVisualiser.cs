@@ -3,6 +3,7 @@ using m0.Graph;
 using m0.Graph.ExecutionFlow;
 using m0.UIWpf.Controls;
 using m0.UIWpf.Foundation;
+using m0.UIWpf.Visualisers;
 using m0.UIWpf.Visualisers.Helper;
 using m0.User.Process.UX;
 using m0.Util;
@@ -3037,9 +3038,20 @@ namespace m0.UIWpf.UX
 
             RepositionAlgorithmEnum Reposition = RepositionAlgorithmEnumHelper.GetEnum(AlgorithmVertex);
 
-            //
+            IVertex visualiserVertex = GraphUtil.GetQueryOutFirst(stack, "this", null);
 
-            return null;
+            UXVisualiser visualiser = (UXVisualiser)VisualisersList.GetVisualiser(visualiserVertex);
+
+            if (visualiser == null)
+            {
+                UserInteractionUtil.ShowException("GraphVisualiser", "GraphVisualiser instance not found for baseVertex", ExceptionLevelEnum.Error);
+
+                return stack;
+            }
+
+            //visualiser.Dispatcher.Invoke(() => visualiser.RepositionGraph(Reposition));
+
+            return stack;
         }
     }
 }
