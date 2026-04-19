@@ -1081,6 +1081,8 @@ namespace m0.UIWpf.Visualisers
 
         private void ApplyRadialLayout(List<SimpleVisualiserWrapper> wrappers)
         {
+            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+
             Dictionary<SimpleVisualiserWrapper, List<SimpleVisualiserWrapper>> adj = BuildUndirectedAdjacency(wrappers);
             SimpleVisualiserWrapper root = PickRootWrapper(wrappers);
 
@@ -1105,8 +1107,25 @@ namespace m0.UIWpf.Visualisers
             double cx = GetCanvasWidth() / 2;
             double cy = GetCanvasHeight() / 2;
 
-            IEnumerable<IGrouping<int, KeyValuePair<SimpleVisualiserWrapper, int>>> byLevel =
-                level.GroupBy(kv => kv.Value).OrderBy(g => g.Key);
+            // Group by level and pre-compute per-level max half-height so we can keep
+            // adjacent rings from crashing into each other.
+            List<IGrouping<int, KeyValuePair<SimpleVisualiserWrapper, int>>> byLevel =
+                level.GroupBy(kv => kv.Value).OrderBy(g => g.Key).ToList();
+
+            Dictionary<int, double> maxHalfHeightAtLevel = new Dictionary<int, double>();
+            foreach (IGrouping<int, KeyValuePair<SimpleVisualiserWrapper, int>> g in byLevel)
+            {
+                double mh = 0;
+                foreach (KeyValuePair<SimpleVisualiserWrapper, int> kv in g)
+                    if (kv.Key.ActualHeight / 2 > mh) mh = kv.Key.ActualHeight / 2;
+                maxHalfHeightAtLevel[g.Key] = mh;
+            }
+
+            double previousRadius = 0;
+            double previousHalfHeight = 0;
+
+            const double angularPadding = 15;
+            const double ringPadding = 20;
 
             foreach (IGrouping<int, KeyValuePair<SimpleVisualiserWrapper, int>> g in byLevel)
             {
@@ -1116,21 +1135,26 @@ namespace m0.UIWpf.Visualisers
                 if (lvl == 0)
                 {
                     foreach (SimpleVisualiserWrapper w in atLevel) SetWrapperCenter(w, cx, cy);
+                    previousRadius = 0;
+                    previousHalfHeight = maxHalfHeightAtLevel[lvl];
                     continue;
                 }
 
-                // Slice angle based on each node's visual size - bigger node gets bigger slice.
-                const double angularPadding = 15;
-                double totalWeight = atLevel.Sum(w => Math.Max(w.ActualWidth, w.ActualHeight) + angularPadding);
+                // Slice weight uses the width, because the tangential direction on the
+                // ring is dominated by width; height is handled by radial spacing below.
+                double totalWeight = atLevel.Sum(w => w.ActualWidth + angularPadding);
                 if (totalWeight <= 0) totalWeight = atLevel.Count;
 
+                // Minimum radius so all rectangles fit around the ring without angular overlap.
                 double radiusFromNodes = totalWeight / (2 * Math.PI);
-                double radius = Math.Max(circleSize * lvl, radiusFromNodes);
+                // Minimum radius so this ring does not collide with previous ring radially.
+                double radiusFromPrevious = previousRadius + previousHalfHeight + maxHalfHeightAtLevel[lvl] + ringPadding;
+                double radius = Math.Max(Math.Max(circleSize * lvl, radiusFromNodes), radiusFromPrevious);
 
                 double angleAccFraction = 0;
                 foreach (SimpleVisualiserWrapper w in atLevel)
                 {
-                    double weight = Math.Max(w.ActualWidth, w.ActualHeight) + angularPadding;
+                    double weight = w.ActualWidth + angularPadding;
                     double share = weight / totalWeight;
                     double mid = angleAccFraction + share / 2;
                     double a = mid * 2 * Math.PI;
@@ -1139,7 +1163,14 @@ namespace m0.UIWpf.Visualisers
                     SetWrapperCenter(w, x, y);
                     angleAccFraction += share;
                 }
+
+                previousRadius = radius;
+                previousHalfHeight = maxHalfHeightAtLevel[lvl];
             }
+
+            sw.Stop();
+            MinusZero.Instance.Log(1, "GraphVisualiser.ApplyRadialLayout",
+                "wrappers=" + wrappers.Count + " rings=" + byLevel.Count + " elapsed_ms=" + sw.ElapsedMilliseconds);
         }
 
         // 2) FORCE-DIRECTED (Fruchterman-Reingold with rectangle overlap) =====
@@ -1254,28 +1285,72 @@ namespace m0.UIWpf.Visualisers
 
         private void ApplySugiyamaLayout(List<SimpleVisualiserWrapper> wrappers)
         {
+            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+
             Dictionary<SimpleVisualiserWrapper, List<SimpleVisualiserWrapper>> outAdj;
             Dictionary<SimpleVisualiserWrapper, List<SimpleVisualiserWrapper>> inAdj;
             BuildDirectedAdjacency(wrappers, out outAdj, out inAdj);
 
-            // Layer assignment: longest path from sources. Iterate until no change.
-            Dictionary<SimpleVisualiserWrapper, int> layer = new Dictionary<SimpleVisualiserWrapper, int>();
-            foreach (SimpleVisualiserWrapper w in wrappers) layer[w] = 0;
+            // Layer assignment via Kahn's topological sort with cycle breaking.
+            // Without this, a cycle A -> B -> A made the previous "longest path" loop
+            // increment both layers every iteration until guard ran out, sending nodes
+            // thousands of pixels below the canvas.
+            Dictionary<SimpleVisualiserWrapper, int> remainingInDeg = new Dictionary<SimpleVisualiserWrapper, int>();
+            foreach (SimpleVisualiserWrapper w in wrappers) remainingInDeg[w] = inAdj[w].Count;
 
-            bool changed;
-            int guard = 0;
-            do
+            Dictionary<SimpleVisualiserWrapper, int> layer = new Dictionary<SimpleVisualiserWrapper, int>();
+            Queue<SimpleVisualiserWrapper> readyQueue = new Queue<SimpleVisualiserWrapper>();
+            HashSet<SimpleVisualiserWrapper> processed = new HashSet<SimpleVisualiserWrapper>();
+
+            foreach (SimpleVisualiserWrapper w in wrappers)
+                if (remainingInDeg[w] == 0) { readyQueue.Enqueue(w); layer[w] = 0; }
+
+            int maxAllowedLayer = Math.Max(1, wrappers.Count - 1);
+            int cyclesBroken = 0;
+
+            while (processed.Count < wrappers.Count)
             {
-                changed = false;
-                foreach (SimpleVisualiserWrapper w in wrappers)
-                    foreach (SimpleVisualiserWrapper p in inAdj[w])
-                        if (layer[w] <= layer[p])
-                        {
-                            layer[w] = layer[p] + 1;
-                            changed = true;
-                        }
-                guard++;
-            } while (changed && guard < wrappers.Count + 2); // guard also limits cycles impact
+                if (readyQueue.Count == 0)
+                {
+                    // Cycle: pick an unprocessed node with the smallest remaining
+                    // in-degree and force-start it; one of its in-edges becomes a
+                    // "back edge" that gets ignored for layering purposes.
+                    SimpleVisualiserWrapper pick = null;
+                    int minDeg = int.MaxValue;
+                    foreach (SimpleVisualiserWrapper w in wrappers)
+                    {
+                        if (processed.Contains(w)) continue;
+                        if (remainingInDeg[w] < minDeg) { minDeg = remainingInDeg[w]; pick = w; }
+                    }
+                    if (pick == null) break;
+
+                    int maxP = -1;
+                    foreach (SimpleVisualiserWrapper p in inAdj[pick])
+                        if (layer.TryGetValue(p, out int lp) && lp > maxP) maxP = lp;
+                    int lw = Math.Min(maxP + 1, maxAllowedLayer);
+                    layer[pick] = lw;
+                    readyQueue.Enqueue(pick);
+                    cyclesBroken++;
+                }
+
+                SimpleVisualiserWrapper v = readyQueue.Dequeue();
+                if (!processed.Add(v)) continue;
+
+                foreach (SimpleVisualiserWrapper u in outAdj[v])
+                {
+                    if (processed.Contains(u)) continue;
+                    int currentLayer = layer.ContainsKey(u) ? layer[u] : 0;
+                    int candidate = Math.Min(layer[v] + 1, maxAllowedLayer);
+                    if (candidate > currentLayer) layer[u] = candidate;
+                    else if (!layer.ContainsKey(u)) layer[u] = currentLayer;
+
+                    remainingInDeg[u]--;
+                    if (remainingInDeg[u] <= 0) readyQueue.Enqueue(u);
+                }
+            }
+
+            foreach (SimpleVisualiserWrapper w in wrappers)
+                if (!layer.ContainsKey(w)) layer[w] = 0;
 
             Dictionary<int, List<SimpleVisualiserWrapper>> layers = layer
                 .GroupBy(kv => kv.Value)
@@ -1288,6 +1363,7 @@ namespace m0.UIWpf.Visualisers
             {
                 for (int L = 1; L <= maxLayer; L++)
                 {
+                    if (!layers.ContainsKey(L)) continue;
                     List<SimpleVisualiserWrapper> prev = layers.ContainsKey(L - 1) ? layers[L - 1] : new List<SimpleVisualiserWrapper>();
                     layers[L].Sort((a, b) => Barycenter(a, inAdj, prev).CompareTo(Barycenter(b, inAdj, prev)));
                 }
@@ -1299,11 +1375,25 @@ namespace m0.UIWpf.Visualisers
                 }
             }
 
-            // Coordinate assignment
+            // Coordinate assignment - squeeze vertical spacing so the whole stack
+            // fits within the canvas height even for deep layerings.
             double xPadding = 40;
-            double yPadding = 140;
+            double canvasH = GetCanvasHeight();
+
+            double maxLayerHeight = 0;
+            foreach (KeyValuePair<int, List<SimpleVisualiserWrapper>> kv in layers)
+                foreach (SimpleVisualiserWrapper w in kv.Value)
+                    if (w.ActualHeight > maxLayerHeight) maxLayerHeight = w.ActualHeight;
+
+            double topMargin = Math.Max(40, maxLayerHeight / 2 + 20);
+            double bottomMargin = Math.Max(40, maxLayerHeight / 2 + 20);
+            double available = Math.Max(100, canvasH - topMargin - bottomMargin);
+            double preferredYPadding = 140;
+            double yPadding = maxLayer > 0 ? Math.Min(preferredYPadding, available / maxLayer) : preferredYPadding;
+            if (yPadding < maxLayerHeight + 20) yPadding = maxLayerHeight + 20; // do not collide with ring above
+
             double cx = GetCanvasWidth() / 2;
-            double startY = 60;
+            double startY = topMargin;
 
             foreach (KeyValuePair<int, List<SimpleVisualiserWrapper>> kv in layers.OrderBy(k => k.Key))
             {
@@ -1319,6 +1409,11 @@ namespace m0.UIWpf.Visualisers
                     curX += w.ActualWidth + xPadding;
                 }
             }
+
+            sw.Stop();
+            MinusZero.Instance.Log(1, "GraphVisualiser.ApplySugiyamaLayout",
+                "wrappers=" + wrappers.Count + " maxLayer=" + maxLayer + " cyclesBroken=" + cyclesBroken +
+                " yPadding=" + yPadding.ToString("F1") + " elapsed_ms=" + sw.ElapsedMilliseconds);
         }
 
         private double Barycenter(SimpleVisualiserWrapper w,
@@ -1499,11 +1594,24 @@ namespace m0.UIWpf.Visualisers
             if (wrappers.Count < 2) return;
 
             const double margin = 6;
-            const int maxIter = 80;
+            const int maxIter = 40;
+            // Damping factor < 1 to prevent oscillation when many nodes are packed
+            // on the same ring; each pair is only partially separated per iteration,
+            // letting the global configuration settle.
+            const double damping = 0.5;
+
+            // Convergence threshold: stop as soon as the average per-node movement
+            // drops below ~0.25 px, so we do not burn iterations on oscillation.
+            double convergenceThreshold = 0.25 * wrappers.Count;
+
+            int iterationsUsed = 0;
+            double totalMovement = 0;
 
             for (int iter = 0; iter < maxIter; iter++)
             {
-                bool moved = false;
+                iterationsUsed = iter + 1;
+                totalMovement = 0;
+
                 for (int i = 0; i < wrappers.Count; i++)
                     for (int j = i + 1; j < wrappers.Count; j++)
                     {
@@ -1519,25 +1627,31 @@ namespace m0.UIWpf.Visualisers
 
                         if (overlapX > 0 && overlapY > 0)
                         {
+                            double push;
                             if (overlapX < overlapY)
                             {
-                                double push = overlapX / 2 + 0.5;
+                                push = overlapX / 2 * damping;
                                 if (dx >= 0) { ac.X -= push; bc.X += push; }
                                 else         { ac.X += push; bc.X -= push; }
                             }
                             else
                             {
-                                double push = overlapY / 2 + 0.5;
+                                push = overlapY / 2 * damping;
                                 if (dy >= 0) { ac.Y -= push; bc.Y += push; }
                                 else         { ac.Y += push; bc.Y -= push; }
                             }
                             SetWrapperCenter(a, ac.X, ac.Y);
                             SetWrapperCenter(b, bc.X, bc.Y);
-                            moved = true;
+                            totalMovement += push * 2;
                         }
                     }
-                if (!moved) break;
+
+                if (totalMovement < convergenceThreshold) break;
             }
+
+            MinusZero.Instance.Log(1, "GraphVisualiser.ApplyOverlapRemoval",
+                "iterations=" + iterationsUsed + " lastTotalMovement=" + totalMovement.ToString("F2") +
+                " wrappers=" + wrappers.Count);
         }
 
         // LINE REDRAW ========================================================
