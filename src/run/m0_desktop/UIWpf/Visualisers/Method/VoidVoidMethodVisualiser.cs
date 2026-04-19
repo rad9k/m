@@ -17,6 +17,7 @@ using System.Windows;
 using m0.ZeroCode;
 using System.Threading;
 using System.Windows.Threading;
+using m0.User.Process.UX;
 
 namespace m0.UIWpf.Visualisers.Method
 {
@@ -77,8 +78,18 @@ namespace m0.UIWpf.Visualisers.Method
 
             ButtonVisualChange(false);
 
-            if(baseVertex != null && methodVertex != null)
+            if (baseVertex != null && methodVertex != null)
+            {
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
+                
                 ZeroCodeExecutonUtil.CreateExecutionAndVertexMethodExecute(methodVertex, baseVertex);
+
+                //////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                //////////////////////////////////////
+            }
 
             ButtonVisualChange(true);
         }

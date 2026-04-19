@@ -115,7 +115,6 @@ namespace m0.UIWpf
 
         ContentPresenter Content_Top;
         Border MethodsDivider_Top;
-        ScrollViewer MethodsScrollViewer_Top;
         StackPanel MethodsPanel_Top;
         ScrollViewer Content_Down;
         ScrollViewer Content_Right;
@@ -126,8 +125,7 @@ namespace m0.UIWpf
 
             Content_Top = (ContentPresenter)topPanel.Children[0];
             MethodsDivider_Top = (Border)topPanel.Children[1];
-            MethodsScrollViewer_Top = (ScrollViewer)topPanel.Children[2];
-            MethodsPanel_Top = (StackPanel)MethodsScrollViewer_Top.Content;
+            MethodsPanel_Top = (StackPanel)topPanel.Children[2];
             Content_Down = (ScrollViewer)this.Expander_Down.Content;
 
             Content_Right = (ScrollViewer)this.Expander_Right.Content;
@@ -153,7 +151,7 @@ namespace m0.UIWpf
             TopMethodVisualisers.Clear();
             MethodsPanel_Top.Children.Clear();
             MethodsDivider_Top.Visibility = Visibility.Collapsed;
-            MethodsScrollViewer_Top.Visibility = Visibility.Collapsed;
+            MethodsPanel_Top.Visibility = Visibility.Collapsed;
         }
 
         void EnsureTopMethodsContent()
@@ -178,7 +176,9 @@ namespace m0.UIWpf
                 if (methodEdge.To.Get(false, "$Hide:") != null)
                     continue;
 
-                FrameworkElement methodVisualiser = ExecutableVisualiserFactory.CreateExecutableVisualiser(currentBaseEdge, methodEdge.To);
+                IEdge visualiserEdge = new EasyEdge(null, null, platformClassObject.Vertex);
+
+                FrameworkElement methodVisualiser = ExecutableVisualiserFactory.CreateExecutableVisualiser(visualiserEdge, methodEdge.To);
                 StackPanel methodContainer = new StackPanel();
                 methodContainer.Margin = new Thickness(0, 0, 12, 0);
 
@@ -201,7 +201,7 @@ namespace m0.UIWpf
                 return;
 
             MethodsDivider_Top.Visibility = Visibility.Visible;
-            MethodsScrollViewer_Top.Visibility = Visibility.Visible;
+            MethodsPanel_Top.Visibility = Visibility.Visible;
         }
 
         public void SetContent(IPlatformClass pc){

@@ -78,6 +78,8 @@ namespace m0.UIWpf.Visualisers
         double controlLineVsControlLineSeparator = 4;
 
         double lastCorrectedWidth = 0;
+        bool widthCorrectionScheduled = false;
+        bool widthCorrectionInProgress = false;
 
 
         TabItem TabControlSelectedItem;
@@ -115,7 +117,7 @@ namespace m0.UIWpf.Visualisers
                 "FormVisualiser", 
                 this, 
                 false, 
-                new List<string> { @""/*, @"BaseEdge:\To:"*/}, // currently the form does not need BaseEdge:\To:
+                new List<string> { @"" }, // currently the form does not need BaseEdge:\To:
                 "AtomVisualiser",
                 baseEdgeVertex,
                 UpdateBaseEdgeCallSchemeEnum.OmmitFirst);            
@@ -337,6 +339,11 @@ namespace m0.UIWpf.Visualisers
 
             BaseVertexEdgeAdded_PreFill = false;
             BaseVertexEdgeAdded = false;
+            lastCorrectedWidth = 0;
+            widthCorrectionScheduled = false;
+            widthCorrectionInProgress = false;
+            TabControlSelectedItem = null;
+            TabControl = null;
 
             IVertex basTo = Vertex.Get(false, @"BaseEdge:\To:");            
 
@@ -429,35 +436,24 @@ namespace m0.UIWpf.Visualisers
                         if (e.To.Get(false, "$Hide:") == null)
                             AddEdge(e.To, false);
                 
-                if (MetaOnLeft){
-                    if (HasTabs)
-                    {
-                        ScheduleActiveTabCorrection();
-                    }
-                    else if (TabList.ContainsKey(""))
-                    {
-                        this.SizeChanged -= FormVisualiser_SizeChanged;
-                        CorrectWidth(TabList[""]);
-                        lastCorrectedWidth = this.ActualWidth;
-                        this.SizeChanged += FormVisualiser_SizeChanged;
-                    }
-                }
+                if (MetaOnLeft)
+                    ScheduleWidthCorrection(true);
                 
             }
             //return;
             VisualiserHelper.ForceVertexChangeOff = false;
         }
 
-        protected void CorrectWidth(TabInfo i, bool allowUpdateLayout = true)
+        protected bool CorrectWidth(TabInfo i, bool allowUpdateLayout = true)
         {
             if (i.ControlInfos.Count() == 0)
-                return;
+                return true;
 
-            if (allowUpdateLayout && !HasTabs && !i.WidthCorrectionDone)
+            if (allowUpdateLayout && !i.WidthCorrectionDone)
                 this.UpdateLayout();
 
            if (i.ControlInfos.First().Value.MetaControl.ActualWidth == 0)
-                return;
+                return false;
             
             i.WidthCorrectionDone = true;
            
@@ -503,6 +499,8 @@ namespace m0.UIWpf.Visualisers
                         ci.Value.DataControl.Width = Math.Max(0, Math.Floor(oneColumnWidth - maxMetaWidthInColumn[ci.Value.Column] - metaVsDataSeparator - sectionControlBorderWidth));
                     }
                 }
+
+            return true;
         }
 
         protected object CreateColumnedContent()
@@ -569,8 +567,6 @@ namespace m0.UIWpf.Visualisers
 
                 TabControlSelectedItem = TabControl.SelectedItem as TabItem;
 
-                if (MetaOnLeft)
-                    ScheduleActiveTabCorrection();
             }
             else
                 Content = CreateColumnedContent();
@@ -581,33 +577,76 @@ namespace m0.UIWpf.Visualisers
            // Content = new Button();
         }
 
-        private void ScheduleActiveTabCorrection()
+        private TabInfo GetTabInfoForWidthCorrection()
         {
-            if (!HasTabs || !MetaOnLeft || isDisposed || TabList == null)
+            if (TabList == null)
+                return null;
+
+            if (HasTabs)
+                return getActiveTabInfo();
+
+            if (TabList.ContainsKey(""))
+                return TabList[""];
+
+            return null;
+        }
+
+        private void ScheduleWidthCorrection(bool allowUpdateLayout, int retryCount = 0)
+        {
+            if (!MetaOnLeft || isDisposed || TabList == null)
                 return;
+
+            if (retryCount == 0)
+            {
+                if (widthCorrectionScheduled)
+                    return;
+
+                widthCorrectionScheduled = true;
+            }
 
             this.Dispatcher.BeginInvoke(
                 new Action(() =>
                 {
-                    if (!HasTabs || !MetaOnLeft || isDisposed || TabList == null)
+                    if (retryCount == 0)
+                        widthCorrectionScheduled = false;
+
+                    if (!MetaOnLeft || isDisposed || TabList == null)
                         return;
 
-                    TabInfo activeTab = getActiveTabInfo();
-                    if (activeTab == null)
+                    TabInfo tabInfo = GetTabInfoForWidthCorrection();
+                    if (tabInfo == null)
                         return;
 
                     this.SizeChanged -= FormVisualiser_SizeChanged;
+                    bool correctionDone = false;
+                    widthCorrectionInProgress = true;
                     try
                     {
-                        CorrectWidth(activeTab, false);
-                        lastCorrectedWidth = this.ActualWidth;
+                        correctionDone = CorrectWidth(tabInfo, allowUpdateLayout);
+                        if (correctionDone)
+                            lastCorrectedWidth = this.ActualWidth;
                     }
                     finally
                     {
+                        widthCorrectionInProgress = false;
                         this.SizeChanged += FormVisualiser_SizeChanged;
                     }
+
+                    if (!correctionDone && retryCount < 5)
+                        ScheduleWidthCorrection(true, retryCount + 1);
                 }),
-                System.Windows.Threading.DispatcherPriority.Loaded);
+                retryCount == 0 ? System.Windows.Threading.DispatcherPriority.Loaded : System.Windows.Threading.DispatcherPriority.Render);
+        }
+
+        private void DataControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (!MetaOnLeft || isDisposed || widthCorrectionInProgress)
+                return;
+
+            if (!e.WidthChanged)
+                return;
+
+            ScheduleWidthCorrection(false);
         }
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -617,11 +656,12 @@ namespace m0.UIWpf.Visualisers
             if (MetaOnLeft && TabControlSelectedItem != null && TabControlSelectedItem.Tag is TabInfo tabInfo)
             {
                 this.SizeChanged -= FormVisualiser_SizeChanged;
-                CorrectWidth(tabInfo);
-                lastCorrectedWidth = this.ActualWidth;
+                bool correctionDone = CorrectWidth(tabInfo);
+                if (correctionDone)
+                    lastCorrectedWidth = this.ActualWidth;
                 this.SizeChanged += FormVisualiser_SizeChanged;
 
-                ScheduleActiveTabCorrection();
+                ScheduleWidthCorrection(true);
             }
         }
 
@@ -642,24 +682,28 @@ namespace m0.UIWpf.Visualisers
             lastCorrectedWidth = this.ActualWidth;
 
             this.SizeChanged -= FormVisualiser_SizeChanged;
+            bool correctionDone = false;
             try
             {
                 if (HasTabs)
                 {
                     TabInfo activeTab = getActiveTabInfo();
                     if (activeTab != null)
-                        CorrectWidth(activeTab, false);
+                        correctionDone = CorrectWidth(activeTab, false);
                 }
                 else
                 {
                     if (TabList.ContainsKey(""))
-                        CorrectWidth(TabList[""], false);
+                        correctionDone = CorrectWidth(TabList[""], false);
                 }
             }
             finally
             {
                 this.SizeChanged += FormVisualiser_SizeChanged;
             }
+
+            if (!correctionDone)
+                ScheduleWidthCorrection(false);
         }
 
         protected Panel GetUIPlace(string group,string section, ControlInfo ci)
@@ -828,6 +872,7 @@ namespace m0.UIWpf.Visualisers
 
             ci.MetaControl = metaControl;
             ci.DataControl = dataControl;
+            ci.DataControl.SizeChanged += DataControl_SizeChanged;
 
             if (meta == null)
             { // BaseEdgeVertex

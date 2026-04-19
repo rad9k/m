@@ -946,10 +946,9 @@ namespace m0.UIWpf.Visualisers
 
             RepositionAlgorithmEnum Reposition = RepositionAlgorithmEnumHelper.GetEnum(AlgorithmVertex);
 
-            IVertex baseVertexEdge = GraphUtil.GetQueryOutFirst(stack, "baseVertex", null);
-            IVertex baseVertex = baseVertexEdge != null ? GraphUtil.GetQueryOutFirst(baseVertexEdge, "To", null) : null;
+            IVertex visualiserVertex = GraphUtil.GetQueryOutFirst(stack, "this", null);
 
-            GraphVisualiser visualiser = FindGraphVisualiser(baseVertex);
+            GraphVisualiser visualiser = (GraphVisualiser)VisualisersList.GetVisualiser(visualiserVertex);
 
             if (visualiser == null)
             {
@@ -961,20 +960,6 @@ namespace m0.UIWpf.Visualisers
             visualiser.Dispatcher.Invoke(() => visualiser.RepositionGraph(Reposition));
 
             return stack;
-        }
-
-        private static GraphVisualiser FindGraphVisualiser(IVertex baseVertex)
-        {
-            if (baseVertex != null && TypedEdge.vertexDictionary.ContainsKey(baseVertex))
-            {
-                ITypedEdge te = TypedEdge.vertexDictionary[baseVertex];
-                if (te is GraphVisualiser gv) return gv;
-            }
-
-            //foreach (KeyValuePair<IVertex, ITypedEdge> kv in TypedEdge.vertexDictionary)
-                //if (kv.Value is GraphVisualiser gv) return gv;
-
-            return null;
         }
 
         public void RepositionGraph(RepositionAlgorithmEnum algorithm)

@@ -14,6 +14,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
+using m0.User.Process.UX;
 
 namespace m0.UIWpf.Visualisers.Method
 {
@@ -46,8 +47,7 @@ namespace m0.UIWpf.Visualisers.Method
                 ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex, mz.Root.Get(false, @"System\Meta\Visualiser\Method\VoidAnyMethod"));
                 ClassVertex.AddIsClassAndAllAttributesAndAssociations(Vertex.Get(false, "BaseEdge:"), mz.Root.Get(false, @"System\Meta\ZeroTypes\Edge"));
 
-                parametersStack = InstructionHelpers.CreateStack();
-                parametersStack.AddExternalReference();
+                parametersStack = InstructionHelpers.CreateStack();             
             }
 
             contentGrid = new Grid();
@@ -207,8 +207,16 @@ namespace m0.UIWpf.Visualisers.Method
 
             if (baseVertex != null && methodVertex != null && parametersStack != null)
             {
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
+                
                 IExecution exe = new ZeroCodeExecution();
                 ZeroCodeExecutonUtil.MethodCall(exe, methodVertex, baseVertex, parametersStack);
+
+                //////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                //////////////////////////////////////
             }
 
             ButtonVisualChange(true);
