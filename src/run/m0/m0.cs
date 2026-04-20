@@ -364,7 +364,7 @@ namespace m0
 
         public void CommitTransaction()
         {
-            foreach (IStore s in Stores)
+            foreach (IStore s in Stores.ToList())
                 if (s is ICommitBeforeGlobalDetachStore)
                     s.CommitTransaction();
 

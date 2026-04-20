@@ -186,6 +186,24 @@ function getSidebarMaxWidth() {
     return Math.min(400, Math.max(getSidebarMinWidth(), window.innerWidth - 40));
 }
 
+function refreshIOSPdfEmbeds() {
+    (function () {
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+        if (!isIOS) return;
+
+        const frames = document.querySelectorAll('iframe.pdf-embed');
+        const mozillaViewerPrefix = 'https://mozilla.github.io/pdf.js/web/viewer.html?file=';
+
+        frames.forEach(frame => {
+            const src = frame.getAttribute('src') || '';
+            if (src.startsWith(mozillaViewerPrefix)) {
+                frame.remove();
+            }
+        });
+    })();
+}
+
 // Load tree data from JSON file
 async function loadTreeData() {
     try {
@@ -339,6 +357,181 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.addEventListener('pointercancel', stopResizing);
 });
 
+// ===== IMAGE VIEWER (fullscreen for .img-viewable) =====
+// Slider range 0..1000 is mapped logarithmically to zoom 10%..1000%,
+// so slider value 500 corresponds to 100% zoom (middle position).
+const ImageViewer = (function () {
+    const SLIDER_MIN = 0;
+    const SLIDER_MAX = 1000;
+    const ZOOM_MIN_PERCENT = 10;
+    const ZOOM_MAX_PERCENT = 150;
+    const LOG_MIN = Math.log(ZOOM_MIN_PERCENT);
+    const LOG_MAX = Math.log(ZOOM_MAX_PERCENT);
+
+    let overlay, titleEl, slider, zoomValueEl, closeBtn, contentEl, imgEl;
+    let baseWidth = 0;
+    let baseHeight = 0;
+    let currentZoomPercent = 100;
+    let initialized = false;
+
+    function sliderToZoomPercent(sliderValue) {
+        const ratio = (sliderValue - SLIDER_MIN) / (SLIDER_MAX - SLIDER_MIN);
+        const logZoom = LOG_MIN + ratio * (LOG_MAX - LOG_MIN);
+        return Math.exp(logZoom);
+    }
+
+    function zoomPercentToSlider(zoomPercent) {
+        const clamped = Math.max(ZOOM_MIN_PERCENT, Math.min(ZOOM_MAX_PERCENT, zoomPercent));
+        const logZoom = Math.log(clamped);
+        const ratio = (logZoom - LOG_MIN) / (LOG_MAX - LOG_MIN);
+        return SLIDER_MIN + ratio * (SLIDER_MAX - SLIDER_MIN);
+    }
+
+    function applyZoom(zoomPercent) {
+        currentZoomPercent = zoomPercent;
+        const scale = zoomPercent / 100;
+        const scaledWidth = baseWidth * scale;
+        const scaledHeight = baseHeight * scale;
+        imgEl.style.width = scaledWidth + 'px';
+        imgEl.style.height = scaledHeight + 'px';
+        imgEl.style.transform = 'none';
+        zoomValueEl.textContent = Math.round(zoomPercent) + '%';
+    }
+
+    function centerScrollIfSmall() {
+        const cw = contentEl.clientWidth;
+        const ch = contentEl.clientHeight;
+        const iw = imgEl.offsetWidth;
+        const ih = imgEl.offsetHeight;
+
+        if (iw <= cw) {
+            imgEl.style.marginLeft = Math.max(0, (cw - iw) / 2) + 'px';
+        } else {
+            imgEl.style.marginLeft = '0px';
+        }
+
+        if (ih <= ch) {
+            imgEl.style.marginTop = Math.max(0, (ch - ih) / 2) + 'px';
+        } else {
+            imgEl.style.marginTop = '0px';
+        }
+    }
+
+    function open(sourceImg) {
+        if (!initialized) return;
+
+        const src = sourceImg.currentSrc || sourceImg.src;
+        const altText = sourceImg.getAttribute('alt') || '';
+
+        titleEl.textContent = altText;
+        imgEl.alt = altText;
+
+        imgEl.style.width = '';
+        imgEl.style.height = '';
+        imgEl.style.marginLeft = '';
+        imgEl.style.marginTop = '';
+
+        const onLoaded = () => {
+            baseWidth = imgEl.naturalWidth || sourceImg.naturalWidth || imgEl.width;
+            baseHeight = imgEl.naturalHeight || sourceImg.naturalHeight || imgEl.height;
+            slider.value = zoomPercentToSlider(100);
+            applyZoom(100);
+            centerScrollIfSmall();
+            contentEl.scrollTop = 0;
+            contentEl.scrollLeft = 0;
+        };
+
+        if (imgEl.src !== src) {
+            imgEl.onload = onLoaded;
+            imgEl.src = src;
+        } else {
+            onLoaded();
+        }
+
+        overlay.classList.add('active');
+        overlay.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function close() {
+        overlay.classList.remove('active');
+        overlay.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        imgEl.onload = null;
+        imgEl.removeAttribute('src');
+    }
+
+    function onSliderInput() {
+        const zoomPercent = sliderToZoomPercent(parseFloat(slider.value));
+
+        // Keep the current viewport center fixed while zooming.
+        const prevScrollLeft = contentEl.scrollLeft;
+        const prevScrollTop = contentEl.scrollTop;
+        const viewCenterX = prevScrollLeft + contentEl.clientWidth / 2;
+        const viewCenterY = prevScrollTop + contentEl.clientHeight / 2;
+        const prevWidth = imgEl.offsetWidth || 1;
+        const prevHeight = imgEl.offsetHeight || 1;
+        const relX = viewCenterX / prevWidth;
+        const relY = viewCenterY / prevHeight;
+
+        applyZoom(zoomPercent);
+        centerScrollIfSmall();
+
+        const newWidth = imgEl.offsetWidth;
+        const newHeight = imgEl.offsetHeight;
+        contentEl.scrollLeft = Math.max(0, relX * newWidth - contentEl.clientWidth / 2);
+        contentEl.scrollTop = Math.max(0, relY * newHeight - contentEl.clientHeight / 2);
+    }
+
+    function init() {
+        overlay = document.getElementById('imageViewerOverlay');
+        titleEl = document.getElementById('imageViewerTitle');
+        slider = document.getElementById('imageViewerSlider');
+        zoomValueEl = document.getElementById('imageViewerZoomValue');
+        closeBtn = document.getElementById('imageViewerClose');
+        contentEl = document.getElementById('imageViewerContent');
+        imgEl = document.getElementById('imageViewerImg');
+
+        if (!overlay) return;
+        initialized = true;
+
+        slider.addEventListener('input', onSliderInput);
+        closeBtn.addEventListener('click', close);
+
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) close();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (!overlay.classList.contains('active')) return;
+            if (e.key === 'Escape') {
+                close();
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            if (overlay.classList.contains('active')) {
+                centerScrollIfSmall();
+            }
+        });
+
+        // Event delegation for dynamically loaded images with the .img-viewable class.
+        document.addEventListener('click', (e) => {
+            const target = e.target;
+            if (target && target.tagName === 'IMG' && target.classList.contains('img-viewable')) {
+                e.preventDefault();
+                open(target);
+            }
+        });
+    }
+
+    return { init };
+})();
+
+document.addEventListener('DOMContentLoaded', () => {
+    ImageViewer.init();
+});
+
 function loadDocument_index() {
     const mainContent = document.getElementById('mainContent');
     
@@ -356,6 +549,7 @@ function loadDocument_index() {
         })
         .then(content => {
             mainContent.innerHTML = content;
+            refreshIOSPdfEmbeds();
         })
         .catch(error => {
             console.error('Error loading document:', error);
@@ -382,6 +576,7 @@ function loadDocument(docId) {
         })
         .then(content => {
             mainContent.innerHTML = content;
+            refreshIOSPdfEmbeds();
             // Opcjonalnie: przewiń ponownie po załadowaniu treści
             mainContent.scrollTop = 0;
         })

@@ -74,9 +74,11 @@
 			html += url
 			html += "%"></audio>"
 		function "HandleGeneric_DIAGRAM" (@String "Query", @String "label")
-			html += "<center><img src=%"diagrams\"
+			html += "<center><img class=%"img-viewable%" src=%"diagrams\"
 			html += @@Html\DiagramQueryToDiagramId[Query]
-			html += ".png%">"><BR><span class=%"description%">"
+			html += ".png%" alt=%""
+			html += label
+			html += "%"><BR><span class=%"description%">"
 			html += label
 			html += "</span></center>"
 		function "HandleGeneric_PDF" (@String "url")

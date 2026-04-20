@@ -143,6 +143,7 @@ namespace m0.UIWpf.UX
                 bottom - top + 1);
 
             CroppedBitmap croppedBitmap = new CroppedBitmap(compositedBitmap, cropRect);
+
             return AddWhitePadding(croppedBitmap, paddingPixels);
         }
 
@@ -154,18 +155,23 @@ namespace m0.UIWpf.UX
 
         private static BitmapSource AddWhitePadding(BitmapSource source, int paddingPixels)
         {
-            int width = source.PixelWidth;
-            int height = source.PixelHeight;
+            if (paddingPixels <= 0)
+                return source;
+
+            FormatConvertedBitmap normalizedSource = new FormatConvertedBitmap(source, PixelFormats.Bgra32, null, 0);
+
+            int width = normalizedSource.PixelWidth;
+            int height = normalizedSource.PixelHeight;
+            int stride = width * 4;
+
             int paddedWidth = width + (2 * paddingPixels);
             int paddedHeight = height + (2 * paddingPixels);
-            int sourceStride = width * 4;
             int paddedStride = paddedWidth * 4;
 
-            byte[] sourcePixels = new byte[height * sourceStride];
-            source.CopyPixels(sourcePixels, sourceStride, 0);
+            byte[] sourcePixels = new byte[height * stride];
+            normalizedSource.CopyPixels(sourcePixels, stride, 0);
 
             byte[] paddedPixels = new byte[paddedHeight * paddedStride];
-
             for (int i = 0; i < paddedPixels.Length; i += 4)
             {
                 paddedPixels[i + 0] = 255;
@@ -176,14 +182,21 @@ namespace m0.UIWpf.UX
 
             for (int y = 0; y < height; y++)
             {
-                int sourceOffset = y * sourceStride;
+                int sourceOffset = y * stride;
                 int destinationOffset = ((y + paddingPixels) * paddedStride) + (paddingPixels * 4);
-                Array.Copy(sourcePixels, sourceOffset, paddedPixels, destinationOffset, sourceStride);
+                Buffer.BlockCopy(sourcePixels, sourceOffset, paddedPixels, destinationOffset, stride);
             }
 
-            WriteableBitmap result = new WriteableBitmap(paddedWidth, paddedHeight, dpi, dpi, PixelFormats.Bgra32, null);
-            result.WritePixels(new Int32Rect(0, 0, paddedWidth, paddedHeight), paddedPixels, paddedStride, 0);
-            return result;
+            WriteableBitmap paddedBitmap = new WriteableBitmap(
+                paddedWidth,
+                paddedHeight,
+                normalizedSource.DpiX,
+                normalizedSource.DpiY,
+                PixelFormats.Bgra32,
+                null);
+
+            paddedBitmap.WritePixels(new Int32Rect(0, 0, paddedWidth, paddedHeight), paddedPixels, paddedStride, 0);
+            return paddedBitmap;
         }
 
         private static Rect GetCanvasContentBounds(Canvas canvas)

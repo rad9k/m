@@ -616,7 +616,7 @@ body {
 .markdown-body .video-container {
     width: 100%;
     max-width: 800px;
-    margin: 20px;
+    margin: 20px auto;
 	margin-bottom: -0.5em;
 }
 
@@ -640,9 +640,8 @@ body {
 }
 
 .markdown-body audio {
-    width: 60%;        
-    max-width: 600px;  
-    min-width: 260px;  
+    width: 100%;        
+    
     display: block;
     margin: 10px 0; 
 }
@@ -693,6 +692,162 @@ body {
 .markdown-body::-webkit-scrollbar-thumb:hover {
     background: #2d3748;
 }
+
+/* ===== IMAGE VIEWER (fullscreen for .img-viewable) ===== */
+.markdown-body img.img-viewable {
+    cursor: zoom-in;
+}
+
+.image-viewer-overlay {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 2000;
+    display: none;
+    flex-direction: column;
+}
+
+.image-viewer-overlay.active {
+    display: flex;
+}
+
+.image-viewer-header {
+    flex: 0 0 auto;
+    height: 44px;
+    background: #000;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 12px;
+    border-bottom: 1px solid #222;
+    user-select: none;
+}
+
+.image-viewer-title {
+    flex: 1;
+    min-width: 0;
+    color: #fff;
+    font-family: 'Georgia', 'Palatino', 'Times New Roman', serif;
+    font-size: 1em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.image-viewer-zoom {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.image-viewer-zoom-value {
+    color: #fff;
+    font-family: 'Georgia', 'Palatino', 'Times New Roman', serif;
+    font-size: 0.9em;
+    min-width: 52px;
+    text-align: right;
+}
+
+.image-viewer-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 220px;
+    height: 4px;
+    background: #555;
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+}
+
+.image-viewer-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid #888;
+    cursor: pointer;
+}
+
+.image-viewer-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid #888;
+    cursor: pointer;
+}
+
+.image-viewer-close {
+    background: transparent;
+    color: #fff;
+    border: 1px solid #fff;
+    border-radius: 3px;
+    padding: 4px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    font-family: 'Georgia', 'Palatino', 'Times New Roman', serif;
+    transition: all 0.2s ease;
+}
+
+.image-viewer-close:hover {
+    background: #fff;
+    color: #000;
+}
+
+.image-viewer-content {
+    flex: 1 1 auto;
+    overflow: auto;
+    background: #000;
+    display: block;
+    position: relative;
+}
+
+.image-viewer-content img {
+    display: block;
+    margin: 0;
+    transform-origin: top left;
+    max-width: none;
+    max-height: none;
+    box-shadow: none;
+    border-radius: 0;
+    background: transparent;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+.image-viewer-content::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+.image-viewer-content::-webkit-scrollbar-track {
+    background: #111;
+}
+
+.image-viewer-content::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 6px;
+}
+
+.image-viewer-content::-webkit-scrollbar-thumb:hover {
+    background: #777;
+}
+
+@media (max-width: 768px) {
+    .image-viewer-slider {
+        width: 120px;
+    }
+
+    .image-viewer-zoom-value {
+        min-width: 44px;
+        font-size: 0.85em;
+    }
+}
     </style>
 </head>
 <body>
@@ -724,6 +879,20 @@ body {
 
 <div class="markdown-body" id="mainContent">    
             Select an item from the left panel to load the document
+</div>
+
+<div class="image-viewer-overlay" id="imageViewerOverlay" role="dialog" aria-hidden="true">
+    <div class="image-viewer-header">
+        <span class="image-viewer-title" id="imageViewerTitle"></span>
+        <div class="image-viewer-zoom">
+            <input type="range" class="image-viewer-slider" id="imageViewerSlider" min="0" max="1000" value="500" aria-label="Zoom">
+            <span class="image-viewer-zoom-value" id="imageViewerZoomValue">100%</span>
+            <button class="image-viewer-close" id="imageViewerClose" aria-label="Close">Close</button>
+        </div>
+    </div>
+    <div class="image-viewer-content" id="imageViewerContent">
+        <img class="image-viewer-img" id="imageViewerImg" alt="">
+    </div>
 </div>
 
 <script src="script.js"></script>
