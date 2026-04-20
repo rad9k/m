@@ -17,18 +17,13 @@ namespace m0.Lib.StdView
         static IVertex HardBreak = Md.Get(false, "HardBreak");
         static IVertex ParagraphBreak = Md.Get(false, "ParagraphBreak");
         static IVertex HorizontalRule = Md.Get(false, "HorizontalRule");
-        static IVertex Header1Start = Md.Get(false, "Header1Start");
-        static IVertex Header2Start = Md.Get(false, "Header2Start");
-        static IVertex Header3Start = Md.Get(false, "Header3Start");
-        static IVertex Header4Start = Md.Get(false, "Header4Start");
-        static IVertex Header5Start = Md.Get(false, "Header5Start");
-        static IVertex Header6Start = Md.Get(false, "Header6Start");
-        static IVertex Header1End = Md.Get(false, "Header1End");
-        static IVertex Header2End = Md.Get(false, "Header2End");
-        static IVertex Header3End = Md.Get(false, "Header3End");
-        static IVertex Header4End = Md.Get(false, "Header4End");
-        static IVertex Header5End = Md.Get(false, "Header5End");
-        static IVertex Header6End = Md.Get(false, "Header6End");
+        static IVertex Header1 = Md.Get(false, "Header1");
+        static IVertex Header2 = Md.Get(false, "Header2");
+        static IVertex Header3 = Md.Get(false, "Header3");
+        static IVertex Header4 = Md.Get(false, "Header4");
+        static IVertex Header5 = Md.Get(false, "Header5");
+        static IVertex Header6 = Md.Get(false, "Header6");
+
         static IVertex BoldStart = Md.Get(false, "BoldStart");
         static IVertex BoldEnd = Md.Get(false, "BoldEnd");
         static IVertex ItalicStart = Md.Get(false, "ItalicStart");
@@ -79,7 +74,6 @@ namespace m0.Lib.StdView
         private static bool isInsideImage = false;
         private static bool isInsideTable = false;
         private static int blockquoteLevel = 0;
-        private static int currentHeaderLevel = 0;
         private static StringBuilder codeBlockContent = null;
         private static string codeBlockLanguageName = null;
 
@@ -136,7 +130,6 @@ namespace m0.Lib.StdView
             isInsideImage = false;
             isInsideTable = false;
             blockquoteLevel = 0;
-            currentHeaderLevel = 0;
             codeBlockContent = null;
             codeBlockLanguageName = null;
             listContextStack.Clear();
@@ -200,7 +193,6 @@ namespace m0.Lib.StdView
                 // Handle hard breaks (two or more spaces at end of line)
                 if (IsHardBreak(md, position))
                 {
-                    CloseHeaderIfOpen(to);
                     ExtractHardBreak(md, ref position);
                     AddTokenToTarget(to, HardBreak);
                     continue;
@@ -209,7 +201,6 @@ namespace m0.Lib.StdView
                 // Handle paragraph breaks (double newline = empty line)
                 if (IsParagraphBreak(md, position))
                 {
-                    CloseHeaderIfOpen(to);
                     ExtractParagraphBreak(md, ref position);
 
                     LineAnalysis paragraphAnalysis = AnalyzeLine(md, position);
@@ -408,7 +399,6 @@ namespace m0.Lib.StdView
                 // Handle single newlines (generate HardBreak if next line has content)
                 if (currentChar == '\n')
                 {
-                    CloseHeaderIfOpen(to);
                     int lookaheadPosition = position + 1;
                     LineAnalysis lineAnalysis = AnalyzeLine(md, lookaheadPosition);
 
@@ -499,7 +489,6 @@ namespace m0.Lib.StdView
                 // Handle carriage returns (just advance position)
                 if (currentChar == '\r')
                 {
-                    CloseHeaderIfOpen(to);
                     position++;
                     if (position < md.Length && md[position] == '\n')
                     {
@@ -523,32 +512,29 @@ namespace m0.Lib.StdView
                     if (headerLevel > 0 && headerLevel <= 6)
                     {
                         position += headerLevel;
+                        SkipWhitespace(md, ref position);
 
+                        StringBuilder headerContent = new StringBuilder();
+                        while (position < md.Length && md[position] != '\n' && md[position] != '\r')
+                        {
+                            headerContent.Append(md[position]);
+                            position++;
+                        }
+
+                        string headerText = headerContent.ToString().TrimEnd();
+
+                        IVertex headerMeta = null;
                         switch (headerLevel)
                         {
-                            case 1:
-                                AddTokenToTarget(to, Header1Start);
-                                break;
-                            case 2:
-                                AddTokenToTarget(to, Header2Start);
-                                break;
-                            case 3:
-                                AddTokenToTarget(to, Header3Start);
-                                break;
-                            case 4:
-                                AddTokenToTarget(to, Header4Start);
-                                break;
-                            case 5:
-                                AddTokenToTarget(to, Header5Start);
-                                break;
-                            case 6:
-                                AddTokenToTarget(to, Header6Start);
-                                break;
+                            case 1: headerMeta = Header1; break;
+                            case 2: headerMeta = Header2; break;
+                            case 3: headerMeta = Header3; break;
+                            case 4: headerMeta = Header4; break;
+                            case 5: headerMeta = Header5; break;
+                            case 6: headerMeta = Header6; break;
                         }
-                        
-                        currentHeaderLevel = headerLevel;
-                        
-                        SkipWhitespace(md, ref position);
+
+                        to.AddVertex(headerMeta, HtmlUtil.QuoteString(headerText));
                         continue;
                     }
                 }
@@ -773,8 +759,7 @@ namespace m0.Lib.StdView
             }
             
             CloseAllLists(to);
-            CloseHeaderIfOpen(to);
-            
+
             // Close all remaining blockquote levels at the end
             while (blockquoteLevel > 0)
             {
@@ -836,38 +821,6 @@ namespace m0.Lib.StdView
         }
 
 
-
-        private static void CloseHeaderIfOpen(IVertex target)
-        {
-            if (currentHeaderLevel == 0)
-            {
-                return;
-            }
-
-            switch (currentHeaderLevel)
-            {
-                case 1:
-                    AddTokenToTarget(target, Header1End);
-                    break;
-                case 2:
-                    AddTokenToTarget(target, Header2End);
-                    break;
-                case 3:
-                    AddTokenToTarget(target, Header3End);
-                    break;
-                case 4:
-                    AddTokenToTarget(target, Header4End);
-                    break;
-                case 5:
-                    AddTokenToTarget(target, Header5End);
-                    break;
-                case 6:
-                    AddTokenToTarget(target, Header6End);
-                    break;
-            }
-
-            currentHeaderLevel = 0;
-        }
 
         private static void CloseCurrentList(IVertex target)
         {

@@ -10,18 +10,12 @@
 		"HardBreak"
 		"ParagraphBreak"
 		"HorizontalRule"
-		"Header1Start"
-		"Header2Start"
-		"Header3Start"
-		"Header4Start"
-		"Header5Start"
-		"Header6Start"
-		"Header1End"
-		"Header2End"
-		"Header3End"
-		"Header4End"
-		"Header5End"
-		"Header6End"
+		"Header1"
+		"Header2"
+		"Header3"
+		"Header4"
+		"Header5"
+		"Header6"		
 		"BoldStart"
 		"BoldEnd"
 		"ItalicStart"
@@ -113,40 +107,46 @@
 					case "HorizontalRule"
 						html += "<HR>"
 						
-					case "Header1Start"
-						html += "<H1>"
-											
-					case "Header2Start"
-						html += "<H2>"
-						
-					case "Header3Start"
-						html += "<H3>"
-						
-					case "Header4Start"
-						html += "<H4>"
-						
-					case "Header5Start"
-						html += "<H5>"
-						
-					case "Header6Start"
-						html += "<H6>"
-						
-					case "Header1End"
+					case "Header1"
+						html += "<H1 id=%""
+						html +=	@@Html\ReplaceSpaceAndSpecialCharacters[e\To]
+						html += "%">"
+						html +=	e\To
 						html += "</H1>"
 											
-					case "Header2End"
+					case "Header2"
+						html += "<H2 id=%""
+						html +=	e\To
+						html += "%">"
+						html +=	e\To
 						html += "</H2>"
 						
-					case "Header3End"
+					case "Header3"
+						html += "<H3 id=%""
+						html +=	e\To
+						html += "%">"
+						html +=	e\To
 						html += "</H3>"
 						
-					case "Header4End"
+					case "Header4"
+						html += "<H4 id=%""
+						html +=	e\To
+						html += "%">"
+						html +=	e\To
 						html += "</H4>"
 						
-					case "Header5End"
+					case "Header5"
+						html += "<H5 id=%""
+						html +=	e\To
+						html += "%">"
+						html +=	e\To
 						html += "</H5>"
 						
-					case "Header6End"
+					case "Header6"
+						html += "<H6 id=%""
+						html +=	e\To
+						html += "%">"
+						html +=	e\To
 						html += "</H6>"
 						
 					case "BoldStart"

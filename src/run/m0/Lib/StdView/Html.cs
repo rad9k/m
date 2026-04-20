@@ -1,4 +1,4 @@
-﻿using m0.Foundation;
+using m0.Foundation;
 using m0.Graph;
 using m0.Util;
 using m0.ZeroCode.Helpers;
@@ -13,7 +13,38 @@ namespace m0.Lib.StdView
 {
     public class Html
     {
-        static IVertex FormalTextLanguages_Vertex = MinusZero.Instance.Root.Get(false, @"System\FormalTextLanguage");
+        static IVertex FormalTextLanguages_Vertex = MinusZero.Instance.Root.Get(false, @"System\FormalTextLanguage");        
+        public static INoInEdgeInOutVertexVertex ReplaceSpaceAndSpecialCharacters(IExecution exe)
+        {
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
+
+            IVertex text_Vertex = GraphUtil.GetQueryOutFirst(stack, "text", null);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            string text = GraphUtil.GetStringValue(text_Vertex);
+
+            string replacedText = null;
+
+            if (text != null)
+            {
+                StringBuilder sb = new StringBuilder(text.Length);
+
+                foreach (char c in text)
+                {
+                    if (char.IsLetterOrDigit(c))
+                        sb.Append(c);
+                    else
+                        sb.Append('-');
+                }
+
+                replacedText = sb.ToString();
+            }
+
+            newStack.AddVertex(null, replacedText);
+
+            return newStack;
+        }
 
         public static string DiagramQueryToDiagramId_internal(string query)
         {

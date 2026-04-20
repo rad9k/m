@@ -145,6 +145,8 @@ namespace m0_SYSTEM_GENERATE.Lib
             IVertex AddColorsToCode_Vertex = LibStdView.Get(false, @"Html\AddColorsToCode");
             IVertex DequoteText_Vertex = LibStdView.Get(false, @"Html\DequoteText");
             IVertex DiagramQueryToDiagramId_Vertex = LibStdView.Get(false, @"Html\DiagramQueryToDiagramId");
+            IVertex ReplaceSpaceAndSpecialCharacters_Vertex = LibStdView.Get(false, @"Html\ReplaceSpaceAndSpecialCharacters");
+            
 
 
             ExecutionFlowHelper.DecorateWithDotNetStaticMethod(VertexToJson_Transform_Vertex,
@@ -174,6 +176,10 @@ namespace m0_SYSTEM_GENERATE.Lib
             ExecutionFlowHelper.DecorateWithDotNetStaticMethod(DiagramQueryToDiagramId_Vertex,
                 "m0.Lib.StdView.Html, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
                 "DiagramQueryToDiagramId");
+
+            ExecutionFlowHelper.DecorateWithDotNetStaticMethod(ReplaceSpaceAndSpecialCharacters_Vertex,
+                "m0.Lib.StdView.Html, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                "ReplaceSpaceAndSpecialCharacters");            
         }        
 
         public static void CreateLibNet()
