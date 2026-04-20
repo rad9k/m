@@ -3,6 +3,57 @@ let treeData = [];
 
 // All documents are loaded dynamically from HTML files
 
+// ===== URL / HASH ROUTING =====
+// The custom HTTP server only returns index.html when the request targets the
+// root directory, so we cannot encode the document path in the URL pathname
+// (any non-root path would be interpreted by the server as a document request
+// and would skip loading the SPA shell). Hash fragments are never sent to the
+// server, which makes them the portable way to store the currently displayed
+// document in the address bar. The encoded value stays human readable: most
+// browsers render it with the original spaces/diacritics in the address bar,
+// and even when copied out it only gets RFC-3986 percent encoding.
+function GetDocIdFromUrl() {
+    const hash = window.location.hash;
+    if (!hash || hash.length <= 1) {
+        return null;
+    }
+    const raw = hash.substring(1);
+    try {
+        return decodeURIComponent(raw);
+    } catch (error) {
+        return raw;
+    }
+}
+
+function BuildHashForDocId(docId) {
+    return '#' + encodeURIComponent(docId);
+}
+
+function UpdateUrlForDocId(docId, replaceCurrentEntry) {
+    const newHash = BuildHashForDocId(docId);
+    if (window.location.hash === newHash) {
+        return;
+    }
+    const state = { docId: docId };
+    if (replaceCurrentEntry) {
+        history.replaceState(state, '', newHash);
+    } else {
+        history.pushState(state, '', newHash);
+    }
+}
+
+function ClearUrlDocId(replaceCurrentEntry) {
+    if (!window.location.hash) {
+        return;
+    }
+    const urlWithoutHash = window.location.pathname + window.location.search;
+    if (replaceCurrentEntry) {
+        history.replaceState({}, '', urlWithoutHash);
+    } else {
+        history.pushState({}, '', urlWithoutHash);
+    }
+}
+
 class TreeView {
     constructor(container, data) {
         this.container = container;
@@ -14,7 +65,64 @@ class TreeView {
     init() {
         this.render();
         this.bindEvents();
-		loadDocument_index();
+
+        const initialDocId = GetDocIdFromUrl();
+        if (initialDocId) {
+            const matched = this.activateItemById(initialDocId);
+            loadDocument(initialDocId);
+            if (!matched) {
+                // Keep the hash in the URL so the user still sees what was
+                // requested even if the tree does not contain this id.
+                UpdateUrlForDocId(initialDocId, true);
+            }
+        } else {
+            loadDocument_index();
+        }
+    }
+
+    findItemElementById(id) {
+        if (id === null || id === undefined) {
+            return null;
+        }
+        const selector = `.tree-item[data-id="${CSS.escape(String(id))}"]`;
+        return this.container.querySelector(selector);
+    }
+
+    expandAncestorsOf(itemElement) {
+        let currentNode = itemElement.parentElement;
+        while (currentNode && currentNode !== this.container) {
+            if (currentNode.classList && currentNode.classList.contains('tree-children')) {
+                currentNode.classList.add('expanded');
+                currentNode.style.maxHeight = 'none';
+                const parentItem = currentNode.parentElement;
+                if (parentItem && parentItem.classList.contains('tree-item')) {
+                    const parentToggle = parentItem.querySelector(':scope > .tree-content > .tree-toggle');
+                    if (parentToggle && parentToggle.classList.contains('collapsed')) {
+                        parentToggle.classList.remove('collapsed');
+                        parentToggle.classList.add('expanded');
+                    }
+                }
+            }
+            currentNode = currentNode.parentElement;
+        }
+    }
+
+    activateItemById(id) {
+        const itemElement = this.findItemElementById(id);
+        if (!itemElement) {
+            return false;
+        }
+        this.expandAncestorsOf(itemElement);
+        this.setActiveItem(itemElement);
+        const activeContent = itemElement.querySelector(':scope > .tree-content');
+        if (activeContent && typeof activeContent.scrollIntoView === 'function') {
+            try {
+                activeContent.scrollIntoView({ block: 'nearest' });
+            } catch (error) {
+                activeContent.scrollIntoView();
+            }
+        }
+        return true;
     }
 
     render() {
@@ -91,6 +199,7 @@ class TreeView {
             // Load document
             const itemId = treeItem.dataset.id;
             loadDocument(itemId);
+            UpdateUrlForDocId(itemId, false);
 
             if (!treeItem.querySelector('.tree-children') && isMobileViewport()) {
                 closeHamburgerMenu();
@@ -231,6 +340,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     const treeContainer = document.getElementById('treeContainer');
     treeView = new TreeView(treeContainer, treeData);
+
+    // React to the user navigating through browser history or editing the hash
+    // directly in the address bar. pushState we perform ourselves does not
+    // trigger hashchange, so this handler only runs for user-initiated changes.
+    window.addEventListener('hashchange', () => {
+        const docId = GetDocIdFromUrl();
+        if (docId) {
+            if (treeView) {
+                treeView.activateItemById(docId);
+            }
+            loadDocument(docId);
+        } else {
+            if (treeView && treeView.activeItem) {
+                treeView.activeItem.querySelector('.tree-content').classList.remove('active');
+                treeView.activeItem = null;
+            }
+            loadDocument_index();
+        }
+    });
 
     // Collapse/expand all buttons
     document.getElementById('collapseAll').addEventListener('click', () => {
