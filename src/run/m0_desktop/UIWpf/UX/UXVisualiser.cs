@@ -466,8 +466,9 @@ namespace m0.UIWpf.UX
             if (definitionEdges == null)
                 return;
 
-            foreach (IEdge e in definitionEdges.OutEdgesRaw)
-                if (!(GraphUtil.ExistQueryOut(e.Meta, "$NoCopy", null) || GraphUtil.ExistQueryOut(e.To, "$NoCopy", null)))
+            //foreach (IEdge e in definitionEdges.OutEdgesRaw)
+            foreach (IEdge e in definitionEdges.OutEdges)
+                if (e.Meta.Value.ToString()[0]!='$' && (!(GraphUtil.ExistQueryOut(e.Meta, "$NoCopy", null) || GraphUtil.ExistQueryOut(e.To, "$NoCopy", null))))
                 {
                     if (!VertexOperations.IsLink(e) && VertexOperations.IsAtomicVertex(e.To))
                         GraphUtil.SetVertexValue(baseVertex, e.Meta, e.To.Value); // shallow copy
