@@ -102,12 +102,12 @@ namespace m0.UIWpf.UX
 
         private static BitmapSource CropToVisibleContent(RenderTargetBitmap sourceWithAlpha, BitmapSource compositedBitmap, int paddingPixels)
         {
-            int width = sourceWithAlpha.PixelWidth;
-            int height = sourceWithAlpha.PixelHeight;
+            int width = compositedBitmap.PixelWidth;
+            int height = compositedBitmap.PixelHeight;
             int stride = width * 4;
 
-            byte[] sourcePixels = new byte[height * stride];
-            sourceWithAlpha.CopyPixels(sourcePixels, stride, 0);
+            byte[] compositedPixels = new byte[height * stride];
+            compositedBitmap.CopyPixels(compositedPixels, stride, 0);
 
             int left = width;
             int top = height;
@@ -119,9 +119,11 @@ namespace m0.UIWpf.UX
                 for (int x = 0; x < width; x++)
                 {
                     int offset = y * stride + (x * 4);
-                    byte alpha = sourcePixels[offset + 3];
+                    byte blue = compositedPixels[offset + 0];
+                    byte green = compositedPixels[offset + 1];
+                    byte red = compositedPixels[offset + 2];
 
-                    if (alpha == 0)
+                    if (!IsNonWhitePixel(red, green, blue))
                         continue;
 
                     if (x < left) left = x;
@@ -142,6 +144,12 @@ namespace m0.UIWpf.UX
 
             CroppedBitmap croppedBitmap = new CroppedBitmap(compositedBitmap, cropRect);
             return AddWhitePadding(croppedBitmap, paddingPixels);
+        }
+
+        private static bool IsNonWhitePixel(byte red, byte green, byte blue)
+        {
+            const byte WhiteThreshold = 250;
+            return red < WhiteThreshold || green < WhiteThreshold || blue < WhiteThreshold;
         }
 
         private static BitmapSource AddWhitePadding(BitmapSource source, int paddingPixels)
