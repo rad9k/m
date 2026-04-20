@@ -73,9 +73,9 @@
 			html += "<audio class=%"player%" controls src=%""
 			html += url
 			html += "%"></audio>"
-		function "HandleGeneric_DIAGRAM" (@String "Query", @String "label")
+		function "HandleGeneric_DIAGRAM" (@String "query", @String "label")
 			html += "<center><img src=%"diagrams\"
-			html += @@Html\DiagramQueryToDiagramId[Query]
+			html += @@Html\DiagramQueryToDiagramId[query]
 			html += ".png%">"><BR><span class=%"description%">"
 			html += label
 			html += "</span></center>"
@@ -204,7 +204,7 @@
 							case "AUDIO"
 								@@Html\HandleGeneric_AUDIO[e\To\{Name:url}\Value]
 							case "DIAGRAM"
-								@@Html\HandleGeneric_DIAGRAM[e\To\{Name:Query}\Value, e\To\{Name:label}\Value]
+								@@Html\HandleGeneric_DIAGRAM[e\To\{Name:query}\Value, e\To\{Name:label}\Value]
 							case "PDF"
 								@@Html\HandleGeneric_PDF[e\To\{Name:url}\Value]
 							case "PDF2"

@@ -1,129 +1,114 @@
 ﻿using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.IO;
 
 namespace m0.UIWpf.UX
 {
     public class CanvasToPng
     {
-        static double dpi = 96;
+        static double dpi = 192;
+        const double BaseDpi = 96.0;
+        const int FinalPaddingPixels = 10;
+        const int RenderSafetyMarginDip = 20;
+        const int EmptyImageSizeDip = 20;
 
         public static void SaveCanvasToPng(Canvas canvas, string filePath)
         {
-            // Render canvas to bitmap
-            RenderTargetBitmap renderBitmap = new RenderTargetBitmap(
-                (int)canvas.ActualWidth,
-                (int)canvas.ActualHeight,
-                dpi,
-                dpi,
-                PixelFormats.Pbgra32);
+            double dpiScale = dpi / BaseDpi;
+            canvas.UpdateLayout();
 
-            renderBitmap.Render(canvas);
-
-            // Convert to a more manageable format
-            FormatConvertedBitmap convertedBitmap = new FormatConvertedBitmap(
-                renderBitmap,
-                PixelFormats.Bgra32,
-                null,
-                0);
-
-            // Get pixels
-            int width = convertedBitmap.PixelWidth;
-            int height = convertedBitmap.PixelHeight;
-            int stride = width * 4; // 4 bytes per pixel (BGRA)
-            byte[] pixels = new byte[height * stride];
-            convertedBitmap.CopyPixels(pixels, stride, 0);
-
-            // Replace fully transparent pixels with white (but keep semi-transparent for antialiasing)
-            ReplaceTransparentWithWhite(pixels);
-
-            // Find non-white area bounds
-            var bounds = FindVisibleBounds(pixels, width, height, stride);
-
-            if (bounds == null)
+            Rect contentBounds = GetCanvasContentBounds(canvas);
+            if (contentBounds.IsEmpty || contentBounds.Width <= 0 || contentBounds.Height <= 0)
             {
-                // Entire image is white
                 SaveEmptyImage(filePath);
                 return;
             }
 
-            // Add 10 pixel border
-            int padding = 10;
-            int croppedWidth = bounds.Value.Right - bounds.Value.Left + 1 + (2 * padding);
-            int croppedHeight = bounds.Value.Bottom - bounds.Value.Top + 1 + (2 * padding);
+            contentBounds.Inflate(RenderSafetyMarginDip, RenderSafetyMarginDip);
 
-            // Create new bitmap with border
-            WriteableBitmap croppedBitmap = new WriteableBitmap(
-                croppedWidth,
-                croppedHeight,
-                dpi,
-                dpi,
-                PixelFormats.Bgra32,
-                null);
+            int renderWidthPixels = Math.Max(1, (int)Math.Ceiling(contentBounds.Width * dpiScale));
+            int renderHeightPixels = Math.Max(1, (int)Math.Ceiling(contentBounds.Height * dpiScale));
 
-            // Fill with white color
-            byte[] whitePixels = new byte[croppedHeight * croppedWidth * 4];
-            for (int i = 0; i < whitePixels.Length; i += 4)
-            {
-                whitePixels[i] = 255;     // B
-                whitePixels[i + 1] = 255; // G
-                whitePixels[i + 2] = 255; // R
-                whitePixels[i + 3] = 255; // A
-            }
-            croppedBitmap.WritePixels(
-                new Int32Rect(0, 0, croppedWidth, croppedHeight),
-                whitePixels,
-                croppedWidth * 4,
-                0);
+            RenderTargetBitmap canvasBitmap = RenderCanvasWithTranslation(
+                canvas,
+                renderWidthPixels,
+                renderHeightPixels,
+                -contentBounds.X,
+                -contentBounds.Y);
 
-            // Copy cropped area
-            int sourceWidth = bounds.Value.Right - bounds.Value.Left + 1;
-            int sourceHeight = bounds.Value.Bottom - bounds.Value.Top + 1;
-            byte[] croppedPixels = new byte[sourceHeight * sourceWidth * 4];
+            BitmapSource compositedBitmap = CompositePbgra32OverWhite(canvasBitmap);
+            BitmapSource croppedBitmap = CropToVisibleContent(canvasBitmap, compositedBitmap, FinalPaddingPixels);
 
-            for (int y = 0; y < sourceHeight; y++)
-            {
-                int sourceY = bounds.Value.Top + y;
-                int sourceOffset = sourceY * stride + bounds.Value.Left * 4;
-                int destOffset = y * sourceWidth * 4;
-                Array.Copy(pixels, sourceOffset, croppedPixels, destOffset, sourceWidth * 4);
-            }
-
-            // Paste into center (with border)
-            croppedBitmap.WritePixels(
-                new Int32Rect(padding, padding, sourceWidth, sourceHeight),
-                croppedPixels,
-                sourceWidth * 4,
-                0);
-
-            // Save to file
             SaveBitmapToPng(croppedBitmap, filePath);
         }
 
-        private static void ReplaceTransparentWithWhite(byte[] pixels)
+        private static RenderTargetBitmap RenderCanvasWithTranslation(
+            Canvas canvas,
+            int pixelWidth,
+            int pixelHeight,
+            double translateX,
+            double translateY)
         {
-            for (int i = 0; i < pixels.Length; i += 4)
-            {
-                byte a = pixels[i + 3];
+            RenderTargetBitmap target = new RenderTargetBitmap(
+                pixelWidth,
+                pixelHeight,
+                dpi,
+                dpi,
+                PixelFormats.Pbgra32);
 
-                // Only replace fully transparent pixels (alpha near 0)
-                // Keep semi-transparent pixels for proper antialiasing
-                if (a < 10)
-                {
-                    pixels[i] = 255;     // B
-                    pixels[i + 1] = 255; // G
-                    pixels[i + 2] = 255; // R
-                    pixels[i + 3] = 255; // A
-                }
+            Transform savedRenderTransform = canvas.RenderTransform;
+            canvas.RenderTransform = new TranslateTransform(translateX, translateY);
+            try
+            {
+                target.Render(canvas);
             }
+            finally
+            {
+                canvas.RenderTransform = savedRenderTransform;
+            }
+
+            return target;
         }
 
-        private static (int Left, int Top, int Right, int Bottom)? FindVisibleBounds(
-            byte[] pixels, int width, int height, int stride)
+        private static BitmapSource CompositePbgra32OverWhite(RenderTargetBitmap source)
         {
+            int width = source.PixelWidth;
+            int height = source.PixelHeight;
+            int stride = width * 4;
+
+            byte[] sourcePixels = new byte[height * stride];
+            source.CopyPixels(sourcePixels, stride, 0);
+
+            byte[] resultPixels = new byte[height * stride];
+
+            for (int i = 0; i < resultPixels.Length; i += 4)
+            {
+                byte sourceAlpha = sourcePixels[i + 3];
+                int invertedAlpha = 255 - sourceAlpha;
+
+                resultPixels[i + 0] = (byte)Math.Min(255, sourcePixels[i + 0] + invertedAlpha);
+                resultPixels[i + 1] = (byte)Math.Min(255, sourcePixels[i + 1] + invertedAlpha);
+                resultPixels[i + 2] = (byte)Math.Min(255, sourcePixels[i + 2] + invertedAlpha);
+                resultPixels[i + 3] = 255;
+            }
+
+            WriteableBitmap result = new WriteableBitmap(width, height, dpi, dpi, PixelFormats.Bgra32, null);
+            result.WritePixels(new Int32Rect(0, 0, width, height), resultPixels, stride, 0);
+            return result;
+        }
+
+        private static BitmapSource CropToVisibleContent(RenderTargetBitmap sourceWithAlpha, BitmapSource compositedBitmap, int paddingPixels)
+        {
+            int width = sourceWithAlpha.PixelWidth;
+            int height = sourceWithAlpha.PixelHeight;
+            int stride = width * 4;
+
+            byte[] sourcePixels = new byte[height * stride];
+            sourceWithAlpha.CopyPixels(sourcePixels, stride, 0);
+
             int left = width;
             int top = height;
             int right = -1;
@@ -133,29 +118,96 @@ namespace m0.UIWpf.UX
             {
                 for (int x = 0; x < width; x++)
                 {
-                    int offset = y * stride + x * 4;
-                    byte b = pixels[offset];
-                    byte g = pixels[offset + 1];
-                    byte r = pixels[offset + 2];
-                    byte a = pixels[offset + 3];
+                    int offset = y * stride + (x * 4);
+                    byte alpha = sourcePixels[offset + 3];
 
-                    // Check if pixel is not white (considering semi-transparent pixels)
-                    bool isVisible = (r < 250 || g < 250 || b < 250) && a > 10;
+                    if (alpha == 0)
+                        continue;
 
-                    if (isVisible)
-                    {
-                        if (x < left) left = x;
-                        if (x > right) right = x;
-                        if (y < top) top = y;
-                        if (y > bottom) bottom = y;
-                    }
+                    if (x < left) left = x;
+                    if (x > right) right = x;
+                    if (y < top) top = y;
+                    if (y > bottom) bottom = y;
                 }
             }
 
-            if (right == -1)
-                return null; // No visible pixels found
+            if (right < left || bottom < top)
+                return compositedBitmap;
 
-            return (left, top, right, bottom);
+            Int32Rect cropRect = new Int32Rect(
+                left,
+                top,
+                right - left + 1,
+                bottom - top + 1);
+
+            CroppedBitmap croppedBitmap = new CroppedBitmap(compositedBitmap, cropRect);
+            return AddWhitePadding(croppedBitmap, paddingPixels);
+        }
+
+        private static BitmapSource AddWhitePadding(BitmapSource source, int paddingPixels)
+        {
+            int width = source.PixelWidth;
+            int height = source.PixelHeight;
+            int paddedWidth = width + (2 * paddingPixels);
+            int paddedHeight = height + (2 * paddingPixels);
+            int sourceStride = width * 4;
+            int paddedStride = paddedWidth * 4;
+
+            byte[] sourcePixels = new byte[height * sourceStride];
+            source.CopyPixels(sourcePixels, sourceStride, 0);
+
+            byte[] paddedPixels = new byte[paddedHeight * paddedStride];
+
+            for (int i = 0; i < paddedPixels.Length; i += 4)
+            {
+                paddedPixels[i + 0] = 255;
+                paddedPixels[i + 1] = 255;
+                paddedPixels[i + 2] = 255;
+                paddedPixels[i + 3] = 255;
+            }
+
+            for (int y = 0; y < height; y++)
+            {
+                int sourceOffset = y * sourceStride;
+                int destinationOffset = ((y + paddingPixels) * paddedStride) + (paddingPixels * 4);
+                Array.Copy(sourcePixels, sourceOffset, paddedPixels, destinationOffset, sourceStride);
+            }
+
+            WriteableBitmap result = new WriteableBitmap(paddedWidth, paddedHeight, dpi, dpi, PixelFormats.Bgra32, null);
+            result.WritePixels(new Int32Rect(0, 0, paddedWidth, paddedHeight), paddedPixels, paddedStride, 0);
+            return result;
+        }
+
+        private static Rect GetCanvasContentBounds(Canvas canvas)
+        {
+            Rect bounds = Rect.Empty;
+
+            foreach (UIElement child in canvas.Children)
+            {
+                if (child == null || child.Visibility != Visibility.Visible)
+                    continue;
+
+                Rect childBounds = VisualTreeHelper.GetDescendantBounds(child);
+
+                if (childBounds.IsEmpty)
+                    childBounds = new Rect(new Point(0, 0), child.RenderSize);
+
+                if (childBounds.IsEmpty || childBounds.Width <= 0 || childBounds.Height <= 0)
+                    continue;
+
+                GeneralTransform transform = child.TransformToAncestor(canvas);
+                Rect transformedBounds = transform.TransformBounds(childBounds);
+
+                if (transformedBounds.IsEmpty || transformedBounds.Width <= 0 || transformedBounds.Height <= 0)
+                    continue;
+
+                if (bounds.IsEmpty)
+                    bounds = transformedBounds;
+                else
+                    bounds.Union(transformedBounds);
+            }
+
+            return bounds;
         }
 
         private static void SaveBitmapToPng(BitmapSource bitmap, string filePath)
@@ -171,14 +223,15 @@ namespace m0.UIWpf.UX
 
         private static void SaveEmptyImage(string filePath)
         {
-            // Create small white bitmap
-            WriteableBitmap emptyBitmap = new WriteableBitmap(20, 20, dpi, dpi, PixelFormats.Bgra32, null);
-            byte[] white = new byte[20 * 20 * 4];
+            double dpiScale = dpi / BaseDpi;
+            int emptyImageSize = Math.Max(1, (int)Math.Round(EmptyImageSizeDip * dpiScale));
+            WriteableBitmap emptyBitmap = new WriteableBitmap(emptyImageSize, emptyImageSize, dpi, dpi, PixelFormats.Bgra32, null);
+            byte[] white = new byte[emptyImageSize * emptyImageSize * 4];
             for (int i = 0; i < white.Length; i += 4)
             {
                 white[i] = white[i + 1] = white[i + 2] = white[i + 3] = 255;
             }
-            emptyBitmap.WritePixels(new Int32Rect(0, 0, 20, 20), white, 20 * 4, 0);
+            emptyBitmap.WritePixels(new Int32Rect(0, 0, emptyImageSize, emptyImageSize), white, emptyImageSize * 4, 0);
             SaveBitmapToPng(emptyBitmap, filePath);
         }
     }
