@@ -2,7 +2,7 @@
 
 you will be good. you are
 
-## Modern Dev is Broken. Fix it with **-zero**.
+## Modern Dev is Broken. Fix it with -zero.
 
 > We’re in 2026, and we’re still spending 80% of our time fighting "glue code," syncing schemas, and debugging ORMs. We’ve added layers of AI and cloud abstraction, but the core—the way we represent data and logic—is still stuck in the 70s.
 
