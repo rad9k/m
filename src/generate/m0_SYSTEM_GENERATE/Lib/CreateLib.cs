@@ -25,6 +25,8 @@ namespace m0_SYSTEM_GENERATE.Lib
         static IVertex ColorMeta = r.Get(false, @"System\Meta\ZeroTypes\UX\Color");
         static IVertex ExecutableMeta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\Executable");
 
+        static IVertex Lib;
+
         static IVertex LibStd;
         static IVertex LibSys;
         static IVertex LibStdUI;
@@ -37,9 +39,9 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             IVertex root = m0.MinusZero.Instance.root;
 
-            IVertex lib = root.Get(false, "System").AddVertex(null, "Lib");
+            Lib = root.Get(false, "System").AddVertex(null, "Lib");
 
-            LibStd = lib.AddVertex(null, "Std");
+            LibStd = Lib.AddVertex(null, "Std");
 
             string type = "m0.Lib.Std, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
@@ -88,9 +90,9 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             IVertex root = m0.MinusZero.Instance.root;
 
-            IVertex lib = root.Get(false, "System").AddVertex(null, "Lib");
+            //IVertex lib = root.Get(false, "System").AddVertex(null, "Lib");
 
-            LibSys = lib.AddVertex(null, "Sys");
+            LibSys = Lib.AddVertex(null, "Sys");
 
             string type = "m0.Lib.Sys, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
@@ -109,9 +111,9 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             IVertex root = m0.MinusZero.Instance.root;
 
-            IVertex lib = root.Get(false, "System").AddVertex(null, "Lib");
+            //IVertex lib = root.Get(false, "System").AddVertex(null, "Lib");
 
-            LibStdUI = lib.AddVertex(null, "StdUI");
+            LibStdUI = Lib.AddVertex(null, "StdUI");
 
             string type = "m0.Lib.StdUI, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
@@ -131,9 +133,9 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             IVertex root = m0.MinusZero.Instance.root;
 
-            IVertex lib = root.Get(false, "System").AddVertex(null, "Lib");
+            //IVertex lib = root.Get(false, "System").AddVertex(null, "Lib");
 
-            LibStdView = lib.AddVertex(null, "StdView");
+            LibStdView = Lib.AddVertex(null, "StdView");
 
             GraphUtil.LoadTXTParseAndMove_ChildEdges(@"_RES\Lib\StdView\StdView.txt", LibStdView);
 
@@ -188,7 +190,7 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             IVertex root = m0.MinusZero.Instance.root;
 
-            IVertex lib = root.Get(false, "System").AddVertex(null, "Lib");
+            //IVertex lib = root.Get(false, "System").AddVertex(null, "Lib");
 
             IVertex IntegerType = root.Get(false, @"System\Meta\ZeroTypes\Integer");
             IVertex BooleanType = root.Get(false, @"System\Meta\ZeroTypes\Boolean");
@@ -196,7 +198,7 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             IVertex defaultValue_meta = root.Get(false, @"System\Meta\Base\Vertex\$DefaultValue");
 
-            LibNet = lib.AddVertex(null, "Net");
+            LibNet = Lib.AddVertex(null, "Net");
 
             string type = "m0.Lib.Net.Net, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
@@ -259,7 +261,13 @@ namespace m0_SYSTEM_GENERATE.Lib
         }
 
         public static void Save(IEnumerable<IVertex> systemSubGraphWithLinks, Dictionary<string, StoreId> storeOverride)
-        {            
+        {
+            print("* saving Lib\\Std");
+
+            GeneralUtil.CreateM0JAndMoveEdgesIntoIt_IncludeEverythingBesidesList("lib.m0j", Lib, new HashSet<IVertex>(systemSubGraphWithLinks), storeOverride);
+
+            return;
+
             print("* saving Lib\\Std");
 
             GeneralUtil.CreateM0JAndMoveEdgesIntoIt_IncludeEverythingBesidesList("lib_std.m0j", LibStd, new HashSet<IVertex>(systemSubGraphWithLinks), storeOverride);

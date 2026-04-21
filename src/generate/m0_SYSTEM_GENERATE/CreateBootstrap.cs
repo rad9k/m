@@ -34,7 +34,10 @@ namespace m0_SYSTEM_GENERATE
             IVertex examples = r.AddVertex(null, "examples");
             examples.AddVertex(null, "examples.m0j");
 
-            IVertex lib_std = r.AddVertex(null, "System\\Lib\\Std");
+            IVertex lib_std = r.AddVertex(null, "System\\Lib");
+            lib_std.AddVertex(null, "lib.m0j");
+
+            /*IVertex lib_std = r.AddVertex(null, "System\\Lib\\Std");
             lib_std.AddVertex(null, "lib_std.m0j");
 
             IVertex lib_sys = r.AddVertex(null, "System\\Lib\\Sys");
@@ -53,7 +56,7 @@ namespace m0_SYSTEM_GENERATE
             {
                 IVertex lib_music = r.AddVertex(null, "System\\Lib\\Music");
                 lib_music.AddVertex(null, "lib_music.m0j");
-            }
+            }*/
 
             GeneralUtil.SaveStore(store);
         }

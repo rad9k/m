@@ -171,11 +171,11 @@ namespace m0_SYSTEM_GENERATE
 
             Lib.CreateLib.Save(systemSubGraphWithLinks, storeOverride);
 
-            print("* Lib::Std and Lib::Sys saved to \"lib_std.m0j\" and \"lib_sys.m0j\"");
+            print("* ALL Lib::* saved to \"lib.m0j\"");
 
-            Music.CreateMusic.Save(systemSubGraphWithLinks, storeOverride);
+            //Music.CreateMusic.Save(systemSubGraphWithLinks, storeOverride);
 
-            print("* Lib::Music saved \"lib_music.m0j\"");
+            //print("* Lib::Music saved \"lib_music.m0j\"");
             //
 
             print("* creating \"_bootstrap.m0j\"");
