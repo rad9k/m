@@ -48,44 +48,19 @@ namespace m0.UIWpf.Visualisers
         }
 
         private bool _IsSelected;
-        
-        public  bool IsSelected { 
+
+        public bool IsSelected
+        {
             get { return _IsSelected; }
             set
             {
                 _IsSelected = value;
-                
-                StackPanel s = (StackPanel)Header;
 
-                int cc = s.Children.Count;
-                
-                Label l = (Label)s.Children[0];
-                Label l2=null;
+                MetaToEdgeControl headerControl = Header as MetaToEdgeControl;
 
-                if(cc>1)
-                    l2=(Label)s.Children[1];
-
-                if (_IsSelected)
-                {
-                    l.Background = (Brush)FindResource("0SelectionBrush");
-                    l.Foreground = (Brush)FindResource("0BackgroundBrush");
-
-                    if(l2!=null){
-                        l2.Background = (Brush)FindResource("0SelectionBrush");
-                        l2.Foreground = (Brush)FindResource("0BackgroundBrush");
-                    }
-                }else{                    
-                    if(l2==null){
-                        l.Background = (Brush)FindResource("0BackgroundBrush");
-                        l.Foreground = (Brush)FindResource("0ForegroundBrush");
-                    }else{
-                        l.Background = (Brush)FindResource("0BackgroundBrush");
-                        l.Foreground = (Brush)FindResource("0GrayBrush");
-                       l2.Background = (Brush)FindResource("0BackgroundBrush");
-                       l2.Foreground = (Brush)FindResource("0ForegroundBrush");
-                   }
-               }               
-             }                        
+                if (headerControl != null)
+                    headerControl.IsSelected = value;
+            }
         }
 
         public TreeVisualiser ParentVisualiser {get; set;}
@@ -146,58 +121,21 @@ namespace m0.UIWpf.Visualisers
             IsFilled = true;                        
         }
 
-        public void UpdateHeader(){
-            bool wasSelected = IsSelected;
-            StackPanel s = new StackPanel();
+        public void UpdateHeader()
+        {
+            bool wasSelected = _IsSelected;
 
-            IEdge e = GetEdge();
+            MetaToEdgeControl headerControl = Header as MetaToEdgeControl;
 
-            if ((GeneralUtil.CompareStrings(e.Meta.Value, "$Empty") && HideMetaNameIfEmpty)||e.Meta.Value==null)
+            if (headerControl == null)
             {
-                Label ll = new Label();
-
-                if (e.To.Value == null || GeneralUtil.CompareStrings(e.To.Value, ""))
-                    ll.Content = "[$Empty]";
-                else
-                    ll.Content = e.To.Value;
-
-                ll.Padding = new Thickness(0);
-
-                ll.Foreground = (Brush)FindResource("0ForegroundBrush");
-                ll.FontWeight = WpfUtil.ValueWeight;
-
-                s.Children.Add(ll);
-            }
-            else
-            {
-                s.Orientation = Orientation.Horizontal;
-
-                Label l1 = new Label();
-                l1.Content = e.Meta.Value + " : ";
-                l1.Padding = new Thickness(0);
-
-                l1.Foreground = (Brush)FindResource("0GrayBrush");
-                l1.FontStyle = FontStyles.Italic;
-                l1.FontWeight = WpfUtil.MetaWeight;
-
-                Label l2 = new Label();
-                
-                l2.Content = e.To.Value;
-
-                l2.Padding = new Thickness(0);
-
-                l2.Foreground = (Brush)FindResource("0ForegroundBrush");
-                l2.FontWeight = WpfUtil.ValueWeight;
-
-                s.Children.Add(l1);
-                s.Children.Add(l2);
+                headerControl = new MetaToEdgeControl();
+                Header = headerControl;
             }
 
-            Header = s;
-
-            if(wasSelected)
-                IsSelected = true;
-        }        
+            headerControl.BaseEdge = GetEdge();
+            headerControl.IsSelected = wasSelected;
+        }
 
         public INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
