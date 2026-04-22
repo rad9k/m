@@ -1,15 +1,21 @@
 ﻿using m0.Foundation;
+using m0.Graph;
+using m0.UIWpf.Commands;
 using m0.UIWpf.Foundation;
+using m0.Util;
+using m0.ZeroCode;
+using m0.ZeroCode.Helpers;
+using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using m0.UIWpf.Commands;
-using m0.Util;
-using m0.ZeroTypes;
+using System.Xml.Linq;
+using Xceed.Wpf.AvalonDock.Controls;
 
 namespace m0.UIWpf.Controls
 {
@@ -77,6 +83,8 @@ namespace m0.UIWpf.Controls
 
                 this.Items.Clear();
 
+                AddHelp();
+
                 ExtraCommandHook ech = new ExtraCommandHook(this);
 
                 ech.CheckAndAddExtraCommand();
@@ -96,6 +104,50 @@ namespace m0.UIWpf.Controls
             {
                 DisableMenuItems();
                 return;
+            }
+        }
+
+        private void AddHelp()
+        {
+            IVertex metaVertex = GraphUtil.GetQueryOutFirst(EdgeVertex, "Meta", null);
+            IVertex toVertex = GraphUtil.GetQueryOutFirst(EdgeVertex, "To", null);
+
+            IList<IEdge> HelpURL_Meta = GraphUtil.GetQueryOut(metaVertex, "HelpURL", null);
+            IList<IEdge> HelpURL_To = GraphUtil.GetQueryOut(toVertex, "HelpURL", null);
+
+            int cnt = 1;
+
+            foreach (IEdge e in HelpURL_Meta)
+                AddHelpEntry(e.To.Value.ToString(), "Help (" + cnt++ + " entry by Meta)");
+
+            cnt = 1;
+
+            foreach (IEdge e in HelpURL_To)
+                AddHelpEntry(e.To.Value.ToString(), "Help (" + cnt++ + " entry by To)");
+        }
+
+        void AddHelpEntry(string url, string item_name)
+        {
+            MenuItem newMenuItem = m0ContextMenu.createMenuItem(item_name);
+
+            newMenuItem.Tag = url;
+
+            newMenuItem.Click += (sender, e) =>
+            {
+                OnHelpClick(sender, e);
+            };
+
+            Items.Add(newMenuItem);
+        }
+
+        private void OnHelpClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuItem menuItem)
+            {
+                string url = menuItem.Tag as string;
+
+                if (url != null)
+                    MinusZero.Instance.UserInteraction.ShowContent(new WebView2UrlControl(url, "Help"));
             }
         }
 

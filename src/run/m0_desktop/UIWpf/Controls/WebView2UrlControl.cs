@@ -9,8 +9,9 @@ namespace m0.UIWpf.Controls
     {
         private readonly object webView2Control;
         private readonly Action<object> disposeAction;
+        private readonly string textRepresentation;
 
-        public WebView2UrlControl(string url)
+        public WebView2UrlControl(string url, string toStringValue)
         {
             if (string.IsNullOrWhiteSpace(url))
             {
@@ -21,6 +22,8 @@ namespace m0.UIWpf.Controls
 
             FrameworkElement webViewElement = CreateWebViewElement(out this.webView2Control, out this.disposeAction);
             this.Children.Add(webViewElement);
+
+            this.textRepresentation = toStringValue;
 
             Navigate(targetUri);
         }
@@ -77,6 +80,11 @@ namespace m0.UIWpf.Controls
             {
                 this.disposeAction(this.webView2Control);
             }
+        }
+
+        public override string ToString()
+        {
+            return this.textRepresentation;
         }
     }
 }
