@@ -227,6 +227,10 @@ def estimate_foreground_color(rgb_u8: np.ndarray, alpha_seed: np.ndarray) -> np.
         opaque = (alpha_seed > 0.90) & (sat > 0.10)
     if int(opaque.sum()) < 50:
         opaque = alpha_seed > 0.90
+    if int(opaque.sum()) < 50:
+        opaque = sat > 0.12
+    if int(opaque.sum()) < 1:
+        return np.array([30.0, 126.0, 255.0], dtype=np.float32)
     return np.median(rgb_u8[opaque].astype(np.float32), axis=0)
 
 
@@ -331,6 +335,12 @@ def process_rgb_u8_to_icon(
         alpha_seed,
         np.clip((sat.astype(np.float32) / 255.0 - 0.02) / 0.06, 0.0, 1.0),
     )
+    if not np.any(alpha_seed > 0.05):
+        # Extremely flat / odd backgrounds: distance-to-checker can collapse; lean on chroma.
+        alpha_seed = np.maximum(
+            alpha_seed,
+            np.clip((sat.astype(np.float32) / 255.0 - 0.01) / 0.05, 0.0, 1.0),
+        )
 
     foreground_u8 = estimate_foreground_color(rgb_u8, alpha_seed)
     foreground = foreground_u8.astype(np.float32) / 255.0
@@ -515,9 +525,9 @@ def main() -> int:
     skip_prefixes = ("c__Users_",)
 
     pairs, missing = collect_inputs(input_dir, manifest, skip_prefixes)
-    if args.report_missing is not None and missing:
+    if args.report_missing is not None:
         args.report_missing.parent.mkdir(parents=True, exist_ok=True)
-        args.report_missing.write_text("\n".join(missing) + "\n", encoding="utf-8")
+        args.report_missing.write_text("\n".join(missing) + ("\n" if missing else ""), encoding="utf-8")
         print(f"Wrote missing list ({len(missing)}): {args.report_missing}")
     if not pairs:
         print("No matching input PNGs to process.", file=sys.stderr)
