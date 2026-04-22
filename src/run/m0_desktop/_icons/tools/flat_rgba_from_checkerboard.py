@@ -342,10 +342,18 @@ def process_rgb_u8_to_icon(
         # Rare: unmix + scrub wipes everything (bad foreground estimate / odd background).
         # Fall back to the distance/chroma seed alpha and recompute foreground colors.
         alpha = np.clip(alpha_seed, 0.0, 1.0)
-        alpha = np.where(alpha < 2.0 / 255.0, 0.0, alpha)
 
     rgb_foreground = recover_rgb(color, background, alpha)
 
+    opaque_mask = alpha > (1.0 / 255.0)
+    if not np.any(opaque_mask):
+        # Last resort: chroma-based mask (works when background is neutral but not a checkerboard).
+        sat_u8 = chroma_u8(rgb_u8)
+        alpha = np.clip((sat_u8.astype(np.float32) / 255.0 - 0.02) / 0.08, 0.0, 1.0)
+        rgb_foreground = recover_rgb(color, background, alpha)
+        opaque_mask = alpha > (1.0 / 255.0)
+
+    alpha = np.where(alpha < 2.0 / 255.0, 0.0, alpha)
     opaque_mask = alpha > (1.0 / 255.0)
     if not np.any(opaque_mask):
         raise RuntimeError(
