@@ -7448,7 +7448,7 @@ namespace m0
         {
             IVertex HelpURL = Root.Get(false, @"System\Meta\Base\Vertex\HelpURL");
 
-            v.AddEdge(HelpURL, @"http://localhost/" + url_suffix);
+            v.AddVertex(HelpURL, @"http://localhost/" + url_suffix);
         }
 
         private void AddHelp()
