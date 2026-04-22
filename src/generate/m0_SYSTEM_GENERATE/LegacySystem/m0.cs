@@ -7444,15 +7444,19 @@ namespace m0
             IsInitialized = true;
         }
 
+        void AddHelp(IVertex v, string url_suffix)
+        {
+            IVertex HelpURL = Root.Get(false, @"System\Meta\Base\Vertex\HelpURL");
+
+            v.AddEdge(HelpURL, @"http://localhost/" + url_suffix);
+        }
+
         private void AddHelp()
         {
             IVertex base_Vertex = Root.Get(false, @"System\Meta\Base");
 
-            IVertex HelpURL = base_Vertex.Get(false, @"Vertex\HelpURL");
 
-            base_Vertex.AddVertex(HelpURL, @"http://localhost/#11%20Platform%2F01%20Instance%20core%2F01%20Base");
-
-
+            AddHelp(base_Vertex, @"#11%20Platform%2F01%20Instance%20core%2F01%20Base");
         }
 
         public void Initialize()
