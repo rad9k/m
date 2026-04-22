@@ -22,6 +22,8 @@ namespace m0.UIWpf.Controls
         private static readonly Dictionary<string, BitmapImage> BitmapByIconPath =
             new Dictionary<string, BitmapImage>(StringComparer.OrdinalIgnoreCase);
 
+        private static bool MetaIconDirectoryNameMissingLogged;
+
         private readonly StackPanel contentPanel;
         private readonly Image iconImage;
         private readonly Label metaLabel;
@@ -61,13 +63,15 @@ namespace m0.UIWpf.Controls
 
         public MetaToEdgeControl()
         {
-            Background = Brushes.Transparent;
+            Background = null;
             BorderThickness = new Thickness(0);
             Padding = new Thickness(0);
+            SnapsToDevicePixels = true;
+            UseLayoutRounding = true;
 
             contentPanel = new StackPanel();
             contentPanel.Orientation = Orientation.Horizontal;
-            contentPanel.Background = Brushes.Transparent;
+            contentPanel.Background = null;
 
             double enlargedIconSize = WpfUtil.IconSize * 2;
             double iconVerticalOverflow = (enlargedIconSize - WpfUtil.IconSize) / 2;
@@ -77,13 +81,17 @@ namespace m0.UIWpf.Controls
             iconImage.Height = enlargedIconSize;
             iconImage.Margin = new Thickness(0, -iconVerticalOverflow, 4, -iconVerticalOverflow);
             iconImage.VerticalAlignment = VerticalAlignment.Center;
+            iconImage.HorizontalAlignment = HorizontalAlignment.Center;
+            iconImage.Stretch = Stretch.Uniform;
+            iconImage.SnapsToDevicePixels = true;
+            iconImage.UseLayoutRounding = true;
             iconImage.Visibility = Visibility.Collapsed;
-            RenderOptions.SetBitmapScalingMode(iconImage, BitmapScalingMode.HighQuality);
+            RenderOptions.SetBitmapScalingMode(iconImage, BitmapScalingMode.Fant);
 
             metaLabel = new Label();
             metaLabel.Padding = new Thickness(0);
             metaLabel.Margin = new Thickness(0);
-            metaLabel.Background = Brushes.Transparent;
+            metaLabel.Background = null;
             metaLabel.Foreground = GetMetaForegroundBrush();
             metaLabel.FontStyle = FontStyles.Italic;
             metaLabel.FontWeight = WpfUtil.MetaWeight;
@@ -92,7 +100,7 @@ namespace m0.UIWpf.Controls
             toLabel = new Label();
             toLabel.Padding = new Thickness(0);
             toLabel.Margin = new Thickness(0);
-            toLabel.Background = Brushes.Transparent;
+            toLabel.Background = null;
             toLabel.Foreground = GetForegroundBrush();
             toLabel.FontWeight = WpfUtil.ValueWeight;
             toLabel.VerticalContentAlignment = VerticalAlignment.Center;
@@ -171,7 +179,7 @@ namespace m0.UIWpf.Controls
                 return "[$Empty]";
 
             if (GeneralUtil.CompareStrings(toValue, ""))
-                return "\"\"";
+                return "";
 
             return toValue.ToString();
         }
@@ -203,15 +211,15 @@ namespace m0.UIWpf.Controls
             }
             else
             {
-                Background = Brushes.Transparent;
-                contentPanel.Background = Brushes.Transparent;
+                Background = null;
+                contentPanel.Background = null;
 
                 metaLabel.Foreground = GetMetaForegroundBrush();
                 toLabel.Foreground = GetForegroundBrush();
             }
 
-            metaLabel.Background = Brushes.Transparent;
-            toLabel.Background = Brushes.Transparent;
+            metaLabel.Background = null;
+            toLabel.Background = null;
         }
 
         private BitmapImage TryLoadIconBitmap(IEdge edge)
@@ -239,10 +247,13 @@ namespace m0.UIWpf.Controls
                 lock (IconCacheLock)
                     BitmapByIconPath[iconPath] = bitmap;
 
+                MinusZero.Instance.Log(1, "MetaToEdgeControl", "loaded icon '" + iconPath + "' pixelFormat=" + bitmap.Format + " size=" + bitmap.PixelWidth + "x" + bitmap.PixelHeight);
+
                 return bitmap;
             }
-            catch
+            catch (Exception iconLoadException)
             {
+                MinusZero.Instance.Log(1, "MetaToEdgeControl", "failed to load icon '" + iconPath + "': " + iconLoadException.Message);
                 return null;
             }
         }
@@ -270,19 +281,16 @@ namespace m0.UIWpf.Controls
 
                 Dictionary<string, string> iconPathMap = GetIconPathMap(iconDirectory);
 
-                if (iconPathMap.TryGetValue(normalizedIconName, out string exactMatch))
-                {
-                    requestedIconPathMap[normalizedIconName] = exactMatch;
-                    return exactMatch;
-                }
+                iconPathMap.TryGetValue(normalizedIconName, out string exactMatch);
 
-                string partialMatch = iconPathMap
-                    .FirstOrDefault(iconPathItem => iconPathItem.Key.IndexOf(normalizedIconName, StringComparison.OrdinalIgnoreCase) >= 0)
-                    .Value;
+                requestedIconPathMap[normalizedIconName] = exactMatch ?? string.Empty;
 
-                requestedIconPathMap[normalizedIconName] = partialMatch ?? string.Empty;
+                if (exactMatch == null)
+                    MinusZero.Instance.Log(1, "MetaToEdgeControl", "no icon match for '" + normalizedIconName + "' in '" + iconDirectory + "'");
+                else
+                    MinusZero.Instance.Log(1, "MetaToEdgeControl", "resolved icon '" + normalizedIconName + "' -> '" + exactMatch + "'");
 
-                return partialMatch;
+                return exactMatch;
             }
         }
 
@@ -298,10 +306,19 @@ namespace m0.UIWpf.Controls
             string iconsRootDirectory = Path.Combine(applicationPath, "icons");
 
             string metaIconDirectoryName =
-                minusZero?.Root?.Get(false, @"Home:\CurrentUser:\Settings:\MetaIconsDirectoryName:")?.Value?.ToString();
+                minusZero?.Root?.Get(false, @"Home:\CurrentUser:\Settings:\MetaIconDirectoryName:")?.Value?.ToString();
 
             if (string.IsNullOrWhiteSpace(metaIconDirectoryName))
-                return iconsRootDirectory;
+            {
+                if (MetaIconDirectoryNameMissingLogged == false)
+                {
+                    MinusZero.Instance.Log(1, "MetaToEdgeControl",
+                        @"setting 'Home:\CurrentUser:\Settings:\MetaIconDirectoryName:' is not set - falling back to 'flat'");
+                    MetaIconDirectoryNameMissingLogged = true;
+                }
+
+                metaIconDirectoryName = "flat";
+            }
 
             return Path.Combine(iconsRootDirectory, metaIconDirectoryName);
         }
@@ -337,6 +354,8 @@ namespace m0.UIWpf.Controls
             }
 
             IconPathsByDirectory[iconDirectory] = iconPathMap;
+
+            MinusZero.Instance.Log(1, "MetaToEdgeControl", "indexed icon directory '" + iconDirectory + "' fileCount=" + iconPathMap.Count);
 
             return iconPathMap;
         }
