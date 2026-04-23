@@ -14,6 +14,12 @@ namespace m0.UIWpf.Controls
 {
     public class MetaToEdgeControl : Border
     {
+        /// <summary>
+        /// Decode meta icons at a modest pixel width before WPF scales them to ~30 logical DIP.
+        /// Loading full 256px sources and scaling with certain modes caused visible gray halos on alpha.
+        /// </summary>
+        private const int MetaIconDecodeMaxSidePixels = 128;
+
         private static readonly object IconCacheLock = new object();
         private static readonly Dictionary<string, Dictionary<string, string>> IconPathsByDirectory =
             new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
@@ -73,7 +79,7 @@ namespace m0.UIWpf.Controls
             contentPanel.Orientation = Orientation.Horizontal;
             contentPanel.Background = null;
 
-            double enlargedIconSize = WpfUtil.IconSize * 2;
+            double enlargedIconSize = WpfUtil.IconSize * 1.5;
             double iconVerticalOverflow = (enlargedIconSize - WpfUtil.IconSize) / 2;
 
             iconImage = new Image();
@@ -86,6 +92,7 @@ namespace m0.UIWpf.Controls
             iconImage.SnapsToDevicePixels = true;
             iconImage.UseLayoutRounding = true;
             iconImage.Visibility = Visibility.Collapsed;
+            // Fant + strong downscale on transparent PNGs often produces gray "tiles" behind the glyph.
             RenderOptions.SetBitmapScalingMode(iconImage, BitmapScalingMode.Fant);
 
             metaLabel = new Label();
@@ -240,6 +247,8 @@ namespace m0.UIWpf.Controls
                 BitmapImage bitmap = new BitmapImage();
                 bitmap.BeginInit();
                 bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
+                bitmap.DecodePixelWidth = MetaIconDecodeMaxSidePixels;
                 bitmap.UriSource = new Uri(iconPath, UriKind.Absolute);
                 bitmap.EndInit();
                 bitmap.Freeze();
@@ -306,19 +315,7 @@ namespace m0.UIWpf.Controls
             string iconsRootDirectory = Path.Combine(applicationPath, "icons");
 
             string metaIconDirectoryName =
-                minusZero?.Root?.Get(false, @"Home:\CurrentUser:\Settings:\MetaIconDirectoryName:")?.Value?.ToString();
-
-            if (string.IsNullOrWhiteSpace(metaIconDirectoryName))
-            {
-                if (MetaIconDirectoryNameMissingLogged == false)
-                {
-                    MinusZero.Instance.Log(1, "MetaToEdgeControl",
-                        @"setting 'Home:\CurrentUser:\Settings:\MetaIconDirectoryName:' is not set - falling back to 'flat'");
-                    MetaIconDirectoryNameMissingLogged = true;
-                }
-
-                metaIconDirectoryName = "flat";
-            }
+                minusZero?.Root?.Get(false, @"Home:\CurrentUser:\Settings:\MetaIconsDirectoryName:")?.Value?.ToString();
 
             return Path.Combine(iconsRootDirectory, metaIconDirectoryName);
         }
