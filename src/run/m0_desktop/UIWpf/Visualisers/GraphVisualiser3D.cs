@@ -674,19 +674,20 @@ namespace m0.UIWpf.Visualisers
             for (int level = 1; level <= numberOfCircles; level++)
             {
                 List<IVertex> thisLevel = new List<IVertex>();
-                List<(IEdge edge, bool outgoing)> edgesFromPrevious = new List<(IEdge, bool)>();
+                List<(IEdge edge, IVertex peerVertex, bool outgoing)> edgesFromPrevious =
+                    new List<(IEdge, IVertex, bool)>();
 
                 foreach (IVertex v in previousLevel)
                 {
                     if (showOutEdges)
                         foreach (IEdge e in v)
                             if (CanAddEdge(e) && !DisplayedVerticesUIElements.ContainsKey(e.To))
-                                edgesFromPrevious.Add((e, true));
+                                edgesFromPrevious.Add((e, v, true));
 
                     if (showInEdges)
                         foreach (IEdge e in v.InEdges.ToList())
                             if (CanAddEdge(e) && !DisplayedVerticesUIElements.ContainsKey(e.From))
-                                edgesFromPrevious.Add((e, false));
+                                edgesFromPrevious.Add((e, v, false));
                 }
 
                 PlaceNewLevel(level, numberOfCircles, circleSize, layout, edgesFromPrevious, thisLevel);
@@ -727,7 +728,7 @@ namespace m0.UIWpf.Visualisers
         }
 
         private void PlaceNewLevel(int level, int maxLevel, int shellStep, LayoutAlgorithm3DEnum layout,
-            List<(IEdge edge, bool outgoing)> edges, List<IVertex> accumulator)
+            List<(IEdge edge, IVertex peerVertex, bool outgoing)> edges, List<IVertex> accumulator)
         {
             if (edges.Count == 0) return;
 
@@ -736,7 +737,7 @@ namespace m0.UIWpf.Visualisers
 
             for (int i = 0; i < count; i++)
             {
-                (IEdge e, bool outgoing) = edges[i];
+                (IEdge e, IVertex peerVertex, bool outgoing) = edges[i];
                 IVertex target = outgoing ? e.To : e.From;
 
                 if (DisplayedVerticesUIElements.ContainsKey(target)) continue;
@@ -746,9 +747,14 @@ namespace m0.UIWpf.Visualisers
                 VertexNode3D node = AddVertex(p, target);
                 accumulator.Add(target);
 
-                VertexNode3D peer = outgoing
-                    ? DisplayedVerticesUIElements[e.From]
-                    : DisplayedVerticesUIElements[e.To];
+                if (!DisplayedVerticesUIElements.TryGetValue(peerVertex, out VertexNode3D peer))
+                {
+                    MinusZero.Instance.Log(1, "GraphVisualiser3D.PlaceNewLevel",
+                        "Missing peer vertex on scene for edge meta=" +
+                        (e.Meta != null ? e.Meta.Value : "null") +
+                        " outgoing=" + outgoing);
+                    continue;
+                }
 
                 if (outgoing) AddEdge(peer, node, e.Meta);
                 else          AddEdge(node, peer, e.Meta);
