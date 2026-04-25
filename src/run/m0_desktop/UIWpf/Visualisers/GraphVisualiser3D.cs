@@ -493,6 +493,7 @@ namespace m0.UIWpf.Visualisers
         private readonly PerspectiveCamera camera;
         private readonly ModelVisual3D sceneRoot;
         private readonly ModelVisual3D lightRoot;
+        private readonly ScaleTransform3D visualisationScale;
         private readonly ScaleTransform3D sceneScale;
         private readonly AxisAngleRotation3D sceneRotation;
         private readonly RotateTransform3D sceneRotate;
@@ -525,6 +526,7 @@ namespace m0.UIWpf.Visualisers
         private bool showInEdges;
         private int maxVertices;
         private double sphereSize;
+        private double scale = 1.0;
         private double labelScale = 1.0;
 
         internal double EdgeRadius { get; private set; }
@@ -532,7 +534,7 @@ namespace m0.UIWpf.Visualisers
         internal double ArrowLength { get; private set; }
 
         private static readonly string[] _MetaTriggeringUpdateVertex = new string[] {
-            "CircleLength", "NumberOfCircles", "ShowOutEdges", "ShowInEdges",
+            "EdgeLength", "NumberOfCircles", "ShowOutEdges", "ShowInEdges",
             "MetaLabels", "LayoutMode3D", "TransitionStyle",
             "TransitionDurationMs", "SphereSize", "MaxVertices3D", "LabelSize"
         };
@@ -579,11 +581,13 @@ namespace m0.UIWpf.Visualisers
             };
             viewport.Camera = camera;
 
+            visualisationScale = new ScaleTransform3D(1, 1, 1);
             sceneScale = new ScaleTransform3D(1, 1, 1);
             sceneRotation = new AxisAngleRotation3D(new Vector3D(0, 1, 0), 0);
             sceneRotate = new RotateTransform3D(sceneRotation);
 
             Transform3DGroup sceneTransform = new Transform3DGroup();
+            sceneTransform.Children.Add(visualisationScale);
             sceneTransform.Children.Add(sceneScale);
             sceneTransform.Children.Add(sceneRotate);
 
@@ -670,12 +674,14 @@ namespace m0.UIWpf.Visualisers
             sceneScale.BeginAnimation(ScaleTransform3D.ScaleYProperty, null);
             sceneScale.BeginAnimation(ScaleTransform3D.ScaleZProperty, null);
             sceneScale.ScaleX = sceneScale.ScaleY = sceneScale.ScaleZ = 1;
+            ApplyScaleFromVertex(false);
 
             IVertex baseTo = Vertex.Get(false, @"BaseEdge:\To:");
             if (baseTo != null)
             {
                 LayoutAlgorithm3DEnum layout = LayoutAlgorithm3DEnumHelper.GetEnum(Vertex.Get(false, "LayoutMode3D:"));
                 BuildGraph(baseTo, layout);
+                UpdateLabelSizes();
                 SelectWrappersForSelectedVertices();
             }
 
@@ -735,7 +741,7 @@ namespace m0.UIWpf.Visualisers
         private void BuildGraph(IVertex baseTo, LayoutAlgorithm3DEnum layout)
         {
             int numberOfCircles = GraphUtil.GetIntegerValue(Vertex.Get(false, "NumberOfCircles:")) ?? 2;
-            int circleSize = GraphUtil.GetIntegerValueOr0(Vertex.Get(false, "CircleLength:"));
+            int circleSize = GraphUtil.GetIntegerValueOr0(Vertex.Get(false, "EdgeLength:"));
             if (circleSize <= 0) circleSize = 200;
 
             AddNode(baseTo, new Point3D(0, 0, 0), true);
@@ -988,11 +994,7 @@ namespace m0.UIWpf.Visualisers
             TextBlock label = new TextBlock
             {
                 Text = string.IsNullOrEmpty(text) ? "Ø" : text,
-                Padding = isEdge
-                    ? new Thickness(3 * labelScale, 0, 3 * labelScale, 0)
-                    : new Thickness(5 * labelScale, 1 * labelScale, 5 * labelScale, 1 * labelScale),
                 TextAlignment = TextAlignment.Center,
-                FontSize = (isEdge ? 10 : 12) * labelScale,
                 Foreground = new SolidColorBrush(isEdge
                     ? GetThemeColor("0LightGrayBrush", Colors.LightGray)
                     : GetThemeColor("0ForegroundBrush", Colors.White)),
@@ -1000,7 +1002,23 @@ namespace m0.UIWpf.Visualisers
                 IsHitTestVisible = false
             };
 
+            ApplyLabelSize(label, isEdge);
             return label;
+        }
+
+        private void UpdateLabelSizes()
+        {
+            foreach (GraphVisualiser3DLabel label in labels)
+                ApplyLabelSize(label.Element, label.IsEdgeLabel);
+        }
+
+        private void ApplyLabelSize(TextBlock label, bool isEdge)
+        {
+            double effectiveLabelScale = Math.Max(0.01, labelScale * scale);
+            label.Padding = isEdge
+                ? new Thickness(3 * effectiveLabelScale, 0, 3 * effectiveLabelScale, 0)
+                : new Thickness(5 * effectiveLabelScale, 1 * effectiveLabelScale, 5 * effectiveLabelScale, 1 * effectiveLabelScale);
+            label.FontSize = (isEdge ? 10 : 12) * effectiveLabelScale;
         }
 
         private void RefreshLabelText()
@@ -1469,12 +1487,21 @@ namespace m0.UIWpf.Visualisers
 
         public void ScaleChange()
         {
-            double scale = ((double)(GraphUtil.GetIntegerValue(Vertex.Get(false, "Scale:")) ?? 100)) / 100.0;
+            ApplyScaleFromVertex(true);
+        }
 
-            if (scale != 1.0)
-                LayoutTransform = new ScaleTransform(scale, scale);
-            else
-                LayoutTransform = null;
+        private void ApplyScaleFromVertex(bool updateExistingLabels)
+        {
+            scale = ((double)(GraphUtil.GetIntegerValue(Vertex.Get(false, "Scale:")) ?? 100)) / 100.0;
+            if (scale <= 0)
+                scale = 1.0;
+
+            visualisationScale.ScaleX = scale;
+            visualisationScale.ScaleY = scale;
+            visualisationScale.ScaleZ = scale;
+
+            if (updateExistingLabels)
+                UpdateLabelSizes();
 
             UpdateLabels();
         }
@@ -1566,7 +1593,7 @@ namespace m0.UIWpf.Visualisers
         protected void SetVertexDefaultValues()
         {
             Vertex.Get(false, "Scale:").Value = 100;
-            Vertex.Get(false, "CircleLength:").Value = 210;
+            Vertex.Get(false, "EdgeLength:").Value = 210;
             Vertex.Get(false, "NumberOfCircles:").Value = 1;
             Vertex.Get(false, "LabelSize:").Value = 100;
             Vertex.Get(false, "MetaLabels:").Value = "True";
