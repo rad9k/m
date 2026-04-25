@@ -234,7 +234,7 @@ namespace m0.UIWpf.Visualisers
         {
             parentVisualiser = parent;
 
-            shaftMaterial = new DiffuseMaterial(new SolidColorBrush(parent.GetThemeColor("0LightGrayBrush", Colors.LightGray)));
+            shaftMaterial = new DiffuseMaterial(CreateAnimatedZebraBrush(parent.GetThemeColor("0LightGrayBrush", Colors.LightGray), false));
             shaftEmissive = new EmissiveMaterial(new SolidColorBrush(Colors.Black));
             headMaterial = new DiffuseMaterial(new SolidColorBrush(parent.GetThemeColor("0LightGrayBrush", Colors.LightGray)));
             headEmissive = new EmissiveMaterial(new SolidColorBrush(Colors.Black));
@@ -336,7 +336,7 @@ namespace m0.UIWpf.Visualisers
                 : parentVisualiser.GetThemeColor("0LightGrayBrush", Colors.LightGray);
             Color glow = highlighted ? color : Colors.Black;
 
-            shaftMaterial.Brush = new SolidColorBrush(color);
+            shaftMaterial.Brush = CreateAnimatedZebraBrush(color, highlighted);
             headMaterial.Brush = new SolidColorBrush(color);
             shaftEmissive.Brush = new SolidColorBrush(glow);
             headEmissive.Brush = new SolidColorBrush(glow);
@@ -348,6 +348,51 @@ namespace m0.UIWpf.Visualisers
                     : parentVisualiser.GetThemeColor("0LightGrayBrush", Colors.LightGray));
                 Panel.SetZIndex(MetaLabel, highlighted ? 8500 : 900);
             }
+        }
+
+        private Brush CreateAnimatedZebraBrush(Color baseColor, bool highlighted)
+        {
+            Color darkStripe = Mix(baseColor, Colors.Black, highlighted ? 0.12 : 0.38);
+            Color lightStripe = Mix(baseColor, Colors.White, highlighted ? 0.72 : 0.45);
+
+            LinearGradientBrush brush = new LinearGradientBrush
+            {
+                StartPoint = new Point(0, 0),
+                EndPoint = new Point(0, 1),
+                MappingMode = BrushMappingMode.RelativeToBoundingBox,
+                SpreadMethod = GradientSpreadMethod.Repeat
+            };
+
+            brush.GradientStops.Add(new GradientStop(darkStripe, 0.00));
+            brush.GradientStops.Add(new GradientStop(darkStripe, 0.42));
+            brush.GradientStops.Add(new GradientStop(lightStripe, 0.43));
+            brush.GradientStops.Add(new GradientStop(lightStripe, 0.62));
+            brush.GradientStops.Add(new GradientStop(darkStripe, 0.63));
+            brush.GradientStops.Add(new GradientStop(darkStripe, 1.00));
+
+            TransformGroup transform = new TransformGroup();
+            transform.Children.Add(new System.Windows.Media.ScaleTransform(1, 0.24));
+
+            TranslateTransform translate = new TranslateTransform();
+            transform.Children.Add(translate);
+            brush.RelativeTransform = transform;
+
+            DoubleAnimation flow = new DoubleAnimation(0, -1, TimeSpan.FromSeconds(highlighted ? 2.4 : 4.2))
+            {
+                RepeatBehavior = RepeatBehavior.Forever
+            };
+            translate.BeginAnimation(TranslateTransform.YProperty, flow);
+
+            return brush;
+        }
+
+        private static Color Mix(Color from, Color to, double amount)
+        {
+            amount = Math.Max(0, Math.Min(1, amount));
+            return Color.FromRgb(
+                (byte)(from.R + (to.R - from.R) * amount),
+                (byte)(from.G + (to.G - from.G) * amount),
+                (byte)(from.B + (to.B - from.B) * amount));
         }
 
         private static Quaternion RotationFromYAxis(Vector3D direction)
@@ -429,8 +474,10 @@ namespace m0.UIWpf.Visualisers
 
                 mesh.Positions.Add(new Point3D(x, -half, z));
                 mesh.Normals.Add(normal);
+                mesh.TextureCoordinates.Add(new Point((double)i / slices, 1));
                 mesh.Positions.Add(new Point3D(x, half, z));
                 mesh.Normals.Add(normal);
+                mesh.TextureCoordinates.Add(new Point((double)i / slices, 0));
             }
 
             for (int i = 0; i < slices; i++)
@@ -497,6 +544,7 @@ namespace m0.UIWpf.Visualisers
         private readonly ScaleTransform3D sceneScale;
         private readonly AxisAngleRotation3D sceneRotation;
         private readonly RotateTransform3D sceneRotate;
+        private readonly TranslateTransform3D sceneTranslate;
         private readonly Dictionary<IVertex, GraphVisualiser3DNode> displayedNodes;
         private readonly Dictionary<Model3D, GraphVisualiser3DNode> modelToNode;
         private readonly List<GraphVisualiser3DEdgeVisual> edgeVisuals;
@@ -585,11 +633,13 @@ namespace m0.UIWpf.Visualisers
             sceneScale = new ScaleTransform3D(1, 1, 1);
             sceneRotation = new AxisAngleRotation3D(new Vector3D(0, 1, 0), 0);
             sceneRotate = new RotateTransform3D(sceneRotation);
+            sceneTranslate = new TranslateTransform3D();
 
             Transform3DGroup sceneTransform = new Transform3DGroup();
             sceneTransform.Children.Add(visualisationScale);
             sceneTransform.Children.Add(sceneScale);
             sceneTransform.Children.Add(sceneRotate);
+            sceneTransform.Children.Add(sceneTranslate);
 
             sceneRoot = new ModelVisual3D { Transform = sceneTransform };
             viewport.Children.Add(sceneRoot);
@@ -674,6 +724,10 @@ namespace m0.UIWpf.Visualisers
             sceneScale.BeginAnimation(ScaleTransform3D.ScaleYProperty, null);
             sceneScale.BeginAnimation(ScaleTransform3D.ScaleZProperty, null);
             sceneScale.ScaleX = sceneScale.ScaleY = sceneScale.ScaleZ = 1;
+            sceneTranslate.BeginAnimation(TranslateTransform3D.OffsetXProperty, null);
+            sceneTranslate.BeginAnimation(TranslateTransform3D.OffsetYProperty, null);
+            sceneTranslate.BeginAnimation(TranslateTransform3D.OffsetZProperty, null);
+            sceneTranslate.OffsetX = sceneTranslate.OffsetY = sceneTranslate.OffsetZ = 0;
             ApplyScaleFromVertex(false);
 
             IVertex baseTo = Vertex.Get(false, @"BaseEdge:\To:");
@@ -1382,41 +1436,107 @@ namespace m0.UIWpf.Visualisers
         {
             animationInProgress = true;
 
-            Point3D startPosition = camera.Position;
-            Point3D targetCameraPosition = target.Position + (camera.Position - target.Position) * 0.28;
-            Point3DAnimation flyIn = new Point3DAnimation(startPosition, targetCameraPosition,
-                TimeSpan.FromMilliseconds(durationMs / 2))
-            {
-                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseIn }
-            };
+            Vector3D targetOffset = new Vector3D(
+                -target.Position.X * scale,
+                -target.Position.Y * scale,
+                -target.Position.Z * scale);
 
-            DoubleAnimation fade = new DoubleAnimation(1, 0.15, TimeSpan.FromMilliseconds(durationMs / 2))
-            {
-                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseIn }
-            };
+            DoubleAnimation moveX = CreateSceneMoveAnimation(sceneTranslate.OffsetX, targetOffset.X, durationMs / 2);
+            DoubleAnimation moveY = CreateSceneMoveAnimation(sceneTranslate.OffsetY, targetOffset.Y, durationMs / 2);
+            DoubleAnimation moveZ = CreateSceneMoveAnimation(sceneTranslate.OffsetZ, targetOffset.Z, durationMs / 2);
 
-            fade.Completed += (s, e) =>
+            EventHandler labelUpdater = (s, e) => UpdateLabels();
+            CompositionTarget.Rendering += labelUpdater;
+
+            moveX.Completed += (s, e) =>
             {
-                BeginAnimation(OpacityProperty, null);
-                Opacity = 1;
+                CompositionTarget.Rendering -= labelUpdater;
+                sceneTranslate.BeginAnimation(TranslateTransform3D.OffsetXProperty, null);
+                sceneTranslate.BeginAnimation(TranslateTransform3D.OffsetYProperty, null);
+                sceneTranslate.BeginAnimation(TranslateTransform3D.OffsetZProperty, null);
+                sceneTranslate.OffsetX = sceneTranslate.OffsetY = sceneTranslate.OffsetZ = 0;
+
                 PaintGraph();
-                Point3D defaultCamera = CurrentCameraPositionFromAngles();
-                Point3DAnimation flyOut = new Point3DAnimation(camera.Position, defaultCamera,
-                    TimeSpan.FromMilliseconds(durationMs / 2))
-                {
-                    EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
-                };
-                flyOut.Completed += (s2, e2) =>
+
+                AnimateNewGraphFromBase(durationMs / 2, () =>
                 {
                     animationInProgress = false;
-                    ResetTransitionVisualState(true);
+                    ResetTransitionVisualState(false);
                     UpdateLabels();
-                };
-                camera.BeginAnimation(ProjectionCamera.PositionProperty, flyOut);
+                });
             };
 
-            camera.BeginAnimation(ProjectionCamera.PositionProperty, flyIn);
-            BeginAnimation(OpacityProperty, fade);
+            sceneTranslate.BeginAnimation(TranslateTransform3D.OffsetXProperty, moveX);
+            sceneTranslate.BeginAnimation(TranslateTransform3D.OffsetYProperty, moveY);
+            sceneTranslate.BeginAnimation(TranslateTransform3D.OffsetZProperty, moveZ);
+        }
+
+        private DoubleAnimation CreateSceneMoveAnimation(double from, double to, int durationMs)
+        {
+            return new DoubleAnimation(from, to, TimeSpan.FromMilliseconds(Math.Max(1, durationMs)))
+            {
+                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseInOut }
+            };
+        }
+
+        private void AnimateNewGraphFromBase(int durationMs, Action completed)
+        {
+            if (displayedNodes.Count == 0)
+            {
+                completed();
+                return;
+            }
+
+            Dictionary<GraphVisualiser3DNode, Point3D> finalPositions =
+                displayedNodes.Values.ToDictionary(node => node, node => node.Position);
+
+            foreach (GraphVisualiser3DNode node in displayedNodes.Values)
+                node.SetWorldPosition(new Point3D(0, 0, 0));
+
+            UpdateAllEdgeVisuals();
+            UpdateLabels();
+
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            int safeDuration = Math.Max(1, durationMs);
+
+            EventHandler handler = null;
+            handler = (s, e) =>
+            {
+                double t = Math.Min(1.0, stopwatch.Elapsed.TotalMilliseconds / safeDuration);
+                double eased = EaseOutCubic(t);
+
+                foreach (KeyValuePair<GraphVisualiser3DNode, Point3D> item in finalPositions)
+                {
+                    Point3D finalPosition = item.Value;
+                    item.Key.SetWorldPosition(new Point3D(
+                        finalPosition.X * eased,
+                        finalPosition.Y * eased,
+                        finalPosition.Z * eased));
+                }
+
+                UpdateAllEdgeVisuals();
+                UpdateLabels();
+
+                if (t >= 1.0)
+                {
+                    CompositionTarget.Rendering -= handler;
+                    completed();
+                }
+            };
+
+            CompositionTarget.Rendering += handler;
+        }
+
+        private static double EaseOutCubic(double t)
+        {
+            double p = 1.0 - t;
+            return 1.0 - p * p * p;
+        }
+
+        private void UpdateAllEdgeVisuals()
+        {
+            foreach (GraphVisualiser3DEdgeVisual edgeVisual in edgeVisuals)
+                edgeVisual.Connect(edgeVisual.FromNode, edgeVisual.ToNode, edgeVisual.Edge, sphereSize);
         }
 
         private void RunWarpTransition(int durationMs)
@@ -1463,6 +1583,12 @@ namespace m0.UIWpf.Visualisers
             sceneScale.ScaleX = 1;
             sceneScale.ScaleY = 1;
             sceneScale.ScaleZ = 1;
+            sceneTranslate.BeginAnimation(TranslateTransform3D.OffsetXProperty, null);
+            sceneTranslate.BeginAnimation(TranslateTransform3D.OffsetYProperty, null);
+            sceneTranslate.BeginAnimation(TranslateTransform3D.OffsetZProperty, null);
+            sceneTranslate.OffsetX = 0;
+            sceneTranslate.OffsetY = 0;
+            sceneTranslate.OffsetZ = 0;
 
             if (resetCameraAnimation)
                 UpdateCamera();
@@ -1600,8 +1726,8 @@ namespace m0.UIWpf.Visualisers
             Vertex.Get(false, "ShowOutEdges:").Value = "True";
             Vertex.Get(false, "ShowInEdges:").Value = "False";
             Vertex.Get(false, "LayoutMode3D:").Value = "FibonacciSphereShells";
-            Vertex.Get(false, "TransitionStyle:").Value = "OrbitTransition";
-            Vertex.Get(false, "TransitionDurationMs:").Value = 600;
+            Vertex.Get(false, "TransitionStyle:").Value = "FyToAndSwap";
+            Vertex.Get(false, "TransitionDurationMs:").Value = 1000;
             Vertex.Get(false, "SphereSize:").Value = 22;
             Vertex.Get(false, "MaxVertices3D:").Value = 250;
         }
