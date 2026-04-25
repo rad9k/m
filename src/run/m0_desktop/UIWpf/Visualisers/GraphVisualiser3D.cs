@@ -534,7 +534,7 @@ namespace m0.UIWpf.Visualisers
                 "GraphVisualiser3D",
                 this,
                 false,
-                new List<string> { "" },
+                new List<string> { @"", @"BaseEdge:\", @"BaseEdge:\To:\" },
                 "AtomVisualiserFull",
                 baseEdgeVertex,
                 UpdateBaseEdgeCallSchemeEnum.OmmitFirst);
@@ -748,13 +748,7 @@ namespace m0.UIWpf.Visualisers
                 accumulator.Add(target);
 
                 if (!DisplayedVerticesUIElements.TryGetValue(peerVertex, out VertexNode3D peer))
-                {
-                    MinusZero.Instance.Log(1, "GraphVisualiser3D.PlaceNewLevel",
-                        "Missing peer vertex on scene for edge meta=" +
-                        (e.Meta != null ? e.Meta.Value : "null") +
-                        " outgoing=" + outgoing);
                     continue;
-                }
 
                 if (outgoing) AddEdge(peer, node, e.Meta);
                 else          AddEdge(node, peer, e.Meta);
@@ -1375,7 +1369,13 @@ namespace m0.UIWpf.Visualisers
             {
                 RestoreSelectedVertices();
                 if (node.BaseVertex != null)
+                {
                     GraphUtil.ReplaceEdge(Vertex.Get(false, "BaseEdge:"), "To", node.BaseVertex);
+
+                    IVertex updatedBaseTo = Vertex.Get(false, @"BaseEdge:\To:");
+                    if (updatedBaseTo == node.BaseVertex)
+                        BaseEdgeToUpdated();
+                }
                 e.Handled = true;
                 base.OnMouseDown(e);
                 return;
