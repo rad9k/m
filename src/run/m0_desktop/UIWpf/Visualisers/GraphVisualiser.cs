@@ -242,7 +242,7 @@ namespace m0.UIWpf.Visualisers
               "GraphVisualiser", 
               this, 
               false, 
-              new List<string> {""/*, @"BaseEdge:\To:"*/ }, 
+              new List<string> { @"", @"BaseEdge:\", @"BaseEdge:\To:\" }, 
               "AtomVisualiserFull",
               baseEdgeVertex,
               UpdateBaseEdgeCallSchemeEnum.OmmitFirst);
@@ -643,9 +643,45 @@ namespace m0.UIWpf.Visualisers
                 this.LayoutTransform = null;
         }
 
+        protected KeyValuePair<IVertex, SimpleVisualiserWrapper> GetVertexWrapperByEventSource(object eventSource)
+        {
+            DependencyObject current = eventSource as DependencyObject;
+
+            while (current != null)
+            {
+                if (current is SimpleVisualiserWrapper)
+                {
+                    KeyValuePair<IVertex, SimpleVisualiserWrapper> wrapperMatch =
+                        DisplayedVerticesUIElements.FirstOrDefault(x => x.Value == current);
+
+                    if (wrapperMatch.Value != null)
+                        return wrapperMatch;
+                }
+
+                KeyValuePair<IVertex, SimpleVisualiserWrapper> childMatch =
+                    DisplayedVerticesUIElements.FirstOrDefault(x => x.Value.Child == current);
+
+                if (childMatch.Value != null)
+                    return childMatch;
+
+                DependencyObject parent = null;
+
+                if (current is Visual || current is System.Windows.Media.Media3D.Visual3D)
+                    parent = VisualTreeHelper.GetParent(current);
+
+                if (parent == null)
+                    parent = LogicalTreeHelper.GetParent(current);
+
+                current = parent;
+            }
+
+            return default(KeyValuePair<IVertex, SimpleVisualiserWrapper>);
+        }
+
         protected override void OnMouseMove(MouseEventArgs e)
         {
-            KeyValuePair<IVertex, SimpleVisualiserWrapper> kvp = DisplayedVerticesUIElements.Where(x => ((SimpleVisualiserWrapper)x.Value).Child == e.Source).FirstOrDefault();
+            KeyValuePair<IVertex, SimpleVisualiserWrapper> kvp =
+                GetVertexWrapperByEventSource(e.OriginalSource ?? e.Source);
 
             if (kvp.Value != null&&((SimpleVisualiserWrapper)kvp.Value).IsHighlighted==false)
             {
@@ -659,7 +695,7 @@ namespace m0.UIWpf.Visualisers
                 Highlighted = wrapper;
             }
 
-            base.OnMouseEnter(e);
+            base.OnMouseMove(e);
         }
         
         protected override void OnMouseDown(MouseButtonEventArgs e)
@@ -667,16 +703,25 @@ namespace m0.UIWpf.Visualisers
             if (e.ClickCount == 2) // switch to another BaseVertex
             {
                 RestoreSelectedVertices();
-                
-                KeyValuePair<IVertex, SimpleVisualiserWrapper> kvp = DisplayedVerticesUIElements.Where(x => ((SimpleVisualiserWrapper)x.Value).Child == e.Source).FirstOrDefault();
 
-                if (kvp.Key != null)                
-                    GraphUtil.ReplaceEdge(Vertex.Get(false, "BaseEdge:"), "To", kvp.Key);                                    
+                KeyValuePair<IVertex, SimpleVisualiserWrapper> kvp =
+                    GetVertexWrapperByEventSource(e.OriginalSource ?? e.Source);
+
+                if (kvp.Key != null)
+                {
+                    GraphUtil.ReplaceEdge(Vertex.Get(false, "BaseEdge:"), "To", kvp.Key);
+
+                    IVertex updatedBaseTo = Vertex.Get(false, @"BaseEdge:\To:");
+
+                    if (updatedBaseTo == kvp.Key)
+                        BaseEdgeToUpdated();
+                }
             }
 
             if (e.ClickCount == 1) // change Selection
             {
-                   KeyValuePair<IVertex, SimpleVisualiserWrapper> kvp = DisplayedVerticesUIElements.Where(x => ((SimpleVisualiserWrapper)x.Value).Child == e.Source).FirstOrDefault();
+                   KeyValuePair<IVertex, SimpleVisualiserWrapper> kvp =
+                       GetVertexWrapperByEventSource(e.OriginalSource ?? e.Source);
 
                    if (kvp.Key != null)
                    {

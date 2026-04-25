@@ -1,7 +1,6 @@
 using m0.Foundation;
 using m0.Graph;
 using m0.Graph.ExecutionFlow;
-using m0.UIWpf.Commands;
 using m0.UIWpf.Foundation;
 using m0.UIWpf.Visualisers.Helper;
 using m0.User.Process.UX;
@@ -13,192 +12,194 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Media3D;
-using System.Windows.Shapes;
 using Color = System.Windows.Media.Color;
 using Colors = System.Windows.Media.Colors;
 
 namespace m0.UIWpf.Visualisers
 {
-    // Tag stored on each 3D edge so highlight/selection mirrors the 2D GraphVisualiser.
-    public class LineTagStore3D
+    internal sealed class GraphVisualiser3DLabel
     {
-        public VertexNode3D FromNode;
-        public VertexNode3D ToNode;
-        public IVertex MetaVertex;
+        public TextBlock Element;
+        public Func<Point3D> GetWorldPosition;
+        public int BaseZIndex;
+        public bool IsEdgeLabel;
+    }
+
+    internal sealed class GraphVisualiser3DEdgeTag
+    {
+        public GraphVisualiser3DNode FromNode;
+        public GraphVisualiser3DNode ToNode;
+        public IEdge Edge;
         public TextBlock MetaLabel;
     }
 
-    // 3D counterpart of SimpleVisualiserWrapper. One instance per vertex on the scene.
-    // Owns the sphere body, the 2D billboard label, edges pointing in/out of it,
-    // and a GraphChangeTrigger listener so value/edge changes rebuild the graph.
-    public class VertexNode3D : ModelVisual3D, IDisposable
+    internal sealed class GraphVisualiser3DNode : ModelVisual3D, IDisposable
     {
+        private readonly GraphVisualiser3D parentVisualiser;
+        private readonly TranslateTransform3D translate;
+        private readonly ScaleTransform3D scale;
+        private readonly DiffuseMaterial bodyMaterial;
+        private readonly EmissiveMaterial bodyEmissive;
+        private IEdge listenerEdge;
+        private bool isDisposed;
+
         public IVertex BaseVertex;
-        public GraphVisualiser3D ParentVisualiser;
-
         public Point3D Position;
-
         public GeometryModel3D BodyModel;
-        public DiffuseMaterial BodyMaterial;
-        public EmissiveMaterial BodyEmissive;
-
-        public Viewport2DVisual3D LabelVisual;
-        public FrameworkElement LabelContent;
-
-        public TranslateTransform3D Translate;
-        public ScaleTransform3D Scale;
-
-        public List<EdgeLine3D> Lines = new List<EdgeLine3D>();
-
+        public readonly List<GraphVisualiser3DEdgeVisual> OutgoingEdges = new List<GraphVisualiser3DEdgeVisual>();
+        public readonly List<GraphVisualiser3DEdgeVisual> IncidentEdges = new List<GraphVisualiser3DEdgeVisual>();
+        public TextBlock Label;
         public bool IsSelected;
         public bool IsHighlighted;
 
-        private IEdge listenerEdge;
-
-        public VertexNode3D(IVertex baseVertex, GraphVisualiser3D parent)
+        public GraphVisualiser3DNode(IVertex baseVertex, GraphVisualiser3D parent, double sphereSize)
         {
             BaseVertex = baseVertex;
-            ParentVisualiser = parent;
+            parentVisualiser = parent;
 
-            Translate = new TranslateTransform3D(0, 0, 0);
-            Scale = new ScaleTransform3D(1, 1, 1);
+            translate = new TranslateTransform3D();
+            scale = new ScaleTransform3D(sphereSize, sphereSize, sphereSize);
 
-            Transform3DGroup group = new Transform3DGroup();
-            group.Children.Add(Scale);
-            group.Children.Add(Translate);
-            this.Transform = group;
+            Transform3DGroup transform = new Transform3DGroup();
+            transform.Children.Add(scale);
+            transform.Children.Add(translate);
+            Transform = transform;
 
-            if (baseVertex != null)
-                listenerEdge = ExecutionFlowHelper.AddTriggerAndListener(baseVertex,
-                    new List<string> { },
-                    new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
-                        GraphChangeFilterEnum.OutputEdgeAdded,
-                        GraphChangeFilterEnum.OutputEdgeRemoved,
-                        GraphChangeFilterEnum.OutputEdgeDisposed},
-                    "Basic3DTrigger",
-                    VertexChange);
+            bodyMaterial = new DiffuseMaterial(new SolidColorBrush(parent.GetThemeColor("0LightGrayBrush", Colors.LightGray)));
+            bodyEmissive = new EmissiveMaterial(new SolidColorBrush(Colors.Black));
+
+            MaterialGroup material = new MaterialGroup();
+            material.Children.Add(bodyMaterial);
+            material.Children.Add(bodyEmissive);
+
+            BodyModel = new GeometryModel3D(GraphVisualiser3DMeshFactory.UnitSphere, material);
+            BodyModel.BackMaterial = material;
+            Content = BodyModel;
+
+            ApplyBodyColors();
+            RegisterGraphListener();
         }
 
-        protected INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
+        private void RegisterGraphListener()
+        {
+            if (BaseVertex == null) return;
+
+            listenerEdge = ExecutionFlowHelper.AddTriggerAndListener(BaseVertex,
+                new List<string> { },
+                new List<GraphChangeFilterEnum> {
+                    GraphChangeFilterEnum.ValueChange,
+                    GraphChangeFilterEnum.OutputEdgeAdded,
+                    GraphChangeFilterEnum.OutputEdgeRemoved,
+                    GraphChangeFilterEnum.OutputEdgeDisposed },
+                "GraphVisualiser3DNode",
+                VertexChange);
+        }
+
+        private INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
             if (BaseVertex == null || BaseVertex.DisposedState != DisposeStateEnum.Live)
                 return exe.Stack;
 
             IVertex valueChange = exe.Stack.Get(false, @"event:\Type:ValueChange");
-
-            if (valueChange == null)
-                ParentVisualiser.RequestRepaint();
+            if (valueChange != null)
+                parentVisualiser.RequestLabelRefresh();
+            else
+                parentVisualiser.RequestRepaint();
 
             return exe.Stack;
         }
 
-        public void SetWorldPosition(Point3D p)
+        public void SetWorldPosition(Point3D position)
         {
-            Position = p;
-            Translate.OffsetX = p.X;
-            Translate.OffsetY = p.Y;
-            Translate.OffsetZ = p.Z;
+            Position = position;
+            translate.OffsetX = position.X;
+            translate.OffsetY = position.Y;
+            translate.OffsetZ = position.Z;
         }
 
         public void Select()
         {
             IsSelected = true;
             ApplyBodyColors();
+            ApplyLabelState();
         }
 
         public void Unselect()
         {
             IsSelected = false;
             ApplyBodyColors();
+            ApplyLabelState();
         }
 
-        public void HighlightThisAndDescendants()
+        public void SetHighlighted(bool highlighted)
         {
-            IsHighlighted = true;
+            IsHighlighted = highlighted;
             ApplyBodyColors();
-
-            foreach (EdgeLine3D line in Lines)
-            {
-                line.SetHighlighted(true);
-
-                LineTagStore3D tag = line.Tag as LineTagStore3D;
-                if (tag != null)
-                {
-                    if (tag.ToNode != this) tag.ToNode.ApplyLocalHighlight(true);
-                    if (tag.FromNode != this) tag.FromNode.ApplyLocalHighlight(true);
-                }
-            }
-        }
-
-        public void UnhighlightThisAndDescendants()
-        {
-            IsHighlighted = false;
-            ApplyBodyColors();
-
-            foreach (EdgeLine3D line in Lines)
-            {
-                line.SetHighlighted(false);
-
-                LineTagStore3D tag = line.Tag as LineTagStore3D;
-                if (tag != null)
-                {
-                    if (tag.ToNode != this) tag.ToNode.ApplyLocalHighlight(false);
-                    if (tag.FromNode != this) tag.FromNode.ApplyLocalHighlight(false);
-                }
-            }
-        }
-
-        // Only touches the visual state of a single node - used to light up the
-        // neighbors of a highlighted node without cascading further.
-        public void ApplyLocalHighlight(bool on)
-        {
-            IsHighlighted = on;
-            ApplyBodyColors();
+            ApplyLabelState();
         }
 
         private void ApplyBodyColors()
         {
-            if (BodyMaterial == null || BodyEmissive == null) return;
-
-            Color baseColor;
+            Color color;
             Color emissive;
 
             if (IsSelected)
             {
-                baseColor = ParentVisualiser.GetThemeColor("0SelectionBrush", Colors.DodgerBlue);
-                emissive  = Darken(baseColor, 0.35);
+                color = parentVisualiser.GetThemeColor("0SelectionBrush", Colors.DodgerBlue);
+                emissive = Darken(color, 0.35);
             }
             else if (IsHighlighted)
             {
-                baseColor = ParentVisualiser.GetThemeColor("0HighlightBrush", Colors.OrangeRed);
-                emissive  = Darken(baseColor, 0.5);
+                color = parentVisualiser.GetThemeColor("0HighlightBrush", Colors.OrangeRed);
+                emissive = Darken(color, 0.50);
             }
             else
             {
-                baseColor = ParentVisualiser.GetThemeColor("0LightGrayBrush", Colors.LightGray);
-                emissive  = Colors.Black;
+                color = parentVisualiser.GetThemeColor("0LightGrayBrush", Colors.LightGray);
+                emissive = Colors.Black;
             }
 
-            BodyMaterial.Brush = new SolidColorBrush(baseColor);
-            BodyEmissive.Brush = new SolidColorBrush(emissive);
+            bodyMaterial.Brush = new SolidColorBrush(color);
+            bodyEmissive.Brush = new SolidColorBrush(emissive);
         }
 
-        private static Color Darken(Color c, double factor)
+        public void ApplyLabelState()
+        {
+            if (Label == null) return;
+
+            if (IsSelected)
+            {
+                Label.Foreground = new SolidColorBrush(parentVisualiser.GetThemeColor("0BackgroundBrush", Colors.Black));
+                Label.Background = new SolidColorBrush(parentVisualiser.GetThemeColor("0SelectionBrush", Colors.DodgerBlue));
+                Panel.SetZIndex(Label, 9000);
+            }
+            else if (IsHighlighted)
+            {
+                Label.Foreground = new SolidColorBrush(parentVisualiser.GetThemeColor("0HighlightBrush", Colors.OrangeRed));
+                Label.Background = parentVisualiser.GetLabelBackgroundBrush(230);
+                Panel.SetZIndex(Label, 8000);
+            }
+            else
+            {
+                Label.Foreground = new SolidColorBrush(parentVisualiser.GetThemeColor("0ForegroundBrush", Colors.White));
+                Label.Background = parentVisualiser.GetLabelBackgroundBrush(205);
+                Panel.SetZIndex(Label, 1000);
+            }
+        }
+
+        private static Color Darken(Color color, double factor)
         {
             return Color.FromRgb(
-                (byte)(c.R * factor),
-                (byte)(c.G * factor),
-                (byte)(c.B * factor));
+                (byte)(color.R * factor),
+                (byte)(color.G * factor),
+                (byte)(color.B * factor));
         }
-
-        private bool isDisposed;
 
         public void Dispose()
         {
@@ -207,298 +208,333 @@ namespace m0.UIWpf.Visualisers
 
             if (listenerEdge != null)
                 GraphChangeTrigger.RemoveListener(listenerEdge);
-
-            if (LabelContent is IDisposable)
-                ((IDisposable)LabelContent).Dispose();
         }
     }
 
-    // 3D counterpart of ArrowLine. Contains a thin cylinder (trunk) and a cone (arrow tip)
-    // connecting two VertexNode3D instances. Transforms are used so the same canonical
-    // cylinder mesh is reused across all edges.
-    public class EdgeLine3D : ModelVisual3D
+    internal sealed class GraphVisualiser3DEdgeVisual : ModelVisual3D
     {
-        public LineTagStore3D Tag;
+        private readonly GraphVisualiser3D parentVisualiser;
+        private readonly DiffuseMaterial shaftMaterial;
+        private readonly EmissiveMaterial shaftEmissive;
+        private readonly DiffuseMaterial headMaterial;
+        private readonly EmissiveMaterial headEmissive;
+        private readonly ScaleTransform3D shaftScale;
+        private readonly RotateTransform3D shaftRotate;
+        private readonly TranslateTransform3D shaftTranslate;
+        private readonly ScaleTransform3D headScale;
+        private readonly RotateTransform3D headRotate;
+        private readonly TranslateTransform3D headTranslate;
 
-        private GeometryModel3D trunk;
-        private GeometryModel3D tip;
-        private DiffuseMaterial trunkMaterial;
-        private DiffuseMaterial tipMaterial;
+        public GraphVisualiser3DNode FromNode;
+        public GraphVisualiser3DNode ToNode;
+        public IEdge Edge;
+        public TextBlock MetaLabel;
 
-        private Transform3DGroup trunkTransform;
-        private Transform3DGroup tipTransform;
-
-        private GraphVisualiser3D parent;
-
-        public EdgeLine3D(GraphVisualiser3D parentVisualiser)
+        public GraphVisualiser3DEdgeVisual(GraphVisualiser3D parent)
         {
-            parent = parentVisualiser;
+            parentVisualiser = parent;
+
+            shaftMaterial = new DiffuseMaterial(new SolidColorBrush(parent.GetThemeColor("0LightGrayBrush", Colors.LightGray)));
+            shaftEmissive = new EmissiveMaterial(new SolidColorBrush(Colors.Black));
+            headMaterial = new DiffuseMaterial(new SolidColorBrush(parent.GetThemeColor("0LightGrayBrush", Colors.LightGray)));
+            headEmissive = new EmissiveMaterial(new SolidColorBrush(Colors.Black));
+
+            MaterialGroup shaftGroup = new MaterialGroup();
+            shaftGroup.Children.Add(shaftMaterial);
+            shaftGroup.Children.Add(shaftEmissive);
+
+            MaterialGroup headGroup = new MaterialGroup();
+            headGroup.Children.Add(headMaterial);
+            headGroup.Children.Add(headEmissive);
+
+            shaftScale = new ScaleTransform3D();
+            shaftRotate = new RotateTransform3D();
+            shaftTranslate = new TranslateTransform3D();
+
+            Transform3DGroup shaftTransform = new Transform3DGroup();
+            shaftTransform.Children.Add(shaftScale);
+            shaftTransform.Children.Add(shaftRotate);
+            shaftTransform.Children.Add(shaftTranslate);
+
+            headScale = new ScaleTransform3D();
+            headRotate = new RotateTransform3D();
+            headTranslate = new TranslateTransform3D();
+
+            Transform3DGroup headTransform = new Transform3DGroup();
+            headTransform.Children.Add(headScale);
+            headTransform.Children.Add(headRotate);
+            headTransform.Children.Add(headTranslate);
 
             Model3DGroup group = new Model3DGroup();
-
-            trunkMaterial = new DiffuseMaterial(new SolidColorBrush(parent.GetThemeColor("0LightGrayBrush", Colors.LightGray)));
-            tipMaterial   = new DiffuseMaterial(new SolidColorBrush(parent.GetThemeColor("0LightGrayBrush", Colors.LightGray)));
-
-            trunk = new GeometryModel3D(GeometryFactory3D.UnitCylinder, trunkMaterial);
-            tip   = new GeometryModel3D(GeometryFactory3D.UnitCone,     tipMaterial);
-
-            trunkTransform = new Transform3DGroup();
-            tipTransform   = new Transform3DGroup();
-
-            trunk.Transform = trunkTransform;
-            tip.Transform   = tipTransform;
-
-            group.Children.Add(trunk);
-            group.Children.Add(tip);
+            group.Children.Add(new GeometryModel3D(GraphVisualiser3DMeshFactory.UnitCylinder, shaftGroup)
+            {
+                BackMaterial = shaftGroup,
+                Transform = shaftTransform
+            });
+            group.Children.Add(new GeometryModel3D(GraphVisualiser3DMeshFactory.UnitCone, headGroup)
+            {
+                BackMaterial = headGroup,
+                Transform = headTransform
+            });
 
             Content = group;
         }
 
-        public void UpdateGeometry(Point3D from, Point3D to, double trunkRadius, double tipLength, double tipRadius)
+        public void Connect(GraphVisualiser3DNode fromNode, GraphVisualiser3DNode toNode, IEdge edge, double nodeRadius)
         {
-            Vector3D direction = to - from;
-            double length = direction.Length;
+            FromNode = fromNode;
+            ToNode = toNode;
+            Edge = edge;
+
+            Vector3D delta = toNode.Position - fromNode.Position;
+            double length = delta.Length;
             if (length < 0.001) return;
 
-            Vector3D dirNormalized = direction / length;
+            Vector3D direction = delta;
+            direction.Normalize();
 
-            double trunkLength = Math.Max(0, length - tipLength);
-            Point3D trunkStart = from;
-            Point3D trunkEnd   = from + dirNormalized * trunkLength;
-            Point3D tipStart   = trunkEnd;
+            Point3D start = fromNode.Position + direction * (nodeRadius * 1.20);
+            Point3D end = toNode.Position - direction * (nodeRadius * 1.35);
+            Vector3D visibleDelta = end - start;
+            double visibleLength = Math.Max(1, visibleDelta.Length);
+            Point3D middle = start + visibleDelta * 0.5;
 
-            trunkTransform.Children.Clear();
-            trunkTransform.Children.Add(new ScaleTransform3D(trunkRadius, trunkLength, trunkRadius));
-            trunkTransform.Children.Add(AlignYToDirectionTransform(dirNormalized));
-            trunkTransform.Children.Add(new TranslateTransform3D(trunkStart.X, trunkStart.Y, trunkStart.Z));
+            Quaternion rotation = RotationFromYAxis(direction);
+            QuaternionRotation3D shaftRotation = new QuaternionRotation3D(rotation);
+            QuaternionRotation3D headRotation = new QuaternionRotation3D(rotation);
 
-            tipTransform.Children.Clear();
-            tipTransform.Children.Add(new ScaleTransform3D(tipRadius, tipLength, tipRadius));
-            tipTransform.Children.Add(AlignYToDirectionTransform(dirNormalized));
-            tipTransform.Children.Add(new TranslateTransform3D(tipStart.X, tipStart.Y, tipStart.Z));
+            shaftScale.ScaleX = parentVisualiser.EdgeRadius;
+            shaftScale.ScaleY = visibleLength;
+            shaftScale.ScaleZ = parentVisualiser.EdgeRadius;
+            shaftRotate.Rotation = shaftRotation;
+            shaftTranslate.OffsetX = middle.X;
+            shaftTranslate.OffsetY = middle.Y;
+            shaftTranslate.OffsetZ = middle.Z;
+
+            headScale.ScaleX = parentVisualiser.ArrowRadius;
+            headScale.ScaleY = parentVisualiser.ArrowLength;
+            headScale.ScaleZ = parentVisualiser.ArrowRadius;
+            headRotate.Rotation = headRotation;
+            headTranslate.OffsetX = end.X;
+            headTranslate.OffsetY = end.Y;
+            headTranslate.OffsetZ = end.Z;
         }
 
-        // Rotation that maps the canonical cylinder/cone Y-axis to the given direction.
-        private static Transform3D AlignYToDirectionTransform(Vector3D dir)
+        public Point3D GetLabelPosition()
         {
-            Vector3D y = new Vector3D(0, 1, 0);
-            double dot = Vector3D.DotProduct(y, dir);
+            if (FromNode == null || ToNode == null)
+                return new Point3D();
 
-            if (dot >= 0.9999)
-                return Transform3D.Identity;
+            Point3D p = FromNode.Position + (ToNode.Position - FromNode.Position) * 0.56;
+            return p;
+        }
 
-            if (dot <= -0.9999)
-                return new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(1, 0, 0), 180));
+        public void SetHighlighted(bool highlighted)
+        {
+            Color color = highlighted
+                ? parentVisualiser.GetThemeColor("0HighlightBrush", Colors.OrangeRed)
+                : parentVisualiser.GetThemeColor("0LightGrayBrush", Colors.LightGray);
+            Color glow = highlighted ? color : Colors.Black;
 
-            Vector3D axis = Vector3D.CrossProduct(y, dir);
+            shaftMaterial.Brush = new SolidColorBrush(color);
+            headMaterial.Brush = new SolidColorBrush(color);
+            shaftEmissive.Brush = new SolidColorBrush(glow);
+            headEmissive.Brush = new SolidColorBrush(glow);
+
+            if (MetaLabel != null)
+            {
+                MetaLabel.Foreground = new SolidColorBrush(highlighted
+                    ? parentVisualiser.GetThemeColor("0HighlightBrush", Colors.OrangeRed)
+                    : parentVisualiser.GetThemeColor("0LightGrayBrush", Colors.LightGray));
+                Panel.SetZIndex(MetaLabel, highlighted ? 8500 : 900);
+            }
+        }
+
+        private static Quaternion RotationFromYAxis(Vector3D direction)
+        {
+            Vector3D yAxis = new Vector3D(0, 1, 0);
+            Vector3D axis = Vector3D.CrossProduct(yAxis, direction);
+            double dot = Vector3D.DotProduct(yAxis, direction);
+
+            if (axis.Length < 0.0001)
+            {
+                if (dot > 0) return Quaternion.Identity;
+                return new Quaternion(new Vector3D(1, 0, 0), 180);
+            }
+
             axis.Normalize();
-            double angleDeg = Math.Acos(dot) * 180.0 / Math.PI;
-            return new RotateTransform3D(new AxisAngleRotation3D(axis, angleDeg));
+            double angle = Math.Acos(Math.Max(-1, Math.Min(1, dot))) * 180.0 / Math.PI;
+            return new Quaternion(axis, angle);
         }
-
-        public void SetColor(Color c)
-        {
-            trunkMaterial.Brush = new SolidColorBrush(c);
-            tipMaterial.Brush   = new SolidColorBrush(c);
-        }
-
-        public void SetHighlighted(bool on)
-        {
-            Color c = on
-                ? parent.GetThemeColor("0LightHighlightBrush", Colors.Gold)
-                : parent.GetThemeColor("0LightGrayBrush", Colors.LightGray);
-
-            SetColor(c);
-
-            if (Tag != null && Tag.MetaLabel != null)
-                Tag.MetaLabel.Foreground = new SolidColorBrush(on
-                    ? parent.GetThemeColor("0HighlightBrush", Colors.OrangeRed)
-                    : parent.GetThemeColor("0LightGrayBrush", Colors.LightGray));
-        }
-
-        public GeometryModel3D TrunkModel => trunk;
-        public GeometryModel3D TipModel   => tip;
     }
 
-    // Canonical, frozen meshes reused across all vertices and edges for performance.
-    // The sphere is placed at origin with radius 1; the cylinder runs from (0,0,0)
-    // to (0,1,0) with radius 1; the cone has its base at y=0 and apex at y=1.
-    internal static class GeometryFactory3D
+    internal static class GraphVisualiser3DMeshFactory
     {
-        public static readonly MeshGeometry3D UnitSphere;
-        public static readonly MeshGeometry3D UnitCylinder;
-        public static readonly MeshGeometry3D UnitCone;
+        public static readonly MeshGeometry3D UnitSphere = CreateSphere(1.0, 16, 12);
+        public static readonly MeshGeometry3D UnitCylinder = CreateCylinder(1.0, 1.0, 14);
+        public static readonly MeshGeometry3D UnitCone = CreateCone(1.0, 1.0, 16);
 
-        static GeometryFactory3D()
-        {
-            UnitSphere   = BuildSphere(16, 12);
-            UnitCylinder = BuildCylinder(18);
-            UnitCone     = BuildCone(18);
-
-            UnitSphere.Freeze();
-            UnitCylinder.Freeze();
-            UnitCone.Freeze();
-        }
-
-        private static MeshGeometry3D BuildSphere(int longitudeSegments, int latitudeSegments)
+        private static MeshGeometry3D CreateSphere(double radius, int slices, int stacks)
         {
             MeshGeometry3D mesh = new MeshGeometry3D();
 
-            for (int lat = 0; lat <= latitudeSegments; lat++)
+            for (int stack = 0; stack <= stacks; stack++)
             {
-                double theta = lat * Math.PI / latitudeSegments;
-                double sinTheta = Math.Sin(theta);
-                double cosTheta = Math.Cos(theta);
+                double phi = Math.PI * stack / stacks;
+                double y = Math.Cos(phi) * radius;
+                double ringRadius = Math.Sin(phi) * radius;
 
-                for (int lon = 0; lon <= longitudeSegments; lon++)
+                for (int slice = 0; slice <= slices; slice++)
                 {
-                    double phi = lon * 2 * Math.PI / longitudeSegments;
-                    double sinPhi = Math.Sin(phi);
-                    double cosPhi = Math.Cos(phi);
-
-                    double x = cosPhi * sinTheta;
-                    double y = cosTheta;
-                    double z = sinPhi * sinTheta;
-
-                    mesh.Positions.Add(new Point3D(x, y, z));
-                    mesh.Normals.Add(new Vector3D(x, y, z));
-                    mesh.TextureCoordinates.Add(new Point((double)lon / longitudeSegments, (double)lat / latitudeSegments));
+                    double theta = 2.0 * Math.PI * slice / slices;
+                    double x = Math.Cos(theta) * ringRadius;
+                    double z = Math.Sin(theta) * ringRadius;
+                    Point3D p = new Point3D(x, y, z);
+                    mesh.Positions.Add(p);
+                    mesh.Normals.Add(new Vector3D(p.X, p.Y, p.Z));
+                    mesh.TextureCoordinates.Add(new Point((double)slice / slices, (double)stack / stacks));
                 }
             }
 
-            for (int lat = 0; lat < latitudeSegments; lat++)
-                for (int lon = 0; lon < longitudeSegments; lon++)
+            int row = slices + 1;
+            for (int stack = 0; stack < stacks; stack++)
+                for (int slice = 0; slice < slices; slice++)
                 {
-                    int first = lat * (longitudeSegments + 1) + lon;
-                    int second = first + longitudeSegments + 1;
-
-                    mesh.TriangleIndices.Add(first);
-                    mesh.TriangleIndices.Add(second);
-                    mesh.TriangleIndices.Add(first + 1);
-
-                    mesh.TriangleIndices.Add(second);
-                    mesh.TriangleIndices.Add(second + 1);
-                    mesh.TriangleIndices.Add(first + 1);
+                    int a = stack * row + slice;
+                    int b = a + row;
+                    mesh.TriangleIndices.Add(a);
+                    mesh.TriangleIndices.Add(b);
+                    mesh.TriangleIndices.Add(a + 1);
+                    mesh.TriangleIndices.Add(a + 1);
+                    mesh.TriangleIndices.Add(b);
+                    mesh.TriangleIndices.Add(b + 1);
                 }
 
+            mesh.Freeze();
             return mesh;
         }
 
-        private static MeshGeometry3D BuildCylinder(int segments)
+        private static MeshGeometry3D CreateCylinder(double radius, double height, int slices)
         {
             MeshGeometry3D mesh = new MeshGeometry3D();
+            double half = height / 2.0;
 
-            for (int i = 0; i <= segments; i++)
+            for (int i = 0; i <= slices; i++)
             {
-                double a = i * 2 * Math.PI / segments;
-                double x = Math.Cos(a);
-                double z = Math.Sin(a);
+                double angle = 2.0 * Math.PI * i / slices;
+                double x = Math.Cos(angle) * radius;
+                double z = Math.Sin(angle) * radius;
+                Vector3D normal = new Vector3D(x, 0, z);
+                normal.Normalize();
 
-                mesh.Positions.Add(new Point3D(x, 0, z));
-                mesh.Positions.Add(new Point3D(x, 1, z));
-
-                mesh.Normals.Add(new Vector3D(x, 0, z));
-                mesh.Normals.Add(new Vector3D(x, 0, z));
+                mesh.Positions.Add(new Point3D(x, -half, z));
+                mesh.Normals.Add(normal);
+                mesh.Positions.Add(new Point3D(x, half, z));
+                mesh.Normals.Add(normal);
             }
 
-            for (int i = 0; i < segments; i++)
+            for (int i = 0; i < slices; i++)
             {
-                int b = i * 2;
-
+                int a = i * 2;
+                int b = a + 1;
+                int c = a + 2;
+                int d = a + 3;
+                mesh.TriangleIndices.Add(a);
+                mesh.TriangleIndices.Add(c);
                 mesh.TriangleIndices.Add(b);
-                mesh.TriangleIndices.Add(b + 2);
-                mesh.TriangleIndices.Add(b + 1);
-
-                mesh.TriangleIndices.Add(b + 1);
-                mesh.TriangleIndices.Add(b + 2);
-                mesh.TriangleIndices.Add(b + 3);
+                mesh.TriangleIndices.Add(b);
+                mesh.TriangleIndices.Add(c);
+                mesh.TriangleIndices.Add(d);
             }
 
+            mesh.Freeze();
             return mesh;
         }
 
-        private static MeshGeometry3D BuildCone(int segments)
+        private static MeshGeometry3D CreateCone(double radius, double height, int slices)
         {
             MeshGeometry3D mesh = new MeshGeometry3D();
+            double half = height / 2.0;
+            int tipIndex = 0;
+            mesh.Positions.Add(new Point3D(0, half, 0));
+            mesh.Normals.Add(new Vector3D(0, 1, 0));
 
-            Point3D apex = new Point3D(0, 1, 0);
-
-            for (int i = 0; i <= segments; i++)
+            for (int i = 0; i <= slices; i++)
             {
-                double a = i * 2 * Math.PI / segments;
-                double x = Math.Cos(a);
-                double z = Math.Sin(a);
-
-                mesh.Positions.Add(new Point3D(x, 0, z));
-                mesh.Positions.Add(apex);
-
-                mesh.Normals.Add(new Vector3D(x, 0.5, z));
-                mesh.Normals.Add(new Vector3D(0, 1, 0));
+                double angle = 2.0 * Math.PI * i / slices;
+                double x = Math.Cos(angle) * radius;
+                double z = Math.Sin(angle) * radius;
+                Vector3D normal = new Vector3D(x, radius, z);
+                normal.Normalize();
+                mesh.Positions.Add(new Point3D(x, -half, z));
+                mesh.Normals.Add(normal);
             }
 
-            for (int i = 0; i < segments; i++)
+            for (int i = 1; i <= slices; i++)
             {
-                int b = i * 2;
-
-                mesh.TriangleIndices.Add(b);
-                mesh.TriangleIndices.Add(b + 2);
-                mesh.TriangleIndices.Add(b + 1);
+                mesh.TriangleIndices.Add(tipIndex);
+                mesh.TriangleIndices.Add(i);
+                mesh.TriangleIndices.Add(i + 1);
             }
 
+            mesh.Freeze();
             return mesh;
         }
     }
 
-    // Main 3D graph visualiser. Mirrors the structure of GraphVisualiser (2D):
-    //
-    // - ListVisualiserHelper registration under "System\Meta\Visualiser\Graph3D"
-    // - Dictionary<IVertex, VertexNode3D> DisplayedVerticesUIElements
-    // - PaintGraph() full rebuild, driven by BaseEdge + meta attributes
-    // - Selection/highlighting via mouse + SelectedEdges subgraph
-    // - Double-click changes BaseEdge (with animated transition)
-    //
-    // Extra 3D pieces:
-    // - Viewport3D + orbital camera + lighting + scene root transform
-    // - Layout algorithms placing vertices in spheres/orbits/volumes
-    // - BaseEdge-change animations (Cut / OrbitTransition / FlyToAndSwap / ...)
     public class GraphVisualiser3D : Grid, IListVisualiser, IHasSelectableEdges, ITypedEdge
     {
         public event Notify SelectedEdgesChange;
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }
 
-        private Viewport3D viewport;
-        private PerspectiveCamera camera;
-        private ModelVisual3D sceneRoot;
-        private ModelVisual3D lightingRoot;
+        private readonly Viewport3D viewport;
+        private readonly Canvas labelOverlay;
+        private readonly PerspectiveCamera camera;
+        private readonly ModelVisual3D sceneRoot;
+        private readonly ModelVisual3D lightRoot;
+        private readonly ScaleTransform3D sceneScale;
+        private readonly AxisAngleRotation3D sceneRotation;
+        private readonly RotateTransform3D sceneRotate;
+        private readonly Dictionary<IVertex, GraphVisualiser3DNode> displayedNodes;
+        private readonly Dictionary<Model3D, GraphVisualiser3DNode> modelToNode;
+        private readonly List<GraphVisualiser3DEdgeVisual> edgeVisuals;
+        private readonly List<GraphVisualiser3DLabel> labels;
+        private readonly Dictionary<string, double> metaAngleCache = new Dictionary<string, double>();
 
-        private ScaleTransform3D sceneScale;
-        private AxisAngleRotation3D sceneRotation;
-        private RotateTransform3D sceneRotate;
-
-        private double cameraYaw   = 0;
-        private double cameraPitch = 0.4;
-        private double cameraDistance = 900;
-
-        private Dictionary<IVertex, VertexNode3D> DisplayedVerticesUIElements;
-        private Dictionary<Model3D, VertexNode3D> modelToNode;
-        private List<EdgeLine3D> edgeLines;
-
-        private VertexNode3D highlighted;
-
+        private GraphVisualiser3DNode highlightedNode;
         private IVertex previousBaseEdgeTo;
-
+        private IVertex tempSelectedVertices;
         private bool isPainting;
         private bool isFirstPainted;
+        private bool repaintQueued;
+        private bool labelRefreshQueued;
         private bool animationInProgress;
+        private bool mouseIsDown;
+        private bool cameraDragActive;
+        private bool doubleClickHandled;
+        private Point dragStart;
+        private double yawAtDragStart;
+        private double pitchAtDragStart;
+        private double cameraYaw;
+        private double cameraPitch = 0.45;
+        private double cameraDistance = 900;
 
-        // Meta attributes that trigger a full rebuild when they change (mirrors the 2D list,
-        // extended with 3D-specific keys).
+        private bool metaLabels;
+        private bool showOutEdges;
+        private bool showInEdges;
+        private int maxVertices;
+        private double sphereSize;
+        private double labelScale = 1.0;
+
+        internal double EdgeRadius { get; private set; }
+        internal double ArrowRadius { get; private set; }
+        internal double ArrowLength { get; private set; }
+
         private static readonly string[] _MetaTriggeringUpdateVertex = new string[] {
-            "VisualiserCircleSize", "NumberOfCircles",
-            "ShowOutEdges", "ShowInEdges", "FastMode", "MetaLabels",
-            "LayoutMode3D", "TransitionStyle", "TransitionDurationMs",
-            "SphereSize", "ShowLabels3D"
+            "CircleLength", "NumberOfCircles", "ShowOutEdges", "ShowInEdges",
+            "MetaLabels", "LayoutMode3D", "TransitionStyle",
+            "TransitionDurationMs", "SphereSize", "MaxVertices3D", "LabelSize"
         };
         public string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
@@ -507,65 +543,45 @@ namespace m0.UIWpf.Visualisers
 
         public void ViewAttributesUpdated() { }
 
-        // TypedEdge START
-
         public GraphVisualiser3D(IEdge _edge)
         {
             Edge = _edge;
-
             TypedEdge.vertexDictionary.Add(Edge.To, this);
         }
 
         public IEdge Edge { get; set; }
-        // TypedEdge END
 
         public GraphVisualiser3D(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile)
         {
-            DisplayedVerticesUIElements = new Dictionary<IVertex, VertexNode3D>();
-            modelToNode = new Dictionary<Model3D, VertexNode3D>();
-            edgeLines = new List<EdgeLine3D>();
+            displayedNodes = new Dictionary<IVertex, GraphVisualiser3DNode>();
+            modelToNode = new Dictionary<Model3D, GraphVisualiser3DNode>();
+            edgeVisuals = new List<GraphVisualiser3DEdgeVisual>();
+            labels = new List<GraphVisualiser3DLabel>();
 
-            SetupHost();
-
-            new ListVisualiserHelper(parentVisualiser,
-                isVolatile,
-                MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Graph3D"),
-                this,
-                "GraphVisualiser3D",
-                this,
-                false,
-                new List<string> { "" },
-                "AtomVisualiserFull",
-                baseEdgeVertex,
-                UpdateBaseEdgeCallSchemeEnum.OmmitFirst);
-
-            this.PreviewMouseLeftButtonDown += Host_PreviewMouseLeftButtonDown;
-            this.PreviewMouseMove           += Host_PreviewMouseMove;
-            this.MouseWheel                 += Host_MouseWheel;
-
-            SetVertexDefaultValues();
-        }
-
-        private void SetupHost()
-        {
             Brush background = TryFindResource("0BackgroundBrush") as Brush;
-            this.Background = background ?? new SolidColorBrush(Color.FromRgb(24, 24, 28));
-            this.ClipToBounds = true;
+            Background = background ?? new SolidColorBrush(Color.FromRgb(24, 24, 28));
+            ClipToBounds = true;
 
             viewport = new Viewport3D();
-            this.Children.Add(viewport);
+            labelOverlay = new Canvas
+            {
+                IsHitTestVisible = false
+            };
+
+            Children.Add(viewport);
+            Children.Add(labelOverlay);
 
             camera = new PerspectiveCamera
             {
-                FieldOfView = 60,
+                FieldOfView = 58,
                 NearPlaneDistance = 0.1,
                 FarPlaneDistance = 100000
             };
             viewport.Camera = camera;
 
-            sceneScale   = new ScaleTransform3D(1, 1, 1);
+            sceneScale = new ScaleTransform3D(1, 1, 1);
             sceneRotation = new AxisAngleRotation3D(new Vector3D(0, 1, 0), 0);
-            sceneRotate   = new RotateTransform3D(sceneRotation);
+            sceneRotate = new RotateTransform3D(sceneRotation);
 
             Transform3DGroup sceneTransform = new Transform3DGroup();
             sceneTransform.Children.Add(sceneScale);
@@ -574,625 +590,761 @@ namespace m0.UIWpf.Visualisers
             sceneRoot = new ModelVisual3D { Transform = sceneTransform };
             viewport.Children.Add(sceneRoot);
 
-            lightingRoot = new ModelVisual3D();
-            Model3DGroup lightsGroup = new Model3DGroup();
-            lightsGroup.Children.Add(new AmbientLight(Color.FromRgb(80, 80, 90)));
-            lightsGroup.Children.Add(new DirectionalLight(Color.FromRgb(200, 200, 210), new Vector3D(-1, -1, -1)));
-            lightsGroup.Children.Add(new DirectionalLight(Color.FromRgb(80, 80, 100), new Vector3D(1, 0.5, 1)));
-            lightingRoot.Content = lightsGroup;
-            viewport.Children.Add(lightingRoot);
+            lightRoot = new ModelVisual3D();
+            Model3DGroup lightGroup = new Model3DGroup();
+            lightGroup.Children.Add(new AmbientLight(Color.FromRgb(80, 80, 95)));
+            lightGroup.Children.Add(new DirectionalLight(Color.FromRgb(220, 220, 230), new Vector3D(-1, -1.2, -1)));
+            lightGroup.Children.Add(new DirectionalLight(Color.FromRgb(90, 100, 130), new Vector3D(1, 0.4, 1)));
+            lightRoot.Content = lightGroup;
+            viewport.Children.Add(lightRoot);
 
             UpdateCamera();
+
+            new ListVisualiserHelper(parentVisualiser,
+                isVolatile,
+                MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Graph3D"),
+                this,
+                "GraphVisualiser3D",
+                this,
+                false,
+                new List<string> { @"", @"BaseEdge:\", @"BaseEdge:\To:\" },
+                "AtomVisualiserFull",
+                baseEdgeVertex,
+                UpdateBaseEdgeCallSchemeEnum.OmmitFirst);
+
+            SizeChanged += GraphVisualiser3D_SizeChanged;
+            PreviewMouseLeftButtonDown += GraphVisualiser3D_PreviewMouseLeftButtonDown;
+            PreviewMouseMove += GraphVisualiser3D_PreviewMouseMove;
+            PreviewMouseLeftButtonUp += GraphVisualiser3D_PreviewMouseLeftButtonUp;
+            MouseWheel += GraphVisualiser3D_MouseWheel;
+            MouseLeave += GraphVisualiser3D_MouseLeave;
+
+            SetVertexDefaultValues();
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)
         {
             VisualiserHelper.AddContextMenu();
-
             PaintGraph();
 
             if (isFirstPainted)
-                this.Loaded -= OnLoad;
+                Loaded -= OnLoad;
         }
 
-        private bool fastMode;
-        private bool metaLabels;
-        private bool showOutEdges;
-        private bool showInEdges;
-        private bool showLabels3D = true;
+        private void GraphVisualiser3D_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateLabels();
+        }
 
         public void PaintGraph()
         {
-            if (Vertex.DisposedState != DisposeStateEnum.Live) return;
+            if (Vertex.DisposedState != DisposeStateEnum.Live)
+                return;
 
-            if (ActualWidth == 0 || ActualHeight == 0) return;
-
-            isPainting = true;
-
-            fastMode     = GeneralUtil.CompareStrings(Vertex.Get(false, "FastMode:"),     "True");
-            metaLabels   = GeneralUtil.CompareStrings(Vertex.Get(false, "MetaLabels:"),   "True");
-            showOutEdges = GeneralUtil.CompareStrings(Vertex.Get(false, "ShowOutEdges:"), "True");
-            showInEdges  = GeneralUtil.CompareStrings(Vertex.Get(false, "ShowInEdges:"),  "True");
-            showLabels3D = GeneralUtil.CompareStrings(Vertex.Get(false, "ShowLabels3D:"), "True");
-
-            // Dispose existing nodes and clear the scene.
-            foreach (VertexNode3D node in DisplayedVerticesUIElements.Values.Distinct())
-                node.Dispose();
-            DisplayedVerticesUIElements.Clear();
-
-            modelToNode.Clear();
-            edgeLines.Clear();
-
-            List<Visual3D> toRemove = new List<Visual3D>();
-            foreach (Visual3D v in sceneRoot.Children) toRemove.Add(v);
-            foreach (Visual3D v in toRemove) sceneRoot.Children.Remove(v);
-
-            // Reset scene transform after a potential animation.
-            sceneRotation.Angle = 0;
-            sceneScale.ScaleX = sceneScale.ScaleY = sceneScale.ScaleZ = 1;
-
-            LayoutAlgorithm3DEnum layout = LayoutAlgorithm3DEnumHelper.GetEnum(Vertex.Get(false, "LayoutMode3D:"));
+            if (ActualWidth == 0 || ActualHeight == 0)
+                return;
 
             Stopwatch sw = Stopwatch.StartNew();
+            isPainting = true;
+
+            metaLabels = !GeneralUtil.CompareStrings(Vertex.Get(false, "MetaLabels:"), "False");
+            showOutEdges = !GeneralUtil.CompareStrings(Vertex.Get(false, "ShowOutEdges:"), "False");
+            showInEdges = GeneralUtil.CompareStrings(Vertex.Get(false, "ShowInEdges:"), "True");
+            maxVertices = GraphUtil.GetIntegerValueOr0(Vertex.Get(false, "MaxVertices3D:"));
+            if (maxVertices <= 0) maxVertices = 250;
+            sphereSize = GraphUtil.GetIntegerValueOr0(Vertex.Get(false, "SphereSize:"));
+            if (sphereSize <= 0) sphereSize = 22;
+            labelScale = ((double)(GraphUtil.GetIntegerValue(Vertex.Get(false, "LabelSize:")) ?? 100)) / 100.0;
+            if (labelScale <= 0) labelScale = 1.0;
+            EdgeRadius = Math.Max(1.5, sphereSize * 0.08);
+            ArrowRadius = Math.Max(4, sphereSize * 0.22);
+            ArrowLength = Math.Max(12, sphereSize * 0.8);
+
+            ClearScene();
+
+            BeginAnimation(OpacityProperty, null);
+            Opacity = 1;
+            sceneRotation.BeginAnimation(AxisAngleRotation3D.AngleProperty, null);
+            sceneRotation.Angle = 0;
+            sceneScale.BeginAnimation(ScaleTransform3D.ScaleXProperty, null);
+            sceneScale.BeginAnimation(ScaleTransform3D.ScaleYProperty, null);
+            sceneScale.BeginAnimation(ScaleTransform3D.ScaleZProperty, null);
+            sceneScale.ScaleX = sceneScale.ScaleY = sceneScale.ScaleZ = 1;
 
             IVertex baseTo = Vertex.Get(false, @"BaseEdge:\To:");
             if (baseTo != null)
             {
-                BuildGraphForLayout(baseTo, layout);
+                LayoutAlgorithm3DEnum layout = LayoutAlgorithm3DEnumHelper.GetEnum(Vertex.Get(false, "LayoutMode3D:"));
+                BuildGraph(baseTo, layout);
                 SelectWrappersForSelectedVertices();
             }
 
             previousBaseEdgeTo = baseTo;
             isFirstPainted = true;
             isPainting = false;
+            UpdateLabels();
 
             sw.Stop();
             MinusZero.Instance.Log(1, "GraphVisualiser3D.PaintGraph",
-                "layout=" + layout + " vertices=" + DisplayedVerticesUIElements.Count +
-                " edges=" + edgeLines.Count + " elapsed_ms=" + sw.ElapsedMilliseconds);
+                "vertices=" + displayedNodes.Count + " edges=" + edgeVisuals.Count + " elapsed_ms=" + sw.ElapsedMilliseconds);
         }
 
-        // Internal trigger used by VertexNode3D listeners when a displayed vertex
-        // changes - equivalent to the 2D SimpleVisualiserWrapper.VertexChange path.
         public void RequestRepaint()
         {
-            if (!isPainting) PaintGraph();
+            if (isPainting || repaintQueued) return;
+
+            repaintQueued = true;
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                repaintQueued = false;
+                PaintGraph();
+            }));
         }
 
-        // Place the BaseEdge at origin then expand the graph outwards according to the
-        // chosen algorithm. Always BFS by out/in edges - same contract as 2D AddCircle.
-        private void BuildGraphForLayout(IVertex baseTo, LayoutAlgorithm3DEnum layout)
+        public void RequestLabelRefresh()
+        {
+            if (labelRefreshQueued) return;
+
+            labelRefreshQueued = true;
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                labelRefreshQueued = false;
+                RefreshLabelText();
+                UpdateLabels();
+            }));
+        }
+
+        private void ClearScene()
+        {
+            foreach (GraphVisualiser3DNode node in displayedNodes.Values)
+                node.Dispose();
+
+            displayedNodes.Clear();
+            modelToNode.Clear();
+            edgeVisuals.Clear();
+            labels.Clear();
+            labelOverlay.Children.Clear();
+
+            List<Visual3D> toRemove = new List<Visual3D>();
+            foreach (Visual3D visual in sceneRoot.Children)
+                toRemove.Add(visual);
+            foreach (Visual3D visual in toRemove)
+                sceneRoot.Children.Remove(visual);
+        }
+
+        private void BuildGraph(IVertex baseTo, LayoutAlgorithm3DEnum layout)
         {
             int numberOfCircles = GraphUtil.GetIntegerValue(Vertex.Get(false, "NumberOfCircles:")) ?? 2;
-            int circleSize      = GraphUtil.GetIntegerValueOr0(Vertex.Get(false, "VisualiserCircleSize:"));
+            int circleSize = GraphUtil.GetIntegerValueOr0(Vertex.Get(false, "CircleLength:"));
             if (circleSize <= 0) circleSize = 200;
 
-            VertexNode3D root = AddVertex(new Point3D(0, 0, 0), baseTo);
+            AddNode(baseTo, new Point3D(0, 0, 0), true);
 
-            List<IVertex> previousLevel = new List<IVertex> { baseTo };
+            HashSet<IVertex> visited = new HashSet<IVertex>();
+            visited.Add(baseTo);
+            List<IVertex> currentLevel = new List<IVertex> { baseTo };
 
-            for (int level = 1; level <= numberOfCircles; level++)
+            for (int level = 1; level <= numberOfCircles && currentLevel.Count > 0; level++)
             {
-                List<IVertex> thisLevel = new List<IVertex>();
-                List<(IEdge edge, IVertex peerVertex, bool outgoing)> edgesFromPrevious =
-                    new List<(IEdge, IVertex, bool)>();
+                List<Tuple<IEdge, IVertex, IVertex>> candidates = new List<Tuple<IEdge, IVertex, IVertex>>();
 
-                foreach (IVertex v in previousLevel)
+                foreach (IVertex from in currentLevel)
                 {
-                    if (showOutEdges)
-                        foreach (IEdge e in v)
-                            if (CanAddEdge(e) && !DisplayedVerticesUIElements.ContainsKey(e.To))
-                                edgesFromPrevious.Add((e, v, true));
-
-                    if (showInEdges)
-                        foreach (IEdge e in v.InEdges.ToList())
-                            if (CanAddEdge(e) && !DisplayedVerticesUIElements.ContainsKey(e.From))
-                                edgesFromPrevious.Add((e, v, false));
-                }
-
-                PlaceNewLevel(level, numberOfCircles, circleSize, layout, edgesFromPrevious, thisLevel);
-
-                // Connect every edge that touches already-displayed vertices, including
-                // duplicates / back-edges / sibling links.
-                foreach (IVertex v in previousLevel)
-                {
-                    if (showOutEdges)
-                        foreach (IEdge e in v)
-                            if (CanAddEdge(e) && DisplayedVerticesUIElements.ContainsKey(e.To))
-                                AddEdge(DisplayedVerticesUIElements[v], DisplayedVerticesUIElements[e.To], e.Meta);
-
-                    if (showInEdges)
-                        foreach (IEdge e in v.InEdges.ToList())
-                            if (CanAddEdge(e) && DisplayedVerticesUIElements.ContainsKey(e.From))
-                                AddEdge(DisplayedVerticesUIElements[e.From], DisplayedVerticesUIElements[v], e.Meta);
-                }
-
-                previousLevel = thisLevel;
-            }
-
-            // Final closing sweep - connect edges between vertices of the last level
-            // that both happen to be on the scene (mirrors the post-loop pass in 2D).
-            foreach (IVertex v in previousLevel)
-            {
-                if (showOutEdges)
-                    foreach (IEdge e in v)
-                        if (CanAddEdge(e) && DisplayedVerticesUIElements.ContainsKey(e.To))
-                            AddEdge(DisplayedVerticesUIElements[v], DisplayedVerticesUIElements[e.To], e.Meta);
-                if (showInEdges)
-                    foreach (IEdge e in v.InEdges.ToList())
-                        if (CanAddEdge(e) && DisplayedVerticesUIElements.ContainsKey(e.From))
-                            AddEdge(DisplayedVerticesUIElements[e.From], DisplayedVerticesUIElements[v], e.Meta);
-            }
-
-            ApplyPostLayoutRefinement(layout);
-        }
-
-        private void PlaceNewLevel(int level, int maxLevel, int shellStep, LayoutAlgorithm3DEnum layout,
-            List<(IEdge edge, IVertex peerVertex, bool outgoing)> edges, List<IVertex> accumulator)
-        {
-            if (edges.Count == 0) return;
-
-            double radius = shellStep * level;
-            int count = edges.Count;
-
-            for (int i = 0; i < count; i++)
-            {
-                (IEdge e, IVertex peerVertex, bool outgoing) = edges[i];
-                IVertex target = outgoing ? e.To : e.From;
-
-                if (DisplayedVerticesUIElements.ContainsKey(target)) continue;
-
-                Point3D p = ComputeLevelPosition(layout, level, maxLevel, i, count, radius, e.Meta);
-
-                VertexNode3D node = AddVertex(p, target);
-                accumulator.Add(target);
-
-                if (!DisplayedVerticesUIElements.TryGetValue(peerVertex, out VertexNode3D peer))
-                {
-                    MinusZero.Instance.Log(1, "GraphVisualiser3D.PlaceNewLevel",
-                        "Missing peer vertex on scene for edge meta=" +
-                        (e.Meta != null ? e.Meta.Value : "null") +
-                        " outgoing=" + outgoing);
-                    continue;
-                }
-
-                if (outgoing) AddEdge(peer, node, e.Meta);
-                else          AddEdge(node, peer, e.Meta);
-            }
-        }
-
-        private Point3D ComputeLevelPosition(LayoutAlgorithm3DEnum layout, int level, int maxLevel,
-            int index, int count, double radius, IVertex metaVertex)
-        {
-            switch (layout)
-            {
-                case LayoutAlgorithm3DEnum.FibonacciSphereShells:
-                    return FibonacciPoint(index, count, radius);
-
-                case LayoutAlgorithm3DEnum.OrbitalPlanes:
-                    return OrbitalPoint(index, count, radius, metaVertex);
-
-                case LayoutAlgorithm3DEnum.ConcentricSpiral3D:
-                    return SpiralPoint(index, count, radius, level, maxLevel);
-
-                case LayoutAlgorithm3DEnum.Sugiyama3DLayers:
-                    return Sugiyama3DPoint(index, count, radius, level, maxLevel);
-
-                case LayoutAlgorithm3DEnum.Force3D:
-                    // Force3D starts from a Fibonacci seed and then relaxes in
-                    // ApplyPostLayoutRefinement to avoid expensive recomputes.
-                    return FibonacciPoint(index, count, radius);
-
-                default:
-                    return FibonacciPoint(index, count, radius);
-            }
-        }
-
-        private static Point3D FibonacciPoint(int index, int total, double radius)
-        {
-            if (total < 1) total = 1;
-            double k = total == 1 ? 0 : (2.0 * index) / (total - 1) - 1.0;
-            double phi = index * Math.PI * (3 - Math.Sqrt(5));
-            double r = Math.Sqrt(Math.Max(0, 1 - k * k));
-            return new Point3D(Math.Cos(phi) * r * radius,
-                               k * radius,
-                               Math.Sin(phi) * r * radius);
-        }
-
-        // Each meta vertex defines a unique tilted orbital plane. Children sharing the
-        // same meta sit on the same ring around the BaseEdge.
-        private Dictionary<IVertex, int> metaOrbitIndex = new Dictionary<IVertex, int>();
-
-        private Point3D OrbitalPoint(int index, int total, double radius, IVertex metaVertex)
-        {
-            if (metaVertex == null) return FibonacciPoint(index, total, radius);
-
-            if (!metaOrbitIndex.TryGetValue(metaVertex, out int orbitId))
-            {
-                orbitId = metaOrbitIndex.Count;
-                metaOrbitIndex[metaVertex] = orbitId;
-            }
-
-            double tiltYaw   = orbitId * 0.618 * Math.PI;         // golden-angle tilt
-            double tiltPitch = (orbitId % 5) * Math.PI / 10.0;
-            double angle     = (double)index / Math.Max(1, total) * Math.PI * 2;
-
-            double x = Math.Cos(angle) * radius;
-            double y = 0;
-            double z = Math.Sin(angle) * radius;
-
-            double cy = Math.Cos(tiltYaw),   sy = Math.Sin(tiltYaw);
-            double cp = Math.Cos(tiltPitch), sp = Math.Sin(tiltPitch);
-
-            double x1 =  x * cp + y * sp;
-            double y1 = -x * sp + y * cp;
-            double z1 =  z;
-
-            double x2 =  x1 * cy + z1 * sy;
-            double z2 = -x1 * sy + z1 * cy;
-
-            return new Point3D(x2, y1, z2);
-        }
-
-        private static Point3D SpiralPoint(int index, int total, double radius, int level, int maxLevel)
-        {
-            double t = (double)index / Math.Max(1, total);
-            double angle = t * Math.PI * 4;
-            double yOffset = (level - (maxLevel + 1) / 2.0) * radius * 0.8;
-            double r = radius * (0.4 + 0.6 * t);
-            return new Point3D(Math.Cos(angle) * r, yOffset + t * radius * 0.6, Math.Sin(angle) * r);
-        }
-
-        private static Point3D Sugiyama3DPoint(int index, int total, double radius, int level, int maxLevel)
-        {
-            if (total < 1) total = 1;
-            double longitude = (double)index / total * Math.PI * 2;
-            double latitude  = Math.PI / (maxLevel + 1) * level - Math.PI / 2;
-            double r = radius;
-            return new Point3D(Math.Cos(latitude) * Math.Cos(longitude) * r,
-                               Math.Sin(latitude) * r,
-                               Math.Cos(latitude) * Math.Sin(longitude) * r);
-        }
-
-        // Refinement passes (lightweight force relaxation + edge endpoint recalc).
-        private void ApplyPostLayoutRefinement(LayoutAlgorithm3DEnum layout)
-        {
-            if (layout == LayoutAlgorithm3DEnum.Force3D)
-                RelaxForce3D(60);
-
-            foreach (EdgeLine3D line in edgeLines)
-                UpdateEdgeEndpoints(line);
-        }
-
-        private void RelaxForce3D(int iterations)
-        {
-            List<VertexNode3D> nodes = DisplayedVerticesUIElements.Values.Distinct().ToList();
-            int n = nodes.Count;
-            if (n < 2) return;
-
-            double volumeK = 200; // characteristic spring length
-            double temperature = 80;
-
-            Dictionary<VertexNode3D, Vector3D> disp = new Dictionary<VertexNode3D, Vector3D>();
-
-            Dictionary<VertexNode3D, HashSet<VertexNode3D>> adj = new Dictionary<VertexNode3D, HashSet<VertexNode3D>>();
-            foreach (VertexNode3D node in nodes) adj[node] = new HashSet<VertexNode3D>();
-            foreach (EdgeLine3D line in edgeLines)
-            {
-                LineTagStore3D tag = line.Tag as LineTagStore3D;
-                if (tag == null) continue;
-                if (tag.FromNode == tag.ToNode) continue;
-                adj[tag.FromNode].Add(tag.ToNode);
-                adj[tag.ToNode].Add(tag.FromNode);
-            }
-
-            VertexNode3D pinned = DisplayedVerticesUIElements.Values.FirstOrDefault();
-
-            for (int iter = 0; iter < iterations; iter++)
-            {
-                foreach (VertexNode3D node in nodes) disp[node] = new Vector3D(0, 0, 0);
-
-                for (int i = 0; i < n; i++)
-                    for (int j = i + 1; j < n; j++)
+                    foreach (IEdge edge in GetVisibleEdges(from))
                     {
-                        Vector3D delta = nodes[i].Position - nodes[j].Position;
-                        double dist = delta.Length;
-                        if (dist < 0.001) { delta = new Vector3D(0.1, 0.1, 0.1); dist = delta.Length; }
-                        double repulsion = (volumeK * volumeK) / dist;
-                        Vector3D push = delta / dist * repulsion;
-                        disp[nodes[i]] += push;
-                        disp[nodes[j]] -= push;
-                    }
+                        IVertex target = edge.From == from ? edge.To : edge.From;
+                        if (target == null) continue;
 
-                foreach (VertexNode3D a in nodes)
-                    foreach (VertexNode3D b in adj[a])
-                    {
-                        if (a.GetHashCode() >= b.GetHashCode()) continue; // process each pair once
-                        Vector3D delta = a.Position - b.Position;
-                        double dist = delta.Length;
-                        if (dist < 0.001) continue;
-                        double attraction = (dist * dist) / volumeK;
-                        Vector3D pull = delta / dist * attraction;
-                        disp[a] -= pull;
-                        disp[b] += pull;
-                    }
-
-                foreach (VertexNode3D node in nodes)
-                {
-                    if (node == pinned) continue;
-                    Vector3D d = disp[node];
-                    double len = d.Length;
-                    if (len > 0)
-                    {
-                        Vector3D step = d / len * Math.Min(len, temperature);
-                        node.SetWorldPosition(node.Position + step);
+                        if (!displayedNodes.ContainsKey(target) && displayedNodes.Count + candidates.Count < maxVertices)
+                            candidates.Add(Tuple.Create(edge, from, target));
                     }
                 }
 
-                temperature *= 0.95;
+                List<IVertex> nextLevel = PlaceLevel(level, numberOfCircles, circleSize, layout, candidates, visited);
+
+                foreach (IVertex from in currentLevel)
+                    ConnectDisplayedEdges(from);
+
+                currentLevel = nextLevel;
             }
+
+            foreach (IVertex vertex in displayedNodes.Keys.ToList())
+                ConnectDisplayedEdges(vertex);
         }
 
-        private bool CanAddEdge(IEdge e)
+        private IEnumerable<IEdge> GetVisibleEdges(IVertex vertex)
         {
-            if (e == null || e.Meta == null) return true;
-            if (GeneralUtil.CompareStrings(e.Meta, "$GraphChangeTrigger")) return false;
+            List<IEdge> result = new List<IEdge>();
+
+            if (showOutEdges)
+                result.AddRange(VisualiserUtil.FilterEdges(vertex.OutEdges, Vertex));
+
+            if (showInEdges)
+                result.AddRange(VisualiserUtil.FilterEdges(vertex.InEdges, Vertex));
+
+            return result.Where(CanAddEdge);
+        }
+
+        private bool CanAddEdge(IEdge edge)
+        {
+            if (edge == null || edge.Meta == null)
+                return false;
+
+            if (GeneralUtil.CompareStrings(edge.Meta, "$GraphChangeTrigger"))
+                return false;
+
             return true;
         }
 
-        private VertexNode3D AddVertex(Point3D p, IVertex baseVertex)
+        private List<IVertex> PlaceLevel(int level, int maxLevel, int circleSize, LayoutAlgorithm3DEnum layout,
+            List<Tuple<IEdge, IVertex, IVertex>> candidates, HashSet<IVertex> visited)
         {
-            VertexNode3D node = new VertexNode3D(baseVertex, this);
+            List<IVertex> added = new List<IVertex>();
+            List<Tuple<IEdge, IVertex, IVertex>> unique = new List<Tuple<IEdge, IVertex, IVertex>>();
 
-            double sphereSize = GraphUtil.GetIntegerValueOr0(Vertex.Get(false, "SphereSize:"));
-            if (sphereSize <= 0) sphereSize = 24;
+            foreach (Tuple<IEdge, IVertex, IVertex> candidate in candidates)
+            {
+                if (visited.Contains(candidate.Item3)) continue;
+                visited.Add(candidate.Item3);
+                unique.Add(candidate);
+            }
 
-            node.Scale.ScaleX = node.Scale.ScaleY = node.Scale.ScaleZ = sphereSize;
+            int count = unique.Count;
+            if (count == 0) return added;
 
-            Color baseColor = GetThemeColor("0LightGrayBrush", Colors.LightGray);
-            node.BodyMaterial = new DiffuseMaterial(new SolidColorBrush(baseColor));
-            node.BodyEmissive = new EmissiveMaterial(new SolidColorBrush(Colors.Black));
+            double radius = circleSize * level;
+            for (int i = 0; i < count; i++)
+            {
+                Tuple<IEdge, IVertex, IVertex> item = unique[i];
+                double metaAngle = GetMetaAngle(item.Item1.Meta);
+                double localOffset = ((double)i / Math.Max(1, count)) * Math.PI * 2.0;
+                Point3D position = GetLayoutPosition(layout, level, maxLevel, radius, metaAngle, localOffset, i, count);
+                AddNode(item.Item3, position, false);
+                added.Add(item.Item3);
+            }
 
-            MaterialGroup matGroup = new MaterialGroup();
-            matGroup.Children.Add(node.BodyMaterial);
-            matGroup.Children.Add(node.BodyEmissive);
+            return added;
+        }
 
-            node.BodyModel = new GeometryModel3D(GeometryFactory3D.UnitSphere, matGroup);
-            node.BodyModel.BackMaterial = node.BodyMaterial;
+        private double GetMetaAngle(IVertex meta)
+        {
+            string key = meta != null && meta.Value != null ? meta.Value.ToString() : "$Empty";
+            if (metaAngleCache.TryGetValue(key, out double angle))
+                return angle;
 
-            Model3DGroup group = new Model3DGroup();
-            group.Children.Add(node.BodyModel);
-            node.Content = group;
+            int hash = key.GetHashCode();
+            double normalized = Math.Abs(hash % 10000) / 10000.0;
+            angle = normalized * Math.PI * 2.0;
+            metaAngleCache[key] = angle;
+            return angle;
+        }
 
+        private Point3D GetLayoutPosition(LayoutAlgorithm3DEnum layout, int level, int maxLevel, double radius,
+            double metaAngle, double localOffset, int index, int count)
+        {
+            switch (layout)
+            {
+                case LayoutAlgorithm3DEnum.OrbitalPlanes:
+                    return new Point3D(
+                        Math.Cos(metaAngle + localOffset * 0.18) * radius,
+                        (level - (maxLevel / 2.0)) * radius * 0.32,
+                        Math.Sin(metaAngle + localOffset * 0.18) * radius);
+
+                case LayoutAlgorithm3DEnum.ConcentricSpiral3D:
+                    {
+                        double angle = metaAngle + index * 0.72;
+                        return new Point3D(
+                            Math.Cos(angle) * radius,
+                            (index - count / 2.0) * sphereSize * 1.8,
+                            Math.Sin(angle) * radius);
+                    }
+
+                case LayoutAlgorithm3DEnum.Sugiyama3DLayers:
+                    {
+                        double angle = localOffset;
+                        return new Point3D(
+                            Math.Cos(angle) * radius * 0.8,
+                            -level * radius * 0.55,
+                            Math.Sin(angle) * radius * 0.45);
+                    }
+
+                case LayoutAlgorithm3DEnum.Force3D:
+                case LayoutAlgorithm3DEnum.FibonacciSphereShells:
+                default:
+                    return FibonacciSpherePosition(radius, index, count, metaAngle);
+            }
+        }
+
+        private Point3D FibonacciSpherePosition(double radius, int index, int count, double metaAngle)
+        {
+            double goldenAngle = Math.PI * (3.0 - Math.Sqrt(5.0));
+            double y = 1.0 - (2.0 * (index + 0.5) / Math.Max(1, count));
+            double ring = Math.Sqrt(Math.Max(0, 1.0 - y * y));
+            double theta = goldenAngle * index + metaAngle * 0.35;
+
+            return new Point3D(
+                Math.Cos(theta) * ring * radius,
+                y * radius,
+                Math.Sin(theta) * ring * radius);
+        }
+
+        private GraphVisualiser3DNode AddNode(IVertex vertex, Point3D position, bool isRoot)
+        {
+            if (displayedNodes.TryGetValue(vertex, out GraphVisualiser3DNode existing))
+                return existing;
+
+            double size = isRoot ? sphereSize * 1.25 : sphereSize;
+            GraphVisualiser3DNode node = new GraphVisualiser3DNode(vertex, this, size);
+            node.SetWorldPosition(position);
+
+            displayedNodes[vertex] = node;
             modelToNode[node.BodyModel] = node;
-
-            node.SetWorldPosition(p);
-
-            if (showLabels3D)
-                AttachLabel(node, baseVertex, sphereSize);
-
-            DisplayedVerticesUIElements[baseVertex] = node;
-
             sceneRoot.Children.Add(node);
+
+            TextBlock label = CreateLabel(vertex.Value != null ? vertex.Value.ToString() : "Ø", false);
+            node.Label = label;
+            node.ApplyLabelState();
+            labelOverlay.Children.Add(label);
+            labels.Add(new GraphVisualiser3DLabel
+            {
+                Element = label,
+                GetWorldPosition = () => node.Position + new Vector3D(0, size * 1.35, 0),
+                BaseZIndex = isRoot ? 3000 : 1000,
+                IsEdgeLabel = false
+            });
 
             return node;
         }
 
-        private void AttachLabel(VertexNode3D node, IVertex baseVertex, double sphereSize)
+        private void ConnectDisplayedEdges(IVertex vertex)
         {
-            FrameworkElement labelElement = CreateLabelElement(baseVertex);
-            if (labelElement == null) return;
+            if (!displayedNodes.TryGetValue(vertex, out GraphVisualiser3DNode fromNode))
+                return;
 
-            node.LabelContent = labelElement;
-
-            // Billboard rectangle placed just above the sphere. Uses Viewport2DVisual3D
-            // so the embedded WPF element participates in hit-testing and rendering.
-            double w = 120;
-            double h = 30;
-
-            MeshGeometry3D planeMesh = new MeshGeometry3D();
-            planeMesh.Positions.Add(new Point3D(-w / 2, 0, 0));
-            planeMesh.Positions.Add(new Point3D( w / 2, 0, 0));
-            planeMesh.Positions.Add(new Point3D( w / 2, h, 0));
-            planeMesh.Positions.Add(new Point3D(-w / 2, h, 0));
-            planeMesh.TextureCoordinates.Add(new Point(0, 1));
-            planeMesh.TextureCoordinates.Add(new Point(1, 1));
-            planeMesh.TextureCoordinates.Add(new Point(1, 0));
-            planeMesh.TextureCoordinates.Add(new Point(0, 0));
-            planeMesh.TriangleIndices.Add(0);
-            planeMesh.TriangleIndices.Add(1);
-            planeMesh.TriangleIndices.Add(2);
-            planeMesh.TriangleIndices.Add(0);
-            planeMesh.TriangleIndices.Add(2);
-            planeMesh.TriangleIndices.Add(3);
-
-            DiffuseMaterial labelMaterial = new DiffuseMaterial { Brush = Brushes.White };
-            Viewport2DVisual3D.SetIsVisualHostMaterial(labelMaterial, true);
-
-            Viewport2DVisual3D viewport2D = new Viewport2DVisual3D
+            foreach (IEdge edge in GetVisibleEdges(vertex))
             {
-                Geometry = planeMesh,
-                Material = labelMaterial,
-                Visual = labelElement
-            };
+                if (!showInEdges && edge.From != vertex)
+                    continue;
 
-            // Position the label plane in node-local space, above the sphere body.
-            TranslateTransform3D labelOffset = new TranslateTransform3D(0, 1.2, 0);
-            viewport2D.Transform = labelOffset;
+                IVertex toVertex = edge.From == vertex ? edge.To : edge.From;
+                if (toVertex == null || !displayedNodes.TryGetValue(toVertex, out GraphVisualiser3DNode toNode))
+                    continue;
 
-            // Scale the whole label with the sphere so it stays readable.
-            // The plane already carries its Translate; we need to place it in world
-            // space by adding it as a child of the node. ModelVisual3D children get
-            // their parent's Transform, but Viewport2DVisual3D can be added directly.
-            ModelVisual3D labelHost = new ModelVisual3D();
-            labelHost.Transform = new TranslateTransform3D(node.Position.X, node.Position.Y + sphereSize * 1.1, node.Position.Z);
-            labelHost.Children.Add(viewport2D);
+                GraphVisualiser3DNode actualFrom = edge.From == vertex ? fromNode : toNode;
+                GraphVisualiser3DNode actualTo = edge.From == vertex ? toNode : fromNode;
+                if (EdgeAlreadyDisplayed(edge, actualFrom, actualTo))
+                    continue;
 
-            node.LabelVisual = viewport2D;
-            sceneRoot.Children.Add(labelHost);
+                AddEdgeVisual(actualFrom, actualTo, edge);
+            }
         }
 
-        private FrameworkElement CreateLabelElement(IVertex v)
+        private bool EdgeAlreadyDisplayed(IEdge edge, GraphVisualiser3DNode from, GraphVisualiser3DNode to)
         {
-            if (v == null) return null;
-
-            TextBlock tb = new TextBlock
-            {
-                Text = v.Value != null ? v.Value.ToString() : "Ø",
-                Foreground = new SolidColorBrush(GetThemeColor("0ForegroundBrush", Colors.White)),
-                Background = new SolidColorBrush(GetThemeColor("0BackgroundBrush", Color.FromArgb(200, 0, 0, 0))),
-                Padding = new Thickness(4, 1, 4, 1),
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                TextAlignment = TextAlignment.Center
-            };
-
-            return tb;
+            foreach (GraphVisualiser3DEdgeVisual visual in edgeVisuals)
+                if (visual.Edge == edge && visual.FromNode == from && visual.ToNode == to)
+                    return true;
+            return false;
         }
 
-        private void AddEdge(VertexNode3D from, VertexNode3D to, IVertex meta)
+        private void AddEdgeVisual(GraphVisualiser3DNode from, GraphVisualiser3DNode to, IEdge edge)
         {
-            if (from == null || to == null || from == to) return;
+            if (from == null || to == null || from == to || edge == null)
+                return;
 
-            EdgeLine3D line = new EdgeLine3D(this);
-            LineTagStore3D tag = new LineTagStore3D
+            GraphVisualiser3DEdgeVisual visual = new GraphVisualiser3DEdgeVisual(this);
+            visual.Connect(from, to, edge, sphereSize);
+
+            GraphVisualiser3DEdgeTag tag = new GraphVisualiser3DEdgeTag
             {
                 FromNode = from,
-                ToNode   = to,
-                MetaVertex = meta
+                ToNode = to,
+                Edge = edge
             };
-            line.Tag = tag;
+            from.OutgoingEdges.Add(visual);
+            from.IncidentEdges.Add(visual);
+            to.IncidentEdges.Add(visual);
+            edgeVisuals.Add(visual);
+            sceneRoot.Children.Add(visual);
 
-            UpdateEdgeEndpoints(line);
-
-            Color metaColor = HashToColor(meta);
-            line.SetColor(metaColor);
-
-            from.Lines.Add(line);
-            to.Lines.Add(line);
-            edgeLines.Add(line);
-
-            sceneRoot.Children.Add(line);
+            if (metaLabels && edge.Meta != null && edge.Meta.Value != null)
+            {
+                TextBlock metaLabel = CreateLabel(edge.Meta.Value.ToString(), true);
+                visual.MetaLabel = metaLabel;
+                tag.MetaLabel = metaLabel;
+                labelOverlay.Children.Add(metaLabel);
+                labels.Add(new GraphVisualiser3DLabel
+                {
+                    Element = metaLabel,
+                    GetWorldPosition = visual.GetLabelPosition,
+                    BaseZIndex = 900,
+                    IsEdgeLabel = true
+                });
+            }
         }
 
-        private void UpdateEdgeEndpoints(EdgeLine3D line)
+        private TextBlock CreateLabel(string text, bool isEdge)
         {
-            LineTagStore3D tag = line.Tag as LineTagStore3D;
-            if (tag == null || tag.FromNode == null || tag.ToNode == null) return;
+            TextBlock label = new TextBlock
+            {
+                Text = string.IsNullOrEmpty(text) ? "Ø" : text,
+                Padding = isEdge
+                    ? new Thickness(3 * labelScale, 0, 3 * labelScale, 0)
+                    : new Thickness(5 * labelScale, 1 * labelScale, 5 * labelScale, 1 * labelScale),
+                TextAlignment = TextAlignment.Center,
+                FontSize = (isEdge ? 10 : 12) * labelScale,
+                Foreground = new SolidColorBrush(isEdge
+                    ? GetThemeColor("0LightGrayBrush", Colors.LightGray)
+                    : GetThemeColor("0ForegroundBrush", Colors.White)),
+                Background = GetLabelBackgroundBrush((byte)(isEdge ? 160 : 205)),
+                IsHitTestVisible = false
+            };
 
-            double sphereSize = GraphUtil.GetIntegerValueOr0(Vertex.Get(false, "SphereSize:"));
-            if (sphereSize <= 0) sphereSize = 24;
-
-            // Trim the ends so the cylinder starts and stops at the sphere surface.
-            Vector3D direction = tag.ToNode.Position - tag.FromNode.Position;
-            double len = direction.Length;
-            if (len < 0.001) return;
-
-            Vector3D unit = direction / len;
-            Point3D from = tag.FromNode.Position + unit * sphereSize;
-            Point3D to   = tag.ToNode.Position   - unit * sphereSize;
-
-            double trunkRadius = Math.Max(1, sphereSize * 0.08);
-            double tipLength   = sphereSize * 0.8;
-            double tipRadius   = sphereSize * 0.25;
-
-            line.UpdateGeometry(from, to, trunkRadius, tipLength, tipRadius);
+            return label;
         }
 
-        private Color HashToColor(IVertex meta)
+        private void RefreshLabelText()
         {
-            if (meta == null || meta.Value == null)
-                return GetThemeColor("0LightGrayBrush", Colors.LightGray);
+            foreach (GraphVisualiser3DNode node in displayedNodes.Values)
+                if (node.Label != null)
+                    node.Label.Text = node.BaseVertex != null && node.BaseVertex.Value != null
+                        ? node.BaseVertex.Value.ToString()
+                        : "Ø";
 
-            int h = meta.Value.ToString().GetHashCode();
-            double hue = ((uint)h % 360) / 360.0;
-            return HsvToRgb(hue, 0.45, 0.85);
+            foreach (GraphVisualiser3DEdgeVisual edge in edgeVisuals)
+                if (edge.MetaLabel != null)
+                    edge.MetaLabel.Text = edge.Edge != null && edge.Edge.Meta != null && edge.Edge.Meta.Value != null
+                        ? edge.Edge.Meta.Value.ToString()
+                        : "Ø";
         }
 
-        private static Color HsvToRgb(double h, double s, double v)
+        private void UpdateLabels()
         {
-            double c = v * s;
-            double x = c * (1 - Math.Abs((h * 6) % 2 - 1));
-            double m = v - c;
-            double r, g, b;
-            if      (h < 1.0 / 6) { r = c; g = x; b = 0; }
-            else if (h < 2.0 / 6) { r = x; g = c; b = 0; }
-            else if (h < 3.0 / 6) { r = 0; g = c; b = x; }
-            else if (h < 4.0 / 6) { r = 0; g = x; b = c; }
-            else if (h < 5.0 / 6) { r = x; g = 0; b = c; }
-            else                  { r = c; g = 0; b = x; }
-            return Color.FromRgb((byte)((r + m) * 255), (byte)((g + m) * 255), (byte)((b + m) * 255));
+            if (labelOverlay == null || camera == null)
+                return;
+
+            foreach (GraphVisualiser3DLabel label in labels)
+            {
+                Point screen;
+                double depth;
+                bool visible = TryProject(label.GetWorldPosition(), out screen, out depth);
+
+                if (!visible)
+                {
+                    label.Element.Visibility = Visibility.Collapsed;
+                    continue;
+                }
+
+                label.Element.Visibility = Visibility.Visible;
+                label.Element.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+                System.Windows.Size desired = label.Element.DesiredSize;
+                Canvas.SetLeft(label.Element, screen.X - desired.Width / 2.0);
+                Canvas.SetTop(label.Element, screen.Y - desired.Height / 2.0);
+
+                double opacity = Math.Max(0.35, Math.Min(1.0, 1200.0 / Math.Max(250.0, depth)));
+                label.Element.Opacity = label.Element == highlightedNode?.Label ? 1.0 : opacity;
+                Panel.SetZIndex(label.Element, label.BaseZIndex + (int)Math.Max(0, 2000 - depth));
+            }
         }
 
-        // BASE EDGE CHANGE ======================================================
+        private bool TryProject(Point3D localPoint, out Point screen, out double depth)
+        {
+            Matrix3D sceneMatrix = sceneRoot.Transform != null ? sceneRoot.Transform.Value : Matrix3D.Identity;
+            Point3D worldPoint = sceneMatrix.Transform(localPoint);
+
+            Vector3D forward = camera.LookDirection;
+            if (forward.Length < 0.0001)
+            {
+                screen = new Point();
+                depth = 0;
+                return false;
+            }
+            forward.Normalize();
+
+            Vector3D up = camera.UpDirection;
+            if (up.Length < 0.0001) up = new Vector3D(0, 1, 0);
+            up.Normalize();
+
+            Vector3D right = Vector3D.CrossProduct(forward, up);
+            if (right.Length < 0.0001) right = new Vector3D(1, 0, 0);
+            right.Normalize();
+            up = Vector3D.CrossProduct(right, forward);
+            up.Normalize();
+
+            Vector3D fromCamera = worldPoint - camera.Position;
+            double x = Vector3D.DotProduct(fromCamera, right);
+            double y = Vector3D.DotProduct(fromCamera, up);
+            depth = Vector3D.DotProduct(fromCamera, forward);
+
+            if (depth <= camera.NearPlaneDistance)
+            {
+                screen = new Point();
+                return false;
+            }
+
+            double width = Math.Max(1, ActualWidth);
+            double height = Math.Max(1, ActualHeight);
+            double focal = width / (2.0 * Math.Tan(camera.FieldOfView * Math.PI / 360.0));
+
+            screen = new Point(
+                width / 2.0 + x * focal / depth,
+                height / 2.0 - y * focal / depth);
+
+            if (screen.X < -400 || screen.X > width + 400 || screen.Y < -200 || screen.Y > height + 200)
+                return false;
+
+            return true;
+        }
+
+        private void GraphVisualiser3D_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            GraphVisualiser3DNode hit = HitTestVertexAt(e.GetPosition(viewport));
+            if (e.ClickCount == 2 && hit != null)
+            {
+                doubleClickHandled = true;
+                mouseIsDown = false;
+                cameraDragActive = false;
+
+                if (IsMouseCaptured)
+                    ReleaseMouseCapture();
+
+                ChangeBaseEdge(hit);
+                e.Handled = true;
+                return;
+            }
+
+            doubleClickHandled = false;
+            mouseIsDown = true;
+            cameraDragActive = false;
+            dragStart = e.GetPosition(this);
+            yawAtDragStart = cameraYaw;
+            pitchAtDragStart = cameraPitch;
+            CaptureMouse();
+        }
+
+        private void GraphVisualiser3D_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            Point point = e.GetPosition(this);
+
+            if (mouseIsDown && e.LeftButton == MouseButtonState.Pressed)
+            {
+                Vector delta = point - dragStart;
+                if (cameraDragActive || Math.Abs(delta.X) > 4 || Math.Abs(delta.Y) > 4)
+                {
+                    cameraDragActive = true;
+                    cameraYaw = yawAtDragStart - delta.X * 0.006;
+                    cameraPitch = Math.Max(-1.35, Math.Min(1.35, pitchAtDragStart + delta.Y * 0.006));
+                    UpdateCamera();
+                    UpdateLabels();
+                    e.Handled = true;
+                    return;
+                }
+            }
+
+            GraphVisualiser3DNode hit = HitTestVertexAt(e.GetPosition(viewport));
+            SetHoverNode(hit);
+        }
+
+        private void GraphVisualiser3D_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (IsMouseCaptured)
+                ReleaseMouseCapture();
+
+            mouseIsDown = false;
+
+            if (doubleClickHandled)
+            {
+                doubleClickHandled = false;
+                cameraDragActive = false;
+                e.Handled = true;
+                return;
+            }
+
+            GraphVisualiser3DNode hit = HitTestVertexAt(e.GetPosition(viewport));
+            if (!cameraDragActive && hit != null)
+            {
+                ToggleSelection(hit);
+                e.Handled = true;
+            }
+
+            cameraDragActive = false;
+        }
+
+        private void GraphVisualiser3D_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            double factor = e.Delta > 0 ? 0.88 : 1.14;
+            cameraDistance = Math.Max(80, Math.Min(30000, cameraDistance * factor));
+            UpdateCamera();
+            UpdateLabels();
+            e.Handled = true;
+        }
+
+        private void GraphVisualiser3D_MouseLeave(object sender, MouseEventArgs e)
+        {
+            SetHoverNode(null);
+        }
+
+        private void SetHoverNode(GraphVisualiser3DNode node)
+        {
+            if (highlightedNode == node)
+                return;
+
+            if (highlightedNode != null)
+            {
+                highlightedNode.SetHighlighted(false);
+                foreach (GraphVisualiser3DEdgeVisual edge in highlightedNode.OutgoingEdges)
+                {
+                    edge.SetHighlighted(false);
+                    if (edge.ToNode != null && !edge.ToNode.IsSelected)
+                        edge.ToNode.SetHighlighted(false);
+                }
+            }
+
+            highlightedNode = node;
+
+            if (highlightedNode != null)
+            {
+                highlightedNode.SetHighlighted(true);
+                foreach (GraphVisualiser3DEdgeVisual edge in highlightedNode.OutgoingEdges)
+                {
+                    edge.SetHighlighted(true);
+                    if (edge.ToNode != null)
+                        edge.ToNode.SetHighlighted(true);
+                }
+            }
+
+            UpdateLabels();
+        }
+
+        private GraphVisualiser3DNode HitTestVertexAt(Point point)
+        {
+            GraphVisualiser3DNode result = null;
+
+            VisualTreeHelper.HitTest(viewport, null, hit =>
+            {
+                RayHitTestResult rayHit = hit as RayHitTestResult;
+                if (rayHit != null && rayHit.ModelHit != null && modelToNode.TryGetValue(rayHit.ModelHit, out GraphVisualiser3DNode node))
+                {
+                    result = node;
+                    return HitTestResultBehavior.Stop;
+                }
+
+                return HitTestResultBehavior.Continue;
+            }, new PointHitTestParameters(point));
+
+            return result;
+        }
+
+        private void ToggleSelection(GraphVisualiser3DNode node)
+        {
+            if (node == null || node.BaseVertex == null)
+                return;
+
+            Interaction.BeginInteractionWithGraph();
+
+            CopySelectedVerticesToTemp();
+            bool isCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+            IVertex selectedEdges = Vertex.Get(false, "SelectedEdges:");
+
+            if (isCtrl)
+            {
+                if (node.IsSelected)
+                {
+                    node.Unselect();
+                    EdgeHelper.DeleteVertexByEdgeTo(selectedEdges, node.BaseVertex);
+                }
+                else
+                {
+                    node.Select();
+                    EdgeHelper.AddEdgeVertexByToVertex(selectedEdges, node.BaseVertex);
+                }
+            }
+            else
+            {
+                UnselectAllSelected();
+                GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(selectedEdges);
+                node.Select();
+                EdgeHelper.AddEdgeVertexByToVertex(selectedEdges, node.BaseVertex);
+            }
+
+            Interaction.EndInteractionWithGraph();
+            UpdateLabels();
+        }
+
+        private void ChangeBaseEdge(GraphVisualiser3DNode node)
+        {
+            if (node == null || node.BaseVertex == null)
+                return;
+
+            RestoreSelectedVertices();
+            GraphUtil.ReplaceEdge(Vertex.Get(false, "BaseEdge:"), "To", node.BaseVertex);
+
+            IVertex updatedBaseTo = Vertex.Get(false, @"BaseEdge:\To:");
+            if (updatedBaseTo == node.BaseVertex)
+                BaseEdgeToUpdated();
+        }
 
         public void BaseEdgeToUpdated()
         {
-            if (!isFirstPainted) { PaintGraph(); return; }
-            if (animationInProgress) return;
-
-            IVertex newBaseTo = Vertex.Get(false, @"BaseEdge:\To:");
-
-            TransitionStyle3DEnum style = TransitionStyle3DEnumHelper.GetEnum(Vertex.Get(false, "TransitionStyle:"));
-
-            // Only BaseEdge:\To change where the new target is already on the scene
-            // triggers an animated transition. Everything else is a plain rebuild.
-            bool targetOnScene = newBaseTo != null
-                && DisplayedVerticesUIElements.ContainsKey(newBaseTo)
-                && newBaseTo != previousBaseEdgeTo;
-
-            if (!targetOnScene || style == TransitionStyle3DEnum.Cut)
+            if (!isFirstPainted)
             {
                 PaintGraph();
                 return;
             }
 
-            VertexNode3D targetNode = DisplayedVerticesUIElements[newBaseTo];
+            if (animationInProgress)
+                return;
+
+            IVertex newBaseTo = Vertex.Get(false, @"BaseEdge:\To:");
+            bool targetOnScene = newBaseTo != null
+                && displayedNodes.ContainsKey(newBaseTo)
+                && newBaseTo != previousBaseEdgeTo;
+
+            TransitionStyle3DEnum style = TransitionStyle3DEnumHelper.GetEnum(Vertex.Get(false, "TransitionStyle:"));
+            if (!targetOnScene || style == TransitionStyle3DEnum.Cut)
+            {
+                ResetTransitionVisualState(false);
+                PaintGraph();
+                return;
+            }
+
             int durationMs = GraphUtil.GetIntegerValueOr0(Vertex.Get(false, "TransitionDurationMs:"));
             if (durationMs <= 0) durationMs = 600;
 
-            MinusZero.Instance.Log(1, "GraphVisualiser3D.BaseEdgeToUpdated",
-                "transition=" + style + " duration_ms=" + durationMs);
+            GraphVisualiser3DNode target = displayedNodes[newBaseTo];
 
             switch (style)
             {
-                case TransitionStyle3DEnum.OrbitTransition:
-                    RunOrbitTransition(targetNode, durationMs);
-                    break;
-
                 case TransitionStyle3DEnum.FlyToAndSwap:
-                    RunFlyToAndSwapTransition(targetNode, durationMs);
+                    RunFocusFlight(target, durationMs);
                     break;
-
                 case TransitionStyle3DEnum.HyperspaceJump:
-                    RunHyperspaceJumpTransition(durationMs);
+                    RunWarpTransition(durationMs);
                     break;
-
                 case TransitionStyle3DEnum.GravityMorph:
-                    // v1 placeholder: reuse OrbitTransition visuals.
-                    RunOrbitTransition(targetNode, durationMs);
-                    break;
-
+                case TransitionStyle3DEnum.OrbitTransition:
                 default:
-                    PaintGraph();
+                    RunOrbitTransition(target, durationMs);
                     break;
             }
         }
 
-        private void RunOrbitTransition(VertexNode3D target, int durationMs)
+        private void RunOrbitTransition(GraphVisualiser3DNode target, int durationMs)
         {
-            Vector3D toTarget = (Vector3D)target.Position;
-            if (toTarget.Length < 0.001) { PaintGraph(); return; }
+            Vector3D targetVector = (Vector3D)target.Position;
+            if (targetVector.Length < 0.001)
+            {
+                PaintGraph();
+                return;
+            }
 
-            // Rotation axis perpendicular to (origin -> target) and the Y axis.
-            Vector3D axis = Vector3D.CrossProduct(new Vector3D(0, 1, 0), toTarget);
-            if (axis.Length < 0.001) axis = new Vector3D(1, 0, 0);
+            Vector3D axis = Vector3D.CrossProduct(new Vector3D(0, 1, 0), targetVector);
+            if (axis.Length < 0.001)
+                axis = new Vector3D(1, 0, 0);
             axis.Normalize();
             sceneRotation.Axis = axis;
 
-            double targetAngle = 90; // quarter turn, enough to sell the motion
-
-            DoubleAnimation rotate = new DoubleAnimation(0, targetAngle, TimeSpan.FromMilliseconds(durationMs))
+            DoubleAnimation rotate = new DoubleAnimation(0, 90, TimeSpan.FromMilliseconds(durationMs))
             {
                 EasingFunction = new CubicEase { EasingMode = EasingMode.EaseInOut }
             };
@@ -1202,72 +1354,75 @@ namespace m0.UIWpf.Visualisers
             {
                 animationInProgress = false;
                 PaintGraph();
+                ResetTransitionVisualState(false);
             };
 
             sceneRotation.BeginAnimation(AxisAngleRotation3D.AngleProperty, rotate);
         }
 
-        private void RunFlyToAndSwapTransition(VertexNode3D target, int durationMs)
+        private void RunFocusFlight(GraphVisualiser3DNode target, int durationMs)
         {
-            // Phase 1: camera flies toward the target.
-            Point3D currentCamera = camera.Position;
-            Point3D approach = target.Position + (currentCamera - target.Position) * 0.25;
+            animationInProgress = true;
 
-            Point3DAnimation flyIn = new Point3DAnimation(currentCamera, approach,
+            Point3D startPosition = camera.Position;
+            Point3D targetCameraPosition = target.Position + (camera.Position - target.Position) * 0.28;
+            Point3DAnimation flyIn = new Point3DAnimation(startPosition, targetCameraPosition,
                 TimeSpan.FromMilliseconds(durationMs / 2))
             {
                 EasingFunction = new CubicEase { EasingMode = EasingMode.EaseIn }
             };
 
-            DoubleAnimation fadeOut = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(durationMs / 2))
+            DoubleAnimation fade = new DoubleAnimation(1, 0.15, TimeSpan.FromMilliseconds(durationMs / 2))
             {
                 EasingFunction = new CubicEase { EasingMode = EasingMode.EaseIn }
             };
 
-            animationInProgress = true;
-
-            fadeOut.Completed += (s, e) =>
+            fade.Completed += (s, e) =>
             {
-                // Phase 2: rebuild with new BaseEdge, reset opacity, fly back to default.
+                BeginAnimation(OpacityProperty, null);
+                Opacity = 1;
                 PaintGraph();
-                this.Opacity = 1;
-
-                Point3D defaultPos = CurrentCameraPositionFromAngles();
-                Point3DAnimation flyOut = new Point3DAnimation(camera.Position, defaultPos,
+                Point3D defaultCamera = CurrentCameraPositionFromAngles();
+                Point3DAnimation flyOut = new Point3DAnimation(camera.Position, defaultCamera,
                     TimeSpan.FromMilliseconds(durationMs / 2))
                 {
                     EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
                 };
-                flyOut.Completed += (s2, e2) => { animationInProgress = false; };
+                flyOut.Completed += (s2, e2) =>
+                {
+                    animationInProgress = false;
+                    ResetTransitionVisualState(true);
+                    UpdateLabels();
+                };
                 camera.BeginAnimation(ProjectionCamera.PositionProperty, flyOut);
             };
 
             camera.BeginAnimation(ProjectionCamera.PositionProperty, flyIn);
-            this.BeginAnimation(OpacityProperty, fadeOut);
+            BeginAnimation(OpacityProperty, fade);
         }
 
-        private void RunHyperspaceJumpTransition(int durationMs)
+        private void RunWarpTransition(int durationMs)
         {
-            DoubleAnimation scaleDown = new DoubleAnimation(1, 0.01, TimeSpan.FromMilliseconds(durationMs / 2))
+            animationInProgress = true;
+            DoubleAnimation scaleDown = new DoubleAnimation(1, 0.02, TimeSpan.FromMilliseconds(durationMs / 2))
             {
                 EasingFunction = new QuinticEase { EasingMode = EasingMode.EaseIn }
             };
 
-            animationInProgress = true;
             scaleDown.Completed += (s, e) =>
             {
                 PaintGraph();
 
-                DoubleAnimation scaleUp = new DoubleAnimation(0.01, 1, TimeSpan.FromMilliseconds(durationMs / 2))
+                DoubleAnimation scaleUp = new DoubleAnimation(0.02, 1, TimeSpan.FromMilliseconds(durationMs / 2))
                 {
                     EasingFunction = new QuinticEase { EasingMode = EasingMode.EaseOut }
                 };
-                scaleUp.Completed += (s2, e2) => { animationInProgress = false; };
-
-                // Need to clear the previous animation hold before starting a new one.
-                sceneScale.BeginAnimation(ScaleTransform3D.ScaleXProperty, null);
-                sceneScale.BeginAnimation(ScaleTransform3D.ScaleYProperty, null);
-                sceneScale.BeginAnimation(ScaleTransform3D.ScaleZProperty, null);
+                scaleUp.Completed += (s2, e2) =>
+                {
+                    animationInProgress = false;
+                    ResetTransitionVisualState(false);
+                    UpdateLabels();
+                };
 
                 sceneScale.BeginAnimation(ScaleTransform3D.ScaleXProperty, scaleUp);
                 sceneScale.BeginAnimation(ScaleTransform3D.ScaleYProperty, scaleUp);
@@ -1279,7 +1434,21 @@ namespace m0.UIWpf.Visualisers
             sceneScale.BeginAnimation(ScaleTransform3D.ScaleZProperty, scaleDown);
         }
 
-        // CAMERA =================================================================
+        private void ResetTransitionVisualState(bool resetCameraAnimation)
+        {
+            BeginAnimation(OpacityProperty, null);
+            Opacity = 1;
+
+            sceneScale.BeginAnimation(ScaleTransform3D.ScaleXProperty, null);
+            sceneScale.BeginAnimation(ScaleTransform3D.ScaleYProperty, null);
+            sceneScale.BeginAnimation(ScaleTransform3D.ScaleZProperty, null);
+            sceneScale.ScaleX = 1;
+            sceneScale.ScaleY = 1;
+            sceneScale.ScaleZ = 1;
+
+            if (resetCameraAnimation)
+                UpdateCamera();
+        }
 
         private Point3D CurrentCameraPositionFromAngles()
         {
@@ -1291,9 +1460,10 @@ namespace m0.UIWpf.Visualisers
 
         private void UpdateCamera()
         {
-            Point3D pos = CurrentCameraPositionFromAngles();
-            camera.Position = pos;
-            camera.LookDirection = new Vector3D(-pos.X, -pos.Y, -pos.Z);
+            Point3D position = CurrentCameraPositionFromAngles();
+            camera.BeginAnimation(ProjectionCamera.PositionProperty, null);
+            camera.Position = position;
+            camera.LookDirection = new Vector3D(-position.X, -position.Y, -position.Z);
             camera.UpDirection = new Vector3D(0, 1, 0);
         }
 
@@ -1302,166 +1472,12 @@ namespace m0.UIWpf.Visualisers
             double scale = ((double)(GraphUtil.GetIntegerValue(Vertex.Get(false, "Scale:")) ?? 100)) / 100.0;
 
             if (scale != 1.0)
-                this.LayoutTransform = new ScaleTransform(scale, scale);
+                LayoutTransform = new ScaleTransform(scale, scale);
             else
-                this.LayoutTransform = null;
+                LayoutTransform = null;
+
+            UpdateLabels();
         }
-
-        // MOUSE HANDLING =========================================================
-
-        private Point dragStart;
-        private bool isDragging;
-        private double yawAtDragStart;
-        private double pitchAtDragStart;
-
-        private void Host_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            // On double-click we delegate to OnMouseDown below, single-click performs
-            // selection or starts a camera drag depending on what was hit.
-            dragStart = e.GetPosition(this);
-            yawAtDragStart = cameraYaw;
-            pitchAtDragStart = cameraPitch;
-            isDragging = true;
-            this.CaptureMouse();
-        }
-
-        protected override void OnPreviewMouseLeftButtonUp(MouseButtonEventArgs e)
-        {
-            if (this.IsMouseCaptured) this.ReleaseMouseCapture();
-            isDragging = false;
-            base.OnPreviewMouseLeftButtonUp(e);
-        }
-
-        private void Host_PreviewMouseMove(object sender, MouseEventArgs e)
-        {
-            if (isDragging && e.LeftButton == MouseButtonState.Pressed)
-            {
-                Point p = e.GetPosition(this);
-                double dx = p.X - dragStart.X;
-                double dy = p.Y - dragStart.Y;
-
-                cameraYaw = yawAtDragStart - dx * 0.005;
-                cameraPitch = Math.Max(-1.4, Math.Min(1.4, pitchAtDragStart + dy * 0.005));
-
-                UpdateCamera();
-                return;
-            }
-
-            // Hover highlight.
-            VertexNode3D hit = HitTestVertexAt(e.GetPosition(viewport));
-            if (hit != null && !hit.IsHighlighted)
-            {
-                if (highlighted != null) highlighted.UnhighlightThisAndDescendants();
-                hit.HighlightThisAndDescendants();
-                highlighted = hit;
-            }
-        }
-
-        private void Host_MouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            double factor = e.Delta > 0 ? 0.9 : 1.1;
-            cameraDistance = Math.Max(50, Math.Min(20000, cameraDistance * factor));
-            UpdateCamera();
-        }
-
-        protected override void OnMouseDown(MouseButtonEventArgs e)
-        {
-            Point p = e.GetPosition(viewport);
-            VertexNode3D node = HitTestVertexAt(p);
-
-            if (node == null) { base.OnMouseDown(e); return; }
-
-            if (e.ClickCount == 2)
-            {
-                RestoreSelectedVertices();
-                if (node.BaseVertex != null)
-                    GraphUtil.ReplaceEdge(Vertex.Get(false, "BaseEdge:"), "To", node.BaseVertex);
-                e.Handled = true;
-                base.OnMouseDown(e);
-                return;
-            }
-
-            if (e.ClickCount == 1)
-            {
-                Interaction.BeginInteractionWithGraph();
-
-                CopySelectedVerticesToTemp();
-
-                bool isCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
-                IVertex sv = Vertex.Get(false, "SelectedEdges:");
-
-                if (isCtrl)
-                {
-                    if (node.IsSelected)
-                    {
-                        node.Unselect();
-                        EdgeHelper.DeleteVertexByEdgeTo(sv, node.BaseVertex);
-                    }
-                    else
-                    {
-                        node.Select();
-                        EdgeHelper.AddEdgeVertexByToVertex(sv, node.BaseVertex);
-                    }
-                }
-                else
-                {
-                    UnselectAllSelected();
-                    GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
-                    node.Select();
-                    EdgeHelper.AddEdgeVertexByToVertex(sv, node.BaseVertex);
-                }
-
-                Interaction.EndInteractionWithGraph();
-
-                e.Handled = true;
-            }
-
-            base.OnMouseDown(e);
-        }
-
-        // Ray-casts into the 3D scene and returns the VertexNode3D that owns the
-        // hit geometry, if any.
-        private VertexNode3D HitTestVertexAt(Point p)
-        {
-            if (viewport == null) return null;
-
-            VertexNode3D result = null;
-
-            HitTestResultCallback callback = htr =>
-            {
-                RayHitTestResult rhtr = htr as RayHitTestResult;
-                if (rhtr == null) return HitTestResultBehavior.Continue;
-
-                Model3D model = rhtr.ModelHit;
-                if (model != null && modelToNode.TryGetValue(model, out VertexNode3D node))
-                {
-                    result = node;
-                    return HitTestResultBehavior.Stop;
-                }
-
-                return HitTestResultBehavior.Continue;
-            };
-
-            VisualTreeHelper.HitTest(viewport, null, callback, new PointHitTestParameters(p));
-
-            return result;
-        }
-
-        // SELECTION =============================================================
-
-        private void UnselectAllSelected()
-        {
-            IVertex sv = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
-
-            foreach (IEdge v in sv)
-            {
-                IVertex target = v.To.Get(false, "To:");
-                if (target != null && DisplayedVerticesUIElements.ContainsKey(target))
-                    DisplayedVerticesUIElements[target].Unselect();
-            }
-        }
-
-        private IVertex tempSelectedVertices;
 
         private void CopySelectedVerticesToTemp()
         {
@@ -1471,28 +1487,27 @@ namespace m0.UIWpf.Visualisers
 
         private void RestoreSelectedVertices()
         {
-            IVertex sv = Vertex.Get(false, "SelectedEdges:");
+            IVertex selectedEdges = Vertex.Get(false, "SelectedEdges:");
+
             if (tempSelectedVertices != null)
             {
-                GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
-                GraphUtil.CopyShallow(tempSelectedVertices, sv);
+                GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(selectedEdges);
+                GraphUtil.CopyShallow(tempSelectedVertices, selectedEdges);
                 GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(tempSelectedVertices);
             }
         }
 
-        private void UnselectAll()
+        private void UnselectAllSelected()
         {
-            foreach (VertexNode3D node in DisplayedVerticesUIElements.Values)
+            foreach (GraphVisualiser3DNode node in displayedNodes.Values)
                 node.Unselect();
         }
 
         public void UnselectAllSelectedEdges()
         {
             Interaction.BeginInteractionWithGraph();
-
-            IVertex sv = Vertex.Get(false, "SelectedEdges:");
-            GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
-
+            IVertex selectedEdges = Vertex.Get(false, "SelectedEdges:");
+            GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(selectedEdges);
             Interaction.EndInteractionWithGraph();
         }
 
@@ -1500,36 +1515,35 @@ namespace m0.UIWpf.Visualisers
         {
             if (isFirstPainted)
             {
-                UnselectAll();
+                UnselectAllSelected();
                 SelectWrappersForSelectedVertices();
+                UpdateLabels();
             }
 
-            SelectedEdgesChange?.Invoke();
+            if (SelectedEdgesChange != null)
+                SelectedEdgesChange();
         }
 
         private void SelectWrappersForSelectedVertices()
         {
-            IVertex sv = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
+            IVertex selected = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
 
-            foreach (IEdge e in sv)
+            foreach (IEdge edge in selected)
             {
-                IVertex target = e.To.Get(false, "To:");
-                if (target != null && DisplayedVerticesUIElements.ContainsKey(target))
-                    DisplayedVerticesUIElements[target].Select();
+                IVertex target = edge.To.Get(false, "To:");
+                if (target != null && displayedNodes.ContainsKey(target))
+                    displayedNodes[target].Select();
             }
         }
 
-        // IHasLocalizableEdges ==================================================
-
         public IVertex GetEdgeByPoint(Point p)
         {
-            VertexNode3D hit = HitTestVertexAt(p);
-
+            GraphVisualiser3DNode hit = HitTestVertexAt(p);
             if (hit != null && hit.BaseVertex != null)
             {
-                IVertex v = MinusZero.Instance.CreateTempVertex();
-                EdgeHelper.AddEdgeVertexEdgesOnlyTo(v, hit.BaseVertex);
-                return v;
+                IVertex vertex = MinusZero.Instance.CreateTempVertex();
+                EdgeHelper.AddEdgeVertexEdgesOnlyTo(vertex, hit.BaseVertex);
+                return vertex;
             }
 
             if (GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false,
@@ -1539,45 +1553,31 @@ namespace m0.UIWpf.Visualisers
             return null;
         }
 
-        public IVertex GetEdgeByVisualElement(FrameworkElement visualElement) { throw new NotImplementedException(); }
-        public FrameworkElement GetVisualElementByEdge(IVertex vertex)        { throw new NotImplementedException(); }
+        public IVertex GetEdgeByVisualElement(FrameworkElement visualElement)
+        {
+            throw new NotImplementedException();
+        }
 
-        // DEFAULTS ==============================================================
+        public FrameworkElement GetVisualElementByEdge(IVertex vertex)
+        {
+            throw new NotImplementedException();
+        }
 
         protected void SetVertexDefaultValues()
         {
             Vertex.Get(false, "Scale:").Value = 100;
-            Vertex.Get(false, "VisualiserCircleSize:").Value = 200;
-            Vertex.Get(false, "NumberOfCircles:").Value = 2;
-            Vertex.Get(false, "FastMode:").Value = "True";
+            Vertex.Get(false, "CircleLength:").Value = 210;
+            Vertex.Get(false, "NumberOfCircles:").Value = 1;
+            Vertex.Get(false, "LabelSize:").Value = 100;
             Vertex.Get(false, "MetaLabels:").Value = "True";
             Vertex.Get(false, "ShowOutEdges:").Value = "True";
             Vertex.Get(false, "ShowInEdges:").Value = "False";
-
             Vertex.Get(false, "LayoutMode3D:").Value = "FibonacciSphereShells";
             Vertex.Get(false, "TransitionStyle:").Value = "OrbitTransition";
             Vertex.Get(false, "TransitionDurationMs:").Value = 600;
-            Vertex.Get(false, "SphereSize:").Value = 24;
-            Vertex.Get(false, "ShowLabels3D:").Value = "True";
+            Vertex.Get(false, "SphereSize:").Value = 22;
+            Vertex.Get(false, "MaxVertices3D:").Value = 250;
         }
-
-        // THEME HELPERS =========================================================
-
-        public Brush GetThemeBrush(string key, Brush fallback)
-        {
-            object resource = TryFindResource(key) ?? Application.Current?.TryFindResource(key);
-            if (resource is Brush brush) return brush;
-            return fallback;
-        }
-
-        public Color GetThemeColor(string key, Color fallback)
-        {
-            Brush b = GetThemeBrush(key, null);
-            if (b is SolidColorBrush scb) return scb.Color;
-            return fallback;
-        }
-
-        // VERTEX / DISPOSE =======================================================
 
         public IVertex Vertex
         {
@@ -1586,19 +1586,28 @@ namespace m0.UIWpf.Visualisers
         }
 
         private bool isDisposed;
-
         public void Dispose()
         {
-            if (isDisposed) return;
+            if (isDisposed)
+                return;
+
             isDisposed = true;
-
-            foreach (VertexNode3D node in DisplayedVerticesUIElements.Values.Distinct())
-                node.Dispose();
-            DisplayedVerticesUIElements.Clear();
-            modelToNode.Clear();
-            edgeLines.Clear();
-
+            ClearScene();
             VisualiserHelper.Dispose();
+        }
+
+        internal Color GetThemeColor(string key, Color fallback)
+        {
+            object resource = TryFindResource(key) ?? Application.Current?.TryFindResource(key);
+            if (resource is SolidColorBrush brush)
+                return brush.Color;
+            return fallback;
+        }
+
+        internal Brush GetLabelBackgroundBrush(byte alpha)
+        {
+            Color background = GetThemeColor("0BackgroundBrush", Colors.Black);
+            return new SolidColorBrush(Color.FromArgb(alpha, background.R, background.G, background.B));
         }
     }
 }
