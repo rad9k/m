@@ -4430,8 +4430,7 @@ namespace m0
                 "Class:TableFast{Attribute:ToShowEdgesMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:IsAllVisualisersEdit{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowHeader{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Association:GridStyle{$MinCardinality:1,$MaxCardinality:1},Attribute:AlternatingRows{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:Tree," +
                 "Class:Graph{Attribute:VisualiserCircleSize{$MinCardinality:1,$MaxCardinality:1},Attribute:NumberOfCircles{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd:},Attribute:ShowOutEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowInEdges{$MinCardinality:1,$MaxCardinality:1},Attribute:FastMode{$MinCardinality:1,$MaxCardinality:1},Attribute:MetaLabels{$MinCardinality:1,$MaxCardinality:1}}," +
-                "Class:Graph3D{Attribute:VisualiserCircleSize{$MinCardinality:1,$MaxCardinality:1},Attribute:NumberOfCircles{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd:},Attribute:ShowOutEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowInEdges{$MinCardinality:1,$MaxCardinality:1},Attribute:FastMode{$MinCardinality:1,$MaxCardinality:1},Attribute:MetaLabels{$MinCardinality:1,$MaxCardinality:1},Attribute:LayoutMode3D{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd:},Attribute:TransitionStyle{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd:},Attribute:TransitionDurationMs{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd:,MinValue:100,MaxValue:5000,$DefaultValue:600},Attribute:SphereSize{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd:,MinValue:4,MaxValue:200,$DefaultValue:24},Attribute:ShowLabels3D{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True,$UpdateAfterInteractionEnd:},Attribute:MaxVertices3D{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd:,MinValue:10,MaxValue:1000,$DefaultValue:250}}," +
-                "Class:Graph3D2{Attribute:VisualiserCircleSize{$MinCardinality:1,$MaxCardinality:1},Attribute:NumberOfCircles{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd:},Attribute:ShowOutEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowInEdges{$MinCardinality:1,$MaxCardinality:1},Attribute:FastMode{$MinCardinality:1,$MaxCardinality:1},Attribute:MetaLabels{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowLabels3D{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:SphereSize{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd:,MinValue:6,MaxValue:80,$DefaultValue:24}}," +
+                "Class:Graph3D{Attribute:EdgeLength{$MinCardinality:1,$MaxCardinality:1},Attribute:SphereSize{$MinCardinality:1,$MaxCardinality:1,MinValue:4,MaxValue:200,$DefaultValue:24},Attribute:LabelSize{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowOutEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowInEdges{$MinCardinality:1,$MaxCardinality:1},Attribute:MetaLabels{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowLabels3D{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:NumberOfCircles{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd:},Attribute:MaxVertices3D{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd:,MinValue:10,MaxValue:1000,$DefaultValue:250},Attribute:LayoutMode3D{$MinCardinality:1,$MaxCardinality:1},Attribute:IconsOnSpheres{$MinCardinality:1,$MaxCardinality:1},Attribute:IconsOnLabels{$MinCardinality:1,$MaxCardinality:1},Attribute:TransitionStyle{$MinCardinality:1,$MaxCardinality:1},Attribute:TransitionDurationMs{$MinCardinality:1,$MaxCardinality:1,MinValue:100,MaxValue:5000,$DefaultValue:600}}," +
                 "Class:Class,Class:String,Class:StringView,Class:Vertex,Class:Edge,Class:Integer,Class:Decimal,Class:Float,Class:Boolean,Class:ListAndEnum,Class:Debug," +
                 "Class:Wrap," +
                 "Class:List{Attribute:IsMetaRightAlign{$MinCardinality:1,$MaxCardinality:1},Attribute:IsAllVisualisersEdit{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowMeta{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Association:GridStyle{$MinCardinality:1,$MaxCardinality:1}}," +
@@ -4551,15 +4550,21 @@ namespace m0
             sm.Get(false, @"Visualiser\Graph3D").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\HasSelectedEdges"));
             sm.Get(false, @"Visualiser\Graph3D").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.UIWpf.Visualisers.GraphVisualiser3D, m0_desktop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             sm.Get(false, @"Visualiser\Graph3D").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
-            sm.Get(false, @"Visualiser\Graph3D\VisualiserCircleSize").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Integer"));
-            sm.Get(false, @"Visualiser\Graph3D\VisualiserCircleSize").AddVertex(sm.Get(false, @"?MinValue"), 50);
-            sm.Get(false, @"Visualiser\Graph3D\VisualiserCircleSize").AddVertex(sm.Get(false, @"?MaxValue"), 500);
+            sm.Get(false, @"Visualiser\Graph3D\EdgeLength").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Integer"));
+            sm.Get(false, @"Visualiser\Graph3D\EdgeLength").AddVertex(sm.Get(false, @"?MinValue"), 50);
+            sm.Get(false, @"Visualiser\Graph3D\EdgeLength").AddVertex(sm.Get(false, @"?MaxValue"), 500);
+            sm.Get(false, @"Visualiser\Graph3D\LabelSize").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Integer"));
+            sm.Get(false, @"Visualiser\Graph3D\LabelSize").AddVertex(sm.Get(false, @"?MinValue"), 0);
+            sm.Get(false, @"Visualiser\Graph3D\LabelSize").AddVertex(sm.Get(false, @"?MaxValue"), 200);
+
+            sm.Get(false, @"Visualiser\Graph3D\IconsOnSpheres").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
+            sm.Get(false, @"Visualiser\Graph3D\IconsOnLabels").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
+
             sm.Get(false, @"Visualiser\Graph3D\NumberOfCircles").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Integer"));
             sm.Get(false, @"Visualiser\Graph3D\NumberOfCircles").AddVertex(sm.Get(false, @"?MinValue"), 1);
             sm.Get(false, @"Visualiser\Graph3D\NumberOfCircles").AddVertex(sm.Get(false, @"?MaxValue"), 10);
             sm.Get(false, @"Visualiser\Graph3D\ShowOutEdges").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
-            sm.Get(false, @"Visualiser\Graph3D\ShowInEdges").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
-            sm.Get(false, @"Visualiser\Graph3D\FastMode").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
+            sm.Get(false, @"Visualiser\Graph3D\ShowInEdges").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));            
             sm.Get(false, @"Visualiser\Graph3D\MetaLabels").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             sm.Get(false, @"Visualiser\Graph3D").AddEdge(sm.Get(false, @"Visualiser\BaseEdgeTarget"), sm.Get(false, @"Visualiser\BaseEdgeTarget\Any"));
 
@@ -4569,27 +4574,6 @@ namespace m0
             sm.Get(false, @"Visualiser\Graph3D\SphereSize").AddEdge(sm.Get(false, @" ?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Integer"));
             sm.Get(false, @"Visualiser\Graph3D\ShowLabels3D").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             sm.Get(false, @"Visualiser\Graph3D\MaxVertices3D").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Integer"));
-
-            //
-
-            sm.Get(false, @"Visualiser\Graph3D2").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\UX\UXItem"));
-            sm.Get(false, @"Visualiser\Graph3D2").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\HasSelectedEdges"));
-            sm.Get(false, @"Visualiser\Graph3D2").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.UIWpf.Visualisers.GraphVisualiser3D2, m0_desktop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            sm.Get(false, @"Visualiser\Graph3D2").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
-            sm.Get(false, @"Visualiser\Graph3D2\VisualiserCircleSize").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Integer"));
-            sm.Get(false, @"Visualiser\Graph3D2\VisualiserCircleSize").AddVertex(sm.Get(false, @"?MinValue"), 50);
-            sm.Get(false, @"Visualiser\Graph3D2\VisualiserCircleSize").AddVertex(sm.Get(false, @"?MaxValue"), 500);
-            sm.Get(false, @"Visualiser\Graph3D2\NumberOfCircles").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Integer"));
-            sm.Get(false, @"Visualiser\Graph3D2\NumberOfCircles").AddVertex(sm.Get(false, @"?MinValue"), 1);
-            sm.Get(false, @"Visualiser\Graph3D2\NumberOfCircles").AddVertex(sm.Get(false, @"?MaxValue"), 10);
-            sm.Get(false, @"Visualiser\Graph3D2\ShowOutEdges").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
-            sm.Get(false, @"Visualiser\Graph3D2\ShowInEdges").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
-            sm.Get(false, @"Visualiser\Graph3D2\FastMode").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
-            sm.Get(false, @"Visualiser\Graph3D2\MetaLabels").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
-            sm.Get(false, @"Visualiser\Graph3D2").AddEdge(sm.Get(false, @"Visualiser\BaseEdgeTarget"), sm.Get(false, @"Visualiser\BaseEdgeTarget\Any"));
-            
-            sm.Get(false, @"Visualiser\Graph3D2\SphereSize").AddEdge(sm.Get(false, @" ?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Integer"));
-            sm.Get(false, @"Visualiser\Graph3D2\ShowLabels3D").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
 
             //
 

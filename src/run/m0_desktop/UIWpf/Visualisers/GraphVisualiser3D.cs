@@ -512,6 +512,7 @@ namespace m0.UIWpf.Visualisers
         private bool animationInProgress;
         private bool mouseIsDown;
         private bool cameraDragActive;
+        private bool doubleClickHandled;
         private Point dragStart;
         private double yawAtDragStart;
         private double pitchAtDragStart;
@@ -519,21 +520,21 @@ namespace m0.UIWpf.Visualisers
         private double cameraPitch = 0.45;
         private double cameraDistance = 900;
 
-        private bool fastMode;
         private bool metaLabels;
         private bool showOutEdges;
         private bool showInEdges;
         private int maxVertices;
         private double sphereSize;
+        private double labelScale = 1.0;
 
         internal double EdgeRadius { get; private set; }
         internal double ArrowRadius { get; private set; }
         internal double ArrowLength { get; private set; }
 
         private static readonly string[] _MetaTriggeringUpdateVertex = new string[] {
-            "VisualiserCircleSize", "NumberOfCircles", "ShowOutEdges", "ShowInEdges",
-            "FastMode", "MetaLabels", "LayoutMode3D", "TransitionStyle",
-            "TransitionDurationMs", "SphereSize", "MaxVertices3D"
+            "CircleLength", "NumberOfCircles", "ShowOutEdges", "ShowInEdges",
+            "MetaLabels", "LayoutMode3D", "TransitionStyle",
+            "TransitionDurationMs", "SphereSize", "MaxVertices3D", "LabelSize"
         };
         public string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
@@ -646,7 +647,6 @@ namespace m0.UIWpf.Visualisers
             Stopwatch sw = Stopwatch.StartNew();
             isPainting = true;
 
-            fastMode = GeneralUtil.CompareStrings(Vertex.Get(false, "FastMode:"), "True");
             metaLabels = !GeneralUtil.CompareStrings(Vertex.Get(false, "MetaLabels:"), "False");
             showOutEdges = !GeneralUtil.CompareStrings(Vertex.Get(false, "ShowOutEdges:"), "False");
             showInEdges = GeneralUtil.CompareStrings(Vertex.Get(false, "ShowInEdges:"), "True");
@@ -654,12 +654,16 @@ namespace m0.UIWpf.Visualisers
             if (maxVertices <= 0) maxVertices = 250;
             sphereSize = GraphUtil.GetIntegerValueOr0(Vertex.Get(false, "SphereSize:"));
             if (sphereSize <= 0) sphereSize = 22;
+            labelScale = ((double)(GraphUtil.GetIntegerValue(Vertex.Get(false, "LabelSize:")) ?? 100)) / 100.0;
+            if (labelScale <= 0) labelScale = 1.0;
             EdgeRadius = Math.Max(1.5, sphereSize * 0.08);
             ArrowRadius = Math.Max(4, sphereSize * 0.22);
             ArrowLength = Math.Max(12, sphereSize * 0.8);
 
             ClearScene();
 
+            BeginAnimation(OpacityProperty, null);
+            Opacity = 1;
             sceneRotation.BeginAnimation(AxisAngleRotation3D.AngleProperty, null);
             sceneRotation.Angle = 0;
             sceneScale.BeginAnimation(ScaleTransform3D.ScaleXProperty, null);
@@ -731,7 +735,7 @@ namespace m0.UIWpf.Visualisers
         private void BuildGraph(IVertex baseTo, LayoutAlgorithm3DEnum layout)
         {
             int numberOfCircles = GraphUtil.GetIntegerValue(Vertex.Get(false, "NumberOfCircles:")) ?? 2;
-            int circleSize = GraphUtil.GetIntegerValueOr0(Vertex.Get(false, "VisualiserCircleSize:"));
+            int circleSize = GraphUtil.GetIntegerValueOr0(Vertex.Get(false, "CircleLength:"));
             if (circleSize <= 0) circleSize = 200;
 
             AddNode(baseTo, new Point3D(0, 0, 0), true);
@@ -984,9 +988,11 @@ namespace m0.UIWpf.Visualisers
             TextBlock label = new TextBlock
             {
                 Text = string.IsNullOrEmpty(text) ? "Ø" : text,
-                Padding = isEdge ? new Thickness(3, 0, 3, 0) : new Thickness(5, 1, 5, 1),
+                Padding = isEdge
+                    ? new Thickness(3 * labelScale, 0, 3 * labelScale, 0)
+                    : new Thickness(5 * labelScale, 1 * labelScale, 5 * labelScale, 1 * labelScale),
                 TextAlignment = TextAlignment.Center,
-                FontSize = isEdge ? 10 : 12,
+                FontSize = (isEdge ? 10 : 12) * labelScale,
                 Foreground = new SolidColorBrush(isEdge
                     ? GetThemeColor("0LightGrayBrush", Colors.LightGray)
                     : GetThemeColor("0ForegroundBrush", Colors.White)),
@@ -1092,6 +1098,22 @@ namespace m0.UIWpf.Visualisers
 
         private void GraphVisualiser3D_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            GraphVisualiser3DNode hit = HitTestVertexAt(e.GetPosition(viewport));
+            if (e.ClickCount == 2 && hit != null)
+            {
+                doubleClickHandled = true;
+                mouseIsDown = false;
+                cameraDragActive = false;
+
+                if (IsMouseCaptured)
+                    ReleaseMouseCapture();
+
+                ChangeBaseEdge(hit);
+                e.Handled = true;
+                return;
+            }
+
+            doubleClickHandled = false;
             mouseIsDown = true;
             cameraDragActive = false;
             dragStart = e.GetPosition(this);
@@ -1130,14 +1152,18 @@ namespace m0.UIWpf.Visualisers
 
             mouseIsDown = false;
 
+            if (doubleClickHandled)
+            {
+                doubleClickHandled = false;
+                cameraDragActive = false;
+                e.Handled = true;
+                return;
+            }
+
             GraphVisualiser3DNode hit = HitTestVertexAt(e.GetPosition(viewport));
             if (!cameraDragActive && hit != null)
             {
-                if (e.ClickCount == 2)
-                    ChangeBaseEdge(hit);
-                else
-                    ToggleSelection(hit);
-
+                ToggleSelection(hit);
                 e.Handled = true;
             }
 
@@ -1277,6 +1303,7 @@ namespace m0.UIWpf.Visualisers
             TransitionStyle3DEnum style = TransitionStyle3DEnumHelper.GetEnum(Vertex.Get(false, "TransitionStyle:"));
             if (!targetOnScene || style == TransitionStyle3DEnum.Cut)
             {
+                ResetTransitionVisualState(false);
                 PaintGraph();
                 return;
             }
@@ -1327,6 +1354,7 @@ namespace m0.UIWpf.Visualisers
             {
                 animationInProgress = false;
                 PaintGraph();
+                ResetTransitionVisualState(false);
             };
 
             sceneRotation.BeginAnimation(AxisAngleRotation3D.AngleProperty, rotate);
@@ -1351,8 +1379,9 @@ namespace m0.UIWpf.Visualisers
 
             fade.Completed += (s, e) =>
             {
-                PaintGraph();
+                BeginAnimation(OpacityProperty, null);
                 Opacity = 1;
+                PaintGraph();
                 Point3D defaultCamera = CurrentCameraPositionFromAngles();
                 Point3DAnimation flyOut = new Point3DAnimation(camera.Position, defaultCamera,
                     TimeSpan.FromMilliseconds(durationMs / 2))
@@ -1362,7 +1391,7 @@ namespace m0.UIWpf.Visualisers
                 flyOut.Completed += (s2, e2) =>
                 {
                     animationInProgress = false;
-                    UpdateCamera();
+                    ResetTransitionVisualState(true);
                     UpdateLabels();
                 };
                 camera.BeginAnimation(ProjectionCamera.PositionProperty, flyOut);
@@ -1391,6 +1420,7 @@ namespace m0.UIWpf.Visualisers
                 scaleUp.Completed += (s2, e2) =>
                 {
                     animationInProgress = false;
+                    ResetTransitionVisualState(false);
                     UpdateLabels();
                 };
 
@@ -1402,6 +1432,22 @@ namespace m0.UIWpf.Visualisers
             sceneScale.BeginAnimation(ScaleTransform3D.ScaleXProperty, scaleDown);
             sceneScale.BeginAnimation(ScaleTransform3D.ScaleYProperty, scaleDown);
             sceneScale.BeginAnimation(ScaleTransform3D.ScaleZProperty, scaleDown);
+        }
+
+        private void ResetTransitionVisualState(bool resetCameraAnimation)
+        {
+            BeginAnimation(OpacityProperty, null);
+            Opacity = 1;
+
+            sceneScale.BeginAnimation(ScaleTransform3D.ScaleXProperty, null);
+            sceneScale.BeginAnimation(ScaleTransform3D.ScaleYProperty, null);
+            sceneScale.BeginAnimation(ScaleTransform3D.ScaleZProperty, null);
+            sceneScale.ScaleX = 1;
+            sceneScale.ScaleY = 1;
+            sceneScale.ScaleZ = 1;
+
+            if (resetCameraAnimation)
+                UpdateCamera();
         }
 
         private Point3D CurrentCameraPositionFromAngles()
@@ -1429,6 +1475,8 @@ namespace m0.UIWpf.Visualisers
                 LayoutTransform = new ScaleTransform(scale, scale);
             else
                 LayoutTransform = null;
+
+            UpdateLabels();
         }
 
         private void CopySelectedVerticesToTemp()
@@ -1518,9 +1566,9 @@ namespace m0.UIWpf.Visualisers
         protected void SetVertexDefaultValues()
         {
             Vertex.Get(false, "Scale:").Value = 100;
-            Vertex.Get(false, "VisualiserCircleSize:").Value = 210;
-            Vertex.Get(false, "NumberOfCircles:").Value = 2;
-            Vertex.Get(false, "FastMode:").Value = "True";
+            Vertex.Get(false, "CircleLength:").Value = 210;
+            Vertex.Get(false, "NumberOfCircles:").Value = 1;
+            Vertex.Get(false, "LabelSize:").Value = 100;
             Vertex.Get(false, "MetaLabels:").Value = "True";
             Vertex.Get(false, "ShowOutEdges:").Value = "True";
             Vertex.Get(false, "ShowInEdges:").Value = "False";
