@@ -1188,6 +1188,19 @@ namespace m0.UIWpf.Visualisers
         private double GetCanvasWidth()  { return this.Width  > 0 ? this.Width  : Math.Max(this.ActualWidth,  800); }
         private double GetCanvasHeight() { return this.Height > 0 ? this.Height : Math.Max(this.ActualHeight, 800); }
 
+        private void ExpandCanvasForRelaxedLayout(double factor)
+        {
+            int numberOfCircles = GraphUtil.GetIntegerValue(Vertex.Get(false, "NumberOfCircles:")) ?? 2;
+            int circleSize = GraphUtil.GetIntegerValueOr0(Vertex.Get(false, "VisualiserCircleSize:"));
+            if (circleSize <= 0) circleSize = 200;
+
+            double baseSize = Math.Max(800, numberOfCircles * circleSize * 2);
+            double relaxedSize = baseSize * factor;
+
+            if (Width < relaxedSize) Width = relaxedSize;
+            if (Height < relaxedSize) Height = relaxedSize;
+        }
+
         // 1) RADIAL (improved BFS) ==========================================
 
         private void ApplyRadialLayout(List<SimpleVisualiserWrapper> wrappers)
@@ -1290,11 +1303,13 @@ namespace m0.UIWpf.Visualisers
         {
             Dictionary<SimpleVisualiserWrapper, List<SimpleVisualiserWrapper>> adj = BuildUndirectedAdjacency(wrappers);
 
+            ExpandCanvasForRelaxedLayout(2.0);
+
             double width = GetCanvasWidth();
             double height = GetCanvasHeight();
             int n = wrappers.Count;
             double area = width * height;
-            double k = Math.Sqrt(area / Math.Max(1, n)) * 2.0;
+            double k = Math.Sqrt(area / Math.Max(1, n));
 
             Random rand = new Random(42);
             Dictionary<SimpleVisualiserWrapper, Point> pos = new Dictionary<SimpleVisualiserWrapper, Point>();
@@ -1549,6 +1564,8 @@ namespace m0.UIWpf.Visualisers
 
         private void ApplyKamadaKawaiLayout(List<SimpleVisualiserWrapper> wrappers)
         {
+            ExpandCanvasForRelaxedLayout(2.0);
+
             int n = wrappers.Count;
             Dictionary<SimpleVisualiserWrapper, List<SimpleVisualiserWrapper>> adj = BuildUndirectedAdjacency(wrappers);
 
@@ -1574,7 +1591,7 @@ namespace m0.UIWpf.Visualisers
                 foreach (int v in kv.Value.Values) if (v > diameter) diameter = v;
 
             double canvasSize = Math.Min(GetCanvasWidth(), GetCanvasHeight());
-            double L = (canvasSize * 0.8) / diameter * 2.0;
+            double L = (canvasSize * 0.8) / diameter;
             double K = 1.0;
 
             // Initial positions on a circle.
