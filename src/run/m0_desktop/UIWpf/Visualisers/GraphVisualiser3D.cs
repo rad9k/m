@@ -234,7 +234,7 @@ namespace m0.UIWpf.Visualisers
         {
             parentVisualiser = parent;
 
-            shaftMaterial = new DiffuseMaterial(CreateAnimatedZebraBrush(parent.GetThemeColor("0LightGrayBrush", Colors.LightGray), false));
+            shaftMaterial = new DiffuseMaterial(CreateShaftBrush(parent.GetThemeColor("0LightGrayBrush", Colors.LightGray), false));
             shaftEmissive = new EmissiveMaterial(new SolidColorBrush(Colors.Black));
             headMaterial = new DiffuseMaterial(new SolidColorBrush(parent.GetThemeColor("0LightGrayBrush", Colors.LightGray)));
             headEmissive = new EmissiveMaterial(new SolidColorBrush(Colors.Black));
@@ -336,7 +336,7 @@ namespace m0.UIWpf.Visualisers
                 : parentVisualiser.GetThemeColor("0LightGrayBrush", Colors.LightGray);
             Color glow = highlighted ? color : Colors.Black;
 
-            shaftMaterial.Brush = CreateAnimatedZebraBrush(color, highlighted);
+            shaftMaterial.Brush = CreateShaftBrush(color, highlighted);
             headMaterial.Brush = new SolidColorBrush(color);
             shaftEmissive.Brush = new SolidColorBrush(glow);
             headEmissive.Brush = new SolidColorBrush(glow);
@@ -348,6 +348,14 @@ namespace m0.UIWpf.Visualisers
                     : parentVisualiser.GetThemeColor("0LightGrayBrush", Colors.LightGray));
                 Panel.SetZIndex(MetaLabel, highlighted ? 8500 : 900);
             }
+        }
+
+        private Brush CreateShaftBrush(Color baseColor, bool highlighted)
+        {
+            if (!parentVisualiser.AnimateEdges)
+                return new SolidColorBrush(baseColor);
+
+            return CreateAnimatedZebraBrush(baseColor, highlighted);
         }
 
         private Brush CreateAnimatedZebraBrush(Color baseColor, bool highlighted)
@@ -572,6 +580,7 @@ namespace m0.UIWpf.Visualisers
         private bool metaLabels;
         private bool showOutEdges;
         private bool showInEdges;
+        private bool animateEdges;
         private int maxVertices;
         private double sphereSize;
         private double scale = 1.0;
@@ -580,11 +589,13 @@ namespace m0.UIWpf.Visualisers
         internal double EdgeRadius { get; private set; }
         internal double ArrowRadius { get; private set; }
         internal double ArrowLength { get; private set; }
+        internal bool AnimateEdges { get { return animateEdges; } }
 
         private static readonly string[] _MetaTriggeringUpdateVertex = new string[] {
             "EdgeLength", "NumberOfCircles", "ShowOutEdges", "ShowInEdges",
             "MetaLabels", "LayoutMode3D", "TransitionStyle",
-            "TransitionDurationMs", "SphereSize", "MaxVertices3D", "LabelSize"
+            "TransitionDurationMs", "SphereSize", "MaxVertices3D", "LabelSize",
+            "AnimateEdges"
         };
         public string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
@@ -704,6 +715,8 @@ namespace m0.UIWpf.Visualisers
             metaLabels = !GeneralUtil.CompareStrings(Vertex.Get(false, "MetaLabels:"), "False");
             showOutEdges = !GeneralUtil.CompareStrings(Vertex.Get(false, "ShowOutEdges:"), "False");
             showInEdges = GeneralUtil.CompareStrings(Vertex.Get(false, "ShowInEdges:"), "True");
+            bool animateEdgesIsNull = false;
+            animateEdges = GraphUtil.GetBooleanValue(Vertex.Get(false, "AnimateEdges:"), ref animateEdgesIsNull);
             maxVertices = GraphUtil.GetIntegerValueOr0(Vertex.Get(false, "MaxVertices3D:"));
             if (maxVertices <= 0) maxVertices = 250;
             sphereSize = GraphUtil.GetIntegerValueOr0(Vertex.Get(false, "SphereSize:"));
@@ -1068,7 +1081,7 @@ namespace m0.UIWpf.Visualisers
 
         private void ApplyLabelSize(TextBlock label, bool isEdge)
         {
-            double effectiveLabelScale = Math.Max(0.01, labelScale * scale);
+            double effectiveLabelScale = Math.Max(0.01, labelScale * Math.Max(0.01, scale));
             label.Padding = isEdge
                 ? new Thickness(3 * effectiveLabelScale, 0, 3 * effectiveLabelScale, 0)
                 : new Thickness(5 * effectiveLabelScale, 1 * effectiveLabelScale, 5 * effectiveLabelScale, 1 * effectiveLabelScale);
@@ -1094,6 +1107,14 @@ namespace m0.UIWpf.Visualisers
         {
             if (labelOverlay == null || camera == null)
                 return;
+
+            if (scale <= 0)
+            {
+                foreach (GraphVisualiser3DLabel label in labels)
+                    label.Element.Visibility = Visibility.Collapsed;
+
+                return;
+            }
 
             foreach (GraphVisualiser3DLabel label in labels)
             {
@@ -1503,7 +1524,7 @@ namespace m0.UIWpf.Visualisers
             handler = (s, e) =>
             {
                 double t = Math.Min(1.0, stopwatch.Elapsed.TotalMilliseconds / safeDuration);
-                double eased = EaseOutCubic(t);
+                double eased = EaseInOutCubic(t);
 
                 foreach (KeyValuePair<GraphVisualiser3DNode, Point3D> item in finalPositions)
                 {
@@ -1527,10 +1548,13 @@ namespace m0.UIWpf.Visualisers
             CompositionTarget.Rendering += handler;
         }
 
-        private static double EaseOutCubic(double t)
+        private static double EaseInOutCubic(double t)
         {
-            double p = 1.0 - t;
-            return 1.0 - p * p * p;
+            if (t < 0.5)
+                return 4.0 * t * t * t;
+
+            double p = -2.0 * t + 2.0;
+            return 1.0 - (p * p * p) / 2.0;
         }
 
         private void UpdateAllEdgeVisuals()
@@ -1544,7 +1568,7 @@ namespace m0.UIWpf.Visualisers
             animationInProgress = true;
             DoubleAnimation scaleDown = new DoubleAnimation(1, 0.02, TimeSpan.FromMilliseconds(durationMs / 2))
             {
-                EasingFunction = new QuinticEase { EasingMode = EasingMode.EaseIn }
+                EasingFunction = new QuinticEase { EasingMode = EasingMode.EaseInOut }
             };
 
             scaleDown.Completed += (s, e) =>
@@ -1553,7 +1577,7 @@ namespace m0.UIWpf.Visualisers
 
                 DoubleAnimation scaleUp = new DoubleAnimation(0.02, 1, TimeSpan.FromMilliseconds(durationMs / 2))
                 {
-                    EasingFunction = new QuinticEase { EasingMode = EasingMode.EaseOut }
+                    EasingFunction = new QuinticEase { EasingMode = EasingMode.EaseInOut }
                 };
                 scaleUp.Completed += (s2, e2) =>
                 {
@@ -1619,8 +1643,8 @@ namespace m0.UIWpf.Visualisers
         private void ApplyScaleFromVertex(bool updateExistingLabels)
         {
             scale = ((double)(GraphUtil.GetIntegerValue(Vertex.Get(false, "Scale:")) ?? 100)) / 100.0;
-            if (scale <= 0)
-                scale = 1.0;
+            if (scale < 0)
+                scale = 0;
 
             visualisationScale.ScaleX = scale;
             visualisationScale.ScaleY = scale;
@@ -1725,8 +1749,9 @@ namespace m0.UIWpf.Visualisers
             Vertex.Get(false, "MetaLabels:").Value = "True";
             Vertex.Get(false, "ShowOutEdges:").Value = "True";
             Vertex.Get(false, "ShowInEdges:").Value = "False";
+            Vertex.Get(false, "AnimateEdges:").Value = "True";
             Vertex.Get(false, "LayoutMode3D:").Value = "FibonacciSphereShells";
-            Vertex.Get(false, "TransitionStyle:").Value = "FyToAndSwap";
+            Vertex.Get(false, "TransitionStyle:").Value = "FlyToAndSwap";
             Vertex.Get(false, "TransitionDurationMs:").Value = 1000;
             Vertex.Get(false, "SphereSize:").Value = 22;
             Vertex.Get(false, "MaxVertices3D:").Value = 250;

@@ -19,6 +19,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 
 namespace m0.UIWpf.Visualisers
@@ -28,6 +29,7 @@ namespace m0.UIWpf.Visualisers
         public SimpleVisualiserWrapper ToWrapper;
         public SimpleVisualiserWrapper FromWrapper;
         public TextBlock MetaLabel;
+        public bool IsAnimationOverlay;
     }
 
     public class SimpleVisualiserWrapper : Border, IDisposable
@@ -73,10 +75,10 @@ namespace m0.UIWpf.Visualisers
             HighlightThis();
 
             foreach(Shape e in Lines){
-                e.Stroke = (Brush)FindResource("0LightHighlightBrush");
-                e.Fill = (Brush)FindResource("0LightHighlightBrush");
+                ParentVisualiser.ApplyEdgeStyle(e, true);
 
-                Panel.SetZIndex(e, 99998);
+                LineTagStore edgeTag = e.Tag as LineTagStore;
+                Panel.SetZIndex(e, edgeTag != null && edgeTag.IsAnimationOverlay ? 99997 : 99996);
 
                 if (e.Tag != null)
                 {
@@ -112,8 +114,7 @@ namespace m0.UIWpf.Visualisers
             UnhighlightThis();
 
             foreach(Shape e in Lines){
-                e.Stroke = (Brush)FindResource("0LightGrayBrush");
-                e.Fill = (Brush)FindResource("0LightGrayBrush");
+                ParentVisualiser.ApplyEdgeStyle(e, false);
 
                 Panel.SetZIndex(e, 0);
 
@@ -208,7 +209,7 @@ namespace m0.UIWpf.Visualisers
         public bool IsPaiting=false;
 
 
-        static string[] _MetaTriggeringUpdateVertex = new string[] { "VisualiserCircleSize", "NumberOfCircles", "ShowOutEdges", "ShowInEdges", "FastMode", "MetaLabels" };
+        static string[] _MetaTriggeringUpdateVertex = new string[] { "VisualiserCircleSize", "NumberOfCircles", "ShowOutEdges", "ShowInEdges", "FastMode", "MetaLabels", "AnimateEdges" };
         public string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
         static string[] _MetaTriggeringUpdateView = new string[] { };
@@ -338,10 +339,28 @@ namespace m0.UIWpf.Visualisers
                         
             l.EndEnding = m0.UIWpf.Controls.Fast.LineEndEnum.FilledTriangle;
             l.Fill = (Brush)FindResource("0LightGrayBrush");            
+            ApplyEdgeStyle(l, false);
 
             Panel.SetZIndex(l, 0);            
 
-            Children.Add(l);            
+            Children.Add(l);
+
+            ArrowLine animatedOverlay = new ArrowLine();
+            LineTagStore animatedLineTag = new LineTagStore();
+            animatedLineTag.ToWrapper = ToWrapper;
+            animatedLineTag.FromWrapper = FromWrapper;
+            animatedLineTag.IsAnimationOverlay = true;
+            animatedOverlay.Tag = animatedLineTag;
+            animatedOverlay.X1 = l.X1;
+            animatedOverlay.Y1 = l.Y1;
+            animatedOverlay.X2 = l.X2;
+            animatedOverlay.Y2 = l.Y2;
+            animatedOverlay.EndEnding = m0.UIWpf.Controls.Fast.LineEndEnum.Straight;
+            FromWrapper.Lines.Add(animatedOverlay);
+            ToWrapper.Lines.Add(animatedOverlay);
+            ApplyEdgeStyle(animatedOverlay, false);
+            Panel.SetZIndex(animatedOverlay, 0);
+            Children.Add(animatedOverlay);
 
             if (MetaLabels&&meta.Value!=null&&!GeneralUtil.CompareStrings(meta.Value,"$Empty"))
             {                
@@ -353,6 +372,7 @@ namespace m0.UIWpf.Visualisers
 
                 b.Foreground = (Brush)FindResource("0LightGrayBrush");
 
+                Panel.SetZIndex(b, 2);
                 Children.Add(b);
 
                 lineTag.MetaLabel = b;
@@ -390,6 +410,7 @@ namespace m0.UIWpf.Visualisers
         bool MetaLabels;
         bool ShowOutEdges;
         bool ShowInEdges;
+        bool AnimateEdges;
 
         bool IsFirstPainted = false;
 
@@ -430,6 +451,9 @@ namespace m0.UIWpf.Visualisers
                 else
                     ShowInEdges = false;
 
+                bool animateEdgesIsNull = false;
+                AnimateEdges = GraphUtil.GetBooleanValue(Vertex.Get(false, "AnimateEdges:"), ref animateEdgesIsNull);
+
                 this.Children.Clear();
 
                 foreach (UIElement e in DisplayedVerticesUIElements.Values)
@@ -457,6 +481,48 @@ namespace m0.UIWpf.Visualisers
 
                 //
             }
+        }
+
+        internal void ApplyEdgeStyle(Shape edge, bool highlighted)
+        {
+            LineTagStore tag = edge.Tag as LineTagStore;
+            bool isAnimationOverlay = tag != null && tag.IsAnimationOverlay;
+            Brush brush = highlighted
+                ? (Brush)FindResource("0LightHighlightBrush")
+                : (Brush)FindResource("0LightGrayBrush");
+
+            edge.BeginAnimation(Shape.StrokeDashOffsetProperty, null);
+            edge.StrokeDashOffset = 0;
+
+            if (isAnimationOverlay)
+            {
+                if (!AnimateEdges)
+                {
+                    edge.Visibility = Visibility.Collapsed;
+                    edge.StrokeDashArray = null;
+                    return;
+                }
+
+                edge.Visibility = Visibility.Visible;
+                edge.Stroke = highlighted
+                    ? (Brush)FindResource("0HighlightBrush")
+                    : (Brush)FindResource("0VeryLightGrayBrush");
+                edge.Fill = Brushes.Transparent;
+                edge.StrokeDashArray = new DoubleCollection { 8, 5 };
+                edge.StrokeDashCap = PenLineCap.Flat;
+
+                DoubleAnimation dashAnimation = new DoubleAnimation(0, -13, TimeSpan.FromSeconds(highlighted ? 0.9 : 1.8))
+                {
+                    RepeatBehavior = RepeatBehavior.Forever
+                };
+                edge.BeginAnimation(Shape.StrokeDashOffsetProperty, dashAnimation);
+                return;
+            }
+
+            edge.Visibility = Visibility.Visible;
+            edge.Stroke = brush;
+            edge.Fill = brush;
+            edge.StrokeDashArray = null;
         }
 
         Dictionary<IVertex, SimpleVisualiserWrapper> DisplayedVerticesUIElements;
@@ -616,7 +682,7 @@ namespace m0.UIWpf.Visualisers
             Vertex.Get(false, "NumberOfCircles:").Value = 2;
             Vertex.Get(false, "FastMode:").Value = "True";
             Vertex.Get(false, "MetaLabels:").Value = "True";
-            Vertex.Get(false, "ShowOutEdges:").Value = "True";
+            Vertex.Get(false, "ShowOutEdges:").Value = "True";            
         }        
 
         public void BaseEdgeToUpdated(){
@@ -1228,7 +1294,7 @@ namespace m0.UIWpf.Visualisers
             double height = GetCanvasHeight();
             int n = wrappers.Count;
             double area = width * height;
-            double k = Math.Sqrt(area / Math.Max(1, n));
+            double k = Math.Sqrt(area / Math.Max(1, n)) * 2.0;
 
             Random rand = new Random(42);
             Dictionary<SimpleVisualiserWrapper, Point> pos = new Dictionary<SimpleVisualiserWrapper, Point>();
@@ -1508,7 +1574,7 @@ namespace m0.UIWpf.Visualisers
                 foreach (int v in kv.Value.Values) if (v > diameter) diameter = v;
 
             double canvasSize = Math.Min(GetCanvasWidth(), GetCanvasHeight());
-            double L = (canvasSize * 0.8) / diameter;
+            double L = (canvasSize * 0.8) / diameter * 2.0;
             double K = 1.0;
 
             // Initial positions on a circle.
