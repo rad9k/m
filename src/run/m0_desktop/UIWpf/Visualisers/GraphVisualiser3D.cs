@@ -288,7 +288,11 @@ namespace m0.UIWpf.Visualisers
 
             Vector3D delta = toNode.Position - fromNode.Position;
             double length = delta.Length;
-            if (length < 0.001) return;
+            if (length < 0.001)
+            {
+                CollapseToPoint(fromNode.Position);
+                return;
+            }
 
             Vector3D direction = delta;
             direction.Normalize();
@@ -318,6 +322,23 @@ namespace m0.UIWpf.Visualisers
             headTranslate.OffsetX = end.X;
             headTranslate.OffsetY = end.Y;
             headTranslate.OffsetZ = end.Z;
+        }
+
+        private void CollapseToPoint(Point3D point)
+        {
+            shaftScale.ScaleX = 0;
+            shaftScale.ScaleY = 0;
+            shaftScale.ScaleZ = 0;
+            shaftTranslate.OffsetX = point.X;
+            shaftTranslate.OffsetY = point.Y;
+            shaftTranslate.OffsetZ = point.Z;
+
+            headScale.ScaleX = 0;
+            headScale.ScaleY = 0;
+            headScale.ScaleZ = 0;
+            headTranslate.OffsetX = point.X;
+            headTranslate.OffsetY = point.Y;
+            headTranslate.OffsetZ = point.Z;
         }
 
         public Point3D GetLabelPosition()
@@ -723,8 +744,8 @@ namespace m0.UIWpf.Visualisers
             if (sphereSize <= 0) sphereSize = 22;
             labelScale = ((double)(GraphUtil.GetIntegerValue(Vertex.Get(false, "LabelSize:")) ?? 100)) / 100.0;
             if (labelScale <= 0) labelScale = 1.0;
-            EdgeRadius = Math.Max(1.5, sphereSize * 0.08);
-            ArrowRadius = Math.Max(4, sphereSize * 0.22);
+            EdgeRadius = Math.Max(1.5, sphereSize * 0.08) * 1.5;
+            ArrowRadius = Math.Max(4, sphereSize * 0.22) * 1.5;
             ArrowLength = Math.Max(12, sphereSize * 0.8);
 
             ClearScene();
@@ -1477,9 +1498,9 @@ namespace m0.UIWpf.Visualisers
                 sceneTranslate.BeginAnimation(TranslateTransform3D.OffsetZProperty, null);
                 sceneTranslate.OffsetX = sceneTranslate.OffsetY = sceneTranslate.OffsetZ = 0;
 
-                PaintGraph();
+                Dictionary<GraphVisualiser3DNode, Point3D> growthFinalPositions = PaintGraphCollapsedToBase();
 
-                AnimateNewGraphFromBase(durationMs / 2, () =>
+                AnimateNewGraphFromBase(growthFinalPositions, durationMs / 2, () =>
                 {
                     animationInProgress = false;
                     ResetTransitionVisualState(false);
@@ -1492,21 +1513,9 @@ namespace m0.UIWpf.Visualisers
             sceneTranslate.BeginAnimation(TranslateTransform3D.OffsetZProperty, moveZ);
         }
 
-        private DoubleAnimation CreateSceneMoveAnimation(double from, double to, int durationMs)
+        private Dictionary<GraphVisualiser3DNode, Point3D> PaintGraphCollapsedToBase()
         {
-            return new DoubleAnimation(from, to, TimeSpan.FromMilliseconds(Math.Max(1, durationMs)))
-            {
-                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseInOut }
-            };
-        }
-
-        private void AnimateNewGraphFromBase(int durationMs, Action completed)
-        {
-            if (displayedNodes.Count == 0)
-            {
-                completed();
-                return;
-            }
+            PaintGraph();
 
             Dictionary<GraphVisualiser3DNode, Point3D> finalPositions =
                 displayedNodes.Values.ToDictionary(node => node, node => node.Position);
@@ -1516,6 +1525,25 @@ namespace m0.UIWpf.Visualisers
 
             UpdateAllEdgeVisuals();
             UpdateLabels();
+
+            return finalPositions;
+        }
+
+        private DoubleAnimation CreateSceneMoveAnimation(double from, double to, int durationMs)
+        {
+            return new DoubleAnimation(from, to, TimeSpan.FromMilliseconds(Math.Max(1, durationMs)))
+            {
+                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseInOut }
+            };
+        }
+
+        private void AnimateNewGraphFromBase(Dictionary<GraphVisualiser3DNode, Point3D> finalPositions, int durationMs, Action completed)
+        {
+            if (finalPositions == null || finalPositions.Count == 0)
+            {
+                completed();
+                return;
+            }
 
             Stopwatch stopwatch = Stopwatch.StartNew();
             int safeDuration = Math.Max(1, durationMs);
