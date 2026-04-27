@@ -2,7 +2,7 @@
 
 ## Summary
 
-> Fractal Graphs extend directed graphs by describing every edge with a meta-vertex, making semantics intrinsic to the structure rather than external — so data, metadata, and meta-models are all represented uniformly within a single, self-consistent framework. This enables structural homoiconicity, where data, code, and architecture become different projections of the same underlying graph, eliminating the need to synchronize separate representations across layers. The -zero platform is a practical implementation of this idea, unifying a graph database, modeling environment, diagram editor, textual languages, and a Graph Virtual Machine into one coherent system where requirements, implementation, and documentation coexist without fragmentation.
+> Fractal Graphs extend directed graphs by describing every edge with a meta-vertex, making semantics intrinsic to the structure rather than external — so data, metadata, and meta-models are all represented uniformly within a single, self-consistent framework. This enables structural homoiconicity, where data, code, and architecture become different projections of the same underlying graph, eliminating the need to synchronize separate representations across layers. The [-zero platform](http://tereszczuk.com/-zero) is a practical implementation of this idea, unifying a graph database, modeling environment, diagram editor, textual languages, and a Graph Virtual Machine into one coherent system where requirements, implementation, and documentation coexist without fragmentation.
 
 ## Introduction
 
