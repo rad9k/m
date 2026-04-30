@@ -79,7 +79,7 @@ namespace m0.UIWpf.Controls
             contentPanel.Orientation = Orientation.Horizontal;
             contentPanel.Background = null;
 
-            double enlargedIconSize = WpfUtil.IconSize * 1.5;
+            double enlargedIconSize = WpfUtil.IconSize * 1.0;
             double iconVerticalOverflow = (enlargedIconSize - WpfUtil.IconSize) / 2;
 
             iconImage = new Image();
