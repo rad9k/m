@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using m0.Foundation;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -11,6 +12,7 @@ using m0.ZeroUML;
 using m0.ZeroTypes;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using m0.Graph;
 using m0.UIWpf.Controls;
 using m0.UIWpf.Foundation;
@@ -257,6 +259,8 @@ namespace m0.UIWpf.Visualisers
 
         public TreeVisualiser(IEdge _edge)
         {
+            ApplyTreeViewItemExpanderStyle();
+
             Edge = _edge;
 
             TypedEdge.vertexDictionary.Add(Edge.To, this);
@@ -268,6 +272,8 @@ namespace m0.UIWpf.Visualisers
         public TreeVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile)
         {
             MinusZero mz = MinusZero.Instance;
+
+            ApplyTreeViewItemExpanderStyle();
 
             this.Foreground = (Brush)FindResource("0ForegroundBrush");
             this.Background = (Brush)FindResource("0BackgroundBrush");
@@ -298,6 +304,52 @@ namespace m0.UIWpf.Visualisers
 
                 SetVertexDefaultValues();
             }
+        }
+
+        private void ApplyTreeViewItemExpanderStyle()
+        {
+            Resources["ExpandCollapseToggleStyle"] = CreateFilledExpandCollapseToggleStyle();
+        }
+
+        private static Style CreateFilledExpandCollapseToggleStyle()
+        {
+            Style style = new Style(typeof(ToggleButton));
+
+            style.Setters.Add(new Setter(FocusableProperty, false));
+            style.Setters.Add(new Setter(WidthProperty, 16.0));
+            style.Setters.Add(new Setter(HeightProperty, 16.0));
+
+            ControlTemplate template = new ControlTemplate(typeof(ToggleButton));
+            FrameworkElementFactory grid = new FrameworkElementFactory(typeof(Grid));
+
+            FrameworkElementFactory triangle = new FrameworkElementFactory(typeof(Path));
+            triangle.Name = "ExpandPath";
+            triangle.SetValue(Path.DataProperty, Geometry.Parse("M 5 3 L 11 8 L 5 13 Z"));
+            triangle.SetValue(Path.StretchProperty, Stretch.None);
+            triangle.SetValue(Path.HorizontalAlignmentProperty, HorizontalAlignment.Center);
+            triangle.SetValue(Path.VerticalAlignmentProperty, VerticalAlignment.Center);
+            triangle.SetResourceReference(Path.FillProperty, "0ForegroundBrush");
+            triangle.SetResourceReference(Path.StrokeProperty, "0ForegroundBrush");
+
+            grid.AppendChild(triangle);
+            template.VisualTree = grid;
+
+            Trigger expandedTrigger = new Trigger();
+            expandedTrigger.Property = ToggleButton.IsCheckedProperty;
+            expandedTrigger.Value = true;
+            expandedTrigger.Setters.Add(new Setter(Path.DataProperty, Geometry.Parse("M 3 5 L 13 5 L 8 11 Z"), "ExpandPath"));
+            template.Triggers.Add(expandedTrigger);
+
+            Trigger disabledTrigger = new Trigger();
+            disabledTrigger.Property = IsEnabledProperty;
+            disabledTrigger.Value = false;
+            disabledTrigger.Setters.Add(new Setter(Path.FillProperty, Brushes.Transparent, "ExpandPath"));
+            disabledTrigger.Setters.Add(new Setter(Path.StrokeProperty, Brushes.Transparent, "ExpandPath"));
+            template.Triggers.Add(disabledTrigger);
+
+            style.Setters.Add(new Setter(TemplateProperty, template));
+
+            return style;
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)

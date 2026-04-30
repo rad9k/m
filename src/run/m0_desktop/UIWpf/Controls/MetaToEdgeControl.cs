@@ -72,6 +72,7 @@ namespace m0.UIWpf.Controls
             Background = null;
             BorderThickness = new Thickness(0);
             Padding = new Thickness(0);
+            Margin = new Thickness(-3, 0, 3, 0);
             SnapsToDevicePixels = true;
             UseLayoutRounding = true;
 
@@ -85,7 +86,7 @@ namespace m0.UIWpf.Controls
             iconImage = new Image();
             iconImage.Width = enlargedIconSize;
             iconImage.Height = enlargedIconSize;
-            iconImage.Margin = new Thickness(0, -iconVerticalOverflow, 4, -iconVerticalOverflow);
+            iconImage.Margin = new Thickness(0, -iconVerticalOverflow, 3, -iconVerticalOverflow);
             iconImage.VerticalAlignment = VerticalAlignment.Center;
             iconImage.HorizontalAlignment = HorizontalAlignment.Center;
             iconImage.Stretch = Stretch.Uniform;
@@ -183,6 +184,12 @@ namespace m0.UIWpf.Controls
             object toValue = edge?.To?.Value;
 
             if (toValue == null)
+                return "[$Empty]";
+
+            if (GeneralUtil.CompareStrings(edge?.Meta?.Value, "$Empty") && GeneralUtil.CompareStrings(toValue, "$Empty"))
+                return "[$Empty]";
+
+            if (GeneralUtil.CompareStrings(edge?.Meta?.Value, "$Empty") && GeneralUtil.CompareStrings(toValue, ""))
                 return "[$Empty]";
 
             if (GeneralUtil.CompareStrings(toValue, ""))
