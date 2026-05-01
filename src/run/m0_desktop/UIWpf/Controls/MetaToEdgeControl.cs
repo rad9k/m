@@ -276,9 +276,9 @@ namespace m0.UIWpf.Controls
 
         private string TryFindIconPath(IEdge edge)
         {
-            string iconName = GetIconName(edge);
+            List<string> iconNames = GetIconNameCandidates(edge);
 
-            if (string.IsNullOrWhiteSpace(iconName))
+            if (iconNames.Count == 0)
                 return null;
 
             string iconDirectory = GetIconDirectory();
@@ -286,28 +286,47 @@ namespace m0.UIWpf.Controls
             if (string.IsNullOrWhiteSpace(iconDirectory) || Directory.Exists(iconDirectory) == false)
                 return null;
 
-            string normalizedIconName = iconName.Trim();
-
             lock (IconCacheLock)
             {
                 Dictionary<string, string> requestedIconPathMap = GetRequestedIconPathMap(iconDirectory);
-
-                if (requestedIconPathMap.TryGetValue(normalizedIconName, out string cachedResolvedPath))
-                    return string.IsNullOrWhiteSpace(cachedResolvedPath) ? null : cachedResolvedPath;
-
                 Dictionary<string, string> iconPathMap = GetIconPathMap(iconDirectory);
 
-                iconPathMap.TryGetValue(normalizedIconName, out string exactMatch);
+                foreach (string iconName in iconNames)
+                {
+                    string iconPath = TryResolveIconPath(iconDirectory, requestedIconPathMap, iconPathMap, iconName);
 
-                requestedIconPathMap[normalizedIconName] = exactMatch ?? string.Empty;
+                    if (iconPath != null)
+                        return iconPath;
+                }
 
-                if (exactMatch == null)
-                    MinusZero.Instance.Log(1, "MetaToEdgeControl", "no icon match for '" + normalizedIconName + "' in '" + iconDirectory + "'");
-                else
-                    MinusZero.Instance.Log(1, "MetaToEdgeControl", "resolved icon '" + normalizedIconName + "' -> '" + exactMatch + "'");
-
-                return exactMatch;
+                return null;
             }
+        }
+
+        private string TryResolveIconPath(
+            string iconDirectory,
+            Dictionary<string, string> requestedIconPathMap,
+            Dictionary<string, string> iconPathMap,
+            string iconName)
+        {
+            if (string.IsNullOrWhiteSpace(iconName))
+                return null;
+
+            string normalizedIconName = iconName.Trim();
+
+            if (requestedIconPathMap.TryGetValue(normalizedIconName, out string cachedResolvedPath))
+                return string.IsNullOrWhiteSpace(cachedResolvedPath) ? null : cachedResolvedPath;
+
+            iconPathMap.TryGetValue(normalizedIconName, out string exactMatch);
+
+            requestedIconPathMap[normalizedIconName] = exactMatch ?? string.Empty;
+
+            if (exactMatch == null)
+                MinusZero.Instance.Log(1, "MetaToEdgeControl", "no icon match for '" + normalizedIconName + "' in '" + iconDirectory + "'");
+            else
+                MinusZero.Instance.Log(1, "MetaToEdgeControl", "resolved icon '" + normalizedIconName + "' -> '" + exactMatch + "'");
+
+            return exactMatch;
         }
 
         private string GetIconDirectory()
@@ -327,19 +346,36 @@ namespace m0.UIWpf.Controls
             return Path.Combine(iconsRootDirectory, metaIconDirectoryName);
         }
 
-        private string GetIconName(IEdge edge)
+        private List<string> GetIconNameCandidates(IEdge edge)
         {
-            string iconNameFromIsEdge = GetIconNameFromIsEdge(edge);
-
-            if (string.IsNullOrWhiteSpace(iconNameFromIsEdge) == false)
-                return iconNameFromIsEdge;
+            List<string> iconNames = new List<string>();
 
             object metaValue = edge?.Meta?.Value;
+            bool isMetaEmpty = GeneralUtil.CompareStrings(metaValue, "$Empty");
 
-            if (metaValue == null)
-                return null;
+            if (metaValue != null && isMetaEmpty == false)
+                AddIconNameCandidate(iconNames, metaValue.ToString());
 
-            return metaValue.ToString();
+            if (edge?.To?.Value != null)
+                AddIconNameCandidate(iconNames, edge.To.Value.ToString());
+
+            if (isMetaEmpty)
+                AddIconNameCandidate(iconNames, "$Empty");
+
+            AddIconNameCandidate(iconNames, GetIconNameFromIsEdge(edge));
+
+            return iconNames;
+        }
+
+        private void AddIconNameCandidate(List<string> iconNames, string iconName)
+        {
+            if (string.IsNullOrWhiteSpace(iconName))
+                return;
+
+            if (iconNames.Any(existingIconName => GeneralUtil.CompareStrings(existingIconName, iconName)))
+                return;
+
+            iconNames.Add(iconName);
         }
 
         private static Dictionary<string, string> GetIconPathMap(string iconDirectory)

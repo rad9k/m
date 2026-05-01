@@ -11,7 +11,7 @@
                 <avalonDock:LayoutPanel Orientation="Horizontal" >
                 <avalonDock:LayoutDocumentPane x:Name="Pane"/>
                     <avalonDock:LayoutAnchorablePane DockWidth="250">
-                        <avalonDock:LayoutAnchorable Title="root" x:Name="root" CanClose="False" CanHide="False"/>
+                        <avalonDock:LayoutAnchorable Title="" x:Name="root" CanClose="False" CanHide="False" CanAutoHide="False" CanDockAsTabbedDocument="False" CanFloat="True" />
                             
                     </avalonDock:LayoutAnchorablePane>
                 </avalonDock:LayoutPanel>                

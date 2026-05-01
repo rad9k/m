@@ -63,6 +63,8 @@ namespace m0
 
             mainTree = new TreeVisualiser(baseEdgeVertex, null, false);
 
+            mainTree.Background = (Brush)FindResource("0VeryLightGrayBrush");
+
             this.root.Content = mainTree;
         }
 

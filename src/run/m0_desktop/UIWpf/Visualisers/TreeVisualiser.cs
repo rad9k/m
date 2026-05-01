@@ -12,7 +12,9 @@ using m0.ZeroUML;
 using m0.ZeroTypes;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using m0.Graph;
 using m0.UIWpf.Controls;
 using m0.UIWpf.Foundation;
@@ -34,6 +36,10 @@ namespace m0.UIWpf.Visualisers
         public static bool HideMetaNameIfEmpty = true;
 
         public bool IsFilled;        
+
+        private bool ignoreNextMouseLeftButtonUp;
+        private bool isExpandCollapseAnimationInProgress;
+        private ToggleButton expanderToggleButton;
 
         private void Select(bool IsCtrl)
         {
@@ -67,6 +73,33 @@ namespace m0.UIWpf.Visualisers
 
         public TreeVisualiser ParentVisualiser {get; set;}
 
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            if (expanderToggleButton != null)
+                expanderToggleButton.PreviewMouseLeftButtonDown -= ExpanderToggleButtonPreviewMouseLeftButtonDown;
+
+            expanderToggleButton = GetTemplateChild("Expander") as ToggleButton;
+
+            if (expanderToggleButton != null)
+            {
+                expanderToggleButton.Focusable = false;
+                expanderToggleButton.Width = 48;
+                expanderToggleButton.Height = 16;
+                expanderToggleButton.Margin = new Thickness(0, 0, -32, 0);
+                expanderToggleButton.Template = TreeVisualiser.CreateFilledExpandCollapseToggleTemplate();
+                expanderToggleButton.PreviewMouseLeftButtonDown += ExpanderToggleButtonPreviewMouseLeftButtonDown;
+            }
+        }
+
+        private void ExpanderToggleButtonPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            ToggleExpandedWithAnimation();
+            ignoreNextMouseLeftButtonUp = true;
+            e.Handled = true;
+        }
+
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
             if (e.ClickCount == 2)
@@ -75,6 +108,14 @@ namespace m0.UIWpf.Visualisers
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs a)
         {
+            if (IsInExpandCollapseClickArea(a.GetPosition(this)))
+            {
+                ToggleExpandedWithAnimation();
+                ignoreNextMouseLeftButtonUp = true;
+                a.Handled = true;
+                return;
+            }
+
             a.Handled = true;
         }
 
@@ -85,6 +126,13 @@ namespace m0.UIWpf.Visualisers
 
         protected override void OnMouseLeftButtonUp(MouseButtonEventArgs a)
         {
+            if (ignoreNextMouseLeftButtonUp)
+            {
+                ignoreNextMouseLeftButtonUp = false;
+                a.Handled = true;
+                return;
+            }
+
             bool IsCtrl = false;
 
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
@@ -105,6 +153,25 @@ namespace m0.UIWpf.Visualisers
             //base.OnMouseLeftButtonDown(a);
         }        
 
+        private bool IsInExpandCollapseClickArea(Point position)
+        {
+            if (HasItems == false)
+                return false;
+
+            FrameworkElement headerElement = Header as FrameworkElement;
+
+            if (headerElement == null || headerElement.IsVisible == false)
+                return false;
+
+            Point headerPosition = headerElement.TranslatePoint(new Point(0, 0), this);
+            double headerBottom = headerPosition.Y + headerElement.ActualHeight;
+
+            return position.X >= 0 &&
+                position.X < headerPosition.X &&
+                position.Y >= headerPosition.Y &&
+                position.Y <= headerBottom;
+        }
+
         void Fill()
         {
             TreeVisualiser.ClearAllItems_Reccurent(this);
@@ -120,7 +187,109 @@ namespace m0.UIWpf.Visualisers
             if (IsFilled == false)
                 Fill();
 
-            IsFilled = true;                        
+            IsFilled = true;
+
+            if (isExpandCollapseAnimationInProgress == false)
+                BeginExpandAnimation();
+        }
+
+        protected override void OnCollapsed(RoutedEventArgs e)
+        {
+            ResetChildItemAnimations();
+        }
+
+        private void ToggleExpandedWithAnimation()
+        {
+            if (HasItems == false || isExpandCollapseAnimationInProgress)
+                return;
+
+            isExpandCollapseAnimationInProgress = true;
+
+            if (IsExpanded)
+            {
+                AnimateChildItems(false, delegate
+                {
+                    IsExpanded = false;
+                    ResetChildItemAnimations();
+                    isExpandCollapseAnimationInProgress = false;
+                });
+            }
+            else
+            {
+                IsExpanded = true;
+                BeginExpandAnimation();
+            }
+        }
+
+        private void BeginExpandAnimation()
+        {
+            Dispatcher.BeginInvoke(new Action(delegate
+            {
+                AnimateChildItems(true, delegate
+                {
+                    isExpandCollapseAnimationInProgress = false;
+                });
+            }), DispatcherPriority.Loaded);
+        }
+
+        private void AnimateChildItems(bool expand, EventHandler completed)
+        {
+            List<FrameworkElement> childElements = Items
+                .OfType<FrameworkElement>()
+                .ToList();
+
+            if (childElements.Count == 0)
+            {
+                completed?.Invoke(this, EventArgs.Empty);
+                return;
+            }
+
+            TimeSpan duration = TimeSpan.FromMilliseconds(expand ? 85 : 65);
+            IEasingFunction easingFunction = new QuadraticEase { EasingMode = expand ? EasingMode.EaseOut : EasingMode.EaseIn };
+
+            for (int index = 0; index < childElements.Count; index++)
+            {
+                FrameworkElement childElement = childElements[index];
+                TranslateTransform translateTransform = childElement.RenderTransform as TranslateTransform;
+
+                if (translateTransform == null)
+                {
+                    translateTransform = new TranslateTransform();
+                    childElement.RenderTransform = translateTransform;
+                }
+
+                childElement.Opacity = expand ? 0 : 1;
+                translateTransform.Y = expand ? -5 : 0;
+
+                DoubleAnimation opacityAnimation = new DoubleAnimation(expand ? 1 : 0, new Duration(duration));
+                opacityAnimation.EasingFunction = easingFunction;
+
+                DoubleAnimation translateAnimation = new DoubleAnimation(expand ? 0 : -5, new Duration(duration));
+                translateAnimation.EasingFunction = easingFunction;
+
+                if (index == childElements.Count - 1)
+                    opacityAnimation.Completed += completed;
+
+                childElement.BeginAnimation(OpacityProperty, opacityAnimation);
+                translateTransform.BeginAnimation(TranslateTransform.YProperty, translateAnimation);
+            }
+        }
+
+        private void ResetChildItemAnimations()
+        {
+            foreach (FrameworkElement childElement in Items.OfType<FrameworkElement>())
+            {
+                childElement.BeginAnimation(OpacityProperty, null);
+                childElement.Opacity = 1;
+
+                TranslateTransform translateTransform = childElement.RenderTransform as TranslateTransform;
+
+                if (translateTransform != null)
+                {
+                    translateTransform.BeginAnimation(TranslateTransform.YProperty, null);
+                    translateTransform.Y = 0;
+                }
+            }
         }
 
         public void UpdateHeader()
@@ -259,8 +428,6 @@ namespace m0.UIWpf.Visualisers
 
         public TreeVisualiser(IEdge _edge)
         {
-            ApplyTreeViewItemExpanderStyle();
-
             Edge = _edge;
 
             TypedEdge.vertexDictionary.Add(Edge.To, this);
@@ -272,8 +439,6 @@ namespace m0.UIWpf.Visualisers
         public TreeVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile)
         {
             MinusZero mz = MinusZero.Instance;
-
-            ApplyTreeViewItemExpanderStyle();
 
             this.Foreground = (Brush)FindResource("0ForegroundBrush");
             this.Background = (Brush)FindResource("0BackgroundBrush");
@@ -306,30 +471,22 @@ namespace m0.UIWpf.Visualisers
             }
         }
 
-        private void ApplyTreeViewItemExpanderStyle()
+        public static ControlTemplate CreateFilledExpandCollapseToggleTemplate()
         {
-            Resources["ExpandCollapseToggleStyle"] = CreateFilledExpandCollapseToggleStyle();
-        }
-
-        private static Style CreateFilledExpandCollapseToggleStyle()
-        {
-            Style style = new Style(typeof(ToggleButton));
-
-            style.Setters.Add(new Setter(FocusableProperty, false));
-            style.Setters.Add(new Setter(WidthProperty, 16.0));
-            style.Setters.Add(new Setter(HeightProperty, 16.0));
-
             ControlTemplate template = new ControlTemplate(typeof(ToggleButton));
             FrameworkElementFactory grid = new FrameworkElementFactory(typeof(Grid));
+            grid.SetValue(Panel.BackgroundProperty, Brushes.Transparent);
 
             FrameworkElementFactory triangle = new FrameworkElementFactory(typeof(Path));
             triangle.Name = "ExpandPath";
-            triangle.SetValue(Path.DataProperty, Geometry.Parse("M 5 3 L 11 8 L 5 13 Z"));
+            triangle.SetValue(Path.DataProperty, Geometry.Parse("M 6 4.5 L 10.5 8 L 6 11.5 Z"));
             triangle.SetValue(Path.StretchProperty, Stretch.None);
-            triangle.SetValue(Path.HorizontalAlignmentProperty, HorizontalAlignment.Center);
+            triangle.SetValue(Path.HorizontalAlignmentProperty, HorizontalAlignment.Left);
             triangle.SetValue(Path.VerticalAlignmentProperty, VerticalAlignment.Center);
-            triangle.SetResourceReference(Path.FillProperty, "0ForegroundBrush");
-            triangle.SetResourceReference(Path.StrokeProperty, "0ForegroundBrush");
+            triangle.SetValue(RenderTransformOriginProperty, new Point(0.5, 0.5));
+            triangle.SetValue(RenderTransformProperty, new RotateTransform(0));
+            triangle.SetResourceReference(Path.FillProperty, "0GrayBrush");
+            triangle.SetResourceReference(Path.StrokeProperty, "0GrayBrush");
 
             grid.AppendChild(triangle);
             template.VisualTree = grid;
@@ -337,7 +494,8 @@ namespace m0.UIWpf.Visualisers
             Trigger expandedTrigger = new Trigger();
             expandedTrigger.Property = ToggleButton.IsCheckedProperty;
             expandedTrigger.Value = true;
-            expandedTrigger.Setters.Add(new Setter(Path.DataProperty, Geometry.Parse("M 3 5 L 13 5 L 8 11 Z"), "ExpandPath"));
+            expandedTrigger.EnterActions.Add(new BeginStoryboard { Storyboard = CreateTriangleRotationStoryboard(90) });
+            expandedTrigger.ExitActions.Add(new BeginStoryboard { Storyboard = CreateTriangleRotationStoryboard(0) });
             template.Triggers.Add(expandedTrigger);
 
             Trigger disabledTrigger = new Trigger();
@@ -347,9 +505,21 @@ namespace m0.UIWpf.Visualisers
             disabledTrigger.Setters.Add(new Setter(Path.StrokeProperty, Brushes.Transparent, "ExpandPath"));
             template.Triggers.Add(disabledTrigger);
 
-            style.Setters.Add(new Setter(TemplateProperty, template));
+            return template;
+        }
 
-            return style;
+        private static Storyboard CreateTriangleRotationStoryboard(double angle)
+        {
+            DoubleAnimation rotationAnimation = new DoubleAnimation(angle, new Duration(TimeSpan.FromMilliseconds(80)));
+            rotationAnimation.EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut };
+
+            Storyboard.SetTargetName(rotationAnimation, "ExpandPath");
+            Storyboard.SetTargetProperty(rotationAnimation, new PropertyPath("(UIElement.RenderTransform).(RotateTransform.Angle)"));
+
+            Storyboard storyboard = new Storyboard();
+            storyboard.Children.Add(rotationAnimation);
+
+            return storyboard;
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)
