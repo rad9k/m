@@ -1,6 +1,5 @@
 param(
-    [Parameter(Mandatory = $true)]
-    [string]$SourcePath,
+    [string]$SourcePath = ".",
 
     [string]$OutputPath,
 
@@ -158,6 +157,8 @@ if ([System.IO.File]::Exists($fullSourcePath)) {
     $sourceFile = Get-Item -LiteralPath $fullSourcePath
     $outputFilePath = Get-OutputFilePath $sourceFile $OutputPath
 
+    Write-Host "Converting: $($sourceFile.FullName)"
+
     Convert-WhiteBackgroundToTransparent `
         -InputFilePath $sourceFile.FullName `
         -OutputFilePath $outputFilePath `
@@ -181,13 +182,20 @@ if ([System.IO.Directory]::Exists($fullSourcePath)) {
         [System.IO.SearchOption]::TopDirectoryOnly
     }
 
-    $sourceFiles = [System.IO.Directory]::GetFiles($fullSourcePath, "*.png", $searchOption)
+    $sourceFiles = @([System.IO.Directory]::GetFiles($fullSourcePath, "*.png", $searchOption) | Sort-Object)
     $convertedCount = 0
+
+    if ($sourceFiles.Count -eq 0) {
+        Write-Host "No PNG files found in: $fullSourcePath"
+        exit 0
+    }
 
     foreach ($sourceFilePath in $sourceFiles) {
         $sourceFile = Get-Item -LiteralPath $sourceFilePath
         $relativePath = Get-RelativePath $fullSourcePath $sourceFile.FullName
         $outputFilePath = [System.IO.Path]::Combine((Get-FullPath $OutputPath), $relativePath)
+
+        Write-Host "Converting: $relativePath"
 
         Convert-WhiteBackgroundToTransparent `
             -InputFilePath $sourceFile.FullName `

@@ -6,6 +6,12 @@ The tool is intended for icon cleanup in `_icons_pool_`. It uses only Windows Po
 
 ## Usage
 
+Convert all PNG files in the current directory:
+
+```powershell
+.\Convert-WhiteToTransparent.ps1
+```
+
 Convert one file:
 
 ```powershell
