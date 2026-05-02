@@ -53,7 +53,7 @@ namespace m0.UIWpf.Commands
                 if (nameVertex != null)
                     name = GraphUtil.GetStringValue(nameVertex);
 
-                MenuItem newMenuItem = m0ContextMenu.createMenuItem(name);
+                MenuItem newMenuItem = m0ContextMenu.createMenuItem("",name);
 
                 newMenuItem.Tag = commandVertex;
 

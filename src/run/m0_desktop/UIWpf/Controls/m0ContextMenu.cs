@@ -128,14 +128,11 @@ namespace m0.UIWpf.Controls
 
         void AddHelpEntry(string url, string item_name)
         {
-            MenuItem newMenuItem = m0ContextMenu.createMenuItem(item_name);
+            MenuItem newMenuItem = m0ContextMenu.createMenuItem("menu-Help", item_name);
 
             newMenuItem.Tag = url;
 
-            newMenuItem.Click += (sender, e) =>
-            {
-                OnHelpClick(sender, e);
-            };
+            newMenuItem.Click += OnHelpClick;
 
             Items.Add(newMenuItem);
         }
@@ -186,21 +183,21 @@ namespace m0.UIWpf.Controls
         {
             //if (meta.Value != null && !GeneralUtil.CompareStrings(meta.Value, "$Empty"))
             //{
-                MenuItem i = createMenuItem(meta.Value.ToString());
+                MenuItem i = createMenuItem("menu-New Vertex by Meta Schema", meta.Value.ToString());
                 NewVertexBySchema.Items.Add(i);
 
-                MenuItem ie = createMenuItem(meta.Value.ToString());
+                MenuItem ie = createMenuItem("menu-New Edge by Meta Schema", meta.Value.ToString());
                 NewEdgeBySchema.Items.Add(ie);
 
             foreach (IEdge ee in metaEdges)
                     if (ee.To.Value != null && !GeneralUtil.CompareStrings(ee.To.Value, "$Empty"))
                     {
-                        MenuItem ii = createMenuItem(ee.To.Value.ToString());                        
+                        MenuItem ii = createMenuItem("menu-New Vertex by Meta Schema", ee.To.Value.ToString());                        
 
                         ii.Tag = ee.To;
                         i.Items.Add(ii);
 
-                        MenuItem iie = createMenuItem(ee.To.Value.ToString());
+                        MenuItem iie = createMenuItem("menu-New Edge by Meta Schema", ee.To.Value.ToString());
                         iie.Tag = ee.To;
                         ie.Items.Add(iie);
 
@@ -254,18 +251,18 @@ namespace m0.UIWpf.Controls
 
         private void AddOpen()
         {
-            MenuItem NewVertex = createMenuItem("Open");
+            MenuItem NewVertex = createMenuItem("menu-Open","Open");
             NewVertex.Click += OnOpen;
             this.Items.Add(NewVertex);
         }
 
         private void AddNew()
         {
-            MenuItem NewVertex = createMenuItem("New Vertex");
+            MenuItem NewVertex = createMenuItem("menu-New Vertex", "New Vertex");
             NewVertex.Click += OnNewVertex;
             this.Items.Add(NewVertex);
 
-            NewVertexBySchema = createMenuItem("New Vertex by Meta Schema");            
+            NewVertexBySchema = createMenuItem("menu-New Vertex by Meta Schema", "New Vertex by Meta Schema");            
             this.Items.Add(NewVertexBySchema);
 
             MenuItem NewEdge = createMenuItem("New Edge");
