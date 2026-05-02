@@ -116,7 +116,7 @@ namespace m0.UIWpf.Controls
 
             toLabel.Content = GetToText(edge);
 
-            ImageSource iconBitmap = IconServer.GetIconByVertex(edge?.To);
+            ImageSource iconBitmap = IconServer.GetIconByEdge(edge);
 
             if (iconBitmap == null)
             {

@@ -18,6 +18,8 @@ namespace m0.UIWpf
         private const int IconDecodeMaxSidePixels = 128;
 
         private static readonly object IconCacheLock = new object();
+        private static readonly Dictionary<string, Dictionary<string, string>> IconPathsByDirectory =
+            new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
         private static readonly Dictionary<string, BitmapImage> BitmapByIconPath =
             new Dictionary<string, BitmapImage>(StringComparer.OrdinalIgnoreCase);
         private static readonly Dictionary<string, Dictionary<string, string>> RequestedIconPathByDirectory =
@@ -35,6 +37,16 @@ namespace m0.UIWpf
             return GetIconByString("$Empty");
         }
 
+        public static BitmapImage GetIconByEdge(IEdge edge)
+        {
+            string iconPath = TryFindIconPath(edge);
+
+            if (iconPath == null)
+                return null;
+
+            return LoadIconBitmap(iconPath);
+        }
+
         public static BitmapImage GetIconByString(string iconName)
         {
             string iconPath = TryFindIconPath(iconName);
@@ -43,6 +55,16 @@ namespace m0.UIWpf
                 return null;
 
             return LoadIconBitmap(iconPath);
+        }
+
+        private static string TryFindIconPath(IEdge edge)
+        {
+            List<string> iconNames = GetIconNameCandidates(edge);
+
+            if (iconNames.Count == 0)
+                return null;
+
+            return TryFindIconPath(iconNames);
         }
 
         private static BitmapImage LoadIconBitmap(string iconPath)
@@ -83,8 +105,11 @@ namespace m0.UIWpf
             if (string.IsNullOrWhiteSpace(iconName))
                 return null;
 
-            string normalizedIconName = iconName.Trim();
+            return TryFindIconPath(new List<string> { iconName });
+        }
 
+        private static string TryFindIconPath(List<string> iconNames)
+        {
             string iconDirectory = GetIconDirectory();
 
             if (string.IsNullOrWhiteSpace(iconDirectory) || Directory.Exists(iconDirectory) == false)
@@ -93,23 +118,98 @@ namespace m0.UIWpf
             lock (IconCacheLock)
             {
                 Dictionary<string, string> requestedIconPathMap = GetRequestedIconPathMap(iconDirectory);
+                Dictionary<string, string> iconPathMap = GetIconPathMap(iconDirectory);
 
-                if (requestedIconPathMap.TryGetValue(normalizedIconName, out string cachedResolvedPath))
-                    return string.IsNullOrWhiteSpace(cachedResolvedPath) ? null : cachedResolvedPath;
+                foreach (string iconName in iconNames)
+                {
+                    string iconPath = TryResolveIconPath(iconDirectory, requestedIconPathMap, iconPathMap, iconName);
+
+                    if (iconPath != null)
+                        return iconPath;
+                }
+
+                return null;
             }
+        }
 
-            string iconPath = Path.Combine(iconDirectory, normalizedIconName + ".png");
-            string resolvedIconPath = File.Exists(iconPath) ? iconPath : null;
+        private static string TryResolveIconPath(
+            string iconDirectory,
+            Dictionary<string, string> requestedIconPathMap,
+            Dictionary<string, string> iconPathMap,
+            string iconName)
+        {
+            if (string.IsNullOrWhiteSpace(iconName))
+                return null;
 
-            lock (IconCacheLock)
-                GetRequestedIconPathMap(iconDirectory)[normalizedIconName] = resolvedIconPath ?? string.Empty;
+            string normalizedIconName = iconName.Trim();
 
-            if (resolvedIconPath == null)
+            if (requestedIconPathMap.TryGetValue(normalizedIconName, out string cachedResolvedPath))
+                return string.IsNullOrWhiteSpace(cachedResolvedPath) ? null : cachedResolvedPath;
+
+            iconPathMap.TryGetValue(normalizedIconName, out string exactMatch);
+
+            requestedIconPathMap[normalizedIconName] = exactMatch ?? string.Empty;
+
+            if (exactMatch == null)
                 MinusZero.Instance.Log(1, "IconServer", "no icon match for '" + normalizedIconName + "' in '" + iconDirectory + "'");
             else
-                MinusZero.Instance.Log(1, "IconServer", "resolved icon '" + normalizedIconName + "' -> '" + resolvedIconPath + "'");
+                MinusZero.Instance.Log(1, "IconServer", "resolved icon '" + normalizedIconName + "' -> '" + exactMatch + "'");
 
-            return resolvedIconPath;
+            return exactMatch;
+        }
+
+        private static List<string> GetIconNameCandidates(IEdge edge)
+        {
+            List<string> iconNames = new List<string>();
+
+            object metaValue = edge?.Meta?.Value;
+            bool isMetaEmpty = GeneralUtil.CompareStrings(metaValue, "$Empty");
+
+            if (metaValue != null && isMetaEmpty == false)
+                AddIconNameCandidate(iconNames, metaValue.ToString());
+
+            if (edge?.To?.Value != null)
+                AddIconNameCandidate(iconNames, edge.To.Value.ToString());
+
+            if (isMetaEmpty)
+                AddIconNameCandidate(iconNames, "$Empty");
+
+            AddIconNameCandidate(iconNames, GetIconNameFromIsEdge(edge?.To));
+
+            return iconNames;
+        }
+
+        private static void AddIconNameCandidate(List<string> iconNames, string iconName)
+        {
+            if (string.IsNullOrWhiteSpace(iconName))
+                return;
+
+            if (iconNames.Any(existingIconName => GeneralUtil.CompareStrings(existingIconName, iconName)))
+                return;
+
+            iconNames.Add(iconName);
+        }
+
+        private static Dictionary<string, string> GetIconPathMap(string iconDirectory)
+        {
+            if (IconPathsByDirectory.TryGetValue(iconDirectory, out Dictionary<string, string> cachedIconPathMap))
+                return cachedIconPathMap;
+
+            Dictionary<string, string> iconPathMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (string iconPath in Directory.GetFiles(iconDirectory, "*.png", SearchOption.TopDirectoryOnly))
+            {
+                string iconFileName = Path.GetFileNameWithoutExtension(iconPath);
+
+                if (string.IsNullOrWhiteSpace(iconFileName) == false && iconPathMap.ContainsKey(iconFileName) == false)
+                    iconPathMap.Add(iconFileName, iconPath);
+            }
+
+            IconPathsByDirectory[iconDirectory] = iconPathMap;
+
+            MinusZero.Instance.Log(1, "IconServer", "indexed icon directory '" + iconDirectory + "' fileCount=" + iconPathMap.Count);
+
+            return iconPathMap;
         }
 
         private static Dictionary<string, string> GetRequestedIconPathMap(string iconDirectory)
@@ -153,11 +253,14 @@ namespace m0.UIWpf
         private static string GetIconNameFromIsEdge(IVertex vertex)
         {
             if (vertex == null)
-                return null;            
+                return null;
 
-            IEdge isEdge = vertex.OutEdges.FirstOrDefault(outEdge =>
-                outEdge?.Meta?.Value != null &&
-                (GeneralUtil.CompareStrings(outEdge.Meta.Value, "$Is") || GeneralUtil.CompareStrings(outEdge.Meta.Value, "$Is:")));
+            IList<IEdge> isEdges = GraphUtil.GetQueryOut(vertex, "$Is", null);
+
+            if (isEdges.Count == 0)
+                isEdges = GraphUtil.GetQueryOut(vertex, "$Is:", null);
+
+            IEdge isEdge = isEdges.FirstOrDefault();
 
             if (isEdge?.To?.Value == null)
                 return null;

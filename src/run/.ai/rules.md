@@ -16,4 +16,4 @@ Remeber to use meaningfull variable, attributes, functions, metods and classes i
 
 Upper cammel case for class, metods, functions, public variables. Lower cammel case for parameter names and local variables.
 
-For quering out edges use GraphUtil.GetQueryOut family of methods and not manually iterating ober OutEdges.
+For filtering edges use GraphUtil.GetQueryOut family of methods and not manually iterating over OutEdges. If you want to iterate over all edges you can use IVertex.OutEdges (with inheritence) and IVertex.OutEdgesRaw.
