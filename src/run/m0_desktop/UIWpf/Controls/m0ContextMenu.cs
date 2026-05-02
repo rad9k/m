@@ -265,61 +265,54 @@ namespace m0.UIWpf.Controls
             NewVertexBySchema = createMenuItem("menu-New Vertex by Meta Schema", "New Vertex by Meta Schema");            
             this.Items.Add(NewVertexBySchema);
 
-            MenuItem NewEdge = createMenuItem("New Edge");
+            MenuItem NewEdge = createMenuItem("menu-New Edge","New Edge");
             NewEdge.Click += OnNewEdge;
             this.Items.Add(NewEdge);
 
-            NewEdgeBySchema = createMenuItem("New Edge by Meta Schema");
+            NewEdgeBySchema = createMenuItem("menu-New Edge by Meta Schema","New Edge by Meta Schema");
             this.Items.Add(NewEdgeBySchema);
-        }
-
-        private void AddNewDiagram()
-        {
-            MenuItem NewVertex = createMenuItem("New Diagram");
-            NewVertex.Click += OnNewDiagram;
-            this.Items.Add(NewVertex);
         }
 
         private void AddNewUX()
         {
-            MenuItem NewVertex = createMenuItem("New Diagram / UX");
+            MenuItem NewVertex = createMenuItem("menu-New Diagram", "New Diagram / UX");
             NewVertex.Click += OnNewUX;
             this.Items.Add(NewVertex);
         }
 
         private void AddCutCopyPasteItems()
         {
-            MenuItem Cut = createMenuItem("Cut");
+            MenuItem Cut = createMenuItem("menu-Cut", "Cut");
             Cut.Click += OnCut;
             this.Items.Add(Cut);
 
-            MenuItem Copy = createMenuItem("Copy");
+            MenuItem Copy = createMenuItem("menu-Copy", "Copy");
             Copy.Click += OnCopy;
             this.Items.Add(Copy);
 
-            MenuItem Paste = createMenuItem("Paste");
+            MenuItem Paste = createMenuItem("menu-Paste", "Paste");
             Paste.Click += OnPaste;
             this.Items.Add(Paste);
 
-            MenuItem PasteSpecial = createMenuItem("Paste special");            
+            MenuItem PasteSpecial = createMenuItem("menu-Paste special","Paste special");            
             this.Items.Add(PasteSpecial);
 
-            MenuItem PasteSpecial_Paste_to_store = createMenuItem("Paste to store");
+            MenuItem PasteSpecial_Paste_to_store = createMenuItem("menu-Paste to store", "Paste to store");
             PasteSpecial_Paste_to_store.Click += OnPasteSpecial_Paste_to_store;
             PasteSpecial.Items.Add(PasteSpecial_Paste_to_store);
 
-            MenuItem PasteSpecial_Replace = createMenuItem("Replace");
+            MenuItem PasteSpecial_Replace = createMenuItem("menu-Replace", "Replace");
             PasteSpecial_Replace.Click += OnPasteSpecial_Replace;
             PasteSpecial.Items.Add(PasteSpecial_Replace);
 
-            MenuItem Delete = createMenuItem("Delete");
+            MenuItem Delete = createMenuItem("menu-Delete","Delete");
             Delete.Click += OnDelete;
             this.Items.Add(Delete);
         }
 
         private void AddQuery()
         {
-            MenuItem Query = createMenuItem("Query");
+            MenuItem Query = createMenuItem("menu-Query", "Query");
             Query.Click += OnQuery;
             this.Items.Add(Query);            
         }
@@ -331,7 +324,7 @@ namespace m0.UIWpf.Controls
             IVertex codeVis = root.Get(false, @"System\Meta\Visualiser\Code");
 
            
-            MenuItem formMenuItem = createMenuItem("Open Form");
+            MenuItem formMenuItem = createMenuItem("menu-Open Form", "Open Form");
 
             formMenuItem.Tag = formVis;
 
@@ -340,7 +333,7 @@ namespace m0.UIWpf.Controls
             Items.Add(formMenuItem);
 
 
-            MenuItem codeMenuItem = createMenuItem("Open Code");
+            MenuItem codeMenuItem = createMenuItem("menu-Open Code", "Open Code");
 
             codeMenuItem.Tag = codeVis;
 
@@ -352,14 +345,15 @@ namespace m0.UIWpf.Controls
 
         private void AddExecute()
         {
-            MenuItem Execute = createMenuItem("Execute");
+            MenuItem Execute = createMenuItem("menu-Execute", "Execute");
+
             Execute.Click += OnExecute;
             this.Items.Add(Execute);
         }
 
         void AddOpenAs()
         {
-            MenuItem OpenVisualiser = createMenuItem("Open As");
+            MenuItem OpenVisualiser = createMenuItem("menu-Open As", "Open As");
 
             this.Items.Add(OpenVisualiser);
 
@@ -369,7 +363,7 @@ namespace m0.UIWpf.Controls
 
             //
 
-            MenuItem v = createMenuItem("Visualiser Commander");            
+            MenuItem v = createMenuItem("menu-Visuliser Commander", "Visualiser Commander");
 
             v.Click += OnOpenVisualiserCommander;
 
