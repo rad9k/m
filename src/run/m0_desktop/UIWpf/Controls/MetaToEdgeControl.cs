@@ -1,35 +1,13 @@
-using m0.Foundation;
 using m0.Graph;
 using m0.Util;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace m0.UIWpf.Controls
 {
     public class MetaToEdgeControl : Border
     {
-        /// <summary>
-        /// Decode meta icons at a modest pixel width before WPF scales them to ~30 logical DIP.
-        /// Loading full 256px sources and scaling with certain modes caused visible gray halos on alpha.
-        /// </summary>
-        private const int MetaIconDecodeMaxSidePixels = 128;
-
-        private static readonly object IconCacheLock = new object();
-        private static readonly Dictionary<string, Dictionary<string, string>> IconPathsByDirectory =
-            new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
-        private static readonly Dictionary<string, Dictionary<string, string>> RequestedIconPathByDirectory =
-            new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
-        private static readonly Dictionary<string, BitmapImage> BitmapByIconPath =
-            new Dictionary<string, BitmapImage>(StringComparer.OrdinalIgnoreCase);
-
-        private static bool MetaIconDirectoryNameMissingLogged;
-
         private readonly StackPanel contentPanel;
         private readonly Image iconImage;
         private readonly Label metaLabel;
@@ -137,7 +115,7 @@ namespace m0.UIWpf.Controls
 
             toLabel.Content = GetToText(edge);
 
-            BitmapImage iconBitmap = TryLoadIconBitmap(edge);
+            ImageSource iconBitmap = IconServer.GetIconByVertex(edge?.To);
 
             if (iconBitmap == null)
             {
@@ -234,197 +212,6 @@ namespace m0.UIWpf.Controls
 
             metaLabel.Background = null;
             toLabel.Background = null;
-        }
-
-        private BitmapImage TryLoadIconBitmap(IEdge edge)
-        {
-            string iconPath = TryFindIconPath(edge);
-
-            if (iconPath == null)
-                return null;
-
-            try
-            {
-                lock (IconCacheLock)
-                {
-                    if (BitmapByIconPath.TryGetValue(iconPath, out BitmapImage cachedBitmap))
-                        return cachedBitmap;
-                }
-
-                BitmapImage bitmap = new BitmapImage();
-                bitmap.BeginInit();
-                bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                bitmap.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
-                bitmap.DecodePixelWidth = MetaIconDecodeMaxSidePixels;
-                bitmap.UriSource = new Uri(iconPath, UriKind.Absolute);
-                bitmap.EndInit();
-                bitmap.Freeze();
-
-                lock (IconCacheLock)
-                    BitmapByIconPath[iconPath] = bitmap;
-
-                MinusZero.Instance.Log(1, "MetaToEdgeControl", "loaded icon '" + iconPath + "' pixelFormat=" + bitmap.Format + " size=" + bitmap.PixelWidth + "x" + bitmap.PixelHeight);
-
-                return bitmap;
-            }
-            catch (Exception iconLoadException)
-            {
-                MinusZero.Instance.Log(1, "MetaToEdgeControl", "failed to load icon '" + iconPath + "': " + iconLoadException.Message);
-                return null;
-            }
-        }
-
-        private string TryFindIconPath(IEdge edge)
-        {
-            List<string> iconNames = GetIconNameCandidates(edge);
-
-            if (iconNames.Count == 0)
-                return null;
-
-            string iconDirectory = GetIconDirectory();
-
-            if (string.IsNullOrWhiteSpace(iconDirectory) || Directory.Exists(iconDirectory) == false)
-                return null;
-
-            lock (IconCacheLock)
-            {
-                Dictionary<string, string> requestedIconPathMap = GetRequestedIconPathMap(iconDirectory);
-                Dictionary<string, string> iconPathMap = GetIconPathMap(iconDirectory);
-
-                foreach (string iconName in iconNames)
-                {
-                    string iconPath = TryResolveIconPath(iconDirectory, requestedIconPathMap, iconPathMap, iconName);
-
-                    if (iconPath != null)
-                        return iconPath;
-                }
-
-                return null;
-            }
-        }
-
-        private string TryResolveIconPath(
-            string iconDirectory,
-            Dictionary<string, string> requestedIconPathMap,
-            Dictionary<string, string> iconPathMap,
-            string iconName)
-        {
-            if (string.IsNullOrWhiteSpace(iconName))
-                return null;
-
-            string normalizedIconName = iconName.Trim();
-
-            if (requestedIconPathMap.TryGetValue(normalizedIconName, out string cachedResolvedPath))
-                return string.IsNullOrWhiteSpace(cachedResolvedPath) ? null : cachedResolvedPath;
-
-            iconPathMap.TryGetValue(normalizedIconName, out string exactMatch);
-
-            requestedIconPathMap[normalizedIconName] = exactMatch ?? string.Empty;
-
-            if (exactMatch == null)
-                MinusZero.Instance.Log(1, "MetaToEdgeControl", "no icon match for '" + normalizedIconName + "' in '" + iconDirectory + "'");
-            else
-                MinusZero.Instance.Log(1, "MetaToEdgeControl", "resolved icon '" + normalizedIconName + "' -> '" + exactMatch + "'");
-
-            return exactMatch;
-        }
-
-        private string GetIconDirectory()
-        {
-            MinusZero minusZero = MinusZero.Instance;
-
-            string applicationPath = minusZero?.ApplicationPath;
-
-            if (string.IsNullOrWhiteSpace(applicationPath))
-                return null;
-
-            string iconsRootDirectory = Path.Combine(applicationPath, "icons");
-
-            string metaIconDirectoryName =
-                minusZero?.Root?.Get(false, @"Home:\CurrentUser:\Settings:\MetaIconsDirectoryName:")?.Value?.ToString();
-
-            return Path.Combine(iconsRootDirectory, metaIconDirectoryName);
-        }
-
-        private List<string> GetIconNameCandidates(IEdge edge)
-        {
-            List<string> iconNames = new List<string>();
-
-            object metaValue = edge?.Meta?.Value;
-            bool isMetaEmpty = GeneralUtil.CompareStrings(metaValue, "$Empty");
-
-            if (metaValue != null && isMetaEmpty == false)
-                AddIconNameCandidate(iconNames, metaValue.ToString());
-
-            if (edge?.To?.Value != null)
-                AddIconNameCandidate(iconNames, edge.To.Value.ToString());
-
-            if (isMetaEmpty)
-                AddIconNameCandidate(iconNames, "$Empty");
-
-            AddIconNameCandidate(iconNames, GetIconNameFromIsEdge(edge));
-
-            return iconNames;
-        }
-
-        private void AddIconNameCandidate(List<string> iconNames, string iconName)
-        {
-            if (string.IsNullOrWhiteSpace(iconName))
-                return;
-
-            if (iconNames.Any(existingIconName => GeneralUtil.CompareStrings(existingIconName, iconName)))
-                return;
-
-            iconNames.Add(iconName);
-        }
-
-        private static Dictionary<string, string> GetIconPathMap(string iconDirectory)
-        {
-            if (IconPathsByDirectory.TryGetValue(iconDirectory, out Dictionary<string, string> cachedIconPathMap))
-                return cachedIconPathMap;
-
-            Dictionary<string, string> iconPathMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-            foreach (string iconPath in Directory.GetFiles(iconDirectory, "*.png", SearchOption.TopDirectoryOnly))
-            {
-                string iconFileName = Path.GetFileNameWithoutExtension(iconPath);
-
-                if (string.IsNullOrWhiteSpace(iconFileName) == false && iconPathMap.ContainsKey(iconFileName) == false)
-                    iconPathMap.Add(iconFileName, iconPath);
-            }
-
-            IconPathsByDirectory[iconDirectory] = iconPathMap;
-
-            MinusZero.Instance.Log(1, "MetaToEdgeControl", "indexed icon directory '" + iconDirectory + "' fileCount=" + iconPathMap.Count);
-
-            return iconPathMap;
-        }
-
-        private static Dictionary<string, string> GetRequestedIconPathMap(string iconDirectory)
-        {
-            if (RequestedIconPathByDirectory.TryGetValue(iconDirectory, out Dictionary<string, string> cachedRequestedIconPathMap))
-                return cachedRequestedIconPathMap;
-
-            Dictionary<string, string> requestedIconPathMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-            RequestedIconPathByDirectory[iconDirectory] = requestedIconPathMap;
-
-            return requestedIconPathMap;
-        }
-
-        private string GetIconNameFromIsEdge(IEdge edge)
-        {
-            if (edge?.To == null)
-                return null;
-
-            IEdge isEdge = edge.To.OutEdges.FirstOrDefault(outEdge =>
-                outEdge?.Meta?.Value != null &&
-                (GeneralUtil.CompareStrings(outEdge.Meta.Value, "$Is") || GeneralUtil.CompareStrings(outEdge.Meta.Value, "$Is:")));
-
-            if (isEdge?.To?.Value == null)
-                return null;
-
-            return isEdge.To.Value.ToString();
         }
     }
 }

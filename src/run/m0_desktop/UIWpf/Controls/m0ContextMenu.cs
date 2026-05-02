@@ -426,16 +426,16 @@ namespace m0.UIWpf.Controls
 
             /////////////////////// base synchronised
 
-            MenuItem OpenVisualiserSelectedBase = createMenuItem("Open Master-Detail (SelectedEdges<>BaseEdge synchronised) Visualiser");
+            MenuItem OpenVisualiserSelectedBase = createMenuItem("menu-Open Master-Detail Visualiser", "Open Master-Detail (SelectedEdges<>BaseEdge synchronised) Visualiser");
             Special.Items.Add(OpenVisualiserSelectedBase);
 
             foreach (IEdge vis in vislist)
             {
-                MenuItem v = createMenuItem(vis.To.Value.ToString());
+                MenuItem v = createMenuItem("menu-" + vis.To.Value.ToString(), vis.To.Value.ToString());
 
                 v.Tag = vis.To;
 
-                v.Click += OnOpenVisualiserFirstSelectedEdge;
+                v.Click += OnOpenVisualiserFirstSelectedEdge;   
 
                 OpenVisualiserSelectedBase.Items.Add(v);
             }
@@ -444,12 +444,12 @@ namespace m0.UIWpf.Controls
 
             vislist = root.GetAll(false, @"System\Meta\Visualiser\Class:{$Inherits:HasSelectedEdges,BaseEdgeTarget:Any}");
 
-            MenuItem OpenVisualiserSelectedSelected = createMenuItem("Open SelectedEdges<>SelectedEdges synchronised Visualiser");
+            MenuItem OpenVisualiserSelectedSelected = createMenuItem("menu-Open Synchronized Visualiser", "Open SelectedEdges<>SelectedEdges synchronised Visualiser");
             Special.Items.Add(OpenVisualiserSelectedSelected);            
 
             foreach (IEdge vis in vislist)
             {
-                MenuItem v = createMenuItem(vis.To.Value.ToString());
+                MenuItem v = createMenuItem("menu-" + vis.To.Value.ToString(), vis.To.Value.ToString());
 
                 v.Tag = vis.To;
 
