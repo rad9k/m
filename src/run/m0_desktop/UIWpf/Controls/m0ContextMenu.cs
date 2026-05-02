@@ -1,4 +1,4 @@
-﻿using m0.Foundation;
+using m0.Foundation;
 using m0.Graph;
 using m0.UIWpf.Commands;
 using m0.UIWpf.Foundation;
@@ -14,6 +14,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Xml.Linq;
 using Xceed.Wpf.AvalonDock.Controls;
 
@@ -239,6 +240,28 @@ namespace m0.UIWpf.Controls
         {
             MenuItem m = new MenuItem();
             m.Header = header;
+
+            ImageSource iconSource = IconServer.GetIconByString(icon);
+
+            if (iconSource != null)
+            {
+                double menuIconSize = Math.Round(WpfUtil.IconSize * 1.2);
+
+                Image iconImage = new Image();
+                iconImage.Source = iconSource;
+                iconImage.Width = menuIconSize;
+                iconImage.Height = menuIconSize;
+                iconImage.Stretch = Stretch.Uniform;
+                iconImage.SnapsToDevicePixels = true;
+                iconImage.UseLayoutRounding = true;
+                iconImage.HorizontalAlignment = HorizontalAlignment.Center;
+                iconImage.VerticalAlignment = VerticalAlignment.Center;
+
+                RenderOptions.SetBitmapScalingMode(iconImage, BitmapScalingMode.Fant);
+
+                m.Icon = iconImage;
+            }
+
             return m;
         }
 
@@ -363,11 +386,11 @@ namespace m0.UIWpf.Controls
 
             //
 
-            MenuItem v = createMenuItem("menu-Visuliser Commander", "Visualiser Commander");
+            MenuItem visualiserCommanderMenuItem = createMenuItem("menu-Visuliser Commander", "Visualiser Commander");
 
-            v.Click += OnOpenVisualiserCommander;
+            visualiserCommanderMenuItem.Click += OnOpenVisualiserCommander;
 
-            OpenVisualiser.Items.Add(v);
+            OpenVisualiser.Items.Add(visualiserCommanderMenuItem);
 
             //
 

@@ -153,7 +153,7 @@ namespace m0.UIWpf
         private static string GetIconNameFromIsEdge(IVertex vertex)
         {
             if (vertex == null)
-                return null;
+                return null;            
 
             IEdge isEdge = vertex.OutEdges.FirstOrDefault(outEdge =>
                 outEdge?.Meta?.Value != null &&
