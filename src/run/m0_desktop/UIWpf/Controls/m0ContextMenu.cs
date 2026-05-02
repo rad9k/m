@@ -373,7 +373,7 @@ namespace m0.UIWpf.Controls
 
             foreach (IEdge vis in vislist)
             {
-                MenuItem v = createMenuItem(vis.To.Value.ToString());
+                MenuItem v = createMenuItem("menu-" + vis.To.Value.ToString(), vis.To.Value.ToString());
 
                 v.Tag = vis.To;
 
@@ -385,20 +385,20 @@ namespace m0.UIWpf.Controls
 
         void AddOpenAsSpecial()
         { 
-            MenuItem Special = createMenuItem("Open special");
+            MenuItem Special = createMenuItem("menu-Open special", "Open special");
 
             this.Items.Add(Special);
 
             /////////////////////// meta
 
-            MenuItem OpenMetaVisualiser = createMenuItem("Open Visualiser for Meta");
+            MenuItem OpenMetaVisualiser = createMenuItem("menu-Open Visualiser for Meta", "Open Visualiser for Meta");
             Special.Items.Add(OpenMetaVisualiser);
 
             IVertex vislist = root.GetAll(false, @"System\Meta\Visualiser\Class:{$Inherits:UXItem,BaseEdgeTarget:Any}");
 
             foreach (IEdge vis in vislist)
             {
-                MenuItem v = createMenuItem(vis.To.Value.ToString());
+                MenuItem v = createMenuItem("menu-" + vis.To.Value.ToString(), vis.To.Value.ToString());
 
                 v.Tag = vis.To;
 
