@@ -238,7 +238,7 @@ namespace m0.UIWpf.Controls
             
         }
 
-        public static MenuItem createMenuItem(string header)
+        public static MenuItem createMenuItem(string icon, string header)
         {
             MenuItem m = new MenuItem();
             m.Header = header;
@@ -304,6 +304,17 @@ namespace m0.UIWpf.Controls
             Paste.Click += OnPaste;
             this.Items.Add(Paste);
 
+            MenuItem PasteSpecial = createMenuItem("Paste special");            
+            this.Items.Add(PasteSpecial);
+
+            MenuItem PasteSpecial_Paste_to_store = createMenuItem("Paste to store");
+            PasteSpecial_Paste_to_store.Click += OnPasteSpecial_Paste_to_store;
+            PasteSpecial.Items.Add(PasteSpecial_Paste_to_store);
+
+            MenuItem PasteSpecial_Replace = createMenuItem("Replace");
+            PasteSpecial_Replace.Click += OnPasteSpecial_Replace;
+            PasteSpecial.Items.Add(PasteSpecial_Replace);
+
             MenuItem Delete = createMenuItem("Delete");
             Delete.Click += OnDelete;
             this.Items.Add(Delete);
@@ -358,6 +369,16 @@ namespace m0.UIWpf.Controls
             // IVertex vislist = root.GetAll(false, @"System\Meta\Visualiser\"); BaseEdge ones currently not supported
 
             IVertex vislist = root.GetAll(false, @"System\Meta\Visualiser\Class:{$Inherits:UXItem,BaseEdgeTarget:Any}");
+
+            //
+
+            MenuItem v = createMenuItem("Visualiser Commander");            
+
+            v.Click += OnOpenVisualiserCommander;
+
+            OpenVisualiser.Items.Add(v);
+
+            //
 
             foreach (IEdge vis in vislist)
             {
@@ -511,8 +532,13 @@ namespace m0.UIWpf.Controls
             BaseCommands.Paste(this.EdgeVertex, PlatformClassOfVisualiserMenuHasBeenOpenedOn.Vertex);
 
             if (FromCopyPlatformClass is IHasSelectableEdges)
-                ((IHasSelectableEdges)FromCopyPlatformClass).UnselectAllSelectedEdges();
+                ((IHasSelectableEdges)FromCopyPlatformClass).UnselectAllSelectedEdges();        
         }
+
+        void OnPasteSpecial_Paste_to_store(object sender, System.Windows.RoutedEventArgs e) { }
+
+
+        void OnPasteSpecial_Replace(object sender, System.Windows.RoutedEventArgs e) { }
 
         void OnDelete(object sender, System.Windows.RoutedEventArgs e)
         {
@@ -535,6 +561,11 @@ namespace m0.UIWpf.Controls
         void OnExecute(object sender, System.Windows.RoutedEventArgs e)
         {
             BaseCommands.Execute(this.EdgeVertex, null);
+        }
+
+        void OnOpenVisualiserCommander(object sender, System.Windows.RoutedEventArgs e)
+        {
+            
         }
 
         void OnOpenVisualiser(object sender, System.Windows.RoutedEventArgs e)
