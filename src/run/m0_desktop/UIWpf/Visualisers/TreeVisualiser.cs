@@ -229,7 +229,7 @@ namespace m0.UIWpf.Visualisers
                 {
                     isExpandCollapseAnimationInProgress = false;
                 });
-            }), DispatcherPriority.Loaded);
+            }), DispatcherPriority.Render);
         }
 
         private void AnimateChildItems(bool expand, EventHandler completed)
@@ -246,6 +246,10 @@ namespace m0.UIWpf.Visualisers
 
             TimeSpan duration = TimeSpan.FromMilliseconds(expand ? 85 : 65);
             IEasingFunction easingFunction = new QuadraticEase { EasingMode = expand ? EasingMode.EaseOut : EasingMode.EaseIn };
+            double startOpacity = expand ? 0.65 : 1;
+            double endOpacity = expand ? 1 : 0;
+            double startTranslateY = expand ? -5 : 0;
+            double endTranslateY = expand ? 0 : -5;
 
             for (int index = 0; index < childElements.Count; index++)
             {
@@ -258,20 +262,56 @@ namespace m0.UIWpf.Visualisers
                     childElement.RenderTransform = translateTransform;
                 }
 
-                childElement.Opacity = expand ? 0 : 1;
-                translateTransform.Y = expand ? -5 : 0;
+                childElement.BeginAnimation(OpacityProperty, null);
+                translateTransform.BeginAnimation(TranslateTransform.YProperty, null);
 
-                DoubleAnimation opacityAnimation = new DoubleAnimation(expand ? 1 : 0, new Duration(duration));
-                opacityAnimation.EasingFunction = easingFunction;
+                childElement.Opacity = startOpacity;
+                translateTransform.Y = startTranslateY;
 
-                DoubleAnimation translateAnimation = new DoubleAnimation(expand ? 0 : -5, new Duration(duration));
-                translateAnimation.EasingFunction = easingFunction;
+                DoubleAnimation opacityAnimation = new DoubleAnimation
+                {
+                    From = startOpacity,
+                    To = endOpacity,
+                    Duration = new Duration(duration),
+                    EasingFunction = easingFunction,
+                    FillBehavior = FillBehavior.Stop
+                };
+
+                DoubleAnimation translateAnimation = new DoubleAnimation
+                {
+                    From = startTranslateY,
+                    To = endTranslateY,
+                    Duration = new Duration(duration),
+                    EasingFunction = easingFunction,
+                    FillBehavior = FillBehavior.Stop
+                };
 
                 if (index == childElements.Count - 1)
-                    opacityAnimation.Completed += completed;
+                    opacityAnimation.Completed += delegate
+                    {
+                        CompleteChildItemAnimations(childElements, endOpacity, endTranslateY);
+                        completed?.Invoke(this, EventArgs.Empty);
+                    };
 
                 childElement.BeginAnimation(OpacityProperty, opacityAnimation);
                 translateTransform.BeginAnimation(TranslateTransform.YProperty, translateAnimation);
+            }
+        }
+
+        private void CompleteChildItemAnimations(List<FrameworkElement> childElements, double opacity, double translateY)
+        {
+            foreach (FrameworkElement childElement in childElements)
+            {
+                childElement.BeginAnimation(OpacityProperty, null);
+                childElement.Opacity = opacity;
+
+                TranslateTransform translateTransform = childElement.RenderTransform as TranslateTransform;
+
+                if (translateTransform != null)
+                {
+                    translateTransform.BeginAnimation(TranslateTransform.YProperty, null);
+                    translateTransform.Y = translateY;
+                }
             }
         }
 
