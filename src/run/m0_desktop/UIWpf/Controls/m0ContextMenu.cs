@@ -386,7 +386,7 @@ namespace m0.UIWpf.Controls
 
             //
 
-            MenuItem visualiserCommanderMenuItem = createMenuItem("menu-Visuliser Commander", "Visualiser Commander");
+            MenuItem visualiserCommanderMenuItem = createMenuItem("menu-Visualiser Commander", "Visualiser Commander");
 
             visualiserCommanderMenuItem.Click += OnOpenVisualiserCommander;
 
@@ -408,7 +408,7 @@ namespace m0.UIWpf.Controls
 
         void AddOpenAsSpecial()
         { 
-            MenuItem Special = createMenuItem("menu-Open special", "Open special");
+            MenuItem Special = createMenuItem("menu-Open Special Visualiser", "Open special");
 
             this.Items.Add(Special);
 

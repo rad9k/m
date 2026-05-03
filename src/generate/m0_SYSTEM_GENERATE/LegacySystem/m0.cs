@@ -4429,8 +4429,8 @@ namespace m0
                 "Class:Table{Attribute:ToShowEdgesMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:ExpertMode{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:IsAllVisualisersEdit{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowHeader{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Association:GridStyle{$MinCardinality:1,$MaxCardinality:1},Attribute:AlternatingRows{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:TableFast{Attribute:ToShowEdgesMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:IsAllVisualisersEdit{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowHeader{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Association:GridStyle{$MinCardinality:1,$MaxCardinality:1},Attribute:AlternatingRows{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:Tree," +
-                "Class:Graph{Attribute:VisualiserCircleSize{$MinCardinality:1,$MaxCardinality:1},Attribute:NumberOfCircles{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd:},Attribute:ShowOutEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowInEdges{$MinCardinality:1,$MaxCardinality:1},Attribute:FastMode{$MinCardinality:1,$MaxCardinality:1},Attribute:MetaLabels{$MinCardinality:1,$MaxCardinality:1},Attribute:AnimateEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False}}," +
-                "Class:Graph3D{Attribute:EdgeLength{$MinCardinality:1,$MaxCardinality:1},Attribute:SphereSize{$MinCardinality:1,$MaxCardinality:1,MinValue:4,MaxValue:150,$DefaultValue:24},Attribute:LabelSize{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowOutEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowInEdges{$MinCardinality:1,$MaxCardinality:1},Attribute:MetaLabels{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowLabels3D{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:NumberOfCircles{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd:},Attribute:MaxVertices3D{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd:,MinValue:10,MaxValue:1000,$DefaultValue:250},Attribute:LayoutMode3D{$MinCardinality:1,$MaxCardinality:1},Attribute:IconsOnSpheres{$MinCardinality:1,$MaxCardinality:1},Attribute:IconsOnLabels{$MinCardinality:1,$MaxCardinality:1},Attribute:TransitionStyle{$MinCardinality:1,$MaxCardinality:1},Attribute:TransitionDurationMs{$MinCardinality:1,$MaxCardinality:1,MinValue:50,MaxValue:3000,$DefaultValue:1000},Attribute:AnimateEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True}}," +
+                "Class:Graph{Attribute:VisualiserCircleSize{$MinCardinality:1,$MaxCardinality:1},Attribute:NumberOfCircles{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd:},Attribute:ShowOutEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowInEdges{$MinCardinality:1,$MaxCardinality:1},Attribute:FastMode{$MinCardinality:1,$MaxCardinality:1},Attribute:MetaLabels{$MinCardinality:1,$MaxCardinality:1},Attribute:AnimateEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:Icons{$MinCardinality:1,$MaxCardinality:1}}," +
+                "Class:Graph3D{Attribute:EdgeLength{$MinCardinality:1,$MaxCardinality:1},Attribute:SphereSize{$MinCardinality:1,$MaxCardinality:1,MinValue:4,MaxValue:150,$DefaultValue:24},Attribute:LabelSize{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowOutEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowInEdges{$MinCardinality:1,$MaxCardinality:1},Attribute:MetaLabels{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowLabels3D{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:NumberOfCircles{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd:},Attribute:MaxVertices3D{$MinCardinality:1,$MaxCardinality:1,$UpdateAfterInteractionEnd:,MinValue:10,MaxValue:1000,$DefaultValue:250},Attribute:LayoutMode3D{$MinCardinality:1,$MaxCardinality:1},Attribute:IconsOnVertexes{$MinCardinality:1,$MaxCardinality:1},Attribute:IconsOnLabels{$MinCardinality:1,$MaxCardinality:1},Attribute:TransitionStyle{$MinCardinality:1,$MaxCardinality:1},Attribute:TransitionDurationMs{$MinCardinality:1,$MaxCardinality:1,MinValue:50,MaxValue:3000,$DefaultValue:1000},Attribute:AnimateEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True}}," +
                 "Class:Class,Class:String,Class:StringView,Class:Vertex,Class:Edge,Class:Integer,Class:Decimal,Class:Float,Class:Boolean,Class:ListAndEnum,Class:Debug," +
                 "Class:Wrap," +
                 "Class:List{Attribute:IsMetaRightAlign{$MinCardinality:1,$MaxCardinality:1},Attribute:IsAllVisualisersEdit{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowMeta{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Association:GridStyle{$MinCardinality:1,$MaxCardinality:1}}," +
@@ -4440,9 +4440,11 @@ namespace m0
                 "Class:TriggerSet{Attribute:SnapToGrid{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowVelocity{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowSnapLines{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:DefaultVelocity{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:127,MinValue:-1,MaxValue:127}}," +
                 "Class:ChordProgression{Attribute:ShowLabel{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowArrowLines{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True}}," +
                 "Class:Song{Attribute:SnapToGrid{$MinCardinality:1,$MaxCardinality:1},Attribute:ShowLabel{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowArrowLines{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowSnapLines{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowToolbarNames{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False}}," +
-                "Class:UX," +
+                "Class:UX" +
                 //"Class:UXTest," +
-                "Class:Test}");
+                //"Class:Test"
+                "}"
+                );
 
             sm.Get(false, @"Visualiser\BaseEdgeTarget").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));
             sm.Get(false, @"Visualiser\GridStyleEnum").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));
@@ -4543,6 +4545,7 @@ namespace m0
             sm.Get(false, @"Visualiser\Graph\FastMode").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             sm.Get(false, @"Visualiser\Graph\MetaLabels").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             sm.Get(false, @"Visualiser\Graph\AnimateEdges").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
+            sm.Get(false, @"Visualiser\Graph\Icons").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             sm.Get(false, @"Visualiser\Graph").AddEdge(sm.Get(false, @"Visualiser\BaseEdgeTarget"), sm.Get(false, @"Visualiser\BaseEdgeTarget\Any"));
 
             //
@@ -4558,7 +4561,7 @@ namespace m0
             sm.Get(false, @"Visualiser\Graph3D\LabelSize").AddVertex(sm.Get(false, @"?MinValue"), 0);
             sm.Get(false, @"Visualiser\Graph3D\LabelSize").AddVertex(sm.Get(false, @"?MaxValue"), 200);
 
-            sm.Get(false, @"Visualiser\Graph3D\IconsOnSpheres").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
+            sm.Get(false, @"Visualiser\Graph3D\IconsOnVertexes").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             sm.Get(false, @"Visualiser\Graph3D\IconsOnLabels").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             sm.Get(false, @"Visualiser\Graph3D\AnimateEdges").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
 
@@ -4736,10 +4739,10 @@ namespace m0
             sm.Get(false, @"ZeroTypes\UX\UXContainer").AddEdge(sm.Get(false, "ZeroUML?$DefaultViewVisualiser"), sm.Get(false, @"Visualiser\UX"));            
             sm.Get(false, @"ZeroTypes\UX\UXContainer").AddEdge(sm.Get(false, "ZeroUML?$DefaultEditVisualiser"), sm.Get(false, @"Visualiser\UX"));
 
-            sm.Get(false, @"Visualiser\Test").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\UX\UXItem"));
+            /*sm.Get(false, @"Visualiser\Test").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\UX\UXItem"));
             sm.Get(false, @"Visualiser\Test").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.UIWpf.Visualisers.TestVisualiser, m0_desktop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             sm.Get(false, @"Visualiser\Test").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
-            sm.Get(false, @"Visualiser\Test").AddEdge(sm.Get(false, @"Visualiser\BaseEdgeTarget"), sm.Get(false, @"Visualiser\BaseEdgeTarget\Any"));
+            sm.Get(false, @"Visualiser\Test").AddEdge(sm.Get(false, @"Visualiser\BaseEdgeTarget"), sm.Get(false, @"Visualiser\BaseEdgeTarget\Any"));*/
 
             /*sm.Get(false, @"Visualiser\UXTest").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\UX\UXItem"));
             sm.Get(false, @"Visualiser\UXTest").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.UIWpf.UX.Generic.UXTestVisualiser, m0_desktop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");

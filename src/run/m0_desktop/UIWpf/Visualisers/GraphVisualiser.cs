@@ -50,7 +50,7 @@ namespace m0.UIWpf.Visualisers
 
             this.Background = (Brush)FindResource("0SelectionBrush");
 
-            GeneralUtil.SetPropertyIfPresent(this.Child, "Foreground", (Brush)FindResource("0BackgroundBrush"));
+            SetChildForeground((Brush)FindResource("0BackgroundBrush"));
         }
 
         public void Unselect()
@@ -60,9 +60,9 @@ namespace m0.UIWpf.Visualisers
             this.Background = (Brush)FindResource("0BackgroundBrush");
 
             if(IsHighlighted)
-                GeneralUtil.SetPropertyIfPresent(this.Child, "Foreground", (Brush)FindResource("0HighlightBrush"));
+                SetChildForeground((Brush)FindResource("0HighlightBrush"));
             else
-                GeneralUtil.SetPropertyIfPresent(this.Child, "Foreground", (Brush)FindResource("0ForegroundBrush"));
+                SetChildForeground((Brush)FindResource("0ForegroundBrush"));
         }
 
 
@@ -104,7 +104,7 @@ namespace m0.UIWpf.Visualisers
 
             this.BorderBrush = (Brush)FindResource("0HighlightBrush");
 
-            GeneralUtil.SetPropertyIfPresent(this.Child, "Foreground", (Brush)FindResource("0HighlightBrush"));
+            SetChildForeground((Brush)FindResource("0HighlightBrush"));
         }
 
         public void UnhighlightThisAndDescendants()
@@ -143,9 +143,9 @@ namespace m0.UIWpf.Visualisers
             this.BorderBrush = (Brush)FindResource("0LightGrayBrush");
 
             if(IsSelected)
-                GeneralUtil.SetPropertyIfPresent(this.Child, "Foreground", (Brush)FindResource("0BackgroundBrush"));
+                SetChildForeground((Brush)FindResource("0BackgroundBrush"));
             else
-                GeneralUtil.SetPropertyIfPresent(this.Child, "Foreground", (Brush)FindResource("0ForegroundBrush"));
+                SetChildForeground((Brush)FindResource("0ForegroundBrush"));
         }
 
         public SimpleVisualiserWrapper(FrameworkElement e, IVertex _baseVertex, GraphVisualiser _ParentVisualiser)
@@ -209,7 +209,7 @@ namespace m0.UIWpf.Visualisers
         public bool IsPaiting=false;
 
 
-        static string[] _MetaTriggeringUpdateVertex = new string[] { "VisualiserCircleSize", "NumberOfCircles", "ShowOutEdges", "ShowInEdges", "FastMode", "MetaLabels", "AnimateEdges" };
+        static string[] _MetaTriggeringUpdateVertex = new string[] { "VisualiserCircleSize", "NumberOfCircles", "ShowOutEdges", "ShowInEdges", "FastMode", "MetaLabels", "AnimateEdges", "Icons" };
         public string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
         static string[] _MetaTriggeringUpdateView = new string[] { };
