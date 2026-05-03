@@ -25,7 +25,9 @@ namespace m0.UIWpf.Visualisers
 {
     internal sealed class GraphVisualiser3DLabel
     {
-        public TextBlock Element;
+        public FrameworkElement Element;
+        public TextBlock TextElement;
+        public Image IconElement;
         public Func<Point3D> GetWorldPosition;
         public int BaseZIndex;
         public bool IsEdgeLabel;
@@ -45,6 +47,7 @@ namespace m0.UIWpf.Visualisers
         private readonly TranslateTransform3D translate;
         private readonly ScaleTransform3D scale;
         private readonly DiffuseMaterial bodyMaterial;
+        private readonly DiffuseMaterial iconMaterial;
         private readonly EmissiveMaterial bodyEmissive;
         private IEdge listenerEdge;
         private bool isDisposed;
@@ -55,6 +58,7 @@ namespace m0.UIWpf.Visualisers
         public readonly List<GraphVisualiser3DEdgeVisual> OutgoingEdges = new List<GraphVisualiser3DEdgeVisual>();
         public readonly List<GraphVisualiser3DEdgeVisual> IncidentEdges = new List<GraphVisualiser3DEdgeVisual>();
         public TextBlock Label;
+        public FrameworkElement LabelElement;
         public bool IsSelected;
         public bool IsHighlighted;
 
@@ -72,10 +76,12 @@ namespace m0.UIWpf.Visualisers
             Transform = transform;
 
             bodyMaterial = new DiffuseMaterial(new SolidColorBrush(parent.GetThemeColor("0LightGrayBrush", Colors.LightGray)));
+            iconMaterial = new DiffuseMaterial(Brushes.Transparent);
             bodyEmissive = new EmissiveMaterial(new SolidColorBrush(Colors.Black));
 
             MaterialGroup material = new MaterialGroup();
             material.Children.Add(bodyMaterial);
+            material.Children.Add(iconMaterial);
             material.Children.Add(bodyEmissive);
 
             BodyModel = new GeometryModel3D(GraphVisualiser3DMeshFactory.UnitSphere, material);
@@ -169,28 +175,64 @@ namespace m0.UIWpf.Visualisers
             bodyEmissive.Brush = new SolidColorBrush(emissive);
         }
 
+        public void SetSphereIcon(ImageSource iconSource)
+        {
+            if (iconSource == null)
+            {
+                iconMaterial.Brush = Brushes.Transparent;
+                return;
+            }
+
+            ImageBrush iconBrush = new ImageBrush(iconSource)
+            {
+                Stretch = Stretch.Uniform,
+                AlignmentX = AlignmentX.Center,
+                AlignmentY = AlignmentY.Center,
+                TileMode = TileMode.None,
+                ViewportUnits = BrushMappingMode.RelativeToBoundingBox,
+                Viewport = new Rect(0, 0, 1, 1)
+            };
+
+            iconBrush.Freeze();
+            iconMaterial.Brush = iconBrush;
+        }
+
         public void ApplyLabelState()
         {
             if (Label == null) return;
 
+            FrameworkElement labelElement = LabelElement ?? Label;
+            Brush backgroundBrush;
+            int zIndex;
+
             if (IsSelected)
             {
                 Label.Foreground = new SolidColorBrush(parentVisualiser.GetThemeColor("0BackgroundBrush", Colors.Black));
-                Label.Background = new SolidColorBrush(parentVisualiser.GetThemeColor("0SelectionBrush", Colors.DodgerBlue));
-                Panel.SetZIndex(Label, 9000);
+                backgroundBrush = new SolidColorBrush(parentVisualiser.GetThemeColor("0SelectionBrush", Colors.DodgerBlue));
+                zIndex = 9000;
             }
             else if (IsHighlighted)
             {
                 Label.Foreground = new SolidColorBrush(parentVisualiser.GetThemeColor("0HighlightBrush", Colors.OrangeRed));
-                Label.Background = parentVisualiser.GetLabelBackgroundBrush(230);
-                Panel.SetZIndex(Label, 8000);
+                backgroundBrush = parentVisualiser.GetLabelBackgroundBrush(230);
+                zIndex = 8000;
             }
             else
             {
                 Label.Foreground = new SolidColorBrush(parentVisualiser.GetThemeColor("0ForegroundBrush", Colors.White));
-                Label.Background = parentVisualiser.GetLabelBackgroundBrush(205);
-                Panel.SetZIndex(Label, 1000);
+                backgroundBrush = parentVisualiser.GetLabelBackgroundBrush(205);
+                zIndex = 1000;
             }
+
+            if (labelElement is Border)
+            {
+                ((Border)labelElement).Background = backgroundBrush;
+                Label.Background = null;
+            }
+            else
+                Label.Background = backgroundBrush;
+
+            Panel.SetZIndex(labelElement, zIndex);
         }
 
         private static Color Darken(Color color, double factor)
@@ -602,6 +644,8 @@ namespace m0.UIWpf.Visualisers
         private bool showOutEdges;
         private bool showInEdges;
         private bool animateEdges;
+        private bool iconsOnLabels;
+        private bool iconsOnVertexes;
         private int maxVertices;
         private double sphereSize;
         private double scale = 1.0;
@@ -616,7 +660,7 @@ namespace m0.UIWpf.Visualisers
             "EdgeLength", "NumberOfCircles", "ShowOutEdges", "ShowInEdges",
             "MetaLabels", "LayoutMode3D", "TransitionStyle",
             "TransitionDurationMs", "SphereSize", "MaxVertices3D", "LabelSize",
-            "AnimateEdges"
+            "AnimateEdges", "IconsOnLabels", "IconsOnVertexes"
         };
         public string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
@@ -738,6 +782,8 @@ namespace m0.UIWpf.Visualisers
             showInEdges = GeneralUtil.CompareStrings(Vertex.Get(false, "ShowInEdges:"), "True");
             bool animateEdgesIsNull = false;
             animateEdges = GraphUtil.GetBooleanValue(Vertex.Get(false, "AnimateEdges:"), ref animateEdgesIsNull);
+            iconsOnLabels = GeneralUtil.CompareStrings(Vertex.Get(false, "IconsOnLabels:"), "True");
+            iconsOnVertexes = GeneralUtil.CompareStrings(Vertex.Get(false, "IconsOnVertexes:"), "True");
             maxVertices = GraphUtil.GetIntegerValueOr0(Vertex.Get(false, "MaxVertices3D:"));
             if (maxVertices <= 0) maxVertices = 250;
             sphereSize = GraphUtil.GetIntegerValueOr0(Vertex.Get(false, "SphereSize:"));
@@ -991,23 +1037,85 @@ namespace m0.UIWpf.Visualisers
             GraphVisualiser3DNode node = new GraphVisualiser3DNode(vertex, this, size);
             node.SetWorldPosition(position);
 
+            if (iconsOnVertexes)
+                node.SetSphereIcon(IconServer.GetIconByVertex(vertex));
+
             displayedNodes[vertex] = node;
             modelToNode[node.BodyModel] = node;
             sceneRoot.Children.Add(node);
 
             TextBlock label = CreateLabel(vertex.Value != null ? vertex.Value.ToString() : "Ø", false);
+            Image labelIcon;
+            FrameworkElement labelElement = CreateNodeLabelElement(vertex, label, out labelIcon);
             node.Label = label;
+            node.LabelElement = labelElement;
             node.ApplyLabelState();
-            labelOverlay.Children.Add(label);
+            labelOverlay.Children.Add(labelElement);
             labels.Add(new GraphVisualiser3DLabel
             {
-                Element = label,
+                Element = labelElement,
+                TextElement = label,
+                IconElement = labelIcon,
                 GetWorldPosition = () => node.Position + new Vector3D(0, size * 1.35, 0),
                 BaseZIndex = isRoot ? 3000 : 1000,
                 IsEdgeLabel = false
             });
 
             return node;
+        }
+
+        private FrameworkElement CreateNodeLabelElement(IVertex vertex, TextBlock label, out Image labelIcon)
+        {
+            labelIcon = null;
+
+            if (!iconsOnLabels)
+                return label;
+
+            ImageSource iconSource = IconServer.GetIconByVertex(vertex);
+
+            if (iconSource == null)
+                return label;
+
+            Border labelBorder = new Border
+            {
+                IsHitTestVisible = false,
+                SnapsToDevicePixels = true,
+                UseLayoutRounding = true
+            };
+
+            StackPanel panel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Background = null
+            };
+
+            labelIcon = CreateIconImage(iconSource, new Thickness(3, 0, 3, 0));
+            panel.Children.Add(labelIcon);
+            panel.Children.Add(label);
+
+            label.Background = null;
+            labelBorder.Child = panel;
+
+            return labelBorder;
+        }
+
+        private Image CreateIconImage(ImageSource iconSource, Thickness margin)
+        {
+            Image iconImage = new Image
+            {
+                Source = iconSource,
+                Margin = margin,
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Stretch = Stretch.Uniform,
+                SnapsToDevicePixels = true,
+                UseLayoutRounding = true,
+                IsHitTestVisible = false
+            };
+
+            RenderOptions.SetBitmapScalingMode(iconImage, BitmapScalingMode.Fant);
+
+            return iconImage;
         }
 
         private void ConnectDisplayedEdges(IVertex vertex)
@@ -1070,6 +1178,7 @@ namespace m0.UIWpf.Visualisers
                 labels.Add(new GraphVisualiser3DLabel
                 {
                     Element = metaLabel,
+                    TextElement = metaLabel,
                     GetWorldPosition = visual.GetLabelPosition,
                     BaseZIndex = 900,
                     IsEdgeLabel = true
@@ -1097,7 +1206,22 @@ namespace m0.UIWpf.Visualisers
         private void UpdateLabelSizes()
         {
             foreach (GraphVisualiser3DLabel label in labels)
-                ApplyLabelSize(label.Element, label.IsEdgeLabel);
+                ApplyLabelSize(label);
+        }
+
+        private void ApplyLabelSize(GraphVisualiser3DLabel label)
+        {
+            if (label.TextElement != null)
+                ApplyLabelSize(label.TextElement, label.IsEdgeLabel);
+
+            if (label.IconElement != null)
+            {
+                double effectiveLabelScale = Math.Max(0.01, labelScale * Math.Max(0.01, scale));
+                double iconSize = WpfUtil.IconSize * effectiveLabelScale;
+
+                label.IconElement.Width = iconSize;
+                label.IconElement.Height = iconSize;
+            }
         }
 
         private void ApplyLabelSize(TextBlock label, bool isEdge)
@@ -1156,7 +1280,7 @@ namespace m0.UIWpf.Visualisers
                 Canvas.SetTop(label.Element, screen.Y - desired.Height / 2.0);
 
                 double opacity = Math.Max(0.35, Math.Min(1.0, 1200.0 / Math.Max(250.0, depth)));
-                label.Element.Opacity = label.Element == highlightedNode?.Label ? 1.0 : opacity;
+                label.Element.Opacity = label.TextElement == highlightedNode?.Label || label.Element == highlightedNode?.Label ? 1.0 : opacity;
                 Panel.SetZIndex(label.Element, label.BaseZIndex + (int)Math.Max(0, 2000 - depth));
             }
         }
@@ -1783,6 +1907,8 @@ namespace m0.UIWpf.Visualisers
             Vertex.Get(false, "TransitionDurationMs:").Value = 1000;
             Vertex.Get(false, "SphereSize:").Value = 22;
             Vertex.Get(false, "MaxVertices3D:").Value = 250;
+            Vertex.Get(false, "IconsOnLabels:").Value = "False";
+            Vertex.Get(false, "IconsOnVertexes:").Value = "False";
         }
 
         public IVertex Vertex

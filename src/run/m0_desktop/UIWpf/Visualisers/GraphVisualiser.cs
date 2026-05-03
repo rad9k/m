@@ -148,6 +148,40 @@ namespace m0.UIWpf.Visualisers
                 SetChildForeground((Brush)FindResource("0ForegroundBrush"));
         }
 
+        private void SetChildForeground(Brush brush)
+        {
+            SetForegroundIfPresent(this.Child, brush);
+        }
+
+        private void SetForegroundIfPresent(DependencyObject element, Brush brush)
+        {
+            if (element == null)
+                return;
+
+            GeneralUtil.SetPropertyIfPresent(element, "Foreground", brush);
+
+            if (element is Panel)
+            {
+                Panel panel = (Panel)element;
+
+                foreach (UIElement child in panel.Children)
+                    SetForegroundIfPresent(child, brush);
+            }
+            else if (element is ContentControl)
+            {
+                ContentControl contentControl = (ContentControl)element;
+
+                if (contentControl.Content is DependencyObject)
+                    SetForegroundIfPresent((DependencyObject)contentControl.Content, brush);
+            }
+            else if (element is Decorator)
+            {
+                Decorator decorator = (Decorator)element;
+
+                SetForegroundIfPresent(decorator.Child, brush);
+            }
+        }
+
         public SimpleVisualiserWrapper(FrameworkElement e, IVertex _baseVertex, GraphVisualiser _ParentVisualiser)
         {
             baseVertex = _baseVertex;
@@ -381,6 +415,8 @@ namespace m0.UIWpf.Visualisers
 
         protected FrameworkElement GetVisualiser(IVertex v)
         {
+            FrameworkElement visualiser;
+
             if (!FastMode)
             {
                 IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, null, v);
@@ -391,7 +427,7 @@ namespace m0.UIWpf.Visualisers
 
                 s.ContextMenu = null; // no contextmenu, as there is gloal one for whole GraphVisualiser
 
-                return s;
+                visualiser = s;
             }
             else
             {
@@ -402,8 +438,38 @@ namespace m0.UIWpf.Visualisers
                 else
                     b.Text = "Ø";
 
-                return b;
-            }       
+                visualiser = b;
+            }
+
+            if (!Icons)
+                return visualiser;
+
+            ImageSource iconSource = IconServer.GetIconByVertex(v);
+
+            if (iconSource == null)
+                return visualiser;
+
+            StackPanel panel = new StackPanel();
+            panel.Orientation = Orientation.Horizontal;
+
+            Image iconImage = new Image();
+            iconImage.Source = iconSource;
+            iconImage.Width = WpfUtil.IconSize;
+            iconImage.Height = WpfUtil.IconSize;
+            iconImage.Margin = new Thickness(0, 0, 3, 0);
+            iconImage.VerticalAlignment = VerticalAlignment.Center;
+            iconImage.Stretch = Stretch.Uniform;
+            iconImage.SnapsToDevicePixels = true;
+            iconImage.UseLayoutRounding = true;
+
+            RenderOptions.SetBitmapScalingMode(iconImage, BitmapScalingMode.Fant);
+
+            visualiser.VerticalAlignment = VerticalAlignment.Center;
+
+            panel.Children.Add(iconImage);
+            panel.Children.Add(visualiser);
+
+            return panel;
         }
 
         bool FastMode;
@@ -411,6 +477,7 @@ namespace m0.UIWpf.Visualisers
         bool ShowOutEdges;
         bool ShowInEdges;
         bool AnimateEdges;
+        bool Icons;
 
         bool IsFirstPainted = false;
 
@@ -453,6 +520,11 @@ namespace m0.UIWpf.Visualisers
 
                 bool animateEdgesIsNull = false;
                 AnimateEdges = GraphUtil.GetBooleanValue(Vertex.Get(false, "AnimateEdges:"), ref animateEdgesIsNull);
+
+                if (GeneralUtil.CompareStrings(Vertex.Get(false, "Icons:"), "True"))
+                    Icons = true;
+                else
+                    Icons = false;
 
                 this.Children.Clear();
 
@@ -682,7 +754,8 @@ namespace m0.UIWpf.Visualisers
             Vertex.Get(false, "NumberOfCircles:").Value = 2;
             Vertex.Get(false, "FastMode:").Value = "True";
             Vertex.Get(false, "MetaLabels:").Value = "True";
-            Vertex.Get(false, "ShowOutEdges:").Value = "True";            
+            Vertex.Get(false, "ShowOutEdges:").Value = "True";
+            Vertex.Get(false, "Icons:").Value = "False";
         }        
 
         public void BaseEdgeToUpdated(){
