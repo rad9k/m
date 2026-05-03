@@ -755,7 +755,7 @@ namespace m0.UIWpf.Visualisers
             Vertex.Get(false, "FastMode:").Value = "True";
             Vertex.Get(false, "MetaLabels:").Value = "True";
             Vertex.Get(false, "ShowOutEdges:").Value = "True";
-            Vertex.Get(false, "Icons:").Value = "False";
+            Vertex.Get(false, "Icons:").Value = "True";
         }        
 
         public void BaseEdgeToUpdated(){

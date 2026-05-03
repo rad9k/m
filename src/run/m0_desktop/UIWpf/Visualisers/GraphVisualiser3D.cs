@@ -183,12 +183,30 @@ namespace m0.UIWpf.Visualisers
                 return;
             }
 
-            ImageBrush iconBrush = new ImageBrush(iconSource)
+            DrawingGroup iconDrawingGroup = new DrawingGroup();
+            iconDrawingGroup.Children.Add(new GeometryDrawing(
+                Brushes.Transparent,
+                null,
+                new RectangleGeometry(new Rect(0, 0, 1, 1))));
+
+            double iconWidth = 0.22;
+            double iconHeight = 0.32;
+            double iconTop = 0.34;
+
+            for (int iconIndex = 0; iconIndex < 3; iconIndex++)
             {
-                Stretch = Stretch.Uniform,
-                AlignmentX = AlignmentX.Center,
-                AlignmentY = AlignmentY.Center,
+                double iconLeft = (iconIndex + 0.5) / 3.0 - iconWidth / 2.0;
+                iconDrawingGroup.Children.Add(new ImageDrawing(iconSource, new Rect(iconLeft, iconTop, iconWidth, iconHeight)));
+            }
+
+            iconDrawingGroup.Freeze();
+
+            DrawingBrush iconBrush = new DrawingBrush(iconDrawingGroup)
+            {
+                Stretch = Stretch.Fill,
                 TileMode = TileMode.None,
+                ViewboxUnits = BrushMappingMode.RelativeToBoundingBox,
+                Viewbox = new Rect(0, 0, 1, 1),
                 ViewportUnits = BrushMappingMode.RelativeToBoundingBox,
                 Viewport = new Rect(0, 0, 1, 1)
             };
@@ -1907,8 +1925,8 @@ namespace m0.UIWpf.Visualisers
             Vertex.Get(false, "TransitionDurationMs:").Value = 1000;
             Vertex.Get(false, "SphereSize:").Value = 22;
             Vertex.Get(false, "MaxVertices3D:").Value = 250;
-            Vertex.Get(false, "IconsOnLabels:").Value = "False";
-            Vertex.Get(false, "IconsOnVertexes:").Value = "False";
+            Vertex.Get(false, "IconsOnLabels:").Value = "True";
+            Vertex.Get(false, "IconsOnVertexes:").Value = "True";
         }
 
         public IVertex Vertex
