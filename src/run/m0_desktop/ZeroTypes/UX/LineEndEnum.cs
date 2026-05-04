@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace m0.ZeroTypes.UX
 {
-    public enum LineEndEnum { Straight, Arrow, Triangle, FilledTriangle, Diamond, FilledDiamond }
+    public enum LineEndEnum { Straight, Arrow, Triangle, FilledTriangle, Diamond, FilledDiamond, CrowFoot }
 
     class LineEndEnumHelper
     {
@@ -17,6 +17,7 @@ namespace m0.ZeroTypes.UX
         static IVertex FilledTriangle_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LineEndEnum\FilledTriangle");
         static IVertex Diamond_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LineEndEnum\Diamond");
         static IVertex FilledDiamond_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LineEndEnum\FilledDiamond");
+        static IVertex CrowFoot_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LineEndEnum\CrowFoot");
 
         public static LineEndEnum GetEnum(IVertex v)
         {
@@ -37,6 +38,8 @@ namespace m0.ZeroTypes.UX
 
                 case "FilledDiamond": return LineEndEnum.FilledDiamond;
 
+                case "CrowFoot": return LineEndEnum.CrowFoot;
+
                 default: return LineEndEnum.Straight;
             }
         }
@@ -55,6 +58,8 @@ namespace m0.ZeroTypes.UX
                 case LineEndEnum.Diamond: return Diamond_meta;
 
                 case LineEndEnum.FilledDiamond: return FilledDiamond_meta;
+
+                case LineEndEnum.CrowFoot: return CrowFoot_meta;
             }
 
             return Straight_meta;

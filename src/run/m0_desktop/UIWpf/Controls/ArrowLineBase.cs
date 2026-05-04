@@ -25,6 +25,17 @@ namespace m0.UIWpf.Controls
         PathFigure pathfigHead2;
         PolyLineSegment polysegHead2;
 
+        // Extra pre-allocated figures for CrowFoot's two side prongs at each end.
+        // The middle prong reuses pathfigHead1 / pathfigHead2.
+        PathFigure pathfigHead1Side1;
+        PolyLineSegment polysegHead1Side1;
+        PathFigure pathfigHead1Side2;
+        PolyLineSegment polysegHead1Side2;
+        PathFigure pathfigHead2Side1;
+        PolyLineSegment polysegHead2Side1;
+        PathFigure pathfigHead2Side2;
+        PolyLineSegment polysegHead2Side2;
+
         /// <summary>
         ///     Identifies the ArrowAngle dependency property.
         /// </summary>
@@ -117,6 +128,22 @@ namespace m0.UIWpf.Controls
             pathfigHead2 = new PathFigure();
             polysegHead2 = new PolyLineSegment();
             pathfigHead2.Segments.Add(polysegHead2);
+
+            pathfigHead1Side1 = new PathFigure();
+            polysegHead1Side1 = new PolyLineSegment();
+            pathfigHead1Side1.Segments.Add(polysegHead1Side1);
+
+            pathfigHead1Side2 = new PathFigure();
+            polysegHead1Side2 = new PolyLineSegment();
+            pathfigHead1Side2.Segments.Add(polysegHead1Side2);
+
+            pathfigHead2Side1 = new PathFigure();
+            polysegHead2Side1 = new PolyLineSegment();
+            pathfigHead2Side1.Segments.Add(polysegHead2Side1);
+
+            pathfigHead2Side2 = new PathFigure();
+            polysegHead2Side2 = new PolyLineSegment();
+            pathfigHead2Side2.Segments.Add(polysegHead2Side2);
         }
 
         public LineEndEnum StartEnding;
@@ -156,6 +183,16 @@ namespace m0.UIWpf.Controls
                         pathgeo.Figures.Add(CalculateDiamond(pathfigHead1, pt2, pt1));
                     }
 
+                    if (StartEnding == LineEndEnum.CrowFoot)
+                    {
+                        Point pt1 = pathfigLine.StartPoint;
+                        Point pt2 = polysegLine.Points[0];
+
+                        pathgeo.Figures.Add(CalculateCrowFootMiddle(pathfigHead1, pt2, pt1));
+                        pathgeo.Figures.Add(CalculateCrowFootSide(pathfigHead1Side1, pt2, pt1, +1));
+                        pathgeo.Figures.Add(CalculateCrowFootSide(pathfigHead1Side2, pt2, pt1, -1));
+                    }
+
                     // Draw the arrow at the end of the line.
                     if (EndEnding == LineEndEnum.Arrow || EndEnding == LineEndEnum.Triangle || EndEnding == LineEndEnum.FilledTriangle)
                     {
@@ -178,6 +215,17 @@ namespace m0.UIWpf.Controls
                         Point pt2 = polysegLine.Points[count - 1];
 
                         pathgeo.Figures.Add(CalculateDiamond(pathfigHead2, pt1, pt2));
+                    }
+
+                    if (EndEnding == LineEndEnum.CrowFoot)
+                    {
+                        Point pt1 = count == 1 ? pathfigLine.StartPoint :
+                                                 polysegLine.Points[count - 2];
+                        Point pt2 = polysegLine.Points[count - 1];
+
+                        pathgeo.Figures.Add(CalculateCrowFootMiddle(pathfigHead2, pt1, pt2));
+                        pathgeo.Figures.Add(CalculateCrowFootSide(pathfigHead2Side1, pt1, pt2, +1));
+                        pathgeo.Figures.Add(CalculateCrowFootSide(pathfigHead2Side2, pt1, pt2, -1));
                     }
                 }
                 return pathgeo;
@@ -230,6 +278,49 @@ namespace m0.UIWpf.Controls
             polyseg.Points.Add(pt2 + (double)1.75*vect * matx);
 
             pathfig.IsClosed = true;
+
+            return pathfig;
+        }
+
+        // CrowFoot ("many" symbol in ERD): three open strokes radiating outward
+        // from pt2 (the line endpoint), away from pt1. The middle prong continues
+        // the line direction; the two side prongs are rotated by +/- ArrowAngle/2.
+        // Pre-allocated PathFigure / PolyLineSegment instances are passed in to
+        // avoid per-frame allocations.
+        PathFigure CalculateCrowFootMiddle(PathFigure pathfig, Point pt1, Point pt2)
+        {
+            Vector vect = pt2 - pt1;
+            vect.Normalize();
+            vect *= ArrowLength;
+
+            PolyLineSegment polyseg = pathfig.Segments[0] as PolyLineSegment;
+            polyseg.Points.Clear();
+
+            pathfig.StartPoint = pt2;
+            polyseg.Points.Add(pt2 + vect);
+
+            pathfig.IsClosed = false;
+
+            return pathfig;
+        }
+
+        // angleSign: +1 for one side prong, -1 for the other.
+        PathFigure CalculateCrowFootSide(PathFigure pathfig, Point pt1, Point pt2, double angleSign)
+        {
+            Matrix matx = new Matrix();
+            Vector vect = pt2 - pt1;
+            vect.Normalize();
+            vect *= ArrowLength;
+
+            matx.Rotate(angleSign * ArrowAngle / 2);
+
+            PolyLineSegment polyseg = pathfig.Segments[0] as PolyLineSegment;
+            polyseg.Points.Clear();
+
+            pathfig.StartPoint = pt2;
+            polyseg.Points.Add(pt2 + vect * matx);
+
+            pathfig.IsClosed = false;
 
             return pathfig;
         }
