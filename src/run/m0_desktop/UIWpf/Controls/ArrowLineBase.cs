@@ -282,9 +282,14 @@ namespace m0.UIWpf.Controls
             return pathfig;
         }
 
-        // CrowFoot ("many" symbol in ERD): three open strokes radiating outward
-        // from pt2 (the line endpoint), away from pt1. The middle prong continues
-        // the line direction; the two side prongs are rotated by +/- ArrowAngle/2.
+        // CrowFoot ("many" symbol in ERD): three open strokes converging at a
+        // point pulled back from pt2 by ArrowLength along the line, and fanning
+        // out so they reach (or border on) the entity edge at pt2. The middle
+        // prong hits exactly pt2; the two side prongs are rotated by
+        // +/- ArrowAngle/2 from the line direction.
+        // The line itself must be shortened by ArrowLength at the matching end
+        // so it stops at the convergence point - this shortening lives in
+        // ArrowPolyline.DefiningGeometry, in tandem with this method.
         // Pre-allocated PathFigure / PolyLineSegment instances are passed in to
         // avoid per-frame allocations.
         PathFigure CalculateCrowFootMiddle(PathFigure pathfig, Point pt1, Point pt2)
@@ -293,11 +298,13 @@ namespace m0.UIWpf.Controls
             vect.Normalize();
             vect *= ArrowLength;
 
+            Point convergence = pt2 - vect;
+
             PolyLineSegment polyseg = pathfig.Segments[0] as PolyLineSegment;
             polyseg.Points.Clear();
 
-            pathfig.StartPoint = pt2;
-            polyseg.Points.Add(pt2 + vect);
+            pathfig.StartPoint = convergence;
+            polyseg.Points.Add(pt2);
 
             pathfig.IsClosed = false;
 
@@ -312,13 +319,15 @@ namespace m0.UIWpf.Controls
             vect.Normalize();
             vect *= ArrowLength;
 
+            Point convergence = pt2 - vect;
+
             matx.Rotate(angleSign * ArrowAngle / 2);
 
             PolyLineSegment polyseg = pathfig.Segments[0] as PolyLineSegment;
             polyseg.Points.Clear();
 
-            pathfig.StartPoint = pt2;
-            polyseg.Points.Add(pt2 + vect * matx);
+            pathfig.StartPoint = convergence;
+            polyseg.Points.Add(convergence + vect * matx);
 
             pathfig.IsClosed = false;
 

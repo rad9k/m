@@ -106,6 +106,35 @@ namespace m0.UIWpf.Controls
                         polysegLine.Points[Points.Count - 2] = CalculateDiamondPoint(pt1, pt2);
                     }
 
+                    // CrowFoot: pull the line endpoint back by ArrowLength so it
+                    // stops at the prongs' convergence point instead of poking
+                    // into the entity. The prong geometry itself is built in
+                    // ArrowLineBase.CalculateCrowFoot* using the original pt2.
+                    if (StartEnding == LineEndEnum.CrowFoot)
+                    {
+                        Point pt1 = pathfigLine.StartPoint;
+                        Point pt2 = polysegLine.Points[0];
+
+                        Vector vect = pt1 - pt2;
+                        vect.Normalize();
+                        vect *= ArrowLength;
+
+                        pathfigLine.StartPoint = pt1 - vect;
+                    }
+
+                    if (EndEnding == LineEndEnum.CrowFoot)
+                    {
+                        Point pt1 = polysegLine.Points.Count == 1 ? pathfigLine.StartPoint :
+                                                    polysegLine.Points[polysegLine.Points.Count - 2];
+                        Point pt2 = polysegLine.Points[polysegLine.Points.Count - 1];
+
+                        Vector vect = pt2 - pt1;
+                        vect.Normalize();
+                        vect *= ArrowLength;
+
+                        polysegLine.Points[Points.Count - 2] = pt2 - vect;
+                    }
+
                     if(IsEndings)
                          polysegLine.Points.Clear();
 
