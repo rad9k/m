@@ -197,6 +197,10 @@ namespace m0.ZeroTypes.UX
             LineEndings.ArrowLength = 15;
             Line.ArrowLength = 15;
 
+            // Anchor type may have just become CrowFoot without items moving;
+            // refresh the side prong tips so DefiningGeometry sees them on the
+            // very next render.
+            ComputeCrowFootSideTips();
         }
 
         Brush FillBrush = null;
@@ -270,6 +274,82 @@ namespace m0.ZeroTypes.UX
 
             LineEndings.Points = pc;
             Line.Points = pc;
+
+            ComputeCrowFootSideTips();
+        }
+
+        // Computes the two side prong tips of CrowFoot at each end (only for
+        // ends with StartAnchor / EndAnchor == CrowFoot), using a shape-aware
+        // ray/edge intersection on the relevant UXItem. The tip overrides are
+        // pushed onto LineEndings so ArrowLineBase.DefiningGeometry uses them
+        // instead of the angular fallback. Falls back to the angular formula
+        // (override left null) when the item reference is missing or the
+        // geometry is degenerate, so this method is safe to call eagerly.
+        protected virtual void ComputeCrowFootSideTips()
+        {
+            LineEndings.StartCrowFootSide1Tip = null;
+            LineEndings.StartCrowFootSide2Tip = null;
+            LineEndings.EndCrowFootSide1Tip = null;
+            LineEndings.EndCrowFootSide2Tip = null;
+
+            PointCollection pc = LineEndings.Points;
+            if (pc == null || pc.Count < 2)
+                return;
+
+            double arrowLen = LineEndings.ArrowLength;
+            double halfAngle = LineEndings.ArrowAngle / 2.0;
+
+            if (StartAnchor == LineEndEnum.CrowFoot && FromDiagramItem != null)
+            {
+                Point pt2 = pc[0];
+                Point pt1 = pc[1];
+
+                Vector vect = pt2 - pt1;
+
+                if (vect.Length > 0.001)
+                {
+                    vect.Normalize();
+                    Point convergence = pt2 - vect * arrowLen;
+
+                    Vector dir1 = RotateVectorDegrees(vect, +halfAngle);
+                    Vector dir2 = RotateVectorDegrees(vect, -halfAngle);
+
+                    LineEndings.StartCrowFootSide1Tip = FromDiagramItem.GetLineEdgeIntersection(convergence, dir1);
+                    LineEndings.StartCrowFootSide2Tip = FromDiagramItem.GetLineEdgeIntersection(convergence, dir2);
+                }
+            }
+
+            if (EndAnchor == LineEndEnum.CrowFoot && ToItem != null)
+            {
+                int n = pc.Count;
+                Point pt1 = pc[n - 2];
+                Point pt2 = pc[n - 1];
+
+                Vector vect = pt2 - pt1;
+
+                if (vect.Length > 0.001)
+                {
+                    vect.Normalize();
+                    Point convergence = pt2 - vect * arrowLen;
+
+                    Vector dir1 = RotateVectorDegrees(vect, +halfAngle);
+                    Vector dir2 = RotateVectorDegrees(vect, -halfAngle);
+
+                    LineEndings.EndCrowFootSide1Tip = ToItem.GetLineEdgeIntersection(convergence, dir1);
+                    LineEndings.EndCrowFootSide2Tip = ToItem.GetLineEdgeIntersection(convergence, dir2);
+                }
+            }
+        }
+
+        // Same rotation convention as Matrix.Rotate (degrees, screen Y-down
+        // coordinate system); kept as a static helper to avoid allocating
+        // a Matrix per call.
+        static Vector RotateVectorDegrees(Vector v, double angleDegrees)
+        {
+            double rad = angleDegrees * Math.PI / 180.0;
+            double cos = Math.Cos(rad);
+            double sin = Math.Sin(rad);
+            return new Vector(v.X * cos - v.Y * sin, v.X * sin + v.Y * cos);
         }
 
         public override double GetMouseDistance(Point p)

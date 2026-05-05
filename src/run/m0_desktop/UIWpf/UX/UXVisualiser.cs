@@ -2599,6 +2599,10 @@ namespace m0.UIWpf.UX
 
         public Point GetLineAnchorLocation(IUXItem toItem, bool useToPoint, Point toPoint, int toItemDiagramLinesCount, int toItemDiagramLinesNumber, bool isSelfStart) { return new Point(); }
 
+        // Visualiser is not a renderable shape entity; return fromPoint as a
+        // safe no-op so any accidental call doesn't produce a (0,0) artifact.
+        public Point GetLineEdgeIntersection(Point fromPoint, Vector direction) { return fromPoint; }
+
         public void UpdateDiagramLines() { }
 
         // UXItem

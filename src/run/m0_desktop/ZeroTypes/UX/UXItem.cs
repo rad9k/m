@@ -1203,6 +1203,88 @@ namespace m0.ZeroTypes.UX
             return p;
         }
 
+        // Default rectangle implementation: shoots a ray from fromPoint in
+        // direction, intersects all 4 axis-aligned edges, and returns the
+        // closest hit point that lies on an actual edge segment AND lies
+        // strictly forward along the ray. If no valid hit is found (degenerate
+        // direction, item not laid out yet, etc.) the function returns
+        // fromPoint as a safe fallback so the caller can detect "no change".
+        public virtual Point GetLineEdgeIntersection(Point fromPoint, Vector direction)
+        {
+            if (OwningVisualiser == null)
+                return fromPoint;
+
+            if (this.ActualWidth <= 0 || this.ActualHeight <= 0)
+                return fromPoint;
+
+            if (direction.Length < 0.0001)
+                return fromPoint;
+
+            Point thisLeftTop = TranslatePoint(new Point(0, 0), OwningVisualiser.Canvas);
+
+            double left = thisLeftTop.X;
+            double top = thisLeftTop.Y;
+            double right = left + this.ActualWidth;
+            double bottom = top + this.ActualHeight;
+
+            Point rayEnd = new Point(fromPoint.X + direction.X, fromPoint.Y + direction.Y);
+            Line2D ray = Geometry2D.GetLine2DFromPoints(fromPoint, rayEnd);
+
+            // 4 edges as infinite lines
+            Line2D topEdge = Geometry2D.GetLine2DFromPoints(left, top, right, top);
+            Line2D bottomEdge = Geometry2D.GetLine2DFromPoints(left, bottom, right, bottom);
+            Line2D leftEdge = Geometry2D.GetLine2DFromPoints(left, top, left, bottom);
+            Line2D rightEdge = Geometry2D.GetLine2DFromPoints(right, top, right, bottom);
+
+            const double tol = 0.5;
+
+            Point candidateTop = Geometry2D.FindLineCross(ray, topEdge);
+            Point candidateBottom = Geometry2D.FindLineCross(ray, bottomEdge);
+            Point candidateLeft = Geometry2D.FindLineCross(ray, leftEdge);
+            Point candidateRight = Geometry2D.FindLineCross(ray, rightEdge);
+
+            Point best = fromPoint;
+            double bestDistance = double.MaxValue;
+
+            ConsiderRectangleCandidate(candidateTop, fromPoint, direction, left, top, right, bottom, tol, ref best, ref bestDistance);
+            ConsiderRectangleCandidate(candidateBottom, fromPoint, direction, left, top, right, bottom, tol, ref best, ref bestDistance);
+            ConsiderRectangleCandidate(candidateLeft, fromPoint, direction, left, top, right, bottom, tol, ref best, ref bestDistance);
+            ConsiderRectangleCandidate(candidateRight, fromPoint, direction, left, top, right, bottom, tol, ref best, ref bestDistance);
+
+            if (bestDistance == double.MaxValue)
+                return fromPoint;
+
+            return best;
+        }
+
+        // Helper for GetLineEdgeIntersection: accepts a candidate point if it
+        // lies inside the rectangle bounds (with tolerance) and lies strictly
+        // forward along the ray; keeps the closest such candidate.
+        static void ConsiderRectangleCandidate(Point cand, Point fromPoint, Vector direction,
+            double left, double top, double right, double bottom, double tol,
+            ref Point best, ref double bestDistance)
+        {
+            if (double.IsNaN(cand.X) || double.IsNaN(cand.Y) || double.IsInfinity(cand.X) || double.IsInfinity(cand.Y))
+                return;
+
+            if (cand.X < left - tol || cand.X > right + tol || cand.Y < top - tol || cand.Y > bottom + tol)
+                return;
+
+            double dx = cand.X - fromPoint.X;
+            double dy = cand.Y - fromPoint.Y;
+
+            // Strictly forward along the ray
+            if (dx * direction.X + dy * direction.Y <= 0)
+                return;
+
+            double dist = Math.Sqrt(dx * dx + dy * dy);
+            if (dist < bestDistance)
+            {
+                bestDistance = dist;
+                best = cand;
+            }
+        }
+
         // UNDER
 
         // UXItem

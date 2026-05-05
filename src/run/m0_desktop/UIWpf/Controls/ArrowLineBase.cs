@@ -150,6 +150,17 @@ namespace m0.UIWpf.Controls
 
         public LineEndEnum EndEnding;
 
+        // Optional CrowFoot side prong tip overrides. When set, the side
+        // prongs are drawn from the convergence point to the supplied tip
+        // (computed by the caller using a shape-aware ray/edge intersection).
+        // When null, ArrowLineBase falls back to the angular formula
+        // (convergence + rotated unit vector * ArrowLength), which lands the
+        // tip in the air and not on any entity edge.
+        public Point? StartCrowFootSide1Tip;
+        public Point? StartCrowFootSide2Tip;
+        public Point? EndCrowFootSide1Tip;
+        public Point? EndCrowFootSide2Tip;
+
         /// <summary>
         ///     Gets a value that represents the Geometry of the ArrowLine.
         /// </summary>
@@ -189,8 +200,8 @@ namespace m0.UIWpf.Controls
                         Point pt2 = polysegLine.Points[0];
 
                         pathgeo.Figures.Add(CalculateCrowFootMiddle(pathfigHead1, pt2, pt1));
-                        pathgeo.Figures.Add(CalculateCrowFootSide(pathfigHead1Side1, pt2, pt1, +1));
-                        pathgeo.Figures.Add(CalculateCrowFootSide(pathfigHead1Side2, pt2, pt1, -1));
+                        pathgeo.Figures.Add(CalculateCrowFootSide(pathfigHead1Side1, pt2, pt1, +1, StartCrowFootSide1Tip));
+                        pathgeo.Figures.Add(CalculateCrowFootSide(pathfigHead1Side2, pt2, pt1, -1, StartCrowFootSide2Tip));
                     }
 
                     // Draw the arrow at the end of the line.
@@ -224,8 +235,8 @@ namespace m0.UIWpf.Controls
                         Point pt2 = polysegLine.Points[count - 1];
 
                         pathgeo.Figures.Add(CalculateCrowFootMiddle(pathfigHead2, pt1, pt2));
-                        pathgeo.Figures.Add(CalculateCrowFootSide(pathfigHead2Side1, pt1, pt2, +1));
-                        pathgeo.Figures.Add(CalculateCrowFootSide(pathfigHead2Side2, pt1, pt2, -1));
+                        pathgeo.Figures.Add(CalculateCrowFootSide(pathfigHead2Side1, pt1, pt2, +1, EndCrowFootSide1Tip));
+                        pathgeo.Figures.Add(CalculateCrowFootSide(pathfigHead2Side2, pt1, pt2, -1, EndCrowFootSide2Tip));
                     }
                 }
                 return pathgeo;
@@ -312,22 +323,36 @@ namespace m0.UIWpf.Controls
         }
 
         // angleSign: +1 for one side prong, -1 for the other.
-        PathFigure CalculateCrowFootSide(PathFigure pathfig, Point pt1, Point pt2, double angleSign)
+        // overrideTip: if non-null, drawn from convergence to overrideTip
+        // (caller computed it via shape-aware ray/edge intersection so the
+        // tip lands exactly on the entity boundary). If null, falls back to
+        // the angular formula which leaves the tip in the air.
+        PathFigure CalculateCrowFootSide(PathFigure pathfig, Point pt1, Point pt2, double angleSign, Point? overrideTip)
         {
-            Matrix matx = new Matrix();
             Vector vect = pt2 - pt1;
             vect.Normalize();
             vect *= ArrowLength;
 
             Point convergence = pt2 - vect;
 
-            matx.Rotate(angleSign * ArrowAngle / 2);
+            Point tip;
+
+            if (overrideTip.HasValue)
+            {
+                tip = overrideTip.Value;
+            }
+            else
+            {
+                Matrix matx = new Matrix();
+                matx.Rotate(angleSign * ArrowAngle / 2);
+                tip = convergence + vect * matx;
+            }
 
             PolyLineSegment polyseg = pathfig.Segments[0] as PolyLineSegment;
             polyseg.Points.Clear();
 
             pathfig.StartPoint = convergence;
-            polyseg.Points.Add(convergence + vect * matx);
+            polyseg.Points.Add(tip);
 
             pathfig.IsClosed = false;
 

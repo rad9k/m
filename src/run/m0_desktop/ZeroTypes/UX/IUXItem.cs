@@ -64,6 +64,12 @@ namespace m0.ZeroTypes.UX
 
         Point GetLineAnchorLocation(IUXItem toItem, bool useToPoint, Point toPoint, int toItemDiagramLinesCount, int toItemDiagramLinesNumber, bool isSelfStart);
 
+        // Returns the point on this item's visible boundary where a ray cast
+        // from fromPoint (assumed to be outside the item) in the given direction
+        // first crosses the boundary. Used by CrowFoot side prongs to land
+        // exactly on the item's edge regardless of shape.
+        Point GetLineEdgeIntersection(Point fromPoint, Vector direction);
+
         void UpdateDiagramLines();
 
         //

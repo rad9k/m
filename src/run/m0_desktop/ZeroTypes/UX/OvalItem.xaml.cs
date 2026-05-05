@@ -252,5 +252,60 @@ namespace m0.ZeroTypes.UX
 
             return p;
         }
+
+        // Ellipse equivalent of UXItem.GetLineEdgeIntersection.
+        // Solves the ray <-> ellipse intersection (2 candidates) and returns
+        // the one strictly forward along the ray (closest to fromPoint).
+        public override Point GetLineEdgeIntersection(Point fromPoint, Vector direction)
+        {
+            if (OwningVisualiser == null)
+                return fromPoint;
+
+            if (this.ActualWidth <= 0 || this.ActualHeight <= 0)
+                return fromPoint;
+
+            if (direction.Length < 0.0001)
+                return fromPoint;
+
+            Point thisLeftTop = TranslatePoint(new Point(0, 0), OwningVisualiser.Canvas);
+
+            double ovalX = thisLeftTop.X + this.ActualWidth / 2;
+            double ovalY = thisLeftTop.Y + this.ActualHeight / 2;
+            // Same Oval ctor convention as the existing GetLineAnchorLocation
+            // path above (a = height/2, b = width/2)
+            Oval o = new Oval(ovalX, ovalY, this.ActualHeight / 2, this.ActualWidth / 2);
+
+            Point rayEnd = new Point(fromPoint.X + direction.X, fromPoint.Y + direction.Y);
+            Line2D ray = Geometry2D.GetLine2DFromPoints(fromPoint, rayEnd);
+
+            Point[] crosses = Geometry2D.GetOvalLineCross(ray, o);
+
+            Point best = fromPoint;
+            double bestDistance = double.MaxValue;
+
+            foreach (Point cand in crosses)
+            {
+                if (double.IsNaN(cand.X) || double.IsNaN(cand.Y) || double.IsInfinity(cand.X) || double.IsInfinity(cand.Y))
+                    continue;
+
+                double dx = cand.X - fromPoint.X;
+                double dy = cand.Y - fromPoint.Y;
+
+                if (dx * direction.X + dy * direction.Y <= 0)
+                    continue;
+
+                double dist = Math.Sqrt(dx * dx + dy * dy);
+                if (dist < bestDistance)
+                {
+                    bestDistance = dist;
+                    best = cand;
+                }
+            }
+
+            if (bestDistance == double.MaxValue)
+                return fromPoint;
+
+            return best;
+        }
     }
 }

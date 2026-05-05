@@ -323,6 +323,90 @@ namespace m0.ZeroTypes.UX
             return p;
         }
 
+        // Rhombus equivalent of UXItem.GetLineEdgeIntersection.
+        // The rhombus is inscribed in the item bounding box, with vertices
+        // at the midpoints of the bounding box sides. Ray is intersected
+        // against each of the 4 diagonal sides as a segment; the closest
+        // forward hit is returned.
+        public override Point GetLineEdgeIntersection(Point fromPoint, Vector direction)
+        {
+            if (OwningVisualiser == null)
+                return fromPoint;
+
+            if (this.ActualWidth <= 0 || this.ActualHeight <= 0)
+                return fromPoint;
+
+            if (direction.Length < 0.0001)
+                return fromPoint;
+
+            Point thisLeftTop = TranslatePoint(new Point(0, 0), OwningVisualiser.Canvas);
+
+            double left = thisLeftTop.X;
+            double top = thisLeftTop.Y;
+            double right = left + this.ActualWidth;
+            double bottom = top + this.ActualHeight;
+            double cx = left + this.ActualWidth / 2;
+            double cy = top + this.ActualHeight / 2;
+
+            // 4 vertices (top, right, bottom, left)
+            Point vTop = new Point(cx, top);
+            Point vRight = new Point(right, cy);
+            Point vBottom = new Point(cx, bottom);
+            Point vLeft = new Point(left, cy);
+
+            Point rayEnd = new Point(fromPoint.X + direction.X, fromPoint.Y + direction.Y);
+            Line2D ray = Geometry2D.GetLine2DFromPoints(fromPoint, rayEnd);
+
+            Point best = fromPoint;
+            double bestDistance = double.MaxValue;
+
+            ConsiderRhombusSide(ray, vTop, vRight, fromPoint, direction, ref best, ref bestDistance);
+            ConsiderRhombusSide(ray, vRight, vBottom, fromPoint, direction, ref best, ref bestDistance);
+            ConsiderRhombusSide(ray, vBottom, vLeft, fromPoint, direction, ref best, ref bestDistance);
+            ConsiderRhombusSide(ray, vLeft, vTop, fromPoint, direction, ref best, ref bestDistance);
+
+            if (bestDistance == double.MaxValue)
+                return fromPoint;
+
+            return best;
+        }
+
+        // Intersects ray with the infinite line through (a, b), then accepts
+        // the crossing only if it falls within the [a, b] segment bounding box
+        // (with tolerance) AND lies strictly forward along the ray. Updates
+        // best/bestDistance if this hit is the closest so far.
+        static void ConsiderRhombusSide(Line2D ray, Point a, Point b, Point fromPoint, Vector direction,
+            ref Point best, ref double bestDistance)
+        {
+            Line2D side = Geometry2D.GetLine2DFromPoints(a, b);
+            Point cand = Geometry2D.FindLineCross(ray, side);
+
+            if (double.IsNaN(cand.X) || double.IsNaN(cand.Y) || double.IsInfinity(cand.X) || double.IsInfinity(cand.Y))
+                return;
+
+            const double tol = 0.5;
+            double minX = Math.Min(a.X, b.X) - tol;
+            double maxX = Math.Max(a.X, b.X) + tol;
+            double minY = Math.Min(a.Y, b.Y) - tol;
+            double maxY = Math.Max(a.Y, b.Y) + tol;
+
+            if (cand.X < minX || cand.X > maxX || cand.Y < minY || cand.Y > maxY)
+                return;
+
+            double dx = cand.X - fromPoint.X;
+            double dy = cand.Y - fromPoint.Y;
+
+            if (dx * direction.X + dy * direction.Y <= 0)
+                return;
+
+            double dist = Math.Sqrt(dx * dx + dy * dy);
+            if (dist < bestDistance)
+            {
+                bestDistance = dist;
+                best = cand;
+            }
+        }
+
         // UNDER        
    
     }
