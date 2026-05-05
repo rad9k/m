@@ -22,9 +22,9 @@
 				<"IsFK">
 					<@$EdgeTarget :: @Boolean>		
 					<@$IsAggregation :: @$Empty>
-			<"Association">
+			<"association">
 				<@$Inherits :: @Selector>
-				<@$VertexTarget :: @SQL\Types\Table>
+				<@$VertexTarget :: @SQL\Table>
 		<"Visualiser">
 			<@Class :: "SQL">
 				<@$Inherits :: @UX\UXItem>

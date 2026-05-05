@@ -168,13 +168,13 @@ namespace m0.UIWpf
             if (metaValue != null && isMetaEmpty == false)
                 AddIconNameCandidate(iconNames, metaValue.ToString());
 
+            AddIconNameCandidate(iconNames, GetIconNameFromIsEdge(edge?.To));
+
             if (edge?.To?.Value != null)
                 AddIconNameCandidate(iconNames, edge.To.Value.ToString());
 
             if (isMetaEmpty)
                 AddIconNameCandidate(iconNames, "$Empty");
-
-            AddIconNameCandidate(iconNames, GetIconNameFromIsEdge(edge?.To));
 
             return iconNames;
         }
