@@ -268,7 +268,7 @@ namespace m0.Lib.StdView
 
         private static readonly IVertex TableMeta = MinusZero.Instance.Root.Get(false, @"System\Meta\CustomDomain\SQL\Table");
         private static readonly IVertex ColumnMeta = MinusZero.Instance.Root.Get(false, @"System\Meta\CustomDomain\SQL\Table\Column");
-        private static readonly IVertex AssociationMeta = MinusZero.Instance.Root.Get(false, @"System\Meta\CustomDomain\SQL\Table\Association");
+        private static readonly IVertex AssociationMeta = MinusZero.Instance.Root.Get(false, @"System\Meta\CustomDomain\SQL\Table\association");
         private static readonly IVertex IsPkMeta = MinusZero.Instance.Root.Get(false, @"System\Meta\CustomDomain\SQL\Table\Column\IsPK");
         private static readonly IVertex IsFkMeta = MinusZero.Instance.Root.Get(false, @"System\Meta\CustomDomain\SQL\Table\Column\IsFK");
         private static readonly IVertex SqlTypesRoot = MinusZero.Instance.Root.Get(false, @"System\Meta\CustomDomain\SQL\Types");
