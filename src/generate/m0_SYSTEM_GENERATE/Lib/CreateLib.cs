@@ -141,6 +141,8 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             IVertex VertexToJson_Transform_Vertex = LibStdView.Get(false, "VertexToJson_Transform");
             IVertex JsonToVertex_Transform_Vertex = LibStdView.Get(false, "JsonToVertex_Transform");
+            IVertex MermaidToVertex_Transform_Vertex = LibStdView.Get(false, "MermaidToVertex_Transform");
+            IVertex VertexToMermaid_Transform_Vertex = LibStdView.Get(false, "VertexToMermaid_Transform");
             IVertex MdStringToMdTokenVertexes_Transform_Vertex = LibStdView.Get(false, "MdStringToMdTokenVertexes_Transform");
             IVertex OpenApiUrlVertexToPackage_Transform_Vertex = LibStdView.Get(false, "OpenApiUrlVertexToPackage_Transform");
 
@@ -158,6 +160,14 @@ namespace m0_SYSTEM_GENERATE.Lib
             ExecutionFlowHelper.DecorateWithDotNetStaticMethod(JsonToVertex_Transform_Vertex,
                 "m0.Lib.StdView.JsonToVertex, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", 
                 "JsonToVertex_Transform");
+
+            ExecutionFlowHelper.DecorateWithDotNetStaticMethod(MermaidToVertex_Transform_Vertex,
+                "m0.Lib.StdView.MermaidToVertex, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                "MermaidToVertex_Transform");
+
+            ExecutionFlowHelper.DecorateWithDotNetStaticMethod(VertexToMermaid_Transform_Vertex,
+                "m0.Lib.StdView.VertexToMermaid, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                "VertexToMermaid_Transform");
 
             ExecutionFlowHelper.DecorateWithDotNetStaticMethod(MdStringToMdTokenVertexes_Transform_Vertex,
                 "m0.Lib.StdView.MdStringToMdTokenVertexes, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",

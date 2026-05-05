@@ -275,11 +275,12 @@
 						
 					case "AlignRight"
 						html += "<div align=right>"
-						
 				
 			to <- @@Concatenate[html]
 	function "VertexToJson_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
 	function "JsonToVertex_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
+	function "MermaidToVertex_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
+	function "VertexToMermaid_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
 	function "MdStringToMdTokenVertexes_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
 	function "OpenApiUrlVertexToPackage_Transform" (@Event "event", @VertexType "from", @VertexType "meta", @VertexType "to")
 	"VertexToJson"
@@ -300,6 +301,24 @@
 		<@View :: "">
 			<@$Is :: @View>	
 			<@FromToTransformFunction :: @JsonToVertex_Transform>
+	"MermaidToVertex"
+		<@$GraphChangeTrigger :: "CreateView">
+			<@$Is :: @GraphChangeTrigger>
+			<@GraphChangeTrigger\ChangeTypeFilter :: @OnlyNonTransactedRootVertexEvents>
+			<@GraphChangeTrigger\ChangeTypeFilter :: @MetaEdgeAdded>
+			<@GraphChangeTrigger\Listener :: @System\Meta\ZeroTypes\ExecutionFlow\CreateViewMetaEdgeAdded>
+		<@View :: "">
+			<@$Is :: @View>	
+			<@FromToTransformFunction :: @MermaidToVertex_Transform>
+	"VertexToMermaid"
+		<@$GraphChangeTrigger :: "CreateView">
+			<@$Is :: @GraphChangeTrigger>
+			<@GraphChangeTrigger\ChangeTypeFilter :: @OnlyNonTransactedRootVertexEvents>
+			<@GraphChangeTrigger\ChangeTypeFilter :: @MetaEdgeAdded>
+			<@GraphChangeTrigger\Listener :: @System\Meta\ZeroTypes\ExecutionFlow\CreateViewMetaEdgeAdded>
+		<@View :: "">
+			<@$Is :: @View>	
+			<@FromToTransformFunction :: @VertexToMermaid_Transform>
 	"MdStringToMdTokenVertexes"
 		<@$GraphChangeTrigger :: "CreateView">
 			<@$Is :: @GraphChangeTrigger>

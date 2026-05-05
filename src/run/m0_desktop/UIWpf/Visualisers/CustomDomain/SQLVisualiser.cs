@@ -17,7 +17,7 @@ using System.Windows;
 using m0.UIWpf.Visualisers.Helper;
 using m0.Lib;
 
-namespace m0.UIWpf.Visualisers
+namespace m0.UIWpf.Visualisers.CustomDomain
 {
     class SQLVisualiser : Border, IVisualiser, ITypedEdge
     {
@@ -51,9 +51,9 @@ namespace m0.UIWpf.Visualisers
             new AtomVisualiserHelper(
                parentVisualiser,
                isVolatile,
-               MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Class"), 
+               MinusZero.Instance.Root.Get(false, @"System\Meta\CustomDomain\SQL\Visualiser\SQL"), 
                this, 
-               "ClassVisualiser", 
+               "SQLVisualiser", 
                this, 
                false, 
                new List<string> { @"", @"BaseEdge:\", @"BaseEdge:\To:\"}, 
@@ -75,62 +75,58 @@ namespace m0.UIWpf.Visualisers
 
             stackPanel.Children.Clear();
 
-            if (bv != null && bv.Value != null /*&& ((String)bv.Value)!="$Empty"*/) {                                                
-                foreach (IEdge e in GraphUtil.GetQueryOut(bv, "Attribute", null)) {                     
-                    StackPanel s = new StackPanel();
-                    s.Orientation = Orientation.Horizontal;
-                    stackPanel.Children.Add(s);
+            if (bv != null && bv.Value != null)
+            {
+                Brush foregroundBrush = (Brush)FindResource("0ForegroundBrush");
 
-                    string str = e.To.Value.ToString();
-                    TextBlock tb = new TextBlock();
-                    tb.FontWeight = FontWeights.Bold;
+                List<IEdge> primaryKeyColumnEdges = new List<IEdge>();
+                List<IEdge> regularColumnEdges = new List<IEdge>();
 
-                    IVertex eToEdgeTarget = GraphUtil.GetQueryOutFirst(e.To, "$EdgeTarget", null);
-
-                    if (eToEdgeTarget != null)
-                    {
-                        str += " : ";
-                        tb.Text = str;
-
-                        s.Children.Add(tb);
-
-                        tb = new TextBlock();
-                        tb.FontStyle = FontStyles.Italic;
-                        tb.Text = GraphUtil.GetStringValue(eToEdgeTarget);
-
-                        s.Children.Add(tb);
-                    }
+                foreach (IEdge columnEdge in GraphUtil.GetQueryOut(bv, "Column", null))
+                {
+                    if (IsColumnFlagTrue(columnEdge.To, "IsPK"))
+                        primaryKeyColumnEdges.Add(columnEdge);
                     else
-                    {
-                        tb.Text = str;
+                        regularColumnEdges.Add(columnEdge);
+                }
 
-                        s.Children.Add(tb);
-                    }
+                Grid tableGrid = new Grid();
+                tableGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                tableGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
-                    string cardinalites = ClassVertex.GetCardinalitiesString(e.To);
+                int rowIndex = 0;
 
-                    if (cardinalites != "") 
-                    {
-                        tb = new TextBlock();
+                foreach (IEdge columnEdge in primaryKeyColumnEdges)
+                {
+                    tableGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                    AddColumnRow(tableGrid, columnEdge, rowIndex, foregroundBrush, "PK");
+                    rowIndex++;
+                }
 
-                        tb.Text = " " + cardinalites;
+                if (primaryKeyColumnEdges.Count > 0 && regularColumnEdges.Count > 0)
+                {
+                    tableGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
-                        s.Children.Add(tb);
-                    }
+                    Border sectionSeparator = new Border();
+                    sectionSeparator.BorderBrush = foregroundBrush;
+                    sectionSeparator.BorderThickness = new Thickness(0, 1, 0, 0);
+                    Grid.SetRow(sectionSeparator, rowIndex);
+                    Grid.SetColumn(sectionSeparator, 0);
+                    Grid.SetColumnSpan(sectionSeparator, 2);
+                    tableGrid.Children.Add(sectionSeparator);
 
-                    string valueRanges = ClassVertex.GetValueRangeString(e.To);
+                    rowIndex++;
+                }
 
-                    if (valueRanges != "")
-                    {
-                        tb = new TextBlock();
-                        tb.FontStyle = FontStyles.Italic;
+                foreach (IEdge columnEdge in regularColumnEdges)
+                {
+                    tableGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                    string leftLabel = IsColumnFlagTrue(columnEdge.To, "IsFK") ? "FK" : "";
+                    AddColumnRow(tableGrid, columnEdge, rowIndex, foregroundBrush, leftLabel);
+                    rowIndex++;
+                }
 
-                        tb.Text = valueRanges;
-
-                        s.Children.Add(tb);
-                    }
-
-                }                
+                stackPanel.Children.Add(tableGrid);
             }
             else
             {
@@ -140,6 +136,64 @@ namespace m0.UIWpf.Visualisers
 
                 stackPanel.Children.Add(tb);
             }                
+        }
+
+        // Reads a "True"/"False" flag (e.g. IsPK, IsFK) from a Column vertex.
+        static bool IsColumnFlagTrue(IVertex columnVertex, string flagMetaName)
+        {
+            IVertex flagVertex = GraphUtil.GetQueryOutFirst(columnVertex, flagMetaName, null);
+
+            return GraphUtil.GetBooleanValueOrFalse(flagVertex);
+        }
+
+        void AddColumnRow(Grid tableGrid, IEdge columnEdge, int rowIndex, Brush foregroundBrush, string leftLabel)
+        {
+            IVertex columnVertex = columnEdge.To;
+
+            Border leftCell = new Border();
+            leftCell.BorderBrush = foregroundBrush;
+            leftCell.BorderThickness = new Thickness(0, 0, 1, 0);
+            leftCell.Padding = new Thickness(2, 0, 2, 0);
+
+            TextBlock leftLabelTextBlock = new TextBlock();
+            leftLabelTextBlock.HorizontalAlignment = HorizontalAlignment.Center;
+            leftLabelTextBlock.Text = leftLabel;
+            leftCell.Child = leftLabelTextBlock;
+
+            Grid.SetRow(leftCell, rowIndex);
+            Grid.SetColumn(leftCell, 0);
+            tableGrid.Children.Add(leftCell);
+
+            StackPanel rightStack = new StackPanel();
+            rightStack.Orientation = Orientation.Horizontal;
+            rightStack.Margin = new Thickness(2, 0, 2, 0);
+
+            string columnName = columnVertex.Value != null ? columnVertex.Value.ToString() : "";
+
+            TextBlock nameTextBlock = new TextBlock();
+            nameTextBlock.FontWeight = FontWeights.Bold;
+
+            IVertex columnTypeVertex = GraphUtil.GetQueryOutFirst(columnVertex, "$EdgeTarget", null);
+
+            if (columnTypeVertex != null)
+            {
+                nameTextBlock.Text = columnName + " : ";
+                rightStack.Children.Add(nameTextBlock);
+
+                TextBlock typeTextBlock = new TextBlock();
+                typeTextBlock.FontStyle = FontStyles.Italic;
+                typeTextBlock.Text = GraphUtil.GetStringValue(columnTypeVertex);
+                rightStack.Children.Add(typeTextBlock);
+            }
+            else
+            {
+                nameTextBlock.Text = columnName;
+                rightStack.Children.Add(nameTextBlock);
+            }
+
+            Grid.SetRow(rightStack, rowIndex);
+            Grid.SetColumn(rightStack, 1);
+            tableGrid.Children.Add(rightStack);
         }
         
         public IVertex Vertex

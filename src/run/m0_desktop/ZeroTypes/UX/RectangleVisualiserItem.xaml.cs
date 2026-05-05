@@ -20,6 +20,7 @@ using System.Xml.Linq;
 using m0.User.Process.UX;
 using m0.UIWpf.Visualisers;
 using m0.UIWpf.UX;
+using m0.UIWpf.Visualisers.CustomDomain;
 
 namespace m0.ZeroTypes.UX
 {
@@ -51,6 +52,12 @@ namespace m0.ZeroTypes.UX
             {
                 ((CodeVisualiser)ContentVisualiser).ViewAttributesUpdated();
                 ((CodeVisualiser)ContentVisualiser).ScaleChange();
+            }
+
+            if (ContentVisualiser is ClassVisualiser)
+            {
+                ((ClassVisualiser)ContentVisualiser).BaseEdgeToUpdated();
+                ((ClassVisualiser)ContentVisualiser).ScaleChange();
             }
 
             if (ContentVisualiser is SQLVisualiser)

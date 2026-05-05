@@ -11,18 +11,20 @@
 				<@$Is :: @AtomType>
 			<@AtomType :: "BLOB">
 				<@$Is :: @AtomType>
-			<"Table">
-				<"Column">
-					<@$VertexTarget :: @Type>
-					<@$Inherits :: @Selector>
+		<"Table">
+			<"Column">
+				<@$VertexTarget :: @Type>
+				<@$Inherits :: @Selector>
+				<@$IsAggregation :: @$Empty>
+				<"IsPK">
+					<@$EdgeTarget :: @Boolean>
 					<@$IsAggregation :: @$Empty>
-					<"IsPK">
-						<@$EdgeTarget :: @Boolean>
-					<"IsFK">
-						<@$EdgeTarget :: @Boolean>		
-				<"Association">
-					<@$Inherits :: @Selector>
-					<@$VertexTarget :: @SQL\Types\Table>
+				<"IsFK">
+					<@$EdgeTarget :: @Boolean>		
+					<@$IsAggregation :: @$Empty>
+			<"Association">
+				<@$Inherits :: @Selector>
+				<@$VertexTarget :: @SQL\Types\Table>
 		<"Visualiser">
 			<@Class :: "SQL">
 				<@$Inherits :: @UX\UXItem>

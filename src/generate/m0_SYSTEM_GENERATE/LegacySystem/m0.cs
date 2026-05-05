@@ -7053,9 +7053,11 @@ namespace m0
 
             CreateSystemFormalTextLanguageZeroCodeVisual_ViewTokens();
 
-            CreateSystemDataUXZeroUMLTemplate();
+            //
 
             CreateSystemMetaCustomDomain();
+
+            CreateSystemDataUXZeroUMLTemplate();
 
             //
 
