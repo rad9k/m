@@ -341,11 +341,29 @@ namespace m0.UIWpf.Visualisers
             if (headerControl == null)
             {
                 headerControl = new MetaToEdgeControl();
+                headerControl.MouseEnter += HeaderControlMouseEnter;
+                headerControl.MouseLeave += HeaderControlMouseLeave;
                 Header = headerControl;
             }
 
             headerControl.BaseEdge = GetEdge();
             headerControl.IsSelected = wasSelected;
+        }
+
+        private void HeaderControlMouseEnter(object sender, MouseEventArgs e)
+        {
+            MetaToEdgeControl headerControl = sender as MetaToEdgeControl;
+
+            if (headerControl != null)
+                headerControl.IsHighlighted = true;
+        }
+
+        private void HeaderControlMouseLeave(object sender, MouseEventArgs e)
+        {
+            MetaToEdgeControl headerControl = sender as MetaToEdgeControl;
+
+            if (headerControl != null)
+                headerControl.IsHighlighted = false;
         }
 
         public INoInEdgeInOutVertexVertex VertexChange(IExecution exe)

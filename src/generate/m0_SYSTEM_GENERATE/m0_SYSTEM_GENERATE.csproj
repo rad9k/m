@@ -88,6 +88,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="_RES\CustomDomain\SQL.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="_RES\Lib\Music\Chord\BasicChords.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -118,7 +121,9 @@
     <Content Include="_RES\Lib\StdView\StdView.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="_RES\UXTemplate\from_m0.txt" />
+    <Content Include="_RES\UXTemplate\SQL.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="_RES\UXTemplate\ZeroUML.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

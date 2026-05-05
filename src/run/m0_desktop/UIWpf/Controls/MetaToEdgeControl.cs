@@ -32,6 +32,15 @@ namespace m0.UIWpf.Controls
         public static readonly DependencyProperty IsSelectedProperty =
             DependencyProperty.Register("IsSelected", typeof(bool), typeof(MetaToEdgeControl), new UIPropertyMetadata(false, IsSelectedChangedCallback));
 
+        public bool IsHighlighted
+        {
+            get { return (bool)GetValue(IsHighlightedProperty); }
+            set { SetValue(IsHighlightedProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsHighlightedProperty =
+            DependencyProperty.Register("IsHighlighted", typeof(bool), typeof(MetaToEdgeControl), new UIPropertyMetadata(false, IsHighlightedChangedCallback));
+
         public static void BaseEdgeChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
         {
             MetaToEdgeControl control = (MetaToEdgeControl)dependencyObject;
@@ -40,6 +49,13 @@ namespace m0.UIWpf.Controls
         }
 
         public static void IsSelectedChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
+        {
+            MetaToEdgeControl control = (MetaToEdgeControl)dependencyObject;
+
+            control.UpdateSelectionState();
+        }
+
+        public static void IsHighlightedChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
         {
             MetaToEdgeControl control = (MetaToEdgeControl)dependencyObject;
 
@@ -192,6 +208,11 @@ namespace m0.UIWpf.Controls
             return FindResource("0GrayBrush") as Brush ?? GetForegroundBrush();
         }
 
+        private Brush GetHighlightBrush()
+        {
+            return FindResource("0HighlightBrush") as Brush ?? GetForegroundBrush();
+        }
+
         private void UpdateSelectionState()
         {
             if (IsSelected)
@@ -201,6 +222,16 @@ namespace m0.UIWpf.Controls
 
                 metaLabel.Foreground = GetBackgroundBrush();
                 toLabel.Foreground = GetBackgroundBrush();
+            }
+            else if (IsHighlighted)
+            {
+                Background = null;
+                contentPanel.Background = null;
+
+                Brush highlightBrush = GetHighlightBrush();
+
+                metaLabel.Foreground = highlightBrush;
+                toLabel.Foreground = highlightBrush;
             }
             else
             {

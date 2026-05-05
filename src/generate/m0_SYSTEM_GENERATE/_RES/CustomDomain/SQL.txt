@@ -1,0 +1,30 @@
+"CustomDomain"
+	"SQL"
+		<"Types">
+			<@AtomType :: "INTEGER">
+				<@$Is :: @AtomType>
+			<@AtomType :: "TEXT">
+				<@$Is :: @AtomType>
+			<@AtomType :: "REAL">
+				<@$Is :: @AtomType>
+			<@AtomType :: "NUMERIC">
+				<@$Is :: @AtomType>
+			<@AtomType :: "BLOB">
+				<@$Is :: @AtomType>
+			<"Table">
+				<"Column">
+					<@$VertexTarget :: @Type>
+					<@$Inherits :: @Selector>
+					<@$IsAggregation :: @$Empty>
+					<"IsPK">
+						<@$EdgeTarget :: @Boolean>
+					<"IsFK">
+						<@$EdgeTarget :: @Boolean>		
+				<"Association">
+					<@$Inherits :: @Selector>
+					<@$VertexTarget :: @SQL\Types\Table>
+		<"Visualiser">
+			<@Class :: "SQL">
+				<@$Inherits :: @UX\UXItem>
+				<@$PlatformClassName :: "m0.UIWpf.Visualisers.CustomDomain.SQLVisualiser, m0_desktop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+				<@System\Meta\Visualiser\BaseEdgeTarget :: @System\Meta\Visualiser\BaseEdgeTarget\Specyfic>

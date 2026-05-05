@@ -53,10 +53,10 @@ namespace m0.ZeroTypes.UX
                 ((CodeVisualiser)ContentVisualiser).ScaleChange();
             }
 
-            if (ContentVisualiser is ClassVisualiser)
+            if (ContentVisualiser is SQLVisualiser)
             {
-                ((ClassVisualiser)ContentVisualiser).BaseEdgeToUpdated();
-                ((ClassVisualiser)ContentVisualiser).ScaleChange();
+                ((SQLVisualiser)ContentVisualiser).BaseEdgeToUpdated();
+                ((SQLVisualiser)ContentVisualiser).ScaleChange();
             }
         }
 
