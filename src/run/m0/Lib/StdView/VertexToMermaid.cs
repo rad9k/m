@@ -103,14 +103,14 @@ namespace m0.Lib.StdView
                     if (!tableNames.Contains(parentTableName))
                         continue;
 
-                    string relationKey = parentTableName + "->" + childTableName;
+                    string relationKey = childTableName + "->" + parentTableName;
                     if (!relationKeys.Add(relationKey))
                         continue;
 
                     builder.Append("    ");
-                    builder.Append(parentTableName);
-                    builder.Append(" ||--o{ ");
                     builder.Append(childTableName);
+                    builder.Append(" ||--o{ ");
+                    builder.Append(parentTableName);
                     builder.Append(" : \"");
                     builder.Append(MermaidErdUtil.EscapeMermaidLabel("has"));
                     builder.AppendLine("\"");

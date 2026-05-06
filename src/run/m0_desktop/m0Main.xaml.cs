@@ -170,6 +170,11 @@ namespace m0
 
         int MaxTitleLength = 30;
 
+        private string TrimTitle(string title)
+        {
+            return title.Substring(0, Math.Min(title.Length, MaxTitleLength));
+        }
+
         protected LayoutAnchorable _ShowContent(object obj)
         {            
             LayoutAnchorable a = new LayoutAnchorable();
@@ -184,9 +189,9 @@ namespace m0
                     return null;
 
                 if (pc.Vertex.Get(false, @"BaseEdge:\To:")!=null&&pc.Vertex.Get(false, @"BaseEdge:\To:").Value != null&&(!GeneralUtil.CompareStrings(pc.Vertex.Get(false, @"BaseEdge:\To:").Value,"")))
-                    a.Title = pc.Vertex.Get(false, @"BaseEdge:\To:").Value.ToString().Substring(0, MaxTitleLength);
+                    a.Title = TrimTitle(pc.Vertex.Get(false, @"BaseEdge:\To:").Value.ToString());
                 else
-                    a.Title = ((string)pc.Vertex.Value).Substring(0, MaxTitleLength); ;
+                    a.Title = TrimTitle((string)pc.Vertex.Value); ;
 
                 PlatformClassSimpleWrapper pcsw = new PlatformClassSimpleWrapper();
 
@@ -219,7 +224,7 @@ namespace m0
 
                 pcsw.IsIntialising = false;
             }else{
-                a.Title = obj.ToString().Substring(0, MaxTitleLength); 
+                a.Title = TrimTitle(obj.ToString()); 
                 a.Content = obj;
 
                 this.Pane.Children.Add(a);
