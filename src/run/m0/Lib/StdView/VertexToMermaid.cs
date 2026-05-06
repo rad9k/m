@@ -85,8 +85,6 @@ namespace m0.Lib.StdView
 
         private static void AppendRelations(StringBuilder builder, IList<IEdge> tableEdges, ISet<string> tableNames)
         {
-            var relationKeys = new HashSet<string>();
-
             foreach (IEdge tableEdge in tableEdges)
             {
                 IVertex childTable = tableEdge.To;
@@ -101,10 +99,6 @@ namespace m0.Lib.StdView
 
                     string parentTableName = MermaidErdUtil.NormalizeIdentifier(GraphUtil.GetStringValue(parentTable));
                     if (!tableNames.Contains(parentTableName))
-                        continue;
-
-                    string relationKey = childTableName + "->" + parentTableName;
-                    if (!relationKeys.Add(relationKey))
                         continue;
 
                     builder.Append("    ");

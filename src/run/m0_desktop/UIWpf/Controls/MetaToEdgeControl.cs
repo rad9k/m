@@ -9,6 +9,8 @@ namespace m0.UIWpf.Controls
 {
     public class MetaToEdgeControl : Border
     {
+        private const int MaxMetaToTextLength = 256;
+
         private readonly StackPanel contentPanel;
         private readonly Image iconImage;
         private readonly Label metaLabel;
@@ -171,7 +173,7 @@ namespace m0.UIWpf.Controls
             if (metaValue == null)
                 return string.Empty;
 
-            return metaValue + " : ";
+            return GetDisplayText(metaValue) + " : ";
         }
 
         private string GetToText(IEdge edge)
@@ -190,7 +192,17 @@ namespace m0.UIWpf.Controls
             if (GeneralUtil.CompareStrings(toValue, ""))
                 return "";
 
-            return toValue.ToString();
+            return GetDisplayText(toValue);
+        }
+
+        private string GetDisplayText(object value)
+        {
+            string text = value.ToString().Replace("\r", "").Replace("\n", "");
+
+            if (text.Length > MaxMetaToTextLength)
+                return text.Substring(0, MaxMetaToTextLength);
+
+            return text;
         }
 
         private Brush GetForegroundBrush()

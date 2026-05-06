@@ -172,7 +172,9 @@ namespace m0
 
         private string TrimTitle(string title)
         {
-            return title.Substring(0, Math.Min(title.Length, MaxTitleLength));
+            string titleWithoutLineBreaks = title.Replace("\r", "").Replace("\n", "");
+
+            return titleWithoutLineBreaks.Substring(0, Math.Min(titleWithoutLineBreaks.Length, MaxTitleLength));
         }
 
         protected LayoutAnchorable _ShowContent(object obj)
