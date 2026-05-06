@@ -277,14 +277,14 @@ namespace m0.Lib.StdView
         private const string SqlRootValue = "SQL";
         private const string MissingMetaValue = "__MermaidMissingMeta__";
 
-        private static readonly IVertex TableMeta = MinusZero.Instance.Root.Get(false, @"System\Meta\CustomDomain\SQL\Table");
-        private static readonly IVertex ColumnMeta = MinusZero.Instance.Root.Get(false, @"System\Meta\CustomDomain\SQL\Table\Column");
-        private static readonly IVertex RelationMeta = MinusZero.Instance.Root.Get(false, @"System\Meta\CustomDomain\SQL\Table\Relation");
-        private static readonly IVertex IsPkMeta = MinusZero.Instance.Root.Get(false, @"System\Meta\CustomDomain\SQL\Table\Column\IsPK");
-        private static readonly IVertex IsFkMeta = MinusZero.Instance.Root.Get(false, @"System\Meta\CustomDomain\SQL\Table\Column\IsFK");
-        private static readonly IVertex SqlTypesRoot = MinusZero.Instance.Root.Get(false, @"System\Meta\CustomDomain\SQL\Types");
-        private static readonly IVertex EdgeTargetMeta = MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget");
-        private static readonly IVertex IsAggregationMeta = MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex\$IsAggregation");
+        private static IVertex TableMeta => MinusZero.Instance.Root.Get(false, @"System\Meta\CustomDomain\SQL\Table");
+        private static IVertex ColumnMeta => MinusZero.Instance.Root.Get(false, @"System\Meta\CustomDomain\SQL\Table\Column");
+        private static IVertex RelationMeta => MinusZero.Instance.Root.Get(false, @"System\Meta\CustomDomain\SQL\Table\Relation");
+        private static IVertex IsPkMeta => MinusZero.Instance.Root.Get(false, @"System\Meta\CustomDomain\SQL\Table\Column\IsPK");
+        private static IVertex IsFkMeta => MinusZero.Instance.Root.Get(false, @"System\Meta\CustomDomain\SQL\Table\Column\IsFK");
+        private static IVertex SqlTypesRoot => MinusZero.Instance.Root.Get(false, @"System\Meta\CustomDomain\SQL\Types");
+        private static IVertex EdgeTargetMeta => MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex\$EdgeTarget");
+        private static IVertex IsAggregationMeta => MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex\$IsAggregation");
 
         private static readonly IDictionary<string, string> MermaidTypeToSqlTypeName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {

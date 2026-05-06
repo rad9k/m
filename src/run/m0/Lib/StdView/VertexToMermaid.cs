@@ -102,9 +102,9 @@ namespace m0.Lib.StdView
                         continue;
 
                     builder.Append("    ");
-                    builder.Append(childTableName);
-                    builder.Append(" ||--o{ ");
                     builder.Append(parentTableName);
+                    builder.Append(" ||--o{ ");
+                    builder.Append(childTableName);
                     builder.Append(" : \"");
                     builder.Append(MermaidErdUtil.EscapeMermaidLabel(GraphUtil.GetStringValue(relationVertex)));
                     builder.AppendLine("\"");
