@@ -363,6 +363,7 @@ namespace m0.UIWpf.Visualisers
             }
 
             headerControl.BaseEdge = GetEdge();
+            headerControl.RefreshVisuals();
             headerControl.IsSelected = wasSelected;
         }
 

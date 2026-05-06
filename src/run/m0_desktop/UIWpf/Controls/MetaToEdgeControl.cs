@@ -117,6 +117,11 @@ namespace m0.UIWpf.Controls
             Child = contentPanel;
         }
 
+        public void RefreshVisuals()
+        {
+            UpdateVisuals(BaseEdge);
+        }
+
         private void UpdateVisuals(IEdge edge)
         {
             bool isMetaEmpty = IsMetaValueEmpty(edge);

@@ -31,7 +31,7 @@ namespace m0.Lib.StdView
             if (diagram.Tables.Count == 0 && diagram.Relations.Count == 0)
                 return;
 
-            IVertex sqlRoot = MermaidErdUtil.GetOrCreateSqlRoot(to);
+            IVertex sqlRoot = to;
             IVertex tableMeta = MermaidErdUtil.GetTableMeta();
             IVertex columnMeta = MermaidErdUtil.GetColumnMeta();
             IVertex relationMeta = MermaidErdUtil.GetRelationMeta();
