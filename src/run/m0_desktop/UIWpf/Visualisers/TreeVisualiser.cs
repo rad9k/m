@@ -78,7 +78,11 @@ namespace m0.UIWpf.Visualisers
             base.OnApplyTemplate();
 
             if (expanderToggleButton != null)
+            {
                 expanderToggleButton.PreviewMouseLeftButtonDown -= ExpanderToggleButtonPreviewMouseLeftButtonDown;
+                expanderToggleButton.MouseEnter -= ExpanderToggleButtonMouseEnter;
+                expanderToggleButton.MouseLeave -= ExpanderToggleButtonMouseLeave;
+            }
 
             expanderToggleButton = GetTemplateChild("Expander") as ToggleButton;
 
@@ -90,7 +94,19 @@ namespace m0.UIWpf.Visualisers
                 expanderToggleButton.Margin = new Thickness(0, 0, -32, 0);
                 expanderToggleButton.Template = TreeVisualiser.CreateFilledExpandCollapseToggleTemplate();
                 expanderToggleButton.PreviewMouseLeftButtonDown += ExpanderToggleButtonPreviewMouseLeftButtonDown;
+                expanderToggleButton.MouseEnter += ExpanderToggleButtonMouseEnter;
+                expanderToggleButton.MouseLeave += ExpanderToggleButtonMouseLeave;
             }
+        }
+
+        private void ExpanderToggleButtonMouseEnter(object sender, MouseEventArgs e)
+        {
+            SetHeaderHighlight(true);
+        }
+
+        private void ExpanderToggleButtonMouseLeave(object sender, MouseEventArgs e)
+        {
+            SetHeaderHighlight(false);
         }
 
         private void ExpanderToggleButtonPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -352,18 +368,20 @@ namespace m0.UIWpf.Visualisers
 
         private void HeaderControlMouseEnter(object sender, MouseEventArgs e)
         {
-            MetaToEdgeControl headerControl = sender as MetaToEdgeControl;
-
-            if (headerControl != null)
-                headerControl.IsHighlighted = true;
+            SetHeaderHighlight(true);
         }
 
         private void HeaderControlMouseLeave(object sender, MouseEventArgs e)
         {
-            MetaToEdgeControl headerControl = sender as MetaToEdgeControl;
+            SetHeaderHighlight(false);
+        }
+
+        private void SetHeaderHighlight(bool isHighlighted)
+        {
+            MetaToEdgeControl headerControl = Header as MetaToEdgeControl;
 
             if (headerControl != null)
-                headerControl.IsHighlighted = false;
+                headerControl.IsHighlighted = isHighlighted;
         }
 
         public INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
@@ -531,18 +549,24 @@ namespace m0.UIWpf.Visualisers
 
         public static ControlTemplate CreateFilledExpandCollapseToggleTemplate()
         {
+            const double expandedTriangleTranslateX = -1.75;
+
             ControlTemplate template = new ControlTemplate(typeof(ToggleButton));
             FrameworkElementFactory grid = new FrameworkElementFactory(typeof(Grid));
             grid.SetValue(Panel.BackgroundProperty, Brushes.Transparent);
 
             FrameworkElementFactory triangle = new FrameworkElementFactory(typeof(Path));
             triangle.Name = "ExpandPath";
-            triangle.SetValue(Path.DataProperty, Geometry.Parse("M 6 4.5 L 10.5 8 L 6 11.5 Z"));
+            triangle.SetValue(Path.DataProperty, Geometry.Parse("M 0 0 L 4.5 3.5 L 0 7 Z"));
             triangle.SetValue(Path.StretchProperty, Stretch.None);
             triangle.SetValue(Path.HorizontalAlignmentProperty, HorizontalAlignment.Left);
             triangle.SetValue(Path.VerticalAlignmentProperty, VerticalAlignment.Center);
+            triangle.SetValue(FrameworkElement.MarginProperty, new Thickness(6, 0, 0, 0));
             triangle.SetValue(RenderTransformOriginProperty, new Point(0.5, 0.5));
-            triangle.SetValue(RenderTransformProperty, new RotateTransform(0));
+            TransformGroup triangleTransform = new TransformGroup();
+            triangleTransform.Children.Add(new RotateTransform(0));
+            triangleTransform.Children.Add(new TranslateTransform(0, 0));
+            triangle.SetValue(RenderTransformProperty, triangleTransform);
             triangle.SetResourceReference(Path.FillProperty, "0GrayBrush");
             triangle.SetResourceReference(Path.StrokeProperty, "0GrayBrush");
 
@@ -552,8 +576,8 @@ namespace m0.UIWpf.Visualisers
             Trigger expandedTrigger = new Trigger();
             expandedTrigger.Property = ToggleButton.IsCheckedProperty;
             expandedTrigger.Value = true;
-            expandedTrigger.EnterActions.Add(new BeginStoryboard { Storyboard = CreateTriangleRotationStoryboard(90) });
-            expandedTrigger.ExitActions.Add(new BeginStoryboard { Storyboard = CreateTriangleRotationStoryboard(0) });
+            expandedTrigger.EnterActions.Add(new BeginStoryboard { Storyboard = CreateTriangleRotationStoryboard(90, expandedTriangleTranslateX) });
+            expandedTrigger.ExitActions.Add(new BeginStoryboard { Storyboard = CreateTriangleRotationStoryboard(0, 0) });
             template.Triggers.Add(expandedTrigger);
 
             Trigger disabledTrigger = new Trigger();
@@ -566,16 +590,23 @@ namespace m0.UIWpf.Visualisers
             return template;
         }
 
-        private static Storyboard CreateTriangleRotationStoryboard(double angle)
+        private static Storyboard CreateTriangleRotationStoryboard(double angle, double translateX)
         {
             DoubleAnimation rotationAnimation = new DoubleAnimation(angle, new Duration(TimeSpan.FromMilliseconds(80)));
             rotationAnimation.EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut };
 
             Storyboard.SetTargetName(rotationAnimation, "ExpandPath");
-            Storyboard.SetTargetProperty(rotationAnimation, new PropertyPath("(UIElement.RenderTransform).(RotateTransform.Angle)"));
+            Storyboard.SetTargetProperty(rotationAnimation, new PropertyPath("(UIElement.RenderTransform).(TransformGroup.Children)[0].(RotateTransform.Angle)"));
+
+            DoubleAnimation translateAnimation = new DoubleAnimation(translateX, new Duration(TimeSpan.FromMilliseconds(80)));
+            translateAnimation.EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut };
+
+            Storyboard.SetTargetName(translateAnimation, "ExpandPath");
+            Storyboard.SetTargetProperty(translateAnimation, new PropertyPath("(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.X)"));
 
             Storyboard storyboard = new Storyboard();
             storyboard.Children.Add(rotationAnimation);
+            storyboard.Children.Add(translateAnimation);
 
             return storyboard;
         }

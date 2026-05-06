@@ -18,9 +18,9 @@
 				<@LabeledItem\ShowMeta :: "False">
 				<@LabeledItem\ConstantLabel :: "table">
 				<@RectangleVisualiserItem\VisualiserClass :: @System\Meta\CustomDomain\SQL\Visualiser\SQL>
-			<@UXDecoratorTemplate :: "association">
+			<@UXDecoratorTemplate :: "Relation">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Table\association">
+				<@EdgeTestQuery :: "$Is:Table\Relation">
 				<@ToDiagramItemTestQuery :: "UXTemplate:Table">
 				<@DecoratorClass :: @LineDecorator>
 				<@ForceShowEditForm :: "True">

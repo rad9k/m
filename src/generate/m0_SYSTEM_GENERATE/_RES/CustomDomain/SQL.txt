@@ -22,7 +22,7 @@
 				<"IsFK">
 					<@$EdgeTarget :: @Boolean>		
 					<@$IsAggregation :: @$Empty>
-			<"association">
+			<"Relation">
 				<@$Inherits :: @Selector>
 				<@$VertexTarget :: @SQL\Table>
 		<"Visualiser">
