@@ -33,12 +33,12 @@ namespace m0.Lib.StdView
                 return builder.ToString();
 
             IList<IEdge> tableEdges = GraphUtil.GetQueryOut(sqlRoot, MermaidErdUtil.GetMetaValue(MermaidErdUtil.GetTableMeta()), null);
-            var tableVertices = new HashSet<IVertex>(tableEdges.Select(edge => edge.To));
+            var tableNames = new HashSet<string>(tableEdges.Select(edge => MermaidErdUtil.NormalizeIdentifier(GraphUtil.GetStringValue(edge.To))));
 
             foreach (IEdge tableEdge in tableEdges)
                 AppendTable(builder, tableEdge.To);
 
-            AppendRelations(builder, tableEdges, tableVertices);
+            AppendRelations(builder, tableEdges, tableNames);
 
             return builder.ToString().TrimEnd();
         }
@@ -83,31 +83,29 @@ namespace m0.Lib.StdView
             return GraphUtil.GetBooleanValueOrFalse(flagVertex);
         }
 
-        private static void AppendRelations(StringBuilder builder, IList<IEdge> tableEdges, ISet<IVertex> tableVertices)
+        private static void AppendRelations(StringBuilder builder, IList<IEdge> tableEdges, ISet<string> tableNames)
         {
-            bool wroteHeaderSpacing = false;
             var relationKeys = new HashSet<string>();
 
             foreach (IEdge tableEdge in tableEdges)
             {
-                IVertex parentTable = tableEdge.To;
-                string parentTableName = MermaidErdUtil.NormalizeIdentifier(GraphUtil.GetStringValue(parentTable));
+                IVertex childTable = tableEdge.To;
+                string childTableName = MermaidErdUtil.NormalizeIdentifier(GraphUtil.GetStringValue(childTable));
 
-                foreach (IEdge relationEdge in GraphUtil.GetQueryOut(parentTable, MermaidErdUtil.GetMetaValue(MermaidErdUtil.GetRelationMeta()), null))
+                foreach (IEdge relationEdge in GraphUtil.GetQueryOut(childTable, MermaidErdUtil.GetMetaValue(MermaidErdUtil.GetRelationMeta()), null))
                 {
-                    IVertex childTable = relationEdge.To;
-                    if (childTable == null || !tableVertices.Contains(childTable))
+                    IVertex relationVertex = relationEdge.To;
+                    IVertex parentTable = GraphUtil.GetQueryOutFirst(relationVertex, MermaidErdUtil.GetMetaValue(MermaidErdUtil.GetEdgeTargetMeta()), null);
+                    if (parentTable == null)
                         continue;
 
-                    string childTableName = MermaidErdUtil.NormalizeIdentifier(GraphUtil.GetStringValue(childTable));
+                    string parentTableName = MermaidErdUtil.NormalizeIdentifier(GraphUtil.GetStringValue(parentTable));
+                    if (!tableNames.Contains(parentTableName))
+                        continue;
+
                     string relationKey = parentTableName + "->" + childTableName;
                     if (!relationKeys.Add(relationKey))
                         continue;
-
-                    if (!wroteHeaderSpacing)
-                    {
-                        wroteHeaderSpacing = true;
-                    }
 
                     builder.Append("    ");
                     builder.Append(parentTableName);

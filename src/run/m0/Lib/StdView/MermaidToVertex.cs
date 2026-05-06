@@ -56,9 +56,18 @@ namespace m0.Lib.StdView
                 IVertex parentTable = GetOrCreateTableVertex(sqlRoot, tableMeta, tableVerticesByName, relation.ParentTableName);
                 IVertex childTable = GetOrCreateTableVertex(sqlRoot, tableMeta, tableVerticesByName, relation.ChildTableName);
 
-                if (relationMeta != null && parentTable != null && childTable != null)
-                    parentTable.AddEdge(relationMeta, childTable);
+                CreateRelation(childTable, relationMeta, edgeTargetMeta, parentTable);
             }
+        }
+
+        private static void CreateRelation(IVertex childTable, IVertex relationMeta, IVertex edgeTargetMeta, IVertex parentTable)
+        {
+            if (childTable == null || relationMeta == null || edgeTargetMeta == null || parentTable == null)
+                return;
+
+            IVertex relationVertex = childTable.AddVertex(relationMeta, "");
+            relationVertex.AddEdge(MinusZero.Instance.Is, relationMeta);
+            relationVertex.AddEdge(edgeTargetMeta, parentTable);
         }
 
         private static IVertex GetOrCreateTableVertex(IVertex sqlRoot, IVertex tableMeta, IDictionary<string, IVertex> tableVerticesByName, string tableName)
