@@ -56,16 +56,16 @@ namespace m0.Lib.StdView
                 IVertex parentTable = GetOrCreateTableVertex(sqlRoot, tableMeta, tableVerticesByName, relation.ParentTableName);
                 IVertex childTable = GetOrCreateTableVertex(sqlRoot, tableMeta, tableVerticesByName, relation.ChildTableName);
 
-                CreateRelation(childTable, relationMeta, edgeTargetMeta, parentTable);
+                CreateRelation(childTable, relationMeta, edgeTargetMeta, parentTable, relation.Label);
             }
         }
 
-        private static void CreateRelation(IVertex childTable, IVertex relationMeta, IVertex edgeTargetMeta, IVertex parentTable)
+        private static void CreateRelation(IVertex childTable, IVertex relationMeta, IVertex edgeTargetMeta, IVertex parentTable, string label)
         {
             if (childTable == null || relationMeta == null || edgeTargetMeta == null || parentTable == null)
                 return;
 
-            IVertex relationVertex = childTable.AddVertex(relationMeta, "");
+            IVertex relationVertex = childTable.AddVertex(relationMeta, label ?? "");
             relationVertex.AddEdge(MinusZero.Instance.Is, relationMeta);
             relationVertex.AddEdge(edgeTargetMeta, parentTable);
         }
@@ -200,6 +200,7 @@ namespace m0.Lib.StdView
         {
             int colonIndex = line.IndexOf(':');
             string relationPart = colonIndex >= 0 ? line.Substring(0, colonIndex).Trim() : line;
+            string relationLabel = colonIndex >= 0 ? MermaidErdUtil.NormalizeRelationLabel(line.Substring(colonIndex + 1)) : "";
             string[] parts = relationPart.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
 
             if (parts.Length < 3)
@@ -213,10 +214,10 @@ namespace m0.Lib.StdView
                 return null;
 
             if (IsOneToManyFromLeft(relationToken))
-                return new MermaidErdRelation { ParentTableName = leftTableName, ChildTableName = rightTableName };
+                return new MermaidErdRelation { ParentTableName = leftTableName, ChildTableName = rightTableName, Label = relationLabel };
 
             if (IsOneToManyFromRight(relationToken))
-                return new MermaidErdRelation { ParentTableName = rightTableName, ChildTableName = leftTableName };
+                return new MermaidErdRelation { ParentTableName = rightTableName, ChildTableName = leftTableName, Label = relationLabel };
 
             return null;
         }
@@ -268,6 +269,7 @@ namespace m0.Lib.StdView
     {
         public string ParentTableName { get; set; }
         public string ChildTableName { get; set; }
+        public string Label { get; set; }
     }
 
     internal static class MermaidErdUtil
@@ -412,6 +414,14 @@ namespace m0.Lib.StdView
                 return "";
 
             return identifier.Trim().Trim('"', '`');
+        }
+
+        public static string NormalizeRelationLabel(string label)
+        {
+            if (label == null)
+                return "";
+
+            return label.Trim().Trim('"');
         }
 
         public static string EscapeMermaidLabel(string label)

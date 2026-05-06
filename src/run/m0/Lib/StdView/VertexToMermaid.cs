@@ -106,7 +106,7 @@ namespace m0.Lib.StdView
                     builder.Append(" ||--o{ ");
                     builder.Append(parentTableName);
                     builder.Append(" : \"");
-                    builder.Append(MermaidErdUtil.EscapeMermaidLabel("has"));
+                    builder.Append(MermaidErdUtil.EscapeMermaidLabel(GraphUtil.GetStringValue(relationVertex)));
                     builder.AppendLine("\"");
                 }
             }
