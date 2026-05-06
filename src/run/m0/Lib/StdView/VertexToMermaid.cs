@@ -93,9 +93,9 @@ namespace m0.Lib.StdView
                 IVertex parentTable = tableEdge.To;
                 string parentTableName = MermaidErdUtil.NormalizeIdentifier(GraphUtil.GetStringValue(parentTable));
 
-                foreach (IEdge associationEdge in GraphUtil.GetQueryOut(parentTable, MermaidErdUtil.GetMetaValue(MermaidErdUtil.GetAssociationMeta()), null))
+                foreach (IEdge relationEdge in GraphUtil.GetQueryOut(parentTable, MermaidErdUtil.GetMetaValue(MermaidErdUtil.GetRelationMeta()), null))
                 {
-                    IVertex childTable = associationEdge.To;
+                    IVertex childTable = relationEdge.To;
                     if (childTable == null || !tableVertices.Contains(childTable))
                         continue;
 

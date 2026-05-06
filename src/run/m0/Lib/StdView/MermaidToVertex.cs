@@ -34,7 +34,7 @@ namespace m0.Lib.StdView
             IVertex sqlRoot = MermaidErdUtil.GetOrCreateSqlRoot(to);
             IVertex tableMeta = MermaidErdUtil.GetTableMeta();
             IVertex columnMeta = MermaidErdUtil.GetColumnMeta();
-            IVertex associationMeta = MermaidErdUtil.GetAssociationMeta();
+            IVertex relationMeta = MermaidErdUtil.GetRelationMeta();
             IVertex edgeTargetMeta = MermaidErdUtil.GetEdgeTargetMeta();
             IVertex isAggregationMeta = MermaidErdUtil.GetIsAggregationMeta();
             IVertex isPkMeta = MermaidErdUtil.GetIsPkMeta();
@@ -56,8 +56,8 @@ namespace m0.Lib.StdView
                 IVertex parentTable = GetOrCreateTableVertex(sqlRoot, tableMeta, tableVerticesByName, relation.ParentTableName);
                 IVertex childTable = GetOrCreateTableVertex(sqlRoot, tableMeta, tableVerticesByName, relation.ChildTableName);
 
-                if (associationMeta != null && parentTable != null && childTable != null)
-                    parentTable.AddEdge(associationMeta, childTable);
+                if (relationMeta != null && parentTable != null && childTable != null)
+                    parentTable.AddEdge(relationMeta, childTable);
             }
         }
 
@@ -268,7 +268,7 @@ namespace m0.Lib.StdView
 
         private static readonly IVertex TableMeta = MinusZero.Instance.Root.Get(false, @"System\Meta\CustomDomain\SQL\Table");
         private static readonly IVertex ColumnMeta = MinusZero.Instance.Root.Get(false, @"System\Meta\CustomDomain\SQL\Table\Column");
-        private static readonly IVertex AssociationMeta = MinusZero.Instance.Root.Get(false, @"System\Meta\CustomDomain\SQL\Table\association");
+        private static readonly IVertex RelationMeta = MinusZero.Instance.Root.Get(false, @"System\Meta\CustomDomain\SQL\Table\Relation");
         private static readonly IVertex IsPkMeta = MinusZero.Instance.Root.Get(false, @"System\Meta\CustomDomain\SQL\Table\Column\IsPK");
         private static readonly IVertex IsFkMeta = MinusZero.Instance.Root.Get(false, @"System\Meta\CustomDomain\SQL\Table\Column\IsFK");
         private static readonly IVertex SqlTypesRoot = MinusZero.Instance.Root.Get(false, @"System\Meta\CustomDomain\SQL\Types");
@@ -327,9 +327,9 @@ namespace m0.Lib.StdView
             return ColumnMeta;
         }
 
-        public static IVertex GetAssociationMeta()
+        public static IVertex GetRelationMeta()
         {
-            return AssociationMeta;
+            return RelationMeta;
         }
 
         public static IVertex GetIsPkMeta()
