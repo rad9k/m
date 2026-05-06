@@ -26,7 +26,7 @@
 				<@ForceShowEditForm :: "True">
 				<@EdgeTargetInEdgePointingToTargetItemBaseEdgeTo :: "True">
 				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\CrowFoot>
+					<@LineDecorator\StartAnchor :: @LineEndEnum\CrowFoot>
 					
 		<"GenericItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightRed>
