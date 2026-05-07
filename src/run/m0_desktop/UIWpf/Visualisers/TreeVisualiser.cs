@@ -630,6 +630,13 @@ namespace m0.UIWpf.Visualisers
                 foreach (IEdge e in filteredList)
                     Items.Add(CreateTreeViewItem(e, true, null));
             }
+
+            // The TreeVisualiser owns a direct graph-change trigger registered straight on the
+            // current root_tree_base vertex (BaseEdge:\To:). When BaseEdge:\To: is rebound to a
+            // different vertex (initial bind from the helper, or a later BaseEdge change), we
+            // must re-register so that the trigger always observes the currently visualised
+            // root vertex.
+            RegisterRootTreeBaseListener();
         }
 
         public void ScaleChange()
@@ -644,26 +651,99 @@ namespace m0.UIWpf.Visualisers
 
         protected INoInEdgeInOutVertexVertex CustomVertexChange(IExecution exe)
         {
-            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "Scale"))            
-                ScaleChange();                
+            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "Scale"))
+                ScaleChange();
 
-            if (IsEdgeAddedRemovedDiscardedFrom(exe.Stack, Vertex.Get(false, @"SelectedEdges:")))            
+            if (IsEdgeAddedRemovedDiscardedFrom(exe.Stack, Vertex.Get(false, @"SelectedEdges:")))
                 SelectedVerticesUpdated();
 
-            if(IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:"))){
+            if (IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:")))
+            {
                 BaseEdgeToUpdated();
                 return exe.Stack;
             }
 
-            IVertex baseEdgeTo = VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:");
+            // Incremental add/remove/dispose of children of root_tree_base is handled by the
+            // dedicated direct trigger (RootTreeBaseVertexChange), so it is intentionally not
+            // dispatched from here anymore.
 
-            DoAddRemoveDisposeAddEdgeByMetaOrValueChangeHandlers(exe.Stack, new List<EventHandlers>()
-            { new EventHandlers(
-                baseEdgeTo,
-                EdgeAdded,
-                EdgeRemoved,
-                EdgeDisposed)
-            });
+            return exe.Stack;
+        }
+
+        // Direct graph-change listener registered straight on the current root_tree_base
+        // (BaseEdge:\To:) vertex. This complements the helper-driven CustomVertexChange path
+        // and guarantees that incremental Add/Remove/Dispose of root-level children always
+        // reach the tree, even in scenarios where the helper-based trigger does not fire
+        // (e.g. drag-and-drop of an unselected top-level item with CopyOnDragAndDrop=False).
+        private IEdge rootTreeBaseListenerEdge;
+        private IVertex rootTreeBaseListenerVertex;
+
+        private void RegisterRootTreeBaseListener()
+        {
+            IVertex newRootTreeBase = Vertex == null ? null : Vertex.Get(false, @"BaseEdge:\To:");
+
+            if (rootTreeBaseListenerEdge != null && rootTreeBaseListenerVertex == newRootTreeBase)
+                return;
+
+            UnregisterRootTreeBaseListener();
+
+            if (newRootTreeBase == null || newRootTreeBase.DisposedState != DisposeStateEnum.Live)
+                return;
+
+            rootTreeBaseListenerVertex = newRootTreeBase;
+
+            rootTreeBaseListenerEdge = ExecutionFlowHelper.AddTriggerAndListener(newRootTreeBase,
+                new List<string> { },
+                new List<GraphChangeFilterEnum> {
+                    GraphChangeFilterEnum.OutputEdgeAdded,
+                    GraphChangeFilterEnum.OutputEdgeRemoved,
+                    GraphChangeFilterEnum.OutputEdgeDisposed
+                },
+                "TreeVisualiserRootTreeBase",
+                RootTreeBaseVertexChange);
+        }
+
+        private void UnregisterRootTreeBaseListener()
+        {
+            if (rootTreeBaseListenerEdge != null)
+            {
+                ExecutionFlowHelper.RemoveGraphChangeListener(rootTreeBaseListenerEdge);
+                rootTreeBaseListenerEdge = null;
+            }
+
+            rootTreeBaseListenerVertex = null;
+        }
+
+        private INoInEdgeInOutVertexVertex RootTreeBaseVertexChange(IExecution exe)
+        {
+            if (VisualiserHelper.IsDisposed)
+                return exe.Stack;
+
+            foreach (IEdge eventEdge in exe.Stack.GetAll(false, @"event:"))
+            {
+                IVertex eventType = eventEdge.To.Get(false, @"Type:");
+                IVertex edgeVertex = GraphUtil.GetQueryOutFirst(eventEdge.To, "Edge", null);
+
+                if (eventType == null || edgeVertex == null || eventType.Value == null)
+                    continue;
+
+                IEdge edge = EdgeHelper.CreateIEdgeFromEdgeVertex(edgeVertex);
+
+                switch (eventType.Value.ToString())
+                {
+                    case "OutputEdgeAdded":
+                        EdgeAdded(edge);
+                        break;
+
+                    case "OutputEdgeRemoved":
+                        EdgeRemoved(edge);
+                        break;
+
+                    case "OutputEdgeDisposed":
+                        EdgeDisposed(edge);
+                        break;
+                }
+            }
 
             return exe.Stack;
         }
@@ -671,8 +751,9 @@ namespace m0.UIWpf.Visualisers
         private void EdgeRemoved(IEdge edge)
         {
             IList l = GeneralUtil.CreateAndCopyList(Items);
+
             foreach (TreeVisualiserViewItem i in l)
-                if (EdgeHelper.CompareIEdges(((IEdge)i.Tag), edge))
+                if (EdgeHelper.CompareIEdges((IEdge)i.Tag, edge))
                     Items.Remove(i);
         }
 
@@ -928,6 +1009,8 @@ namespace m0.UIWpf.Visualisers
             {
                 isDisposed = true;
 
+                UnregisterRootTreeBaseListener();
+
                 VisualiserHelper.Dispose();
 
                 DisposeTreeViewItems(this.Items);
@@ -949,7 +1032,9 @@ namespace m0.UIWpf.Visualisers
             if (vertexByLocationToReturn == null
                 && IsPointBelowLastVisibleHeader(p)
                 && GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"Home:\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "StartAndEnd"))
+            {
                 vertexByLocationToReturn = Vertex.Get(false, @"BaseEdge:");
+            }
 
             return vertexByLocationToReturn;
         }

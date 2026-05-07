@@ -24,6 +24,7 @@ namespace m0.UIWpf.Commands
             {
                 MinusZero.Instance.IsGUIDragging = true;
                 dragData.SetData("DragSource", o);
+
                 DragDrop.DoDragDrop(o, dragData, DragDropEffects.Copy);                
             }
         }
@@ -164,9 +165,10 @@ namespace m0.UIWpf.Commands
 
             bool doCopy = false;
 
-            if (GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"Home:\CurrentUser:\Settings:\CopyOnDragAndDrop:").Value, "True"))
-                doCopy = true;
+            IVertex copyOnDragAndDropSetting = MinusZero.Instance.Root.Get(false, @"Home:\CurrentUser:\Settings:\CopyOnDragAndDrop:");
 
+            if (GeneralUtil.CompareStrings(copyOnDragAndDropSetting.Value, "True"))
+                doCopy = true;
 
             if (e.Data.GetDataPresent("Vertex"))
             {
@@ -177,16 +179,26 @@ namespace m0.UIWpf.Commands
                 ////////////////////////////////////////
 
                 foreach (IEdge ee in dndVertex)
+                {
+                    IVertex eeFrom = ee.To.Get(false, "From:");
+                    IVertex eeMeta = ee.To.Get(false, "Meta:");
+                    IVertex eeTo   = ee.To.Get(false, "To:");
+
+                    bool selfDrop = (eeTo == baseVertex);
+
                     if (doCopy)
-                        baseVertex.AddEdge(ee.To.Get(false, "Meta:"), ee.To.Get(false, "To:"));
+                    {
+                        baseVertex.AddEdge(eeMeta, eeTo);
+                    }
                     else
                     {
-                        if (ee.To.Get(false, "To:") != baseVertex) // do not want to cut and paste to itself
+                        if (!selfDrop) // do not want to cut and paste to itself
                         {
-                            baseVertex.AddEdge(ee.To.Get(false, "Meta:"), ee.To.Get(false, "To:"));
-                            GraphUtil.DeleteEdge(ee.To.Get(false, "From:"), ee.To.Get(false, "Meta:"), ee.To.Get(false, "To:")); // YYY
+                            baseVertex.AddEdge(eeMeta, eeTo);
+                            GraphUtil.DeleteEdge(eeFrom, eeMeta, eeTo); // YYY
                         }
-                    }                        
+                    }
+                }
 
                 if (sender is IHasSelectableEdges)
                     ((IHasSelectableEdges)sender).UnselectAllSelectedEdges();

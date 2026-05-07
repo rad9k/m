@@ -136,7 +136,7 @@ namespace m0.Graph.ExecutionFlow
                 if (en.scopeQuery != null)
                     foreach(string s in en.scopeQuery)
                         foreach(IEdge e in en.sourceVertex.GetAll(false, s))
-                            en.vertexInScope.Add(e.To);                
+                            en.vertexInScope.Add(e.To);
             }
         }        
 

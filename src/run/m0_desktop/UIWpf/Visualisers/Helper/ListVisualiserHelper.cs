@@ -277,7 +277,9 @@ namespace m0.UIWpf.Visualisers.Helper
         // QQQ below two methods were commented out and now 2026.02.17 theyy are working and we are checking what is going on
         protected override void dndDrop(object sender, DragEventArgs e)
         {
-            IVertex v = Visualiser.GetEdgeByPoint(e.GetPosition(VisualiserAsFrameworkElement));
+            Point dropPoint = e.GetPosition(VisualiserAsFrameworkElement);
+
+            IVertex v = Visualiser.GetEdgeByPoint(dropPoint);
 
             if (v == null && GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"Home:\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "OnlyEnd"))
                 v = Vertex.Get(false, "BaseEdge:");

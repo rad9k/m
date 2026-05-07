@@ -142,14 +142,14 @@ namespace m0.Graph.ExecutionFlow
                     foreach (GraphChangeTransactionAtom a in graphChangeTransactionAtoms_OutEdgeValueChange_copy[kvp.Key])
                         foreach (WatcherEntry we in kvp.Value)
                             if(IsFilterMatch_OutEdgeValueChange(we, a))
-                                {                            
+                            {                            
                                     IVertex eventVertex = a.CreateEventVertex_GraphChange(we.triggerVertex, we.sourceVertex, EdgeDirectionEnum.Out);
                                     if (eventVertex != null)
                                     {
                                         GeneralUtil.DictionaryAdd<IVertex, IVertex>(triggerEventDictionary, we.triggerVertex, eventVertex);
                                         eventVertex.AddExternalReference();
                                     }
-                                }                            
+                            }                          
 
                 if (graphChangeTransactionAtoms_InEdge_copy.ContainsKey(kvp.Key))
                     foreach (GraphChangeTransactionAtom a in graphChangeTransactionAtoms_InEdge_copy[kvp.Key])
@@ -194,14 +194,14 @@ namespace m0.Graph.ExecutionFlow
                     foreach (WatcherEntry we in watchedVertexDictionary[kvp.Key])
                         foreach (GraphChangeTransactionAtom a in kvp.Value)
                             if (IsFilterMatch_OutEdgeValueChange(we, a))
-                                {
+                            {
                                     IVertex eventVertex = a.CreateEventVertex_GraphChange(we.triggerVertex, we.sourceVertex, EdgeDirectionEnum.Out);
                                     if (eventVertex != null)
                                     {
                                         GeneralUtil.DictionaryAdd<IVertex, IVertex>(triggerEventDictionary, we.triggerVertex, eventVertex);
                                         eventVertex.AddExternalReference();
                                     }
-                                }                            
+                            }
 
             foreach (KeyValuePair<IVertex, List<GraphChangeTransactionAtom>> kvp in graphChangeTransactionAtoms_InEdge_copy)
                 if (watchedVertexDictionary.ContainsKey(kvp.Key))
