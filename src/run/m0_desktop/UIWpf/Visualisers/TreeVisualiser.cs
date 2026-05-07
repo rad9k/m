@@ -952,17 +952,51 @@ namespace m0.UIWpf.Visualisers
         protected IVertex GetVertexByLocation_Reccurent(ItemCollection items,Point p){
             foreach (TreeViewItem i in items)
             {
-                if (VisualTreeHelper.HitTest(i, TranslatePoint(p, i)) != null)
+                if (IsPointOverTreeViewItemHeaderText(i, p))
                 {
                     IVertex v = MinusZero.Instance.CreateTempVertex();
                     EdgeHelper.AddEdgeVertexEdges(v, (IEdge)i.Tag);
                     vertexByLocationToReturn = v;
                 }
-                    
-                GetVertexByLocation_Reccurent(i.Items, p);                
+
+                // Only recurse into expanded items whose children are actually realized and visible.
+                // This avoids spurious hits on collapsed subtrees when doing bounds-based hit testing.
+                if (i.IsExpanded)
+                    GetVertexByLocation_Reccurent(i.Items, p);
             }
 
             return null;
+        }
+
+        // Drag-and-drop on a tree item should only start when the mouse is really over the
+        // visible header content (icon + meta + value text), not over the empty area that the
+        // TreeViewItem stretches into on the right side of the row.
+        private bool IsPointOverTreeViewItemHeaderText(TreeViewItem item, Point pointInTreeVisualiser)
+        {
+            FrameworkElement headerElement = item.Header as FrameworkElement;
+
+            if (headerElement == null || headerElement.IsVisible == false)
+                return false;
+
+            if (headerElement.ActualWidth <= 0 || headerElement.ActualHeight <= 0)
+                return false;
+
+            Point pointInHeader;
+
+            try
+            {
+                pointInHeader = TranslatePoint(pointInTreeVisualiser, headerElement);
+            }
+            catch (InvalidOperationException)
+            {
+                // Header is not connected to this visual tree (yet), treat as no hit.
+                return false;
+            }
+
+            return pointInHeader.X >= 0
+                && pointInHeader.Y >= 0
+                && pointInHeader.X < headerElement.ActualWidth
+                && pointInHeader.Y < headerElement.ActualHeight;
         }
 
         public IVertex GetEdgeByVisualElement(FrameworkElement visualElement)
