@@ -276,6 +276,7 @@ namespace m0.Lib.StdView
     {
         private const string SqlRootValue = "SQL";
         private const string MissingMetaValue = "__MermaidMissingMeta__";
+        private const string LogWhere = "MermaidErdUtil";
 
         private static IVertex TableMeta => MinusZero.Instance.Root.Get(false, @"System\Meta\CustomDomain\SQL\Table");
         private static IVertex ColumnMeta => MinusZero.Instance.Root.Get(false, @"System\Meta\CustomDomain\SQL\Table\Column");
@@ -319,13 +320,31 @@ namespace m0.Lib.StdView
 
         public static IVertex ResolveSqlRoot(IVertex baseVertex)
         {
+            MinusZero.Instance.Log(0, LogWhere, "ResolveSqlRoot: baseVertex=" + VertexToMermaid.DescribeVertex(baseVertex));
+
             if (baseVertex == null)
+            {
+                MinusZero.Instance.Log(0, LogWhere, "ResolveSqlRoot: baseVertex is null - returning null");
                 return null;
+            }
 
-            if (GraphUtil.GetStringValue(baseVertex) == SqlRootValue || GraphUtil.GetQueryOut(baseVertex, GetMetaValue(TableMeta), null).Count > 0)
+            IVertex tableMeta = TableMeta;
+            object tableMetaValue = GetMetaValue(tableMeta);
+            MinusZero.Instance.Log(0, LogWhere, "ResolveSqlRoot: TableMeta=" + VertexToMermaid.DescribeVertex(tableMeta) + " metaValue=" + tableMetaValue);
+
+            string baseStringValue = GraphUtil.GetStringValue(baseVertex);
+            IList<IEdge> tableEdges = GraphUtil.GetQueryOut(baseVertex, tableMetaValue, null);
+            MinusZero.Instance.Log(0, LogWhere, "ResolveSqlRoot: baseStringValue=\"" + baseStringValue + "\" tableEdges.Count=" + tableEdges.Count);
+
+            if (baseStringValue == SqlRootValue || tableEdges.Count > 0)
+            {
+                MinusZero.Instance.Log(0, LogWhere, "ResolveSqlRoot: returning baseVertex (matched SqlRootValue or has Table edges)");
                 return baseVertex;
+            }
 
-            return GraphUtil.GetQueryOutFirst(baseVertex, null, SqlRootValue);
+            IVertex fallback = GraphUtil.GetQueryOutFirst(baseVertex, null, SqlRootValue);
+            MinusZero.Instance.Log(0, LogWhere, "ResolveSqlRoot: fallback by value=\"" + SqlRootValue + "\" -> " + VertexToMermaid.DescribeVertex(fallback));
+            return fallback;
         }
 
         public static IVertex GetTableMeta()

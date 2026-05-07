@@ -1,5 +1,6 @@
 using m0.Foundation;
 using m0.Graph;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,31 +9,82 @@ namespace m0.Lib.StdView
 {
     public class VertexToMermaid
     {
+        const string LogWhere = "VertexToMermaid";
+
         public static INoInEdgeInOutVertexVertex VertexToMermaid_Transform(IExecution exe)
         {
-            INoInEdgeInOutVertexVertex stack = exe.Stack;
+            MinusZero.Instance.Log(0, LogWhere, "Transform: enter");
 
-            IVertex from = GraphUtil.GetQueryOutFirst(stack, "from", null);
-            IVertex to = GraphUtil.GetQueryOutFirst(stack, "to", null);
+            try
+            {
+                INoInEdgeInOutVertexVertex stack = exe.Stack;
 
-            if (from == null || to == null)
+                IVertex from = GraphUtil.GetQueryOutFirst(stack, "from", null);
+                IVertex to = GraphUtil.GetQueryOutFirst(stack, "to", null);
+
+                MinusZero.Instance.Log(0, LogWhere, "Transform: from=" + DescribeVertex(from));
+                MinusZero.Instance.Log(0, LogWhere, "Transform: to=" + DescribeVertex(to));
+
+                if (from == null || to == null)
+                {
+                    MinusZero.Instance.Log(0, LogWhere, "Transform: from or to is null - bailing out");
+                    return exe.Stack;
+                }
+
+                string mermaid;
+                try
+                {
+                    mermaid = VertexToMermaid_Process(from);
+                }
+                catch (Exception exProcess)
+                {
+                    MinusZero.Instance.Log(0, LogWhere, "Transform: VertexToMermaid_Process THREW " + exProcess.GetType().Name + ": " + exProcess.Message + "\n" + exProcess.StackTrace);
+                    throw;
+                }
+
+                MinusZero.Instance.Log(0, LogWhere, "Transform: process result length=" + (mermaid == null ? -1 : mermaid.Length));
+
+                try
+                {
+                    to.Value = mermaid;
+                    MinusZero.Instance.Log(0, LogWhere, "Transform: to.Value assigned OK");
+                }
+                catch (Exception exValueSet)
+                {
+                    MinusZero.Instance.Log(0, LogWhere, "Transform: to.Value SETTER THREW " + exValueSet.GetType().Name + ": " + exValueSet.Message + "\n" + exValueSet.StackTrace);
+                    throw;
+                }
+
+                MinusZero.Instance.Log(0, LogWhere, "Transform: exit OK");
                 return exe.Stack;
-
-            to.Value = VertexToMermaid_Process(from);
-
-            return exe.Stack;
+            }
+            catch (Exception ex)
+            {
+                MinusZero.Instance.Log(0, LogWhere, "Transform: UNHANDLED EXCEPTION " + ex.GetType().Name + ": " + ex.Message + "\n" + ex.StackTrace);
+                throw;
+            }
         }
 
         public static string VertexToMermaid_Process(IVertex baseVertex)
         {
+            MinusZero.Instance.Log(0, LogWhere, "Process: baseVertex=" + DescribeVertex(baseVertex));
+
             IVertex sqlRoot = MermaidErdUtil.ResolveSqlRoot(baseVertex);
+            MinusZero.Instance.Log(0, LogWhere, "Process: sqlRoot=" + DescribeVertex(sqlRoot));
+
             var builder = new StringBuilder();
             builder.AppendLine("erDiagram");
 
             if (sqlRoot == null)
+            {
+                MinusZero.Instance.Log(0, LogWhere, "Process: sqlRoot is null - returning empty erDiagram");
                 return builder.ToString();
+            }
 
-            IList<IEdge> tableEdges = GraphUtil.GetQueryOut(sqlRoot, MermaidErdUtil.GetMetaValue(MermaidErdUtil.GetTableMeta()), null);
+            object tableMetaValue = MermaidErdUtil.GetMetaValue(MermaidErdUtil.GetTableMeta());
+            IList<IEdge> tableEdges = GraphUtil.GetQueryOut(sqlRoot, tableMetaValue, null);
+            MinusZero.Instance.Log(0, LogWhere, "Process: tableMetaValue=" + tableMetaValue + " tableEdges.Count=" + tableEdges.Count);
+
             var tableNames = new HashSet<string>(tableEdges.Select(edge => MermaidErdUtil.NormalizeIdentifier(GraphUtil.GetStringValue(edge.To))));
 
             foreach (IEdge tableEdge in tableEdges)
@@ -40,7 +92,9 @@ namespace m0.Lib.StdView
 
             AppendRelations(builder, tableEdges, tableNames);
 
-            return builder.ToString().TrimEnd();
+            string result = builder.ToString().TrimEnd();
+            MinusZero.Instance.Log(0, LogWhere, "Process: built mermaid length=" + result.Length);
+            return result;
         }
 
         private static void AppendTable(StringBuilder builder, IVertex tableVertex)
@@ -110,6 +164,32 @@ namespace m0.Lib.StdView
                     builder.AppendLine("\"");
                 }
             }
+        }
+
+        // Renders a compact, log-friendly description of an IVertex (id, value, store).
+        internal static string DescribeVertex(IVertex vertex)
+        {
+            if (vertex == null)
+                return "null";
+
+            string identifier = vertex.Identifier == null ? "?" : vertex.Identifier.ToString();
+            string value = GraphUtil.GetStringValueOrNull(vertex);
+            string valueRender = value == null ? "<null>" : "\"" + value + "\"";
+            string storeRender;
+            try
+            {
+                IStore store = vertex.Store;
+                if (store == null)
+                    storeRender = "<no-store>";
+                else
+                    storeRender = store.GetType().Name + "[" + store.Identifier + "]";
+            }
+            catch (Exception ex)
+            {
+                storeRender = "<store-threw:" + ex.GetType().Name + ">";
+            }
+
+            return "{id=" + identifier + " val=" + valueRender + " store=" + storeRender + "}";
         }
     }
 }
