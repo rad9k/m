@@ -942,11 +942,62 @@ namespace m0.UIWpf.Visualisers
 
             GetVertexByLocation_Reccurent(this.Items, p);
 
-            // DO NOT WANT THIS FEATURE            
-            if (vertexByLocationToReturn == null && GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"Home:\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "StartAndEnd"))
+            // Fallback to the root (BaseEdge:) is only allowed when the point is below the
+            // last visible tree item header, not when it merely falls into the empty space
+            // to the right of some leaf header. Otherwise dragging from the empty area on
+            // the right side of any leaf would incorrectly initiate DnD for the tree root.
+            if (vertexByLocationToReturn == null
+                && IsPointBelowLastVisibleHeader(p)
+                && GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"Home:\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "StartAndEnd"))
                 vertexByLocationToReturn = Vertex.Get(false, @"BaseEdge:");
 
             return vertexByLocationToReturn;
+        }
+
+        private bool IsPointBelowLastVisibleHeader(Point p)
+        {
+            double bottomY = GetMaxBottomYOfVisibleHeaders(this.Items);
+
+            // No visible header at all -> the whole tree area counts as "below the last header".
+            if (bottomY <= 0)
+                return true;
+
+            return p.Y >= bottomY;
+        }
+
+        private double GetMaxBottomYOfVisibleHeaders(ItemCollection items)
+        {
+            double max = 0;
+
+            foreach (TreeViewItem i in items)
+            {
+                FrameworkElement headerElement = i.Header as FrameworkElement;
+
+                if (headerElement != null && headerElement.IsVisible && headerElement.ActualHeight > 0)
+                {
+                    try
+                    {
+                        Point bottomLeftInTree = headerElement.TranslatePoint(
+                            new Point(0, headerElement.ActualHeight), this);
+
+                        if (bottomLeftInTree.Y > max)
+                            max = bottomLeftInTree.Y;
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        // Header is not connected to this visual tree (yet), skip it.
+                    }
+                }
+
+                if (i.IsExpanded)
+                {
+                    double childMax = GetMaxBottomYOfVisibleHeaders(i.Items);
+                    if (childMax > max)
+                        max = childMax;
+                }
+            }
+
+            return max;
         }
 
         protected IVertex GetVertexByLocation_Reccurent(ItemCollection items,Point p){
