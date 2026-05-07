@@ -45,7 +45,6 @@ namespace m0.ZeroCode
 {
     public class ZeroCodeCommon
     {
-
         ///////////////////////
         // core code style
         //////////////////////
@@ -261,7 +260,7 @@ namespace m0.ZeroCode
             if (o == null)
                 return "";
 
-            string s=o.ToString();
+            string s = o.ToString();
 
             s = s.Replace(dict.EscapeCharacter.ToString(), dict.EscapeCharacter.ToString() + dict.EscapeCharacter.ToString());
 
@@ -275,6 +274,14 @@ namespace m0.ZeroCode
                 s = s.Replace(dict.NewVertexSuffix.ToString(), dict.EscapeCharacter.ToString() + dict.NewVertexSuffix);
                 //s = s.Replace(dict.NewVertexSuffix.ToString(), forbidden.ToString() + dict.NewVertexSuffix);
 
+            // Encode CR/LF/TAB as <EscapeCharacter>r / <EscapeCharacter>n / <EscapeCharacter>t so that
+            // values containing these characters stay on a single line in the textual representation.
+            // Order: must run AFTER the EscapeCharacter doubling above, so the inserted EscapeCharacter
+            // is not treated as a literal escape that needs further doubling.
+            s = s.Replace("\r", dict.EscapeCharacter.ToString() + "r");
+            s = s.Replace("\n", dict.EscapeCharacter.ToString() + "n");
+            s = s.Replace("\t", dict.EscapeCharacter.ToString() + "t");
+
             s = s.Replace(forbidden, dict.EscapeCharacter);
 
             return dict.NewVertexPrefix + s + dict.NewVertexSuffix;
@@ -284,10 +291,22 @@ namespace m0.ZeroCode
         {
             s = s.Substring(1, s.Length - 2);                       
 
-            s = s.Replace(String.Concat(dict.EscapeCharacter, dict.NewVertexPrefix), dict.NewVertexPrefix.ToString());
-            s = s.Replace(String.Concat(dict.EscapeCharacter, dict.NewVertexSuffix), dict.NewVertexSuffix.ToString());
+            // Replace doubled escape character with the temporary placeholder first.
+            // This avoids ambiguity between a literal escape character followed by r/n/t
+            // (encoded as e.g. "%%r") and the CR/LF/TAB escape sequences ("%r"/"%n"/"%t").
+            // After this step the only escape character occurrences left are those that
+            // start a multi-char escape sequence.
+            s = s.Replace(String.Concat(dict.EscapeCharacter, dict.EscapeCharacter), forbidden.ToString());
 
-            s = s.Replace(String.Concat(dict.EscapeCharacter, dict.EscapeCharacter), dict.EscapeCharacter.ToString());
+            s = s.Replace(String.Concat(dict.EscapeCharacter, dict.NewVertexPrefix), dict.NewVertexPrefix.ToString());
+            if (dict.NewVertexPrefix != dict.NewVertexSuffix)
+                s = s.Replace(String.Concat(dict.EscapeCharacter, dict.NewVertexSuffix), dict.NewVertexSuffix.ToString());
+
+            s = s.Replace(dict.EscapeCharacter.ToString() + "r", "\r");
+            s = s.Replace(dict.EscapeCharacter.ToString() + "n", "\n");
+            s = s.Replace(dict.EscapeCharacter.ToString() + "t", "\t");
+
+            s = s.Replace(forbidden.ToString(), dict.EscapeCharacter.ToString());
 
             return s;
         }
@@ -384,6 +403,26 @@ namespace m0.ZeroCode
                 needToSurroundWithEscape = true;
             }
 
+            // Encode CR/LF/TAB as multi-char escape sequences so that values containing
+            // these characters fit on a single textual line. Must run AFTER the
+            // EscapeCharacter doubling above, otherwise the inserted EscapeCharacter
+            // would itself be doubled.
+            if (s.IndexOf('\r') != -1)
+            {
+                s = s.Replace("\r", dict.EscapeCharacter.ToString() + "r");
+                needToSurroundWithEscape = true;
+            }
+            if (s.IndexOf('\n') != -1)
+            {
+                s = s.Replace("\n", dict.EscapeCharacter.ToString() + "n");
+                needToSurroundWithEscape = true;
+            }
+            if (s.IndexOf('\t') != -1)
+            {
+                s = s.Replace("\t", dict.EscapeCharacter.ToString() + "t");
+                needToSurroundWithEscape = true;
+            }
+
             for (int x = 0; x < s.Length; x++)
                 if (IsSpecialCharacter(dict, s, x))
                     needToSurroundWithEscape = true;
@@ -393,9 +432,8 @@ namespace m0.ZeroCode
 
             if (needToSurroundWithEscape)
                 return surroundWithEscape(dict, s);
-            else
-                return s;
 
+            return s;
         }        
 
         public static string tryEscapedLinkStringAndDeescape(FormalTextLanguageDictinaries dict, string text, ref int sPos)
@@ -427,9 +465,19 @@ namespace m0.ZeroCode
 
                 string descaped = text.Substring(begSpos + 1, sPos - begSpos - 2);
 
-                descaped = descaped.Replace(String.Concat(dict.EscapeCharacter, dict.EscapeCharacter), dict.EscapeCharacter.ToString());                
+                // Same placeholder trick as in stringFromNewVertexString: collapse the
+                // doubled escape character to a placeholder first, so the multi-char
+                // escapes (\r/\n/\t/\') cannot accidentally match a literal escape
+                // character followed by r/n/t/'.
+                descaped = descaped.Replace(String.Concat(dict.EscapeCharacter, dict.EscapeCharacter), forbidden.ToString());
 
                 descaped = descaped.Replace(String.Concat(dict.EscapeCharacter, dict.EscapedSequencePrefix), dict.EscapedSequencePrefix.ToString());
+
+                descaped = descaped.Replace(dict.EscapeCharacter.ToString() + "r", "\r");
+                descaped = descaped.Replace(dict.EscapeCharacter.ToString() + "n", "\n");
+                descaped = descaped.Replace(dict.EscapeCharacter.ToString() + "t", "\t");
+
+                descaped = descaped.Replace(forbidden.ToString(), dict.EscapeCharacter.ToString());
 
                 return descaped;
             }
