@@ -1348,14 +1348,81 @@ namespace m0.ZeroCode
 
         bool ommitOnce_AppendEdge_Meta = false;
 
+        bool IsMinCardinalityEdge(IEdge e)
+        {
+            if (e == null || e.Meta == null || e.Meta.Value == null)
+                return false;
+
+            return GeneralUtil.CompareStrings(e.Meta.Value, "$MinCardinality");
+        }
+
+        string VertexToDebugString(IVertex v)
+        {
+            if (v == null)
+                return "<null>";
+
+            string value = v.Value == null ? "<null>" : v.Value.ToString();
+            string identifier = v.Identifier == null ? "<null>" : v.Identifier.ToString();
+
+            return value + " [" + identifier + "]";
+        }
+
+        string EdgeToDebugString(IEdge e)
+        {
+            if (e == null)
+                return "<null>";
+
+            return "From=" + VertexToDebugString(e.From)
+                + ", Meta=" + VertexToDebugString(e.Meta)
+                + ", To=" + VertexToDebugString(e.To);
+        }
+
+        string VertexDataToDebugString(VertexData vertexData)
+        {
+            if (vertexData == null)
+                return "<null>";
+
+            return "LinkString=" + vertexData.LinkString
+                + ", NestedLevel=" + vertexData.NestedLevel
+                + ", VertexHasBeenAppendedAsNew=" + vertexData.VertexHasBeenAppendedAsNew;
+        }
+
+        void LogMinCardinality(string area, string message)
+        {
+            MinusZero.Instance.Log(1, "Graph2TextProcessing.$MinCardinality." + area, message);
+        }
+
         bool AppendEdge(IEdge e, IEdge parent, string path, bool ParentKmHasTabAddingOmmit)
         {
+            if (IsMinCardinalityEdge(e))
+                LogMinCardinality("AppendEdge",
+                    "enter path=" + path
+                    + ", parent=" + EdgeToDebugString(parent)
+                    + ", edge=" + EdgeToDebugString(e)
+                    + ", keywordMatched=" + KeywordMatchedSubGraphEdges.ContainsKey(e)
+                    + ", been=" + BeenList.Contains(e));
+
             if (KeywordMatchedSubGraphEdges.ContainsKey(e))
                 if (ShouldAppendKeywordHere(e, path) || e.Meta.Value.ToString() == "NextExpression")
+                {
+                    if (IsMinCardinalityEdge(e))
+                        LogMinCardinality("AppendEdge",
+                            "delegating to AppendKeyword path=" + path
+                            + ", edge=" + EdgeToDebugString(e));
+
                     return AppendKeyword(e, false, ParentKmHasTabAddingOmmit);
+                }
                 else
                     if (KeywordMatchedSubGraphEdges[e].BaseEdge.To != e.To) // :O)
+                    {
+                        if (IsMinCardinalityEdge(e))
+                            LogMinCardinality("AppendEdge",
+                                "skipping edge because keyword match base edge points to another vertex. path=" + path
+                                + ", baseEdge=" + EdgeToDebugString(KeywordMatchedSubGraphEdges[e].BaseEdge)
+                                + ", edge=" + EdgeToDebugString(e));
+
                         return true; // ?????????????????????? or true?
+                    }
 
             if (AppendNewLines_onlyRemember(e))
                 return false;
@@ -1395,8 +1462,26 @@ namespace m0.ZeroCode
             if (keywordSubVertex != null && GraphUtil.ExistQueryOut(keywordSubVertex, "$$ForceNewVertex", null))
                 forceNewVertex = true;
 
+            bool isMinCardinalityEdge = IsMinCardinalityEdge(e);
+
+            if (isMinCardinalityEdge)
+                LogMinCardinality("AppendVertex",
+                    "enter path=" + path
+                    + ", prefixAppended=" + prefixAppended
+                    + ", appendSuffix=" + appendSuffix
+                    + ", hideLinkPrefix=" + hideLinkPrefix
+                    + ", forceNewVertex=" + forceNewVertex
+                    + ", isOldLink=" + VertexOperations.IsLink_OldVersion(e)
+                    + ", keywordSubVertex=" + VertexToDebugString(keywordSubVertex)
+                    + ", edge=" + EdgeToDebugString(e));
+
             if (VertexOperations.IsLink_OldVersion(e) && !forceNewVertex)
             {
+                if (isMinCardinalityEdge)
+                    LogMinCardinality("AppendVertex",
+                        "appending target as link because edge is old link and forceNewVertex is false. path=" + path
+                        + ", target=" + VertexToDebugString(e.To));
+
                 AppendAsLink(e.To, null, hideLinkPrefix);
 
                 if (appendSuffix)
@@ -1406,8 +1491,24 @@ namespace m0.ZeroCode
             }
             else
             {
-                if (isVertexNew(e, path) || forceNewVertex)
+                bool vertexIsNew = isVertexNew(e, path);
+
+                if (isMinCardinalityEdge)
+                    LogMinCardinality("AppendVertex",
+                        "isVertexNew result=" + vertexIsNew
+                        + ", forceNewVertex=" + forceNewVertex
+                        + ", path=" + path
+                        + ", subGraphContainsTo=" + SubGraphVerticesDictionary.ContainsKey(e.To)
+                        + ", toVertexData=" + (SubGraphVerticesDictionary.ContainsKey(e.To) ? VertexDataToDebugString(SubGraphVerticesDictionary[e.To]) : "<missing>")
+                        + ", target=" + VertexToDebugString(e.To));
+
+                if (vertexIsNew || forceNewVertex)
                 {
+                    if (isMinCardinalityEdge)
+                        LogMinCardinality("AppendVertex",
+                            "appending target as new value. path=" + path
+                            + ", target=" + VertexToDebugString(e.To));
+
                     AppendAsNew(e.To);
 
                     if (appendSuffix && prefixAppended)
@@ -1419,6 +1520,11 @@ namespace m0.ZeroCode
                 {
                     if (!prefixAppended && appendSuffix)
                         AppendPrefix();
+
+                    if (isMinCardinalityEdge)
+                        LogMinCardinality("AppendVertex",
+                            "appending target as link because target vertex is already known in subgraph. path=" + path
+                            + ", target=" + VertexToDebugString(e.To));
 
                     AppendAsLink(e.To, null, hideLinkPrefix);
 
@@ -1434,20 +1540,43 @@ namespace m0.ZeroCode
 
         private bool isVertexNew(IEdge e, string path)
         {
+            bool isMinCardinalityEdge = IsMinCardinalityEdge(e);
+
             if (ommitOnce_checkIfSubGraphVerticesDictionaryContainsVertex)
             {
                 ommitOnce_checkIfSubGraphVerticesDictionaryContainsVertex = false;
+
+                if (isMinCardinalityEdge)
+                    LogMinCardinality("isVertexNew",
+                        "returning true because ommitOnce_checkIfSubGraphVerticesDictionaryContainsVertex was set. path=" + path
+                        + ", edge=" + EdgeToDebugString(e));
 
                 return true;
             }
             else
                 if (!SubGraphVerticesDictionary.ContainsKey(e.To))
+                {
+                    if (isMinCardinalityEdge)
+                        LogMinCardinality("isVertexNew",
+                            "returning false because target is not in SubGraphVerticesDictionary. path=" + path
+                            + ", target=" + VertexToDebugString(e.To)
+                            + ", edge=" + EdgeToDebugString(e));
+
                     return false; // is it possible? YES
+                }
 
             VertexData eVertexData = SubGraphVerticesDictionary[e.To];
 
             if (eVertexData.LinkString == "") // root
+            {
+                if (isMinCardinalityEdge)
+                    LogMinCardinality("isVertexNew",
+                        "returning true because target is subgraph root. path=" + path
+                        + ", vertexData=" + VertexDataToDebugString(eVertexData)
+                        + ", edge=" + EdgeToDebugString(e));
+
                 return true;
+            }
 
             if (!eVertexData.VertexHasBeenAppendedAsNew && shouldUseCurrentPathForFirstVertexAppend)
             {
@@ -1463,14 +1592,34 @@ namespace m0.ZeroCode
                 }
 
                 eVertexData.VertexHasBeenAppendedAsNew = true;
+
+                if (isMinCardinalityEdge)
+                    LogMinCardinality("isVertexNew",
+                        "returning true because this is first append and current path is used. path=" + path
+                        + ", vertexData=" + VertexDataToDebugString(eVertexData)
+                        + ", edge=" + EdgeToDebugString(e));
+
                 return true;
             }
 
             if ((path == null || eVertexData.LinkString == path) && !eVertexData.VertexHasBeenAppendedAsNew)
             {
                 eVertexData.VertexHasBeenAppendedAsNew = true;
+
+                if (isMinCardinalityEdge)
+                    LogMinCardinality("isVertexNew",
+                        "returning true because path matches stored link and target was not appended yet. path=" + path
+                        + ", vertexData=" + VertexDataToDebugString(eVertexData)
+                        + ", edge=" + EdgeToDebugString(e));
+
                 return true;
             }
+
+            if (isMinCardinalityEdge)
+                LogMinCardinality("isVertexNew",
+                    "returning false because target was already appended or path does not match. path=" + path
+                    + ", vertexData=" + VertexDataToDebugString(eVertexData)
+                    + ", edge=" + EdgeToDebugString(e));
 
             return false;
         }

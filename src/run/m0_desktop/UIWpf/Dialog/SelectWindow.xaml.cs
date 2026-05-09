@@ -1,4 +1,4 @@
-﻿using m0.Foundation;
+using m0.Foundation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,8 +23,9 @@ namespace m0.UIWpf.Dialog
 
         Point _mousePosition;
 
-        void OnLoad(object sender, RoutedEventArgs e)
+        void PositionWindowBeforeShow()
         {
+            WindowStartupLocation = WindowStartupLocation.Manual;
             WpfUtil.SetWindowPosition(this, _mousePosition);
         }
 
@@ -37,7 +38,7 @@ namespace m0.UIWpf.Dialog
                 if (position != null)
                 {
                     _mousePosition = (Point)position;
-                    this.Loaded += new RoutedEventHandler(OnLoad);
+                    PositionWindowBeforeShow();
                 }
                 else
                     Owner = m0Main.Instance;

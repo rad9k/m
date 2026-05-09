@@ -1,4 +1,4 @@
-﻿using m0.Foundation;
+using m0.Foundation;
 using m0.Graph;
 using System;
 using System.Collections.Generic;
@@ -26,8 +26,9 @@ namespace m0.UIWpf.Visualisers.Diagram
 
         Point _mousePosition;
 
-        void OnLoad(object sender, RoutedEventArgs e)
+        void PositionWindowBeforeShow()
         {
+            WindowStartupLocation = WindowStartupLocation.Manual;
             WpfUtil.SetWindowPosition(this, _mousePosition);
         }
 
@@ -52,7 +53,7 @@ namespace m0.UIWpf.Visualisers.Diagram
 
             //Owner = m0Main.Instance;
 
-            this.Loaded += new RoutedEventHandler(OnLoad);
+            PositionWindowBeforeShow();
 
             ItemName.Content = baseedge.Get(false, "To:").Value;
 
