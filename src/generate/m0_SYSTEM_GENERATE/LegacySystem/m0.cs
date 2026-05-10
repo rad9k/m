@@ -3926,9 +3926,12 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\GetValue").AddEdge(
                 Is, LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method"));
 
-            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\GetValue").AddEdge(
-                LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method\Output"),
-                LegacySystem.Graph.EasyVertex.Get(smz, false, @"VertexType"));
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\GetValue").AddVertex(
+                LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method\Output"), "");
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\GetValue\Output:").AddEdge(
+              LegacySystem.Graph.EasyVertex.Get(smz, false, "*$VertexTarget"),
+              LegacySystem.Graph.EasyVertex.Get(smz, false, @"VertexType"));
 
             // SetValue(object value)
 
@@ -3956,9 +3959,13 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\GetOutEdges").AddEdge(
                 Is, LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method"));
 
-            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\GetOutEdges").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\GetOutEdges").AddVertex(
                 LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method\Output"),
-                LegacySystem.Graph.EasyVertex.Get(smz, false, @"VertexType"));            
+                "");
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\GetOutEdges\Output:").AddEdge(
+              LegacySystem.Graph.EasyVertex.Get(smz, false, "*$VertexTarget"),
+              LegacySystem.Graph.EasyVertex.Get(smz, false, @"VertexType"));
 
             // IList<IEdge> GetInEdges
 
@@ -3969,9 +3976,13 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\GetInEdges").AddEdge(
                 Is, LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method"));
 
-            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\GetInEdges").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\GetInEdges").AddVertex(
                 LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method\Output"),
-                LegacySystem.Graph.EasyVertex.Get(smz, false, @"VertexType"));            
+                "");
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\GetInEdges\Output:").AddEdge(
+              LegacySystem.Graph.EasyVertex.Get(smz, false, "*$VertexTarget"),
+              LegacySystem.Graph.EasyVertex.Get(smz, false, @"VertexType"));
 
             // IEdge AddVertexAndReturnEdge(IVertex metaVertex, object val)
 
@@ -3998,9 +4009,13 @@ namespace m0
               LegacySystem.Graph.EasyVertex.Get(smz, false, "*$EdgeTarget"),
               LegacySystem.Graph.EasyVertex.Get(smz, false, @"VertexType"));
 
-            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\AddVertexAndReturnEdge").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\AddVertexAndReturnEdge").AddVertex(
                 LegacySystem.Graph.EasyVertex.Get(smuml, false, @"Class\Method\Output"),
-                 LegacySystem.Graph.EasyVertex.Get(smz, false, @"Edge"));
+                 "");
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"ExecutionFlow\VertexEval\AddVertexAndReturnEdge\Output:").AddEdge(
+              LegacySystem.Graph.EasyVertex.Get(smz, false, "*$VertexTarget"),
+              LegacySystem.Graph.EasyVertex.Get(smz, false, @"Edge"));
 
             // IEdge AddEdge(IVertex metaVertex, IVertex destVertex)
 
