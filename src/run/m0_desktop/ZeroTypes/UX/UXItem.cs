@@ -1049,15 +1049,29 @@ namespace m0.ZeroTypes.UX
 
         //
 
+        // Returns true when toItem is one of this item's own ancestors
+        // (used by GetLineAnchorLocation to aim a child->parent line at the
+        // parent's TOP edge instead of its center, since the parent's center
+        // sits inside the child).
+        //
+        // Previous implementation walked toItem.ParentItem while still
+        // comparing against this.ParentItem on each step, which effectively
+        // tested "do we share any ancestor?" and returned true for siblings
+        // - causing sibling-to-sibling diagram lines to aim at the other
+        // item's top edge instead of its center.
         bool IsInParentHierarchy(IItem toItem)
         {
             if (toItem == null)
                 return false;
 
-            if (ParentItem == toItem)
-                return true;
-
-            return IsInParentHierarchy(toItem.ParentItem);
+            IItem p = ParentItem;
+            while (p != null)
+            {
+                if (p == toItem)
+                    return true;
+                p = p.ParentItem;
+            }
+            return false;
         }
 
         public virtual Point GetLineAnchorLocation(IUXItem _toItem, bool useToPoint, Point toPoint, int toItemDiagramLinesCount, int toItemDiagramLineNumber, bool isSelfStart)
