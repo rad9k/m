@@ -1,4 +1,4 @@
-﻿using m0.Foundation;
+using m0.Foundation;
 using m0.Graph;
 using m0.Graph.ExecutionFlow;
 using m0.UIWpf;
@@ -496,6 +496,14 @@ namespace m0.ZeroTypes.UX
 
             IVertex baseEdgeTo = BaseEdgeTo;
 
+            if (ShouldRemoveItemAfterBaseEdgeTargetDisposed(exe.Stack, baseEdgeTo))
+            {
+                if (OwningVisualiser is UXVisualiser uxVisualiser)
+                    uxVisualiser.RemoveUXItem(this);
+
+                return exe.Stack;
+            }
+
             if (IsVertexChange(exe.Stack, baseEdgeTo))
                 BaseEdgeToUpdated();
 
@@ -537,6 +545,46 @@ namespace m0.ZeroTypes.UX
                 ViewAttributesUpdated();
 
             return exe.Stack;
+        }
+
+        private bool ShouldRemoveItemAfterBaseEdgeTargetDisposed(IVertex stack, IVertex baseEdgeTo)
+        {
+            if (OwningVisualiser == null || IsDisposed)
+                return false;
+
+            IVertex edgeStub = Vertex != null ? Vertex.Get(false, "BaseEdge:") : null;
+            if (edgeStub == null)
+                return false;
+
+            if (baseEdgeTo != null && baseEdgeTo.DisposedState != DisposeStateEnum.Live)
+                return true;
+
+            foreach (IEdge ev in stack.GetAll(false, "event:"))
+            {
+                IVertex eventVertex = ev.To;
+                IVertex type = eventVertex.Get(false, "Type:");
+                if (type == null)
+                    continue;
+
+                bool isRelevantEventType =
+                    GraphUtil.GetValueAndCompareStrings(type, "OutputEdgeRemoved")
+                    || GraphUtil.GetValueAndCompareStrings(type, "OutputEdgeDisposed");
+
+                if (!isRelevantEventType)
+                    continue;
+
+                IVertex edge = eventVertex.Get(false, "Edge:");
+                if (edge == null)
+                    continue;
+
+                IVertex edgeFrom = edge.Get(false, "From:");
+                IVertex edgeMeta = edge.Get(false, "Meta:");
+
+                if (edgeFrom == edgeStub && GraphUtil.GetValueAndCompareStrings(edgeMeta, "To"))
+                    return true;
+            }
+
+            return false;
         }
 
         // OPTIMISATION START

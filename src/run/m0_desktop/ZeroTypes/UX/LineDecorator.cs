@@ -1,4 +1,4 @@
-﻿using m0.Foundation;
+using m0.Foundation;
 using m0.Graph;
 using m0.Graph.ExecutionFlow;
 using m0.UIWpf;
@@ -66,9 +66,20 @@ namespace m0.ZeroTypes.UX
         }
 
         protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
-        {                       
-            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "IsDashed")
-                || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "LineWidth"))
+        {
+            if (ShouldRemoveLineAfterBaseEdgeTargetDisposed(exe.Stack))
+            {
+                if (FromDiagramItem != null)
+                    FromDiagramItem.RemoveDiagramLine(this);
+
+                return exe.Stack;
+            }
+
+            bool willCallUpdateLine =
+                   IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "IsDashed")
+                || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "LineWidth");
+
+            if (willCallUpdateLine)
                 UpdateLine();
 
             bool needToUpdateLineEnds = false;
@@ -90,14 +101,64 @@ namespace m0.ZeroTypes.UX
             if (needToUpdateLineEnds)
                 UpdateLineEnds();
 
-            if (IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:"))
-                 || IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:\To:")))
+            bool willCallVertexUpdated =
+                   IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:"))
+                || IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:\To:"));
+
+            if (willCallVertexUpdated)
                 VertexUpdated();
 
             if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "HideLabel"))
                 UpdateLabelVisibility();
 
             return exe.Stack;
+        }
+
+        private bool ShouldRemoveLineAfterBaseEdgeTargetDisposed(IVertex stack)
+        {
+            if (FromDiagramItem == null || IsDisposed)
+                return false;
+
+            IVertex edgeStub = Vertex != null ? Vertex.Get(false, "BaseEdge:") : null;
+            if (edgeStub == null)
+                return false;
+
+            IVertex baseEdgeFrom = edgeStub.Get(false, "From:");
+            IVertex baseEdgeMeta = edgeStub.Get(false, "Meta:");
+            IVertex baseEdgeTo = edgeStub.Get(false, "To:");
+
+            if (baseEdgeTo != null && baseEdgeTo.DisposedState != DisposeStateEnum.Live)
+                return true;
+
+            foreach (IEdge ev in stack.GetAll(false, "event:"))
+            {
+                IVertex eventVertex = ev.To;
+                IVertex type = eventVertex.Get(false, "Type:");
+                if (type == null)
+                    continue;
+
+                bool isRelevantEventType =
+                    GraphUtil.GetValueAndCompareStrings(type, "OutputEdgeRemoved")
+                    || GraphUtil.GetValueAndCompareStrings(type, "OutputEdgeDisposed");
+
+                if (!isRelevantEventType)
+                    continue;
+
+                IVertex edge = eventVertex.Get(false, "Edge:");
+                if (edge == null)
+                    continue;
+
+                IVertex edgeFrom = edge.Get(false, "From:");
+                IVertex edgeMeta = edge.Get(false, "Meta:");
+
+                if (edgeFrom == edgeStub && GraphUtil.GetValueAndCompareStrings(edgeMeta, "To"))
+                    return true;
+
+                if (baseEdgeFrom != null && baseEdgeMeta != null && edgeFrom == baseEdgeFrom && edgeMeta == baseEdgeMeta)
+                    return true;
+            }
+
+            return false;
         }
 
         protected virtual void UpdateLine()
