@@ -1,4 +1,4 @@
-﻿using m0.Foundation;
+using m0.Foundation;
 using m0.Graph;
 using m0.UIWpf.UX;
 using m0.ZeroCode.Helpers;
@@ -118,18 +118,9 @@ namespace m0.ZeroTypes.UX
 
         public FrameworkElement GetLabelControl()
         {
-            BaseEdge_forLabel = BaseEdge;
+            BaseEdge_forLabel = LabeledItemLabelHelper.GetLabelEdge(BaseEdge, ContentQuery);
 
-            string labelQuery = ContentQuery;
-
-            if (labelQuery != null)
-                BaseEdge_forLabel = BaseEdge.To.GetAll(false, labelQuery).FirstOrDefault();
-
-            //
-
-            StackPanel stack = new StackPanel();
-            stack.HorizontalAlignment = HorizontalAlignment.Center;
-            stack.Orientation = Orientation.Horizontal;
+            StackPanel stack = LabeledItemLabelHelper.CreateRootStack();
 
             if (BaseEdge_forLabel == null)
             {
@@ -138,29 +129,13 @@ namespace m0.ZeroTypes.UX
                 return stack;
             }
 
-            string constantLabel = ConstantLabel;
-
-            if (constantLabel != null)
-            {
-                TextBlock constantTextBlock = GetTextBlock(HorizontalAlignment.Center);
-
-                constantTextBlock.FontStyle = FontStyles.Italic;
-
-                constantTextBlock.Text = constantLabel;
-
-                stack.Children.Add(constantTextBlock);
-
-                //
-
-                TextBlock dividerTextBlock = GetTextBlock(HorizontalAlignment.Center);
-
-                dividerTextBlock.Text = " | ";
-
-                stack.Children.Add(dividerTextBlock);
-            }
+            LabeledItemLabelHelper.AddConstantLabel(stack, ConstantLabel, GetTextBlock);
 
             if (!HideLabel)
+            {
+                LabeledItemLabelHelper.AddIconIfNeeded(stack, ShowIcons, BaseEdge_forLabel);
                 stack.Children.Add(GetLabelControl_RightPart());
+            }
 
             LabelControl = stack;
 
@@ -169,31 +144,12 @@ namespace m0.ZeroTypes.UX
 
         public string GetLabel_Left()
         {
-            StringBuilder label = new StringBuilder();
-
-            if (ShowMeta && BaseEdge_forLabel.Meta.Value.ToString() != "$Empty")
-            {
-                if (BaseEdge_forLabel.Meta.Value == null)
-                    label.Append("Ø");
-                else
-                    label.Append(BaseEdge_forLabel.Meta.Value.ToString());
-
-                label.Append(" :: ");
-            }
-
-            return label.ToString();
+            return LabeledItemLabelHelper.GetLabelLeft(BaseEdge_forLabel, ShowMeta);
         }
 
         public string GetLabel_Right()
         {
-            StringBuilder label = new StringBuilder();
-
-            if (BaseEdge_forLabel.To.Value == null)
-                label.Append("Ø");
-            else
-                label.Append(BaseEdge_forLabel.To.Value.ToString());
-
-            return label.ToString();
+            return LabeledItemLabelHelper.GetLabelRight(BaseEdge_forLabel);
         }
 
         FrameworkElement GetLabelControl_RightPart()
@@ -364,6 +320,7 @@ namespace m0.ZeroTypes.UX
         static IVertex UseCodeLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\UseCodeLabel");
         static IVertex FormalTextLanguageProcessing_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\FormalTextLanguageProcessing");
         static IVertex ShowMeta_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\ShowMeta");
+        static IVertex ShowIcons_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\ShowIcons");
         static IVertex HideLabel_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\LabeledItem\HideLabel");
         
 
@@ -496,6 +453,23 @@ namespace m0.ZeroTypes.UX
 
                 if (val == null)
                     val = Vertex.AddVertex(HideLabel_meta, value);
+                else
+                    val.Value = value;
+            }
+        }
+
+        public bool ShowIcons
+        {
+            get
+            {
+                return LabeledItemLabelHelper.GetShowIcons(Vertex);
+            }
+            set
+            {
+                IVertex val = GraphUtil.GetQueryOutFirst(Vertex, "ShowIcons", null);
+
+                if (val == null)
+                    val = Vertex.AddVertex(ShowIcons_meta, value);
                 else
                     val.Value = value;
             }

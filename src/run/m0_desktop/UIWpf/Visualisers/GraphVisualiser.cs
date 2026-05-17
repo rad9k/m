@@ -243,7 +243,7 @@ namespace m0.UIWpf.Visualisers
         public bool IsPaiting=false;
 
 
-        static string[] _MetaTriggeringUpdateVertex = new string[] { "VisualiserCircleSize", "NumberOfCircles", "ShowOutEdges", "ShowInEdges", "FastMode", "MetaLabels", "AnimateEdges", "Icons" };
+        static string[] _MetaTriggeringUpdateVertex = new string[] { "VisualiserCircleSize", "NumberOfCircles", "ShowOutEdges", "ShowInEdges", "FastMode", "MetaLabels", "AnimateEdges", "ShowIcons" };
         public string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
         static string[] _MetaTriggeringUpdateView = new string[] { };
@@ -441,7 +441,7 @@ namespace m0.UIWpf.Visualisers
                 visualiser = b;
             }
 
-            if (!Icons)
+            if (!ShowIcons)
                 return visualiser;
 
             ImageSource iconSource = IconServer.GetIconByVertex(v);
@@ -477,7 +477,7 @@ namespace m0.UIWpf.Visualisers
         bool ShowOutEdges;
         bool ShowInEdges;
         bool AnimateEdges;
-        bool Icons;
+        bool ShowIcons;
 
         bool IsFirstPainted = false;
 
@@ -521,10 +521,10 @@ namespace m0.UIWpf.Visualisers
                 bool animateEdgesIsNull = false;
                 AnimateEdges = GraphUtil.GetBooleanValue(Vertex.Get(false, "AnimateEdges:"), ref animateEdgesIsNull);
 
-                if (GeneralUtil.CompareStrings(Vertex.Get(false, "Icons:"), "True"))
-                    Icons = true;
+                if (GeneralUtil.CompareStrings(Vertex.Get(false, "ShowIcons:"), "True"))
+                    ShowIcons = true;
                 else
-                    Icons = false;
+                    ShowIcons = false;
 
                 this.Children.Clear();
 
@@ -755,7 +755,7 @@ namespace m0.UIWpf.Visualisers
             Vertex.Get(false, "FastMode:").Value = "True";
             Vertex.Get(false, "MetaLabels:").Value = "True";
             Vertex.Get(false, "ShowOutEdges:").Value = "True";
-            Vertex.Get(false, "Icons:").Value = "True";
+            Vertex.Get(false, "ShowIcons:").Value = "True";
         }        
 
         public void BaseEdgeToUpdated(){

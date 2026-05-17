@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
@@ -22,11 +22,15 @@ using m0.UIWpf.Visualisers.Helper;
 using m0.Graph.ExecutionFlow;
 using m0.User.Process.UX;
 using System.Windows.Forms;
+using System.Globalization;
 
 namespace m0.UIWpf.Visualisers
 {
     public class ListVisualiser : StackPanel,  IListVisualiser, ITypedEdge
     {
+        private static readonly IValueConverter EdgeIconSourceConverter = new ListVisualiserEdgeIconSourceConverter();
+        private static readonly IValueConverter EdgeIconVisibilityConverter = new ListVisualiserEdgeIconVisibilityConverter();
+
         public event Notify SelectedEdgesChange;
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
@@ -40,7 +44,7 @@ namespace m0.UIWpf.Visualisers
         static string[] _MetaTriggeringUpdateVertex = new string[] { };
         public virtual string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
-        static string[] _MetaTriggeringUpdateView = new string[] { "IsMetaRightAlign", "IsAllVisualisersEdit", "ShowMeta", "GridStyle", "FilterQuery" };
+        static string[] _MetaTriggeringUpdateView = new string[] { "IsMetaRightAlign", "IsAllVisualisersEdit", "ShowMeta", "ShowIcons", "GridStyle", "FilterQuery" };
         public virtual string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
         public virtual void ViewAttributesUpdated() { ResetView(); }
@@ -163,6 +167,7 @@ namespace m0.UIWpf.Visualisers
         }
 
         bool ShowMeta;
+        bool ShowIcons;
 
         protected virtual void CreateView(){
             ThisDataGrid.Columns.Clear();
@@ -173,6 +178,11 @@ namespace m0.UIWpf.Visualisers
                 ShowMeta = false;
             else
                 ShowMeta = true;
+
+            ShowIcons = GraphUtil.GetBooleanValueOrFalse(Vertex.Get(false, "ShowIcons:"));
+
+            if (ShowIcons)
+                ThisDataGrid.Columns.Add(CreateIconColumn());
 
             if (ShowMeta)
             {
@@ -225,6 +235,37 @@ namespace m0.UIWpf.Visualisers
 
 
             ThisDataGrid.Columns.Add(valueColumn); 
+        }
+
+        private DataGridTemplateColumn CreateIconColumn()
+        {
+            DataGridTemplateColumn iconColumn = new DataGridTemplateColumn();
+            iconColumn.CellStyle = (Style)FindResource("0ListValueColumn");
+            iconColumn.CellTemplate = new DataTemplate();
+
+            FrameworkElementFactory factory = new FrameworkElementFactory(typeof(System.Windows.Controls.Image));
+            factory.SetValue(System.Windows.Controls.Image.WidthProperty, WpfUtil.IconSize);
+            factory.SetValue(System.Windows.Controls.Image.HeightProperty, WpfUtil.IconSize);
+            factory.SetValue(System.Windows.Controls.Image.MarginProperty, new Thickness(0, 0, 3, 0));
+            factory.SetValue(System.Windows.Controls.Image.VerticalAlignmentProperty, VerticalAlignment.Center);
+            factory.SetValue(System.Windows.Controls.Image.StretchProperty, Stretch.Uniform);
+            factory.SetValue(System.Windows.Controls.Image.SnapsToDevicePixelsProperty, true);
+            factory.SetValue(System.Windows.Controls.Image.UseLayoutRoundingProperty, true);
+            factory.SetValue(RenderOptions.BitmapScalingModeProperty, BitmapScalingMode.Fant);
+
+            System.Windows.Data.Binding sourceBinding = new System.Windows.Data.Binding("");
+            sourceBinding.Mode = BindingMode.OneWay;
+            sourceBinding.Converter = EdgeIconSourceConverter;
+            factory.SetBinding(System.Windows.Controls.Image.SourceProperty, sourceBinding);
+
+            System.Windows.Data.Binding visibilityBinding = new System.Windows.Data.Binding("");
+            visibilityBinding.Mode = BindingMode.OneWay;
+            visibilityBinding.Converter = EdgeIconVisibilityConverter;
+            factory.SetBinding(System.Windows.Controls.Image.VisibilityProperty, visibilityBinding);
+
+            iconColumn.CellTemplate.VisualTree = factory;
+
+            return iconColumn;
         }
 
         protected void ResetView()
@@ -308,6 +349,7 @@ namespace m0.UIWpf.Visualisers
             Vertex.Get(false, "IsMetaRightAlign:").Value = "False";
             Vertex.Get(false, "IsAllVisualisersEdit:").Value = "False";
             Vertex.Get(false, "ShowMeta:").Value = "True";
+            Vertex.Get(false, "ShowIcons:").Value = "True";
             Vertex.Get(false, "Scale:").Value = 100;
 
             GraphUtil.ReplaceEdge(Vertex, "GridStyle", MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\GridStyleEnum\None"));
@@ -406,7 +448,33 @@ namespace m0.UIWpf.Visualisers
         public FrameworkElement GetVisualElementByEdge(IVertex vertex)
         {
             throw new NotImplementedException();
-        }                
+        }
+
+        private class ListVisualiserEdgeIconSourceConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                return IconServer.GetIconByEdge(value as IEdge);
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                throw new NotSupportedException();
+            }
+        }
+
+        private class ListVisualiserEdgeIconVisibilityConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                return IconServer.GetIconByEdge(value as IEdge) == null ? Visibility.Collapsed : Visibility.Visible;
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                throw new NotSupportedException();
+            }
+        }
     }
 }
 

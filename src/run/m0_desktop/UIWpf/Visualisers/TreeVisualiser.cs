@@ -362,6 +362,7 @@ namespace m0.UIWpf.Visualisers
                 Header = headerControl;
             }
 
+            headerControl.ShowIcon = ParentVisualiser.ShowIcons;
             headerControl.BaseEdge = GetEdge();
             headerControl.RefreshVisuals();
             headerControl.IsSelected = wasSelected;
@@ -493,13 +494,18 @@ namespace m0.UIWpf.Visualisers
         public TreeVisualiser() : this(null, null, false) { }
 
 
-        static string[] _MetaTriggeringUpdateVertex = new string[] {  };
+        static string[] _MetaTriggeringUpdateVertex = new string[] { "ShowIcons" };
         public string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
         static string[] _MetaTriggeringUpdateView = new string[] { };
         public string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
         public void ViewAttributesUpdated() { }
+
+        public bool ShowIcons
+        {
+            get { return GraphUtil.GetBooleanValueOrFalse(Vertex.Get(false, "ShowIcons:")); }
+        }
 
         // TypedEdge START
 
@@ -654,6 +660,9 @@ namespace m0.UIWpf.Visualisers
             if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "Scale"))
                 ScaleChange();
 
+            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "ShowIcons"))
+                UpdateShowIconOnAllItems();
+
             if (IsEdgeAddedRemovedDiscardedFrom(exe.Stack, Vertex.Get(false, @"SelectedEdges:")))
                 SelectedVerticesUpdated();
 
@@ -765,6 +774,24 @@ namespace m0.UIWpf.Visualisers
         private void EdgeDisposed(IEdge edge)
         {
             BaseEdgeToUpdated();
+        }
+
+        private void UpdateShowIconOnAllItems()
+        {
+            UpdateShowIconOnItems(Items, ShowIcons);
+        }
+
+        private void UpdateShowIconOnItems(ItemCollection items, bool showIcons)
+        {
+            foreach (TreeViewItem item in items)
+            {
+                MetaToEdgeControl headerControl = item.Header as MetaToEdgeControl;
+
+                if (headerControl != null)
+                    headerControl.ShowIcon = showIcons;
+
+                UpdateShowIconOnItems(item.Items, showIcons);
+            }
         }
 
         public void SelectedVerticesUpdated()

@@ -43,6 +43,15 @@ namespace m0.UIWpf.Controls
         public static readonly DependencyProperty IsHighlightedProperty =
             DependencyProperty.Register("IsHighlighted", typeof(bool), typeof(MetaToEdgeControl), new UIPropertyMetadata(false, IsHighlightedChangedCallback));
 
+        public bool ShowIcon
+        {
+            get { return (bool)GetValue(ShowIconProperty); }
+            set { SetValue(ShowIconProperty, value); }
+        }
+
+        public static readonly DependencyProperty ShowIconProperty =
+            DependencyProperty.Register("ShowIcon", typeof(bool), typeof(MetaToEdgeControl), new UIPropertyMetadata(false, ShowIconChangedCallback));
+
         public static void BaseEdgeChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
         {
             MetaToEdgeControl control = (MetaToEdgeControl)dependencyObject;
@@ -62,6 +71,13 @@ namespace m0.UIWpf.Controls
             MetaToEdgeControl control = (MetaToEdgeControl)dependencyObject;
 
             control.UpdateSelectionState();
+        }
+
+        public static void ShowIconChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
+        {
+            MetaToEdgeControl control = (MetaToEdgeControl)dependencyObject;
+
+            control.UpdateVisuals(control.BaseEdge);
         }
 
         public MetaToEdgeControl()
@@ -138,6 +154,14 @@ namespace m0.UIWpf.Controls
             }
 
             toLabel.Content = GetToText(edge);
+
+            if (!ShowIcon)
+            {
+                iconImage.Source = null;
+                iconImage.Visibility = Visibility.Collapsed;
+                UpdateSelectionState();
+                return;
+            }
 
             ImageSource iconBitmap = IconServer.GetIconByEdge(edge);
 
