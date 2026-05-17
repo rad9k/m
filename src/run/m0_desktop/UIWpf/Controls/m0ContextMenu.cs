@@ -78,11 +78,19 @@ namespace m0.UIWpf.Controls
             {
                 Point p = Mouse.GetPosition((IInputElement)PlatformClassOfVisualiserMenuHasBeenOpenedOn);
                 EdgeVertex = ((IHasLocalizableEdges)PlatformClassOfVisualiserMenuHasBeenOpenedOn).GetEdgeByPoint(p);
-                
-
-                //EnableMenuItems();
 
                 this.Items.Clear();
+
+                if (EdgeVertex == null)
+                {
+                    DisableMenuItems();
+                    
+                    IsOpen = false;
+
+                    return;
+                }
+
+                //EnableMenuItems();                
 
                 AddHelp();
 
@@ -100,12 +108,10 @@ namespace m0.UIWpf.Controls
 
                 FillNewVertexAndEdgeBySchemaMenu();
             }
-
-            if (EdgeVertex == null)
+            else
             {
                 DisableMenuItems();
-                return;
-            }
+            }            
         }
 
         private void AddHelp()
