@@ -207,6 +207,10 @@ namespace m0.ZeroTypes.UX
             textBox_forBaseEdge.Background = null;
             textBox_forBaseEdge.HorizontalAlignment = horlizontalAlignment;
             textBox_forBaseEdge.VerticalAlignment = System.Windows.VerticalAlignment.Center;
+            textBox_forBaseEdge.VerticalContentAlignment = System.Windows.VerticalAlignment.Center;
+            textBox_forBaseEdge.Padding = new Thickness(0);
+            textBox_forBaseEdge.Margin = new Thickness(0, -2, 0, 0);
+            textBox_forBaseEdge.MinHeight = 0;
             textBox_forBaseEdge.TextWrapping = TextWrapping.Wrap;
 
             if (FontSize != 0)
