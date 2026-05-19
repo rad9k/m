@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media;
 
 using m0.Foundation;
@@ -23,6 +24,8 @@ namespace m0.UIWpf.Visualisers
 {
     public class InEdgesListVisualiser : StackPanel, IListVisualiser, ITypedEdge
     {
+        private const double ColumnResizeCursorHotZone = 6.0;
+
         private static readonly IValueConverter FromIconSourceConverter = new InEdgesListVisualiserFromIconSourceConverter();
         private static readonly IValueConverter FromIconVisibilityConverter = new InEdgesListVisualiserFromIconVisibilityConverter();
         private static readonly IValueConverter InEdgePathConverter = new InEdgesListVisualiserPathConverter();
@@ -71,6 +74,7 @@ namespace m0.UIWpf.Visualisers
             ThisDataGrid.AutoGenerateColumns = false;
             ThisDataGrid.CanUserAddRows = false;
             ThisDataGrid.CanUserDeleteRows = false;
+            ThisDataGrid.CanUserResizeColumns = true;
             ThisDataGrid.IsReadOnly = true;
             ThisDataGrid.RowBackground = (Brush)FindResource("0BackgroundBrush");
             ThisDataGrid.Background = (Brush)FindResource("0BackgroundBrush");
@@ -78,6 +82,8 @@ namespace m0.UIWpf.Visualisers
             ThisDataGrid.VerticalGridLinesBrush = (Brush)FindResource("0ForegroundBrush");
 
             ThisDataGrid.HeadersVisibility = DataGridHeadersVisibility.Column;
+            ThisDataGrid.ColumnHeaderStyle = CreateResizableColumnHeaderStyle();
+            ThisDataGrid.RowStyle = CreateHighlightedRowStyle();
             ThisDataGrid.SelectedValuePath = "From";
             VirtualizingStackPanel.SetIsVirtualizing(ThisDataGrid, false);
 
@@ -91,6 +97,119 @@ namespace m0.UIWpf.Visualisers
                 CreateView();
 
                 ThisDataGrid.SelectionChanged += OnSelectionChanged;
+            }
+        }
+
+        private Style CreateHighlightedRowStyle()
+        {
+            Style rowStyle = new Style(typeof(DataGridRow));
+
+            rowStyle.Setters.Add(new Setter(Control.BackgroundProperty, (Brush)FindResource("0BackgroundBrush")));
+            rowStyle.Setters.Add(new Setter(Control.ForegroundProperty, (Brush)FindResource("0ForegroundBrush")));
+
+            Trigger mouseOverTrigger = new Trigger
+            {
+                Property = DataGridRow.IsMouseOverProperty,
+                Value = true
+            };
+            mouseOverTrigger.Setters.Add(new Setter(Control.BackgroundProperty, (Brush)FindResource("0VeryLightHighlightBrush")));
+            mouseOverTrigger.Setters.Add(new Setter(Control.ForegroundProperty, (Brush)FindResource("0HighlightForegroundBrush")));
+            rowStyle.Triggers.Add(mouseOverTrigger);
+
+            Trigger selectedTrigger = new Trigger
+            {
+                Property = DataGridRow.IsSelectedProperty,
+                Value = true
+            };
+            selectedTrigger.Setters.Add(new Setter(Control.BackgroundProperty, (Brush)FindResource("0SelectionBrush")));
+            rowStyle.Triggers.Add(selectedTrigger);
+
+            return rowStyle;
+        }
+
+        private Style CreateResizableColumnHeaderStyle()
+        {
+            Style headerStyle = new Style(typeof(DataGridColumnHeader));
+
+            headerStyle.Setters.Add(new Setter(Control.ForegroundProperty, (Brush)FindResource("0VeryLightForegroundBrush")));
+            headerStyle.Setters.Add(new Setter(DataGridColumnHeader.SeparatorBrushProperty, (Brush)FindResource("0VeryVeryLightForegroundBrush")));
+            headerStyle.Setters.Add(new Setter(DataGridColumnHeader.SeparatorVisibilityProperty, Visibility.Visible));
+            headerStyle.Setters.Add(new Setter(Control.BorderBrushProperty, (Brush)FindResource("0VeryVeryLightForegroundBrush")));
+            headerStyle.Setters.Add(new Setter(Control.BorderThicknessProperty, new Thickness(0, 0, 1, 0)));
+            headerStyle.Setters.Add(new EventSetter(FrameworkElement.LoadedEvent, new RoutedEventHandler(OnColumnHeaderLoaded)));
+            headerStyle.Setters.Add(new EventSetter(PreviewMouseMoveEvent, new MouseEventHandler(OnColumnHeaderMouseMove)));
+            headerStyle.Setters.Add(new EventSetter(MouseMoveEvent, new MouseEventHandler(OnColumnHeaderMouseMove)));
+            headerStyle.Setters.Add(new EventSetter(PreviewMouseLeftButtonDownEvent, new MouseButtonEventHandler(OnColumnHeaderPreviewMouseLeftButtonDown)));
+            headerStyle.Setters.Add(new EventSetter(PreviewMouseLeftButtonUpEvent, new MouseButtonEventHandler(OnColumnHeaderPreviewMouseLeftButtonUp)));
+            headerStyle.Setters.Add(new EventSetter(MouseLeaveEvent, new MouseEventHandler(OnColumnHeaderMouseLeave)));
+
+            return headerStyle;
+        }
+
+        private void OnColumnHeaderLoaded(object sender, RoutedEventArgs e)
+        {
+            DataGridColumnHeader header = sender as DataGridColumnHeader;
+
+            if (header == null)
+                return;
+
+            foreach (Thumb thumb in FindVisualChildren<Thumb>(header))
+                thumb.Cursor = Cursors.SizeWE;
+        }
+
+        private void OnColumnHeaderMouseMove(object sender, MouseEventArgs e)
+        {
+            DataGridColumnHeader header = sender as DataGridColumnHeader;
+
+            if (header == null || header.Column == null || !ThisDataGrid.CanUserResizeColumns || !header.Column.CanUserResize)
+                return;
+
+            Point point = e.GetPosition(header);
+            bool isOnResizeHotZone =
+                point.X <= ColumnResizeCursorHotZone ||
+                point.X >= header.ActualWidth - ColumnResizeCursorHotZone;
+
+            header.Cursor = isOnResizeHotZone ? Cursors.SizeWE : null;
+        }
+
+        private void OnColumnHeaderPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            DataGridColumnHeader header = sender as DataGridColumnHeader;
+
+            if (header != null && header.Cursor == Cursors.SizeWE)
+                Mouse.OverrideCursor = Cursors.SizeWE;
+        }
+
+        private void OnColumnHeaderPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            Mouse.OverrideCursor = null;
+        }
+
+        private void OnColumnHeaderMouseLeave(object sender, MouseEventArgs e)
+        {
+            DataGridColumnHeader header = sender as DataGridColumnHeader;
+
+            if (header != null)
+                header.Cursor = null;
+
+            if (e.LeftButton != MouseButtonState.Pressed)
+                Mouse.OverrideCursor = null;
+        }
+
+        private static IEnumerable<T> FindVisualChildren<T>(DependencyObject dependencyObject) where T : DependencyObject
+        {
+            if (dependencyObject == null)
+                yield break;
+
+            for (int index = 0; index < VisualTreeHelper.GetChildrenCount(dependencyObject); index++)
+            {
+                DependencyObject child = VisualTreeHelper.GetChild(dependencyObject, index);
+
+                if (child is T)
+                    yield return (T)child;
+
+                foreach (T descendant in FindVisualChildren<T>(child))
+                    yield return descendant;
             }
         }
 
@@ -173,6 +292,13 @@ namespace m0.UIWpf.Visualisers
             DataGridTemplateColumn iconColumn = new DataGridTemplateColumn();
             iconColumn.CellStyle = (Style)FindResource("0ListValueColumn");
             iconColumn.CellTemplate = new DataTemplate();
+            iconColumn.CanUserResize = true;
+            iconColumn.Header = new TextBlock
+            {
+                Text = " ",
+                FontStyle = FontStyles.Italic,
+                Foreground = (Brush)FindResource("0VeryLightForegroundBrush")
+            };
 
             FrameworkElementFactory factory = new FrameworkElementFactory(typeof(Image));
             factory.SetValue(Image.WidthProperty, WpfUtil.IconSize);
@@ -205,11 +331,13 @@ namespace m0.UIWpf.Visualisers
 
             binding.Mode = BindingMode.OneWay;
             column.Binding = binding;
+            column.CanUserResize = true;
             column.CellStyle = (Style)FindResource("0ListValueColumn");
             column.Header = new TextBlock
             {
                 Text = header + " ",
-                FontStyle = FontStyles.Italic
+                FontStyle = FontStyles.Italic,
+                Foreground = (Brush)FindResource("0VeryLightForegroundBrush")
             };
 
             ThisDataGrid.Columns.Add(column);
