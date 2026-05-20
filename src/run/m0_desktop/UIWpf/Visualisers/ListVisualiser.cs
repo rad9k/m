@@ -44,7 +44,7 @@ namespace m0.UIWpf.Visualisers
         static string[] _MetaTriggeringUpdateVertex = new string[] { };
         public virtual string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
-        static string[] _MetaTriggeringUpdateView = new string[] { "IsMetaRightAlign", "IsAllVisualisersEdit", "ShowMeta", "ShowIcons", "GridStyle", "FilterQuery" };
+        static string[] _MetaTriggeringUpdateView = new string[] { "IsMetaRightAlign", "IsAllVisualisersEdit", "ShowMeta", "ShowIcons", "GridStyle", "FilterQuery", "ShowHeader" };
         public virtual string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
         public virtual void ViewAttributesUpdated() { ResetView(); }
@@ -87,6 +87,7 @@ namespace m0.UIWpf.Visualisers
             ThisDataGrid.VerticalGridLinesBrush = (Brush)FindResource("0ForegroundBrush");
 
             ThisDataGrid.HeadersVisibility = DataGridHeadersVisibility.Column;
+            ThisDataGrid.ColumnHeaderStyle = CreateColumnHeaderStyle(false, false);
 
             ThisDataGrid.SelectedValuePath = "To";
             VirtualizingStackPanel.SetIsVirtualizing(ThisDataGrid, false);
@@ -171,6 +172,7 @@ namespace m0.UIWpf.Visualisers
 
         protected virtual void CreateView(){
             ThisDataGrid.Columns.Clear();
+            UpdateHeaderVisibility();
 
             DataGridTextColumn metaColumn = new DataGridTextColumn();
 
@@ -189,11 +191,12 @@ namespace m0.UIWpf.Visualisers
                 System.Windows.Data.Binding mb = new System.Windows.Data.Binding("Meta.Value");
                 mb.Mode = BindingMode.OneWay;
                 metaColumn.Binding = mb;
+                metaColumn.Header = CreateColumnHeader("Meta");
 
                 if (GeneralUtil.CompareStrings(Vertex.Get(false, "IsMetaRightAlign:").Value, "True"))
-                    metaColumn.CellStyle = (Style)FindResource("0ListMetaColumnRight");
+                    metaColumn.CellStyle = CreateHighlightedCellStyle("0ListMetaColumnRight");
                 else
-                    metaColumn.CellStyle = (Style)FindResource("0ListMetaColumnLeft");
+                    metaColumn.CellStyle = CreateHighlightedCellStyle("0ListMetaColumnLeft");
 
                 //metaColumn.Foreground = (Brush)FindResource("0GrayBrush");            
 
@@ -204,7 +207,8 @@ namespace m0.UIWpf.Visualisers
             
             DataGridTemplateColumn valueColumn = new DataGridTemplateColumn();
 
-            valueColumn.CellStyle = (Style)FindResource("0ListValueColumn");
+            valueColumn.CellStyle = CreateHighlightedCellStyle("0ListValueColumn");
+            valueColumn.Header = CreateColumnHeader("To");
 
             //
             // CELL TEMPLATE
@@ -221,6 +225,7 @@ namespace m0.UIWpf.Visualisers
             {
                 valueColumn.CellTemplate = new DataTemplate();
                 FrameworkElementFactory factory = new FrameworkElementFactory(typeof(VisualiserViewWrapper));
+                factory.SetValue(VisualiserViewWrapper.FontWeightProperty, FontWeights.Bold);
                 factory.SetBinding(VisualiserViewWrapper.BaseEdgeProperty, new System.Windows.Data.Binding(""));
                 valueColumn.CellTemplate.VisualTree = factory;
             }
@@ -240,8 +245,9 @@ namespace m0.UIWpf.Visualisers
         private DataGridTemplateColumn CreateIconColumn()
         {
             DataGridTemplateColumn iconColumn = new DataGridTemplateColumn();
-            iconColumn.CellStyle = (Style)FindResource("0ListValueColumn");
+            iconColumn.CellStyle = CreateHighlightedCellStyle("0ListValueColumn");
             iconColumn.CellTemplate = new DataTemplate();
+            iconColumn.Header = CreateColumnHeader("");
 
             FrameworkElementFactory factory = new FrameworkElementFactory(typeof(System.Windows.Controls.Image));
             factory.SetValue(System.Windows.Controls.Image.WidthProperty, WpfUtil.IconSize);
@@ -268,33 +274,96 @@ namespace m0.UIWpf.Visualisers
             return iconColumn;
         }
 
+        private void UpdateHeaderVisibility()
+        {
+            if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, "ShowHeader:"), "False"))
+                ThisDataGrid.HeadersVisibility = DataGridHeadersVisibility.None;
+            else
+                ThisDataGrid.HeadersVisibility = DataGridHeadersVisibility.Column;
+        }
+
+        private Style CreateColumnHeaderStyle(bool drawHorizontalHeaderLine, bool drawVerticalHeaderLine)
+        {
+            Style headerStyle = new Style(typeof(DataGridColumnHeader));
+            Thickness headerBorderThickness = new Thickness(0, 0, 1, drawHorizontalHeaderLine ? 1 : 0);
+            Brush verticalGripBrush = drawVerticalHeaderLine
+                ? (Brush)FindResource("0ForegroundBrush")
+                : (Brush)FindResource("0VeryVeryVeryLightForegroundBrush");
+
+            headerStyle.Setters.Add(new Setter(System.Windows.Controls.Control.ForegroundProperty, (Brush)FindResource("0VeryLightForegroundBrush")));
+            headerStyle.Setters.Add(new Setter(DataGridColumnHeader.SeparatorBrushProperty, verticalGripBrush));
+            headerStyle.Setters.Add(new Setter(DataGridColumnHeader.SeparatorVisibilityProperty, Visibility.Visible));
+            headerStyle.Setters.Add(new Setter(System.Windows.Controls.Control.BorderBrushProperty, verticalGripBrush));
+            headerStyle.Setters.Add(new Setter(System.Windows.Controls.Control.BorderThicknessProperty, headerBorderThickness));
+
+            return headerStyle;
+        }
+
+        private TextBlock CreateColumnHeader(string text)
+        {
+            return new TextBlock
+            {
+                Text = text + " ",
+                FontStyle = FontStyles.Italic,
+                Foreground = (Brush)FindResource("0VeryLightForegroundBrush"),
+                Margin = new Thickness(4, 0, 4, 0)
+            };
+        }
+
+        private Style CreateHighlightedCellStyle(string baseStyleResourceKey)
+        {
+            Style baseCellStyle = (Style)FindResource(baseStyleResourceKey);
+            Style cellStyle = new Style(typeof(System.Windows.Controls.DataGridCell), baseCellStyle);
+
+            DataTrigger rowMouseOverTrigger = new DataTrigger
+            {
+                Binding = new System.Windows.Data.Binding("IsMouseOver")
+                {
+                    RelativeSource = new System.Windows.Data.RelativeSource(System.Windows.Data.RelativeSourceMode.FindAncestor, typeof(DataGridRow), 1)
+                },
+                Value = true
+            };
+            rowMouseOverTrigger.Setters.Add(new Setter(System.Windows.Controls.Control.ForegroundProperty, (Brush)FindResource("0HighlightBrush")));
+            cellStyle.Triggers.Add(rowMouseOverTrigger);
+
+            return cellStyle;
+        }
+
         protected void ResetView()
         {
             CreateView();
 
             ThisDataGrid.HorizontalGridLinesBrush = (Brush)FindResource("0ForegroundBrush");
             ThisDataGrid.VerticalGridLinesBrush = (Brush)FindResource("0ForegroundBrush");
+            bool drawHorizontalHeaderLine = false;
+            bool drawVerticalHeaderLine = false;
 
             if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, "GridStyle:"), "Vertical"))
             {
                 ThisDataGrid.BorderThickness = new System.Windows.Thickness(0);
-                ThisDataGrid.GridLinesVisibility = DataGridGridLinesVisibility.Vertical;                
+                ThisDataGrid.GridLinesVisibility = DataGridGridLinesVisibility.Vertical;
+                drawVerticalHeaderLine = true;
             }
             else if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, "GridStyle:"), "Horizontal"))
             {
                 ThisDataGrid.BorderThickness = new System.Windows.Thickness(0);
-                ThisDataGrid.GridLinesVisibility = DataGridGridLinesVisibility.Horizontal;                
+                ThisDataGrid.GridLinesVisibility = DataGridGridLinesVisibility.Horizontal;
+                drawHorizontalHeaderLine = true;
             }
             else if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, "GridStyle:"), "All"))
             {
                 ThisDataGrid.BorderThickness = new System.Windows.Thickness(0);
-                ThisDataGrid.GridLinesVisibility = DataGridGridLinesVisibility.All;                
+                ThisDataGrid.GridLinesVisibility = DataGridGridLinesVisibility.All;
+                drawHorizontalHeaderLine = true;
+                drawVerticalHeaderLine = true;
             }
             else if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, "GridStyle:"), "AllAndRound"))
             {
                 ThisDataGrid.BorderThickness = new System.Windows.Thickness(1);
                 ThisDataGrid.GridLinesVisibility = DataGridGridLinesVisibility.All;
                 ThisDataGrid.BorderBrush = (Brush)FindResource("0ForegroundBrush");
+                drawHorizontalHeaderLine = true;
+                drawVerticalHeaderLine = true;
             }
             else if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, "GridStyle:"), "Round"))
             {
@@ -307,6 +376,8 @@ namespace m0.UIWpf.Visualisers
                 ThisDataGrid.BorderThickness = new System.Windows.Thickness(0);
                 ThisDataGrid.GridLinesVisibility = DataGridGridLinesVisibility.None;                
             }
+
+            ThisDataGrid.ColumnHeaderStyle = CreateColumnHeaderStyle(drawHorizontalHeaderLine, drawVerticalHeaderLine);
         }
 
         public void ScaleChange()
@@ -350,6 +421,7 @@ namespace m0.UIWpf.Visualisers
             Vertex.Get(false, "IsAllVisualisersEdit:").Value = "False";
             Vertex.Get(false, "ShowMeta:").Value = "True";
             Vertex.Get(false, "ShowIcons:").Value = "True";
+            Vertex.Get(false, "ShowHeader:").Value = "True";
             Vertex.Get(false, "Scale:").Value = 100;
 
             GraphUtil.ReplaceEdge(Vertex, "GridStyle", MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\GridStyleEnum\None"));

@@ -43,7 +43,7 @@ namespace m0.UIWpf.Visualisers
         static string[] _MetaTriggeringUpdateVertex = new string[] { };
         public virtual string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
-        static string[] _MetaTriggeringUpdateView = new string[] { "GridStyle" };
+        static string[] _MetaTriggeringUpdateView = new string[] { "GridStyle", "ShowHeader" };
         public virtual string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
         public virtual void ViewAttributesUpdated() { ResetView(); }
@@ -82,7 +82,7 @@ namespace m0.UIWpf.Visualisers
             ThisDataGrid.VerticalGridLinesBrush = (Brush)FindResource("0ForegroundBrush");
 
             ThisDataGrid.HeadersVisibility = DataGridHeadersVisibility.Column;
-            ThisDataGrid.ColumnHeaderStyle = CreateResizableColumnHeaderStyle();
+            ThisDataGrid.ColumnHeaderStyle = CreateResizableColumnHeaderStyle(false, false);
             ThisDataGrid.RowStyle = CreateHighlightedRowStyle();
             ThisDataGrid.SelectedValuePath = "From";
             VirtualizingStackPanel.SetIsVirtualizing(ThisDataGrid, false);
@@ -112,8 +112,7 @@ namespace m0.UIWpf.Visualisers
                 Property = DataGridRow.IsMouseOverProperty,
                 Value = true
             };
-            mouseOverTrigger.Setters.Add(new Setter(Control.BackgroundProperty, (Brush)FindResource("0VeryLightHighlightBrush")));
-            mouseOverTrigger.Setters.Add(new Setter(Control.ForegroundProperty, (Brush)FindResource("0HighlightForegroundBrush")));
+            mouseOverTrigger.Setters.Add(new Setter(Control.ForegroundProperty, (Brush)FindResource("0HighlightBrush")));
             rowStyle.Triggers.Add(mouseOverTrigger);
 
             Trigger selectedTrigger = new Trigger
@@ -127,15 +126,47 @@ namespace m0.UIWpf.Visualisers
             return rowStyle;
         }
 
-        private Style CreateResizableColumnHeaderStyle()
+        private Style CreateHighlightedCellStyle()
+        {
+            Style baseCellStyle = (Style)FindResource("0ListValueColumn");
+            Style cellStyle = new Style(typeof(DataGridCell), baseCellStyle);
+
+            DataTrigger rowMouseOverTrigger = new DataTrigger
+            {
+                Binding = new Binding("IsMouseOver")
+                {
+                    RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor, typeof(DataGridRow), 1)
+                },
+                Value = true
+            };
+            rowMouseOverTrigger.Setters.Add(new Setter(Control.ForegroundProperty, (Brush)FindResource("0HighlightBrush")));
+            cellStyle.Triggers.Add(rowMouseOverTrigger);
+
+            Trigger selectedTrigger = new Trigger
+            {
+                Property = DataGridCell.IsSelectedProperty,
+                Value = true
+            };
+            selectedTrigger.Setters.Add(new Setter(Control.BackgroundProperty, (Brush)FindResource("0SelectionBrush")));
+            selectedTrigger.Setters.Add(new Setter(Control.ForegroundProperty, (Brush)FindResource("0BackgroundBrush")));
+            cellStyle.Triggers.Add(selectedTrigger);
+
+            return cellStyle;
+        }
+
+        private Style CreateResizableColumnHeaderStyle(bool drawHorizontalHeaderLine, bool drawVerticalHeaderLine)
         {
             Style headerStyle = new Style(typeof(DataGridColumnHeader));
+            Thickness headerBorderThickness = new Thickness(0, 0, 1, drawHorizontalHeaderLine ? 1 : 0);
+            Brush verticalGripBrush = drawVerticalHeaderLine
+                ? (Brush)FindResource("0ForegroundBrush")
+                : (Brush)FindResource("0VeryVeryVeryLightForegroundBrush");
 
             headerStyle.Setters.Add(new Setter(Control.ForegroundProperty, (Brush)FindResource("0VeryLightForegroundBrush")));
-            headerStyle.Setters.Add(new Setter(DataGridColumnHeader.SeparatorBrushProperty, (Brush)FindResource("0VeryVeryLightForegroundBrush")));
+            headerStyle.Setters.Add(new Setter(DataGridColumnHeader.SeparatorBrushProperty, verticalGripBrush));
             headerStyle.Setters.Add(new Setter(DataGridColumnHeader.SeparatorVisibilityProperty, Visibility.Visible));
-            headerStyle.Setters.Add(new Setter(Control.BorderBrushProperty, (Brush)FindResource("0VeryVeryLightForegroundBrush")));
-            headerStyle.Setters.Add(new Setter(Control.BorderThicknessProperty, new Thickness(0, 0, 1, 0)));
+            headerStyle.Setters.Add(new Setter(Control.BorderBrushProperty, verticalGripBrush));
+            headerStyle.Setters.Add(new Setter(Control.BorderThicknessProperty, headerBorderThickness));
             headerStyle.Setters.Add(new EventSetter(FrameworkElement.LoadedEvent, new RoutedEventHandler(OnColumnHeaderLoaded)));
             headerStyle.Setters.Add(new EventSetter(PreviewMouseMoveEvent, new MouseEventHandler(OnColumnHeaderMouseMove)));
             headerStyle.Setters.Add(new EventSetter(MouseMoveEvent, new MouseEventHandler(OnColumnHeaderMouseMove)));
@@ -276,9 +307,10 @@ namespace m0.UIWpf.Visualisers
         protected virtual void CreateView()
         {
             ThisDataGrid.Columns.Clear();
+            UpdateHeaderVisibility();
 
             ThisDataGrid.Columns.Add(CreateFromIconColumn());
-            AddTextColumn("From", new Binding("From.Value"));
+            AddTextColumn("From", new Binding("From.Value"), true);
             AddTextColumn("Meta", new Binding("Meta.Value"));
 
             Binding pathBinding = new Binding("");
@@ -287,17 +319,26 @@ namespace m0.UIWpf.Visualisers
             AddTextColumn("Path", pathBinding);
         }
 
+        private void UpdateHeaderVisibility()
+        {
+            if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, "ShowHeader:"), "False"))
+                ThisDataGrid.HeadersVisibility = DataGridHeadersVisibility.None;
+            else
+                ThisDataGrid.HeadersVisibility = DataGridHeadersVisibility.Column;
+        }
+
         private DataGridTemplateColumn CreateFromIconColumn()
         {
             DataGridTemplateColumn iconColumn = new DataGridTemplateColumn();
-            iconColumn.CellStyle = (Style)FindResource("0ListValueColumn");
+            iconColumn.CellStyle = CreateHighlightedCellStyle();
             iconColumn.CellTemplate = new DataTemplate();
             iconColumn.CanUserResize = true;
             iconColumn.Header = new TextBlock
             {
                 Text = " ",
                 FontStyle = FontStyles.Italic,
-                Foreground = (Brush)FindResource("0VeryLightForegroundBrush")
+                Foreground = (Brush)FindResource("0VeryLightForegroundBrush"),
+                Margin = new Thickness(4, 0, 4, 0)
             };
 
             FrameworkElementFactory factory = new FrameworkElementFactory(typeof(Image));
@@ -325,19 +366,21 @@ namespace m0.UIWpf.Visualisers
             return iconColumn;
         }
 
-        protected virtual void AddTextColumn(string header, Binding binding)
+        protected virtual void AddTextColumn(string header, Binding binding, bool isBold = false)
         {
             DataGridTextColumn column = new DataGridTextColumn();
 
             binding.Mode = BindingMode.OneWay;
             column.Binding = binding;
             column.CanUserResize = true;
-            column.CellStyle = (Style)FindResource("0ListValueColumn");
+            column.CellStyle = CreateHighlightedCellStyle();
+            column.FontWeight = isBold ? FontWeights.Bold : FontWeights.Normal;
             column.Header = new TextBlock
             {
                 Text = header + " ",
                 FontStyle = FontStyles.Italic,
-                Foreground = (Brush)FindResource("0VeryLightForegroundBrush")
+                Foreground = (Brush)FindResource("0VeryLightForegroundBrush"),
+                Margin = new Thickness(4, 0, 4, 0)
             };
 
             ThisDataGrid.Columns.Add(column);
@@ -349,27 +392,35 @@ namespace m0.UIWpf.Visualisers
 
             ThisDataGrid.HorizontalGridLinesBrush = (Brush)FindResource("0ForegroundBrush");
             ThisDataGrid.VerticalGridLinesBrush = (Brush)FindResource("0ForegroundBrush");
+            bool drawHorizontalHeaderLine = false;
+            bool drawVerticalHeaderLine = false;
 
             if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, "GridStyle:"), "Vertical"))
             {
                 ThisDataGrid.BorderThickness = new Thickness(0);
                 ThisDataGrid.GridLinesVisibility = DataGridGridLinesVisibility.Vertical;
+                drawVerticalHeaderLine = true;
             }
             else if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, "GridStyle:"), "Horizontal"))
             {
                 ThisDataGrid.BorderThickness = new Thickness(0);
                 ThisDataGrid.GridLinesVisibility = DataGridGridLinesVisibility.Horizontal;
+                drawHorizontalHeaderLine = true;
             }
             else if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, "GridStyle:"), "All"))
             {
                 ThisDataGrid.BorderThickness = new Thickness(0);
                 ThisDataGrid.GridLinesVisibility = DataGridGridLinesVisibility.All;
+                drawHorizontalHeaderLine = true;
+                drawVerticalHeaderLine = true;
             }
             else if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, "GridStyle:"), "AllAndRound"))
             {
                 ThisDataGrid.BorderThickness = new Thickness(1);
                 ThisDataGrid.GridLinesVisibility = DataGridGridLinesVisibility.All;
                 ThisDataGrid.BorderBrush = (Brush)FindResource("0ForegroundBrush");
+                drawHorizontalHeaderLine = true;
+                drawVerticalHeaderLine = true;
             }
             else if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, "GridStyle:"), "Round"))
             {
@@ -382,6 +433,8 @@ namespace m0.UIWpf.Visualisers
                 ThisDataGrid.BorderThickness = new Thickness(0);
                 ThisDataGrid.GridLinesVisibility = DataGridGridLinesVisibility.None;
             }
+
+            ThisDataGrid.ColumnHeaderStyle = CreateResizableColumnHeaderStyle(drawHorizontalHeaderLine, drawVerticalHeaderLine);
         }
 
         public void ScaleChange()
@@ -435,6 +488,7 @@ namespace m0.UIWpf.Visualisers
 
         protected virtual void SetVertexDefaultValues()
         {
+            Vertex.Get(false, "ShowHeader:").Value = "True";
             Vertex.Get(false, "Scale:").Value = 100;
 
             GraphUtil.ReplaceEdge(Vertex, "GridStyle", MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\GridStyleEnum\None"));
