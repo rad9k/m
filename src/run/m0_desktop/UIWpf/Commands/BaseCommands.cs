@@ -11,6 +11,7 @@ using m0.UIWpf.Dialog;
 using m0.UIWpf.Commands;
 using m0.User.Process.UX;
 using m0.ZeroTypes.UX;
+using m0.UIWpf.VertexCommander;
 
 namespace m0.UIWpf.Commands
 {
@@ -306,6 +307,13 @@ namespace m0.UIWpf.Commands
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////
+        }
+
+        public static void OpenVertexCommander(IVertex baseVertex)
+        {
+            VertexCommanderControl sv = new VertexCommanderControl(baseVertex, baseVertex);
+            MinusZero.Instance.UserInteraction.ShowContent(sv);
+
         }
 
         public static void OpenVisualiser(IVertex baseVertex, IVertex inputVertex, bool isFloating)

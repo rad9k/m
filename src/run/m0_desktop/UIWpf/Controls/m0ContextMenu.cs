@@ -392,11 +392,11 @@ namespace m0.UIWpf.Controls
 
             //
 
-            MenuItem visualiserCommanderMenuItem = createMenuItem("menu-Visualiser Commander", "Visualiser Commander");
+            MenuItem vertexCommanderMenuItem = createMenuItem("menu-Visualiser Commander", "Vertex Commander");
 
-            visualiserCommanderMenuItem.Click += OnOpenVisualiserCommander;
+            vertexCommanderMenuItem.Click += OnOpenVertexCommander;
 
-            OpenVisualiser.Items.Add(visualiserCommanderMenuItem);
+            OpenVisualiser.Items.Add(vertexCommanderMenuItem);
 
             //
 
@@ -583,9 +583,9 @@ namespace m0.UIWpf.Controls
             BaseCommands.Execute(this.EdgeVertex, null);
         }
 
-        void OnOpenVisualiserCommander(object sender, System.Windows.RoutedEventArgs e)
+        void OnOpenVertexCommander(object sender, System.Windows.RoutedEventArgs e)
         {
-            
+            BaseCommands.OpenVertexCommander(this.EdgeVertex);
         }
 
         void OnOpenVisualiser(object sender, System.Windows.RoutedEventArgs e)
