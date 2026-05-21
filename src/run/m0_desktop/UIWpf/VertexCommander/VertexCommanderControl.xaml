@@ -15,14 +15,6 @@
             <Setter Property="Background" Value="{StaticResource 0BackgroundBrush}"/>
         </Style>
 
-        <Style x:Key="PlaceholderTextStyle" TargetType="{x:Type TextBlock}">
-            <Setter Property="Foreground" Value="{StaticResource 0GrayBrush}"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="TextAlignment" Value="Center"/>
-            <Setter Property="TextWrapping" Value="Wrap"/>
-        </Style>
-
         <Style x:Key="GripSplitterStyle" TargetType="{x:Type GridSplitter}">
             <Setter Property="Background" Value="{StaticResource 0GripBrush}"/>
             <Setter Property="ShowsPreview" Value="False"/>
@@ -153,9 +145,7 @@
             </Grid.RowDefinitions>
 
             <Border Grid.Row="0" Style="{StaticResource SectionBorderStyle}" MinHeight="26" Margin="0,0,0,3">
-                <ContentControl x:Name="LeftQueryString">
-                    <TextBlock Style="{StaticResource PlaceholderTextStyle}" Text="[left] CodeControl z LeftQueryString"/>
-                </ContentControl>
+                <ContentControl x:Name="LeftQueryStringCodeControlHost"/>
             </Border>
 
             <Grid Grid.Row="1">
@@ -171,21 +161,15 @@
                     Template="{StaticResource VertexCommanderHorizontalExpanderTemplate}"
                     Margin="0,0,0,3">
                         <StackPanel Orientation="Vertical" MinWidth="260">
-                            <ComboBox x:Name="LeftInEdgesVisualiserSelector" MinWidth="250" Margin="0,0,0,2" SelectedIndex="0">
-                                <ComboBoxItem Content="LeftInEdgesVisualiser: System\Meta\Visualiser\Class:{$Inherits:ShowesInEdges,BaseEdgeTarget:Any}"/>
-                            </ComboBox>
+                            <ComboBox x:Name="LeftInEdgesVisualiserSelector" MinWidth="250" Margin="0,0,0,2" DisplayMemberPath="Value"/>
                             <Border Style="{StaticResource SectionBorderStyle}" MinHeight="32">
-                                <ContentControl x:Name="LeftInEdgesWrapVisualiser">
-                                    <TextBlock Style="{StaticResource PlaceholderTextStyle}" Text="WrapVisualiser child Vertexes dla LeftInEdgesVisualiser"/>
-                                </ContentControl>
+                                <ContentControl x:Name="LeftInEdgesWrapVisualiserHost"/>
                             </Border>
                         </StackPanel>
                 </Expander>
 
                 <Border Grid.Row="1" Style="{StaticResource SectionBorderStyle}">
-                    <ContentControl x:Name="LeftInEdgesVisualiser">
-                        <TextBlock Style="{StaticResource PlaceholderTextStyle}" Text="[left] visualizer wyswietlajacy InEdges dla LeftBaseEdge"/>
-                    </ContentControl>
+                    <ContentControl x:Name="LeftInEdgesVisualiserHost"/>
                 </Border>
             </Grid>
 
@@ -210,21 +194,15 @@
                     Template="{StaticResource VertexCommanderHorizontalExpanderTemplate}"
                     Margin="0,0,0,3">
                         <StackPanel Orientation="Vertical" MinWidth="260">
-                            <ComboBox x:Name="LeftOutEdgesVisualiserSelector" MinWidth="250" Margin="0,0,0,2" SelectedIndex="0">
-                                <ComboBoxItem Content="LeftOutEdgesVisualiser: System\Meta\Visualiser\Class:{$Inherits:ShowesInEdges,BaseEdgeTarget:Any}"/>
-                            </ComboBox>
+                            <ComboBox x:Name="LeftOutEdgesVisualiserSelector" MinWidth="250" Margin="0,0,0,2" DisplayMemberPath="Value"/>
                             <Border Style="{StaticResource SectionBorderStyle}" MinHeight="32">
-                                <ContentControl x:Name="LeftOutEdgesWrapVisualiser">
-                                    <TextBlock Style="{StaticResource PlaceholderTextStyle}" Text="WrapVisualiser child Vertexes dla LeftOutEdgesVisualiser"/>
-                                </ContentControl>
+                                <ContentControl x:Name="LeftOutEdgesWrapVisualiserHost"/>
                             </Border>
                         </StackPanel>
                 </Expander>
 
                 <Border Grid.Row="1" Style="{StaticResource SectionBorderStyle}">
-                    <ContentControl x:Name="LeftOutEdgesVisualiser">
-                        <TextBlock Style="{StaticResource PlaceholderTextStyle}" Text="[left] visualizer wyswietlajacy OutEdges dla LeftBaseEdge"/>
-                    </ContentControl>
+                    <ContentControl x:Name="LeftOutEdgesVisualiserHost"/>
                 </Border>
             </Grid>
         </Grid>
@@ -246,9 +224,7 @@
             </Grid.RowDefinitions>
 
             <Border Grid.Row="0" Style="{StaticResource SectionBorderStyle}" MinHeight="26" Margin="0,0,0,3">
-                <ContentControl x:Name="RightQueryString">
-                    <TextBlock Style="{StaticResource PlaceholderTextStyle}" Text="[right] CodeControl z RightQueryString"/>
-                </ContentControl>
+                <ContentControl x:Name="RightQueryStringCodeControlHost"/>
             </Border>
 
             <Grid Grid.Row="1">
@@ -264,21 +240,15 @@
                     Template="{StaticResource VertexCommanderHorizontalExpanderTemplate}"
                     Margin="0,0,0,3">
                         <StackPanel Orientation="Vertical" MinWidth="260">
-                            <ComboBox x:Name="RightInEdgesVisualiserSelector" MinWidth="250" Margin="0,0,0,2" SelectedIndex="0">
-                                <ComboBoxItem Content="RightInEdgesVisualiser: System\Meta\Visualiser\Class:{$Inherits:ShowesInEdges,BaseEdgeTarget:Any}"/>
-                            </ComboBox>
+                            <ComboBox x:Name="RightInEdgesVisualiserSelector" MinWidth="250" Margin="0,0,0,2" DisplayMemberPath="Value"/>
                             <Border Style="{StaticResource SectionBorderStyle}" MinHeight="32">
-                                <ContentControl x:Name="RightInEdgesWrapVisualiser">
-                                    <TextBlock Style="{StaticResource PlaceholderTextStyle}" Text="WrapVisualiser child Vertexes dla RightInEdgesVisualiser"/>
-                                </ContentControl>
+                                <ContentControl x:Name="RightInEdgesWrapVisualiserHost"/>
                             </Border>
                         </StackPanel>
                 </Expander>
 
                 <Border Grid.Row="1" Style="{StaticResource SectionBorderStyle}">
-                    <ContentControl x:Name="RightInEdgesVisualiser">
-                        <TextBlock Style="{StaticResource PlaceholderTextStyle}" Text="[right] visualizer wyswietlajacy InEdges dla RightBaseEdge"/>
-                    </ContentControl>
+                    <ContentControl x:Name="RightInEdgesVisualiserHost"/>
                 </Border>
             </Grid>
 
@@ -303,21 +273,15 @@
                     Template="{StaticResource VertexCommanderHorizontalExpanderTemplate}"
                     Margin="0,0,0,3">
                         <StackPanel Orientation="Vertical" MinWidth="260">
-                            <ComboBox x:Name="RightOutEdgesVisualiserSelector" MinWidth="250" Margin="0,0,0,2" SelectedIndex="0">
-                                <ComboBoxItem Content="RightOutEdgesVisualiser: System\Meta\Visualiser\Class:{$Inherits:ShowesInEdges,BaseEdgeTarget:Any}"/>
-                            </ComboBox>
+                            <ComboBox x:Name="RightOutEdgesVisualiserSelector" MinWidth="250" Margin="0,0,0,2" DisplayMemberPath="Value"/>
                             <Border Style="{StaticResource SectionBorderStyle}" MinHeight="32">
-                                <ContentControl x:Name="RightOutEdgesWrapVisualiser">
-                                    <TextBlock Style="{StaticResource PlaceholderTextStyle}" Text="WrapVisualiser child Vertexes dla RightOutEdgesVisualiser"/>
-                                </ContentControl>
+                                <ContentControl x:Name="RightOutEdgesWrapVisualiserHost"/>
                             </Border>
                         </StackPanel>
                 </Expander>
 
                 <Border Grid.Row="1" Style="{StaticResource SectionBorderStyle}">
-                    <ContentControl x:Name="RightOutEdgesVisualiser">
-                        <TextBlock Style="{StaticResource PlaceholderTextStyle}" Text="[right] visualizer wyswietlajacy OutEdges dla RightBaseEdge"/>
-                    </ContentControl>
+                    <ContentControl x:Name="RightOutEdgesVisualiserHost"/>
                 </Border>
             </Grid>
         </Grid>
