@@ -26,7 +26,7 @@ using System.Globalization;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class ListVisualiser : StackPanel,  IListVisualiser, ITypedEdge
+    public class ListVisualiser : StackPanel,  IListVisualiser, ITypedEdge, IKeyboardHighlight
     {
         private static readonly IValueConverter EdgeIconSourceConverter = new ListVisualiserEdgeIconSourceConverter();
         private static readonly IValueConverter EdgeIconVisibilityConverter = new ListVisualiserEdgeIconVisibilityConverter();
@@ -40,6 +40,10 @@ namespace m0.UIWpf.Visualisers
         protected bool TurnOffSelectedItemsUpdate = false;
 
         protected bool TurnOffSelectedVerticesUpdate = false;
+
+        private int currentHighlightPosition = -1;
+        private bool isBeforeFirstPosition;
+        private bool isAfterLastPosition;
 
         static string[] _MetaTriggeringUpdateVertex = new string[] { };
         public virtual string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
@@ -102,8 +106,58 @@ namespace m0.UIWpf.Visualisers
                 CreateView();               
 
                 ThisDataGrid.SelectionChanged += _OnSelectionChanged;
+                ThisDataGrid.PreviewKeyDown += OnKeyboardHighlightPreviewKeyDown;
             }
         }        
+
+        public int CurrentHighlightPosition
+        {
+            get { return currentHighlightPosition; }
+        }
+
+        public bool IsBeforeFirstPosition
+        {
+            get { return isBeforeFirstPosition; }
+        }
+
+        public bool IsAfterLastPosition
+        {
+            get { return isAfterLastPosition; }
+        }
+
+        public bool IsFirstPosition
+        {
+            get { return currentHighlightPosition == 0 && !isBeforeFirstPosition && !isAfterLastPosition; }
+            set
+            {
+                if (value)
+                    SetFirstKeyboardHighlightPosition();
+            }
+        }
+
+        public bool IsLastPosition
+        {
+            get { return currentHighlightPosition == GetKeyboardHighlightItemCount() - 1 && !isBeforeFirstPosition && !isAfterLastPosition; }
+            set
+            {
+                if (value)
+                    SetLastKeyboardHighlightPosition();
+            }
+        }
+
+        public bool CanGoBeforeFirstPosition
+        {
+            get { return true; }
+        }
+
+        public bool CanGoAfterLastPosition
+        {
+            get { return true; }
+        }
+
+        public event EventHandler GoneBeforeFirstPosition;
+
+        public event EventHandler GoneAfterLastPosition;
 
         protected virtual void PlatformClassInitialize(IVertex baseEdgeVertex)
         {
@@ -326,7 +380,241 @@ namespace m0.UIWpf.Visualisers
             rowMouseOverTrigger.Setters.Add(new Setter(System.Windows.Controls.Control.ForegroundProperty, (Brush)FindResource("0HighlightBrush")));
             cellStyle.Triggers.Add(rowMouseOverTrigger);
 
+            Trigger selectedTrigger = new Trigger
+            {
+                Property = System.Windows.Controls.DataGridCell.IsSelectedProperty,
+                Value = true
+            };
+            selectedTrigger.Setters.Add(new Setter(System.Windows.Controls.Control.BackgroundProperty, (Brush)FindResource("0SelectionBrush")));
+            selectedTrigger.Setters.Add(new Setter(System.Windows.Controls.Control.BorderBrushProperty, (Brush)FindResource("0SelectionBrush")));
+            cellStyle.Triggers.Add(selectedTrigger);
+
             return cellStyle;
+        }
+
+        private void OnKeyboardHighlightPreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key != Key.Up && e.Key != Key.Down && e.Key != Key.Space)
+                return;
+
+            e.Handled = true;
+
+            if (currentHighlightPosition == -1)
+                return;
+
+            if (e.Key == Key.Up)
+                MoveKeyboardHighlight(-1);
+            else if (e.Key == Key.Down)
+                MoveKeyboardHighlight(1);
+            else
+                ToggleKeyboardHighlightedEdgeSelection();
+        }
+
+        private void SetFirstKeyboardHighlightPosition()
+        {
+            int itemCount = GetKeyboardHighlightItemCount();
+
+            if (itemCount == 0)
+                GoAfterLastKeyboardHighlightPosition();
+            else
+                SetKeyboardHighlightPosition(0);
+        }
+
+        private void SetLastKeyboardHighlightPosition()
+        {
+            int itemCount = GetKeyboardHighlightItemCount();
+
+            if (itemCount == 0)
+                GoBeforeFirstKeyboardHighlightPosition();
+            else
+                SetKeyboardHighlightPosition(itemCount - 1);
+        }
+
+        private void MoveKeyboardHighlight(int positionDelta)
+        {
+            int itemCount = GetKeyboardHighlightItemCount();
+
+            if (itemCount == 0)
+            {
+                if (positionDelta < 0)
+                    GoBeforeFirstKeyboardHighlightPosition();
+                else
+                    GoAfterLastKeyboardHighlightPosition();
+
+                return;
+            }
+
+            int newPosition = currentHighlightPosition + positionDelta;
+
+            if (newPosition < 0)
+                GoBeforeFirstKeyboardHighlightPosition();
+            else if (newPosition >= itemCount)
+                GoAfterLastKeyboardHighlightPosition();
+            else
+                SetKeyboardHighlightPosition(newPosition);
+        }
+
+        private void SetKeyboardHighlightPosition(int position)
+        {
+            ClearKeyboardHighlight();
+
+            currentHighlightPosition = position;
+            isBeforeFirstPosition = false;
+            isAfterLastPosition = false;
+
+            ApplyKeyboardHighlight();
+        }
+
+        private void GoBeforeFirstKeyboardHighlightPosition()
+        {
+            ClearKeyboardHighlight();
+
+            currentHighlightPosition = -1;
+            isBeforeFirstPosition = true;
+            isAfterLastPosition = false;
+
+            if (GoneBeforeFirstPosition != null)
+                GoneBeforeFirstPosition(this, EventArgs.Empty);
+        }
+
+        private void GoAfterLastKeyboardHighlightPosition()
+        {
+            ClearKeyboardHighlight();
+
+            currentHighlightPosition = -1;
+            isBeforeFirstPosition = false;
+            isAfterLastPosition = true;
+
+            if (GoneAfterLastPosition != null)
+                GoneAfterLastPosition(this, EventArgs.Empty);
+        }
+
+        private void ApplyKeyboardHighlight()
+        {
+            DataGridRow row = GetKeyboardHighlightRow();
+
+            if (row == null)
+                return;
+
+            Brush foregroundBrush = IsKeyboardHighlightedEdgeSelected()
+                ? (Brush)FindResource("0ForegroundBrush")
+                : (Brush)FindResource("0HighlightForegroundBrush");
+
+            row.Background = (Brush)FindResource("0HighlightBrush");
+            row.Foreground = foregroundBrush;
+            row.BorderBrush = (Brush)FindResource("0HighlightBrush");
+
+            foreach (System.Windows.Controls.DataGridCell cell in FindVisualChildren<System.Windows.Controls.DataGridCell>(row))
+            {
+                cell.Background = (Brush)FindResource("0HighlightBrush");
+                cell.Foreground = foregroundBrush;
+                cell.BorderBrush = (Brush)FindResource("0HighlightBrush");
+            }
+
+            row.BringIntoView();
+        }
+
+        private void ToggleKeyboardHighlightedEdgeSelection()
+        {
+            IEdge keyboardHighlightedEdge = GetKeyboardHighlightedEdge();
+
+            if (keyboardHighlightedEdge == null)
+                return;
+
+            IVertex selectedEdges = Vertex.Get(false, "SelectedEdges:");
+            IEdge selectedEdgeVertexEdge = EdgeHelper.FindIEdgeVertexByIEdge(selectedEdges, keyboardHighlightedEdge);
+
+            Interaction.BeginInteractionWithGraph();
+
+            if (selectedEdgeVertexEdge != null)
+                selectedEdges.DeleteEdge(selectedEdgeVertexEdge);
+            else
+            {
+                IVertex baseVertex = Vertex.Get(false, @"BaseEdge:\To:");
+
+                if (baseVertex != null)
+                    EdgeHelper.AddEdgeVertex(selectedEdges, baseVertex, keyboardHighlightedEdge.Meta, keyboardHighlightedEdge.To);
+            }
+
+            Interaction.EndInteractionWithGraph();
+
+            RefreshVisualStatesAfterItemsChanged();
+        }
+
+        private bool IsKeyboardHighlightedEdgeSelected()
+        {
+            IEdge keyboardHighlightedEdge = GetKeyboardHighlightedEdge();
+
+            if (keyboardHighlightedEdge == null)
+                return false;
+
+            IVertex selectedEdges = Vertex.Get(false, "SelectedEdges:");
+
+            return selectedEdges != null && EdgeHelper.FindIEdgeVertexByIEdge(selectedEdges, keyboardHighlightedEdge) != null;
+        }
+
+        private IEdge GetKeyboardHighlightedEdge()
+        {
+            if (currentHighlightPosition < 0 || currentHighlightPosition >= GetKeyboardHighlightItemCount())
+                return null;
+
+            return ThisDataGrid.Items[currentHighlightPosition] as IEdge;
+        }
+
+        private void ClearKeyboardHighlight()
+        {
+            DataGridRow row = GetKeyboardHighlightRow();
+
+            if (row == null)
+                return;
+
+            row.ClearValue(System.Windows.Controls.Control.BackgroundProperty);
+            row.ClearValue(System.Windows.Controls.Control.ForegroundProperty);
+            row.ClearValue(System.Windows.Controls.Control.BorderBrushProperty);
+
+            foreach (System.Windows.Controls.DataGridCell cell in FindVisualChildren<System.Windows.Controls.DataGridCell>(row))
+            {
+                cell.ClearValue(System.Windows.Controls.Control.BackgroundProperty);
+                cell.ClearValue(System.Windows.Controls.Control.ForegroundProperty);
+                cell.ClearValue(System.Windows.Controls.Control.BorderBrushProperty);
+            }
+        }
+
+        private DataGridRow GetKeyboardHighlightRow()
+        {
+            if (currentHighlightPosition < 0 || currentHighlightPosition >= GetKeyboardHighlightItemCount())
+                return null;
+
+            object item = ThisDataGrid.Items[currentHighlightPosition];
+            ThisDataGrid.ScrollIntoView(item);
+            ThisDataGrid.UpdateLayout();
+
+            return ThisDataGrid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
+        }
+
+        private int GetKeyboardHighlightItemCount()
+        {
+            if (ThisDataGrid == null || ThisDataGrid.Items == null)
+                return 0;
+
+            return ThisDataGrid.Items.Count;
+        }
+
+        private static IEnumerable<T> FindVisualChildren<T>(DependencyObject dependencyObject) where T : DependencyObject
+        {
+            if (dependencyObject == null)
+                yield break;
+
+            for (int index = 0; index < VisualTreeHelper.GetChildrenCount(dependencyObject); index++)
+            {
+                DependencyObject child = VisualTreeHelper.GetChild(dependencyObject, index);
+
+                if (child is T)
+                    yield return (T)child;
+
+                foreach (T descendant in FindVisualChildren<T>(child))
+                    yield return descendant;
+            }
         }
 
         protected void ResetView()
@@ -378,6 +666,7 @@ namespace m0.UIWpf.Visualisers
             }
 
             ThisDataGrid.ColumnHeaderStyle = CreateColumnHeaderStyle(drawHorizontalHeaderLine, drawVerticalHeaderLine);
+            RefreshVisualStatesAfterItemsChanged();
         }
 
         public void ScaleChange()
@@ -456,7 +745,30 @@ namespace m0.UIWpf.Visualisers
                         ItemsSourceValueNoHide.Add(e);
 
                 ThisDataGrid.ItemsSource = ItemsSourceValueNoHide;             
+                RefreshVisualStatesAfterItemsChanged();
             }           
+        }
+
+        private void RefreshVisualStatesAfterItemsChanged()
+        {
+            SelectedVerticesUpdated();
+            RefreshKeyboardHighlightAfterItemsChanged();
+        }
+
+        private void RefreshKeyboardHighlightAfterItemsChanged()
+        {
+            if (currentHighlightPosition == -1)
+                return;
+
+            int itemCount = GetKeyboardHighlightItemCount();
+
+            if (itemCount == 0)
+                return;
+
+            if (currentHighlightPosition >= itemCount)
+                currentHighlightPosition = itemCount - 1;
+
+            ApplyKeyboardHighlight();
         }
 
         public IVertex Vertex
