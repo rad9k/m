@@ -1,4 +1,4 @@
-﻿using m0.Foundation;
+using m0.Foundation;
 using m0.UIWpf.Foundation;
 using System;
 using System.Collections.Generic;
@@ -12,6 +12,8 @@ namespace m0.UIWpf.Visualisers.Helper
     public interface IVisualiser : IHasLocalizableEdges, IPlatformClass, IDisposable
     {
         AtomVisualiserHelper VisualiserHelper { get; set; }      
+
+        bool SelectionProphibited { get; set; }
 
         void OnLoad(object sender, RoutedEventArgs e);
 

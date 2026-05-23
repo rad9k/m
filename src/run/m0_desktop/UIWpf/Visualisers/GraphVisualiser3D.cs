@@ -624,6 +624,8 @@ namespace m0.UIWpf.Visualisers
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }
 
+        public bool SelectionProphibited { get; set; }
+
         private readonly Viewport3D viewport;
         private readonly Canvas labelOverlay;
         private readonly PerspectiveCamera camera;
@@ -1493,6 +1495,9 @@ namespace m0.UIWpf.Visualisers
 
         private void ToggleSelection(GraphVisualiser3DNode node)
         {
+            if (SelectionProphibited)
+                return;
+
             if (node == null || node.BaseVertex == null)
                 return;
 

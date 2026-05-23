@@ -486,6 +486,8 @@ namespace m0.UIWpf.Visualisers
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
+        public bool SelectionProphibited { get; set; }
+
 
         protected bool TurnOffSelectedItemsUpdate = false;
 
@@ -831,6 +833,9 @@ namespace m0.UIWpf.Visualisers
 
         public void UpdateSelectedVertices(bool IsCtrl, TreeVisualiserViewItem item)
         {
+            if (SelectionProphibited)
+                return;
+
             if (TurnOffSelectedVerticesUpdate)
                 return;
 

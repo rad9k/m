@@ -13,11 +13,51 @@
             <Setter Property="BorderBrush" Value="{StaticResource 0VeryVeryLightForegroundBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Background" Value="{StaticResource 0BackgroundBrush}"/>
+            <Setter Property="ClipToBounds" Value="True"/>
         </Style>
 
         <Style x:Key="GripSplitterStyle" TargetType="{x:Type GridSplitter}">
             <Setter Property="Background" Value="{StaticResource 0GripBrush}"/>
             <Setter Property="ShowsPreview" Value="False"/>
+        </Style>
+
+        <Style x:Key="ExpanderHeaderTextStyle" TargetType="{x:Type TextBlock}">
+            <Setter Property="Foreground" Value="{StaticResource 0ForegroundBrush}"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="18,0,3,0"/>
+            <Setter Property="LayoutTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="0.6" ScaleY="0.6"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="VisualiserSelectorStyle" TargetType="{x:Type ComboBox}">
+            <Setter Property="MinWidth" Value="250"/>
+            <Setter Property="Margin" Value="0,0,0,2"/>
+            <Setter Property="DisplayMemberPath" Value="Value"/>
+            <Setter Property="Opacity" Value="0"/>
+            <Setter Property="IsHitTestVisible" Value="False"/>
+            <Setter Property="LayoutTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="0.6" ScaleY="0.6"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="BottomCommandButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Padding" Value="2"/>
+            <Setter Property="MinWidth" Value="0"/>
+            <Setter Property="Height" Value="24"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Background" Value="{StaticResource 0BackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource 0ForegroundBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource 0VeryVeryLightForegroundBrush}"/>
+            <Setter Property="BorderThickness" Value="0,0,1,0"/>
         </Style>
 
         <ControlTemplate x:Key="VertexCommanderExpanderButtonTemplate" TargetType="{x:Type ToggleButton}">
@@ -82,26 +122,28 @@
         </ControlTemplate>
 
         <ControlTemplate x:Key="VertexCommanderHorizontalExpanderTemplate" TargetType="{x:Type Expander}">
-            <DockPanel>
-                <ContentPresenter DockPanel.Dock="Left"
-                    ContentSource="Header"
-                    TextElement.Foreground="{StaticResource 0ForegroundBrush}"
-                    VerticalAlignment="Center"
-                    Margin="0,0,4,0"/>
+            <Grid ClipToBounds="True">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
                 <ToggleButton x:Name="ExpanderButton"
-                    DockPanel.Dock="Left"
+                    Grid.Row="0"
+                    HorizontalAlignment="Left"
+                    Margin="-3,0,0,0"
                     Template="{StaticResource VertexCommanderExpanderButtonTemplate}"
                     IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
                     OverridesDefaultStyle="True"
                     Padding="1.5,0"/>
                 <ContentPresenter x:Name="ExpanderContent"
+                    Grid.Row="1"
                     ContentSource="Content"
-                    DockPanel.Dock="Right">
+                    ClipToBounds="True">
                     <ContentPresenter.LayoutTransform>
                         <ScaleTransform ScaleY="0"/>
                     </ContentPresenter.LayoutTransform>
                 </ContentPresenter>
-            </DockPanel>
+            </Grid>
             <ControlTemplate.Triggers>
                 <Trigger Property="IsExpanded" Value="True">
                     <Trigger.EnterActions>
@@ -129,14 +171,18 @@
         </ControlTemplate>
     </UserControl.Resources>
 
-    <Grid Margin="3">
+    <Grid Margin="3" ClipToBounds="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="26"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" MinWidth="240"/>
             <ColumnDefinition Width="7"/>
             <ColumnDefinition Width="*" MinWidth="240"/>
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Column="0" Margin="0,0,3,0">
+        <Grid Grid.Row="0" Grid.Column="0" Margin="0,0,3,0" ClipToBounds="True">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="2*" MinHeight="100"/>
@@ -144,34 +190,50 @@
                 <RowDefinition Height="8*" MinHeight="100"/>
             </Grid.RowDefinitions>
 
-            <Border Grid.Row="0" Style="{StaticResource SectionBorderStyle}" MinHeight="26" Margin="0,0,0,3">
-                <ContentControl x:Name="LeftQueryStringCodeControlHost"/>
+            <Border Grid.Row="0" Style="{StaticResource SectionBorderStyle}" Height="20" Margin="0,0,0,3">
+                <ContentControl x:Name="LeftQueryStringCodeControlHost" ClipToBounds="True"/>
             </Border>
 
-            <Grid Grid.Row="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-
-                <Expander Grid.Row="0"
-                    x:Name="LeftInEdgesExpander"
-                    Header="In edges"
-                    IsExpanded="False"
-                    Template="{StaticResource VertexCommanderHorizontalExpanderTemplate}"
-                    Margin="0,0,0,3">
-                        <StackPanel Orientation="Vertical" MinWidth="260">
-                            <ComboBox x:Name="LeftInEdgesVisualiserSelector" MinWidth="250" Margin="0,0,0,2" DisplayMemberPath="Value"/>
-                            <Border Style="{StaticResource SectionBorderStyle}" MinHeight="32">
-                                <ContentControl x:Name="LeftInEdgesWrapVisualiserHost"/>
+            <ScrollViewer
+                x:Name="LeftInEdgesSectionScrollViewer"
+                Grid.Row="1"
+                VerticalScrollBarVisibility="Auto"
+                HorizontalScrollBarVisibility="Auto"
+                ClipToBounds="True">
+                <StackPanel ClipToBounds="True">
+                    <Grid ClipToBounds="True" Margin="0,0,0,3">
+                        <Expander x:Name="LeftInEdgesExpander"
+                            IsExpanded="False"
+                            Template="{StaticResource VertexCommanderHorizontalExpanderTemplate}">
+                            <Border
+                                Style="{StaticResource SectionBorderStyle}"
+                                MaxWidth="{Binding ViewportWidth, ElementName=LeftInEdgesSectionScrollViewer}"
+                                MinHeight="32"
+                                Margin="0,4,0,0"
+                                HorizontalAlignment="Left">
+                                <ContentControl
+                                    x:Name="LeftInEdgesWrapVisualiserHost"
+                                    MaxWidth="{Binding ViewportWidth, ElementName=LeftInEdgesSectionScrollViewer}"
+                                    HorizontalAlignment="Left"
+                                    ClipToBounds="True"/>
                             </Border>
+                        </Expander>
+                        <StackPanel
+                            Orientation="Horizontal"
+                            VerticalAlignment="Top"
+                            Panel.ZIndex="1">
+                            <TextBlock Style="{StaticResource ExpanderHeaderTextStyle}" Text="In edges"/>
+                            <ComboBox x:Name="LeftInEdgesVisualiserSelector" Style="{StaticResource VisualiserSelectorStyle}"/>
                         </StackPanel>
-                </Expander>
+                    </Grid>
 
-                <Border Grid.Row="1" Style="{StaticResource SectionBorderStyle}">
-                    <ContentControl x:Name="LeftInEdgesVisualiserHost"/>
-                </Border>
-            </Grid>
+                    <Border Style="{StaticResource SectionBorderStyle}">
+                        <ContentControl
+                            x:Name="LeftInEdgesVisualiserHost"
+                            ClipToBounds="True"/>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
 
             <GridSplitter Grid.Row="2"
                 Style="{StaticResource GripSplitterStyle}"
@@ -181,33 +243,51 @@
                 ResizeDirection="Rows"
                 ResizeBehavior="PreviousAndNext"/>
 
-            <Grid Grid.Row="3" Margin="0,3,0,0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-
-                <Expander Grid.Row="0"
-                    x:Name="LeftOutEdgesExpander"
-                    Header="Out edges"
-                    IsExpanded="False"
-                    Template="{StaticResource VertexCommanderHorizontalExpanderTemplate}"
-                    Margin="0,0,0,3">
-                        <StackPanel Orientation="Vertical" MinWidth="260">
-                            <ComboBox x:Name="LeftOutEdgesVisualiserSelector" MinWidth="250" Margin="0,0,0,2" DisplayMemberPath="Value"/>
-                            <Border Style="{StaticResource SectionBorderStyle}" MinHeight="32">
-                                <ContentControl x:Name="LeftOutEdgesWrapVisualiserHost"/>
+            <ScrollViewer
+                x:Name="LeftOutEdgesSectionScrollViewer"
+                Grid.Row="3"
+                Margin="0,3,0,0"
+                VerticalScrollBarVisibility="Auto"
+                HorizontalScrollBarVisibility="Auto"
+                ClipToBounds="True">
+                <StackPanel ClipToBounds="True">
+                    <Grid ClipToBounds="True" Margin="0,0,0,3">
+                        <Expander x:Name="LeftOutEdgesExpander"
+                            IsExpanded="False"
+                            Template="{StaticResource VertexCommanderHorizontalExpanderTemplate}">
+                            <Border
+                                Style="{StaticResource SectionBorderStyle}"
+                                MaxWidth="{Binding ViewportWidth, ElementName=LeftOutEdgesSectionScrollViewer}"
+                                MinHeight="32"
+                                Margin="0,4,0,0"
+                                HorizontalAlignment="Left">
+                                <ContentControl
+                                    x:Name="LeftOutEdgesWrapVisualiserHost"
+                                    MaxWidth="{Binding ViewportWidth, ElementName=LeftOutEdgesSectionScrollViewer}"
+                                    HorizontalAlignment="Left"
+                                    ClipToBounds="True"/>
                             </Border>
+                        </Expander>
+                        <StackPanel
+                            Orientation="Horizontal"
+                            VerticalAlignment="Top"
+                            Panel.ZIndex="1">
+                            <TextBlock Style="{StaticResource ExpanderHeaderTextStyle}" Text="Out edges"/>
+                            <ComboBox x:Name="LeftOutEdgesVisualiserSelector" Style="{StaticResource VisualiserSelectorStyle}"/>
                         </StackPanel>
-                </Expander>
+                    </Grid>
 
-                <Border Grid.Row="1" Style="{StaticResource SectionBorderStyle}">
-                    <ContentControl x:Name="LeftOutEdgesVisualiserHost"/>
-                </Border>
-            </Grid>
+                    <Border Style="{StaticResource SectionBorderStyle}">
+                        <ContentControl
+                            x:Name="LeftOutEdgesVisualiserHost"
+                            ClipToBounds="True"/>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
         </Grid>
 
-        <GridSplitter Grid.Column="1"
+        <GridSplitter Grid.Row="0"
+            Grid.Column="1"
             Style="{StaticResource GripSplitterStyle}"
             Width="7"
             HorizontalAlignment="Stretch"
@@ -215,7 +295,7 @@
             ResizeDirection="Columns"
             ResizeBehavior="PreviousAndNext"/>
 
-        <Grid Grid.Column="2" Margin="3,0,0,0">
+        <Grid Grid.Row="0" Grid.Column="2" Margin="3,0,0,0" ClipToBounds="True">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="2*" MinHeight="100"/>
@@ -223,34 +303,50 @@
                 <RowDefinition Height="8*" MinHeight="100"/>
             </Grid.RowDefinitions>
 
-            <Border Grid.Row="0" Style="{StaticResource SectionBorderStyle}" MinHeight="26" Margin="0,0,0,3">
-                <ContentControl x:Name="RightQueryStringCodeControlHost"/>
+            <Border Grid.Row="0" Style="{StaticResource SectionBorderStyle}" Height="20" Margin="0,0,0,3">
+                <ContentControl x:Name="RightQueryStringCodeControlHost" ClipToBounds="True"/>
             </Border>
 
-            <Grid Grid.Row="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-
-                <Expander Grid.Row="0"
-                    x:Name="RightInEdgesExpander"
-                    Header="In edges"
-                    IsExpanded="False"
-                    Template="{StaticResource VertexCommanderHorizontalExpanderTemplate}"
-                    Margin="0,0,0,3">
-                        <StackPanel Orientation="Vertical" MinWidth="260">
-                            <ComboBox x:Name="RightInEdgesVisualiserSelector" MinWidth="250" Margin="0,0,0,2" DisplayMemberPath="Value"/>
-                            <Border Style="{StaticResource SectionBorderStyle}" MinHeight="32">
-                                <ContentControl x:Name="RightInEdgesWrapVisualiserHost"/>
+            <ScrollViewer
+                x:Name="RightInEdgesSectionScrollViewer"
+                Grid.Row="1"
+                VerticalScrollBarVisibility="Auto"
+                HorizontalScrollBarVisibility="Auto"
+                ClipToBounds="True">
+                <StackPanel ClipToBounds="True">
+                    <Grid ClipToBounds="True" Margin="0,0,0,3">
+                        <Expander x:Name="RightInEdgesExpander"
+                            IsExpanded="False"
+                            Template="{StaticResource VertexCommanderHorizontalExpanderTemplate}">
+                            <Border
+                                Style="{StaticResource SectionBorderStyle}"
+                                MaxWidth="{Binding ViewportWidth, ElementName=RightInEdgesSectionScrollViewer}"
+                                MinHeight="32"
+                                Margin="0,4,0,0"
+                                HorizontalAlignment="Left">
+                                <ContentControl
+                                    x:Name="RightInEdgesWrapVisualiserHost"
+                                    MaxWidth="{Binding ViewportWidth, ElementName=RightInEdgesSectionScrollViewer}"
+                                    HorizontalAlignment="Left"
+                                    ClipToBounds="True"/>
                             </Border>
+                        </Expander>
+                        <StackPanel
+                            Orientation="Horizontal"
+                            VerticalAlignment="Top"
+                            Panel.ZIndex="1">
+                            <TextBlock Style="{StaticResource ExpanderHeaderTextStyle}" Text="In edges"/>
+                            <ComboBox x:Name="RightInEdgesVisualiserSelector" Style="{StaticResource VisualiserSelectorStyle}"/>
                         </StackPanel>
-                </Expander>
+                    </Grid>
 
-                <Border Grid.Row="1" Style="{StaticResource SectionBorderStyle}">
-                    <ContentControl x:Name="RightInEdgesVisualiserHost"/>
-                </Border>
-            </Grid>
+                    <Border Style="{StaticResource SectionBorderStyle}">
+                        <ContentControl
+                            x:Name="RightInEdgesVisualiserHost"
+                            ClipToBounds="True"/>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
 
             <GridSplitter Grid.Row="2"
                 Style="{StaticResource GripSplitterStyle}"
@@ -260,30 +356,68 @@
                 ResizeDirection="Rows"
                 ResizeBehavior="PreviousAndNext"/>
 
-            <Grid Grid.Row="3" Margin="0,3,0,0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-
-                <Expander Grid.Row="0"
-                    x:Name="RightOutEdgesExpander"
-                    Header="Out edges"
-                    IsExpanded="False"
-                    Template="{StaticResource VertexCommanderHorizontalExpanderTemplate}"
-                    Margin="0,0,0,3">
-                        <StackPanel Orientation="Vertical" MinWidth="260">
-                            <ComboBox x:Name="RightOutEdgesVisualiserSelector" MinWidth="250" Margin="0,0,0,2" DisplayMemberPath="Value"/>
-                            <Border Style="{StaticResource SectionBorderStyle}" MinHeight="32">
-                                <ContentControl x:Name="RightOutEdgesWrapVisualiserHost"/>
+            <ScrollViewer
+                x:Name="RightOutEdgesSectionScrollViewer"
+                Grid.Row="3"
+                Margin="0,3,0,0"
+                VerticalScrollBarVisibility="Auto"
+                HorizontalScrollBarVisibility="Auto"
+                ClipToBounds="True">
+                <StackPanel ClipToBounds="True">
+                    <Grid ClipToBounds="True" Margin="0,0,0,3">
+                        <Expander x:Name="RightOutEdgesExpander"
+                            IsExpanded="False"
+                            Template="{StaticResource VertexCommanderHorizontalExpanderTemplate}">
+                            <Border
+                                Style="{StaticResource SectionBorderStyle}"
+                                MaxWidth="{Binding ViewportWidth, ElementName=RightOutEdgesSectionScrollViewer}"
+                                MinHeight="32"
+                                Margin="0,4,0,0"
+                                HorizontalAlignment="Left">
+                                <ContentControl
+                                    x:Name="RightOutEdgesWrapVisualiserHost"
+                                    MaxWidth="{Binding ViewportWidth, ElementName=RightOutEdgesSectionScrollViewer}"
+                                    HorizontalAlignment="Left"
+                                    ClipToBounds="True"/>
                             </Border>
+                        </Expander>
+                        <StackPanel
+                            Orientation="Horizontal"
+                            VerticalAlignment="Top"
+                            Panel.ZIndex="1">
+                            <TextBlock Style="{StaticResource ExpanderHeaderTextStyle}" Text="Out edges"/>
+                            <ComboBox x:Name="RightOutEdgesVisualiserSelector" Style="{StaticResource VisualiserSelectorStyle}"/>
                         </StackPanel>
-                </Expander>
+                    </Grid>
 
-                <Border Grid.Row="1" Style="{StaticResource SectionBorderStyle}">
-                    <ContentControl x:Name="RightOutEdgesVisualiserHost"/>
-                </Border>
-            </Grid>
+                    <Border Style="{StaticResource SectionBorderStyle}">
+                        <ContentControl
+                            x:Name="RightOutEdgesVisualiserHost"
+                            ClipToBounds="True"/>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
         </Grid>
+        <Border
+            x:Name="BottomCommandBar"
+            Grid.Row="1"
+            Grid.ColumnSpan="3"
+            Margin="0,2,0,0"
+            BorderBrush="{StaticResource 0VeryVeryLightForegroundBrush}"
+            BorderThickness="1"
+            Background="{StaticResource 0BackgroundBrush}"
+            ClipToBounds="True">
+            <UniformGrid x:Name="BottomCommandButtonsGrid" Rows="1" Columns="9" ClipToBounds="True">
+                <Button x:Name="ViewButton" Style="{StaticResource BottomCommandButtonStyle}" Click="ViewButton_Click" Content="F3 View"/>
+                <Button x:Name="EditButton" Style="{StaticResource BottomCommandButtonStyle}" Click="EditButton_Click" Content="F4 Edit"/>
+                <Button x:Name="CopyButton" Style="{StaticResource BottomCommandButtonStyle}" Click="CopyButton_Click" Content="F5 Copy"/>
+                <Button x:Name="MoveButton" Style="{StaticResource BottomCommandButtonStyle}" Click="MoveButton_Click" Content="F6 Move"/>
+                <Button x:Name="NewVertexButton" Style="{StaticResource BottomCommandButtonStyle}" Click="NewVertexButton_Click" Content="F7 New Vertex"/>
+                <Button x:Name="DeleteButton" Style="{StaticResource BottomCommandButtonStyle}" Click="DeleteButton_Click" Content="F8 Delete"/>
+                <Button x:Name="NewEdgeButton" Style="{StaticResource BottomCommandButtonStyle}" Click="NewEdgeButton_Click" Content="F9 New Edge"/>
+                <Button x:Name="MasterToDetailButton" Style="{StaticResource BottomCommandButtonStyle}" Click="MasterToDetailButton_Click" Content="F11 Master -&gt; Detail"/>
+                <Button x:Name="DetailToMasterButton" Style="{StaticResource BottomCommandButtonStyle}" Click="DetailToMasterButton_Click" Content="F12 Detail &lt;- Master"/>
+            </UniformGrid>
+        </Border>
     </Grid>
 </UserControl>

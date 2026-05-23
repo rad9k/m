@@ -238,6 +238,8 @@ namespace m0.UIWpf.Visualisers
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
+        public bool SelectionProphibited { get; set; }
+
         SimpleVisualiserWrapper Highlighted;
 
         public bool IsPaiting=false;
@@ -859,6 +861,9 @@ namespace m0.UIWpf.Visualisers
 
             if (e.ClickCount == 1) // change Selection
             {
+                if (SelectionProphibited)
+                    return;
+
                    KeyValuePair<IVertex, SimpleVisualiserWrapper> kvp =
                        GetVertexWrapperByEventSource(e.OriginalSource ?? e.Source);
 

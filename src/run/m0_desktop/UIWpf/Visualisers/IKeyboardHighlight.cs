@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using m0.Foundation;
 
 namespace m0.UIWpf.Visualisers
 {
@@ -22,6 +23,16 @@ namespace m0.UIWpf.Visualisers
         bool CanGoBeforeFirstPosition { get; }
 
         bool CanGoAfterLastPosition { get; }
+
+        IEdge KeyboardHighlightedEdge { get; }
+
+        void ClearKeyboardHighlight();
+
+        void MoveKeyboardHighlight(int positionDelta);
+
+        void ToggleKeyboardHighlightedEdgeSelection();
+
+        event EventHandler KeyboardHighlightEnterPressed;
 
         event EventHandler GoneBeforeFirstPosition;
 

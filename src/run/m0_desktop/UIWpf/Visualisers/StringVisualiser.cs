@@ -25,6 +25,8 @@ namespace m0.UIWpf.Visualisers
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }
 
+        public bool SelectionProphibited { get; set; }
+
         // TypedEdge START
 
         public StringVisualiser(IEdge _edge)

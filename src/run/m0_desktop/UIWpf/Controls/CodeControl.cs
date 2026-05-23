@@ -30,6 +30,12 @@ namespace m0.UIWpf.Controls
 
         public bool NoBackgroundWorkOnGenerate = false;
 
+        public bool HandleEnterAsSubmit = false;
+
+        public bool HandleEscapeAsParse = true;
+
+        public event EventHandler EnterSubmitted;
+
         public IVertex Vertex;
 
         public bool NoVertexForTextMemory = false;
@@ -333,7 +339,14 @@ namespace m0.UIWpf.Controls
         {
             Key effectiveKey = GetEffectiveKey(e);
 
-            if (effectiveKey == Key.Escape)
+            if (effectiveKey == Key.Enter && HandleEnterAsSubmit)
+            {
+                EnterSubmitted?.Invoke(this, EventArgs.Empty);
+                e.Handled = true;
+                return;
+            }
+
+            if (effectiveKey == Key.Escape && HandleEscapeAsParse)
             {
                 ExecuteParse();
                 e.Handled = true;
