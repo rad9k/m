@@ -295,28 +295,22 @@ namespace m0.UIWpf.Controls
         {
             if (ExternalBackgroundMode)
             {
+                Background = null;
+                contentPanel.Background = null;
+
                 if (IsHighlighted)
                 {
-                    Background = GetHighlightBrush();
-                    contentPanel.Background = GetHighlightBrush();
-
                     Brush highlightedForeground = IsKeyboardHighlightedSelected ? GetForegroundBrush() : GetHighlightForegroundBrush();
                     metaLabel.Foreground = highlightedForeground;
                     toLabel.Foreground = highlightedForeground;
                 }
                 else if (IsSelected)
                 {
-                    Background = GetForegroundBrush();
-                    contentPanel.Background = GetForegroundBrush();
-
                     metaLabel.Foreground = GetBackgroundBrush();
                     toLabel.Foreground = GetBackgroundBrush();
                 }
                 else
                 {
-                    Background = null;
-                    contentPanel.Background = null;
-
                     metaLabel.Foreground = GetMetaForegroundBrush();
                     toLabel.Foreground = GetForegroundBrush();
                 }

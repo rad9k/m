@@ -71,6 +71,7 @@ namespace m0.UIWpf.Visualisers
                     headerControl.IsSelected = value;
 
                 UpdateFullWidthVisualState();
+                InvalidateVisual();
             }
         }
 
@@ -89,7 +90,52 @@ namespace m0.UIWpf.Visualisers
                     headerControl.IsHighlighted = value;
 
                 UpdateFullWidthVisualState();
+                InvalidateVisual();
             }
+        }
+
+        protected override void OnRender(DrawingContext drawingContext)
+        {
+            base.OnRender(drawingContext);
+
+            if (ParentVisualiser == null || !ParentVisualiser.FullWidthSelectionHighlight)
+                return;
+
+            Brush backgroundBrush = null;
+
+            if (isKeyboardHighlighted)
+                backgroundBrush = (Brush)FindResource("0HighlightBrush");
+            else if (IsSelected)
+                backgroundBrush = (Brush)FindResource("0SelectionBrush");
+
+            if (backgroundBrush == null)
+                return;
+
+            FrameworkElement headerElement = Header as FrameworkElement;
+
+            if (headerElement == null)
+                return;
+
+            Point itemPositionInTree;
+            Point headerPositionInItem;
+
+            try
+            {
+                itemPositionInTree = TranslatePoint(new Point(0, 0), ParentVisualiser);
+                headerPositionInItem = headerElement.TranslatePoint(new Point(0, 0), this);
+            }
+            catch (InvalidOperationException)
+            {
+                return;
+            }
+
+            Rect backgroundRect = new Rect(
+                -itemPositionInTree.X,
+                headerPositionInItem.Y,
+                ParentVisualiser.ActualWidth,
+                headerElement.ActualHeight);
+
+            drawingContext.DrawRectangle(backgroundBrush, null, backgroundRect);
         }
 
         public override void OnApplyTemplate()
@@ -413,7 +459,21 @@ namespace m0.UIWpf.Visualisers
 
         private void UpdateFullWidthVisualState()
         {
-            if (ParentVisualiser == null || !ParentVisualiser.FullWidthSelectionHighlight)
+            if (ParentVisualiser == null)
+                return;
+
+            if (!ParentVisualiser.FullWidthSelectionHighlight)
+            {
+                MetaToEdgeControl normalHeaderControl = Header as MetaToEdgeControl;
+
+                if (normalHeaderControl != null)
+                    normalHeaderControl.ExternalBackgroundMode = false;
+
+                ClearValue(Control.BackgroundProperty);
+                return;
+            }
+
+            if (Header == null)
                 return;
 
             MetaToEdgeControl headerControl = Header as MetaToEdgeControl;
@@ -423,17 +483,13 @@ namespace m0.UIWpf.Visualisers
                 headerControl.ExternalBackgroundMode = true;
                 headerControl.IsKeyboardHighlightedSelected = IsSelected && isKeyboardHighlighted;
                 headerControl.HorizontalAlignment = HorizontalAlignment.Stretch;
-                headerControl.Width = Math.Max(0, ParentVisualiser.ActualWidth - 2);
+                headerControl.ClearValue(FrameworkElement.MarginProperty);
+                headerControl.ClearValue(FrameworkElement.WidthProperty);
             }
 
             HorizontalContentAlignment = HorizontalAlignment.Stretch;
-
-            if (isKeyboardHighlighted)
-                Background = (Brush)FindResource("0HighlightBrush");
-            else if (IsSelected)
-                Background = (Brush)FindResource("0SelectionBrush");
-            else
-                Background = (Brush)FindResource("0BackgroundBrush");
+            ClearValue(Control.BackgroundProperty);
+            InvalidateVisual();
         }
 
         public INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
@@ -538,7 +594,17 @@ namespace m0.UIWpf.Visualisers
 
         public bool SelectionProphibited { get; set; }
 
-        public bool FullWidthSelectionHighlight { get; set; }
+        private bool fullWidthSelectionHighlight;
+
+        public bool FullWidthSelectionHighlight
+        {
+            get { return fullWidthSelectionHighlight; }
+            set
+            {
+                fullWidthSelectionHighlight = value;
+                ApplyFullWidthSelectionHighlightToAllItems();
+            }
+        }
 
         private TreeVisualiserViewItem keyboardHighlightedItem;
         private bool isBeforeFirstKeyboardPosition;
@@ -1010,6 +1076,27 @@ namespace m0.UIWpf.Visualisers
                 ClearAllSelectedItems_Reccurent(i);            
         }
 
+        private void ApplyFullWidthSelectionHighlightToAllItems()
+        {
+            ApplyFullWidthSelectionHighlightToItems(Items);
+        }
+
+        private void ApplyFullWidthSelectionHighlightToItems(ItemCollection items)
+        {
+            foreach (object item in items)
+            {
+                TreeVisualiserViewItem treeItem = item as TreeVisualiserViewItem;
+
+                if (treeItem == null)
+                    continue;
+
+                treeItem.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+                treeItem.UpdateHeader();
+
+                ApplyFullWidthSelectionHighlightToItems(treeItem.Items);
+            }
+        }
+
         public void ClearKeyboardHighlight()
         {
             if (keyboardHighlightedItem != null)
@@ -1066,14 +1153,10 @@ namespace m0.UIWpf.Visualisers
             if (SelectionProphibited || keyboardHighlightedItem == null)
                 return;
 
-            bool isCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
             bool wasSelected = keyboardHighlightedItem.IsSelected;
 
-            if (!isCtrl)
-                ClearAllSelectedItems();
-
             keyboardHighlightedItem.IsSelected = !wasSelected;
-            UpdateSelectedVertices(isCtrl, keyboardHighlightedItem);
+            UpdateSelectedVertices(true, keyboardHighlightedItem);
         }
 
         public bool ActivateKeyboardHighlightItem(TreeVisualiserViewItem item)
@@ -1204,6 +1287,7 @@ namespace m0.UIWpf.Visualisers
             // DO NOT TRACK GRAPH CHANGE END
 
             i.ParentVisualiser = this;
+            i.HorizontalContentAlignment = HorizontalAlignment.Stretch;
 
             i.Tag = e;
 
