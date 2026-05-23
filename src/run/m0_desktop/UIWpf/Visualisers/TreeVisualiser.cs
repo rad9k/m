@@ -40,6 +40,7 @@ namespace m0.UIWpf.Visualisers
         private bool ignoreNextMouseLeftButtonUp;
         private bool isExpandCollapseAnimationInProgress;
         private ToggleButton expanderToggleButton;
+        private bool isKeyboardHighlighted;
 
         private void Select(bool IsCtrl)
         {
@@ -68,10 +69,28 @@ namespace m0.UIWpf.Visualisers
 
                 if (headerControl != null)
                     headerControl.IsSelected = value;
+
+                UpdateFullWidthVisualState();
             }
         }
 
         public TreeVisualiser ParentVisualiser {get; set;}
+
+        public bool IsKeyboardHighlighted
+        {
+            get { return isKeyboardHighlighted; }
+            set
+            {
+                isKeyboardHighlighted = value;
+
+                MetaToEdgeControl headerControl = Header as MetaToEdgeControl;
+
+                if (headerControl != null)
+                    headerControl.IsHighlighted = value;
+
+                UpdateFullWidthVisualState();
+            }
+        }
 
         public override void OnApplyTemplate()
         {
@@ -374,6 +393,7 @@ namespace m0.UIWpf.Visualisers
             headerControl.BaseEdge = GetEdge();
             headerControl.RefreshVisuals();
             headerControl.IsSelected = wasSelected;
+            UpdateFullWidthVisualState();
         }
 
         private void HeaderControlMouseEnter(object sender, MouseEventArgs e)
@@ -388,10 +408,32 @@ namespace m0.UIWpf.Visualisers
 
         public void SetHeaderHighlight(bool isHighlighted)
         {
+            IsKeyboardHighlighted = isHighlighted;
+        }
+
+        private void UpdateFullWidthVisualState()
+        {
+            if (ParentVisualiser == null || !ParentVisualiser.FullWidthSelectionHighlight)
+                return;
+
             MetaToEdgeControl headerControl = Header as MetaToEdgeControl;
 
             if (headerControl != null)
-                headerControl.IsHighlighted = isHighlighted;
+            {
+                headerControl.ExternalBackgroundMode = true;
+                headerControl.IsKeyboardHighlightedSelected = IsSelected && isKeyboardHighlighted;
+                headerControl.HorizontalAlignment = HorizontalAlignment.Stretch;
+                headerControl.Width = Math.Max(0, ParentVisualiser.ActualWidth - 2);
+            }
+
+            HorizontalContentAlignment = HorizontalAlignment.Stretch;
+
+            if (isKeyboardHighlighted)
+                Background = (Brush)FindResource("0HighlightBrush");
+            else if (IsSelected)
+                Background = (Brush)FindResource("0SelectionBrush");
+            else
+                Background = (Brush)FindResource("0BackgroundBrush");
         }
 
         public INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
@@ -495,6 +537,8 @@ namespace m0.UIWpf.Visualisers
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
         public bool SelectionProphibited { get; set; }
+
+        public bool FullWidthSelectionHighlight { get; set; }
 
         private TreeVisualiserViewItem keyboardHighlightedItem;
         private bool isBeforeFirstKeyboardPosition;
@@ -969,7 +1013,7 @@ namespace m0.UIWpf.Visualisers
         public void ClearKeyboardHighlight()
         {
             if (keyboardHighlightedItem != null)
-                keyboardHighlightedItem.SetHeaderHighlight(false);
+                keyboardHighlightedItem.IsKeyboardHighlighted = false;
 
             keyboardHighlightedItem = null;
             isBeforeFirstKeyboardPosition = false;
@@ -1070,7 +1114,7 @@ namespace m0.UIWpf.Visualisers
             keyboardHighlightedItem = item;
             isBeforeFirstKeyboardPosition = false;
             isAfterLastKeyboardPosition = false;
-            keyboardHighlightedItem.SetHeaderHighlight(true);
+            keyboardHighlightedItem.IsKeyboardHighlighted = true;
             keyboardHighlightedItem.BringIntoView();
         }
 

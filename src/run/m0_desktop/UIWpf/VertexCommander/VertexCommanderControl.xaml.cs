@@ -219,6 +219,8 @@ namespace m0.UIWpf.VertexCommander
                 RecreateRightOutEdgesVisualiser();
             }
 
+            SetKeyboardHighlightAfterBaseEdgeChange(pane);
+
             object dragSource = e.Data.GetData("DragSource");
 
             if (dragSource is IHasSelectableEdges selectableEdges)
@@ -296,6 +298,7 @@ namespace m0.UIWpf.VertexCommander
             GraphUtil.ReplaceEdge(LeftBaseEdge, "To", baseEdgeTo);
             RecreateLeftInEdgesVisualiser();
             RecreateLeftOutEdgesVisualiser();
+            SetKeyboardHighlightAfterBaseEdgeChange(KeyboardHighlightPane.Left);
         }
 
         private void RightQueryStringCodeControl_EnterSubmitted(object sender, System.EventArgs e)
@@ -308,6 +311,7 @@ namespace m0.UIWpf.VertexCommander
             GraphUtil.ReplaceEdge(RightBaseEdge, "To", baseEdgeTo);
             RecreateRightInEdgesVisualiser();
             RecreateRightOutEdgesVisualiser();
+            SetKeyboardHighlightAfterBaseEdgeChange(KeyboardHighlightPane.Right);
         }
 
         private void SetVisualiserSelectors()
@@ -483,6 +487,13 @@ namespace m0.UIWpf.VertexCommander
         {
             currentKeyboardHighlightPane = KeyboardHighlightPane.Left;
             SetFirstAvailableKeyboardHighlight(KeyboardHighlightPane.Left);
+        }
+
+        private void SetKeyboardHighlightAfterBaseEdgeChange(KeyboardHighlightPane pane)
+        {
+            Dispatcher.BeginInvoke(
+                new Action(() => SetFirstAvailableKeyboardHighlight(pane)),
+                System.Windows.Threading.DispatcherPriority.Loaded);
         }
 
         private void SetFirstAvailableKeyboardHighlight(KeyboardHighlightPane pane)
@@ -928,6 +939,7 @@ namespace m0.UIWpf.VertexCommander
                 if (visualiserAsVisualiser != null)
                 {
                     visualiserAsVisualiser.SelectionProphibited = isInEdgesVisualiser;
+                    ConfigureVertexCommanderVisualiser(visualiser);
                     ConfigureEdgesVisibility(visualiserAsVisualiser, isInEdgesVisualiser);
 
                     if (baseVertex != null)
@@ -979,6 +991,14 @@ namespace m0.UIWpf.VertexCommander
 
             if (showInEdges != null)
                 showInEdges.Value = isInEdgesVisualiser ? "True" : "False";
+        }
+
+        private static void ConfigureVertexCommanderVisualiser(IPlatformClass visualiser)
+        {
+            TreeVisualiser treeVisualiser = visualiser as TreeVisualiser;
+
+            if (treeVisualiser != null)
+                treeVisualiser.FullWidthSelectionHighlight = true;
         }
 
         private static void SetKeyboardHighlight(
