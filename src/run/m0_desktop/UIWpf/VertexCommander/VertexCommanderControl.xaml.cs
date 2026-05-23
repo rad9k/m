@@ -157,14 +157,29 @@ namespace m0.UIWpf.VertexCommander
         {
             SetupCodeControlDropTarget(LeftQueryStringCodeControlHost, LeftQueryStringCodeControl_Drop);
             SetupCodeControlDropTarget(LeftQueryStringCodeControl, LeftQueryStringCodeControl_Drop);
+            SetupCodeControlDropTarget(LeftQueryStringCodeControl.editor, LeftQueryStringCodeControl_Drop);
+            SetupCodeControlDropTarget(LeftQueryStringCodeControl.editor.TextArea, LeftQueryStringCodeControl_Drop);
             SetupCodeControlDropTarget(RightQueryStringCodeControlHost, RightQueryStringCodeControl_Drop);
             SetupCodeControlDropTarget(RightQueryStringCodeControl, RightQueryStringCodeControl_Drop);
+            SetupCodeControlDropTarget(RightQueryStringCodeControl.editor, RightQueryStringCodeControl_Drop);
+            SetupCodeControlDropTarget(RightQueryStringCodeControl.editor.TextArea, RightQueryStringCodeControl_Drop);
         }
 
         private static void SetupCodeControlDropTarget(UIElement element, DragEventHandler dropHandler)
         {
             element.AllowDrop = true;
+            element.AddHandler(UIElement.PreviewDragOverEvent, new DragEventHandler(CodeControl_PreviewDragOver), true);
+            element.AddHandler(UIElement.PreviewDropEvent, dropHandler, true);
             element.Drop += dropHandler;
+        }
+
+        private static void CodeControl_PreviewDragOver(object sender, DragEventArgs e)
+        {
+            if (GetDroppedEdge(e) == null)
+                return;
+
+            e.Effects = DragDropEffects.Copy;
+            e.Handled = true;
         }
 
         private void LeftQueryStringCodeControl_Drop(object sender, DragEventArgs e)
@@ -179,6 +194,9 @@ namespace m0.UIWpf.VertexCommander
 
         private void HandleCodeControlDrop(KeyboardHighlightPane pane, DragEventArgs e)
         {
+            if (e.Handled)
+                return;
+
             IEdge droppedEdge = GetDroppedEdge(e);
 
             if (droppedEdge == null)
@@ -971,7 +989,7 @@ namespace m0.UIWpf.VertexCommander
 
             keyboardHighlight.GoneBeforeFirstPosition += goneBeforeFirstPositionHandler;
             keyboardHighlight.GoneAfterLastPosition += goneAfterLastPositionHandler;
-            keyboardHighlight.KeyboardHighlightEnterPressed += keyboardHighlightEnterPressedHandler;
+            keyboardHighlight.KeyboardHighlightActivated += keyboardHighlightEnterPressedHandler;
         }
 
         private static void DisposeVisualiser(
@@ -987,7 +1005,7 @@ namespace m0.UIWpf.VertexCommander
             {
                 keyboardHighlight.GoneBeforeFirstPosition -= goneBeforeFirstPositionHandler;
                 keyboardHighlight.GoneAfterLastPosition -= goneAfterLastPositionHandler;
-                keyboardHighlight.KeyboardHighlightEnterPressed -= keyboardHighlightEnterPressedHandler;
+                keyboardHighlight.KeyboardHighlightActivated -= keyboardHighlightEnterPressedHandler;
                 keyboardHighlight = null;
             }
 

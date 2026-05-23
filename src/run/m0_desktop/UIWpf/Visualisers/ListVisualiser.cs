@@ -110,6 +110,7 @@ namespace m0.UIWpf.Visualisers
 
                 ThisDataGrid.SelectionChanged += _OnSelectionChanged;
                 ThisDataGrid.PreviewKeyDown += OnKeyboardHighlightPreviewKeyDown;
+                ThisDataGrid.MouseDoubleClick += OnKeyboardHighlightMouseDoubleClick;
             }
         }        
 
@@ -163,6 +164,8 @@ namespace m0.UIWpf.Visualisers
         public event EventHandler GoneAfterLastPosition;
 
         public event EventHandler KeyboardHighlightEnterPressed;
+
+        public event EventHandler KeyboardHighlightActivated;
 
         public IEdge KeyboardHighlightedEdge
         {
@@ -597,11 +600,44 @@ namespace m0.UIWpf.Visualisers
 
         private void RaiseKeyboardHighlightEnterPressed()
         {
-            if (KeyboardHighlightedEdge == null)
-                return;
+            RaiseKeyboardHighlightActivated();
 
             if (KeyboardHighlightEnterPressed != null)
                 KeyboardHighlightEnterPressed(this, EventArgs.Empty);
+        }
+
+        private void RaiseKeyboardHighlightActivated()
+        {
+            if (KeyboardHighlightedEdge == null)
+                return;
+
+            if (KeyboardHighlightActivated != null)
+                KeyboardHighlightActivated(this, EventArgs.Empty);
+        }
+
+        private void OnKeyboardHighlightMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            DataGridRow row = GetDataGridRowFromEventSource(e.OriginalSource as DependencyObject);
+
+            if (row == null)
+                return;
+
+            int position = ThisDataGrid.Items.IndexOf(row.Item);
+
+            if (position < 0)
+                return;
+
+            SetKeyboardHighlightPosition(position);
+            RaiseKeyboardHighlightActivated();
+            e.Handled = true;
+        }
+
+        private DataGridRow GetDataGridRowFromEventSource(DependencyObject dependencyObject)
+        {
+            while (dependencyObject != null && !(dependencyObject is DataGridRow))
+                dependencyObject = VisualTreeHelper.GetParent(dependencyObject);
+
+            return dependencyObject as DataGridRow;
         }
 
         private bool IsKeyboardHighlightedEdgeSelected()

@@ -32,6 +32,8 @@ namespace m0.UIWpf.Visualisers
 
         void ToggleKeyboardHighlightedEdgeSelection();
 
+        event EventHandler KeyboardHighlightActivated;
+
         event EventHandler KeyboardHighlightEnterPressed;
 
         event EventHandler GoneBeforeFirstPosition;
