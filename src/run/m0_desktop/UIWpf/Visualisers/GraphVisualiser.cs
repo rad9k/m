@@ -232,7 +232,7 @@ namespace m0.UIWpf.Visualisers
         }        
     }
 
-    public class GraphVisualiser: Canvas, IListVisualiser, IHasSelectableEdges, ITypedEdge
+    public class GraphVisualiser: Canvas, IListVisualiser, IHasSelectableEdges, ITypedEdge, IKeyboardHighlight
     {
         public event Notify SelectedEdgesChange;
 
@@ -241,6 +241,9 @@ namespace m0.UIWpf.Visualisers
         public bool SelectionProphibited { get; set; }
 
         SimpleVisualiserWrapper Highlighted;
+        private IVertex keyboardHighlightedVertex;
+        private bool isBeforeFirstKeyboardPosition;
+        private bool isAfterLastKeyboardPosition;
 
         public bool IsPaiting=false;
 
@@ -252,6 +255,67 @@ namespace m0.UIWpf.Visualisers
         public string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
         public void ViewAttributesUpdated() { }
+
+        public int CurrentHighlightPosition
+        {
+            get
+            {
+                List<IVertex> vertices = GetKeyboardHighlightVertices();
+
+                if (keyboardHighlightedVertex == null)
+                    return -1;
+
+                return vertices.IndexOf(keyboardHighlightedVertex);
+            }
+        }
+
+        public bool IsBeforeFirstPosition { get { return isBeforeFirstKeyboardPosition; } }
+
+        public bool IsAfterLastPosition { get { return isAfterLastKeyboardPosition; } }
+
+        public bool IsFirstPosition
+        {
+            get { return CurrentHighlightPosition == 0 && !isBeforeFirstKeyboardPosition && !isAfterLastKeyboardPosition; }
+            set { if (value) SetKeyboardHighlightToFirst(); }
+        }
+
+        public bool IsLastPosition
+        {
+            get
+            {
+                List<IVertex> vertices = GetKeyboardHighlightVertices();
+                return vertices.Count > 0 && CurrentHighlightPosition == vertices.Count - 1 && !isBeforeFirstKeyboardPosition && !isAfterLastKeyboardPosition;
+            }
+            set { if (value) SetKeyboardHighlightToLast(); }
+        }
+
+        public bool CanGoBeforeFirstPosition { get { return true; } }
+
+        public bool CanGoAfterLastPosition { get { return true; } }
+
+        public IEdge KeyboardHighlightedEdge
+        {
+            get
+            {
+                if (keyboardHighlightedVertex == null)
+                    return null;
+
+                IEdge firstInEdge = keyboardHighlightedVertex.InEdgesRaw.FirstOrDefault();
+
+                if (firstInEdge != null)
+                    return firstInEdge;
+
+                return new EasyEdge(null, null, keyboardHighlightedVertex);
+            }
+        }
+
+        public event EventHandler KeyboardHighlightActivated;
+
+        public event EventHandler KeyboardHighlightEnterPressed;
+
+        public event EventHandler GoneBeforeFirstPosition;
+
+        public event EventHandler GoneAfterLastPosition;
 
         // TypedEdge START
 
@@ -843,13 +907,22 @@ namespace m0.UIWpf.Visualisers
         {
             if (e.ClickCount == 2) // switch to another BaseVertex
             {
-                RestoreSelectedVertices();
-
                 KeyValuePair<IVertex, SimpleVisualiserWrapper> kvp =
                     GetVertexWrapperByEventSource(e.OriginalSource ?? e.Source);
 
                 if (kvp.Key != null)
                 {
+                    SetKeyboardHighlightVertex(kvp.Key);
+
+                    if (KeyboardHighlightActivated != null)
+                    {
+                        RaiseKeyboardHighlightActivated();
+                        e.Handled = true;
+                        return;
+                    }
+
+                    RestoreSelectedVertices();
+
                     GraphUtil.ReplaceEdge(Vertex.Get(false, "BaseEdge:"), "To", kvp.Key);
 
                     IVertex updatedBaseTo = Vertex.Get(false, @"BaseEdge:\To:");
@@ -924,6 +997,207 @@ namespace m0.UIWpf.Visualisers
         protected override void OnMouseUp(MouseButtonEventArgs e)
         {
             base.OnMouseUp(e);
+        }
+
+        public void ClearKeyboardHighlight()
+        {
+            if (keyboardHighlightedVertex == null)
+                return;
+
+            if (DisplayedVerticesUIElements != null && DisplayedVerticesUIElements.ContainsKey(keyboardHighlightedVertex))
+                DisplayedVerticesUIElements[keyboardHighlightedVertex].UnhighlightThis();
+
+            keyboardHighlightedVertex = null;
+            isBeforeFirstKeyboardPosition = false;
+            isAfterLastKeyboardPosition = false;
+        }
+
+        public void MoveKeyboardHighlight(int positionDelta)
+        {
+            List<IVertex> vertices = GetKeyboardHighlightVertices();
+
+            if (vertices.Count == 0)
+            {
+                if (positionDelta < 0)
+                    GoBeforeFirstKeyboardHighlightPosition();
+                else
+                    GoAfterLastKeyboardHighlightPosition();
+
+                return;
+            }
+
+            int currentIndex = CurrentHighlightPosition;
+
+            if (currentIndex < 0)
+                currentIndex = positionDelta < 0 ? vertices.Count : -1;
+
+            int newIndex = currentIndex + positionDelta;
+
+            if (newIndex < 0)
+                GoBeforeFirstKeyboardHighlightPosition();
+            else if (newIndex >= vertices.Count)
+                GoAfterLastKeyboardHighlightPosition();
+            else
+                SetKeyboardHighlightVertex(vertices[newIndex]);
+        }
+
+        public void MoveKeyboardHighlight(KeyboardHighlightMoveDirection direction)
+        {
+            if (direction == KeyboardHighlightMoveDirection.Up || direction == KeyboardHighlightMoveDirection.Down)
+                MoveKeyboardHighlight(direction == KeyboardHighlightMoveDirection.Up ? -1 : 1);
+            else
+                MoveKeyboardHighlightDirectional(direction);
+        }
+
+        public void ToggleKeyboardHighlightedEdgeSelection()
+        {
+            if (SelectionProphibited || keyboardHighlightedVertex == null)
+                return;
+
+            IVertex sv = Vertex.Get(false, "SelectedEdges:");
+            IEdge selectedEdge = EdgeHelper.FindEdgeVertexByToVertex(sv, keyboardHighlightedVertex);
+
+            Interaction.BeginInteractionWithGraph();
+
+            if (selectedEdge != null)
+                sv.DeleteEdge(selectedEdge);
+            else
+                EdgeHelper.AddEdgeVertexByToVertex(sv, keyboardHighlightedVertex);
+
+            Interaction.EndInteractionWithGraph();
+            SelectedVerticesUpdated();
+        }
+
+        private void SetKeyboardHighlightToFirst()
+        {
+            List<IVertex> vertices = GetKeyboardHighlightVertices();
+
+            if (vertices.Count == 0)
+                GoAfterLastKeyboardHighlightPosition();
+            else
+                SetKeyboardHighlightVertex(vertices[0]);
+        }
+
+        private void SetKeyboardHighlightToLast()
+        {
+            List<IVertex> vertices = GetKeyboardHighlightVertices();
+
+            if (vertices.Count == 0)
+                GoBeforeFirstKeyboardHighlightPosition();
+            else
+                SetKeyboardHighlightVertex(vertices[vertices.Count - 1]);
+        }
+
+        private void SetKeyboardHighlightVertex(IVertex vertex)
+        {
+            ClearKeyboardHighlight();
+
+            if (vertex == null || DisplayedVerticesUIElements == null || !DisplayedVerticesUIElements.ContainsKey(vertex))
+                return;
+
+            keyboardHighlightedVertex = vertex;
+            isBeforeFirstKeyboardPosition = false;
+            isAfterLastKeyboardPosition = false;
+            DisplayedVerticesUIElements[vertex].HighlightThis();
+            DisplayedVerticesUIElements[vertex].BringIntoView();
+        }
+
+        private void GoBeforeFirstKeyboardHighlightPosition()
+        {
+            ClearKeyboardHighlight();
+            isBeforeFirstKeyboardPosition = true;
+
+            if (GoneBeforeFirstPosition != null)
+                GoneBeforeFirstPosition(this, EventArgs.Empty);
+        }
+
+        private void GoAfterLastKeyboardHighlightPosition()
+        {
+            ClearKeyboardHighlight();
+            isAfterLastKeyboardPosition = true;
+
+            if (GoneAfterLastPosition != null)
+                GoneAfterLastPosition(this, EventArgs.Empty);
+        }
+
+        private List<IVertex> GetKeyboardHighlightVertices()
+        {
+            if (DisplayedVerticesUIElements == null)
+                return new List<IVertex>();
+
+            return DisplayedVerticesUIElements
+                .Where(x => x.Key != null && x.Value != null && x.Value.Child != null)
+                .OrderBy(x => Canvas.GetTop(x.Value))
+                .ThenBy(x => Canvas.GetLeft(x.Value))
+                .Select(x => x.Key)
+                .ToList();
+        }
+
+        private void MoveKeyboardHighlightDirectional(KeyboardHighlightMoveDirection direction)
+        {
+            if (keyboardHighlightedVertex == null)
+            {
+                SetKeyboardHighlightToFirst();
+                return;
+            }
+
+            if (DisplayedVerticesUIElements == null || !DisplayedVerticesUIElements.ContainsKey(keyboardHighlightedVertex))
+                return;
+
+            SimpleVisualiserWrapper currentWrapper = DisplayedVerticesUIElements[keyboardHighlightedVertex];
+            Point current = GetWrapperCenter(currentWrapper);
+            IVertex bestVertex = null;
+            double bestScore = double.MaxValue;
+
+            foreach (KeyValuePair<IVertex, SimpleVisualiserWrapper> item in DisplayedVerticesUIElements)
+            {
+                if (item.Key == null || item.Key == keyboardHighlightedVertex || item.Value == null || item.Value.Child == null)
+                    continue;
+
+                Point candidate = GetWrapperCenter(item.Value);
+                double dx = candidate.X - current.X;
+                double dy = candidate.Y - current.Y;
+
+                if (!IsCandidateInDirection(direction, dx, dy))
+                    continue;
+
+                double score = (dx * dx) + (dy * dy);
+
+                if (score < bestScore)
+                {
+                    bestScore = score;
+                    bestVertex = item.Key;
+                }
+            }
+
+            if (bestVertex != null)
+                SetKeyboardHighlightVertex(bestVertex);
+        }
+
+        private static bool IsCandidateInDirection(KeyboardHighlightMoveDirection direction, double dx, double dy)
+        {
+            if (direction == KeyboardHighlightMoveDirection.Left)
+                return dx < 0 && Math.Abs(dx) >= Math.Abs(dy) * 0.35;
+
+            if (direction == KeyboardHighlightMoveDirection.Right)
+                return dx > 0 && Math.Abs(dx) >= Math.Abs(dy) * 0.35;
+
+            if (direction == KeyboardHighlightMoveDirection.Up)
+                return dy < 0 && Math.Abs(dy) >= Math.Abs(dx) * 0.35;
+
+            return dy > 0 && Math.Abs(dy) >= Math.Abs(dx) * 0.35;
+        }
+
+        private void RaiseKeyboardHighlightActivated()
+        {
+            if (KeyboardHighlightedEdge == null)
+                return;
+
+            if (KeyboardHighlightActivated != null)
+                KeyboardHighlightActivated(this, EventArgs.Empty);
+
+            if (KeyboardHighlightEnterPressed != null)
+                KeyboardHighlightEnterPressed(this, EventArgs.Empty);
         }
 
         protected void UnselectAllSelected()

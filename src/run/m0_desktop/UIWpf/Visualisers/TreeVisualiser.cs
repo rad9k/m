@@ -119,7 +119,15 @@ namespace m0.UIWpf.Visualisers
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
             if (e.ClickCount == 2)
-                BaseCommands.OpenDefaultVisualiser(EdgeHelper.CreateTempEdgeVertex(GetEdge()), false);            
+            {
+                if (ParentVisualiser.ActivateKeyboardHighlightItem(this))
+                {
+                    e.Handled = true;
+                    return;
+                }
+
+                BaseCommands.OpenDefaultVisualiser(EdgeHelper.CreateTempEdgeVertex(GetEdge()), false);
+            }
         }
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs a)
@@ -378,7 +386,7 @@ namespace m0.UIWpf.Visualisers
             SetHeaderHighlight(false);
         }
 
-        private void SetHeaderHighlight(bool isHighlighted)
+        public void SetHeaderHighlight(bool isHighlighted)
         {
             MetaToEdgeControl headerControl = Header as MetaToEdgeControl;
 
@@ -480,13 +488,17 @@ namespace m0.UIWpf.Visualisers
         }
     }
 
-    public class TreeVisualiser: TreeView, IListVisualiser, IHasSelectableEdges, ITypedEdge
+    public class TreeVisualiser: TreeView, IListVisualiser, IHasSelectableEdges, ITypedEdge, IKeyboardHighlight
     {
         public event Notify SelectedEdgesChange;
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
         public bool SelectionProphibited { get; set; }
+
+        private TreeVisualiserViewItem keyboardHighlightedItem;
+        private bool isBeforeFirstKeyboardPosition;
+        private bool isAfterLastKeyboardPosition;
 
 
         protected bool TurnOffSelectedItemsUpdate = false;
@@ -503,6 +515,62 @@ namespace m0.UIWpf.Visualisers
         public string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
         public void ViewAttributesUpdated() { }
+
+        public int CurrentHighlightPosition
+        {
+            get
+            {
+                List<TreeVisualiserViewItem> items = GetKeyboardHighlightItems();
+
+                if (keyboardHighlightedItem == null)
+                    return -1;
+
+                return items.IndexOf(keyboardHighlightedItem);
+            }
+        }
+
+        public bool IsBeforeFirstPosition { get { return isBeforeFirstKeyboardPosition; } }
+
+        public bool IsAfterLastPosition { get { return isAfterLastKeyboardPosition; } }
+
+        public bool IsFirstPosition
+        {
+            get { return CurrentHighlightPosition == 0 && !isBeforeFirstKeyboardPosition && !isAfterLastKeyboardPosition; }
+            set { if (value) SetKeyboardHighlightToFirst(); }
+        }
+
+        public bool IsLastPosition
+        {
+            get
+            {
+                List<TreeVisualiserViewItem> items = GetKeyboardHighlightItems();
+                return items.Count > 0 && CurrentHighlightPosition == items.Count - 1 && !isBeforeFirstKeyboardPosition && !isAfterLastKeyboardPosition;
+            }
+            set { if (value) SetKeyboardHighlightToLast(); }
+        }
+
+        public bool CanGoBeforeFirstPosition { get { return true; } }
+
+        public bool CanGoAfterLastPosition { get { return true; } }
+
+        public IEdge KeyboardHighlightedEdge
+        {
+            get
+            {
+                if (keyboardHighlightedItem == null)
+                    return null;
+
+                return keyboardHighlightedItem.Tag as IEdge;
+            }
+        }
+
+        public event EventHandler KeyboardHighlightActivated;
+
+        public event EventHandler KeyboardHighlightEnterPressed;
+
+        public event EventHandler GoneBeforeFirstPosition;
+
+        public event EventHandler GoneAfterLastPosition;
 
         public bool ShowIcons
         {
@@ -896,6 +964,169 @@ namespace m0.UIWpf.Visualisers
         {            
             foreach (TreeViewItem i in Items)
                 ClearAllSelectedItems_Reccurent(i);            
+        }
+
+        public void ClearKeyboardHighlight()
+        {
+            if (keyboardHighlightedItem != null)
+                keyboardHighlightedItem.SetHeaderHighlight(false);
+
+            keyboardHighlightedItem = null;
+            isBeforeFirstKeyboardPosition = false;
+            isAfterLastKeyboardPosition = false;
+        }
+
+        public void MoveKeyboardHighlight(int positionDelta)
+        {
+            List<TreeVisualiserViewItem> items = GetKeyboardHighlightItems();
+
+            if (items.Count == 0)
+            {
+                if (positionDelta < 0)
+                    GoBeforeFirstKeyboardHighlightPosition();
+                else
+                    GoAfterLastKeyboardHighlightPosition();
+
+                return;
+            }
+
+            int currentIndex = CurrentHighlightPosition;
+
+            if (currentIndex < 0)
+                currentIndex = positionDelta < 0 ? items.Count : -1;
+
+            int newIndex = currentIndex + positionDelta;
+
+            if (newIndex < 0)
+                GoBeforeFirstKeyboardHighlightPosition();
+            else if (newIndex >= items.Count)
+                GoAfterLastKeyboardHighlightPosition();
+            else
+                SetKeyboardHighlightItem(items[newIndex]);
+        }
+
+        public void MoveKeyboardHighlight(KeyboardHighlightMoveDirection direction)
+        {
+            if (direction == KeyboardHighlightMoveDirection.Up)
+                MoveKeyboardHighlight(-1);
+            else if (direction == KeyboardHighlightMoveDirection.Down)
+                MoveKeyboardHighlight(1);
+            else if (direction == KeyboardHighlightMoveDirection.Left && keyboardHighlightedItem != null)
+                keyboardHighlightedItem.IsExpanded = false;
+            else if (direction == KeyboardHighlightMoveDirection.Right && keyboardHighlightedItem != null)
+                keyboardHighlightedItem.IsExpanded = true;
+        }
+
+        public void ToggleKeyboardHighlightedEdgeSelection()
+        {
+            if (SelectionProphibited || keyboardHighlightedItem == null)
+                return;
+
+            bool isCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+            bool wasSelected = keyboardHighlightedItem.IsSelected;
+
+            if (!isCtrl)
+                ClearAllSelectedItems();
+
+            keyboardHighlightedItem.IsSelected = !wasSelected;
+            UpdateSelectedVertices(isCtrl, keyboardHighlightedItem);
+        }
+
+        public bool ActivateKeyboardHighlightItem(TreeVisualiserViewItem item)
+        {
+            if (item == null)
+                return false;
+
+            SetKeyboardHighlightItem(item);
+            RaiseKeyboardHighlightActivated();
+
+            return KeyboardHighlightActivated != null;
+        }
+
+        private void SetKeyboardHighlightToFirst()
+        {
+            List<TreeVisualiserViewItem> items = GetKeyboardHighlightItems();
+
+            if (items.Count == 0)
+                GoAfterLastKeyboardHighlightPosition();
+            else
+                SetKeyboardHighlightItem(items[0]);
+        }
+
+        private void SetKeyboardHighlightToLast()
+        {
+            List<TreeVisualiserViewItem> items = GetKeyboardHighlightItems();
+
+            if (items.Count == 0)
+                GoBeforeFirstKeyboardHighlightPosition();
+            else
+                SetKeyboardHighlightItem(items[items.Count - 1]);
+        }
+
+        private void SetKeyboardHighlightItem(TreeVisualiserViewItem item)
+        {
+            ClearKeyboardHighlight();
+
+            keyboardHighlightedItem = item;
+            isBeforeFirstKeyboardPosition = false;
+            isAfterLastKeyboardPosition = false;
+            keyboardHighlightedItem.SetHeaderHighlight(true);
+            keyboardHighlightedItem.BringIntoView();
+        }
+
+        private void GoBeforeFirstKeyboardHighlightPosition()
+        {
+            ClearKeyboardHighlight();
+            isBeforeFirstKeyboardPosition = true;
+
+            if (GoneBeforeFirstPosition != null)
+                GoneBeforeFirstPosition(this, EventArgs.Empty);
+        }
+
+        private void GoAfterLastKeyboardHighlightPosition()
+        {
+            ClearKeyboardHighlight();
+            isAfterLastKeyboardPosition = true;
+
+            if (GoneAfterLastPosition != null)
+                GoneAfterLastPosition(this, EventArgs.Empty);
+        }
+
+        private List<TreeVisualiserViewItem> GetKeyboardHighlightItems()
+        {
+            List<TreeVisualiserViewItem> result = new List<TreeVisualiserViewItem>();
+
+            AddKeyboardHighlightItems(Items, result);
+
+            return result;
+        }
+
+        private void AddKeyboardHighlightItems(ItemCollection items, IList<TreeVisualiserViewItem> result)
+        {
+            foreach (object item in items)
+            {
+                TreeVisualiserViewItem treeItem = item as TreeVisualiserViewItem;
+
+                if (treeItem == null)
+                    continue;
+
+                result.Add(treeItem);
+
+                if (treeItem.IsExpanded)
+                    AddKeyboardHighlightItems(treeItem.Items, result);
+            }
+        }
+
+        private void RaiseKeyboardHighlightActivated()
+        {
+            if (KeyboardHighlightedEdge == null)
+                return;
+
+            if (KeyboardHighlightActivated != null)
+                KeyboardHighlightActivated(this, EventArgs.Empty);
+
+            if (KeyboardHighlightEnterPressed != null)
+                KeyboardHighlightEnterPressed(this, EventArgs.Empty);
         }
 
         private void ClearAllSelectedItems_Reccurent(TreeViewItem i)

@@ -366,6 +366,8 @@ namespace m0.UIWpf.VertexCommander
 
             if (e.Key != System.Windows.Input.Key.Up
                 && e.Key != System.Windows.Input.Key.Down
+                && e.Key != System.Windows.Input.Key.Left
+                && e.Key != System.Windows.Input.Key.Right
                 && e.Key != System.Windows.Input.Key.Space
                 && e.Key != System.Windows.Input.Key.Enter)
                 return;
@@ -378,9 +380,13 @@ namespace m0.UIWpf.VertexCommander
                 return;
 
             if (e.Key == System.Windows.Input.Key.Up)
-                keyboardHighlight.MoveKeyboardHighlight(-1);
+                keyboardHighlight.MoveKeyboardHighlight(KeyboardHighlightMoveDirection.Up);
             else if (e.Key == System.Windows.Input.Key.Down)
-                keyboardHighlight.MoveKeyboardHighlight(1);
+                keyboardHighlight.MoveKeyboardHighlight(KeyboardHighlightMoveDirection.Down);
+            else if (e.Key == System.Windows.Input.Key.Left)
+                keyboardHighlight.MoveKeyboardHighlight(KeyboardHighlightMoveDirection.Left);
+            else if (e.Key == System.Windows.Input.Key.Right)
+                keyboardHighlight.MoveKeyboardHighlight(KeyboardHighlightMoveDirection.Right);
             else if (e.Key == System.Windows.Input.Key.Space)
                 keyboardHighlight.ToggleKeyboardHighlightedEdgeSelection();
             else

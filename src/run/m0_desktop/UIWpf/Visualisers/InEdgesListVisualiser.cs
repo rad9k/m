@@ -287,6 +287,14 @@ namespace m0.UIWpf.Visualisers
                 SetKeyboardHighlightPosition(newPosition);
         }
 
+        public void MoveKeyboardHighlight(KeyboardHighlightMoveDirection direction)
+        {
+            if (direction == KeyboardHighlightMoveDirection.Up)
+                MoveKeyboardHighlight(-1);
+            else if (direction == KeyboardHighlightMoveDirection.Down)
+                MoveKeyboardHighlight(1);
+        }
+
         private void SetKeyboardHighlightPosition(int position)
         {
             ClearKeyboardHighlight();
