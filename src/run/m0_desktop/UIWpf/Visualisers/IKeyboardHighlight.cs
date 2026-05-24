@@ -32,6 +32,8 @@ namespace m0.UIWpf.Visualisers
 
         bool CanGoAfterLastPosition { get; }
 
+        bool HasKeyboardHighlightItems { get; }
+
         IEdge KeyboardHighlightedEdge { get; }
 
         void ClearKeyboardHighlight();

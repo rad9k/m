@@ -729,6 +729,11 @@ namespace m0.UIWpf.Visualisers
 
         public bool CanGoAfterLastPosition { get { return true; } }
 
+        public bool HasKeyboardHighlightItems
+        {
+            get { return GetKeyboardHighlightNodes().Count > 0; }
+        }
+
         public IEdge KeyboardHighlightedEdge
         {
             get

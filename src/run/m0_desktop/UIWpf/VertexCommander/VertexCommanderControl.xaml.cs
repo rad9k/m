@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 
 namespace m0.UIWpf.VertexCommander
@@ -355,6 +356,9 @@ namespace m0.UIWpf.VertexCommander
 
         private void VertexCommanderControl_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
+            if (IsQueryCodeControlKeyboardEvent(e))
+                return;
+
             if (e.Key == System.Windows.Input.Key.Tab)
             {
                 e.Handled = true;
@@ -395,6 +399,37 @@ namespace m0.UIWpf.VertexCommander
                 keyboardHighlight.ToggleKeyboardHighlightedEdgeSelection();
             else
                 HandleKeyboardHighlightEnter(currentKeyboardHighlightPane, currentKeyboardHighlightSection, keyboardHighlight.KeyboardHighlightedEdge);
+        }
+
+        private bool IsQueryCodeControlKeyboardEvent(System.Windows.Input.KeyEventArgs e)
+        {
+            DependencyObject originalSource = e.OriginalSource as DependencyObject;
+
+            return IsDescendantOf(LeftQueryStringCodeControl, originalSource)
+                || IsDescendantOf(RightQueryStringCodeControl, originalSource);
+        }
+
+        private static bool IsDescendantOf(DependencyObject parent, DependencyObject child)
+        {
+            DependencyObject current = child;
+
+            while (current != null)
+            {
+                if (current == parent)
+                    return true;
+
+                DependencyObject next = null;
+
+                if (current is Visual || current is System.Windows.Media.Media3D.Visual3D)
+                    next = VisualTreeHelper.GetParent(current);
+
+                if (next == null)
+                    next = LogicalTreeHelper.GetParent(current);
+
+                current = next;
+            }
+
+            return false;
         }
 
         private bool HandleCommandKey(System.Windows.Input.Key key)

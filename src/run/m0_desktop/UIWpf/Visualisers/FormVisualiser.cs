@@ -26,7 +26,8 @@ namespace m0.UIWpf.Visualisers
         public FrameworkElement MetaControl;
         public FrameworkElement DataControl;
         public IEdge BaseEdge;
-        public int Column;        
+        public int Column;
+        public int Order;
     }
 
     public class SectionInfo
@@ -103,7 +104,7 @@ namespace m0.UIWpf.Visualisers
         {
             get
             {
-                List<ControlInfo> controls = GetKeyboardHighlightControlInfos();
+                List<ControlInfo> controls = GetKeyboardHighlightControlInfos(getActiveTabInfo());
 
                 if (keyboardHighlightedControlInfo == null)
                     return -1;
@@ -126,7 +127,7 @@ namespace m0.UIWpf.Visualisers
         {
             get
             {
-                List<ControlInfo> controls = GetKeyboardHighlightControlInfos();
+                List<ControlInfo> controls = GetKeyboardHighlightControlInfos(getActiveTabInfo());
                 return controls.Count > 0 && CurrentHighlightPosition == controls.Count - 1 && !isBeforeFirstKeyboardPosition && !isAfterLastKeyboardPosition;
             }
             set { if (value) SetKeyboardHighlightToLast(); }
@@ -136,9 +137,25 @@ namespace m0.UIWpf.Visualisers
 
         public bool CanGoAfterLastPosition { get { return true; } }
 
+        public bool HasKeyboardHighlightItems
+        {
+            get { return GetKeyboardHighlightControlInfos(getActiveTabInfo()).Count > 0; }
+        }
+
         public IEdge KeyboardHighlightedEdge
         {
-            get { return keyboardHighlightedControlInfo != null ? keyboardHighlightedControlInfo.BaseEdge : null; }
+            get
+            {
+                if (keyboardHighlightedControlInfo == null)
+                    return null;
+
+                IKeyboardHighlight nestedKeyboardHighlight = GetNestedKeyboardHighlight(keyboardHighlightedControlInfo);
+
+                if (nestedKeyboardHighlight != null && nestedKeyboardHighlight.KeyboardHighlightedEdge != null)
+                    return nestedKeyboardHighlight.KeyboardHighlightedEdge;
+
+                return keyboardHighlightedControlInfo.BaseEdge;
+            }
         }
 
         public event EventHandler KeyboardHighlightActivated;
@@ -213,7 +230,14 @@ namespace m0.UIWpf.Visualisers
         public void ClearKeyboardHighlight()
         {
             if (keyboardHighlightedControlInfo != null)
-                SetControlInfoKeyboardHighlight(keyboardHighlightedControlInfo, false);
+            {
+                IKeyboardHighlight nestedKeyboardHighlight = GetNestedKeyboardHighlight(keyboardHighlightedControlInfo);
+
+                if (nestedKeyboardHighlight != null)
+                    nestedKeyboardHighlight.ClearKeyboardHighlight();
+                else
+                    SetControlInfoKeyboardHighlight(keyboardHighlightedControlInfo, false);
+            }
 
             keyboardHighlightedControlInfo = null;
             isBeforeFirstKeyboardPosition = false;
@@ -222,71 +246,127 @@ namespace m0.UIWpf.Visualisers
 
         public void MoveKeyboardHighlight(int positionDelta)
         {
-            List<ControlInfo> controls = GetKeyboardHighlightControlInfos();
+            TabInfo activeTabInfo = getActiveTabInfo();
+            List<ControlInfo> controls = GetKeyboardHighlightControlInfos(activeTabInfo);
 
             if (controls.Count == 0)
             {
                 if (positionDelta < 0)
-                    GoBeforeFirstKeyboardHighlightPosition();
+                    MoveToPreviousTabOrBeforeFirst();
                 else
-                    GoAfterLastKeyboardHighlightPosition();
+                    MoveToNextTabOrAfterLast();
 
                 return;
             }
 
             int currentIndex = CurrentHighlightPosition;
 
+            IKeyboardHighlight nestedKeyboardHighlight = keyboardHighlightedControlInfo != null
+                ? GetNestedKeyboardHighlight(keyboardHighlightedControlInfo)
+                : null;
+
+            if (nestedKeyboardHighlight != null && nestedKeyboardHighlight.CurrentHighlightPosition != -1)
+            {
+                nestedKeyboardHighlight.MoveKeyboardHighlight(positionDelta);
+
+                if (nestedKeyboardHighlight.IsBeforeFirstPosition)
+                    MoveKeyboardHighlightFromControlIndex(activeTabInfo, currentIndex, -1, false);
+                else if (nestedKeyboardHighlight.IsAfterLastPosition)
+                    MoveKeyboardHighlightFromControlIndex(activeTabInfo, currentIndex, 1, true);
+
+                return;
+            }
+
             if (currentIndex < 0)
                 currentIndex = positionDelta < 0 ? controls.Count : -1;
 
+            MoveKeyboardHighlightFromControlIndex(activeTabInfo, currentIndex, positionDelta, positionDelta > 0);
+        }
+
+        private void MoveKeyboardHighlightFromControlIndex(TabInfo tabInfo, int currentIndex, int positionDelta, bool nestedFirstPosition)
+        {
+            List<ControlInfo> controls = GetKeyboardHighlightControlInfos(tabInfo);
             int newIndex = currentIndex + positionDelta;
 
             if (newIndex < 0)
-                GoBeforeFirstKeyboardHighlightPosition();
+                MoveToPreviousTabOrBeforeFirst();
             else if (newIndex >= controls.Count)
-                GoAfterLastKeyboardHighlightPosition();
+                MoveToNextTabOrAfterLast();
             else
-                SetKeyboardHighlightControlInfo(controls[newIndex]);
+                SetKeyboardHighlightControlInfo(controls[newIndex], nestedFirstPosition);
         }
 
         public void MoveKeyboardHighlight(KeyboardHighlightMoveDirection direction)
         {
+            IKeyboardHighlight nestedKeyboardHighlight = keyboardHighlightedControlInfo != null
+                ? GetNestedKeyboardHighlight(keyboardHighlightedControlInfo)
+                : null;
+
+            if (nestedKeyboardHighlight != null && nestedKeyboardHighlight.CurrentHighlightPosition != -1)
+            {
+                nestedKeyboardHighlight.MoveKeyboardHighlight(direction);
+
+                if (nestedKeyboardHighlight.IsBeforeFirstPosition)
+                    MoveKeyboardHighlightFromControlIndex(getActiveTabInfo(), CurrentHighlightPosition, -1, false);
+                else if (nestedKeyboardHighlight.IsAfterLastPosition)
+                    MoveKeyboardHighlightFromControlIndex(getActiveTabInfo(), CurrentHighlightPosition, 1, true);
+
+                return;
+            }
+
             if (direction == KeyboardHighlightMoveDirection.Up)
                 MoveKeyboardHighlight(-1);
             else if (direction == KeyboardHighlightMoveDirection.Down)
                 MoveKeyboardHighlight(1);
+            else if (direction == KeyboardHighlightMoveDirection.Left)
+                MoveKeyboardHighlightToAdjacentColumn(-1);
+            else if (direction == KeyboardHighlightMoveDirection.Right)
+                MoveKeyboardHighlightToAdjacentColumn(1);
         }
 
         public void ToggleKeyboardHighlightedEdgeSelection() { }
 
         private void SetKeyboardHighlightToFirst()
         {
-            List<ControlInfo> controls = GetKeyboardHighlightControlInfos();
+            List<ControlInfo> controls = GetKeyboardHighlightControlInfos(getActiveTabInfo());
 
             if (controls.Count == 0)
                 GoAfterLastKeyboardHighlightPosition();
             else
-                SetKeyboardHighlightControlInfo(controls[0]);
+                SetKeyboardHighlightControlInfo(controls[0], true);
         }
 
         private void SetKeyboardHighlightToLast()
         {
-            List<ControlInfo> controls = GetKeyboardHighlightControlInfos();
+            List<ControlInfo> controls = GetKeyboardHighlightControlInfos(getActiveTabInfo());
 
             if (controls.Count == 0)
                 GoBeforeFirstKeyboardHighlightPosition();
             else
-                SetKeyboardHighlightControlInfo(controls[controls.Count - 1]);
+                SetKeyboardHighlightControlInfo(controls[controls.Count - 1], false);
         }
 
-        private void SetKeyboardHighlightControlInfo(ControlInfo controlInfo)
+        private void SetKeyboardHighlightControlInfo(ControlInfo controlInfo, bool nestedFirstPosition = true)
         {
             ClearKeyboardHighlight();
 
             keyboardHighlightedControlInfo = controlInfo;
             isBeforeFirstKeyboardPosition = false;
             isAfterLastKeyboardPosition = false;
-            SetControlInfoKeyboardHighlight(controlInfo, true);
+
+            IKeyboardHighlight nestedKeyboardHighlight = GetNestedKeyboardHighlight(controlInfo);
+
+            if (nestedKeyboardHighlight != null)
+            {
+                if (nestedFirstPosition)
+                    nestedKeyboardHighlight.IsFirstPosition = true;
+                else
+                    nestedKeyboardHighlight.IsLastPosition = true;
+            }
+            else
+            {
+                SetControlInfoKeyboardHighlight(controlInfo, true);
+            }
 
             if (controlInfo.DataControl != null)
                 controlInfo.DataControl.BringIntoView();
@@ -310,16 +390,211 @@ namespace m0.UIWpf.Visualisers
                 GoneAfterLastPosition(this, EventArgs.Empty);
         }
 
-        private List<ControlInfo> GetKeyboardHighlightControlInfos()
+        private void MoveKeyboardHighlightToAdjacentColumn(int columnDelta)
         {
-            TabInfo tabInfo = getActiveTabInfo();
+            if (keyboardHighlightedControlInfo == null)
+            {
+                if (columnDelta > 0)
+                    SetKeyboardHighlightToFirst();
+                else
+                    SetKeyboardHighlightToLast();
 
+                return;
+            }
+
+            TabInfo activeTabInfo = getActiveTabInfo();
+            List<ControlInfo> controls = GetKeyboardHighlightControlInfos(activeTabInfo);
+
+            if (controls.Count == 0)
+                return;
+
+            int currentColumn = keyboardHighlightedControlInfo.Column;
+            int targetColumn = currentColumn + columnDelta;
+            int currentIndexInColumn = GetIndexInColumn(activeTabInfo, keyboardHighlightedControlInfo);
+            List<ControlInfo> targetColumnControls = GetKeyboardHighlightControlInfosByColumn(activeTabInfo, targetColumn);
+
+            if (targetColumnControls.Count > 0)
+            {
+                int index = Math.Min(currentIndexInColumn, targetColumnControls.Count - 1);
+                SetKeyboardHighlightControlInfo(targetColumnControls[index], columnDelta > 0);
+                return;
+            }
+
+            if (columnDelta < 0)
+                MoveToPreviousTabFirstOrBeforeFirst();
+            else
+                MoveToNextTabOrAfterLast();
+        }
+
+        private int GetIndexInColumn(TabInfo tabInfo, ControlInfo controlInfo)
+        {
+            List<ControlInfo> controlsInColumn = GetKeyboardHighlightControlInfosByColumn(tabInfo, controlInfo.Column);
+
+            int index = controlsInColumn.IndexOf(controlInfo);
+
+            if (index < 0)
+                return 0;
+
+            return index;
+        }
+
+        private List<ControlInfo> GetKeyboardHighlightControlInfosByColumn(TabInfo tabInfo, int column)
+        {
+            return GetKeyboardHighlightControlInfos(tabInfo)
+                .Where(controlInfo => controlInfo.Column == column)
+                .OrderBy(controlInfo => GetControlScreenPosition(controlInfo).Y)
+                .ThenBy(controlInfo => GetControlScreenPosition(controlInfo).X)
+                .ToList();
+        }
+
+        private void MoveToPreviousTabFirstOrBeforeFirst()
+        {
+            TabInfo previousTabInfo = GetAdjacentTabInfo(-1);
+
+            if (previousTabInfo == null)
+            {
+                GoBeforeFirstKeyboardHighlightPosition();
+                return;
+            }
+
+            SetActiveTabInfo(previousTabInfo);
+
+            List<ControlInfo> controls = GetKeyboardHighlightControlInfos(previousTabInfo);
+
+            if (controls.Count == 0)
+                GoBeforeFirstKeyboardHighlightPosition();
+            else
+                SetKeyboardHighlightControlInfo(controls[0], true);
+        }
+
+        private void MoveToPreviousTabOrBeforeFirst()
+        {
+            TabInfo previousTabInfo = GetAdjacentTabInfo(-1);
+
+            if (previousTabInfo == null)
+            {
+                GoBeforeFirstKeyboardHighlightPosition();
+                return;
+            }
+
+            SetActiveTabInfo(previousTabInfo);
+
+            List<ControlInfo> controls = GetKeyboardHighlightControlInfos(previousTabInfo);
+
+            if (controls.Count == 0)
+                GoBeforeFirstKeyboardHighlightPosition();
+            else
+                SetKeyboardHighlightControlInfo(controls[controls.Count - 1], false);
+        }
+
+        private void MoveToNextTabOrAfterLast()
+        {
+            TabInfo nextTabInfo = GetAdjacentTabInfo(1);
+
+            if (nextTabInfo == null)
+            {
+                GoAfterLastKeyboardHighlightPosition();
+                return;
+            }
+
+            SetActiveTabInfo(nextTabInfo);
+
+            List<ControlInfo> controls = GetKeyboardHighlightControlInfos(nextTabInfo);
+
+            if (controls.Count == 0)
+                GoAfterLastKeyboardHighlightPosition();
+            else
+                SetKeyboardHighlightControlInfo(controls[0], true);
+        }
+
+        private TabInfo GetAdjacentTabInfo(int tabDelta)
+        {
+            List<TabInfo> tabInfos = GetTabInfos();
+
+            if (tabInfos.Count <= 1)
+                return null;
+
+            TabInfo activeTabInfo = getActiveTabInfo();
+            int currentIndex = tabInfos.IndexOf(activeTabInfo);
+
+            if (currentIndex < 0)
+                currentIndex = 0;
+
+            int newIndex = currentIndex + tabDelta;
+
+            if (newIndex < 0 || newIndex >= tabInfos.Count)
+                return null;
+
+            return tabInfos[newIndex];
+        }
+
+        private List<TabInfo> GetTabInfos()
+        {
+            if (TabList == null)
+                return new List<TabInfo>();
+
+            return TabList.Values.ToList();
+        }
+
+        private void SetActiveTabInfo(TabInfo tabInfo)
+        {
+            if (tabInfo == null)
+                return;
+
+            if (TabControl != null && tabInfo.TabItem != null)
+            {
+                TabControl.SelectedItem = tabInfo.TabItem;
+                TabControlSelectedItem = tabInfo.TabItem;
+            }
+        }
+
+        private List<ControlInfo> GetKeyboardHighlightControlInfos(TabInfo tabInfo)
+        {
             if (tabInfo == null)
                 return new List<ControlInfo>();
 
             return tabInfo.ControlInfos.Values
-                .Where(controlInfo => controlInfo != null && controlInfo.DataControl != null)
+                .Where(IsKeyboardHighlightControlInfoAvailable)
+                .OrderBy(controlInfo => GetControlScreenPosition(controlInfo).Y)
+                .ThenBy(controlInfo => GetControlScreenPosition(controlInfo).X)
+                .ThenBy(controlInfo => controlInfo.Column)
+                .ThenBy(controlInfo => controlInfo.Order)
                 .ToList();
+        }
+
+        private static bool IsKeyboardHighlightControlInfoAvailable(ControlInfo controlInfo)
+        {
+            if (controlInfo == null || controlInfo.DataControl == null)
+                return false;
+
+            IKeyboardHighlight nestedKeyboardHighlight = GetNestedKeyboardHighlight(controlInfo);
+
+            if (nestedKeyboardHighlight == null)
+                return true;
+
+            return nestedKeyboardHighlight.HasKeyboardHighlightItems;
+        }
+
+        private Point GetControlScreenPosition(ControlInfo controlInfo)
+        {
+            FrameworkElement element = controlInfo != null ? controlInfo.DataControl : null;
+
+            if (element == null)
+                return new Point(double.MaxValue, double.MaxValue);
+
+            try
+            {
+                Point point = element.TranslatePoint(new Point(0, 0), this);
+
+                if (double.IsNaN(point.X) || double.IsNaN(point.Y))
+                    return new Point(double.MaxValue, double.MaxValue);
+
+                return point;
+            }
+            catch (InvalidOperationException)
+            {
+                return new Point(double.MaxValue, double.MaxValue);
+            }
         }
 
         private void SetControlInfoKeyboardHighlight(ControlInfo controlInfo, bool isHighlighted)
@@ -329,6 +604,30 @@ namespace m0.UIWpf.Visualisers
 
             SetElementHighlight(controlInfo.MetaControl, background, foreground);
             SetElementHighlight(controlInfo.DataControl, background, foreground);
+        }
+
+        private static IKeyboardHighlight GetNestedKeyboardHighlight(ControlInfo controlInfo)
+        {
+            if (controlInfo == null)
+                return null;
+
+            return controlInfo.DataControl as IKeyboardHighlight;
+        }
+
+        private void RegisterNestedKeyboardHighlightActivation(ControlInfo controlInfo)
+        {
+            IKeyboardHighlight nestedKeyboardHighlight = GetNestedKeyboardHighlight(controlInfo);
+
+            if (nestedKeyboardHighlight == null)
+                return;
+
+            nestedKeyboardHighlight.KeyboardHighlightActivated += delegate
+            {
+                keyboardHighlightedControlInfo = controlInfo;
+                isBeforeFirstKeyboardPosition = false;
+                isAfterLastKeyboardPosition = false;
+                RaiseKeyboardHighlightActivated();
+            };
         }
 
         private void FormControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -413,7 +712,15 @@ namespace m0.UIWpf.Visualisers
                 return null;
             }
             else
-                return TabList[""];
+            {
+                if (TabList == null)
+                    return null;
+
+                if (TabList.ContainsKey(""))
+                    return TabList[""];
+
+                return TabList.Values.FirstOrDefault();
+            }
         }
 
         private IVertex getMetaForForm()
@@ -910,6 +1217,9 @@ namespace m0.UIWpf.Visualisers
         {
             TabControlSelectedItem = (TabItem)TabControl.SelectedItem;
 
+            if (e.Source == TabControl)
+                SetKeyboardHighlightToFirst();
+
             if (MetaOnLeft && TabControlSelectedItem != null && TabControlSelectedItem.Tag is TabInfo tabInfo)
             {
                 this.SizeChanged -= FormVisualiser_SizeChanged;
@@ -1130,8 +1440,10 @@ namespace m0.UIWpf.Visualisers
             ci.MetaControl = metaControl;
             ci.DataControl = dataControl;
             ci.BaseEdge = GetKeyboardHighlightBaseEdgeForControl(meta, isSet);
+            ci.Order = TabList[group].ControlInfos.Count;
             ci.MetaControl.MouseLeftButtonDown += FormControl_MouseLeftButtonDown;
             ci.DataControl.MouseLeftButtonDown += FormControl_MouseLeftButtonDown;
+            RegisterNestedKeyboardHighlightActivation(ci);
             ci.DataControl.SizeChanged += DataControl_SizeChanged;
 
             if (meta == null)

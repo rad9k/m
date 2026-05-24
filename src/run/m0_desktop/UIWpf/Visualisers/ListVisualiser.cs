@@ -159,6 +159,11 @@ namespace m0.UIWpf.Visualisers
             get { return true; }
         }
 
+        public bool HasKeyboardHighlightItems
+        {
+            get { return GetKeyboardHighlightItemCount() > 0; }
+        }
+
         public event EventHandler GoneBeforeFirstPosition;
 
         public event EventHandler GoneAfterLastPosition;
@@ -630,7 +635,7 @@ namespace m0.UIWpf.Visualisers
             if (row == null)
                 return;
 
-            int position = ThisDataGrid.Items.IndexOf(row.Item);
+            int position = GetKeyboardHighlightRowsInScreenOrder().IndexOf(row);
 
             if (position < 0)
                 return;
@@ -662,10 +667,12 @@ namespace m0.UIWpf.Visualisers
 
         private IEdge GetKeyboardHighlightedEdge()
         {
-            if (currentHighlightPosition < 0 || currentHighlightPosition >= GetKeyboardHighlightItemCount())
+            List<DataGridRow> rows = GetKeyboardHighlightRowsInScreenOrder();
+
+            if (currentHighlightPosition < 0 || currentHighlightPosition >= rows.Count)
                 return null;
 
-            return ThisDataGrid.Items[currentHighlightPosition] as IEdge;
+            return rows[currentHighlightPosition].Item as IEdge;
         }
 
         public void ClearKeyboardHighlight()
@@ -692,10 +699,12 @@ namespace m0.UIWpf.Visualisers
 
         private DataGridRow GetKeyboardHighlightRow()
         {
-            if (currentHighlightPosition < 0 || currentHighlightPosition >= GetKeyboardHighlightItemCount())
+            List<DataGridRow> rows = GetKeyboardHighlightRowsInScreenOrder();
+
+            if (currentHighlightPosition < 0 || currentHighlightPosition >= rows.Count)
                 return null;
 
-            object item = ThisDataGrid.Items[currentHighlightPosition];
+            object item = rows[currentHighlightPosition].Item;
             ThisDataGrid.ScrollIntoView(item);
             ThisDataGrid.UpdateLayout();
 
@@ -704,10 +713,30 @@ namespace m0.UIWpf.Visualisers
 
         private int GetKeyboardHighlightItemCount()
         {
-            if (ThisDataGrid == null || ThisDataGrid.Items == null)
-                return 0;
+            return GetKeyboardHighlightRowsInScreenOrder().Count;
+        }
 
-            return ThisDataGrid.Items.Count;
+        private List<DataGridRow> GetKeyboardHighlightRowsInScreenOrder()
+        {
+            List<DataGridRow> rows = new List<DataGridRow>();
+
+            if (ThisDataGrid == null || ThisDataGrid.Items == null)
+                return rows;
+
+            ThisDataGrid.UpdateLayout();
+
+            foreach (object item in ThisDataGrid.Items)
+            {
+                DataGridRow row = ThisDataGrid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
+
+                if (row != null && row.Item is IEdge)
+                    rows.Add(row);
+            }
+
+            return rows
+                .OrderBy(row => row.TranslatePoint(new Point(0, 0), ThisDataGrid).Y)
+                .ThenBy(row => row.TranslatePoint(new Point(0, 0), ThisDataGrid).X)
+                .ToList();
         }
 
         private static IEnumerable<T> FindVisualChildren<T>(DependencyObject dependencyObject) where T : DependencyObject
