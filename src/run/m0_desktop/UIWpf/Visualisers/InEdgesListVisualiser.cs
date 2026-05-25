@@ -34,6 +34,8 @@ namespace m0.UIWpf.Visualisers
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }
 
+        public bool SelectionProphibited { get; set; }
+
         protected DataGrid ThisDataGrid;
 
         protected bool TurnOffSelectedItemsUpdate = false;
@@ -102,6 +104,7 @@ namespace m0.UIWpf.Visualisers
 
                 ThisDataGrid.SelectionChanged += OnSelectionChanged;
                 ThisDataGrid.PreviewKeyDown += OnKeyboardHighlightPreviewKeyDown;
+                ThisDataGrid.MouseDoubleClick += OnKeyboardHighlightMouseDoubleClick;
             }
         }
 
@@ -150,9 +153,23 @@ namespace m0.UIWpf.Visualisers
             get { return true; }
         }
 
+        public bool HasKeyboardHighlightItems
+        {
+            get { return GetKeyboardHighlightItemCount() > 0; }
+        }
+
         public event EventHandler GoneBeforeFirstPosition;
 
         public event EventHandler GoneAfterLastPosition;
+
+        public event EventHandler KeyboardHighlightEnterPressed;
+
+        public event EventHandler KeyboardHighlightActivated;
+
+        public IEdge KeyboardHighlightedEdge
+        {
+            get { return GetKeyboardHighlightedEdge(); }
+        }
 
         private Style CreateHighlightedRowStyle()
         {
@@ -160,6 +177,7 @@ namespace m0.UIWpf.Visualisers
 
             rowStyle.Setters.Add(new Setter(Control.BackgroundProperty, (Brush)FindResource("0BackgroundBrush")));
             rowStyle.Setters.Add(new Setter(Control.ForegroundProperty, (Brush)FindResource("0ForegroundBrush")));
+            rowStyle.Setters.Add(new Setter(Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Stretch));
 
             Trigger mouseOverTrigger = new Trigger
             {
@@ -202,9 +220,9 @@ namespace m0.UIWpf.Visualisers
                 Property = DataGridCell.IsSelectedProperty,
                 Value = true
             };
-            selectedTrigger.Setters.Add(new Setter(Control.BackgroundProperty, (Brush)FindResource("0SelectionBrush")));
+            selectedTrigger.Setters.Add(new Setter(Control.BackgroundProperty, Brushes.Transparent));
             selectedTrigger.Setters.Add(new Setter(Control.ForegroundProperty, (Brush)FindResource("0BackgroundBrush")));
-            selectedTrigger.Setters.Add(new Setter(Control.BorderBrushProperty, (Brush)FindResource("0SelectionBrush")));
+            selectedTrigger.Setters.Add(new Setter(Control.BorderBrushProperty, Brushes.Transparent));
             cellStyle.Triggers.Add(selectedTrigger);
 
             return cellStyle;
@@ -212,7 +230,7 @@ namespace m0.UIWpf.Visualisers
 
         private void OnKeyboardHighlightPreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key != Key.Up && e.Key != Key.Down && e.Key != Key.Space)
+            if (e.Key != Key.Up && e.Key != Key.Down && e.Key != Key.Space && e.Key != Key.Enter)
                 return;
 
             e.Handled = true;
@@ -224,8 +242,10 @@ namespace m0.UIWpf.Visualisers
                 MoveKeyboardHighlight(-1);
             else if (e.Key == Key.Down)
                 MoveKeyboardHighlight(1);
-            else
+            else if (e.Key == Key.Space)
                 ToggleKeyboardHighlightedEdgeSelection();
+            else
+                RaiseKeyboardHighlightEnterPressed();
         }
 
         private void SetFirstKeyboardHighlightPosition()
@@ -248,7 +268,7 @@ namespace m0.UIWpf.Visualisers
                 SetKeyboardHighlightPosition(itemCount - 1);
         }
 
-        private void MoveKeyboardHighlight(int positionDelta)
+        public void MoveKeyboardHighlight(int positionDelta)
         {
             int itemCount = GetKeyboardHighlightItemCount();
 
@@ -270,6 +290,14 @@ namespace m0.UIWpf.Visualisers
                 GoAfterLastKeyboardHighlightPosition();
             else
                 SetKeyboardHighlightPosition(newPosition);
+        }
+
+        public void MoveKeyboardHighlight(KeyboardHighlightMoveDirection direction)
+        {
+            if (direction == KeyboardHighlightMoveDirection.Up)
+                MoveKeyboardHighlight(-1);
+            else if (direction == KeyboardHighlightMoveDirection.Down)
+                MoveKeyboardHighlight(1);
         }
 
         private void SetKeyboardHighlightPosition(int position)
@@ -332,8 +360,11 @@ namespace m0.UIWpf.Visualisers
             row.BringIntoView();
         }
 
-        private void ToggleKeyboardHighlightedEdgeSelection()
+        public void ToggleKeyboardHighlightedEdgeSelection()
         {
+            if (SelectionProphibited)
+                return;
+
             IEdge keyboardHighlightedEdge = GetKeyboardHighlightedEdge();
 
             if (keyboardHighlightedEdge == null)
@@ -354,6 +385,48 @@ namespace m0.UIWpf.Visualisers
             RefreshVisualStatesAfterItemsChanged();
         }
 
+        private void RaiseKeyboardHighlightEnterPressed()
+        {
+            RaiseKeyboardHighlightActivated();
+
+            if (KeyboardHighlightEnterPressed != null)
+                KeyboardHighlightEnterPressed(this, EventArgs.Empty);
+        }
+
+        private void RaiseKeyboardHighlightActivated()
+        {
+            if (KeyboardHighlightedEdge == null)
+                return;
+
+            if (KeyboardHighlightActivated != null)
+                KeyboardHighlightActivated(this, EventArgs.Empty);
+        }
+
+        private void OnKeyboardHighlightMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            DataGridRow row = GetDataGridRowFromEventSource(e.OriginalSource as DependencyObject);
+
+            if (row == null)
+                return;
+
+            int position = GetKeyboardHighlightRowsInScreenOrder().IndexOf(row);
+
+            if (position < 0)
+                return;
+
+            SetKeyboardHighlightPosition(position);
+            RaiseKeyboardHighlightActivated();
+            e.Handled = true;
+        }
+
+        private DataGridRow GetDataGridRowFromEventSource(DependencyObject dependencyObject)
+        {
+            while (dependencyObject != null && !(dependencyObject is DataGridRow))
+                dependencyObject = VisualTreeHelper.GetParent(dependencyObject);
+
+            return dependencyObject as DataGridRow;
+        }
+
         private bool IsKeyboardHighlightedEdgeSelected()
         {
             IEdge keyboardHighlightedEdge = GetKeyboardHighlightedEdge();
@@ -368,13 +441,15 @@ namespace m0.UIWpf.Visualisers
 
         private IEdge GetKeyboardHighlightedEdge()
         {
-            if (currentHighlightPosition < 0 || currentHighlightPosition >= GetKeyboardHighlightItemCount())
+            List<DataGridRow> rows = GetKeyboardHighlightRowsInScreenOrder();
+
+            if (currentHighlightPosition < 0 || currentHighlightPosition >= rows.Count)
                 return null;
 
-            return ThisDataGrid.Items[currentHighlightPosition] as IEdge;
+            return rows[currentHighlightPosition].Item as IEdge;
         }
 
-        private void ClearKeyboardHighlight()
+        public void ClearKeyboardHighlight()
         {
             DataGridRow row = GetKeyboardHighlightRow();
 
@@ -391,14 +466,19 @@ namespace m0.UIWpf.Visualisers
                 cell.ClearValue(Control.ForegroundProperty);
                 cell.ClearValue(Control.BorderBrushProperty);
             }
+
+            if (ThisDataGrid.SelectedItems.Contains(row.Item))
+                ApplySelectedRowVisualState(row);
         }
 
         private DataGridRow GetKeyboardHighlightRow()
         {
-            if (currentHighlightPosition < 0 || currentHighlightPosition >= GetKeyboardHighlightItemCount())
+            List<DataGridRow> rows = GetKeyboardHighlightRowsInScreenOrder();
+
+            if (currentHighlightPosition < 0 || currentHighlightPosition >= rows.Count)
                 return null;
 
-            object item = ThisDataGrid.Items[currentHighlightPosition];
+            object item = rows[currentHighlightPosition].Item;
             ThisDataGrid.ScrollIntoView(item);
             ThisDataGrid.UpdateLayout();
 
@@ -407,10 +487,30 @@ namespace m0.UIWpf.Visualisers
 
         private int GetKeyboardHighlightItemCount()
         {
-            if (ThisDataGrid == null || ThisDataGrid.Items == null)
-                return 0;
+            return GetKeyboardHighlightRowsInScreenOrder().Count;
+        }
 
-            return ThisDataGrid.Items.Count;
+        private List<DataGridRow> GetKeyboardHighlightRowsInScreenOrder()
+        {
+            List<DataGridRow> rows = new List<DataGridRow>();
+
+            if (ThisDataGrid == null || ThisDataGrid.Items == null)
+                return rows;
+
+            ThisDataGrid.UpdateLayout();
+
+            foreach (object item in ThisDataGrid.Items)
+            {
+                DataGridRow row = ThisDataGrid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
+
+                if (row != null && row.Item is IEdge)
+                    rows.Add(row);
+            }
+
+            return rows
+                .OrderBy(row => row.TranslatePoint(new Point(0, 0), ThisDataGrid).Y)
+                .ThenBy(row => row.TranslatePoint(new Point(0, 0), ThisDataGrid).X)
+                .ToList();
         }
 
         private Style CreateResizableColumnHeaderStyle(bool drawHorizontalHeaderLine, bool drawVerticalHeaderLine)
@@ -540,6 +640,14 @@ namespace m0.UIWpf.Visualisers
 
         protected void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (SelectionProphibited)
+            {
+                TurnOffSelectedVerticesUpdate = true;
+                ThisDataGrid.SelectedItems.Clear();
+                TurnOffSelectedVerticesUpdate = false;
+                return;
+            }
+
             if (!TurnOffSelectedVerticesUpdate)
             {
                 TurnOffSelectedItemsUpdate = true;
@@ -560,6 +668,8 @@ namespace m0.UIWpf.Visualisers
                 ////////////////////////////////////////
 
                 TurnOffSelectedItemsUpdate = false;
+                RefreshSelectedRowsVisualState();
+                RefreshKeyboardHighlightAfterItemsChanged();
             }
         }
 
@@ -712,6 +822,9 @@ namespace m0.UIWpf.Visualisers
             if (SelectedEdgesChange != null)
                 SelectedEdgesChange();
 
+            if (SelectionProphibited)
+                return;
+
             if (TurnOffSelectedItemsUpdate)
                 return;
 
@@ -780,7 +893,63 @@ namespace m0.UIWpf.Visualisers
         private void RefreshVisualStatesAfterItemsChanged()
         {
             SelectedVerticesUpdated();
+            RefreshSelectedRowsVisualState();
             RefreshKeyboardHighlightAfterItemsChanged();
+        }
+
+        private void RefreshSelectedRowsVisualState()
+        {
+            if (ThisDataGrid == null || ThisDataGrid.Items == null)
+                return;
+
+            foreach (object item in ThisDataGrid.Items)
+            {
+                DataGridRow row = GetDataGridRow(item);
+
+                if (row == null)
+                    continue;
+
+                ClearSelectedRowVisualState(row);
+
+                if (ThisDataGrid.SelectedItems.Contains(item))
+                    ApplySelectedRowVisualState(row);
+            }
+        }
+
+        private DataGridRow GetDataGridRow(object item)
+        {
+            ThisDataGrid.ScrollIntoView(item);
+            ThisDataGrid.UpdateLayout();
+
+            return ThisDataGrid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
+        }
+
+        private void ApplySelectedRowVisualState(DataGridRow row)
+        {
+            row.Background = (Brush)FindResource("0SelectionBrush");
+            row.Foreground = (Brush)FindResource("0BackgroundBrush");
+            row.BorderBrush = (Brush)FindResource("0SelectionBrush");
+
+            foreach (DataGridCell cell in FindVisualChildren<DataGridCell>(row))
+            {
+                cell.Background = Brushes.Transparent;
+                cell.Foreground = (Brush)FindResource("0BackgroundBrush");
+                cell.BorderBrush = Brushes.Transparent;
+            }
+        }
+
+        private void ClearSelectedRowVisualState(DataGridRow row)
+        {
+            row.ClearValue(Control.BackgroundProperty);
+            row.ClearValue(Control.ForegroundProperty);
+            row.ClearValue(Control.BorderBrushProperty);
+
+            foreach (DataGridCell cell in FindVisualChildren<DataGridCell>(row))
+            {
+                cell.ClearValue(Control.BackgroundProperty);
+                cell.ClearValue(Control.ForegroundProperty);
+                cell.ClearValue(Control.BorderBrushProperty);
+            }
         }
 
         private void RefreshKeyboardHighlightAfterItemsChanged()

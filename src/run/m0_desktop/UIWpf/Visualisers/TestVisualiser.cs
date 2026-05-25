@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,6 +24,8 @@ namespace m0.UIWpf.Visualisers
     public class TestVisualiser : TextBox, IVisualiser, ITypedEdge
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }
+
+        public bool SelectionProphibited { get; set; }
 
         // TypedEdge START
 

@@ -618,11 +618,13 @@ namespace m0.UIWpf.Visualisers
         }
     }
 
-    public class GraphVisualiser3D : Grid, IListVisualiser, IHasSelectableEdges, ITypedEdge
+    public class GraphVisualiser3D : Grid, IListVisualiser, IHasSelectableEdges, ITypedEdge, IKeyboardHighlight
     {
         public event Notify SelectedEdgesChange;
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }
+
+        public bool SelectionProphibited { get; set; }
 
         private readonly Viewport3D viewport;
         private readonly Canvas labelOverlay;
@@ -641,6 +643,9 @@ namespace m0.UIWpf.Visualisers
         private readonly Dictionary<string, double> metaAngleCache = new Dictionary<string, double>();
 
         private GraphVisualiser3DNode highlightedNode;
+        private GraphVisualiser3DNode keyboardHighlightedNode;
+        private bool isBeforeFirstKeyboardPosition;
+        private bool isAfterLastKeyboardPosition;
         private IVertex previousBaseEdgeTo;
         private IVertex tempSelectedVertices;
         private bool isPainting;
@@ -686,6 +691,72 @@ namespace m0.UIWpf.Visualisers
         public string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
         public void ViewAttributesUpdated() { }
+
+        public int CurrentHighlightPosition
+        {
+            get
+            {
+                List<GraphVisualiser3DNode> nodes = GetKeyboardHighlightNodes();
+
+                if (keyboardHighlightedNode == null)
+                    return -1;
+
+                return nodes.IndexOf(keyboardHighlightedNode);
+            }
+        }
+
+        public bool IsBeforeFirstPosition { get { return isBeforeFirstKeyboardPosition; } }
+
+        public bool IsAfterLastPosition { get { return isAfterLastKeyboardPosition; } }
+
+        public bool IsFirstPosition
+        {
+            get { return CurrentHighlightPosition == 0 && !isBeforeFirstKeyboardPosition && !isAfterLastKeyboardPosition; }
+            set { if (value) SetKeyboardHighlightToFirst(); }
+        }
+
+        public bool IsLastPosition
+        {
+            get
+            {
+                List<GraphVisualiser3DNode> nodes = GetKeyboardHighlightNodes();
+                return nodes.Count > 0 && CurrentHighlightPosition == nodes.Count - 1 && !isBeforeFirstKeyboardPosition && !isAfterLastKeyboardPosition;
+            }
+            set { if (value) SetKeyboardHighlightToLast(); }
+        }
+
+        public bool CanGoBeforeFirstPosition { get { return true; } }
+
+        public bool CanGoAfterLastPosition { get { return true; } }
+
+        public bool HasKeyboardHighlightItems
+        {
+            get { return GetKeyboardHighlightNodes().Count > 0; }
+        }
+
+        public IEdge KeyboardHighlightedEdge
+        {
+            get
+            {
+                if (keyboardHighlightedNode == null || keyboardHighlightedNode.BaseVertex == null)
+                    return null;
+
+                IEdge firstInEdge = keyboardHighlightedNode.BaseVertex.InEdgesRaw.FirstOrDefault();
+
+                if (firstInEdge != null)
+                    return firstInEdge;
+
+                return new EasyEdge(null, null, keyboardHighlightedNode.BaseVertex);
+            }
+        }
+
+        public event EventHandler KeyboardHighlightActivated;
+
+        public event EventHandler KeyboardHighlightEnterPressed;
+
+        public event EventHandler GoneBeforeFirstPosition;
+
+        public event EventHandler GoneAfterLastPosition;
 
         public GraphVisualiser3D(IEdge _edge)
         {
@@ -1364,6 +1435,15 @@ namespace m0.UIWpf.Visualisers
                 if (IsMouseCaptured)
                     ReleaseMouseCapture();
 
+                SetKeyboardHighlightNode(hit);
+
+                if (KeyboardHighlightActivated != null)
+                {
+                    RaiseKeyboardHighlightActivated();
+                    e.Handled = true;
+                    return;
+                }
+
                 ChangeBaseEdge(hit);
                 e.Handled = true;
                 return;
@@ -1493,6 +1573,9 @@ namespace m0.UIWpf.Visualisers
 
         private void ToggleSelection(GraphVisualiser3DNode node)
         {
+            if (SelectionProphibited)
+                return;
+
             if (node == null || node.BaseVertex == null)
                 return;
 
@@ -1525,6 +1608,182 @@ namespace m0.UIWpf.Visualisers
 
             Interaction.EndInteractionWithGraph();
             UpdateLabels();
+        }
+
+        public void ClearKeyboardHighlight()
+        {
+            if (keyboardHighlightedNode != null)
+                keyboardHighlightedNode.SetHighlighted(false);
+
+            keyboardHighlightedNode = null;
+            isBeforeFirstKeyboardPosition = false;
+            isAfterLastKeyboardPosition = false;
+            UpdateLabels();
+        }
+
+        public void MoveKeyboardHighlight(int positionDelta)
+        {
+            List<GraphVisualiser3DNode> nodes = GetKeyboardHighlightNodes();
+
+            if (nodes.Count == 0)
+            {
+                if (positionDelta < 0)
+                    GoBeforeFirstKeyboardHighlightPosition();
+                else
+                    GoAfterLastKeyboardHighlightPosition();
+
+                return;
+            }
+
+            int currentIndex = CurrentHighlightPosition;
+
+            if (currentIndex < 0)
+                currentIndex = positionDelta < 0 ? nodes.Count : -1;
+
+            int newIndex = currentIndex + positionDelta;
+
+            if (newIndex < 0)
+                GoBeforeFirstKeyboardHighlightPosition();
+            else if (newIndex >= nodes.Count)
+                GoAfterLastKeyboardHighlightPosition();
+            else
+                SetKeyboardHighlightNode(nodes[newIndex]);
+        }
+
+        public void MoveKeyboardHighlight(KeyboardHighlightMoveDirection direction)
+        {
+            if (direction == KeyboardHighlightMoveDirection.Up || direction == KeyboardHighlightMoveDirection.Down)
+                MoveKeyboardHighlight(direction == KeyboardHighlightMoveDirection.Up ? -1 : 1);
+            else
+                MoveKeyboardHighlightDirectional(direction);
+        }
+
+        public void ToggleKeyboardHighlightedEdgeSelection()
+        {
+            if (keyboardHighlightedNode != null)
+                ToggleSelection(keyboardHighlightedNode);
+        }
+
+        private void SetKeyboardHighlightToFirst()
+        {
+            List<GraphVisualiser3DNode> nodes = GetKeyboardHighlightNodes();
+
+            if (nodes.Count == 0)
+                GoAfterLastKeyboardHighlightPosition();
+            else
+                SetKeyboardHighlightNode(nodes[0]);
+        }
+
+        private void SetKeyboardHighlightToLast()
+        {
+            List<GraphVisualiser3DNode> nodes = GetKeyboardHighlightNodes();
+
+            if (nodes.Count == 0)
+                GoBeforeFirstKeyboardHighlightPosition();
+            else
+                SetKeyboardHighlightNode(nodes[nodes.Count - 1]);
+        }
+
+        private void SetKeyboardHighlightNode(GraphVisualiser3DNode node)
+        {
+            ClearKeyboardHighlight();
+
+            if (node == null)
+                return;
+
+            keyboardHighlightedNode = node;
+            isBeforeFirstKeyboardPosition = false;
+            isAfterLastKeyboardPosition = false;
+            keyboardHighlightedNode.SetHighlighted(true);
+            UpdateLabels();
+        }
+
+        private void GoBeforeFirstKeyboardHighlightPosition()
+        {
+            ClearKeyboardHighlight();
+            isBeforeFirstKeyboardPosition = true;
+
+            if (GoneBeforeFirstPosition != null)
+                GoneBeforeFirstPosition(this, EventArgs.Empty);
+        }
+
+        private void GoAfterLastKeyboardHighlightPosition()
+        {
+            ClearKeyboardHighlight();
+            isAfterLastKeyboardPosition = true;
+
+            if (GoneAfterLastPosition != null)
+                GoneAfterLastPosition(this, EventArgs.Empty);
+        }
+
+        private List<GraphVisualiser3DNode> GetKeyboardHighlightNodes()
+        {
+            return displayedNodes.Values
+                .Where(node => node != null && node.BaseVertex != null)
+                .OrderBy(node => node.Position.Y)
+                .ThenBy(node => node.Position.X)
+                .ToList();
+        }
+
+        private void MoveKeyboardHighlightDirectional(KeyboardHighlightMoveDirection direction)
+        {
+            if (keyboardHighlightedNode == null)
+            {
+                SetKeyboardHighlightToFirst();
+                return;
+            }
+
+            Point3D current = keyboardHighlightedNode.Position;
+            GraphVisualiser3DNode bestNode = null;
+            double bestScore = double.MaxValue;
+
+            foreach (GraphVisualiser3DNode node in displayedNodes.Values)
+            {
+                if (node == null || node == keyboardHighlightedNode)
+                    continue;
+
+                Vector3D delta = node.Position - current;
+
+                if (!IsCandidateInDirection(direction, delta.X, -delta.Y))
+                    continue;
+
+                double score = delta.X * delta.X + delta.Y * delta.Y + delta.Z * delta.Z;
+
+                if (score < bestScore)
+                {
+                    bestScore = score;
+                    bestNode = node;
+                }
+            }
+
+            if (bestNode != null)
+                SetKeyboardHighlightNode(bestNode);
+        }
+
+        private static bool IsCandidateInDirection(KeyboardHighlightMoveDirection direction, double dx, double dy)
+        {
+            if (direction == KeyboardHighlightMoveDirection.Left)
+                return dx < 0 && Math.Abs(dx) >= Math.Abs(dy) * 0.35;
+
+            if (direction == KeyboardHighlightMoveDirection.Right)
+                return dx > 0 && Math.Abs(dx) >= Math.Abs(dy) * 0.35;
+
+            if (direction == KeyboardHighlightMoveDirection.Up)
+                return dy < 0 && Math.Abs(dy) >= Math.Abs(dx) * 0.35;
+
+            return dy > 0 && Math.Abs(dy) >= Math.Abs(dx) * 0.35;
+        }
+
+        private void RaiseKeyboardHighlightActivated()
+        {
+            if (KeyboardHighlightedEdge == null)
+                return;
+
+            if (KeyboardHighlightActivated != null)
+                KeyboardHighlightActivated(this, EventArgs.Empty);
+
+            if (KeyboardHighlightEnterPressed != null)
+                KeyboardHighlightEnterPressed(this, EventArgs.Empty);
         }
 
         private void ChangeBaseEdge(GraphVisualiser3DNode node)

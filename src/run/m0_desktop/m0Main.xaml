@@ -1,8 +1,8 @@
-﻿<Window x:Class="m0.m0Main"
+<Window x:Class="m0.m0Main"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="-0 // version 0.99" Height="600" Width="800"  xmlns:avalonDock="http://schemas.xceed.com/wpf/xaml/avalondock"  WindowStartupLocation="CenterScreen" Closing="Window_Closing" Closed="Window_Closed"
-        Icon="/m0_desktop;component/Images/Untitled1.png">
+        Icon="pack://application:,,,/m0_desktop;component/Images/Untitled1.png">
     <avalonDock:DockingManager x:Name="dockingManager" >
         <avalonDock:DockingManager.Theme>
             <avalonDock:MetroTheme/>

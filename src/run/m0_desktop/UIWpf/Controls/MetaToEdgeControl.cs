@@ -52,6 +52,24 @@ namespace m0.UIWpf.Controls
         public static readonly DependencyProperty ShowIconProperty =
             DependencyProperty.Register("ShowIcon", typeof(bool), typeof(MetaToEdgeControl), new UIPropertyMetadata(false, ShowIconChangedCallback));
 
+        public bool ExternalBackgroundMode
+        {
+            get { return (bool)GetValue(ExternalBackgroundModeProperty); }
+            set { SetValue(ExternalBackgroundModeProperty, value); }
+        }
+
+        public static readonly DependencyProperty ExternalBackgroundModeProperty =
+            DependencyProperty.Register("ExternalBackgroundMode", typeof(bool), typeof(MetaToEdgeControl), new UIPropertyMetadata(false, ExternalBackgroundModeChangedCallback));
+
+        public bool IsKeyboardHighlightedSelected
+        {
+            get { return (bool)GetValue(IsKeyboardHighlightedSelectedProperty); }
+            set { SetValue(IsKeyboardHighlightedSelectedProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsKeyboardHighlightedSelectedProperty =
+            DependencyProperty.Register("IsKeyboardHighlightedSelected", typeof(bool), typeof(MetaToEdgeControl), new UIPropertyMetadata(false, IsKeyboardHighlightedSelectedChangedCallback));
+
         public static void BaseEdgeChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
         {
             MetaToEdgeControl control = (MetaToEdgeControl)dependencyObject;
@@ -78,6 +96,20 @@ namespace m0.UIWpf.Controls
             MetaToEdgeControl control = (MetaToEdgeControl)dependencyObject;
 
             control.UpdateVisuals(control.BaseEdge);
+        }
+
+        public static void ExternalBackgroundModeChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
+        {
+            MetaToEdgeControl control = (MetaToEdgeControl)dependencyObject;
+
+            control.UpdateSelectionState();
+        }
+
+        public static void IsKeyboardHighlightedSelectedChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
+        {
+            MetaToEdgeControl control = (MetaToEdgeControl)dependencyObject;
+
+            control.UpdateSelectionState();
         }
 
         public MetaToEdgeControl()
@@ -254,8 +286,40 @@ namespace m0.UIWpf.Controls
             return FindResource("0HighlightBrush") as Brush ?? GetForegroundBrush();
         }
 
+        private Brush GetHighlightForegroundBrush()
+        {
+            return FindResource("0HighlightForegroundBrush") as Brush ?? GetForegroundBrush();
+        }
+
         private void UpdateSelectionState()
         {
+            if (ExternalBackgroundMode)
+            {
+                Background = null;
+                contentPanel.Background = null;
+
+                if (IsHighlighted)
+                {
+                    Brush highlightedForeground = IsKeyboardHighlightedSelected ? GetForegroundBrush() : GetHighlightForegroundBrush();
+                    metaLabel.Foreground = highlightedForeground;
+                    toLabel.Foreground = highlightedForeground;
+                }
+                else if (IsSelected)
+                {
+                    metaLabel.Foreground = GetBackgroundBrush();
+                    toLabel.Foreground = GetBackgroundBrush();
+                }
+                else
+                {
+                    metaLabel.Foreground = GetMetaForegroundBrush();
+                    toLabel.Foreground = GetForegroundBrush();
+                }
+
+                metaLabel.Background = null;
+                toLabel.Background = null;
+                return;
+            }
+
             if (IsSelected)
             {
                 Background = GetForegroundBrush();

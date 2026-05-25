@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -38,6 +38,8 @@ namespace m0.UIWpf.Visualisers
         protected virtual IVertex visualiserMetaVertex { get; set; }
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
+
+        public bool SelectionProphibited { get; set; }
 
         bool isContinous = false;
         bool IsRanged = false;

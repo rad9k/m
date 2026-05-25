@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -42,6 +42,8 @@ namespace m0.UIWpf.Visualisers.Diagram
         public event Notify SelectedEdgesChange;
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }
+
+        public bool SelectionProphibited { get; set; }
 
         public List<IDisposable> ChildVisualisers {
             get {

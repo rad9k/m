@@ -47,4 +47,7 @@
     <Resource Include="_RESOURCES\basic\delete.png" />
     <Resource Include="_RESOURCES\basic\details.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="UIWpf\VertexCommander\" />
+  </ItemGroup>
 </Project>

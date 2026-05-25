@@ -3,9 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using m0.Foundation;
 
 namespace m0.UIWpf.Visualisers
 {
+    public enum KeyboardHighlightMoveDirection
+    {
+        Up,
+        Down,
+        Left,
+        Right
+    }
+
     public interface IKeyboardHighlight
     {
         // If -1 - we can have IsBeforeFirstPosition == true or IsAfterLastPosition == true
@@ -22,6 +31,22 @@ namespace m0.UIWpf.Visualisers
         bool CanGoBeforeFirstPosition { get; }
 
         bool CanGoAfterLastPosition { get; }
+
+        bool HasKeyboardHighlightItems { get; }
+
+        IEdge KeyboardHighlightedEdge { get; }
+
+        void ClearKeyboardHighlight();
+
+        void MoveKeyboardHighlight(int positionDelta);
+
+        void MoveKeyboardHighlight(KeyboardHighlightMoveDirection direction);
+
+        void ToggleKeyboardHighlightedEdgeSelection();
+
+        event EventHandler KeyboardHighlightActivated;
+
+        event EventHandler KeyboardHighlightEnterPressed;
 
         event EventHandler GoneBeforeFirstPosition;
 

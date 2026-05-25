@@ -62,6 +62,8 @@ namespace m0.UIWpf.UX
 
         public event Notify SelectedEdgesChange;
 
+        public bool SelectionProphibited { get; set; }
+
         static IVertex systemMetaBaseVertex = m0.MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex");
 
         public IEdge ContainerEdge { get; set; }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,6 +24,8 @@ namespace m0.UIWpf.Visualisers
         public event Notify SelectedEdgesChange;
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
+
+        public bool SelectionProphibited { get; set; }
 
         public double Scale { get; set; } // do not want to expose those as PlatformClass.Vertex
 
