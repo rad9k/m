@@ -7,6 +7,12 @@
 				<@$Is :: @AtomType>
 			<@AtomType :: "REAL">
 				<@$Is :: @AtomType>
+			<@AtomType :: "DECIMAL">
+				<@$Is :: @AtomType>
+			<@AtomType :: "DATE">
+				<@$Is :: @AtomType>
+			<@AtomType :: "DATETIME">
+				<@$Is :: @AtomType>
 			<@AtomType :: "NUMERIC">
 				<@$Is :: @AtomType>
 			<@AtomType :: "BLOB">
