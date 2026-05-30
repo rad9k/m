@@ -87,6 +87,8 @@ namespace m0.UIWpf.Visualisers
         private ControlInfo keyboardHighlightedControlInfo;
         private bool isBeforeFirstKeyboardPosition;
         private bool isAfterLastKeyboardPosition;
+        private bool suppressNestedSelectedEdgesChange;
+        private readonly IList<IEdge> ownSelectedEdges = new List<IEdge>();
 
 
         TabItem TabControlSelectedItem;
@@ -166,7 +168,21 @@ namespace m0.UIWpf.Visualisers
 
         public event EventHandler GoneAfterLastPosition;
 
-        public void UnselectAllSelectedEdges() { }
+        public void UnselectAllSelectedEdges()
+        {
+            suppressNestedSelectedEdgesChange = true;
+
+            try
+            {
+                ownSelectedEdges.Clear();
+                ClearOwnSelectedEdges();
+                ClearNestedSelectedEdges(null);
+            }
+            finally
+            {
+                suppressNestedSelectedEdgesChange = false;
+            }
+        }
 
         // TypedEdge START
 
@@ -238,6 +254,8 @@ namespace m0.UIWpf.Visualisers
                 else
                     SetControlInfoKeyboardHighlight(keyboardHighlightedControlInfo, false);
             }
+
+            ClearNestedKeyboardHighlights(null);
 
             keyboardHighlightedControlInfo = null;
             isBeforeFirstKeyboardPosition = false;
@@ -324,7 +342,23 @@ namespace m0.UIWpf.Visualisers
                 MoveKeyboardHighlightToAdjacentColumn(1);
         }
 
-        public void ToggleKeyboardHighlightedEdgeSelection() { }
+        public void ToggleKeyboardHighlightedEdgeSelection()
+        {
+            if (SelectionProphibited)
+                return;
+
+            IKeyboardHighlight nestedKeyboardHighlight = keyboardHighlightedControlInfo != null
+                ? GetNestedKeyboardHighlight(keyboardHighlightedControlInfo)
+                : null;
+
+            if (nestedKeyboardHighlight != null && nestedKeyboardHighlight.CurrentHighlightPosition != -1)
+            {
+                nestedKeyboardHighlight.ToggleKeyboardHighlightedEdgeSelection();
+                return;
+            }
+
+            ToggleOwnSelectedEdge(KeyboardHighlightedEdge, true);
+        }
 
         private void SetKeyboardHighlightToFirst()
         {
@@ -355,6 +389,8 @@ namespace m0.UIWpf.Visualisers
             isAfterLastKeyboardPosition = false;
 
             IKeyboardHighlight nestedKeyboardHighlight = GetNestedKeyboardHighlight(controlInfo);
+
+            ClearNestedKeyboardHighlights(nestedKeyboardHighlight);
 
             if (nestedKeyboardHighlight != null)
             {
@@ -614,6 +650,28 @@ namespace m0.UIWpf.Visualisers
             return controlInfo.DataControl as IKeyboardHighlight;
         }
 
+        private IEnumerable<IKeyboardHighlight> GetNestedKeyboardHighlights()
+        {
+            if (TabList == null)
+                yield break;
+
+            foreach (TabInfo tabInfo in TabList.Values)
+                foreach (ControlInfo controlInfo in tabInfo.ControlInfos.Values)
+                {
+                    IKeyboardHighlight nestedKeyboardHighlight = GetNestedKeyboardHighlight(controlInfo);
+
+                    if (nestedKeyboardHighlight != null)
+                        yield return nestedKeyboardHighlight;
+                }
+        }
+
+        private void ClearNestedKeyboardHighlights(IKeyboardHighlight exceptKeyboardHighlight)
+        {
+            foreach (IKeyboardHighlight nestedKeyboardHighlight in GetNestedKeyboardHighlights())
+                if (nestedKeyboardHighlight != exceptKeyboardHighlight)
+                    nestedKeyboardHighlight.ClearKeyboardHighlight();
+        }
+
         private void RegisterNestedKeyboardHighlightActivation(ControlInfo controlInfo)
         {
             IKeyboardHighlight nestedKeyboardHighlight = GetNestedKeyboardHighlight(controlInfo);
@@ -623,26 +681,72 @@ namespace m0.UIWpf.Visualisers
 
             nestedKeyboardHighlight.KeyboardHighlightActivated += delegate
             {
+                ClearNestedKeyboardHighlights(nestedKeyboardHighlight);
                 keyboardHighlightedControlInfo = controlInfo;
                 isBeforeFirstKeyboardPosition = false;
                 isAfterLastKeyboardPosition = false;
                 RaiseKeyboardHighlightActivated();
             };
+
+            IListVisualiser nestedListVisualiser = controlInfo.DataControl as IListVisualiser;
+
+            if (nestedListVisualiser != null)
+                nestedListVisualiser.SelectedEdgesChange += delegate { NestedListVisualiser_SelectedEdgesChange(nestedListVisualiser); };
+        }
+
+        private void NestedListVisualiser_SelectedEdgesChange(IListVisualiser sourceVisualiser)
+        {
+            if (suppressNestedSelectedEdgesChange)
+                return;
+
+            bool isCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+
+            suppressNestedSelectedEdgesChange = true;
+
+            try
+            {
+                if (!isCtrl)
+                {
+                    ownSelectedEdges.Clear();
+                    ClearNestedSelectedEdges(sourceVisualiser);
+                }
+
+                SyncOwnSelectedEdgesVertex();
+            }
+            finally
+            {
+                suppressNestedSelectedEdgesChange = false;
+            }
+
+            NotifySelectedEdgesChanged();
         }
 
         private void FormControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.ClickCount != 2)
-                return;
-
             ControlInfo controlInfo = GetControlInfoByElement(sender as FrameworkElement);
 
             if (controlInfo == null)
                 return;
 
             SetKeyboardHighlightControlInfo(controlInfo);
-            RaiseKeyboardHighlightActivated();
-            e.Handled = true;
+
+            if (e.ClickCount == 1)
+            {
+                bool isCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+                IKeyboardHighlight nestedKeyboardHighlight = GetNestedKeyboardHighlight(controlInfo);
+
+                if (nestedKeyboardHighlight == null)
+                    ToggleOwnSelectedEdge(controlInfo.BaseEdge, isCtrl);
+
+                e.Handled = true;
+                return;
+            }
+
+            if (e.ClickCount == 2)
+            {
+                RaiseKeyboardHighlightActivated();
+                e.Handled = true;
+            }
         }
 
         private ControlInfo GetControlInfoByElement(FrameworkElement element)
@@ -679,6 +783,131 @@ namespace m0.UIWpf.Visualisers
                 textBlock.Background = background;
                 textBlock.Foreground = foreground;
             }
+        }
+
+        private void ToggleOwnSelectedEdge(IEdge edge, bool preserveOtherSelections)
+        {
+            if (edge == null)
+                return;
+
+            suppressNestedSelectedEdgesChange = true;
+
+            try
+            {
+                if (!preserveOtherSelections)
+                {
+                    ownSelectedEdges.Clear();
+                    ClearNestedSelectedEdges(null);
+                }
+
+                IEdge selectedEdge = FindOwnSelectedEdge(edge);
+
+                if (selectedEdge != null)
+                    ownSelectedEdges.Remove(selectedEdge);
+                else
+                    ownSelectedEdges.Add(edge);
+
+                SyncOwnSelectedEdgesVertex();
+            }
+            finally
+            {
+                suppressNestedSelectedEdgesChange = false;
+            }
+
+            NotifySelectedEdgesChanged();
+        }
+
+        private IEdge FindOwnSelectedEdge(IEdge edge)
+        {
+            foreach (IEdge ownSelectedEdge in ownSelectedEdges)
+                if (EdgeHelper.CompareIEdges(ownSelectedEdge, edge))
+                    return ownSelectedEdge;
+
+            return null;
+        }
+
+        private void ClearOwnSelectedEdges()
+        {
+            IVertex selectedEdges = GetOwnSelectedEdgesVertex();
+
+            if (selectedEdges != null)
+                GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(selectedEdges);
+        }
+
+        private IVertex GetOwnSelectedEdgesVertex()
+        {
+            if (Vertex == null)
+                return null;
+
+            return Vertex.Get(false, "SelectedEdges:");
+        }
+
+        private void ClearNestedSelectedEdges(IListVisualiser exceptVisualiser)
+        {
+            foreach (IListVisualiser nestedVisualiser in GetNestedListVisualisers())
+            {
+                if (nestedVisualiser == exceptVisualiser)
+                    continue;
+
+                nestedVisualiser.UnselectAllSelectedEdges();
+            }
+        }
+
+        private IEnumerable<IListVisualiser> GetNestedListVisualisers()
+        {
+            if (TabList == null)
+                yield break;
+
+            foreach (TabInfo tabInfo in TabList.Values)
+                foreach (ControlInfo controlInfo in tabInfo.ControlInfos.Values)
+                {
+                    IListVisualiser nestedVisualiser = controlInfo.DataControl as IListVisualiser;
+
+                    if (nestedVisualiser != null)
+                        yield return nestedVisualiser;
+                }
+        }
+
+        private void SyncOwnSelectedEdgesVertex()
+        {
+            IVertex ownSelectedEdges = GetOwnSelectedEdgesVertex();
+
+            if (ownSelectedEdges == null)
+                return;
+
+            GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(ownSelectedEdges);
+
+            foreach (IEdge ownSelectedEdge in this.ownSelectedEdges)
+                AddSelectedEdgeIfMissing(ownSelectedEdges, ownSelectedEdge);
+
+            foreach (IListVisualiser nestedVisualiser in GetNestedListVisualisers())
+            {
+                IVertex nestedSelectedEdges = nestedVisualiser.Vertex.Get(false, "SelectedEdges:");
+
+                if (nestedSelectedEdges == null)
+                    continue;
+
+                foreach (IEdge selectedEdgeVertexEdge in nestedSelectedEdges.GetAll(false, @"{$Is:Edge}"))
+                {
+                    IEdge selectedEdge = EdgeHelper.CreateIEdgeFromEdgeVertex(selectedEdgeVertexEdge.To);
+                    AddSelectedEdgeIfMissing(ownSelectedEdges, selectedEdge);
+                }
+            }
+        }
+
+        private static void AddSelectedEdgeIfMissing(IVertex selectedEdges, IEdge edge)
+        {
+            if (selectedEdges == null || edge == null)
+                return;
+
+            if (EdgeHelper.FindIEdgeVertexByIEdge(selectedEdges, edge) == null)
+                EdgeHelper.AddEdgeVertex(selectedEdges, edge);
+        }
+
+        private void NotifySelectedEdgesChanged()
+        {
+            if (SelectedEdgesChange != null)
+                SelectedEdgesChange();
         }
 
         private void RaiseKeyboardHighlightActivated()
