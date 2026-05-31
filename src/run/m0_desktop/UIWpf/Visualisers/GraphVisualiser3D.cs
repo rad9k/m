@@ -1426,6 +1426,17 @@ namespace m0.UIWpf.Visualisers
         private void GraphVisualiser3D_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             GraphVisualiser3DNode hit = HitTestVertexAt(e.GetPosition(viewport));
+            Point point = e.GetPosition(this);
+
+            MinusZero.Instance.Log(1, "GraphVisualiser3D.DndSelection",
+                string.Format("MouseDown click={0} hitNode={1} labelHit={2} selectedBefore={3} point=({4},{5})",
+                    e.ClickCount,
+                    hit != null,
+                    GetLabelHitKindForDndLog(point),
+                    GetSelectedEdgesCountForDndLog(),
+                    point.X,
+                    point.Y));
+
             if (e.ClickCount == 2 && hit != null)
             {
                 doubleClickHandled = true;
@@ -1452,7 +1463,7 @@ namespace m0.UIWpf.Visualisers
             doubleClickHandled = false;
             mouseIsDown = true;
             cameraDragActive = false;
-            dragStart = e.GetPosition(this);
+            dragStart = point;
             yawAtDragStart = cameraYaw;
             pitchAtDragStart = cameraPitch;
             CaptureMouse();
@@ -1467,6 +1478,14 @@ namespace m0.UIWpf.Visualisers
                 Vector delta = point - dragStart;
                 if (cameraDragActive || Math.Abs(delta.X) > 4 || Math.Abs(delta.Y) > 4)
                 {
+                    MinusZero.Instance.Log(1, "GraphVisualiser3D.DndSelection",
+                        string.Format("MouseMoveCameraDrag cameraDragActiveBefore={0} labelStart={1} selectedCount={2} delta=({3},{4})",
+                            cameraDragActive,
+                            GetLabelHitKindForDndLog(dragStart),
+                            GetSelectedEdgesCountForDndLog(),
+                            delta.X,
+                            delta.Y));
+
                     cameraDragActive = true;
                     cameraYaw = yawAtDragStart - delta.X * 0.006;
                     cameraPitch = Math.Max(-1.35, Math.Min(1.35, pitchAtDragStart + delta.Y * 0.006));
@@ -1483,10 +1502,22 @@ namespace m0.UIWpf.Visualisers
 
         private void GraphVisualiser3D_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            Point point = e.GetPosition(this);
+
             if (IsMouseCaptured)
                 ReleaseMouseCapture();
 
             mouseIsDown = false;
+
+            MinusZero.Instance.Log(1, "GraphVisualiser3D.DndSelection",
+                string.Format("MouseUp doubleClickHandled={0} cameraDragActive={1} hitNode={2} labelHit={3} selectedBefore={4} point=({5},{6})",
+                    doubleClickHandled,
+                    cameraDragActive,
+                    HitTestVertexAt(e.GetPosition(viewport)) != null,
+                    GetLabelHitKindForDndLog(point),
+                    GetSelectedEdgesCountForDndLog(),
+                    point.X,
+                    point.Y));
 
             if (doubleClickHandled)
             {
@@ -1500,6 +1531,10 @@ namespace m0.UIWpf.Visualisers
             if (!cameraDragActive && hit != null)
             {
                 ToggleSelection(hit);
+
+                MinusZero.Instance.Log(1, "GraphVisualiser3D.DndSelection",
+                    string.Format("MouseUpSelectionApplied selectedAfter={0}", GetSelectedEdgesCountForDndLog()));
+
                 e.Handled = true;
             }
 
@@ -1569,6 +1604,33 @@ namespace m0.UIWpf.Visualisers
             }, new PointHitTestParameters(point));
 
             return result;
+        }
+
+        private int GetSelectedEdgesCountForDndLog()
+        {
+            IVertex selectedEdges = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
+
+            return selectedEdges == null ? 0 : selectedEdges.Count();
+        }
+
+        private string GetLabelHitKindForDndLog(Point point)
+        {
+            foreach (GraphVisualiser3DLabel label in labels)
+            {
+                if (label.Element == null || !label.Element.IsVisible)
+                    continue;
+
+                if (label.Element.ActualWidth <= 0 || label.Element.ActualHeight <= 0)
+                    continue;
+
+                Point topLeft = label.Element.TranslatePoint(new Point(0, 0), this);
+                Rect bounds = new Rect(topLeft, new System.Windows.Size(label.Element.ActualWidth, label.Element.ActualHeight));
+
+                if (bounds.Contains(point))
+                    return label.IsEdgeLabel ? "edge-label" : "node-label";
+            }
+
+            return "none";
         }
 
         private void ToggleSelection(GraphVisualiser3DNode node)

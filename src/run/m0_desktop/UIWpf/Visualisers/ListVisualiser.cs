@@ -212,6 +212,13 @@ namespace m0.UIWpf.Visualisers
             //////////////////////////////////////// 
         }
 
+        private int GetSelectedEdgesCountForDndLog()
+        {
+            IVertex selectedEdges = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
+
+            return selectedEdges == null ? 0 : selectedEdges.Count();
+        }
+
         protected void _OnSelectionChanged(object sender, SelectionChangedEventArgs e){
             if (SelectionProphibited)
             {
@@ -226,6 +233,11 @@ namespace m0.UIWpf.Visualisers
                 TurnOffSelectedItemsUpdate = true;
                 
                 IVertex sv = Vertex.Get(false, "SelectedEdges:");
+
+                MinusZero.Instance.Log(1, "ListVisualiser.DndSelection",
+                    string.Format("SelectionChanged selectedEdgesBefore={0} dataGridSelectedItems={1}",
+                        GetSelectedEdgesCountForDndLog(),
+                        ThisDataGrid.SelectedItems.Count));
 
                 ////////////////////////////////////////
                 Interaction.BeginInteractionWithGraph();
@@ -246,6 +258,11 @@ namespace m0.UIWpf.Visualisers
                 TurnOffSelectedItemsUpdate = false;
                 RefreshSelectedRowsVisualState();
                 RefreshKeyboardHighlightAfterItemsChanged();
+
+                MinusZero.Instance.Log(1, "ListVisualiser.DndSelection",
+                    string.Format("SelectionChanged selectedEdgesAfter={0} dataGridSelectedItems={1}",
+                        GetSelectedEdgesCountForDndLog(),
+                        ThisDataGrid.SelectedItems.Count));
             }            
         }
 

@@ -947,16 +947,24 @@ namespace m0.UIWpf.Visualisers
 
                    if (kvp.Key != null)
                    {
+                       bool IsCtrl = false;
+
+                       if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+                           IsCtrl = true;
+
+                       MinusZero.Instance.Log(1, "GraphVisualiser.DndSelection",
+                           string.Format("MouseDown click=1 hit={0} ctrl={1} selectedBefore={2} point=({3},{4})",
+                               GetVertexLogValue(kvp.Key),
+                               IsCtrl,
+                               GetSelectedEdgesCountForDndLog(),
+                               e.GetPosition(this).X,
+                               e.GetPosition(this).Y));
+
                        ////////////////////////////////////////
                        Interaction.BeginInteractionWithGraph();
                        //////////////////////////////////////// 
                     
                        CopySelectedVerticesToTemp();                           
-
-                       bool IsCtrl = false;
-
-                       if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
-                           IsCtrl = true;
 
                        IVertex sv = Vertex.Get(false, "SelectedEdges:");
                        
@@ -991,6 +999,12 @@ namespace m0.UIWpf.Visualisers
                        ////////////////////////////////////////
                        Interaction.EndInteractionWithGraph();
                        //////////////////////////////////////// 
+
+                       MinusZero.Instance.Log(1, "GraphVisualiser.DndSelection",
+                           string.Format("MouseDown selectionApplied hit={0} ctrl={1} selectedAfter={2}",
+                               GetVertexLogValue(kvp.Key),
+                               IsCtrl,
+                               GetSelectedEdgesCountForDndLog()));
                 }
             }
             
@@ -1001,6 +1015,12 @@ namespace m0.UIWpf.Visualisers
 
         protected override void OnMouseUp(MouseButtonEventArgs e)
         {
+            MinusZero.Instance.Log(1, "GraphVisualiser.DndSelection",
+                string.Format("MouseUp selectedCount={0} point=({1},{2})",
+                    GetSelectedEdgesCountForDndLog(),
+                    e.GetPosition(this).X,
+                    e.GetPosition(this).Y));
+
             base.OnMouseUp(e);
         }
 
@@ -1214,6 +1234,21 @@ namespace m0.UIWpf.Visualisers
                     DisplayedVerticesUIElements[v.To.Get(false, "To:")].Unselect();            
         }        
 
+        private int GetSelectedEdgesCountForDndLog()
+        {
+            IVertex selectedEdges = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
+
+            return selectedEdges == null ? 0 : selectedEdges.Count();
+        }
+
+        private static string GetVertexLogValue(IVertex vertex)
+        {
+            if (vertex == null)
+                return "null";
+
+            return vertex.Value == null ? "null-value" : vertex.Value.ToString();
+        }
+
         IVertex tempSelectedVertices;
 
         protected void CopySelectedVerticesToTemp()
@@ -1348,6 +1383,12 @@ namespace m0.UIWpf.Visualisers
 
             CopySelectedVerticesToTemp();
 
+            MinusZero.Instance.Log(1, "GraphVisualiser.DndSelection",
+                string.Format("DndMouseDown selectedSnapshot={0} startPoint=({1},{2})",
+                    GetSelectedEdgesCountForDndLog(),
+                    dndStartPoint.X,
+                    dndStartPoint.Y));
+
             MinusZero.Instance.IsGUIDragging = false;
         }
 
@@ -1362,19 +1403,36 @@ namespace m0.UIWpf.Visualisers
                 (Math.Abs(diff.X) > Dnd.MinimumHorizontalDragDistance) ||
                 (Math.Abs(diff.Y) > Dnd.MinimumVerticalDragDistance)))
             {
+                MinusZero.Instance.Log(1, "GraphVisualiser.DndSelection",
+                    string.Format("DndStartThreshold selectedBeforeRestore={0} diff=({1},{2})",
+                        GetSelectedEdgesCountForDndLog(),
+                        diff.X,
+                        diff.Y));
+
                 RestoreSelectedVertices();
 
+                MinusZero.Instance.Log(1, "GraphVisualiser.DndSelection",
+                    string.Format("DndAfterRestore selectedCount={0}", GetSelectedEdgesCountForDndLog()));
+
                 IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
+                bool usedFallback = false;
 
                 if (Vertex.Get(false, @"SelectedEdges:\{$Is:Edge}") != null)
                     foreach (IEdge ee in Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"))
                         dndVertex.AddEdge(null, ee.To);
                 else
                 {
+                    usedFallback = true;
                     IVertex v = GetEdgeByPoint(dndStartPoint);
                     if (v != null)
                         dndVertex.AddEdge(null, v);
                 }
+
+                MinusZero.Instance.Log(1, "GraphVisualiser.DndSelection",
+                    string.Format("DndPayload selectedCount={0} payloadCount={1} usedFallback={2}",
+                        GetSelectedEdgesCountForDndLog(),
+                        dndVertex.Count(),
+                        usedFallback));
 
                 if (dndVertex.Count() > 0)
                 {

@@ -89,6 +89,13 @@ namespace m0.UIWpf.Visualisers
         private bool isAfterLastKeyboardPosition;
         private bool suppressNestedSelectedEdgesChange;
         private readonly IList<IEdge> ownSelectedEdges = new List<IEdge>();
+        private ControlInfo pendingMouseDownControlInfo;
+        private bool pendingMouseDownIsCtrl;
+        private bool pendingMouseDownHasNestedKeyboardHighlight;
+        private int pendingMouseDownClickCount;
+        private Point pendingMouseDownPoint;
+        private bool suppressNextMouseUpSelection;
+        private bool isFormDndDragging;
 
 
         TabItem TabControlSelectedItem;
@@ -182,6 +189,8 @@ namespace m0.UIWpf.Visualisers
             {
                 suppressNestedSelectedEdgesChange = false;
             }
+
+            RefreshSelectedControlsVisualState();
         }
 
         // TypedEdge START
@@ -635,11 +644,51 @@ namespace m0.UIWpf.Visualisers
 
         private void SetControlInfoKeyboardHighlight(ControlInfo controlInfo, bool isHighlighted)
         {
-            Brush background = isHighlighted ? (Brush)FindResource("0HighlightBrush") : (Brush)FindResource("0BackgroundBrush");
-            Brush foreground = isHighlighted ? (Brush)FindResource("0HighlightForegroundBrush") : (Brush)FindResource("0ForegroundBrush");
+            bool isSelected = IsOwnSelectedControlInfo(controlInfo);
+            Brush background;
+            Brush foreground;
+
+            if (isSelected)
+            {
+                background = (Brush)FindResource("0SelectionBrush");
+                foreground = (Brush)FindResource("0BackgroundBrush");
+            }
+            else if (isHighlighted)
+            {
+                background = (Brush)FindResource("0HighlightBrush");
+                foreground = (Brush)FindResource("0HighlightForegroundBrush");
+            }
+            else
+            {
+                background = (Brush)FindResource("0BackgroundBrush");
+                foreground = (Brush)FindResource("0ForegroundBrush");
+            }
 
             SetElementHighlight(controlInfo.MetaControl, background, foreground);
             SetElementHighlight(controlInfo.DataControl, background, foreground);
+        }
+
+        private bool IsOwnSelectedControlInfo(ControlInfo controlInfo)
+        {
+            if (controlInfo == null || controlInfo.BaseEdge == null)
+                return false;
+
+            return FindOwnSelectedEdge(controlInfo.BaseEdge) != null;
+        }
+
+        private void RefreshSelectedControlsVisualState()
+        {
+            if (TabList == null)
+                return;
+
+            foreach (TabInfo tabInfo in TabList.Values)
+                foreach (ControlInfo controlInfo in tabInfo.ControlInfos.Values)
+                {
+                    bool isKeyboardHighlighted = controlInfo == keyboardHighlightedControlInfo
+                        && GetNestedKeyboardHighlight(controlInfo) == null;
+
+                    SetControlInfoKeyboardHighlight(controlInfo, isKeyboardHighlighted);
+                }
         }
 
         private static IKeyboardHighlight GetNestedKeyboardHighlight(ControlInfo controlInfo)
@@ -712,6 +761,7 @@ namespace m0.UIWpf.Visualisers
                 }
 
                 SyncOwnSelectedEdgesVertex();
+                RefreshSelectedControlsVisualState();
             }
             finally
             {
@@ -721,6 +771,29 @@ namespace m0.UIWpf.Visualisers
             NotifySelectedEdgesChanged();
         }
 
+        private int GetSelectedEdgesCountForDndLog()
+        {
+            IVertex selectedEdges = GetOwnSelectedEdgesVertex();
+
+            if (selectedEdges == null)
+                return 0;
+
+            IVertex selectedEdgeVertices = selectedEdges.GetAll(false, @"{$Is:Edge}");
+
+            return selectedEdgeVertices == null ? 0 : selectedEdgeVertices.Count();
+        }
+
+        private static string GetEdgeLogValue(IEdge edge)
+        {
+            if (edge == null)
+                return "null";
+
+            string meta = edge.Meta == null || edge.Meta.Value == null ? "null-meta" : edge.Meta.Value.ToString();
+            string to = edge.To == null || edge.To.Value == null ? "null-to" : edge.To.Value.ToString();
+
+            return meta + "->" + to;
+        }
+
         private void FormControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             ControlInfo controlInfo = GetControlInfoByElement(sender as FrameworkElement);
@@ -728,15 +801,22 @@ namespace m0.UIWpf.Visualisers
             if (controlInfo == null)
                 return;
 
-            SetKeyboardHighlightControlInfo(controlInfo);
+            pendingMouseDownControlInfo = controlInfo;
+            pendingMouseDownIsCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+            pendingMouseDownHasNestedKeyboardHighlight = GetNestedKeyboardHighlight(controlInfo) != null;
+            pendingMouseDownClickCount = e.ClickCount;
+            pendingMouseDownPoint = e.GetPosition(this);
+            suppressNextMouseUpSelection = false;
 
             if (e.ClickCount == 1)
             {
-                bool isCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
-                IKeyboardHighlight nestedKeyboardHighlight = GetNestedKeyboardHighlight(controlInfo);
-
-                if (nestedKeyboardHighlight == null)
-                    ToggleOwnSelectedEdge(controlInfo.BaseEdge, isCtrl);
+                MinusZero.Instance.Log(1, "FormVisualiser.DndSelection",
+                    string.Format("MouseDown pending click=1 edge={0} ctrl={1} nestedKeyboardHighlight={2} ownSelectedBefore={3} selectedBefore={4}",
+                        GetEdgeLogValue(controlInfo.BaseEdge),
+                        pendingMouseDownIsCtrl,
+                        pendingMouseDownHasNestedKeyboardHighlight,
+                        ownSelectedEdges.Count,
+                        GetSelectedEdgesCountForDndLog()));
 
                 e.Handled = true;
                 return;
@@ -744,9 +824,132 @@ namespace m0.UIWpf.Visualisers
 
             if (e.ClickCount == 2)
             {
+                MinusZero.Instance.Log(1, "FormVisualiser.DndSelection",
+                    string.Format("MouseDown pending click=2 edge={0} nestedKeyboardHighlight={1}",
+                        GetEdgeLogValue(controlInfo.BaseEdge),
+                        pendingMouseDownHasNestedKeyboardHighlight));
+
+                e.Handled = true;
+                return;
+            }
+        }
+
+        private void FormControl_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            ControlInfo controlInfo = GetControlInfoByElement(sender as FrameworkElement);
+
+            if (controlInfo == null || controlInfo != pendingMouseDownControlInfo)
+                return;
+
+            if (suppressNextMouseUpSelection)
+            {
+                ClearPendingMouseSelection();
+                e.Handled = true;
+                return;
+            }
+
+            if (pendingMouseDownClickCount == 1)
+            {
+                if (!pendingMouseDownHasNestedKeyboardHighlight)
+                {
+                    SetKeyboardHighlightControlInfo(controlInfo);
+                    ToggleOwnSelectedEdge(controlInfo.BaseEdge, pendingMouseDownIsCtrl);
+                }
+
+                MinusZero.Instance.Log(1, "FormVisualiser.DndSelection",
+                    string.Format("MouseUp selectionApplied edge={0} ctrl={1} ownSelectedAfter={2} selectedAfter={3}",
+                        GetEdgeLogValue(controlInfo.BaseEdge),
+                        pendingMouseDownIsCtrl,
+                        ownSelectedEdges.Count,
+                        GetSelectedEdgesCountForDndLog()));
+
+                ClearPendingMouseSelection();
+                e.Handled = true;
+                return;
+            }
+
+            if (pendingMouseDownClickCount == 2)
+            {
+                if (!pendingMouseDownHasNestedKeyboardHighlight)
+                    SetKeyboardHighlightControlInfo(controlInfo);
+
                 RaiseKeyboardHighlightActivated();
+                ClearPendingMouseSelection();
                 e.Handled = true;
             }
+        }
+
+        private void FormControl_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            if (pendingMouseDownControlInfo == null || isFormDndDragging)
+                return;
+
+            if (pendingMouseDownHasNestedKeyboardHighlight)
+                return;
+
+            if (e.LeftButton != MouseButtonState.Pressed)
+                return;
+
+            Point mousePosition = e.GetPosition(this);
+            Vector diff = pendingMouseDownPoint - mousePosition;
+
+            if (Math.Abs(diff.X) <= Dnd.MinimumHorizontalDragDistance
+                && Math.Abs(diff.Y) <= Dnd.MinimumVerticalDragDistance)
+                return;
+
+            StartFormDndFromPendingSelection(diff);
+            e.Handled = true;
+        }
+
+        private void StartFormDndFromPendingSelection(Vector diff)
+        {
+            IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
+            bool usedFallback = false;
+
+            IVertex selectedEdges = GetOwnSelectedEdgesVertex();
+
+            if (selectedEdges != null && selectedEdges.Get(false, @"{$Is:Edge}") != null)
+            {
+                foreach (IEdge selectedEdgeVertexEdge in selectedEdges.GetAll(false, @"{$Is:Edge}"))
+                    dndVertex.AddEdge(null, selectedEdgeVertexEdge.To);
+            }
+            else if (pendingMouseDownControlInfo != null && pendingMouseDownControlInfo.BaseEdge != null)
+            {
+                usedFallback = true;
+                EdgeHelper.AddEdgeVertex(dndVertex, pendingMouseDownControlInfo.BaseEdge);
+            }
+
+            MinusZero.Instance.Log(1, "FormVisualiser.DndSelection",
+                string.Format("DndPayload selectedCount={0} payloadCount={1} usedFallback={2} diff=({3},{4})",
+                    GetSelectedEdgesCountForDndLog(),
+                    dndVertex.Count(),
+                    usedFallback,
+                    diff.X,
+                    diff.Y));
+
+            if (dndVertex.Count() > 0)
+            {
+                isFormDndDragging = true;
+                suppressNextMouseUpSelection = true;
+                dndVertex.AddExternalReference();
+
+                DataObject dragData = new DataObject("Vertex", dndVertex);
+                dragData.SetData("DragSource", this);
+
+                Dnd.DoDragDrop(this, dragData);
+
+                isFormDndDragging = false;
+            }
+
+            ClearPendingMouseSelection();
+        }
+
+        private void ClearPendingMouseSelection()
+        {
+            pendingMouseDownControlInfo = null;
+            pendingMouseDownIsCtrl = false;
+            pendingMouseDownHasNestedKeyboardHighlight = false;
+            pendingMouseDownClickCount = 0;
         }
 
         private ControlInfo GetControlInfoByElement(FrameworkElement element)
@@ -790,6 +993,13 @@ namespace m0.UIWpf.Visualisers
             if (edge == null)
                 return;
 
+            MinusZero.Instance.Log(1, "FormVisualiser.DndSelection",
+                string.Format("ToggleOwnSelectedEdge before edge={0} preserveOtherSelections={1} ownSelectedBefore={2} selectedBefore={3}",
+                    GetEdgeLogValue(edge),
+                    preserveOtherSelections,
+                    ownSelectedEdges.Count,
+                    GetSelectedEdgesCountForDndLog()));
+
             suppressNestedSelectedEdgesChange = true;
 
             try
@@ -815,6 +1025,13 @@ namespace m0.UIWpf.Visualisers
             }
 
             NotifySelectedEdgesChanged();
+            RefreshSelectedControlsVisualState();
+
+            MinusZero.Instance.Log(1, "FormVisualiser.DndSelection",
+                string.Format("ToggleOwnSelectedEdge after edge={0} ownSelectedAfter={1} selectedAfter={2}",
+                    GetEdgeLogValue(edge),
+                    ownSelectedEdges.Count,
+                    GetSelectedEdgesCountForDndLog()));
         }
 
         private IEdge FindOwnSelectedEdge(IEdge edge)
@@ -1671,7 +1888,11 @@ namespace m0.UIWpf.Visualisers
             ci.BaseEdge = GetKeyboardHighlightBaseEdgeForControl(meta, isSet);
             ci.Order = TabList[group].ControlInfos.Count;
             ci.MetaControl.MouseLeftButtonDown += FormControl_MouseLeftButtonDown;
+            ci.MetaControl.MouseLeftButtonUp += FormControl_MouseLeftButtonUp;
+            ci.MetaControl.PreviewMouseMove += FormControl_PreviewMouseMove;
             ci.DataControl.MouseLeftButtonDown += FormControl_MouseLeftButtonDown;
+            ci.DataControl.MouseLeftButtonUp += FormControl_MouseLeftButtonUp;
+            ci.DataControl.PreviewMouseMove += FormControl_PreviewMouseMove;
             RegisterNestedKeyboardHighlightActivation(ci);
             ci.DataControl.SizeChanged += DataControl_SizeChanged;
 

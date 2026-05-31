@@ -205,6 +205,13 @@ namespace m0.UIWpf.Visualisers.Helper
             }
         }
 
+        private int GetSelectedEdgesCountForDndLog()
+        {
+            IVertex selectedEdges = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
+
+            return selectedEdges == null ? 0 : selectedEdges.Count();
+        }
+
         // Should be corrected as uncommeted makes dnd from tree to UXContainer not working
 
         /*private override void dndPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -243,19 +250,40 @@ namespace m0.UIWpf.Visualisers.Helper
             {
                 isDraggin = true;
 
+                MinusZero.Instance.Log(1, "ListVisualiserHelper.DndSelection",
+                    string.Format("{0} DndStartThreshold selectedBeforeRestore={1} diff=({2},{3})",
+                        VisualiserName,
+                        GetSelectedEdgesCountForDndLog(),
+                        diff.X,
+                        diff.Y));
+
                 RestoreSelectedVertices();
 
+                MinusZero.Instance.Log(1, "ListVisualiserHelper.DndSelection",
+                    string.Format("{0} DndAfterRestore selectedCount={1}",
+                        VisualiserName,
+                        GetSelectedEdgesCountForDndLog()));
+
                 IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
+                bool usedFallback = false;
 
                 if (Vertex.Get(false, @"SelectedEdges:\") != null)
                     foreach (IEdge ee in Vertex.GetAll(false, @"SelectedEdges:\"))
                         dndVertex.AddEdge(null, ee.To);
                 else
                 {
+                    usedFallback = true;
                     IVertex v = Visualiser.GetEdgeByPoint(dndStartPoint);
                     if (v != null)
                         dndVertex.AddEdge(null, v);
                 }
+
+                MinusZero.Instance.Log(1, "ListVisualiserHelper.DndSelection",
+                    string.Format("{0} DndPayload selectedCount={1} payloadCount={2} usedFallback={3}",
+                        VisualiserName,
+                        GetSelectedEdgesCountForDndLog(),
+                        dndVertex.Count(),
+                        usedFallback));
 
                 if (dndVertex.Count() > 0)
                 {
