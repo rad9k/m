@@ -43,6 +43,14 @@ namespace m0.UIWpf.Visualisers
 
         protected bool TurnOffSelectedVerticesUpdate = false;
 
+        private bool selectedItemsGraphSyncPendingUntilMouseUp;
+        private Point dataGridDndStartPoint;
+        private Point dataGridDndStartPointInDataGrid;
+        private bool dataGridDndHasButtonBeenDown;
+        private bool isDataGridDndDragging;
+        private bool preserveSelectedEdgesVisualStateUntilMouseUp;
+        private object dataGridMouseDownFullRowItem;
+
         private int currentHighlightPosition = -1;
         private bool isBeforeFirstPosition;
         private bool isAfterLastPosition;
@@ -109,6 +117,9 @@ namespace m0.UIWpf.Visualisers
                 CreateView();               
 
                 ThisDataGrid.SelectionChanged += _OnSelectionChanged;
+                ThisDataGrid.PreviewMouseLeftButtonDown += OnDataGridPreviewMouseLeftButtonDown;
+                ThisDataGrid.PreviewMouseMove += OnDataGridPreviewMouseMove;
+                ThisDataGrid.PreviewMouseLeftButtonUp += OnDataGridPreviewMouseLeftButtonUp;
                 ThisDataGrid.PreviewKeyDown += OnKeyboardHighlightPreviewKeyDown;
                 ThisDataGrid.MouseDoubleClick += OnKeyboardHighlightMouseDoubleClick;
             }
@@ -230,40 +241,224 @@ namespace m0.UIWpf.Visualisers
 
             if (!TurnOffSelectedVerticesUpdate)
             {
-                TurnOffSelectedItemsUpdate = true;
-                
-                IVertex sv = Vertex.Get(false, "SelectedEdges:");
+                if (System.Windows.Input.Mouse.LeftButton == MouseButtonState.Pressed)
+                {
+                    selectedItemsGraphSyncPendingUntilMouseUp = true;
+                    preserveSelectedEdgesVisualStateUntilMouseUp = true;
+                    RefreshSelectedRowsVisualState();
+                    RefreshKeyboardHighlightAfterItemsChanged();
 
-                MinusZero.Instance.Log(1, "ListVisualiser.DndSelection",
-                    string.Format("SelectionChanged selectedEdgesBefore={0} dataGridSelectedItems={1}",
-                        GetSelectedEdgesCountForDndLog(),
-                        ThisDataGrid.SelectedItems.Count));
+                    MinusZero.Instance.Log(1, "ListVisualiser.DndSelection",
+                        string.Format("SelectionChanged deferredUntilMouseUp selectedEdgesCurrent={0} dataGridSelectedItems={1}",
+                            GetSelectedEdgesCountForDndLog(),
+                            ThisDataGrid.SelectedItems.Count));
 
-                ////////////////////////////////////////
-                Interaction.BeginInteractionWithGraph();
-                //////////////////////////////////////// 
+                    return;
+                }
 
-                UnselectAllSelectedEdges();
-
-                IVertex baseVertex = Vertex.Get(false, @"BaseEdge:\To:");
-
-                foreach (IEdge ee in ThisDataGrid.SelectedItems)
-                    EdgeHelper.AddEdgeVertex(sv, baseVertex, ee.Meta, ee.To); // becouse of possible FilterQuery
-                                                                        // Edge.AddEdge(sv, ee);
-
-                ////////////////////////////////////////
-                Interaction.EndInteractionWithGraph();
-                //////////////////////////////////////// 
-
-                TurnOffSelectedItemsUpdate = false;
-                RefreshSelectedRowsVisualState();
-                RefreshKeyboardHighlightAfterItemsChanged();
-
-                MinusZero.Instance.Log(1, "ListVisualiser.DndSelection",
-                    string.Format("SelectionChanged selectedEdgesAfter={0} dataGridSelectedItems={1}",
-                        GetSelectedEdgesCountForDndLog(),
-                        ThisDataGrid.SelectedItems.Count));
+                SyncSelectedItemsToSelectedEdges("SelectionChanged");
             }            
+        }
+
+        private void OnDataGridPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            dataGridDndHasButtonBeenDown = false;
+            preserveSelectedEdgesVisualStateUntilMouseUp = false;
+
+            object mouseUpFullRowItem = GetDataGridItemByFullRowPoint(e.GetPosition(this));
+
+            if (!selectedItemsGraphSyncPendingUntilMouseUp
+                && dataGridMouseDownFullRowItem != null
+                && dataGridMouseDownFullRowItem == mouseUpFullRowItem)
+            {
+                ToggleDataGridSelectedItem(dataGridMouseDownFullRowItem);
+                dataGridMouseDownFullRowItem = null;
+                SyncSelectedItemsToSelectedEdges("FullRowMouseUp");
+                e.Handled = true;
+                return;
+            }
+
+            dataGridMouseDownFullRowItem = null;
+
+            if (!selectedItemsGraphSyncPendingUntilMouseUp)
+                return;
+
+            selectedItemsGraphSyncPendingUntilMouseUp = false;
+            SyncSelectedItemsToSelectedEdges("MouseUp");
+        }
+
+        private void OnDataGridPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            dataGridDndStartPoint = e.GetPosition(this);
+            dataGridDndStartPointInDataGrid = e.GetPosition(ThisDataGrid);
+            dataGridMouseDownFullRowItem = GetDataGridItemByFullRowPoint(dataGridDndStartPoint);
+            dataGridDndHasButtonBeenDown = true;
+            isDataGridDndDragging = false;
+
+            MinusZero.Instance.IsGUIDragging = false;
+
+            MinusZero.Instance.Log(1, "ListVisualiser.DndSelection",
+                string.Format("DndMouseDown selectedEdges={0} startPoint=({1},{2})",
+                    GetSelectedEdgesCountForDndLog(),
+                    dataGridDndStartPoint.X,
+                    dataGridDndStartPoint.Y));
+        }
+
+        private void OnDataGridPreviewMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (!dataGridDndHasButtonBeenDown || isDataGridDndDragging)
+                return;
+
+            if (e.LeftButton != MouseButtonState.Pressed)
+                return;
+
+            if (WpfUtil.IsMouseOverScrollbar(sender, dataGridDndStartPointInDataGrid))
+                return;
+
+            Point mousePosition = e.GetPosition(this);
+            Vector diff = dataGridDndStartPoint - mousePosition;
+
+            if (Math.Abs(diff.X) <= Dnd.MinimumHorizontalDragDistance
+                && Math.Abs(diff.Y) <= Dnd.MinimumVerticalDragDistance)
+                return;
+
+            isDataGridDndDragging = true;
+            selectedItemsGraphSyncPendingUntilMouseUp = false;
+            preserveSelectedEdgesVisualStateUntilMouseUp = true;
+
+            IVertex dndVertex = CreateDataGridDndVertex();
+
+            MinusZero.Instance.Log(1, "ListVisualiser.DndSelection",
+                string.Format("DndPayload selectedEdges={0} payloadCount={1} diff=({2},{3})",
+                    GetSelectedEdgesCountForDndLog(),
+                    dndVertex.Count(),
+                    diff.X,
+                    diff.Y));
+
+            if (dndVertex.Count() > 0)
+            {
+                dndVertex.AddExternalReference();
+
+                System.Windows.DataObject dragData = new System.Windows.DataObject("Vertex", dndVertex);
+                dragData.SetData("DragSource", this);
+
+                Dnd.DoDragDrop(this, dragData);
+
+                e.Handled = true;
+            }
+
+            isDataGridDndDragging = false;
+            dataGridDndHasButtonBeenDown = false;
+            dataGridMouseDownFullRowItem = null;
+        }
+
+        private object GetDataGridItemByFullRowPoint(Point point)
+        {
+            if (ThisDataGrid == null || ThisDataGrid.Items == null)
+                return null;
+
+            foreach (object item in ThisDataGrid.Items)
+            {
+                System.Windows.Controls.DataGridRow row = ThisDataGrid.ItemContainerGenerator.ContainerFromItem(item) as System.Windows.Controls.DataGridRow;
+
+                if (row == null || !row.IsVisible)
+                    continue;
+
+                Point pointInRow = TranslatePoint(point, row);
+
+                if (pointInRow.Y >= 0
+                    && pointInRow.Y <= row.ActualHeight
+                    && pointInRow.X >= 0
+                    && pointInRow.X <= ThisDataGrid.ActualWidth)
+                    return item;
+            }
+
+            return null;
+        }
+
+        private void ToggleDataGridSelectedItem(object item)
+        {
+            if (item == null)
+                return;
+
+            TurnOffSelectedVerticesUpdate = true;
+
+            bool isCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+
+            if (isCtrl)
+            {
+                if (ThisDataGrid.SelectedItems.Contains(item))
+                    ThisDataGrid.SelectedItems.Remove(item);
+                else
+                    ThisDataGrid.SelectedItems.Add(item);
+            }
+            else
+            {
+                ThisDataGrid.SelectedItems.Clear();
+                ThisDataGrid.SelectedItems.Add(item);
+            }
+
+            TurnOffSelectedVerticesUpdate = false;
+        }
+
+        private IVertex CreateDataGridDndVertex()
+        {
+            IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
+            IVertex selectedEdges = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
+
+            if (selectedEdges != null && selectedEdges.Count() > 0)
+            {
+                foreach (IEdge selectedEdge in selectedEdges)
+                    dndVertex.AddEdge(null, selectedEdge.To);
+
+                return dndVertex;
+            }
+
+            IVertex edgeByPoint = GetEdgeByPoint(dataGridDndStartPoint);
+
+            if (edgeByPoint != null)
+                dndVertex.AddEdge(null, edgeByPoint);
+
+            return dndVertex;
+        }
+
+        private void SyncSelectedItemsToSelectedEdges(string reason)
+        {
+            TurnOffSelectedItemsUpdate = true;
+
+            IVertex sv = Vertex.Get(false, "SelectedEdges:");
+
+            MinusZero.Instance.Log(1, "ListVisualiser.DndSelection",
+                string.Format("{0} sync selectedEdgesBefore={1} dataGridSelectedItems={2}",
+                    reason,
+                    GetSelectedEdgesCountForDndLog(),
+                    ThisDataGrid.SelectedItems.Count));
+
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            //////////////////////////////////////// 
+
+            UnselectAllSelectedEdges();
+
+            IVertex baseVertex = Vertex.Get(false, @"BaseEdge:\To:");
+
+            foreach (IEdge ee in ThisDataGrid.SelectedItems)
+                EdgeHelper.AddEdgeVertex(sv, baseVertex, ee.Meta, ee.To); // becouse of possible FilterQuery
+                                                                    // Edge.AddEdge(sv, ee);
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            //////////////////////////////////////// 
+
+            TurnOffSelectedItemsUpdate = false;
+            RefreshSelectedRowsVisualState();
+            RefreshKeyboardHighlightAfterItemsChanged();
+
+            MinusZero.Instance.Log(1, "ListVisualiser.DndSelection",
+                string.Format("{0} sync selectedEdgesAfter={1} dataGridSelectedItems={2}",
+                    reason,
+                    GetSelectedEdgesCountForDndLog(),
+                    ThisDataGrid.SelectedItems.Count));
         }
 
         bool ShowMeta;
@@ -692,6 +887,21 @@ namespace m0.UIWpf.Visualisers
             return rows[currentHighlightPosition].Item as IEdge;
         }
 
+        private bool IsItemSelectedForVisualState(object item)
+        {
+            if (!preserveSelectedEdgesVisualStateUntilMouseUp && !isDataGridDndDragging)
+                return ThisDataGrid.SelectedItems.Contains(item);
+
+            IEdge itemEdge = item as IEdge;
+
+            if (itemEdge == null)
+                return false;
+
+            IVertex selectedEdges = Vertex.Get(false, "SelectedEdges:");
+
+            return selectedEdges != null && EdgeHelper.FindIEdgeVertexByIEdge(selectedEdges, itemEdge) != null;
+        }
+
         public void ClearKeyboardHighlight()
         {
             DataGridRow row = GetKeyboardHighlightRow();
@@ -710,7 +920,7 @@ namespace m0.UIWpf.Visualisers
                 cell.ClearValue(System.Windows.Controls.Control.BorderBrushProperty);
             }
 
-            if (ThisDataGrid.SelectedItems.Contains(row.Item))
+            if (IsItemSelectedForVisualState(row.Item))
                 ApplySelectedRowVisualState(row);
         }
 
@@ -845,6 +1055,12 @@ namespace m0.UIWpf.Visualisers
             if (TurnOffSelectedItemsUpdate)
                 return;
 
+            if (preserveSelectedEdgesVisualStateUntilMouseUp || isDataGridDndDragging)
+            {
+                RefreshSelectedRowsVisualState();
+                return;
+            }
+
             TurnOffSelectedVerticesUpdate = true;
 
             ThisDataGrid.SelectedItems.Clear();
@@ -929,7 +1145,7 @@ namespace m0.UIWpf.Visualisers
 
                 ClearSelectedRowVisualState(row);
 
-                if (ThisDataGrid.SelectedItems.Contains(item))
+                if (IsItemSelectedForVisualState(item))
                     ApplySelectedRowVisualState(row);
             }
         }

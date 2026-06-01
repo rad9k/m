@@ -214,7 +214,7 @@ namespace m0.UIWpf.Visualisers
                 "FormVisualiser", 
                 this, 
                 false, 
-                new List<string> { @"" }, // currently the form does not need BaseEdge:\To:
+                new List<string> { @"", @"BaseEdge:\", @"BaseEdge:\To:\" },
                 "AtomVisualiser",
                 baseEdgeVertex,
                 UpdateBaseEdgeCallSchemeEnum.OmmitFirst);            
