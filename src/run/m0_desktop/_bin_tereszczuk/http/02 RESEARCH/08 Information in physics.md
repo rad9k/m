@@ -88,7 +88,7 @@ In this experiment, carbon placed in a thermogravimetric setup was exposed to **
 
 Under ordinary conditions, the carbon used in this type of setup ignites at approximately **850–900°C**. In the experimental series, ignition reportedly occurred at approximately **450–500°C**. In our interpretation, this suggested that informational influence may alter the energetic threshold of a material process without changing the material substrate in any conventional chemical sense.
 
-This experiment was repeated several weeks ago, with a **similar result**, which we consider noteworthy even if not yet sufficient for formal scientific validation.
+This experiment was repeated, with a **similar result**, which we consider noteworthy even if not yet sufficient for formal scientific validation.
 
 ## Informational Influence on the Specific Heat of Water (Wrocław, 2009)
 
