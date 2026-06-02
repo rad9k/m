@@ -223,13 +223,6 @@ namespace m0.UIWpf.Visualisers
             //////////////////////////////////////// 
         }
 
-        private int GetSelectedEdgesCountForDndLog()
-        {
-            IVertex selectedEdges = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
-
-            return selectedEdges == null ? 0 : selectedEdges.Count();
-        }
-
         protected void _OnSelectionChanged(object sender, SelectionChangedEventArgs e){
             if (SelectionProphibited)
             {
@@ -251,7 +244,7 @@ namespace m0.UIWpf.Visualisers
                     return;
                 }
 
-                SyncSelectedItemsToSelectedEdges("SelectionChanged");
+                SyncSelectedItemsToSelectedEdges();
             }            
         }
 
@@ -268,7 +261,7 @@ namespace m0.UIWpf.Visualisers
             {
                 ToggleDataGridSelectedItem(dataGridMouseDownFullRowItem);
                 dataGridMouseDownFullRowItem = null;
-                SyncSelectedItemsToSelectedEdges("FullRowMouseUp");
+                SyncSelectedItemsToSelectedEdges();
                 e.Handled = true;
                 return;
             }
@@ -279,7 +272,7 @@ namespace m0.UIWpf.Visualisers
                 return;
 
             selectedItemsGraphSyncPendingUntilMouseUp = false;
-            SyncSelectedItemsToSelectedEdges("MouseUp");
+            SyncSelectedItemsToSelectedEdges();
         }
 
         private void OnDataGridPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -405,7 +398,7 @@ namespace m0.UIWpf.Visualisers
             return dndVertex;
         }
 
-        private void SyncSelectedItemsToSelectedEdges(string reason)
+        private void SyncSelectedItemsToSelectedEdges()
         {
             TurnOffSelectedItemsUpdate = true;
 

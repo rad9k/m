@@ -654,15 +654,17 @@ namespace m0.UIWpf.Visualisers
             Brush background;
             Brush foreground;
 
-            if (isSelected)
+            if (isHighlighted)
+            {
+                background = (Brush)FindResource("0HighlightBrush");
+                foreground = isSelected
+                    ? (Brush)FindResource("0ForegroundBrush")
+                    : (Brush)FindResource("0HighlightForegroundBrush");
+            }
+            else if (isSelected)
             {
                 background = (Brush)FindResource("0SelectionBrush");
                 foreground = (Brush)FindResource("0BackgroundBrush");
-            }
-            else if (isHighlighted)
-            {
-                background = (Brush)FindResource("0HighlightBrush");
-                foreground = (Brush)FindResource("0HighlightForegroundBrush");
             }
             else
             {
@@ -777,29 +779,6 @@ namespace m0.UIWpf.Visualisers
             NotifySelectedEdgesChanged();
         }
 
-        private int GetSelectedEdgesCountForDndLog()
-        {
-            IVertex selectedEdges = GetOwnSelectedEdgesVertex();
-
-            if (selectedEdges == null)
-                return 0;
-
-            IVertex selectedEdgeVertices = selectedEdges.GetAll(false, @"{$Is:Edge}");
-
-            return selectedEdgeVertices == null ? 0 : selectedEdgeVertices.Count();
-        }
-
-        private static string GetEdgeLogValue(IEdge edge)
-        {
-            if (edge == null)
-                return "null";
-
-            string meta = edge.Meta == null || edge.Meta.Value == null ? "null-meta" : edge.Meta.Value.ToString();
-            string to = edge.To == null || edge.To.Value == null ? "null-to" : edge.To.Value.ToString();
-
-            return meta + "->" + to;
-        }
-
         private void FormControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             ControlInfo controlInfo = GetControlInfoByElement(sender as FrameworkElement);
@@ -811,18 +790,12 @@ namespace m0.UIWpf.Visualisers
 
             if (e.ClickCount == 1)
             {
-                LogPendingMouseDown("MouseDown");
                 e.Handled = true;
                 return;
             }
 
             if (e.ClickCount == 2)
             {
-                MinusZero.Instance.Log(1, "FormVisualiser.DndSelection",
-                    string.Format("MouseDown pending click=2 edge={0} nestedKeyboardHighlight={1}",
-                        GetEdgeLogValue(controlInfo.BaseEdge),
-                        pendingMouseDownHasNestedKeyboardHighlight));
-
                 e.Handled = true;
                 return;
             }
@@ -836,9 +809,6 @@ namespace m0.UIWpf.Visualisers
                 return;
 
             SetPendingMouseDownControlInfo(controlInfo, e);
-
-            if (e.ClickCount == 1)
-                LogPendingMouseDown("PreviewMouseDown");
         }
 
         private void SetPendingMouseDownControlInfo(ControlInfo controlInfo, MouseButtonEventArgs e)
@@ -849,18 +819,6 @@ namespace m0.UIWpf.Visualisers
             pendingMouseDownClickCount = e.ClickCount;
             pendingMouseDownPoint = e.GetPosition(this);
             suppressNextMouseUpSelection = false;
-        }
-
-        private void LogPendingMouseDown(string eventName)
-        {
-            MinusZero.Instance.Log(1, "FormVisualiser.DndSelection",
-                string.Format("{0} pending click=1 edge={1} ctrl={2} nestedKeyboardHighlight={3} ownSelectedBefore={4} selectedBefore={5}",
-                    eventName,
-                    GetEdgeLogValue(pendingMouseDownControlInfo == null ? null : pendingMouseDownControlInfo.BaseEdge),
-                    pendingMouseDownIsCtrl,
-                    pendingMouseDownHasNestedKeyboardHighlight,
-                    ownSelectedEdges.Count,
-                    GetSelectedEdgesCountForDndLog()));
         }
 
         private void FormControl_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -884,13 +842,6 @@ namespace m0.UIWpf.Visualisers
                     SetKeyboardHighlightControlInfo(controlInfo);
                     ToggleOwnSelectedEdge(controlInfo.BaseEdge, pendingMouseDownIsCtrl);
                 }
-
-                MinusZero.Instance.Log(1, "FormVisualiser.DndSelection",
-                    string.Format("MouseUp selectionApplied edge={0} ctrl={1} ownSelectedAfter={2} selectedAfter={3}",
-                        GetEdgeLogValue(controlInfo.BaseEdge),
-                        pendingMouseDownIsCtrl,
-                        ownSelectedEdges.Count,
-                        GetSelectedEdgesCountForDndLog()));
 
                 ClearPendingMouseSelection();
                 e.Handled = true;
@@ -933,7 +884,6 @@ namespace m0.UIWpf.Visualisers
         private void StartFormDndFromPendingSelection(Vector diff)
         {
             IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
-            bool usedFallback = false;
 
             IVertex selectedEdges = GetOwnSelectedEdgesVertex();
             IVertex selectedEdgeVertices = selectedEdges == null
@@ -947,17 +897,8 @@ namespace m0.UIWpf.Visualisers
             }
             else if (pendingMouseDownControlInfo != null && pendingMouseDownControlInfo.BaseEdge != null)
             {
-                usedFallback = true;
                 EdgeHelper.AddEdgeVertex(dndVertex, pendingMouseDownControlInfo.BaseEdge);
             }
-
-            MinusZero.Instance.Log(1, "FormVisualiser.DndSelection",
-                string.Format("DndPayload selectedCount={0} payloadCount={1} usedFallback={2} diff=({3},{4})",
-                    GetSelectedEdgesCountForDndLog(),
-                    dndVertex.Count(),
-                    usedFallback,
-                    diff.X,
-                    diff.Y));
 
             if (dndVertex.Count() > 0)
             {
@@ -1004,13 +945,20 @@ namespace m0.UIWpf.Visualisers
             if (element == null)
                 return;
 
+            SetElementBrushes(element, background, foreground);
+        }
+
+        private static void SetElementBrushes(DependencyObject element, Brush background, Brush foreground)
+        {
+            if (element == null)
+                return;
+
             Control control = element as Control;
 
             if (control != null)
             {
                 control.Background = background;
                 control.Foreground = foreground;
-                return;
             }
 
             TextBlock textBlock = element as TextBlock;
@@ -1020,19 +968,28 @@ namespace m0.UIWpf.Visualisers
                 textBlock.Background = background;
                 textBlock.Foreground = foreground;
             }
+
+            Panel panel = element as Panel;
+
+            if (panel != null)
+                foreach (UIElement child in panel.Children)
+                    SetElementBrushes(child, background, foreground);
+
+            ContentControl contentControl = element as ContentControl;
+
+            if (contentControl != null && contentControl.Content is DependencyObject)
+                SetElementBrushes((DependencyObject)contentControl.Content, background, foreground);
+
+            Decorator decorator = element as Decorator;
+
+            if (decorator != null)
+                SetElementBrushes(decorator.Child, background, foreground);
         }
 
         private void ToggleOwnSelectedEdge(IEdge edge, bool preserveOtherSelections)
         {
             if (edge == null)
                 return;
-
-            MinusZero.Instance.Log(1, "FormVisualiser.DndSelection",
-                string.Format("ToggleOwnSelectedEdge before edge={0} preserveOtherSelections={1} ownSelectedBefore={2} selectedBefore={3}",
-                    GetEdgeLogValue(edge),
-                    preserveOtherSelections,
-                    ownSelectedEdges.Count,
-                    GetSelectedEdgesCountForDndLog()));
 
             suppressNestedSelectedEdgesChange = true;
 
@@ -1060,12 +1017,6 @@ namespace m0.UIWpf.Visualisers
 
             NotifySelectedEdgesChanged();
             RefreshSelectedControlsVisualState();
-
-            MinusZero.Instance.Log(1, "FormVisualiser.DndSelection",
-                string.Format("ToggleOwnSelectedEdge after edge={0} ownSelectedAfter={1} selectedAfter={2}",
-                    GetEdgeLogValue(edge),
-                    ownSelectedEdges.Count,
-                    GetSelectedEdgesCountForDndLog()));
         }
 
         private IEdge FindOwnSelectedEdge(IEdge edge)

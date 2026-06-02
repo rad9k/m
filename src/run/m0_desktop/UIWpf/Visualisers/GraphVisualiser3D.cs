@@ -225,17 +225,19 @@ namespace m0.UIWpf.Visualisers
             Brush backgroundBrush;
             int zIndex;
 
-            if (IsSelected)
+            if (IsHighlighted)
+            {
+                Label.Foreground = new SolidColorBrush(parentVisualiser.GetThemeColor(
+                    IsSelected ? "0ForegroundBrush" : "0HighlightForegroundBrush",
+                    IsSelected ? Colors.White : Colors.Black));
+                backgroundBrush = new SolidColorBrush(parentVisualiser.GetThemeColor("0HighlightBrush", Colors.OrangeRed));
+                zIndex = 9000;
+            }
+            else if (IsSelected)
             {
                 Label.Foreground = new SolidColorBrush(parentVisualiser.GetThemeColor("0BackgroundBrush", Colors.Black));
                 backgroundBrush = new SolidColorBrush(parentVisualiser.GetThemeColor("0SelectionBrush", Colors.DodgerBlue));
                 zIndex = 9000;
-            }
-            else if (IsHighlighted)
-            {
-                Label.Foreground = new SolidColorBrush(parentVisualiser.GetThemeColor("0HighlightBrush", Colors.OrangeRed));
-                backgroundBrush = parentVisualiser.GetLabelBackgroundBrush(230);
-                zIndex = 8000;
             }
             else
             {
@@ -1551,19 +1553,13 @@ namespace m0.UIWpf.Visualisers
 
         private void SetHoverNode(GraphVisualiser3DNode node)
         {
+            if (keyboardHighlightedNode != null)
+                ClearKeyboardHighlight();
+
             if (highlightedNode == node)
                 return;
 
-            if (highlightedNode != null)
-            {
-                highlightedNode.SetHighlighted(false);
-                foreach (GraphVisualiser3DEdgeVisual edge in highlightedNode.OutgoingEdges)
-                {
-                    edge.SetHighlighted(false);
-                    if (edge.ToNode != null && !edge.ToNode.IsSelected)
-                        edge.ToNode.SetHighlighted(false);
-                }
-            }
+            ClearMouseHoverNode();
 
             highlightedNode = node;
 
@@ -1578,6 +1574,23 @@ namespace m0.UIWpf.Visualisers
                 }
             }
 
+            UpdateLabels();
+        }
+
+        private void ClearMouseHoverNode()
+        {
+            if (highlightedNode == null)
+                return;
+
+            highlightedNode.SetHighlighted(false);
+            foreach (GraphVisualiser3DEdgeVisual edge in highlightedNode.OutgoingEdges)
+            {
+                edge.SetHighlighted(false);
+                if (edge.ToNode != null && !edge.ToNode.IsSelected)
+                    edge.ToNode.SetHighlighted(false);
+            }
+
+            highlightedNode = null;
             UpdateLabels();
         }
 
@@ -1598,33 +1611,6 @@ namespace m0.UIWpf.Visualisers
             }, new PointHitTestParameters(point));
 
             return result;
-        }
-
-        private int GetSelectedEdgesCountForDndLog()
-        {
-            IVertex selectedEdges = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
-
-            return selectedEdges == null ? 0 : selectedEdges.Count();
-        }
-
-        private string GetLabelHitKindForDndLog(Point point)
-        {
-            foreach (GraphVisualiser3DLabel label in labels)
-            {
-                if (label.Element == null || !label.Element.IsVisible)
-                    continue;
-
-                if (label.Element.ActualWidth <= 0 || label.Element.ActualHeight <= 0)
-                    continue;
-
-                Point topLeft = label.Element.TranslatePoint(new Point(0, 0), this);
-                Rect bounds = new Rect(topLeft, new System.Windows.Size(label.Element.ActualWidth, label.Element.ActualHeight));
-
-                if (bounds.Contains(point))
-                    return label.IsEdgeLabel ? "edge-label" : "node-label";
-            }
-
-            return "none";
         }
 
         private GraphVisualiser3DNode HitTestNodeLabelAt(Point point)
@@ -1823,6 +1809,7 @@ namespace m0.UIWpf.Visualisers
         private void SetKeyboardHighlightNode(GraphVisualiser3DNode node)
         {
             ClearKeyboardHighlight();
+            ClearMouseHoverNode();
 
             if (node == null)
                 return;
@@ -1856,8 +1843,8 @@ namespace m0.UIWpf.Visualisers
         {
             return displayedNodes.Values
                 .Where(node => node != null && node.BaseVertex != null)
-                .OrderBy(node => node.Position.Y)
-                .ThenBy(node => node.Position.X)
+                .OrderBy(node => GetNodeLabelScreenCenter(node).Y)
+                .ThenBy(node => GetNodeLabelScreenCenter(node).X)
                 .ToList();
         }
 
@@ -1869,7 +1856,7 @@ namespace m0.UIWpf.Visualisers
                 return;
             }
 
-            Point3D current = keyboardHighlightedNode.Position;
+            Point current = GetNodeLabelScreenCenter(keyboardHighlightedNode);
             GraphVisualiser3DNode bestNode = null;
             double bestScore = double.MaxValue;
 
@@ -1878,12 +1865,14 @@ namespace m0.UIWpf.Visualisers
                 if (node == null || node == keyboardHighlightedNode)
                     continue;
 
-                Vector3D delta = node.Position - current;
+                Point candidate = GetNodeLabelScreenCenter(node);
+                double dx = candidate.X - current.X;
+                double dy = candidate.Y - current.Y;
 
-                if (!IsCandidateInDirection(direction, delta.X, -delta.Y))
+                if (!IsCandidateInDirection(direction, dx, dy))
                     continue;
 
-                double score = delta.X * delta.X + delta.Y * delta.Y + delta.Z * delta.Z;
+                double score = dx * dx + dy * dy;
 
                 if (score < bestScore)
                 {
@@ -1894,6 +1883,22 @@ namespace m0.UIWpf.Visualisers
 
             if (bestNode != null)
                 SetKeyboardHighlightNode(bestNode);
+        }
+
+        private Point GetNodeLabelScreenCenter(GraphVisualiser3DNode node)
+        {
+            if (node == null || node.LabelElement == null || node.LabelElement.Visibility != Visibility.Visible)
+                return new Point(double.MaxValue, double.MaxValue);
+
+            double left = Canvas.GetLeft(node.LabelElement);
+            double top = Canvas.GetTop(node.LabelElement);
+
+            if (double.IsNaN(left) || double.IsNaN(top))
+                return new Point(double.MaxValue, double.MaxValue);
+
+            return new Point(
+                left + node.LabelElement.ActualWidth / 2.0,
+                top + node.LabelElement.ActualHeight / 2.0);
         }
 
         private static bool IsCandidateInDirection(KeyboardHighlightMoveDirection direction, double dx, double dy)

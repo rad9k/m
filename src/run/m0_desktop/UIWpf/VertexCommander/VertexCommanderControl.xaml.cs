@@ -1010,6 +1010,7 @@ namespace m0.UIWpf.VertexCommander
 
             IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, null, visualiserInstance);
             WrapVisualiser wrapVisualiser = new WrapVisualiser(baseEdgeVertex, 0.6, visualiserInstance, true);
+            wrapVisualiser.Background = (Brush)wrapVisualiser.FindResource("0VeryLightGrayBrush");
             wrapVisualiser.ClipToBounds = true;
             wrapVisualiser.HorizontalAlignment = HorizontalAlignment.Left;
             wrapVisualiserHost.Content = wrapVisualiser;

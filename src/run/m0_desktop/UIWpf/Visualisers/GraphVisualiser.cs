@@ -48,21 +48,14 @@ namespace m0.UIWpf.Visualisers
         {
             IsSelected = true;
 
-            this.Background = (Brush)FindResource("0SelectionBrush");
-
-            SetChildForeground((Brush)FindResource("0BackgroundBrush"));
+            ApplyVisualState();
         }
 
         public void Unselect()
         {
             IsSelected = false;
 
-            this.Background = (Brush)FindResource("0BackgroundBrush");
-
-            if(IsHighlighted)
-                SetChildForeground((Brush)FindResource("0HighlightBrush"));
-            else
-                SetChildForeground((Brush)FindResource("0ForegroundBrush"));
+            ApplyVisualState();
         }
 
 
@@ -99,12 +92,13 @@ namespace m0.UIWpf.Visualisers
         }
 
         public void HighlightThis()
-        {            
+        {
+            IsHighlighted = true;
             Panel.SetZIndex(this, 99999);
 
             this.BorderBrush = (Brush)FindResource("0HighlightBrush");
 
-            SetChildForeground((Brush)FindResource("0HighlightBrush"));
+            ApplyVisualState();
         }
 
         public void UnhighlightThisAndDescendants()
@@ -138,19 +132,79 @@ namespace m0.UIWpf.Visualisers
 
         public void UnhighlightThis()
         {
+            IsHighlighted = false;
             Panel.SetZIndex(this, 1);
 
             this.BorderBrush = (Brush)FindResource("0LightGrayBrush");
 
-            if(IsSelected)
-                SetChildForeground((Brush)FindResource("0BackgroundBrush"));
+            ApplyVisualState();
+        }
+
+        private void ApplyVisualState()
+        {
+            Brush background;
+            Brush foreground;
+
+            if (IsHighlighted)
+            {
+                background = (Brush)FindResource("0HighlightBrush");
+                foreground = IsSelected
+                    ? (Brush)FindResource("0ForegroundBrush")
+                    : (Brush)FindResource("0HighlightForegroundBrush");
+            }
+            else if (IsSelected)
+            {
+                background = (Brush)FindResource("0SelectionBrush");
+                foreground = (Brush)FindResource("0BackgroundBrush");
+            }
             else
-                SetChildForeground((Brush)FindResource("0ForegroundBrush"));
+            {
+                background = (Brush)FindResource("0BackgroundBrush");
+                foreground = (Brush)FindResource("0ForegroundBrush");
+            }
+
+            this.Background = background;
+            SetChildBackground(background);
+            SetChildForeground(foreground);
         }
 
         private void SetChildForeground(Brush brush)
         {
             SetForegroundIfPresent(this.Child, brush);
+        }
+
+        private void SetChildBackground(Brush brush)
+        {
+            SetBackgroundIfPresent(this.Child, brush);
+        }
+
+        private void SetBackgroundIfPresent(DependencyObject element, Brush brush)
+        {
+            if (element == null)
+                return;
+
+            GeneralUtil.SetPropertyIfPresent(element, "Background", brush);
+
+            if (element is Panel)
+            {
+                Panel panel = (Panel)element;
+
+                foreach (UIElement child in panel.Children)
+                    SetBackgroundIfPresent(child, brush);
+            }
+            else if (element is ContentControl)
+            {
+                ContentControl contentControl = (ContentControl)element;
+
+                if (contentControl.Content is DependencyObject)
+                    SetBackgroundIfPresent((DependencyObject)contentControl.Content, brush);
+            }
+            else if (element is Decorator)
+            {
+                Decorator decorator = (Decorator)element;
+
+                SetBackgroundIfPresent(decorator.Child, brush);
+            }
         }
 
         private void SetForegroundIfPresent(DependencyObject element, Brush brush)
@@ -890,6 +944,9 @@ namespace m0.UIWpf.Visualisers
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
+            if (keyboardHighlightedVertex != null)
+                ClearKeyboardHighlight();
+
             KeyValuePair<IVertex, SimpleVisualiserWrapper> kvp =
                 GetVertexWrapperByEventSource(e.OriginalSource ?? e.Source);
 
@@ -906,6 +963,15 @@ namespace m0.UIWpf.Visualisers
             }
 
             base.OnMouseMove(e);
+        }
+
+        private void ClearMouseHoverHighlight()
+        {
+            if (Highlighted != null)
+            {
+                Highlighted.UnhighlightThisAndDescendants();
+                Highlighted = null;
+            }
         }
         
         protected override void OnMouseDown(MouseButtonEventArgs e)
@@ -1104,6 +1170,7 @@ namespace m0.UIWpf.Visualisers
         private void SetKeyboardHighlightVertex(IVertex vertex)
         {
             ClearKeyboardHighlight();
+            ClearMouseHoverHighlight();
 
             if (vertex == null || DisplayedVerticesUIElements == null || !DisplayedVerticesUIElements.ContainsKey(vertex))
                 return;
@@ -1225,21 +1292,6 @@ namespace m0.UIWpf.Visualisers
         private IVertex pendingMouseDownSelectionVertex;
         private bool pendingMouseDownSelectionIsCtrl;
         private bool suppressNextMouseUpSelection;
-
-        private int GetSelectedEdgesCountForDndLog()
-        {
-            IVertex selectedEdges = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
-
-            return selectedEdges == null ? 0 : selectedEdges.Count();
-        }
-
-        private static string GetVertexLogValue(IVertex vertex)
-        {
-            if (vertex == null)
-                return "null";
-
-            return vertex.Value == null ? "null-value" : vertex.Value.ToString();
-        }
 
         IVertex tempSelectedVertices;
 
