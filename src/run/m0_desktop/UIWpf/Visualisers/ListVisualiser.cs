@@ -248,11 +248,6 @@ namespace m0.UIWpf.Visualisers
                     RefreshSelectedRowsVisualState();
                     RefreshKeyboardHighlightAfterItemsChanged();
 
-                    MinusZero.Instance.Log(1, "ListVisualiser.DndSelection",
-                        string.Format("SelectionChanged deferredUntilMouseUp selectedEdgesCurrent={0} dataGridSelectedItems={1}",
-                            GetSelectedEdgesCountForDndLog(),
-                            ThisDataGrid.SelectedItems.Count));
-
                     return;
                 }
 
@@ -297,11 +292,6 @@ namespace m0.UIWpf.Visualisers
 
             MinusZero.Instance.IsGUIDragging = false;
 
-            MinusZero.Instance.Log(1, "ListVisualiser.DndSelection",
-                string.Format("DndMouseDown selectedEdges={0} startPoint=({1},{2})",
-                    GetSelectedEdgesCountForDndLog(),
-                    dataGridDndStartPoint.X,
-                    dataGridDndStartPoint.Y));
         }
 
         private void OnDataGridPreviewMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
@@ -327,13 +317,6 @@ namespace m0.UIWpf.Visualisers
             preserveSelectedEdgesVisualStateUntilMouseUp = true;
 
             IVertex dndVertex = CreateDataGridDndVertex();
-
-            MinusZero.Instance.Log(1, "ListVisualiser.DndSelection",
-                string.Format("DndPayload selectedEdges={0} payloadCount={1} diff=({2},{3})",
-                    GetSelectedEdgesCountForDndLog(),
-                    dndVertex.Count(),
-                    diff.X,
-                    diff.Y));
 
             if (dndVertex.Count() > 0)
             {
@@ -428,12 +411,6 @@ namespace m0.UIWpf.Visualisers
 
             IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
-            MinusZero.Instance.Log(1, "ListVisualiser.DndSelection",
-                string.Format("{0} sync selectedEdgesBefore={1} dataGridSelectedItems={2}",
-                    reason,
-                    GetSelectedEdgesCountForDndLog(),
-                    ThisDataGrid.SelectedItems.Count));
-
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             //////////////////////////////////////// 
@@ -454,11 +431,6 @@ namespace m0.UIWpf.Visualisers
             RefreshSelectedRowsVisualState();
             RefreshKeyboardHighlightAfterItemsChanged();
 
-            MinusZero.Instance.Log(1, "ListVisualiser.DndSelection",
-                string.Format("{0} sync selectedEdgesAfter={1} dataGridSelectedItems={2}",
-                    reason,
-                    GetSelectedEdgesCountForDndLog(),
-                    ThisDataGrid.SelectedItems.Count));
         }
 
         bool ShowMeta;

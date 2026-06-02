@@ -1,6 +1,7 @@
 using m0.Foundation;
 using m0.Graph;
 using m0.Graph.ExecutionFlow;
+using m0.UIWpf.Commands;
 using m0.UIWpf.Foundation;
 using m0.UIWpf.Visualisers.Helper;
 using m0.User.Process.UX;
@@ -31,6 +32,7 @@ namespace m0.UIWpf.Visualisers
         public Func<Point3D> GetWorldPosition;
         public int BaseZIndex;
         public bool IsEdgeLabel;
+        public GraphVisualiser3DNode Node;
     }
 
     internal sealed class GraphVisualiser3DEdgeTag
@@ -656,6 +658,10 @@ namespace m0.UIWpf.Visualisers
         private bool mouseIsDown;
         private bool cameraDragActive;
         private bool doubleClickHandled;
+        private GraphVisualiser3DNode pendingMouseDownNode;
+        private bool pendingMouseDownStartedOnLabel;
+        private bool suppressNextMouseUpSelection;
+        private bool isGraph3DDndDragging;
         private Point dragStart;
         private double yawAtDragStart;
         private double pitchAtDragStart;
@@ -1147,7 +1153,8 @@ namespace m0.UIWpf.Visualisers
                 IconElement = labelIcon,
                 GetWorldPosition = () => node.Position + new Vector3D(0, size * 1.35, 0),
                 BaseZIndex = isRoot ? 3000 : 1000,
-                IsEdgeLabel = false
+                IsEdgeLabel = false,
+                Node = node
             });
 
             return node;
@@ -1425,17 +1432,9 @@ namespace m0.UIWpf.Visualisers
 
         private void GraphVisualiser3D_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            GraphVisualiser3DNode hit = HitTestVertexAt(e.GetPosition(viewport));
             Point point = e.GetPosition(this);
-
-            MinusZero.Instance.Log(1, "GraphVisualiser3D.DndSelection",
-                string.Format("MouseDown click={0} hitNode={1} labelHit={2} selectedBefore={3} point=({4},{5})",
-                    e.ClickCount,
-                    hit != null,
-                    GetLabelHitKindForDndLog(point),
-                    GetSelectedEdgesCountForDndLog(),
-                    point.X,
-                    point.Y));
+            GraphVisualiser3DNode labelHit = HitTestNodeLabelAt(point);
+            GraphVisualiser3DNode hit = labelHit ?? HitTestVertexAt(e.GetPosition(viewport));
 
             if (e.ClickCount == 2 && hit != null)
             {
@@ -1463,6 +1462,9 @@ namespace m0.UIWpf.Visualisers
             doubleClickHandled = false;
             mouseIsDown = true;
             cameraDragActive = false;
+            pendingMouseDownNode = hit;
+            pendingMouseDownStartedOnLabel = labelHit != null;
+            suppressNextMouseUpSelection = false;
             dragStart = point;
             yawAtDragStart = cameraYaw;
             pitchAtDragStart = cameraPitch;
@@ -1476,16 +1478,17 @@ namespace m0.UIWpf.Visualisers
             if (mouseIsDown && e.LeftButton == MouseButtonState.Pressed)
             {
                 Vector delta = point - dragStart;
+                if (pendingMouseDownStartedOnLabel
+                    && (Math.Abs(delta.X) > Dnd.MinimumHorizontalDragDistance
+                    || Math.Abs(delta.Y) > Dnd.MinimumVerticalDragDistance))
+                {
+                    StartGraph3DLabelDnd(delta);
+                    e.Handled = true;
+                    return;
+                }
+
                 if (cameraDragActive || Math.Abs(delta.X) > 4 || Math.Abs(delta.Y) > 4)
                 {
-                    MinusZero.Instance.Log(1, "GraphVisualiser3D.DndSelection",
-                        string.Format("MouseMoveCameraDrag cameraDragActiveBefore={0} labelStart={1} selectedCount={2} delta=({3},{4})",
-                            cameraDragActive,
-                            GetLabelHitKindForDndLog(dragStart),
-                            GetSelectedEdgesCountForDndLog(),
-                            delta.X,
-                            delta.Y));
-
                     cameraDragActive = true;
                     cameraYaw = yawAtDragStart - delta.X * 0.006;
                     cameraPitch = Math.Max(-1.35, Math.Min(1.35, pitchAtDragStart + delta.Y * 0.006));
@@ -1509,36 +1512,27 @@ namespace m0.UIWpf.Visualisers
 
             mouseIsDown = false;
 
-            MinusZero.Instance.Log(1, "GraphVisualiser3D.DndSelection",
-                string.Format("MouseUp doubleClickHandled={0} cameraDragActive={1} hitNode={2} labelHit={3} selectedBefore={4} point=({5},{6})",
-                    doubleClickHandled,
-                    cameraDragActive,
-                    HitTestVertexAt(e.GetPosition(viewport)) != null,
-                    GetLabelHitKindForDndLog(point),
-                    GetSelectedEdgesCountForDndLog(),
-                    point.X,
-                    point.Y));
-
             if (doubleClickHandled)
             {
                 doubleClickHandled = false;
                 cameraDragActive = false;
+                ClearPendingMouseDownNode();
+                suppressNextMouseUpSelection = false;
                 e.Handled = true;
                 return;
             }
 
-            GraphVisualiser3DNode hit = HitTestVertexAt(e.GetPosition(viewport));
-            if (!cameraDragActive && hit != null)
+            GraphVisualiser3DNode hit = HitTestNodeLabelAt(point) ?? HitTestVertexAt(e.GetPosition(viewport));
+            if (!cameraDragActive && !suppressNextMouseUpSelection && hit != null)
             {
                 ToggleSelection(hit);
-
-                MinusZero.Instance.Log(1, "GraphVisualiser3D.DndSelection",
-                    string.Format("MouseUpSelectionApplied selectedAfter={0}", GetSelectedEdgesCountForDndLog()));
 
                 e.Handled = true;
             }
 
             cameraDragActive = false;
+            ClearPendingMouseDownNode();
+            suppressNextMouseUpSelection = false;
         }
 
         private void GraphVisualiser3D_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -1631,6 +1625,86 @@ namespace m0.UIWpf.Visualisers
             }
 
             return "none";
+        }
+
+        private GraphVisualiser3DNode HitTestNodeLabelAt(Point point)
+        {
+            foreach (GraphVisualiser3DLabel label in labels)
+            {
+                if (label.IsEdgeLabel || label.Node == null)
+                    continue;
+
+                if (label.Element == null || !label.Element.IsVisible)
+                    continue;
+
+                if (label.Element.ActualWidth <= 0 || label.Element.ActualHeight <= 0)
+                    continue;
+
+                Point topLeft = label.Element.TranslatePoint(new Point(0, 0), this);
+                Rect bounds = new Rect(topLeft, new System.Windows.Size(label.Element.ActualWidth, label.Element.ActualHeight));
+
+                if (bounds.Contains(point))
+                    return label.Node;
+            }
+
+            return null;
+        }
+
+        private void StartGraph3DLabelDnd(Vector delta)
+        {
+            if (pendingMouseDownNode == null)
+                return;
+
+            isGraph3DDndDragging = true;
+            suppressNextMouseUpSelection = true;
+            mouseIsDown = false;
+
+            if (IsMouseCaptured)
+                ReleaseMouseCapture();
+
+            IVertex dndVertex = CreateGraph3DDndVertex(pendingMouseDownNode);
+
+            if (dndVertex.Count() > 0)
+            {
+                dndVertex.AddExternalReference();
+
+                DataObject dragData = new DataObject("Vertex", dndVertex);
+                dragData.SetData("DragSource", this);
+
+                Dnd.DoDragDrop(this, dragData);
+            }
+
+            isGraph3DDndDragging = false;
+            ClearPendingMouseDownNode();
+        }
+
+        private IVertex CreateGraph3DDndVertex(GraphVisualiser3DNode fallbackNode)
+        {
+            IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
+            IVertex selectedEdges = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
+
+            if (selectedEdges != null && selectedEdges.Count() > 0)
+            {
+                foreach (IEdge selectedEdge in selectedEdges)
+                    dndVertex.AddEdge(null, selectedEdge.To);
+
+                return dndVertex;
+            }
+
+            if (fallbackNode != null && fallbackNode.BaseVertex != null)
+            {
+                IVertex edgeVertex = MinusZero.Instance.CreateTempVertex();
+                EdgeHelper.AddEdgeVertexEdgesOnlyTo(edgeVertex, fallbackNode.BaseVertex);
+                dndVertex.AddEdge(null, edgeVertex);
+            }
+
+            return dndVertex;
+        }
+
+        private void ClearPendingMouseDownNode()
+        {
+            pendingMouseDownNode = null;
+            pendingMouseDownStartedOnLabel = false;
         }
 
         private void ToggleSelection(GraphVisualiser3DNode node)

@@ -288,6 +288,12 @@ namespace m0.UIWpf.Visualisers
 
             int currentIndex = CurrentHighlightPosition;
 
+            if (keyboardHighlightedControlInfo != null && currentIndex < 0)
+            {
+                ClearKeyboardHighlight();
+                currentIndex = -1;
+            }
+
             IKeyboardHighlight nestedKeyboardHighlight = keyboardHighlightedControlInfo != null
                 ? GetNestedKeyboardHighlight(keyboardHighlightedControlInfo)
                 : null;
@@ -801,23 +807,11 @@ namespace m0.UIWpf.Visualisers
             if (controlInfo == null)
                 return;
 
-            pendingMouseDownControlInfo = controlInfo;
-            pendingMouseDownIsCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
-            pendingMouseDownHasNestedKeyboardHighlight = GetNestedKeyboardHighlight(controlInfo) != null;
-            pendingMouseDownClickCount = e.ClickCount;
-            pendingMouseDownPoint = e.GetPosition(this);
-            suppressNextMouseUpSelection = false;
+            SetPendingMouseDownControlInfo(controlInfo, e);
 
             if (e.ClickCount == 1)
             {
-                MinusZero.Instance.Log(1, "FormVisualiser.DndSelection",
-                    string.Format("MouseDown pending click=1 edge={0} ctrl={1} nestedKeyboardHighlight={2} ownSelectedBefore={3} selectedBefore={4}",
-                        GetEdgeLogValue(controlInfo.BaseEdge),
-                        pendingMouseDownIsCtrl,
-                        pendingMouseDownHasNestedKeyboardHighlight,
-                        ownSelectedEdges.Count,
-                        GetSelectedEdgesCountForDndLog()));
-
+                LogPendingMouseDown("MouseDown");
                 e.Handled = true;
                 return;
             }
@@ -832,6 +826,41 @@ namespace m0.UIWpf.Visualisers
                 e.Handled = true;
                 return;
             }
+        }
+
+        private void FormControl_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            ControlInfo controlInfo = GetControlInfoByElement(sender as FrameworkElement);
+
+            if (controlInfo == null)
+                return;
+
+            SetPendingMouseDownControlInfo(controlInfo, e);
+
+            if (e.ClickCount == 1)
+                LogPendingMouseDown("PreviewMouseDown");
+        }
+
+        private void SetPendingMouseDownControlInfo(ControlInfo controlInfo, MouseButtonEventArgs e)
+        {
+            pendingMouseDownControlInfo = controlInfo;
+            pendingMouseDownIsCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+            pendingMouseDownHasNestedKeyboardHighlight = GetNestedKeyboardHighlight(controlInfo) != null;
+            pendingMouseDownClickCount = e.ClickCount;
+            pendingMouseDownPoint = e.GetPosition(this);
+            suppressNextMouseUpSelection = false;
+        }
+
+        private void LogPendingMouseDown(string eventName)
+        {
+            MinusZero.Instance.Log(1, "FormVisualiser.DndSelection",
+                string.Format("{0} pending click=1 edge={1} ctrl={2} nestedKeyboardHighlight={3} ownSelectedBefore={4} selectedBefore={5}",
+                    eventName,
+                    GetEdgeLogValue(pendingMouseDownControlInfo == null ? null : pendingMouseDownControlInfo.BaseEdge),
+                    pendingMouseDownIsCtrl,
+                    pendingMouseDownHasNestedKeyboardHighlight,
+                    ownSelectedEdges.Count,
+                    GetSelectedEdgesCountForDndLog()));
         }
 
         private void FormControl_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -907,10 +936,13 @@ namespace m0.UIWpf.Visualisers
             bool usedFallback = false;
 
             IVertex selectedEdges = GetOwnSelectedEdgesVertex();
+            IVertex selectedEdgeVertices = selectedEdges == null
+                ? null
+                : selectedEdges.GetAll(false, @"{$Is:Edge}");
 
-            if (selectedEdges != null && selectedEdges.Get(false, @"{$Is:Edge}") != null)
+            if (selectedEdgeVertices != null && selectedEdgeVertices.Count() > 0)
             {
-                foreach (IEdge selectedEdgeVertexEdge in selectedEdges.GetAll(false, @"{$Is:Edge}"))
+                foreach (IEdge selectedEdgeVertexEdge in selectedEdgeVertices)
                     dndVertex.AddEdge(null, selectedEdgeVertexEdge.To);
             }
             else if (pendingMouseDownControlInfo != null && pendingMouseDownControlInfo.BaseEdge != null)
@@ -931,6 +963,7 @@ namespace m0.UIWpf.Visualisers
             {
                 isFormDndDragging = true;
                 suppressNextMouseUpSelection = true;
+                ClearKeyboardHighlight();
                 dndVertex.AddExternalReference();
 
                 DataObject dragData = new DataObject("Vertex", dndVertex);
@@ -938,6 +971,7 @@ namespace m0.UIWpf.Visualisers
 
                 Dnd.DoDragDrop(this, dragData);
 
+                ClearKeyboardHighlight();
                 isFormDndDragging = false;
             }
 
@@ -1344,6 +1378,9 @@ namespace m0.UIWpf.Visualisers
             //ExecutionFlowHelper.
 
             this.SizeChanged -= FormVisualiser_SizeChanged;
+
+            ClearKeyboardHighlight();
+            ClearPendingMouseSelection();
 
             VisualiserHelper.DisposeAllChildVisualisersExceptWrap();
 
@@ -1887,9 +1924,11 @@ namespace m0.UIWpf.Visualisers
             ci.DataControl = dataControl;
             ci.BaseEdge = GetKeyboardHighlightBaseEdgeForControl(meta, isSet);
             ci.Order = TabList[group].ControlInfos.Count;
+            ci.MetaControl.PreviewMouseLeftButtonDown += FormControl_PreviewMouseLeftButtonDown;
             ci.MetaControl.MouseLeftButtonDown += FormControl_MouseLeftButtonDown;
             ci.MetaControl.MouseLeftButtonUp += FormControl_MouseLeftButtonUp;
             ci.MetaControl.PreviewMouseMove += FormControl_PreviewMouseMove;
+            ci.DataControl.PreviewMouseLeftButtonDown += FormControl_PreviewMouseLeftButtonDown;
             ci.DataControl.MouseLeftButtonDown += FormControl_MouseLeftButtonDown;
             ci.DataControl.MouseLeftButtonUp += FormControl_MouseLeftButtonUp;
             ci.DataControl.PreviewMouseMove += FormControl_PreviewMouseMove;

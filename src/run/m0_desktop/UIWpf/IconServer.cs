@@ -25,8 +25,6 @@ namespace m0.UIWpf
         private static readonly Dictionary<string, Dictionary<string, string>> RequestedIconPathByDirectory =
             new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
 
-        private static bool MetaIconDirectoryNameMissingLogged;
-
         public static BitmapImage GetIconByVertex(IVertex vertex)
         {
             BitmapImage iconByIsEdge = GetIconByString(GetIconNameFromIsEdge(vertex));
@@ -89,13 +87,10 @@ namespace m0.UIWpf
                 lock (IconCacheLock)
                     BitmapByIconPath[iconPath] = bitmap;
 
-                MinusZero.Instance.Log(1, "IconServer", "loaded icon '" + iconPath + "' pixelFormat=" + bitmap.Format + " size=" + bitmap.PixelWidth + "x" + bitmap.PixelHeight);
-
                 return bitmap;
             }
             catch (Exception iconLoadException)
             {
-                MinusZero.Instance.Log(1, "IconServer", "failed to load icon '" + iconPath + "': " + iconLoadException.Message);
                 return null;
             }
         }
@@ -150,11 +145,6 @@ namespace m0.UIWpf
 
             requestedIconPathMap[normalizedIconName] = exactMatch ?? string.Empty;
 
-            if (exactMatch == null)
-                MinusZero.Instance.Log(1, "IconServer", "no icon match for '" + normalizedIconName + "' in '" + iconDirectory + "'");
-            else
-                MinusZero.Instance.Log(1, "IconServer", "resolved icon '" + normalizedIconName + "' -> '" + exactMatch + "'");
-
             return exactMatch;
         }
 
@@ -207,8 +197,6 @@ namespace m0.UIWpf
 
             IconPathsByDirectory[iconDirectory] = iconPathMap;
 
-            MinusZero.Instance.Log(1, "IconServer", "indexed icon directory '" + iconDirectory + "' fileCount=" + iconPathMap.Count);
-
             return iconPathMap;
         }
 
@@ -238,12 +226,6 @@ namespace m0.UIWpf
 
             if (string.IsNullOrWhiteSpace(metaIconDirectoryName))
             {
-                if (MetaIconDirectoryNameMissingLogged == false)
-                {
-                    MinusZero.Instance.Log(1, "IconServer", "meta icon directory name is not configured");
-                    MetaIconDirectoryNameMissingLogged = true;
-                }
-
                 return null;
             }
 

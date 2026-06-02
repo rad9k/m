@@ -142,6 +142,9 @@ namespace m0.UIWpf.Visualisers
         {
             base.OnApplyTemplate();
 
+            Focusable = false;
+            FocusVisualStyle = null;
+
             if (expanderToggleButton != null)
             {
                 expanderToggleButton.PreviewMouseLeftButtonDown -= ExpanderToggleButtonPreviewMouseLeftButtonDown;
@@ -162,6 +165,19 @@ namespace m0.UIWpf.Visualisers
                 expanderToggleButton.MouseEnter += ExpanderToggleButtonMouseEnter;
                 expanderToggleButton.MouseLeave += ExpanderToggleButtonMouseLeave;
             }
+        }
+
+        protected override void OnSelected(RoutedEventArgs e)
+        {
+            base.OnSelected(e);
+            base.IsSelected = false;
+            e.Handled = true;
+        }
+
+        protected override void OnUnselected(RoutedEventArgs e)
+        {
+            base.OnUnselected(e);
+            e.Handled = true;
         }
 
         private void ExpanderToggleButtonMouseEnter(object sender, MouseEventArgs e)
