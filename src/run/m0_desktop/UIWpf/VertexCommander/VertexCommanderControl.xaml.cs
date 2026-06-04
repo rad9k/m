@@ -1,5 +1,6 @@
 using m0.Foundation;
 using m0.Graph;
+using m0.UIWpf.Commands;
 using m0.UIWpf.Controls;
 using m0.UIWpf.Foundation;
 using m0.UIWpf.Visualisers;
@@ -8,6 +9,7 @@ using m0.User.Process.UX;
 using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -39,6 +41,24 @@ namespace m0.UIWpf.VertexCommander
 
         private KeyboardHighlightPane currentKeyboardHighlightPane = KeyboardHighlightPane.Left;
         private KeyboardHighlightSection currentKeyboardHighlightSection = KeyboardHighlightSection.InEdges;
+
+        private const int QueryHistoryMax = 10;
+
+        private readonly ObservableCollection<QueryHistoryEntry> leftQueryHistory = new ObservableCollection<QueryHistoryEntry>();
+        private readonly ObservableCollection<QueryHistoryEntry> rightQueryHistory = new ObservableCollection<QueryHistoryEntry>();
+        private bool isApplyingHistorySelection;
+        private System.DateTime leftQueryHistoryPopupClosed;
+        private System.DateTime rightQueryHistoryPopupClosed;
+
+        private KeyboardHighlightPane? liveSyncMasterPane;
+        private bool isLiveSyncing;
+
+        private class QueryHistoryEntry
+        {
+            public string QueryText { get; set; }
+
+            public IVertex BaseEdgeTo { get; set; }
+        }
 
         private enum KeyboardHighlightPane
         {
@@ -107,6 +127,7 @@ namespace m0.UIWpf.VertexCommander
             SetCodeControlQueryText();
             Loaded += VertexCommanderControl_Loaded;
             AddCodeControlEventHandlers();
+            SetupQueryHistoryControls();
             SetDefaultVisualiserClasses();
             SetVisualiserSelectors();
             AddVisualiserSelectorEventHandlers();
@@ -131,6 +152,7 @@ namespace m0.UIWpf.VertexCommander
             SetBottomCommandButtonFontSize(NewVertexButton, fontSize);
             SetBottomCommandButtonFontSize(DeleteButton, fontSize);
             SetBottomCommandButtonFontSize(NewEdgeButton, fontSize);
+            SetBottomCommandButtonFontSize(ReplaceButton, fontSize);
             SetBottomCommandButtonFontSize(MasterToDetailButton, fontSize);
             SetBottomCommandButtonFontSize(DetailToMasterButton, fontSize);
         }
@@ -221,6 +243,7 @@ namespace m0.UIWpf.VertexCommander
             }
 
             SetKeyboardHighlightAfterBaseEdgeChange(pane);
+            RecordPaneQueryHistory(pane);
 
             object dragSource = e.Data.GetData("DragSource");
 
@@ -258,6 +281,8 @@ namespace m0.UIWpf.VertexCommander
         private void VertexCommanderControl_Loaded(object sender, RoutedEventArgs e)
         {
             SetCodeControlQueryText();
+            RecordPaneQueryHistory(KeyboardHighlightPane.Left);
+            RecordPaneQueryHistory(KeyboardHighlightPane.Right);
             Dispatcher.BeginInvoke(new Action(SetInitialKeyboardHighlight), System.Windows.Threading.DispatcherPriority.Loaded);
         }
 
@@ -300,6 +325,7 @@ namespace m0.UIWpf.VertexCommander
             RecreateLeftInEdgesVisualiser();
             RecreateLeftOutEdgesVisualiser();
             SetKeyboardHighlightAfterBaseEdgeChange(KeyboardHighlightPane.Left);
+            RecordPaneQueryHistory(KeyboardHighlightPane.Left);
         }
 
         private void RightQueryStringCodeControl_EnterSubmitted(object sender, System.EventArgs e)
@@ -313,6 +339,143 @@ namespace m0.UIWpf.VertexCommander
             RecreateRightInEdgesVisualiser();
             RecreateRightOutEdgesVisualiser();
             SetKeyboardHighlightAfterBaseEdgeChange(KeyboardHighlightPane.Right);
+            RecordPaneQueryHistory(KeyboardHighlightPane.Right);
+        }
+
+        private void SetupQueryHistoryControls()
+        {
+            LeftQueryHistoryList.ItemsSource = leftQueryHistory;
+            RightQueryHistoryList.ItemsSource = rightQueryHistory;
+
+            LeftQueryHistoryList.SelectionChanged += LeftQueryHistoryList_SelectionChanged;
+            RightQueryHistoryList.SelectionChanged += RightQueryHistoryList_SelectionChanged;
+
+            LeftQueryHistoryPopup.Closed += (s, e) => leftQueryHistoryPopupClosed = System.DateTime.Now;
+            RightQueryHistoryPopup.Closed += (s, e) => rightQueryHistoryPopupClosed = System.DateTime.Now;
+        }
+
+        private void RecordPaneQueryHistory(KeyboardHighlightPane pane)
+        {
+            if (isApplyingHistorySelection)
+                return;
+
+            CodeControl codeControl = pane == KeyboardHighlightPane.Left
+                ? LeftQueryStringCodeControl
+                : RightQueryStringCodeControl;
+
+            IVertex baseEdge = pane == KeyboardHighlightPane.Left ? LeftBaseEdge : RightBaseEdge;
+
+            if (codeControl == null || baseEdge == null)
+                return;
+
+            string queryText = codeControl.editor.Text;
+
+            if (string.IsNullOrWhiteSpace(queryText))
+                return;
+
+            ObservableCollection<QueryHistoryEntry> history = pane == KeyboardHighlightPane.Left
+                ? leftQueryHistory
+                : rightQueryHistory;
+
+            for (int i = history.Count - 1; i >= 0; i--)
+                if (history[i].QueryText == queryText)
+                    history.RemoveAt(i);
+
+            history.Insert(0, new QueryHistoryEntry
+            {
+                QueryText = queryText,
+                BaseEdgeTo = baseEdge.Get(false, @"To:")
+            });
+
+            while (history.Count > QueryHistoryMax)
+                history.RemoveAt(history.Count - 1);
+        }
+
+        private void LeftQueryHistoryToggle_Click(object sender, RoutedEventArgs e)
+        {
+            if ((System.DateTime.Now - leftQueryHistoryPopupClosed).TotalMilliseconds < 250)
+                return;
+
+            LeftQueryHistoryPopup.IsOpen = true;
+        }
+
+        private void RightQueryHistoryToggle_Click(object sender, RoutedEventArgs e)
+        {
+            if ((System.DateTime.Now - rightQueryHistoryPopupClosed).TotalMilliseconds < 250)
+                return;
+
+            RightQueryHistoryPopup.IsOpen = true;
+        }
+
+        private void LeftQueryHistoryList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ApplyHistorySelection(KeyboardHighlightPane.Left, LeftQueryHistoryList, LeftQueryHistoryPopup);
+        }
+
+        private void RightQueryHistoryList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ApplyHistorySelection(KeyboardHighlightPane.Right, RightQueryHistoryList, RightQueryHistoryPopup);
+        }
+
+        private void ApplyHistorySelection(KeyboardHighlightPane pane, ListBox historyList, System.Windows.Controls.Primitives.Popup popup)
+        {
+            if (isApplyingHistorySelection)
+                return;
+
+            if (!(historyList.SelectedItem is QueryHistoryEntry entry))
+                return;
+
+            isApplyingHistorySelection = true;
+
+            try
+            {
+                ApplyHistoryEntry(pane, entry);
+                historyList.SelectedItem = null;
+                popup.IsOpen = false;
+            }
+            finally
+            {
+                isApplyingHistorySelection = false;
+            }
+        }
+
+        private void ApplyHistoryEntry(KeyboardHighlightPane pane, QueryHistoryEntry entry)
+        {
+            if (entry == null)
+                return;
+
+            IVertex baseEdgeTo = entry.BaseEdgeTo;
+
+            if (baseEdgeTo == null && !string.IsNullOrWhiteSpace(entry.QueryText))
+                baseEdgeTo = MinusZero.Instance.Root.Get(false, entry.QueryText);
+
+            if (baseEdgeTo == null)
+                return;
+
+            if (pane == KeyboardHighlightPane.Left)
+            {
+                if (LeftBaseEdge == null)
+                    return;
+
+                GraphUtil.ReplaceEdge(LeftBaseEdge, "To", baseEdgeTo);
+                LeftQueryStringCodeControl.editor.Text = entry.QueryText ?? "";
+                LeftQueryStringCodeControl.editor.Background = null;
+                RecreateLeftInEdgesVisualiser();
+                RecreateLeftOutEdgesVisualiser();
+            }
+            else
+            {
+                if (RightBaseEdge == null)
+                    return;
+
+                GraphUtil.ReplaceEdge(RightBaseEdge, "To", baseEdgeTo);
+                RightQueryStringCodeControl.editor.Text = entry.QueryText ?? "";
+                RightQueryStringCodeControl.editor.Background = null;
+                RecreateRightInEdgesVisualiser();
+                RecreateRightOutEdgesVisualiser();
+            }
+
+            SetKeyboardHighlightAfterBaseEdgeChange(pane);
         }
 
         private void SetVisualiserSelectors()
@@ -359,25 +522,27 @@ namespace m0.UIWpf.VertexCommander
             if (IsQueryCodeControlKeyboardEvent(e))
                 return;
 
-            if (e.Key == System.Windows.Input.Key.Tab)
+            System.Windows.Input.Key key = e.Key == System.Windows.Input.Key.System ? e.SystemKey : e.Key;
+
+            if (key == System.Windows.Input.Key.Tab)
             {
                 e.Handled = true;
                 SwitchKeyboardHighlightPane();
                 return;
             }
 
-            if (HandleCommandKey(e.Key))
+            if (HandleCommandKey(key))
             {
                 e.Handled = true;
                 return;
             }
 
-            if (e.Key != System.Windows.Input.Key.Up
-                && e.Key != System.Windows.Input.Key.Down
-                && e.Key != System.Windows.Input.Key.Left
-                && e.Key != System.Windows.Input.Key.Right
-                && e.Key != System.Windows.Input.Key.Space
-                && e.Key != System.Windows.Input.Key.Enter)
+            if (key != System.Windows.Input.Key.Up
+                && key != System.Windows.Input.Key.Down
+                && key != System.Windows.Input.Key.Left
+                && key != System.Windows.Input.Key.Right
+                && key != System.Windows.Input.Key.Space
+                && key != System.Windows.Input.Key.Enter)
                 return;
 
             e.Handled = true;
@@ -387,18 +552,25 @@ namespace m0.UIWpf.VertexCommander
             if (keyboardHighlight == null)
                 return;
 
-            if (e.Key == System.Windows.Input.Key.Up)
+            if (key == System.Windows.Input.Key.Up)
                 keyboardHighlight.MoveKeyboardHighlight(KeyboardHighlightMoveDirection.Up);
-            else if (e.Key == System.Windows.Input.Key.Down)
+            else if (key == System.Windows.Input.Key.Down)
                 keyboardHighlight.MoveKeyboardHighlight(KeyboardHighlightMoveDirection.Down);
-            else if (e.Key == System.Windows.Input.Key.Left)
+            else if (key == System.Windows.Input.Key.Left)
                 keyboardHighlight.MoveKeyboardHighlight(KeyboardHighlightMoveDirection.Left);
-            else if (e.Key == System.Windows.Input.Key.Right)
+            else if (key == System.Windows.Input.Key.Right)
                 keyboardHighlight.MoveKeyboardHighlight(KeyboardHighlightMoveDirection.Right);
-            else if (e.Key == System.Windows.Input.Key.Space)
+            else if (key == System.Windows.Input.Key.Space)
                 keyboardHighlight.ToggleKeyboardHighlightedEdgeSelection();
             else
                 HandleKeyboardHighlightEnter(currentKeyboardHighlightPane, currentKeyboardHighlightSection, keyboardHighlight.KeyboardHighlightedEdge);
+
+            if (key == System.Windows.Input.Key.Up
+                || key == System.Windows.Input.Key.Down
+                || key == System.Windows.Input.Key.Left
+                || key == System.Windows.Input.Key.Right
+                || key == System.Windows.Input.Key.Space)
+                RunLiveSyncIfActive();
         }
 
         private bool IsQueryCodeControlKeyboardEvent(System.Windows.Input.KeyEventArgs e)
@@ -457,6 +629,9 @@ namespace m0.UIWpf.VertexCommander
                 case System.Windows.Input.Key.F9:
                     NewEdgeButton_Click(this, new RoutedEventArgs());
                     return true;
+                case System.Windows.Input.Key.F10:
+                    ReplaceButton_Click(this, new RoutedEventArgs());
+                    return true;
                 case System.Windows.Input.Key.F11:
                     MasterToDetailButton_Click(this, new RoutedEventArgs());
                     return true;
@@ -468,40 +643,245 @@ namespace m0.UIWpf.VertexCommander
             }
         }
 
+        private IVertex GetActivePaneBaseEdge()
+        {
+            return currentKeyboardHighlightPane == KeyboardHighlightPane.Left ? LeftBaseEdge : RightBaseEdge;
+        }
+
+        private IVertex GetOtherPaneBaseEdge()
+        {
+            return currentKeyboardHighlightPane == KeyboardHighlightPane.Left ? RightBaseEdge : LeftBaseEdge;
+        }
+
+        private IVertex GetActivePaneOutEdgesInstance()
+        {
+            return currentKeyboardHighlightPane == KeyboardHighlightPane.Left
+                ? leftOutEdgesVisuliserInstance
+                : rightOutEdgesVisuliserInstance;
+        }
+
+        private IList<IEdge> GetActivePaneSelectedIEdges()
+        {
+            List<IEdge> result = new List<IEdge>();
+
+            IVertex instance = GetActivePaneOutEdgesInstance();
+
+            if (instance == null)
+                return result;
+
+            IVertex selectedEdges = instance.Get(false, "SelectedEdges:");
+
+            if (selectedEdges == null)
+                return result;
+
+            foreach (IEdge e in selectedEdges.GetAll(false, @"{$Is:Edge}"))
+                result.Add(EdgeHelper.CreateIEdgeFromEdgeVertex(e.To));
+
+            return result;
+        }
+
+        private void OpenFloatingAtomVisualiser(bool editable)
+        {
+            IKeyboardHighlight keyboardHighlight = GetKeyboardHighlight(currentKeyboardHighlightPane, currentKeyboardHighlightSection);
+
+            IEdge highlightedEdge = keyboardHighlight?.KeyboardHighlightedEdge;
+
+            if (highlightedEdge == null)
+                return;
+
+            IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(highlightedEdge);
+
+            FrameworkElement visualiser = editable
+                ? (FrameworkElement)new StringVisualiser(baseEdgeVertex, null, false)
+                : new StringViewVisualiser(baseEdgeVertex, null, false);
+
+            visualiser.Focusable = true;
+            visualiser.PreviewKeyDown += FloatingAtomVisualiser_PreviewKeyDown;
+            visualiser.Loaded += (s, args) => visualiser.Focus();
+
+            MinusZero.Instance.UserInteraction.ShowContentFloating(visualiser, FloatingWindowSize.Micro);
+        }
+
+        private void FloatingAtomVisualiser_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key != System.Windows.Input.Key.Escape)
+                return;
+
+            e.Handled = true;
+            MinusZero.Instance.UserInteraction.CloseWindowByContent(sender);
+        }
+
         private void ViewButton_Click(object sender, RoutedEventArgs e)
         {
+            OpenFloatingAtomVisualiser(false);
         }
 
         private void EditButton_Click(object sender, RoutedEventArgs e)
         {
+            OpenFloatingAtomVisualiser(true);
         }
 
         private void CopyButton_Click(object sender, RoutedEventArgs e)
         {
+            IVertex copyTo = GetOtherPaneBaseEdge()?.Get(false, "To:");
+
+            if (copyTo == null)
+                return;
+
+            IList<IEdge> selected = GetActivePaneSelectedIEdges();
+
+            if (selected.Count == 0)
+                return;
+
+            VertexOperations.CopyVertex(selected, copyTo);
         }
 
         private void MoveButton_Click(object sender, RoutedEventArgs e)
         {
+            IVertex moveTo = GetOtherPaneBaseEdge()?.Get(false, "To:");
+
+            if (moveTo == null)
+                return;
+
+            IList<IEdge> selected = GetActivePaneSelectedIEdges();
+
+            if (selected.Count == 0)
+                return;
+
+            VertexOperations.MoveVertex(selected, moveTo);
+
+            RecreateLeftOutEdgesVisualiser();
+            RecreateRightOutEdgesVisualiser();
+        }
+
+        private void ReplaceButton_Click(object sender, RoutedEventArgs e)
+        {
+            IVertex replaceTo = GetOtherPaneBaseEdge()?.Get(false, "To:");
+
+            if (replaceTo == null)
+                return;
+
+            IList<IEdge> selected = GetActivePaneSelectedIEdges();
+
+            if (selected.Count == 0)
+                return;
+
+            VertexOperations.ReplaceVertex(selected, replaceTo);
+
+            RecreateLeftOutEdgesVisualiser();
+            RecreateRightOutEdgesVisualiser();
         }
 
         private void NewVertexButton_Click(object sender, RoutedEventArgs e)
         {
+            IVertex baseEdge = GetActivePaneBaseEdge();
+
+            if (baseEdge == null)
+                return;
+
+            BaseCommands.NewVertex(baseEdge, null);
         }
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
+            IVertex baseEdge = GetActivePaneBaseEdge();
+            IVertex instance = GetActivePaneOutEdgesInstance();
+
+            if (baseEdge == null || instance == null)
+                return;
+
+            BaseCommands.Delete(baseEdge, instance);
+
+            RecreateLeftOutEdgesVisualiser();
+            RecreateRightOutEdgesVisualiser();
         }
 
         private void NewEdgeButton_Click(object sender, RoutedEventArgs e)
         {
+            IVertex baseEdge = GetActivePaneBaseEdge();
+
+            if (baseEdge == null)
+                return;
+
+            BaseCommands.NewEdge(baseEdge, null);
         }
 
         private void MasterToDetailButton_Click(object sender, RoutedEventArgs e)
         {
+            ToggleLiveSync(KeyboardHighlightPane.Left);
         }
 
         private void DetailToMasterButton_Click(object sender, RoutedEventArgs e)
         {
+            ToggleLiveSync(KeyboardHighlightPane.Right);
+        }
+
+        private void ToggleLiveSync(KeyboardHighlightPane masterPane)
+        {
+            if (liveSyncMasterPane == masterPane)
+            {
+                liveSyncMasterPane = null;
+                return;
+            }
+
+            liveSyncMasterPane = masterPane;
+            currentKeyboardHighlightPane = masterPane;
+            RunLiveSyncIfActive();
+        }
+
+        private void RunLiveSyncIfActive()
+        {
+            if (isLiveSyncing || liveSyncMasterPane == null)
+                return;
+
+            KeyboardHighlightPane masterPane = liveSyncMasterPane.Value;
+
+            if (currentKeyboardHighlightPane != masterPane)
+                return;
+
+            // master tracks OutEdges only; ignore when the highlight sits on InEdges
+            if (currentKeyboardHighlightSection != KeyboardHighlightSection.OutEdges)
+                return;
+
+            IKeyboardHighlight masterHighlight = GetKeyboardHighlight(masterPane, KeyboardHighlightSection.OutEdges);
+
+            IEdge masterEdge = masterHighlight?.KeyboardHighlightedEdge;
+
+            if (masterEdge == null || masterEdge.To == null)
+                return;
+
+            KeyboardHighlightPane detailPane = masterPane == KeyboardHighlightPane.Left
+                ? KeyboardHighlightPane.Right
+                : KeyboardHighlightPane.Left;
+
+            IVertex detailBaseEdge = detailPane == KeyboardHighlightPane.Left ? LeftBaseEdge : RightBaseEdge;
+
+            if (detailBaseEdge == null)
+                return;
+
+            isLiveSyncing = true;
+
+            try
+            {
+                GraphUtil.ReplaceEdge(detailBaseEdge, "To", masterEdge.To);
+
+                if (detailPane == KeyboardHighlightPane.Left)
+                {
+                    SetCodeControlQueryText(LeftQueryStringCodeControl, LeftBaseEdge);
+                    RecreateLeftInEdgesVisualiser();
+                    RecreateLeftOutEdgesVisualiser();
+                }
+                else
+                {
+                    SetCodeControlQueryText(RightQueryStringCodeControl, RightBaseEdge);
+                    RecreateRightInEdgesVisualiser();
+                    RecreateRightOutEdgesVisualiser();
+                }
+            }
+            finally
+            {
+                isLiveSyncing = false;
+            }
         }
 
         private void SwitchKeyboardHighlightPane()
@@ -780,6 +1160,8 @@ namespace m0.UIWpf.VertexCommander
                 RecreateRightOutEdgesVisualiser();
             }
 
+            RecordPaneQueryHistory(pane);
+
             currentKeyboardHighlightPane = pane;
             currentKeyboardHighlightSection = KeyboardHighlightSection.OutEdges;
             Dispatcher.BeginInvoke(
@@ -805,6 +1187,8 @@ namespace m0.UIWpf.VertexCommander
                 keyboardHighlight.IsLastPosition = true;
 
             FocusKeyboardHighlightVisualiser(pane, section);
+
+            RunLiveSyncIfActive();
         }
 
         private IKeyboardHighlight GetKeyboardHighlight(KeyboardHighlightPane pane, KeyboardHighlightSection section)

@@ -45,6 +45,35 @@
             </Setter>
         </Style>
 
+        <Style x:Key="HistoryDropDownButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Width" Value="16"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Background" Value="{StaticResource 0BackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource 0ForegroundBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource 0VeryVeryLightForegroundBrush}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="ButtonBorder"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="1,0,0,0">
+                            <Path x:Name="Arrow"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Data="M 0 0 L 7 0 L 3.5 4 Z"
+                                Fill="{TemplateBinding Foreground}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="Background" Value="{StaticResource 0VeryVeryLightForegroundBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style x:Key="BottomCommandButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="Margin" Value="0"/>
             <Setter Property="Padding" Value="2"/>
@@ -191,7 +220,36 @@
             </Grid.RowDefinitions>
 
             <Border Grid.Row="0" Style="{StaticResource SectionBorderStyle}" Height="20" Margin="0,0,0,3">
-                <ContentControl x:Name="LeftQueryStringCodeControlHost" ClipToBounds="True"/>
+                <Grid x:Name="LeftQueryHeaderGrid">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <ContentControl Grid.Column="0" x:Name="LeftQueryStringCodeControlHost" ClipToBounds="True"/>
+
+                    <Button Grid.Column="1"
+                        x:Name="LeftQueryHistoryToggle"
+                        Style="{StaticResource HistoryDropDownButtonStyle}"
+                        Click="LeftQueryHistoryToggle_Click"/>
+
+                    <Popup
+                        x:Name="LeftQueryHistoryPopup"
+                        PlacementTarget="{Binding ElementName=LeftQueryHeaderGrid}"
+                        Placement="Bottom"
+                        Width="{Binding ActualWidth, ElementName=LeftQueryHeaderGrid}"
+                        StaysOpen="False"
+                        AllowsTransparency="True">
+                        <Border Style="{StaticResource SectionBorderStyle}">
+                            <ListBox x:Name="LeftQueryHistoryList"
+                                MaxHeight="200"
+                                DisplayMemberPath="QueryText"
+                                FontFamily="Consolas"
+                                Background="{StaticResource 0BackgroundBrush}"
+                                Foreground="{StaticResource 0ForegroundBrush}"/>
+                        </Border>
+                    </Popup>
+                </Grid>
             </Border>
 
             <ScrollViewer
@@ -304,7 +362,36 @@
             </Grid.RowDefinitions>
 
             <Border Grid.Row="0" Style="{StaticResource SectionBorderStyle}" Height="20" Margin="0,0,0,3">
-                <ContentControl x:Name="RightQueryStringCodeControlHost" ClipToBounds="True"/>
+                <Grid x:Name="RightQueryHeaderGrid">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <ContentControl Grid.Column="0" x:Name="RightQueryStringCodeControlHost" ClipToBounds="True"/>
+
+                    <Button Grid.Column="1"
+                        x:Name="RightQueryHistoryToggle"
+                        Style="{StaticResource HistoryDropDownButtonStyle}"
+                        Click="RightQueryHistoryToggle_Click"/>
+
+                    <Popup
+                        x:Name="RightQueryHistoryPopup"
+                        PlacementTarget="{Binding ElementName=RightQueryHeaderGrid}"
+                        Placement="Bottom"
+                        Width="{Binding ActualWidth, ElementName=RightQueryHeaderGrid}"
+                        StaysOpen="False"
+                        AllowsTransparency="True">
+                        <Border Style="{StaticResource SectionBorderStyle}">
+                            <ListBox x:Name="RightQueryHistoryList"
+                                MaxHeight="200"
+                                DisplayMemberPath="QueryText"
+                                FontFamily="Consolas"
+                                Background="{StaticResource 0BackgroundBrush}"
+                                Foreground="{StaticResource 0ForegroundBrush}"/>
+                        </Border>
+                    </Popup>
+                </Grid>
             </Border>
 
             <ScrollViewer
@@ -407,7 +494,7 @@
             BorderThickness="1"
             Background="{StaticResource 0BackgroundBrush}"
             ClipToBounds="True">
-            <UniformGrid x:Name="BottomCommandButtonsGrid" Rows="1" Columns="9" ClipToBounds="True">
+            <UniformGrid x:Name="BottomCommandButtonsGrid" Rows="1" Columns="10" ClipToBounds="True">
                 <Button x:Name="ViewButton" Style="{StaticResource BottomCommandButtonStyle}" Click="ViewButton_Click" Content="F3 View"/>
                 <Button x:Name="EditButton" Style="{StaticResource BottomCommandButtonStyle}" Click="EditButton_Click" Content="F4 Edit"/>
                 <Button x:Name="CopyButton" Style="{StaticResource BottomCommandButtonStyle}" Click="CopyButton_Click" Content="F5 Copy"/>
@@ -415,6 +502,7 @@
                 <Button x:Name="NewVertexButton" Style="{StaticResource BottomCommandButtonStyle}" Click="NewVertexButton_Click" Content="F7 New Vertex"/>
                 <Button x:Name="DeleteButton" Style="{StaticResource BottomCommandButtonStyle}" Click="DeleteButton_Click" Content="F8 Delete"/>
                 <Button x:Name="NewEdgeButton" Style="{StaticResource BottomCommandButtonStyle}" Click="NewEdgeButton_Click" Content="F9 New Edge"/>
+                <Button x:Name="ReplaceButton" Style="{StaticResource BottomCommandButtonStyle}" Click="ReplaceButton_Click" Content="F10 Replace"/>
                 <Button x:Name="MasterToDetailButton" Style="{StaticResource BottomCommandButtonStyle}" Click="MasterToDetailButton_Click" Content="F11 Master -&gt; Detail"/>
                 <Button x:Name="DetailToMasterButton" Style="{StaticResource BottomCommandButtonStyle}" Click="DetailToMasterButton_Click" Content="F12 Detail &lt;- Master"/>
             </UniformGrid>

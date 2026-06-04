@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.Graph.ExecutionFlow;
 using m0.Util;
 using m0.ZeroCode.Helpers;
 using Microsoft.AspNetCore.StaticAssets;
@@ -16,13 +17,623 @@ namespace m0.ZeroTypes
         static string[] NoCopy_MetaValue = {"$GraphChangeTrigger"};
         static string[] NoCopy_VertexIsValue = { "GraphChangeTrigger" };
 
-        public static void CopyVertex(IEdge edgeToCopy, IVertex copyTo)
+        // ReplaceVertex similarity tuning (static, tunable). Cutoff is the minimum similarity score
+        // [0..1] for an old/new pair to be considered a match.
+        public static double ReplaceSimilarityCutoff = 0.5;
+        public static double Replace_ValueWeight = 0.6;          // weight of value (name) similarity in local score
+        public static double Replace_IsWeight = 0.4;             // weight of $Is overlap in local score
+        public static double Replace_StructureWeight = 0.6;      // blend: how much recursive child structure counts vs local
+        public static double Replace_MetaMismatchPenalty = 0.85; // multiplier applied to a child match when its edge meta differs
+        public static int Replace_MaxMatchDepth = 8;             // recursion cap for structural similarity
+
+        public static void CopyVertex(IEnumerable<IEdge> edgesToCopy, IVertex copyTo)
+        {
+            List<IEdge> roots = edgesToCopy.ToList();
+
+            Dictionary<IVertex, IVertex> oldToNew = new Dictionary<IVertex, IVertex>();
+
+            CopySubGraphIntoVertex(roots, copyTo, oldToNew);
+
+            MinusZero.Instance.Log(1, "VertexOperations.CopyVertex",
+                "roots=" + roots.Count + " scopeVertices=" + oldToNew.Count);
+        }
+
+        // MoveSet: same copy as CopyVertex (subgraph ending at links, meta remapped when inside the
+        // copied scope, copies attached under moveTo), then a full relocation of the original fragment:
+        //  - every external referrer of a copied vertex (in-edge or meta-in-edge) is repointed to the copy,
+        //  - the original input edges are deleted from their From vertices,
+        //  - the original subgraph loses its incoming references and disposes.
+        public static void MoveVertex(IEnumerable<IEdge> edgesToMove, IVertex moveTo)
+        {
+            List<IEdge> roots = edgesToMove.ToList();
+
+            HashSet<IEdge> inputEdges = new HashSet<IEdge>(roots);
+
+            Dictionary<IVertex, IVertex> oldToNew = new Dictionary<IVertex, IVertex>();
+
+            CopySubGraphIntoVertex(roots, moveTo, oldToNew);
+
+            // Repin external referrers onto the copies. These are real graph changes, so they are
+            // intentionally NOT hidden from graph change watchers. Edges internal to the scope are
+            // already recreated among the copies; the input edges are skipped here because they are
+            // deleted below and replaced by the moveTo connectors.
+            foreach (KeyValuePair<IVertex, IVertex> oldNew in oldToNew)
+            {
+                IVertex oldVertex = oldNew.Key;
+                IVertex newVertex = oldNew.Value;
+
+                foreach (IEdge inEdge in oldVertex.InEdgesRaw.ToList())
+                {
+                    if (oldToNew.ContainsKey(inEdge.From) || inputEdges.Contains(inEdge))
+                        continue;
+
+                    IVertex meta = oldToNew.ContainsKey(inEdge.Meta) ? oldToNew[inEdge.Meta] : inEdge.Meta;
+
+                    inEdge.From.AddEdge(meta, newVertex);
+                    inEdge.From.DeleteEdge(inEdge);
+                }
+
+                foreach (IEdge metaInEdge in oldVertex.MetaInEdgesRaw.ToList())
+                {
+                    if (oldToNew.ContainsKey(metaInEdge.From) || inputEdges.Contains(metaInEdge))
+                        continue;
+
+                    IVertex to = oldToNew.ContainsKey(metaInEdge.To) ? oldToNew[metaInEdge.To] : metaInEdge.To;
+
+                    metaInEdge.From.AddEdge(newVertex, to);
+                    metaInEdge.From.DeleteEdge(metaInEdge);
+                }
+            }
+
+            // Delete the original input edges from their real From vertices. The original subgraph
+            // then loses its incoming references and disposes.
+            foreach (IEdge e in roots)
+                if (e.From != null && e.From.DisposedState == DisposeStateEnum.Live)
+                    e.From.DeleteEdge(e);
+
+            MinusZero.Instance.Log(1, "VertexOperations.MoveVertex",
+                "roots=" + roots.Count + " scopeVertices=" + oldToNew.Count);
+        }
+
+        // ReplaceSet: builds a new subgraph modeled on the source (like CopyVertex) and reconciles it
+        // with a "similar" subgraph already present under replaceTo:
+        //  - locate the existing (old) similar subgraph in replaceTo (matched from the input edges),
+        //  - build the new subgraph from the source under replaceTo,
+        //  - compute a 1:1 anchor-first mapping old -> new using a fuzzy similarity measure that is
+        //    tolerant to renames, meta changes and inserted/removed levels (content/structure based,
+        //    depth-independent),
+        //  - repin the external in-edges / meta-in-edges of the matched old vertices onto the new ones
+        //    (preserving edge order), remapping meta when the meta vertex itself was matched,
+        //  - drop the old subgraph (its connectors under replaceTo); unmatched old vertices are cut off
+        //    and disposed once nothing references them.
+        // The source is treated as a template (it is copied, not consumed).
+        public static void ReplaceVertex(IEnumerable<IEdge> edgesToReplace, IVertex replaceTo)
+        {
+            List<IEdge> roots = edgesToReplace.ToList();
+
+            Dictionary<IVertex, Dictionary<IVertex, double>> memo = new Dictionary<IVertex, Dictionary<IVertex, double>>();
+
+            // 1. Find the existing (old) similar subgraph roots under replaceTo, BEFORE adding the new copies.
+            List<IEdge> oldRootEdges = FindOldRootEdges(roots, replaceTo, memo);
+
+            HashSet<IVertex> oldScope = new HashSet<IVertex>();
+            foreach (IEdge oldRootEdge in oldRootEdges)
+                CollectCopyScope(oldRootEdge.To, oldScope);
+
+            // 2. Build the new subgraph from the source under replaceTo.
+            Dictionary<IVertex, IVertex> sourceToNew = new Dictionary<IVertex, IVertex>();
+            CopySubGraphIntoVertex(roots, replaceTo, sourceToNew);
+
+            HashSet<IVertex> newScope = new HashSet<IVertex>(sourceToNew.Values);
+
+            // 3. Match old vs new (anchor-first, 1:1).
+            Dictionary<IVertex, IVertex> oldToNew = MatchSubGraphs(oldScope, newScope, memo);
+
+            // 4. Collect edge rewrites: repin external referrers of matched old vertices onto the new
+            //    ones, and drop the old root connectors. Edges internal to the old or new scope are left
+            //    alone (the old ones dispose with the old subgraph).
+            HashSet<IEdge> excluded = new HashSet<IEdge>(oldRootEdges);
+            Dictionary<IVertex, List<EdgeRewrite>> byFrom = new Dictionary<IVertex, List<EdgeRewrite>>();
+
+            foreach (KeyValuePair<IVertex, IVertex> match in oldToNew)
+            {
+                IVertex oldVertex = match.Key;
+                IVertex newVertex = match.Value;
+
+                foreach (IEdge inEdge in oldVertex.InEdgesRaw.ToList())
+                {
+                    if (oldScope.Contains(inEdge.From) || newScope.Contains(inEdge.From) || excluded.Contains(inEdge))
+                        continue;
+
+                    AddRewrite(byFrom, inEdge.From, new EdgeRewrite
+                    {
+                        Target = inEdge,
+                        NewMeta = Remap(oldToNew, inEdge.Meta),
+                        NewTo = newVertex
+                    });
+                }
+
+                foreach (IEdge metaInEdge in oldVertex.MetaInEdgesRaw.ToList())
+                {
+                    if (oldScope.Contains(metaInEdge.From) || newScope.Contains(metaInEdge.From) || excluded.Contains(metaInEdge))
+                        continue;
+
+                    AddRewrite(byFrom, metaInEdge.From, new EdgeRewrite
+                    {
+                        Target = metaInEdge,
+                        NewMeta = newVertex,
+                        NewTo = Remap(oldToNew, metaInEdge.To)
+                    });
+                }
+            }
+
+            // Old root connectors are dropped from replaceTo; their replacement is the new connector
+            // built in step 2.
+            foreach (IEdge oldRootEdge in oldRootEdges)
+                AddRewrite(byFrom, oldRootEdge.From, new EdgeRewrite { Target = oldRootEdge, Drop = true });
+
+            // 5. Apply rewrites with order preserved. replaceTo is processed last, so external referrers
+            //    are repinned before the old subgraph is cut and starts disposing.
+            foreach (IVertex from in byFrom.Keys.ToList())
+                if (from != replaceTo)
+                    RewriteFrom(from, byFrom[from]);
+
+            if (byFrom.ContainsKey(replaceTo))
+                RewriteFrom(replaceTo, byFrom[replaceTo]);
+
+            MinusZero.Instance.Log(1, "VertexOperations.ReplaceVertex",
+                "roots=" + roots.Count + " oldRoots=" + oldRootEdges.Count
+                + " oldScope=" + oldScope.Count + " newScope=" + newScope.Count + " matched=" + oldToNew.Count);
+        }
+
+        class EdgeRewrite
+        {
+            public IEdge Target;
+            public IVertex NewMeta;
+            public IVertex NewTo;
+            public bool Drop;
+        }
+
+        class MatchCandidate
+        {
+            public double Score;
+            public IVertex Old;
+            public IVertex New;
+        }
+
+        static IVertex Remap(Dictionary<IVertex, IVertex> map, IVertex v)
+        {
+            if (v != null && map.ContainsKey(v))
+                return map[v];
+
+            return v;
+        }
+
+        static void AddRewrite(Dictionary<IVertex, List<EdgeRewrite>> byFrom, IVertex from, EdgeRewrite rewrite)
+        {
+            List<EdgeRewrite> list;
+
+            if (!byFrom.TryGetValue(from, out list))
+            {
+                list = new List<EdgeRewrite>();
+                byFrom[from] = list;
+            }
+
+            list.Add(rewrite);
+        }
+
+        // Rebuilds the whole out-edge list of from, applying the rewrites (repin / drop) in place. This
+        // preserves the original edge order (plain add+delete would move repinned edges to the end).
+        static void RewriteFrom(IVertex from, List<EdgeRewrite> rewrites)
+        {
+            List<IEdge> snapshot = from.OutEdgesRaw.ToList();
+
+            foreach (IEdge e in snapshot)
+            {
+                EdgeRewrite rewrite = null;
+
+                foreach (EdgeRewrite candidate in rewrites)
+                    if (ReferenceEquals(candidate.Target, e))
+                    {
+                        rewrite = candidate;
+                        break;
+                    }
+
+                if (rewrite != null && rewrite.Drop)
+                    continue;
+
+                if (rewrite != null)
+                    from.AddEdge(rewrite.NewMeta, rewrite.NewTo);
+                else
+                    from.AddEdge(e.Meta, e.To);
+            }
+
+            from.DeleteEdgesList(snapshot);
+        }
+
+        // Finds, for each input root edge, the best-matching existing edge under replaceTo (same meta,
+        // similar To vertex). Each existing edge is used at most once (1:1 at the root level too).
+        static List<IEdge> FindOldRootEdges(List<IEdge> roots, IVertex replaceTo, Dictionary<IVertex, Dictionary<IVertex, double>> memo)
+        {
+            List<IEdge> result = new List<IEdge>();
+            HashSet<IEdge> used = new HashSet<IEdge>();
+
+            foreach (IEdge rootEdge in roots)
+            {
+                IVertex sourceRoot = rootEdge.To;
+
+                IEdge best = null;
+                double bestScore = -1;
+
+                foreach (IEdge candidate in replaceTo.OutEdgesRaw)
+                {
+                    if (used.Contains(candidate) || VertexOperations.IsLink(candidate))
+                        continue;
+
+                    if (!GeneralUtil.CompareStrings(candidate.Meta, rootEdge.Meta))
+                        continue;
+
+                    double score = Similarity(sourceRoot, candidate.To, 0, memo);
+
+                    if (score > bestScore)
+                    {
+                        bestScore = score;
+                        best = candidate;
+                    }
+                }
+
+                if (best != null && bestScore >= ReplaceSimilarityCutoff)
+                {
+                    result.Add(best);
+                    used.Add(best);
+                }
+            }
+
+            return result;
+        }
+
+        // Anchor-first, 1:1 matching: score all old/new pairs by (content + structure) similarity, keep
+        // those at or above the cutoff, then assign greedily best-first so each old and each new vertex
+        // is used at most once.
+        static Dictionary<IVertex, IVertex> MatchSubGraphs(HashSet<IVertex> oldScope, HashSet<IVertex> newScope,
+            Dictionary<IVertex, Dictionary<IVertex, double>> memo)
+        {
+            List<MatchCandidate> candidates = new List<MatchCandidate>();
+
+            foreach (IVertex oldVertex in oldScope)
+                foreach (IVertex newVertex in newScope)
+                {
+                    double score = Similarity(oldVertex, newVertex, 0, memo);
+
+                    if (score >= ReplaceSimilarityCutoff)
+                        candidates.Add(new MatchCandidate { Score = score, Old = oldVertex, New = newVertex });
+                }
+
+            candidates.Sort((x, y) =>
+            {
+                int c = y.Score.CompareTo(x.Score);
+                if (c != 0) return c;
+
+                c = string.CompareOrdinal(GraphUtil.GetStringValue(x.Old), GraphUtil.GetStringValue(y.Old));
+                if (c != 0) return c;
+
+                return string.CompareOrdinal(GraphUtil.GetStringValue(x.New), GraphUtil.GetStringValue(y.New));
+            });
+
+            HashSet<IVertex> usedOld = new HashSet<IVertex>();
+            HashSet<IVertex> usedNew = new HashSet<IVertex>();
+            Dictionary<IVertex, IVertex> map = new Dictionary<IVertex, IVertex>();
+
+            foreach (MatchCandidate candidate in candidates)
+            {
+                if (usedOld.Contains(candidate.Old) || usedNew.Contains(candidate.New))
+                    continue;
+
+                map[candidate.Old] = candidate.New;
+                usedOld.Add(candidate.Old);
+                usedNew.Add(candidate.New);
+            }
+
+            return map;
+        }
+
+        // Recursive content+structure similarity in [0..1], memoized. A provisional value is stored
+        // before recursing so cyclic structures terminate.
+        static double Similarity(IVertex a, IVertex b, int depth, Dictionary<IVertex, Dictionary<IVertex, double>> memo)
+        {
+            Dictionary<IVertex, double> inner;
+
+            if (!memo.TryGetValue(a, out inner))
+            {
+                inner = new Dictionary<IVertex, double>();
+                memo[a] = inner;
+            }
+
+            double cached;
+            if (inner.TryGetValue(b, out cached))
+                return cached;
+
+            double local = LocalSimilarity(a, b);
+
+            inner[b] = local; // provisional, breaks cycles
+
+            double result = local;
+
+            if (depth < Replace_MaxMatchDepth)
+            {
+                double childAlignment = ChildAlignment(a, b, depth, memo);
+
+                if (childAlignment >= 0)
+                    result = Replace_StructureWeight * childAlignment + (1 - Replace_StructureWeight) * local;
+            }
+
+            inner[b] = result;
+
+            return result;
+        }
+
+        // Greedy best alignment of the copyable, non-link children of a and b, normalized by the larger
+        // child count (so missing/extra children reduce the score). Returns -1 when neither has children.
+        static double ChildAlignment(IVertex a, IVertex b, int depth, Dictionary<IVertex, Dictionary<IVertex, double>> memo)
+        {
+            List<IEdge> childrenA = CopyableChildEdges(a);
+            List<IEdge> childrenB = CopyableChildEdges(b);
+
+            if (childrenA.Count == 0 && childrenB.Count == 0)
+                return -1;
+
+            if (childrenA.Count == 0 || childrenB.Count == 0)
+                return 0;
+
+            bool[] usedB = new bool[childrenB.Count];
+            double total = 0;
+
+            foreach (IEdge edgeA in childrenA)
+            {
+                double best = 0;
+                int bestIndex = -1;
+
+                for (int i = 0; i < childrenB.Count; i++)
+                {
+                    if (usedB[i])
+                        continue;
+
+                    double score = Similarity(edgeA.To, childrenB[i].To, depth + 1, memo);
+
+                    if (!GeneralUtil.CompareStrings(edgeA.Meta, childrenB[i].Meta))
+                        score *= Replace_MetaMismatchPenalty;
+
+                    if (score > best)
+                    {
+                        best = score;
+                        bestIndex = i;
+                    }
+                }
+
+                if (bestIndex >= 0)
+                {
+                    usedB[bestIndex] = true;
+                    total += best;
+                }
+            }
+
+            return total / Math.Max(childrenA.Count, childrenB.Count);
+        }
+
+        static double LocalSimilarity(IVertex a, IVertex b)
+        {
+            double valueSimilarity = ValueSimilarity(GraphUtil.GetStringValue(a), GraphUtil.GetStringValue(b));
+
+            List<string> isA = IsValues(a);
+            List<string> isB = IsValues(b);
+
+            if (isA.Count == 0 && isB.Count == 0)
+                return valueSimilarity;
+
+            double isSimilarity = DiceOverlap(isA, isB);
+
+            return (Replace_ValueWeight * valueSimilarity + Replace_IsWeight * isSimilarity)
+                / (Replace_ValueWeight + Replace_IsWeight);
+        }
+
+        static List<IEdge> CopyableChildEdges(IVertex v)
+        {
+            List<IEdge> result = new List<IEdge>();
+
+            foreach (IEdge e in v.OutEdgesRaw)
+                if (CanCopy_ByEdge(e) && !VertexOperations.IsLink(e))
+                    result.Add(e);
+
+            return result;
+        }
+
+        static List<string> IsValues(IVertex v)
+        {
+            List<string> result = new List<string>();
+
+            foreach (IEdge e in GraphUtil.GetQueryOut(v, "$Is", null))
+                result.Add(GraphUtil.GetStringValue(e.To));
+
+            return result;
+        }
+
+        static double DiceOverlap(List<string> a, List<string> b)
+        {
+            if (a.Count == 0 && b.Count == 0)
+                return 1.0;
+
+            if (a.Count == 0 || b.Count == 0)
+                return 0.0;
+
+            HashSet<string> setA = new HashSet<string>(a);
+            HashSet<string> setB = new HashSet<string>(b);
+
+            int intersection = 0;
+            foreach (string s in setA)
+                if (setB.Contains(s))
+                    intersection++;
+
+            return (2.0 * intersection) / (setA.Count + setB.Count);
+        }
+
+        static double ValueSimilarity(string a, string b)
+        {
+            if (a == b)
+                return 1.0;
+
+            int max = Math.Max(a.Length, b.Length);
+
+            if (max == 0)
+                return 1.0;
+
+            return 1.0 - (double)LevenshteinDistance(a, b) / max;
+        }
+
+        static int LevenshteinDistance(string a, string b)
+        {
+            int[] previous = new int[b.Length + 1];
+            int[] current = new int[b.Length + 1];
+
+            for (int j = 0; j <= b.Length; j++)
+                previous[j] = j;
+
+            for (int i = 1; i <= a.Length; i++)
+            {
+                current[0] = i;
+
+                for (int j = 1; j <= b.Length; j++)
+                {
+                    int cost = (a[i - 1] == b[j - 1]) ? 0 : 1;
+
+                    current[j] = Math.Min(Math.Min(current[j - 1] + 1, previous[j] + 1), previous[j - 1] + cost);
+                }
+
+                int[] swap = previous;
+                previous = current;
+                current = swap;
+            }
+
+            return previous[b.Length];
+        }
+
+        // Builds a copy of the non-link subgraph(s) reachable from each root's To vertex into copyTo,
+        // filling oldToNew with the source-vertex -> copy-vertex mapping. Meta and To are remapped to
+        // the copy whenever they belong to the copied scope, so a meta vertex that is part of the
+        // copied set is referenced by its copy in the destination, not by the original meta vertex.
+        static void CopySubGraphIntoVertex(List<IEdge> roots, IVertex copyTo, Dictionary<IVertex, IVertex> oldToNew)
+        {
+            // Copy scope: union of subgraphs reachable from each root's To vertex through non-link
+            // OutEdgesRaw. Traversal stops at links (VertexOperations.IsLink), so linked targets stay
+            // as references to the original vertices instead of being copied.
+            HashSet<IVertex> scope = new HashSet<IVertex>();
+
+            foreach (IEdge edgeToCopy in roots)
+                CollectCopyScope(edgeToCopy.To, scope);
+
+            // Create one copy per scope vertex. New vertices must live in copyTo's store, so they
+            // are created via copyTo and kept alive by a temporary holder edge until the real edges
+            // are wired. The holder churn is hidden from graph change watchers.
+            List<IEdge> tempEdges = new List<IEdge>();
+
+            bool previousWatch = TurnGraphChangeWatchOff();
+            try
+            {
+                foreach (IVertex source in scope)
+                {
+                    IEdge holder = copyTo.AddVertexAndReturnEdge(null, source.Value);
+
+                    oldToNew[source] = holder.To;
+                    tempEdges.Add(holder);
+                }
+            }
+            finally
+            {
+                RestoreGraphChangeWatch(previousWatch);
+            }
+
+            // Recreate inner edges with meta/to remapping.
+            foreach (IVertex source in scope)
+            {
+                IVertex targetFrom = oldToNew[source];
+
+                foreach (IEdge e in source.OutEdgesRaw)
+                {
+                    if (!CanCopy_ByEdge(e))
+                        continue;
+
+                    IVertex meta = oldToNew.ContainsKey(e.Meta) ? oldToNew[e.Meta] : e.Meta;
+                    IVertex to = oldToNew.ContainsKey(e.To) ? oldToNew[e.To] : e.To;
+
+                    targetFrom.AddEdge(meta, to);
+                }
+            }
+
+            // Attach each root copy under copyTo using the root edge's meta (remapped if in scope).
+            foreach (IEdge edgeToCopy in roots)
+            {
+                IVertex rootMeta = oldToNew.ContainsKey(edgeToCopy.Meta) ? oldToNew[edgeToCopy.Meta] : edgeToCopy.Meta;
+
+                copyTo.AddEdge(rootMeta, oldToNew[edgeToCopy.To]);
+            }
+
+            // Drop the temporary holder edges. Every copy now has real incoming edges.
+            previousWatch = TurnGraphChangeWatchOff();
+            try
+            {
+                foreach (IEdge holder in tempEdges)
+                    holder.From.DeleteEdge(holder);
+            }
+            finally
+            {
+                RestoreGraphChangeWatch(previousWatch);
+            }
+        }
+
+        static void CollectCopyScope(IVertex vertex, HashSet<IVertex> visited)
+        {
+            if (!visited.Add(vertex))
+                return;
+
+            foreach (IEdge e in vertex.OutEdgesRaw)
+                if (CanCopy_ByEdge(e) && !VertexOperations.IsLink(e))
+                    CollectCopyScope(e.To, visited);
+        }
+
+        static bool TurnGraphChangeWatchOff()
+        {
+            ITransaction transaction = MinusZero.Instance.GetTopTransaction();
+
+            if (transaction == null)
+                return true;
+
+            bool previousWatch = transaction.GraphChangeWatchActive;
+
+            ExecutionFlowHelper.GraphChangeWatchOff();
+
+            return previousWatch;
+        }
+
+        static void RestoreGraphChangeWatch(bool previousWatch)
+        {
+            ITransaction transaction = MinusZero.Instance.GetTopTransaction();
+
+            if (transaction == null)
+                return;
+
+            if (previousWatch)
+                ExecutionFlowHelper.GraphChangeWatchOn();
+            else
+                ExecutionFlowHelper.GraphChangeWatchOff();
+        }
+
+        /* if something is not working I'm leaving the old version also
+        public static void CopyVertex_old(IEdge edgeToCopy, IVertex copyTo)
         {
             if (InstructionHelpers.CheckIfIsAtomType(edgeToCopy.To))
                 copyTo.AddVertex(edgeToCopy.Meta, edgeToCopy.To.Value);
             else
                 GraphUtil.DeepCopy(edgeToCopy, copyTo);
-        }
+        }*/
 
         public static IVertex GetTargetFromStackTop(INoInEdgeInOutVertexVertex stack)
         {

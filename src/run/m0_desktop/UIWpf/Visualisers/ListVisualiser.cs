@@ -216,7 +216,8 @@ namespace m0.UIWpf.Visualisers
            
             IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
-            GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
+            if (sv != null)
+                GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();

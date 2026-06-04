@@ -2092,8 +2092,8 @@ namespace m0.ZeroUML.Instructions
 
             INoInEdgeInOutVertexVertex newStack = CreateStack();
 
-            foreach (IEdge e in expressionResult)
-                VertexOperations.CopyVertex(e, newStack);
+            //foreach (IEdge e in expressionResult)
+            VertexOperations.CopyVertex(expressionResult, newStack);
 
             return newStack;
         }        

@@ -184,7 +184,7 @@ namespace m0.UIWpf.Commands
 
                     IEdge v_To_Edge = EdgeHelper.GetIEdgeByEdgeVertex(v);
 
-                    VertexOperations.CopyVertex(v_To_Edge, baseVertex_To);
+                    VertexOperations.CopyVertex(v_To_Edge.To, baseVertex_To);
                 }
             }            
 
