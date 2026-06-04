@@ -59,13 +59,18 @@ namespace m0.UIWpf.Visualisers
         }
 
 
-        public bool IsHighlighted;
+        // Mouse hover highlight: border + text in highlight color, background stays normal/selection.
+        public bool IsMouseHover;
+
+        // Keyboard highlight (IKeyboardHighlight): full background highlight, like List/Tree.
+        public bool IsKeyboardHighlighted;
+
+        // Kept for external mouse-hover checks (e.g. OnMouseMove).
+        public bool IsHighlighted { get { return IsMouseHover; } }
 
         public void HighlightThisAndDescendants()
         {
-            IsHighlighted = true;
-
-            HighlightThis();
+            SetMouseHover(true);
 
             foreach(Shape e in Lines){
                 ParentVisualiser.ApplyEdgeStyle(e, true);
@@ -83,29 +88,30 @@ namespace m0.UIWpf.Visualisers
                         Panel.SetZIndex(lineTag.MetaLabel, 99998);
                     }
 
-                    lineTag.ToWrapper.HighlightThis();
+                    lineTag.ToWrapper.SetMouseHover(true);
 
                     if (lineTag.FromWrapper != this)
-                        lineTag.FromWrapper.HighlightThis();
+                        lineTag.FromWrapper.SetMouseHover(true);
                 }
             }                            
         }
 
         public void HighlightThis()
         {
-            IsHighlighted = true;
-            Panel.SetZIndex(this, 99999);
+            SetMouseHover(true);
+        }
 
-            this.BorderBrush = (Brush)FindResource("0HighlightBrush");
+        public void SetMouseHover(bool isHover)
+        {
+            IsMouseHover = isHover;
+            Panel.SetZIndex(this, isHover ? 99999 : 1);
 
             ApplyVisualState();
         }
 
         public void UnhighlightThisAndDescendants()
         {            
-            IsHighlighted = false;
-
-            UnhighlightThis();
+            SetMouseHover(false);
 
             foreach(Shape e in Lines){
                 ParentVisualiser.ApplyEdgeStyle(e, false);
@@ -122,20 +128,23 @@ namespace m0.UIWpf.Visualisers
                         Panel.SetZIndex(lineTag.MetaLabel, 1);
                     }
 
-                    lineTag.ToWrapper.UnhighlightThis();
+                    lineTag.ToWrapper.SetMouseHover(false);
 
                     if (lineTag.FromWrapper != this)
-                        lineTag.FromWrapper.UnhighlightThis();
+                        lineTag.FromWrapper.SetMouseHover(false);
                 }
             }                                    
         }
 
         public void UnhighlightThis()
         {
-            IsHighlighted = false;
-            Panel.SetZIndex(this, 1);
+            SetMouseHover(false);
+        }
 
-            this.BorderBrush = (Brush)FindResource("0LightGrayBrush");
+        public void SetKeyboardHighlighted(bool isKeyboardHighlighted)
+        {
+            IsKeyboardHighlighted = isKeyboardHighlighted;
+            Panel.SetZIndex(this, isKeyboardHighlighted ? 99999 : 1);
 
             ApplyVisualState();
         }
@@ -144,25 +153,38 @@ namespace m0.UIWpf.Visualisers
         {
             Brush background;
             Brush foreground;
+            Brush border;
 
-            if (IsHighlighted)
+            if (IsKeyboardHighlighted)
             {
                 background = (Brush)FindResource("0HighlightBrush");
                 foreground = IsSelected
                     ? (Brush)FindResource("0ForegroundBrush")
                     : (Brush)FindResource("0HighlightForegroundBrush");
+                border = (Brush)FindResource("0HighlightBrush");
+            }
+            else if (IsMouseHover)
+            {
+                background = IsSelected
+                    ? (Brush)FindResource("0SelectionBrush")
+                    : (Brush)FindResource("0BackgroundBrush");
+                foreground = (Brush)FindResource("0HighlightBrush");
+                border = (Brush)FindResource("0HighlightBrush");
             }
             else if (IsSelected)
             {
                 background = (Brush)FindResource("0SelectionBrush");
                 foreground = (Brush)FindResource("0BackgroundBrush");
+                border = (Brush)FindResource("0LightGrayBrush");
             }
             else
             {
                 background = (Brush)FindResource("0BackgroundBrush");
                 foreground = (Brush)FindResource("0ForegroundBrush");
+                border = (Brush)FindResource("0LightGrayBrush");
             }
 
+            this.BorderBrush = border;
             this.Background = background;
             SetChildBackground(background);
             SetChildForeground(foreground);
@@ -1084,7 +1106,7 @@ namespace m0.UIWpf.Visualisers
                 return;
 
             if (DisplayedVerticesUIElements != null && DisplayedVerticesUIElements.ContainsKey(keyboardHighlightedVertex))
-                DisplayedVerticesUIElements[keyboardHighlightedVertex].UnhighlightThis();
+                DisplayedVerticesUIElements[keyboardHighlightedVertex].SetKeyboardHighlighted(false);
 
             keyboardHighlightedVertex = null;
             isBeforeFirstKeyboardPosition = false;
@@ -1178,7 +1200,7 @@ namespace m0.UIWpf.Visualisers
             keyboardHighlightedVertex = vertex;
             isBeforeFirstKeyboardPosition = false;
             isAfterLastKeyboardPosition = false;
-            DisplayedVerticesUIElements[vertex].HighlightThis();
+            DisplayedVerticesUIElements[vertex].SetKeyboardHighlighted(true);
             DisplayedVerticesUIElements[vertex].BringIntoView();
         }
 

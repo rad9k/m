@@ -96,6 +96,7 @@ namespace m0.UIWpf.Visualisers
         private Point pendingMouseDownPoint;
         private bool suppressNextMouseUpSelection;
         private bool isFormDndDragging;
+        private bool pendingMouseDownStartedOnSelfDraggingControl;
 
 
         TabItem TabControlSelectedItem;
@@ -818,7 +819,35 @@ namespace m0.UIWpf.Visualisers
             pendingMouseDownHasNestedKeyboardHighlight = GetNestedKeyboardHighlight(controlInfo) != null;
             pendingMouseDownClickCount = e.ClickCount;
             pendingMouseDownPoint = e.GetPosition(this);
+            pendingMouseDownStartedOnSelfDraggingControl = IsWithinSelfDraggingControl(e.OriginalSource as DependencyObject);
             suppressNextMouseUpSelection = false;
+        }
+
+        // Some nested controls (e.g. the NumberVisualiser slider) handle their own drag gesture.
+        // Form drag-and-drop must not hijack a gesture that starts on such a control, otherwise the
+        // slider stutters because Form steals the mouse move and starts DnD instead.
+        private static bool IsWithinSelfDraggingControl(DependencyObject element)
+        {
+            while (element != null)
+            {
+                if (element is System.Windows.Controls.Primitives.RangeBase
+                    || element is System.Windows.Controls.Primitives.Thumb
+                    || element is System.Windows.Controls.Primitives.Track
+                    || element is System.Windows.Controls.Primitives.ScrollBar)
+                    return true;
+
+                DependencyObject parent = null;
+
+                if (element is Visual || element is System.Windows.Media.Media3D.Visual3D)
+                    parent = VisualTreeHelper.GetParent(element);
+
+                if (parent == null)
+                    parent = LogicalTreeHelper.GetParent(element);
+
+                element = parent;
+            }
+
+            return false;
         }
 
         private void FormControl_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -865,6 +894,9 @@ namespace m0.UIWpf.Visualisers
                 return;
 
             if (pendingMouseDownHasNestedKeyboardHighlight)
+                return;
+
+            if (pendingMouseDownStartedOnSelfDraggingControl)
                 return;
 
             if (e.LeftButton != MouseButtonState.Pressed)
@@ -925,6 +957,7 @@ namespace m0.UIWpf.Visualisers
             pendingMouseDownIsCtrl = false;
             pendingMouseDownHasNestedKeyboardHighlight = false;
             pendingMouseDownClickCount = 0;
+            pendingMouseDownStartedOnSelfDraggingControl = false;
         }
 
         private ControlInfo GetControlInfoByElement(FrameworkElement element)
@@ -945,20 +978,16 @@ namespace m0.UIWpf.Visualisers
             if (element == null)
                 return;
 
-            SetElementBrushes(element, background, foreground);
-        }
-
-        private static void SetElementBrushes(DependencyObject element, Brush background, Brush foreground)
-        {
-            if (element == null)
-                return;
-
+            // Color only the Form's own control surface (the meta/value label). Do NOT descend into
+            // nested visualisers (atomic or Table) - they manage their own background/foreground
+            // (e.g. the empty-edge grey state via IsNull), so recursing here would overwrite it.
             Control control = element as Control;
 
             if (control != null)
             {
                 control.Background = background;
                 control.Foreground = foreground;
+                return;
             }
 
             TextBlock textBlock = element as TextBlock;
@@ -968,22 +997,6 @@ namespace m0.UIWpf.Visualisers
                 textBlock.Background = background;
                 textBlock.Foreground = foreground;
             }
-
-            Panel panel = element as Panel;
-
-            if (panel != null)
-                foreach (UIElement child in panel.Children)
-                    SetElementBrushes(child, background, foreground);
-
-            ContentControl contentControl = element as ContentControl;
-
-            if (contentControl != null && contentControl.Content is DependencyObject)
-                SetElementBrushes((DependencyObject)contentControl.Content, background, foreground);
-
-            Decorator decorator = element as Decorator;
-
-            if (decorator != null)
-                SetElementBrushes(decorator.Child, background, foreground);
         }
 
         private void ToggleOwnSelectedEdge(IEdge edge, bool preserveOtherSelections)

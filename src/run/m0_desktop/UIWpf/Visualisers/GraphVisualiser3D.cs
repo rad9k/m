@@ -62,7 +62,9 @@ namespace m0.UIWpf.Visualisers
         public TextBlock Label;
         public FrameworkElement LabelElement;
         public bool IsSelected;
-        public bool IsHighlighted;
+        public bool IsMouseHover;
+        public bool IsKeyboardHighlighted;
+        public bool IsHighlighted { get { return IsMouseHover || IsKeyboardHighlighted; } }
 
         public GraphVisualiser3DNode(IVertex baseVertex, GraphVisualiser3D parent, double sphereSize)
         {
@@ -145,9 +147,16 @@ namespace m0.UIWpf.Visualisers
             ApplyLabelState();
         }
 
-        public void SetHighlighted(bool highlighted)
+        public void SetMouseHover(bool isHover)
         {
-            IsHighlighted = highlighted;
+            IsMouseHover = isHover;
+            ApplyBodyColors();
+            ApplyLabelState();
+        }
+
+        public void SetKeyboardHighlighted(bool isKeyboardHighlighted)
+        {
+            IsKeyboardHighlighted = isKeyboardHighlighted;
             ApplyBodyColors();
             ApplyLabelState();
         }
@@ -225,12 +234,21 @@ namespace m0.UIWpf.Visualisers
             Brush backgroundBrush;
             int zIndex;
 
-            if (IsHighlighted)
+            if (IsKeyboardHighlighted)
             {
                 Label.Foreground = new SolidColorBrush(parentVisualiser.GetThemeColor(
                     IsSelected ? "0ForegroundBrush" : "0HighlightForegroundBrush",
                     IsSelected ? Colors.White : Colors.Black));
                 backgroundBrush = new SolidColorBrush(parentVisualiser.GetThemeColor("0HighlightBrush", Colors.OrangeRed));
+                zIndex = 9000;
+            }
+            else if (IsMouseHover)
+            {
+                // Mouse hover: text in highlight color, background stays standard (selection if selected).
+                Label.Foreground = new SolidColorBrush(parentVisualiser.GetThemeColor("0HighlightBrush", Colors.OrangeRed));
+                backgroundBrush = IsSelected
+                    ? new SolidColorBrush(parentVisualiser.GetThemeColor("0SelectionBrush", Colors.DodgerBlue))
+                    : parentVisualiser.GetLabelBackgroundBrush(230);
                 zIndex = 9000;
             }
             else if (IsSelected)
@@ -1565,12 +1583,12 @@ namespace m0.UIWpf.Visualisers
 
             if (highlightedNode != null)
             {
-                highlightedNode.SetHighlighted(true);
+                highlightedNode.SetMouseHover(true);
                 foreach (GraphVisualiser3DEdgeVisual edge in highlightedNode.OutgoingEdges)
                 {
                     edge.SetHighlighted(true);
                     if (edge.ToNode != null)
-                        edge.ToNode.SetHighlighted(true);
+                        edge.ToNode.SetMouseHover(true);
                 }
             }
 
@@ -1582,12 +1600,12 @@ namespace m0.UIWpf.Visualisers
             if (highlightedNode == null)
                 return;
 
-            highlightedNode.SetHighlighted(false);
+            highlightedNode.SetMouseHover(false);
             foreach (GraphVisualiser3DEdgeVisual edge in highlightedNode.OutgoingEdges)
             {
                 edge.SetHighlighted(false);
                 if (edge.ToNode != null && !edge.ToNode.IsSelected)
-                    edge.ToNode.SetHighlighted(false);
+                    edge.ToNode.SetMouseHover(false);
             }
 
             highlightedNode = null;
@@ -1735,7 +1753,7 @@ namespace m0.UIWpf.Visualisers
         public void ClearKeyboardHighlight()
         {
             if (keyboardHighlightedNode != null)
-                keyboardHighlightedNode.SetHighlighted(false);
+                keyboardHighlightedNode.SetKeyboardHighlighted(false);
 
             keyboardHighlightedNode = null;
             isBeforeFirstKeyboardPosition = false;
@@ -1817,7 +1835,7 @@ namespace m0.UIWpf.Visualisers
             keyboardHighlightedNode = node;
             isBeforeFirstKeyboardPosition = false;
             isAfterLastKeyboardPosition = false;
-            keyboardHighlightedNode.SetHighlighted(true);
+            keyboardHighlightedNode.SetKeyboardHighlighted(true);
             UpdateLabels();
         }
 
