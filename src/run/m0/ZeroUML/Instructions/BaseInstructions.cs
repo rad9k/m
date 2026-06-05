@@ -2093,7 +2093,7 @@ namespace m0.ZeroUML.Instructions
             INoInEdgeInOutVertexVertex newStack = CreateStack();
 
             //foreach (IEdge e in expressionResult)
-            VertexOperations.CopyVertex(expressionResult, newStack);
+            VertexOperations.CopyEdgesSet(expressionResult, newStack);
 
             return newStack;
         }        

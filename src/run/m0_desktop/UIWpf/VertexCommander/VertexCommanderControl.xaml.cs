@@ -697,7 +697,10 @@ namespace m0.UIWpf.VertexCommander
 
             visualiser.Focusable = true;
             visualiser.PreviewKeyDown += FloatingAtomVisualiser_PreviewKeyDown;
-            visualiser.Loaded += (s, args) => visualiser.Focus();
+            visualiser.Loaded += (s, args) =>
+                visualiser.Dispatcher.BeginInvoke(
+                    new Action(() => visualiser.Focus()),
+                    System.Windows.Threading.DispatcherPriority.Input);
 
             MinusZero.Instance.UserInteraction.ShowContentFloating(visualiser, FloatingWindowSize.Micro);
         }
@@ -733,7 +736,15 @@ namespace m0.UIWpf.VertexCommander
             if (selected.Count == 0)
                 return;
 
-            VertexOperations.CopyVertex(selected, copyTo);
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
+            VertexOperations.CopyEdgesSet(selected, copyTo);
+
+            //////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            //////////////////////////////////////
         }
 
         private void MoveButton_Click(object sender, RoutedEventArgs e)
@@ -748,7 +759,15 @@ namespace m0.UIWpf.VertexCommander
             if (selected.Count == 0)
                 return;
 
-            VertexOperations.MoveVertex(selected, moveTo);
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
+            VertexOperations.MoveEdgesSet(selected, moveTo);
+
+            //////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            //////////////////////////////////////
 
             RecreateLeftOutEdgesVisualiser();
             RecreateRightOutEdgesVisualiser();
@@ -766,7 +785,15 @@ namespace m0.UIWpf.VertexCommander
             if (selected.Count == 0)
                 return;
 
-            VertexOperations.ReplaceVertex(selected, replaceTo);
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
+            VertexOperations.MoveAndReplaceEdgesSet(selected, replaceTo);
+
+            //////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            //////////////////////////////////////
 
             RecreateLeftOutEdgesVisualiser();
             RecreateRightOutEdgesVisualiser();
@@ -821,12 +848,37 @@ namespace m0.UIWpf.VertexCommander
             if (liveSyncMasterPane == masterPane)
             {
                 liveSyncMasterPane = null;
+                UpdateLiveSyncButtonsVisualState();
                 return;
             }
 
             liveSyncMasterPane = masterPane;
             currentKeyboardHighlightPane = masterPane;
+            UpdateLiveSyncButtonsVisualState();
             RunLiveSyncIfActive();
+        }
+
+        private void UpdateLiveSyncButtonsVisualState()
+        {
+            SetCommandButtonPressed(MasterToDetailButton, liveSyncMasterPane == KeyboardHighlightPane.Left);
+            SetCommandButtonPressed(DetailToMasterButton, liveSyncMasterPane == KeyboardHighlightPane.Right);
+        }
+
+        private void SetCommandButtonPressed(Button button, bool pressed)
+        {
+            if (button == null)
+                return;
+
+            if (pressed)
+            {
+                button.Background = (Brush)FindResource("0ForegroundBrush");
+                button.Foreground = (Brush)FindResource("0BackgroundBrush");
+            }
+            else
+            {
+                button.Background = (Brush)FindResource("0BackgroundBrush");
+                button.Foreground = (Brush)FindResource("0ForegroundBrush");
+            }
         }
 
         private void RunLiveSyncIfActive()

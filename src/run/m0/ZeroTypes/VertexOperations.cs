@@ -17,8 +17,8 @@ namespace m0.ZeroTypes
         static string[] NoCopy_MetaValue = {"$GraphChangeTrigger"};
         static string[] NoCopy_VertexIsValue = { "GraphChangeTrigger" };
 
-        // ReplaceVertex similarity tuning (static, tunable). Cutoff is the minimum similarity score
-        // [0..1] for an old/new pair to be considered a match.
+        // Copy/Move-and-replace similarity tuning (static, tunable). Cutoff is the minimum similarity
+        // score [0..1] for an old/new pair to be considered a match.
         public static double ReplaceSimilarityCutoff = 0.5;
         public static double Replace_ValueWeight = 0.6;          // weight of value (name) similarity in local score
         public static double Replace_IsWeight = 0.4;             // weight of $Is overlap in local score
@@ -26,7 +26,7 @@ namespace m0.ZeroTypes
         public static double Replace_MetaMismatchPenalty = 0.85; // multiplier applied to a child match when its edge meta differs
         public static int Replace_MaxMatchDepth = 8;             // recursion cap for structural similarity
 
-        public static void CopyVertex(IEnumerable<IEdge> edgesToCopy, IVertex copyTo)
+        public static void CopyEdgesSet(IEnumerable<IEdge> edgesToCopy, IVertex copyTo)
         {
             List<IEdge> roots = edgesToCopy.ToList();
 
@@ -43,7 +43,7 @@ namespace m0.ZeroTypes
         //  - every external referrer of a copied vertex (in-edge or meta-in-edge) is repointed to the copy,
         //  - the original input edges are deleted from their From vertices,
         //  - the original subgraph loses its incoming references and disposes.
-        public static void MoveVertex(IEnumerable<IEdge> edgesToMove, IVertex moveTo)
+        public static void MoveEdgesSet(IEnumerable<IEdge> edgesToMove, IVertex moveTo)
         {
             List<IEdge> roots = edgesToMove.ToList();
 
@@ -95,22 +95,35 @@ namespace m0.ZeroTypes
                 "roots=" + roots.Count + " scopeVertices=" + oldToNew.Count);
         }
 
-        // ReplaceSet: builds a new subgraph modeled on the source (like CopyVertex) and reconciles it
-        // with a "similar" subgraph already present under replaceTo:
-        //  - locate the existing (old) similar subgraph in replaceTo (matched from the input edges),
-        //  - build the new subgraph from the source under replaceTo,
-        //  - compute a 1:1 anchor-first mapping old -> new using a fuzzy similarity measure that is
-        //    tolerant to renames, meta changes and inserted/removed levels (content/structure based,
-        //    depth-independent),
-        //  - repin the external in-edges / meta-in-edges of the matched old vertices onto the new ones
-        //    (preserving edge order), remapping meta when the meta vertex itself was matched,
-        //  - drop the old subgraph (its connectors under replaceTo); unmatched old vertices are cut off
-        //    and disposed once nothing references them.
-        // The source is treated as a template (it is copied, not consumed).
-        public static void ReplaceVertex(IEnumerable<IEdge> edgesToReplace, IVertex replaceTo)
+        // CopyAndReplaceSet: builds a new subgraph modeled on the source under replaceTo and reconciles
+        // it with a "similar" subgraph already present there; the source is left intact (copied).
+        public static void CopyAndReplaceEdgesSet(IEnumerable<IEdge> edgesToReplace, IVertex replaceTo)
         {
-            List<IEdge> roots = edgesToReplace.ToList();
+            CopyOrMoveAndReplace(edgesToReplace.ToList(), replaceTo, false);
+        }
 
+        // MoveAndReplaceSet: like CopyAndReplaceVertex, but the source is consumed (moved): the source's
+        // external referrers are repinned onto the new copies and the input edges are deleted.
+        public static void MoveAndReplaceEdgesSet(IEnumerable<IEdge> edgesToReplace, IVertex replaceTo)
+        {
+            CopyOrMoveAndReplace(edgesToReplace.ToList(), replaceTo, true);
+        }
+
+        // Shared core. Builds the new subgraph modeled on the source under replaceTo, then reconciles it
+        // with the existing ("old") similar subgraph already present under replaceTo:
+        //  - locate the old similar subgraph (matched from the input edges),
+        //  - build the new subgraph from the source under replaceTo,
+        //  - compute a 1:1 anchor-first mapping old -> new with a fuzzy similarity measure tolerant to
+        //    renames, meta changes and inserted/removed levels,
+        //  - repin external referrers of the matched old vertices onto the new ones (order preserved),
+        //  - when moveSource is true, also relocate the source: repin the source's external referrers
+        //    onto the new copies and delete the input edges (source consumed),
+        //  - delete the old connectors; unmatched old (and, on move, source) vertices are cut off and
+        //    disposed once nothing references them.
+        // Repins are applied first (no disposal), then the old/source connectors are deleted, so every
+        // repin still sees its target alive.
+        static void CopyOrMoveAndReplace(List<IEdge> roots, IVertex replaceTo, bool moveSource)
+        {
             Dictionary<IVertex, Dictionary<IVertex, double>> memo = new Dictionary<IVertex, Dictionary<IVertex, double>>();
 
             // 1. Find the existing (old) similar subgraph roots under replaceTo, BEFORE adding the new copies.
@@ -125,65 +138,93 @@ namespace m0.ZeroTypes
             CopySubGraphIntoVertex(roots, replaceTo, sourceToNew);
 
             HashSet<IVertex> newScope = new HashSet<IVertex>(sourceToNew.Values);
+            HashSet<IVertex> sourceScope = new HashSet<IVertex>(sourceToNew.Keys);
 
             // 3. Match old vs new (anchor-first, 1:1).
             Dictionary<IVertex, IVertex> oldToNew = MatchSubGraphs(oldScope, newScope, memo);
 
-            // 4. Collect edge rewrites: repin external referrers of matched old vertices onto the new
-            //    ones, and drop the old root connectors. Edges internal to the old or new scope are left
-            //    alone (the old ones dispose with the old subgraph).
+            // 4. Collect repins (order-preserving). The input and old-root edges are never repinned; edges
+            //    internal to the old/new/source scopes are skipped too.
             HashSet<IEdge> excluded = new HashSet<IEdge>(oldRootEdges);
+            foreach (IEdge inputEdge in roots)
+                excluded.Add(inputEdge);
+
             Dictionary<IVertex, List<EdgeRewrite>> byFrom = new Dictionary<IVertex, List<EdgeRewrite>>();
 
+            // Old-side: external referrers of matched old vertices -> new (meta remapped via oldToNew).
             foreach (KeyValuePair<IVertex, IVertex> match in oldToNew)
+                CollectExternalReferrerRepins(match.Key, match.Value, oldToNew, byFrom,
+                    oldScope, newScope, sourceScope, excluded);
+
+            // Source-side (move only): external referrers of source vertices -> new (meta via sourceToNew).
+            if (moveSource)
+                foreach (KeyValuePair<IVertex, IVertex> pair in sourceToNew)
+                    CollectExternalReferrerRepins(pair.Key, pair.Value, sourceToNew, byFrom,
+                        sourceScope, newScope, oldScope, excluded);
+
+            // 5. Apply repins. No disposal happens here (every RewriteFrom re-adds before deleting).
+            foreach (KeyValuePair<IVertex, List<EdgeRewrite>> kv in byFrom)
+                RewriteFrom(kv.Key, kv.Value);
+
+            // 6. Delete the old connectors (old subgraph disposes). On move also delete the input edges
+            //    (source disposes). Re-found by meta/to because step 5 may have rebuilt them.
+            foreach (IEdge oldRootEdge in oldRootEdges)
+                DeleteMatchingEdge(replaceTo, oldRootEdge.Meta, oldRootEdge.To);
+
+            if (moveSource)
+                foreach (IEdge inputEdge in roots)
+                    if (inputEdge.From != null && inputEdge.From.DisposedState == DisposeStateEnum.Live)
+                        DeleteMatchingEdge(inputEdge.From, inputEdge.Meta, inputEdge.To);
+
+            MinusZero.Instance.Log(1, moveSource ? "VertexOperations.MoveAndReplaceVertex" : "VertexOperations.CopyAndReplaceVertex",
+                "roots=" + roots.Count + " oldRoots=" + oldRootEdges.Count
+                + " oldScope=" + oldScope.Count + " newScope=" + newScope.Count
+                + " sourceScope=" + sourceScope.Count + " matched=" + oldToNew.Count);
+        }
+
+        // Queues repins of every external referrer (in-edge / meta-in-edge) of 'source' onto 'target'.
+        // Referrers coming from ownScope/newScope/otherScope or that are excluded are left untouched.
+        static void CollectExternalReferrerRepins(IVertex source, IVertex target, Dictionary<IVertex, IVertex> map,
+            Dictionary<IVertex, List<EdgeRewrite>> byFrom, HashSet<IVertex> ownScope, HashSet<IVertex> newScope,
+            HashSet<IVertex> otherScope, HashSet<IEdge> excluded)
+        {
+            foreach (IEdge inEdge in source.InEdgesRaw.ToList())
             {
-                IVertex oldVertex = match.Key;
-                IVertex newVertex = match.Value;
+                if (ownScope.Contains(inEdge.From) || newScope.Contains(inEdge.From)
+                    || otherScope.Contains(inEdge.From) || excluded.Contains(inEdge))
+                    continue;
 
-                foreach (IEdge inEdge in oldVertex.InEdgesRaw.ToList())
+                AddRewrite(byFrom, inEdge.From, new EdgeRewrite
                 {
-                    if (oldScope.Contains(inEdge.From) || newScope.Contains(inEdge.From) || excluded.Contains(inEdge))
-                        continue;
-
-                    AddRewrite(byFrom, inEdge.From, new EdgeRewrite
-                    {
-                        Target = inEdge,
-                        NewMeta = Remap(oldToNew, inEdge.Meta),
-                        NewTo = newVertex
-                    });
-                }
-
-                foreach (IEdge metaInEdge in oldVertex.MetaInEdgesRaw.ToList())
-                {
-                    if (oldScope.Contains(metaInEdge.From) || newScope.Contains(metaInEdge.From) || excluded.Contains(metaInEdge))
-                        continue;
-
-                    AddRewrite(byFrom, metaInEdge.From, new EdgeRewrite
-                    {
-                        Target = metaInEdge,
-                        NewMeta = newVertex,
-                        NewTo = Remap(oldToNew, metaInEdge.To)
-                    });
-                }
+                    Target = inEdge,
+                    NewMeta = Remap(map, inEdge.Meta),
+                    NewTo = target
+                });
             }
 
-            // Old root connectors are dropped from replaceTo; their replacement is the new connector
-            // built in step 2.
-            foreach (IEdge oldRootEdge in oldRootEdges)
-                AddRewrite(byFrom, oldRootEdge.From, new EdgeRewrite { Target = oldRootEdge, Drop = true });
+            foreach (IEdge metaInEdge in source.MetaInEdgesRaw.ToList())
+            {
+                if (ownScope.Contains(metaInEdge.From) || newScope.Contains(metaInEdge.From)
+                    || otherScope.Contains(metaInEdge.From) || excluded.Contains(metaInEdge))
+                    continue;
 
-            // 5. Apply rewrites with order preserved. replaceTo is processed last, so external referrers
-            //    are repinned before the old subgraph is cut and starts disposing.
-            foreach (IVertex from in byFrom.Keys.ToList())
-                if (from != replaceTo)
-                    RewriteFrom(from, byFrom[from]);
+                AddRewrite(byFrom, metaInEdge.From, new EdgeRewrite
+                {
+                    Target = metaInEdge,
+                    NewMeta = target,
+                    NewTo = Remap(map, metaInEdge.To)
+                });
+            }
+        }
 
-            if (byFrom.ContainsKey(replaceTo))
-                RewriteFrom(replaceTo, byFrom[replaceTo]);
-
-            MinusZero.Instance.Log(1, "VertexOperations.ReplaceVertex",
-                "roots=" + roots.Count + " oldRoots=" + oldRootEdges.Count
-                + " oldScope=" + oldScope.Count + " newScope=" + newScope.Count + " matched=" + oldToNew.Count);
+        static void DeleteMatchingEdge(IVertex from, IVertex meta, IVertex to)
+        {
+            foreach (IEdge e in from.OutEdgesRaw.ToList())
+                if (ReferenceEquals(e.Meta, meta) && ReferenceEquals(e.To, to))
+                {
+                    from.DeleteEdge(e);
+                    return;
+                }
         }
 
         class EdgeRewrite
@@ -191,7 +232,6 @@ namespace m0.ZeroTypes
             public IEdge Target;
             public IVertex NewMeta;
             public IVertex NewTo;
-            public bool Drop;
         }
 
         class MatchCandidate
@@ -222,8 +262,8 @@ namespace m0.ZeroTypes
             list.Add(rewrite);
         }
 
-        // Rebuilds the whole out-edge list of from, applying the rewrites (repin / drop) in place. This
-        // preserves the original edge order (plain add+delete would move repinned edges to the end).
+        // Rebuilds the whole out-edge list of from, applying the repins in place. This preserves the
+        // original edge order (plain add+delete would move repinned edges to the end).
         static void RewriteFrom(IVertex from, List<EdgeRewrite> rewrites)
         {
             List<IEdge> snapshot = from.OutEdgesRaw.ToList();
@@ -238,9 +278,6 @@ namespace m0.ZeroTypes
                         rewrite = candidate;
                         break;
                     }
-
-                if (rewrite != null && rewrite.Drop)
-                    continue;
 
                 if (rewrite != null)
                     from.AddEdge(rewrite.NewMeta, rewrite.NewTo);

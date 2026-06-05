@@ -61,7 +61,9 @@ namespace m0.UIWpf.Dialog
         void OnLoad(object sender, RoutedEventArgs e){
             //Keyboard.Focus(Content);
             //FocusManager.SetFocusedElement(this,Content);
-            Content.Focus();
+            Dispatcher.BeginInvoke(
+                new Action(() => Content.Focus()),
+                System.Windows.Threading.DispatcherPriority.Input);
         }
 
         void FinishDialog()
