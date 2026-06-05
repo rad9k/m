@@ -97,6 +97,11 @@ namespace m0.UIWpf.VertexCommander
 
         public IVertex RightOutEdgesVisuliserInstance { get { return rightOutEdgesVisuliserInstance; } }
 
+        public override string ToString()
+        {
+            return "[][]";
+        }
+
         public VertexCommanderControl()
         {
             InitializeComponent();
@@ -143,7 +148,7 @@ namespace m0.UIWpf.VertexCommander
 
         private void UpdateBottomCommandButtonsFontSize()
         {
-            double buttonWidth = ActualWidth / 9.0;
+            double buttonWidth = ActualWidth / 10.0;
             double fontSize = Math.Max(7.0, Math.Min(10.0, buttonWidth / 11.0));
 
             SetBottomCommandButtonFontSize(ViewButton, fontSize);
@@ -281,23 +286,14 @@ namespace m0.UIWpf.VertexCommander
 
         private void VertexCommanderControl_Loaded(object sender, RoutedEventArgs e)
         {
+            if (initialKeyboardHighlightSet)
+                return;
+
+            initialKeyboardHighlightSet = true;
             SetCodeControlQueryText();
             RecordPaneQueryHistory(KeyboardHighlightPane.Left);
             RecordPaneQueryHistory(KeyboardHighlightPane.Right);
-
-            if (!initialKeyboardHighlightSet)
-            {
-                initialKeyboardHighlightSet = true;
-                Dispatcher.BeginInvoke(new Action(SetInitialKeyboardHighlight), System.Windows.Threading.DispatcherPriority.Loaded);
-                return;
-            }
-
-            KeyboardHighlightPane paneToRestore = currentKeyboardHighlightPane;
-            KeyboardHighlightSection sectionToRestore = currentKeyboardHighlightSection;
-            int positionToRestore = GetKeyboardHighlightPosition(paneToRestore, sectionToRestore);
-            Dispatcher.BeginInvoke(
-                new Action(() => RestoreKeyboardHighlightPosition(paneToRestore, sectionToRestore, positionToRestore, false)),
-                System.Windows.Threading.DispatcherPriority.Loaded);
+            Dispatcher.BeginInvoke(new Action(SetInitialKeyboardHighlight), System.Windows.Threading.DispatcherPriority.Loaded);
         }
 
         private void SetCodeControlQueryText()
@@ -820,17 +816,12 @@ namespace m0.UIWpf.VertexCommander
                 SetKeyboardHighlightPosition(pane, KeyboardHighlightSection.OutEdges, true);
         }
 
-        private void RecreatePaneVisualisers(KeyboardHighlightPane pane)
+        private void RecreatePaneOutEdgesVisualiser(KeyboardHighlightPane pane)
         {
             if (pane == KeyboardHighlightPane.Left)
-            {
-                RecreateLeftInEdgesVisualiser();
                 RecreateLeftOutEdgesVisualiser();
-                return;
-            }
-
-            RecreateRightInEdgesVisualiser();
-            RecreateRightOutEdgesVisualiser();
+            else
+                RecreateRightOutEdgesVisualiser();
         }
 
         private void RestorePaneAfterFloatingDialog(
@@ -843,16 +834,14 @@ namespace m0.UIWpf.VertexCommander
                 return;
 
             Dispatcher.BeginInvoke(
-                new Action(() =>
-                {
-                    RecreatePaneVisualisers(pane);
-                    RestoreKeyboardHighlightPosition(pane, section, position, true);
-                }),
+                new Action(() => RestoreKeyboardHighlightPosition(pane, section, position, false)),
                 System.Windows.Threading.DispatcherPriority.Loaded);
         }
 
         private void OpenFloatingAtomVisualiser(bool editable)
         {
+            KeyboardHighlightPane sourcePane = currentKeyboardHighlightPane;
+            KeyboardHighlightSection sourceSection = currentKeyboardHighlightSection;
             IKeyboardHighlight keyboardHighlight = GetKeyboardHighlight(currentKeyboardHighlightPane, currentKeyboardHighlightSection);
 
             IEdge highlightedEdge = keyboardHighlight?.KeyboardHighlightedEdge;
@@ -871,6 +860,16 @@ namespace m0.UIWpf.VertexCommander
             visualiser.Loaded += (s, args) =>
                 visualiser.Dispatcher.BeginInvoke(
                     new Action(() => visualiser.Focus()),
+                    System.Windows.Threading.DispatcherPriority.Input);
+            visualiser.Unloaded += (s, args) =>
+                Dispatcher.BeginInvoke(
+                    new Action(() =>
+                    {
+                        currentKeyboardHighlightPane = sourcePane;
+                        currentKeyboardHighlightSection = sourceSection;
+                        Focus();
+                        FocusKeyboardHighlightVisualiser(sourcePane, sourceSection);
+                    }),
                     System.Windows.Threading.DispatcherPriority.Input);
 
             MinusZero.Instance.UserInteraction.ShowContentFloating(visualiser, FloatingWindowSize.Large);
@@ -1012,8 +1011,7 @@ namespace m0.UIWpf.VertexCommander
 
             BaseCommands.Delete(baseEdge, instance);
 
-            RecreateLeftOutEdgesVisualiser();
-            RecreateRightOutEdgesVisualiser();
+            RecreatePaneOutEdgesVisualiser(sourcePane);
             RestoreSingleOutEdgesKeyboardHighlight(sourcePane, true);
         }
 
