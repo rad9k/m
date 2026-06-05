@@ -27,6 +27,8 @@ namespace m0.UIWpf.Dialog
     {
         EdgeVisualiser Schema;
 
+        public bool IsCommitted { get; private set; }
+
         public override string ToString()
         {
             return "New Vertex";
@@ -56,6 +58,7 @@ namespace m0.UIWpf.Dialog
             //GraphUtil.ReplaceEdge(this.Schema.Vertex.Get(false, "BaseEdge:"),"To",SchemaEdge);
 
             this.Loaded += new RoutedEventHandler(OnLoad);
+            this.PreviewKeyDown += NewVertex_PreviewKeyDown;
         }
 
         void OnLoad(object sender, RoutedEventArgs e){
@@ -68,7 +71,8 @@ namespace m0.UIWpf.Dialog
 
         void FinishDialog()
         {
-            MinusZero.Instance.UserInteraction.CloseWindowByContent(this);
+            IsCommitted = true;
+            IVertex vertexToEdit = null;
 
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
@@ -87,12 +91,17 @@ namespace m0.UIWpf.Dialog
                 v.Value = this.Content.Text;
 
                 if (VertexOperations.GetChildEdges(meta).Any())
-                    MinusZero.Instance.UserInteraction.EditEdge(v);
+                    vertexToEdit = v;
             }
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////
+
+            MinusZero.Instance.UserInteraction.CloseWindowByContent(this);
+
+            if (vertexToEdit != null)
+                MinusZero.Instance.UserInteraction.EditEdge(vertexToEdit);
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -104,6 +113,15 @@ namespace m0.UIWpf.Dialog
         {
             if (e.Key == Key.Enter)
                 FinishDialog();
+        }
+
+        private void NewVertex_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Escape)
+                return;
+
+            e.Handled = true;
+            MinusZero.Instance.UserInteraction.CloseWindowByContent(this);
         }
     }
 }

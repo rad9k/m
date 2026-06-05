@@ -47,6 +47,7 @@ namespace m0.UIWpf.Dialog
 
                 AddButtons(options);
 
+                this.PreviewKeyDown += SelectWindowButton_PreviewKeyDown;
                 this.Loaded += SelectDialogButton_Loaded;
 
                // List.ItemsSource = options;
@@ -97,6 +98,16 @@ namespace m0.UIWpf.Dialog
 
             Close();
                
+        }
+
+        private void SelectWindowButton_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Escape)
+                return;
+
+            e.Handled = true;
+            SelectedOption = null;
+            Close();
         }
     }
 }

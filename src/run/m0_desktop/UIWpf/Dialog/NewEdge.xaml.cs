@@ -28,6 +28,8 @@ namespace m0.UIWpf.Dialog
         EdgeVisualiser Meta;
         EdgeVisualiser To;
 
+        public bool IsCommitted { get; private set; }
+
 
         public override string ToString()
         {
@@ -84,14 +86,24 @@ namespace m0.UIWpf.Dialog
             Interaction.EndInteractionWithGraph();
             //////////////////////////////////////
 
+            Focusable = true;
+            AddHandler(Keyboard.PreviewKeyDownEvent, new KeyEventHandler(NewEdge_PreviewKeyDown), true);
+            Loaded += NewEdge_Loaded;
         }
 
-
+        private void NewEdge_Loaded(object sender, RoutedEventArgs e)
+        {
+            Dispatcher.BeginInvoke(
+                new Action(() => Focus()),
+                System.Windows.Threading.DispatcherPriority.Input);
+        }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             //if (!GeneralUtil.CompareStrings(this.To.Vertex.Get(false, @"BaseEdge:\To:\To:").Value, "$Empty")) // can make edge to $Empty
             {
+                IsCommitted = true;
+
                 ////////////////////////////////////////
                 Interaction.BeginInteractionWithGraph();
                 ////////////////////////////////////////
@@ -109,6 +121,15 @@ namespace m0.UIWpf.Dialog
 
                 MinusZero.Instance.UserInteraction.CloseWindowByContent(this);
             }
+        }
+
+        private void NewEdge_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Escape)
+                return;
+
+            e.Handled = true;
+            MinusZero.Instance.UserInteraction.CloseWindowByContent(this);
         }
     }
 }
