@@ -453,22 +453,26 @@ namespace m0.UIWpf.Visualisers
         {
             DataGridRow row = GetKeyboardHighlightRow();
 
-            if (row == null)
-                return;
-
-            row.ClearValue(Control.BackgroundProperty);
-            row.ClearValue(Control.ForegroundProperty);
-            row.ClearValue(Control.BorderBrushProperty);
-
-            foreach (DataGridCell cell in FindVisualChildren<DataGridCell>(row))
+            if (row != null)
             {
-                cell.ClearValue(Control.BackgroundProperty);
-                cell.ClearValue(Control.ForegroundProperty);
-                cell.ClearValue(Control.BorderBrushProperty);
+                row.ClearValue(Control.BackgroundProperty);
+                row.ClearValue(Control.ForegroundProperty);
+                row.ClearValue(Control.BorderBrushProperty);
+
+                foreach (DataGridCell cell in FindVisualChildren<DataGridCell>(row))
+                {
+                    cell.ClearValue(Control.BackgroundProperty);
+                    cell.ClearValue(Control.ForegroundProperty);
+                    cell.ClearValue(Control.BorderBrushProperty);
+                }
+
+                if (ThisDataGrid.SelectedItems.Contains(row.Item))
+                    ApplySelectedRowVisualState(row);
             }
 
-            if (ThisDataGrid.SelectedItems.Contains(row.Item))
-                ApplySelectedRowVisualState(row);
+            currentHighlightPosition = -1;
+            isBeforeFirstPosition = false;
+            isAfterLastPosition = false;
         }
 
         private DataGridRow GetKeyboardHighlightRow()

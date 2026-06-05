@@ -872,22 +872,26 @@ namespace m0.UIWpf.Visualisers
         {
             DataGridRow row = GetKeyboardHighlightRow();
 
-            if (row == null)
-                return;
-
-            row.ClearValue(System.Windows.Controls.Control.BackgroundProperty);
-            row.ClearValue(System.Windows.Controls.Control.ForegroundProperty);
-            row.ClearValue(System.Windows.Controls.Control.BorderBrushProperty);
-
-            foreach (System.Windows.Controls.DataGridCell cell in FindVisualChildren<System.Windows.Controls.DataGridCell>(row))
+            if (row != null)
             {
-                cell.ClearValue(System.Windows.Controls.Control.BackgroundProperty);
-                cell.ClearValue(System.Windows.Controls.Control.ForegroundProperty);
-                cell.ClearValue(System.Windows.Controls.Control.BorderBrushProperty);
+                row.ClearValue(System.Windows.Controls.Control.BackgroundProperty);
+                row.ClearValue(System.Windows.Controls.Control.ForegroundProperty);
+                row.ClearValue(System.Windows.Controls.Control.BorderBrushProperty);
+
+                foreach (System.Windows.Controls.DataGridCell cell in FindVisualChildren<System.Windows.Controls.DataGridCell>(row))
+                {
+                    cell.ClearValue(System.Windows.Controls.Control.BackgroundProperty);
+                    cell.ClearValue(System.Windows.Controls.Control.ForegroundProperty);
+                    cell.ClearValue(System.Windows.Controls.Control.BorderBrushProperty);
+                }
+
+                if (IsItemSelectedForVisualState(row.Item))
+                    ApplySelectedRowVisualState(row);
             }
 
-            if (IsItemSelectedForVisualState(row.Item))
-                ApplySelectedRowVisualState(row);
+            currentHighlightPosition = -1;
+            isBeforeFirstPosition = false;
+            isAfterLastPosition = false;
         }
 
         private DataGridRow GetKeyboardHighlightRow()

@@ -776,7 +776,6 @@ namespace m0.UIWpf.VertexCommander
                     return;
 
                 ClearOtherKeyboardHighlights(keyboardHighlight);
-                keyboardHighlight.ClearKeyboardHighlight();
 
                 if (position >= 0)
                 {
@@ -792,10 +791,6 @@ namespace m0.UIWpf.VertexCommander
 
                 FocusKeyboardHighlightVisualiser(pane, section);
                 RunLiveSyncIfActive();
-
-                Dispatcher.BeginInvoke(
-                    new Action(() => ClearOtherKeyboardHighlights(keyboardHighlight)),
-                    System.Windows.Threading.DispatcherPriority.ContextIdle);
             };
 
             if (recreateHappened)
@@ -845,10 +840,7 @@ namespace m0.UIWpf.VertexCommander
             bool committed)
         {
             if (!committed)
-            {
-                RestoreKeyboardHighlightPosition(pane, section, position, false);
                 return;
-            }
 
             Dispatcher.BeginInvoke(
                 new Action(() =>
@@ -881,7 +873,7 @@ namespace m0.UIWpf.VertexCommander
                     new Action(() => visualiser.Focus()),
                     System.Windows.Threading.DispatcherPriority.Input);
 
-            MinusZero.Instance.UserInteraction.ShowContentFloating(visualiser, FloatingWindowSize.Micro);
+            MinusZero.Instance.UserInteraction.ShowContentFloating(visualiser, FloatingWindowSize.Large);
         }
 
         private void FloatingAtomVisualiser_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
@@ -1004,7 +996,6 @@ namespace m0.UIWpf.VertexCommander
             dialog.Unloaded += (s, args) => RestorePaneAfterFloatingDialog(sourcePane, sourceSection, sourcePosition, dialog.IsCommitted);
 
             MinusZero.Instance.UserInteraction.ShowContentFloating(dialog, FloatingWindowSize.Micro);
-            RestoreKeyboardHighlightPosition(sourcePane, sourceSection, sourcePosition, false);
         }
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
@@ -1045,7 +1036,6 @@ namespace m0.UIWpf.VertexCommander
             dialog.Unloaded += (s, args) => RestorePaneAfterFloatingDialog(sourcePane, sourceSection, sourcePosition, dialog.IsCommitted);
 
             MinusZero.Instance.UserInteraction.ShowContentFloating(dialog, FloatingWindowSize.Micro);
-            RestoreKeyboardHighlightPosition(sourcePane, sourceSection, sourcePosition, false);
         }
 
         private void MasterToDetailButton_Click(object sender, RoutedEventArgs e)
