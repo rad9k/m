@@ -53,6 +53,7 @@ namespace m0.UIWpf.VertexCommander
 
         private KeyboardHighlightPane? liveSyncMasterPane;
         private bool isLiveSyncing;
+        private System.Windows.Threading.DispatcherTimer liveSyncTimer;
 
         private class QueryHistoryEntry
         {
@@ -1051,6 +1052,7 @@ namespace m0.UIWpf.VertexCommander
             if (liveSyncMasterPane == masterPane)
             {
                 liveSyncMasterPane = null;
+                liveSyncTimer?.Stop();
                 UpdateLiveSyncButtonsVisualState();
                 return;
             }
@@ -1084,7 +1086,32 @@ namespace m0.UIWpf.VertexCommander
             }
         }
 
+        // Coalesces rapid master navigation: only the last move within the debounce window
+        // triggers the (expensive) detail-pane refresh.
         private void RunLiveSyncIfActive()
+        {
+            if (isLiveSyncing || liveSyncMasterPane == null)
+                return;
+
+            if (liveSyncTimer == null)
+            {
+                liveSyncTimer = new System.Windows.Threading.DispatcherTimer
+                {
+                    Interval = System.TimeSpan.FromMilliseconds(120)
+                };
+
+                liveSyncTimer.Tick += (s, e) =>
+                {
+                    liveSyncTimer.Stop();
+                    PerformLiveSync();
+                };
+            }
+
+            liveSyncTimer.Stop();
+            liveSyncTimer.Start();
+        }
+
+        private void PerformLiveSync()
         {
             if (isLiveSyncing || liveSyncMasterPane == null)
                 return;
@@ -1109,33 +1136,59 @@ namespace m0.UIWpf.VertexCommander
                 ? KeyboardHighlightPane.Right
                 : KeyboardHighlightPane.Left;
 
-            IVertex detailBaseEdge = detailPane == KeyboardHighlightPane.Left ? LeftBaseEdge : RightBaseEdge;
-
-            if (detailBaseEdge == null)
-                return;
-
             isLiveSyncing = true;
 
             try
             {
-                GraphUtil.ReplaceEdge(detailBaseEdge, "To", masterEdge.To);
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
 
-                if (detailPane == KeyboardHighlightPane.Left)
+                try
                 {
-                    SetCodeControlQueryText(LeftQueryStringCodeControl, LeftBaseEdge);
-                    RecreateLeftInEdgesVisualiser();
-                    RecreateLeftOutEdgesVisualiser();
+                    ApplyLiveSyncDetailBaseEdge(detailPane, EdgeHelper.CreateTempEdgeVertex(masterEdge));
                 }
-                else
+                finally
                 {
-                    SetCodeControlQueryText(RightQueryStringCodeControl, RightBaseEdge);
-                    RecreateRightInEdgesVisualiser();
-                    RecreateRightOutEdgesVisualiser();
+                    //////////////////////////////////////
+                    Interaction.EndInteractionWithGraph();
+                    //////////////////////////////////////
                 }
             }
             finally
             {
                 isLiveSyncing = false;
+            }
+        }
+
+        private void ApplyLiveSyncDetailBaseEdge(KeyboardHighlightPane detailPane, IVertex baseEdgeVertex)
+        {
+            if (baseEdgeVertex == null)
+                return;
+
+            IVertex inEdgesVisualiserInstance = detailPane == KeyboardHighlightPane.Left
+                ? leftInEdgesVisuliserInstance
+                : rightInEdgesVisuliserInstance;
+
+            IVertex outEdgesVisualiserInstance = detailPane == KeyboardHighlightPane.Left
+                ? leftOutEdgesVisuliserInstance
+                : rightOutEdgesVisuliserInstance;
+
+            if (inEdgesVisualiserInstance != null)
+                GraphUtil.ReplaceEdge(inEdgesVisualiserInstance, "BaseEdge", baseEdgeVertex);
+
+            if (outEdgesVisualiserInstance != null)
+                GraphUtil.ReplaceEdge(outEdgesVisualiserInstance, "BaseEdge", baseEdgeVertex);
+
+            if (detailPane == KeyboardHighlightPane.Left)
+            {
+                LeftBaseEdge = baseEdgeVertex;
+                SetCodeControlQueryText(LeftQueryStringCodeControl, LeftBaseEdge);
+            }
+            else
+            {
+                RightBaseEdge = baseEdgeVertex;
+                SetCodeControlQueryText(RightQueryStringCodeControl, RightBaseEdge);
             }
         }
 

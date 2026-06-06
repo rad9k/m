@@ -45,6 +45,7 @@ namespace m0.UIWpf.Visualisers
         private int currentHighlightPosition = -1;
         private bool isBeforeFirstPosition;
         private bool isAfterLastPosition;
+        private IEdge currentKeyboardHighlightedEdge;
 
         static string[] _MetaTriggeringUpdateVertex = new string[] { };
         public virtual string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
@@ -168,7 +169,7 @@ namespace m0.UIWpf.Visualisers
 
         public IEdge KeyboardHighlightedEdge
         {
-            get { return GetKeyboardHighlightedEdge(); }
+            get { return currentKeyboardHighlightedEdge; }
         }
 
         private Style CreateHighlightedRowStyle()
@@ -307,6 +308,7 @@ namespace m0.UIWpf.Visualisers
             currentHighlightPosition = position;
             isBeforeFirstPosition = false;
             isAfterLastPosition = false;
+            currentKeyboardHighlightedEdge = GetKeyboardHighlightedEdge();
 
             ApplyKeyboardHighlight();
         }
@@ -409,7 +411,7 @@ namespace m0.UIWpf.Visualisers
             if (row == null)
                 return;
 
-            int position = GetKeyboardHighlightRowsInScreenOrder().IndexOf(row);
+            int position = GetKeyboardHighlightEdges().IndexOf(row.Item as IEdge);
 
             if (position < 0)
                 return;
@@ -441,12 +443,27 @@ namespace m0.UIWpf.Visualisers
 
         private IEdge GetKeyboardHighlightedEdge()
         {
-            List<DataGridRow> rows = GetKeyboardHighlightRowsInScreenOrder();
+            List<IEdge> edges = GetKeyboardHighlightEdges();
 
-            if (currentHighlightPosition < 0 || currentHighlightPosition >= rows.Count)
+            if (currentHighlightPosition < 0 || currentHighlightPosition >= edges.Count)
                 return null;
 
-            return rows[currentHighlightPosition].Item as IEdge;
+            return edges[currentHighlightPosition];
+        }
+
+        // Logical edge order taken straight from Items (no layout, no container realization).
+        private List<IEdge> GetKeyboardHighlightEdges()
+        {
+            List<IEdge> edges = new List<IEdge>();
+
+            if (ThisDataGrid == null || ThisDataGrid.Items == null)
+                return edges;
+
+            foreach (object item in ThisDataGrid.Items)
+                if (item is IEdge edge)
+                    edges.Add(edge);
+
+            return edges;
         }
 
         public void ClearKeyboardHighlight()
@@ -473,16 +490,17 @@ namespace m0.UIWpf.Visualisers
             currentHighlightPosition = -1;
             isBeforeFirstPosition = false;
             isAfterLastPosition = false;
+            currentKeyboardHighlightedEdge = null;
         }
 
         private DataGridRow GetKeyboardHighlightRow()
         {
-            List<DataGridRow> rows = GetKeyboardHighlightRowsInScreenOrder();
+            List<IEdge> edges = GetKeyboardHighlightEdges();
 
-            if (currentHighlightPosition < 0 || currentHighlightPosition >= rows.Count)
+            if (currentHighlightPosition < 0 || currentHighlightPosition >= edges.Count)
                 return null;
 
-            object item = rows[currentHighlightPosition].Item;
+            object item = edges[currentHighlightPosition];
             ThisDataGrid.ScrollIntoView(item);
             ThisDataGrid.UpdateLayout();
 
@@ -491,30 +509,16 @@ namespace m0.UIWpf.Visualisers
 
         private int GetKeyboardHighlightItemCount()
         {
-            return GetKeyboardHighlightRowsInScreenOrder().Count;
-        }
-
-        private List<DataGridRow> GetKeyboardHighlightRowsInScreenOrder()
-        {
-            List<DataGridRow> rows = new List<DataGridRow>();
-
             if (ThisDataGrid == null || ThisDataGrid.Items == null)
-                return rows;
+                return 0;
 
-            ThisDataGrid.UpdateLayout();
+            int count = 0;
 
             foreach (object item in ThisDataGrid.Items)
-            {
-                DataGridRow row = ThisDataGrid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
+                if (item is IEdge)
+                    count++;
 
-                if (row != null && row.Item is IEdge)
-                    rows.Add(row);
-            }
-
-            return rows
-                .OrderBy(row => row.TranslatePoint(new Point(0, 0), ThisDataGrid).Y)
-                .ThenBy(row => row.TranslatePoint(new Point(0, 0), ThisDataGrid).X)
-                .ToList();
+            return count;
         }
 
         private Style CreateResizableColumnHeaderStyle(bool drawHorizontalHeaderLine, bool drawVerticalHeaderLine)
