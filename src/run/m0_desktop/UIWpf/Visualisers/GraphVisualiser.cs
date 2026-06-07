@@ -762,7 +762,7 @@ namespace m0.UIWpf.Visualisers
             IEnumerable<IEdge> inEdges = v.InEdges;
 
             if (!ShowFromToChangedVertex)
-                inEdges = ShowesInEdges.FilterFromToChangedVertex(inEdges);
+                inEdges = ShowesInEdges.FilterFromToSourceChangedVertex(inEdges);
 
             return inEdges;
         }

@@ -8,7 +8,7 @@ namespace m0.UIWpf.Visualisers
 {
     public class ShowesInEdges
     {
-        public static IEnumerable<IEdge> FilterFromToChangedVertex(IEnumerable<IEdge> set)
+        public static IEnumerable<IEdge> FilterFromToSourceChangedVertex(IEnumerable<IEdge> set)
         {
             List<IEdge> newList = new List<IEdge>();
 
@@ -16,7 +16,7 @@ namespace m0.UIWpf.Visualisers
             {
                 string meta = e.Meta.Value.ToString();
 
-                if (meta == "From" || meta == "To" || meta == "ChangedVertex")
+                if (meta == "From" || meta == "To" || meta == "Source" || meta == "ChangedVertex")
                     continue;
 
                 newList.Add(e);

@@ -1034,7 +1034,7 @@ namespace m0.UIWpf.Visualisers
             if (showFromToChangedVertex)
                 return inEdges;
 
-            return ShowesInEdges.FilterFromToChangedVertex(inEdges);
+            return ShowesInEdges.FilterFromToSourceChangedVertex(inEdges);
         }
 
         private IEnumerable<IEdge> GetVisibleEdges(IVertex vertex)

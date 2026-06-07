@@ -905,7 +905,7 @@ namespace m0.UIWpf.Visualisers
             if (GraphUtil.GetBooleanValueOrFalse(Vertex.Get(false, "ShowFromToSourceChangedVertex:")))
                 return inEdges;
 
-            return ShowesInEdges.FilterFromToChangedVertex(inEdges).ToList();
+            return ShowesInEdges.FilterFromToSourceChangedVertex(inEdges).ToList();
         }
 
         private void RefreshVisualStatesAfterItemsChanged()
