@@ -203,11 +203,14 @@ namespace m0.UIWpf.Visualisers
             {
                 if (ParentVisualiser.ActivateKeyboardHighlightItem(this))
                 {
+                    ignoreNextMouseLeftButtonUp = true;
                     e.Handled = true;
                     return;
                 }
 
+                ignoreNextMouseLeftButtonUp = true;
                 BaseCommands.OpenDefaultVisualiser(EdgeHelper.CreateTempEdgeVertex(GetEdge()), false);
+                e.Handled = true;
             }
         }
 
@@ -1040,7 +1043,13 @@ namespace m0.UIWpf.Visualisers
 
             TurnOffSelectedItemsUpdate = true;
 
-            IVertex sv = Vertex.Get(false, @"SelectedEdges:");            
+            IVertex sv = Vertex.Get(false, @"SelectedEdges:");
+
+            if (sv == null)
+            {
+                TurnOffSelectedItemsUpdate = false;
+                return;
+            }
 
             IEdge e=(IEdge)item.Tag;
 

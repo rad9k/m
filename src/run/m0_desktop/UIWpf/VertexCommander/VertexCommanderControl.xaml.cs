@@ -1494,6 +1494,13 @@ namespace m0.UIWpf.VertexCommander
             if (newBaseEdge == null)
                 return;
 
+            Dispatcher.BeginInvoke(
+                new Action(() => ApplyKeyboardHighlightEnter(pane, newBaseEdge)),
+                System.Windows.Threading.DispatcherPriority.Loaded);
+        }
+
+        private void ApplyKeyboardHighlightEnter(KeyboardHighlightPane pane, IEdge newBaseEdge)
+        {
             IVertex newBaseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(newBaseEdge);
 
             if (pane == KeyboardHighlightPane.Left)
@@ -1515,9 +1522,7 @@ namespace m0.UIWpf.VertexCommander
 
             currentKeyboardHighlightPane = pane;
             currentKeyboardHighlightSection = KeyboardHighlightSection.OutEdges;
-            Dispatcher.BeginInvoke(
-                new Action(() => SetKeyboardHighlightPosition(pane, KeyboardHighlightSection.OutEdges, true)),
-                System.Windows.Threading.DispatcherPriority.Loaded);
+            SetKeyboardHighlightPosition(pane, KeyboardHighlightSection.OutEdges, true);
         }
 
         private void SetKeyboardHighlightPosition(
