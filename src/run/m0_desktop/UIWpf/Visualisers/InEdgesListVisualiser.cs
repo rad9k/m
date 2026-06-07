@@ -417,7 +417,7 @@ namespace m0.UIWpf.Visualisers
                 return;
 
             SetKeyboardHighlightPosition(position);
-            RaiseKeyboardHighlightActivated();
+            RaiseKeyboardHighlightEnterPressed();
             e.Handled = true;
         }
 

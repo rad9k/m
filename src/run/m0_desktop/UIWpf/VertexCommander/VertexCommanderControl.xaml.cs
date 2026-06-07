@@ -43,6 +43,7 @@ namespace m0.UIWpf.VertexCommander
         private KeyboardHighlightSection currentKeyboardHighlightSection = KeyboardHighlightSection.InEdges;
 
         private const int QueryHistoryMax = 10;
+        private const int KeyboardHighlightPageStep = 10;
 
         private readonly ObservableCollection<QueryHistoryEntry> leftQueryHistory = new ObservableCollection<QueryHistoryEntry>();
         private readonly ObservableCollection<QueryHistoryEntry> rightQueryHistory = new ObservableCollection<QueryHistoryEntry>();
@@ -552,6 +553,8 @@ namespace m0.UIWpf.VertexCommander
                 && key != System.Windows.Input.Key.Down
                 && key != System.Windows.Input.Key.Left
                 && key != System.Windows.Input.Key.Right
+                && key != System.Windows.Input.Key.PageUp
+                && key != System.Windows.Input.Key.PageDown
                 && key != System.Windows.Input.Key.Space
                 && key != System.Windows.Input.Key.Enter)
                 return;
@@ -571,6 +574,10 @@ namespace m0.UIWpf.VertexCommander
                 keyboardHighlight.MoveKeyboardHighlight(KeyboardHighlightMoveDirection.Left);
             else if (key == System.Windows.Input.Key.Right)
                 keyboardHighlight.MoveKeyboardHighlight(KeyboardHighlightMoveDirection.Right);
+            else if (key == System.Windows.Input.Key.PageUp)
+                keyboardHighlight.MoveKeyboardHighlight(-KeyboardHighlightPageStep);
+            else if (key == System.Windows.Input.Key.PageDown)
+                keyboardHighlight.MoveKeyboardHighlight(KeyboardHighlightPageStep);
             else if (key == System.Windows.Input.Key.Space)
                 keyboardHighlight.ToggleKeyboardHighlightedEdgeSelection();
             else
@@ -580,6 +587,8 @@ namespace m0.UIWpf.VertexCommander
                 || key == System.Windows.Input.Key.Down
                 || key == System.Windows.Input.Key.Left
                 || key == System.Windows.Input.Key.Right
+                || key == System.Windows.Input.Key.PageUp
+                || key == System.Windows.Input.Key.PageDown
                 || key == System.Windows.Input.Key.Space)
                 RunLiveSyncIfActive();
         }
