@@ -692,6 +692,7 @@ namespace m0.UIWpf.Visualisers
         private bool metaLabels;
         private bool showOutEdges;
         private bool showInEdges;
+        private bool showFromToChangedVertex;
         private bool animateEdges;
         private bool iconsOnLabels;
         private bool iconsOnVertexes;
@@ -706,7 +707,7 @@ namespace m0.UIWpf.Visualisers
         internal bool AnimateEdges { get { return animateEdges; } }
 
         private static readonly string[] _MetaTriggeringUpdateVertex = new string[] {
-            "EdgeLength", "NumberOfCircles", "ShowOutEdges", "ShowInEdges",
+            "EdgeLength", "NumberOfCircles", "ShowOutEdges", "ShowInEdges", "ShowFromToChangedVertex",
             "MetaLabels", "LayoutMode3D", "TransitionStyle",
             "TransitionDurationMs", "SphereSize", "MaxVertices3D", "LabelSize",
             "AnimateEdges", "IconsOnLabels", "IconsOnVertexes"
@@ -895,6 +896,7 @@ namespace m0.UIWpf.Visualisers
             metaLabels = !GeneralUtil.CompareStrings(Vertex.Get(false, "MetaLabels:"), "False");
             showOutEdges = !GeneralUtil.CompareStrings(Vertex.Get(false, "ShowOutEdges:"), "False");
             showInEdges = GeneralUtil.CompareStrings(Vertex.Get(false, "ShowInEdges:"), "True");
+            showFromToChangedVertex = GraphUtil.GetBooleanValueOrFalse(Vertex.Get(false, "ShowFromToSourceChangedVertex:"));
             bool animateEdgesIsNull = false;
             animateEdges = GraphUtil.GetBooleanValue(Vertex.Get(false, "AnimateEdges:"), ref animateEdgesIsNull);
             iconsOnLabels = GeneralUtil.CompareStrings(Vertex.Get(false, "IconsOnLabels:"), "True");
@@ -1027,6 +1029,14 @@ namespace m0.UIWpf.Visualisers
                 ConnectDisplayedEdges(vertex);
         }
 
+        private IEnumerable<IEdge> ApplyShowesInEdgesInEdgeFilter(IEnumerable<IEdge> inEdges)
+        {
+            if (showFromToChangedVertex)
+                return inEdges;
+
+            return ShowesInEdges.FilterFromToChangedVertex(inEdges);
+        }
+
         private IEnumerable<IEdge> GetVisibleEdges(IVertex vertex)
         {
             List<IEdge> result = new List<IEdge>();
@@ -1035,7 +1045,7 @@ namespace m0.UIWpf.Visualisers
                 result.AddRange(VisualiserUtil.FilterEdges(vertex.OutEdges, Vertex));
 
             if (showInEdges)
-                result.AddRange(VisualiserUtil.FilterEdges(vertex.InEdges, Vertex));
+                result.AddRange(ApplyShowesInEdgesInEdgeFilter(VisualiserUtil.FilterEdges(vertex.InEdges, Vertex)));
 
             return result.Where(CanAddEdge);
         }

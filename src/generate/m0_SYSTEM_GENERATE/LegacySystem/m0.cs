@@ -4428,7 +4428,7 @@ namespace m0
                 "Enum:RepositionAlgorithmEnum{EnumValue:Radial,EnumValue:Force,EnumValue:Sugiyama,EnumValue:Kamada,EnumValue:Tree},"+
                 "Enum:LayoutAlgorithm3DEnum{EnumValue:FibonacciSphereShells,EnumValue:OrbitalPlanes,EnumValue:Force3D,EnumValue:ConcentricSpiral3D,EnumValue:Sugiyama3DLayers}," +
                 "Enum:TransitionStyle3DEnum{EnumValue:Cut,EnumValue:OrbitTransition,EnumValue:FlyToAndSwap,EnumValue:GravityMorph,EnumValue:HyperspaceJump}," +
-                "Class:ShowesInEdges," +
+                "Class:ShowesInEdges{Attribute:ShowFromToSourceChangedVertex{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False}}," +
                 "Class:ShowesOutEdges," +
                 "Class:Form{Attribute:ExpertMode{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ColumnNumber{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:1},Attribute:MetaOnLeft{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:MetaAlignRight{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:SectionsAsTabs{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False}}," +
                 "Class:Code{Attribute:ShowWhiteSpace{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowLineNumbers{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:HighlightedLine{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowFolding{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:TextMemoryCurrent{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:0},Attribute:TextMemoryMax{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:0}}," +
@@ -4452,6 +4452,10 @@ namespace m0
                 //"Class:Test"
                 "}"
                 );
+
+            sm.Get(false, @"Visualiser\ShowesInEdges\ShowFromToSourceChangedVertex").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));            
+
+            //
 
             sm.Get(false, @"Visualiser\BaseEdgeTarget").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));
             sm.Get(false, @"Visualiser\GridStyleEnum").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\EnumBase"));

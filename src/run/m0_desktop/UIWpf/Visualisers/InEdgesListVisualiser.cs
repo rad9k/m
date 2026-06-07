@@ -47,7 +47,7 @@ namespace m0.UIWpf.Visualisers
         private bool isAfterLastPosition;
         private IEdge currentKeyboardHighlightedEdge;
 
-        static string[] _MetaTriggeringUpdateVertex = new string[] { };
+        static string[] _MetaTriggeringUpdateVertex = new string[] { "ShowFromToChangedVertex" };
         public virtual string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
         static string[] _MetaTriggeringUpdateView = new string[] { "GridStyle", "ShowHeader" };
@@ -893,9 +893,19 @@ namespace m0.UIWpf.Visualisers
                     if (GraphUtil.GetQueryOutCount(edge.Meta, "$Hide", null) == 0)
                         visibleInEdges.Add(edge);
 
+                visibleInEdges = ApplyShowesInEdgesInEdgeFilter(visibleInEdges);
+
                 ThisDataGrid.ItemsSource = visibleInEdges;
                 RefreshVisualStatesAfterItemsChanged();
             }
+        }
+
+        private IList<IEdge> ApplyShowesInEdgesInEdgeFilter(IList<IEdge> inEdges)
+        {
+            if (GraphUtil.GetBooleanValueOrFalse(Vertex.Get(false, "ShowFromToSourceChangedVertex:")))
+                return inEdges;
+
+            return ShowesInEdges.FilterFromToChangedVertex(inEdges).ToList();
         }
 
         private void RefreshVisualStatesAfterItemsChanged()

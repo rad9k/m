@@ -324,7 +324,7 @@ namespace m0.UIWpf.Visualisers
         public bool IsPaiting=false;
 
 
-        static string[] _MetaTriggeringUpdateVertex = new string[] { "VisualiserCircleSize", "NumberOfCircles", "ShowOutEdges", "ShowInEdges", "FastMode", "MetaLabels", "AnimateEdges", "ShowIcons" };
+        static string[] _MetaTriggeringUpdateVertex = new string[] { "VisualiserCircleSize", "NumberOfCircles", "ShowOutEdges", "ShowInEdges", "ShowFromToChangedVertex", "FastMode", "MetaLabels", "AnimateEdges", "ShowIcons" };
         public string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
         static string[] _MetaTriggeringUpdateView = new string[] { };
@@ -623,6 +623,7 @@ namespace m0.UIWpf.Visualisers
         bool MetaLabels;
         bool ShowOutEdges;
         bool ShowInEdges;
+        bool ShowFromToChangedVertex;
         bool AnimateEdges;
         bool ShowIcons;
 
@@ -664,6 +665,8 @@ namespace m0.UIWpf.Visualisers
                     ShowInEdges = true;
                 else
                     ShowInEdges = false;
+
+                ShowFromToChangedVertex = GraphUtil.GetBooleanValueOrFalse(Vertex.Get(false, "ShowFromToSourceChangedVertex:"));
 
                 bool animateEdgesIsNull = false;
                 AnimateEdges = GraphUtil.GetBooleanValue(Vertex.Get(false, "AnimateEdges:"), ref animateEdgesIsNull);
@@ -754,6 +757,16 @@ namespace m0.UIWpf.Visualisers
             return true;
         }
 
+        private IEnumerable<IEdge> GetInEdgesForDisplay(IVertex v)
+        {
+            IEnumerable<IEdge> inEdges = v.InEdges;
+
+            if (!ShowFromToChangedVertex)
+                inEdges = ShowesInEdges.FilterFromToChangedVertex(inEdges);
+
+            return inEdges;
+        }
+
         protected void AddCircle(int level, IList<IVertex> InnerCircleVertices)
         {
             //MinusZero.Instance.Log(1,"AddCircle", level.ToString());
@@ -792,7 +805,7 @@ namespace m0.UIWpf.Visualisers
                     }
 
                 if(ShowInEdges)
-                foreach (IEdge e in v.InEdges)
+                foreach (IEdge e in GetInEdgesForDisplay(v))
                     if (!DisplayedVerticesUIElements.ContainsKey(e.From))
                     {
                         DisplayedVerticesUIElements.Add(e.From, dummyPointIn);
@@ -840,7 +853,7 @@ namespace m0.UIWpf.Visualisers
                         }
 
                     if (ShowInEdges)
-                    foreach (IEdge e in v.InEdges.ToList())
+                    foreach (IEdge e in GetInEdgesForDisplay(v))
                         if (!DisplayedVerticesUIElements.ContainsKey(e.From) || DisplayedVerticesUIElements[e.From] == dummyPointIn)
                         {
                             if (CanAddEdge(e))
@@ -883,7 +896,7 @@ namespace m0.UIWpf.Visualisers
                         }
 
                     if (ShowInEdges)
-                        foreach (IEdge e in v.InEdges)
+                        foreach (IEdge e in GetInEdgesForDisplay(v))
                             if (DisplayedVerticesUIElements.ContainsKey(e.From)) // if vertex is allready displayed, connect it
                             {
                                 SimpleVisualiserWrapper eFromPoint = DisplayedVerticesUIElements[e.From];
