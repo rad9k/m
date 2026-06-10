@@ -1714,6 +1714,8 @@ namespace m0
 
             AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) <-(?<SUB>) (?<right>)", "SetLeftVertexesToFirstRightVertexValue");
 
+            /*
+            
             // <+<
             //
             // (?<left>) <+< (?<right>)
@@ -1725,6 +1727,32 @@ namespace m0
             // (?<left>) <<< (?<right>)
 
             AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) <<<(?<SUB>) (?<right>)", "AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphIncludingLinksAsIsInLeftVertex");
+
+            */
+
+            // <<<
+            //
+            // (?<left>) <copy< (?<right>)
+
+            AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) <<copy<<(?<SUB>) (?<right>)", "CopySubgraph");            
+
+            // <<<
+            //
+            // (?<left>) <move< (?<right>)
+
+            AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) <<move<<(?<SUB>) (?<right>)", "MoveSubraph");
+
+            // <<<
+            //
+            // (?<left>) <copy&replace< (?<right>)
+
+            AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) %copy&replace%(?<SUB>) (?<right>)", "CopyAndReplaceSubgraph");
+
+            // <<<
+            //
+            // (?<left>) <move&replace< (?<right>)
+
+            AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) %move&replace%(?<SUB>) (?<right>)", "MoveAndReplaceSubgraph");
 
             /////////////////////////////////////////////////////////
             //
