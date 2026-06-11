@@ -523,7 +523,7 @@ namespace m0
                 ",SetIndex,SetCount" +
                 ",\"{}\",InnerCreation,EdgeSetAdd,EdgeSetSubstract,+,-,Mul,/,?,\"\\ \",InEdgesSlash,Colon,DoubleColon,DoubleSemicolon,CopySet,MetaToTo,()" +
                 ",RedirectLeftEdgesToRightVertices,AddLeftEdgesToRightVertices,AddRightEdgesIntoLeftEdges,DeleteRightVertices,DeleteRightEdgesFromLeftEdges,DeleteRightVerticesFromLeftEdges" +
-                ",SetLeftVertexesToFirstRightVertexValue,AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex,AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphIncludingLinksAsIsInLeftVertex" +
+                ",SetLeftVertexesToFirstRightVertexValue,CopySubgraph,MoveSubraph,CopyAndReplaceSubgraph,MoveAndReplaceSubgraph" +
                 ",Equal,ExactEqual,VertexEqual,NotEqual,Negation,And,Or,MoreThan,LessThan,MoreOrEqualThan,LessOrEqualThan" +
                 ",Action,Return{Expression{$MinCardinality:0,$MaxCardinality:1}},NextOut{Next{$MinCardinality:0,$MaxCardinality:1}}" +
                 ",StackFrameCreator{$$NextAtomRoot:,Type{$$NoSequentialExecution:,$MinCardinality:0,$MaxCardinality:-1}}" +
@@ -569,8 +569,11 @@ namespace m0
             AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "DeleteRightEdgesFromLeftEdges"), "DeleteRightEdgesFromLeftEdges");
             AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "DeleteRightVerticesFromLeftEdges"), "DeleteRightVerticesFromLeftEdges");
             AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "SetLeftVertexesToFirstRightVertexValue"), "SetLeftVertexesToFirstRightVertexValue");
-            AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex"), "AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex");
-            AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphIncludingLinksAsIsInLeftVertex"), "AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphIncludingLinksAsIsInLeftVertex");
+            AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "CopySubgraph"), "CopySubgraph");
+            AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "MoveSubraph"), "MoveSubraph");
+            AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "CopyAndReplaceSubgraph"), "CopyAndReplaceSubgraph");
+            AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "MoveAndReplaceSubgraph"), "MoveAndReplaceSubgraph");
+
 
             // edge set operators
 
@@ -821,12 +824,19 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"SetLeftVertexesToFirstRightVertexValue").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleOperator"));
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CopySubgraph").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleOperator"));
-            LegacySystem.Graph.EasyVertex.Get(smu, false, @"AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphIncludingLinksAsIsInLeftVertex").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"MoveSubraph").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleOperator"));
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"CopyAndReplaceSubgraph").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleOperator"));
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"MoveAndReplaceSubgraph").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleOperator"));
+
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, "DoubleColon").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
@@ -1667,8 +1677,10 @@ namespace m0
             // -< DeleteRightEdgesFromLeftEdges
             // ~< DeleteRightVerticesFromLeftEdges
             // <- SetLeftVertexesToFirstRightVertexValue
-            // <+< AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex
-            // <<< AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphIncludingLinksAsIsInLeftVertex 
+            // <<copy<< CopySubgraph
+            // <<move<< MoveSubgraph
+            // <<copy&replace<< CopyAndReplaceSubgraph
+            // <<move&replace<< MoveAndReplaceSubgraph
             //
             ////////////////////////////////////////////////////////            
 
@@ -1712,47 +1724,31 @@ namespace m0
             //
             // (?<left>) <- (?<right>)
 
-            AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) <-(?<SUB>) (?<right>)", "SetLeftVertexesToFirstRightVertexValue");
+            AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) <-(?<SUB>) (?<right>)", "SetLeftVertexesToFirstRightVertexValue");            
 
-            /*
-            
-            // <+<
+            // <<copy<<
             //
-            // (?<left>) <+< (?<right>)
+            // (?<left>) <<copy<< (?<right>)
 
-            AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) <+<(?<SUB>) (?<right>)", "AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex");
+            AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) <<copy<<(?<SUB>) (?<right>)", "CopySubgraph");
 
-            // <<<
+            // <<move<<
             //
-            // (?<left>) <<< (?<right>)
-
-            AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) <<<(?<SUB>) (?<right>)", "AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphIncludingLinksAsIsInLeftVertex");
-
-            */
-
-            // <<<
-            //
-            // (?<left>) <copy< (?<right>)
-
-            AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) <<copy<<(?<SUB>) (?<right>)", "CopySubgraph");            
-
-            // <<<
-            //
-            // (?<left>) <move< (?<right>)
+            // (?<left>) <<move<< (?<right>)
 
             AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) <<move<<(?<SUB>) (?<right>)", "MoveSubraph");
 
-            // <<<
+            // <<copy&replace<<
             //
-            // (?<left>) <copy&replace< (?<right>)
+            // (?<left>) <<copy&replace<< (?<right>)
 
-            AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) %copy&replace%(?<SUB>) (?<right>)", "CopyAndReplaceSubgraph");
+            AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) <<copy&replace<<(?<SUB>) (?<right>)", "CopyAndReplaceSubgraph");
 
-            // <<<
+            // <<move&replace<<
             //
-            // (?<left>) <move&replace< (?<right>)
+            // (?<left>) <<move&replace<< (?<right>)
 
-            AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) %move&replace%(?<SUB>) (?<right>)", "MoveAndReplaceSubgraph");
+            AddDoubleOperator(k, smu, smb, keyword, any, "(?<left>) <<move&replace<<(?<SUB>) (?<right>)", "MoveAndReplaceSubgraph");
 
             /////////////////////////////////////////////////////////
             //
