@@ -674,21 +674,20 @@ namespace m0.ZeroUML.Instructions
             if (leftExpression == null || rightExpression == null)
                 return exe.Stack;
 
-            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, leftExpression);
+            INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, leftExpression);
 
 
             IVertex newVertexCreationSpace_copy = exe.NewVertexCreationSpace;
             exe.NewVertexCreationSpace = CreateStack();
 
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, rightExpression);
+            INoInEdgeInOutVertexVertex rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, rightExpression);
 
             exe.NewVertexCreationSpace = newVertexCreationSpace_copy;
 
-            if (_leftExecuteResult.Count() > 0)
+            if (leftExecuteResult.Count() > 0)
             {
-                IVertex leftExecuteFirstVertex = _leftExecuteResult.OutEdges[0].To;
-
-                ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_NoBootstrap(_rightExecuteResult, leftExecuteFirstVertex);
+                foreach (IEdge e in leftExecuteResult)
+                    VertexOperations.MoveEdgesSet(rightExecuteResult.OutEdges, e.To);
             }
 
             return exe.Stack;
@@ -705,21 +704,20 @@ namespace m0.ZeroUML.Instructions
             if (leftExpression == null || rightExpression == null)
                 return exe.Stack;
 
-            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, leftExpression);
+            INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, leftExpression);
 
 
             IVertex newVertexCreationSpace_copy = exe.NewVertexCreationSpace;
             exe.NewVertexCreationSpace = CreateStack();
 
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, rightExpression);
+            INoInEdgeInOutVertexVertex rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, rightExpression);
 
             exe.NewVertexCreationSpace = newVertexCreationSpace_copy;
 
-            if (_leftExecuteResult.Count() > 0)
+            if (leftExecuteResult.Count() > 0)
             {
-                IVertex leftExecuteFirstVertex = _leftExecuteResult.OutEdges[0].To;
-
-                ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_NoLinksNoBootstrap(_rightExecuteResult, leftExecuteFirstVertex);
+                foreach (IEdge e in leftExecuteResult)
+                    VertexOperations.CopyAndReplaceEdgesSet(rightExecuteResult.OutEdges, e.To);
             }
 
             return exe.Stack;
@@ -736,21 +734,20 @@ namespace m0.ZeroUML.Instructions
             if (leftExpression == null || rightExpression == null)
                 return exe.Stack;
 
-            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, leftExpression);
+            INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, leftExpression);
 
 
             IVertex newVertexCreationSpace_copy = exe.NewVertexCreationSpace;
             exe.NewVertexCreationSpace = CreateStack();
 
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, rightExpression);
+            INoInEdgeInOutVertexVertex rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, rightExpression);
 
             exe.NewVertexCreationSpace = newVertexCreationSpace_copy;
 
-            if (_leftExecuteResult.Count() > 0)
+            if (leftExecuteResult.Count() > 0)
             {
-                IVertex leftExecuteFirstVertex = _leftExecuteResult.OutEdges[0].To;
-
-                ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_NoBootstrap(_rightExecuteResult, leftExecuteFirstVertex);
+                foreach (IEdge e in leftExecuteResult)
+                    VertexOperations.MoveAndReplaceEdgesSet(rightExecuteResult.OutEdges, e.To);
             }
 
             return exe.Stack;

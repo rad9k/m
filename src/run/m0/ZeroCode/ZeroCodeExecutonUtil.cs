@@ -70,7 +70,7 @@ namespace m0.ZeroCode
 
             INoInEdgeInOutVertexVertex possibleToReturnStack;
 
-            foreach (IEdge e in baseVertex.OutEdgesRaw)
+            foreach (IEdge e in baseVertex.OutEdgesRaw.ToList()) // ToList needed as code vertexes can be modified during execution
                 if (e.Meta != NextAtom_meta && !ZeroCodeUtil.ShouldNotExecute(e)) // EXECUTE BLOCK BEG
                     {                        
                         possibleToReturnStack = exe.ExecuteInstruction(inStack, e.To, out local_isStackFrameReturn);
@@ -83,7 +83,7 @@ namespace m0.ZeroCode
                         }
                     } // EXECUTE BLOCK END
 
-            foreach (IEdge e in baseVertex.OutEdgesRaw)
+            foreach (IEdge e in baseVertex.OutEdgesRaw) // ToList needed as code vertexes can be modified during execution
                 if (e.Meta != NextAtom_meta)
                 {
                     possibleToReturnStack = SequentiallyExecuteInstructions_NextEdges(exe, inStack, e.To, out local_isStackFrameReturn);
