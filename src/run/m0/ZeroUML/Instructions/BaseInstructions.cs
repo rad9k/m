@@ -76,11 +76,13 @@ namespace m0.ZeroUML.Instructions
             {
                 if (queryByVariable)
                 {
-                    if (processedValue.Length > 0 && processedValue[0]==':')
+                    if (processedValue.Length > 0 && processedValue[0] == ':')
                         inputQs.QueryOutEdges(null, processedValue.Substring(1), out e, out eList);
                     else
-                        inputQs.QueryOutEdges(processedValue, null, out e, out eList);                                            
-                } else { 
+                        inputQs.QueryOutEdges(processedValue, null, out e, out eList);
+                }
+                else
+                {
                     if (exe.MetaMode)
                         inputQs.QueryOutEdges(processedValue, null, out e, out eList);
                     else
@@ -310,7 +312,8 @@ namespace m0.ZeroUML.Instructions
 
                     if (nextExpression != null)
                         newQs = ColonSubExpressionProcess_Meta(exe, newQs, nextExpression);
-                } else
+                }
+                else
                     newQs = ColonSubExpressionProcess_Meta(exe, newQs, leftExpression);
             }
 
@@ -384,7 +387,7 @@ namespace m0.ZeroUML.Instructions
 
             exe.NewVertexCreationSpace = leftStack;
 
-            INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, leftExpression);            
+            INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, leftExpression);
 
             // right
 
@@ -630,8 +633,8 @@ namespace m0.ZeroUML.Instructions
             return exe.Stack;
         }
 
-        // <+<
-        public static INoInEdgeInOutVertexVertex AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphAsIsInLeftVertex(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        // <<copy<<
+        public static INoInEdgeInOutVertexVertex CopySubgraph(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
 
@@ -654,6 +657,7 @@ namespace m0.ZeroUML.Instructions
             if (_leftExecuteResult.Count() > 0)
             {
                 IVertex leftExecuteFirstVertex = _leftExecuteResult.OutEdges[0].To;
+
                 //IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges; XXX
 
                 ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_NoLinksNoBootstrap(_rightExecuteResult, leftExecuteFirstVertex);
@@ -662,8 +666,8 @@ namespace m0.ZeroUML.Instructions
             return exe.Stack;
         }
 
-        // <<<
-        public static INoInEdgeInOutVertexVertex AddRightEdgesIntoFirstLeftEdgeAndSetStoreForSubGraphIncludingLinksAsIsInLeftVertex(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        // <<move<<
+        public static INoInEdgeInOutVertexVertex MoveSubraph(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
 
@@ -686,7 +690,68 @@ namespace m0.ZeroUML.Instructions
             if (_leftExecuteResult.Count() > 0)
             {
                 IVertex leftExecuteFirstVertex = _leftExecuteResult.OutEdges[0].To;
-                //IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges; XXX
+
+                ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_NoBootstrap(_rightExecuteResult, leftExecuteFirstVertex);
+            }
+
+            return exe.Stack;
+        }
+
+        // <<copy&replace<<
+        public static INoInEdgeInOutVertexVertex CopyAndReplaceSubgraph(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        {
+            isStackFrameReturn = false;
+
+            IVertex leftExpression = GetLeft(instructionVertex);
+            IVertex rightExpression = GetRight(instructionVertex);
+
+            if (leftExpression == null || rightExpression == null)
+                return exe.Stack;
+
+            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, leftExpression);
+
+
+            IVertex newVertexCreationSpace_copy = exe.NewVertexCreationSpace;
+            exe.NewVertexCreationSpace = CreateStack();
+
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, rightExpression);
+
+            exe.NewVertexCreationSpace = newVertexCreationSpace_copy;
+
+            if (_leftExecuteResult.Count() > 0)
+            {
+                IVertex leftExecuteFirstVertex = _leftExecuteResult.OutEdges[0].To;
+
+                ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_NoLinksNoBootstrap(_rightExecuteResult, leftExecuteFirstVertex);
+            }
+
+            return exe.Stack;
+        }
+
+        // <<move&replace<<
+        public static INoInEdgeInOutVertexVertex MoveAndReplaceSubgraph(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
+        {
+            isStackFrameReturn = false;
+
+            IVertex leftExpression = GetLeft(instructionVertex);
+            IVertex rightExpression = GetRight(instructionVertex);
+
+            if (leftExpression == null || rightExpression == null)
+                return exe.Stack;
+
+            INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, leftExpression);
+
+
+            IVertex newVertexCreationSpace_copy = exe.NewVertexCreationSpace;
+            exe.NewVertexCreationSpace = CreateStack();
+
+            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, rightExpression);
+
+            exe.NewVertexCreationSpace = newVertexCreationSpace_copy;
+
+            if (_leftExecuteResult.Count() > 0)
+            {
+                IVertex leftExecuteFirstVertex = _leftExecuteResult.OutEdges[0].To;
 
                 ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_NoBootstrap(_rightExecuteResult, leftExecuteFirstVertex);
             }
@@ -1777,7 +1842,7 @@ namespace m0.ZeroUML.Instructions
 
                 // currently only one target BUT we can have set! of targets. to support this need to implement
                 // name based call params passing instead of only index based
-                if (targetExpressionExecution.Count() > 0) 
+                if (targetExpressionExecution.Count() > 0)
                     target = targetExpressionExecution.OutEdges[0].To;
             }
 
@@ -1813,11 +1878,11 @@ namespace m0.ZeroUML.Instructions
             exe.RemoveStackFrame(); // LEAVE NEW STACK
 
             //if (local_isStackFrameReturn)
-            
+
             //return toReturnStack; want to have []\
 
             return NextExpressionHandle(exe, toReturnStack, instructionVertex); // []\ worx
-            
+
             //else
             //   return CreateStack();
         }
@@ -2096,7 +2161,7 @@ namespace m0.ZeroUML.Instructions
             VertexOperations.CopyEdgesSet(expressionResult, newStack);
 
             return newStack;
-        }        
+        }
 
         // old, stackForNextExpression based version is in int the DoubleSemicolonOperator below
         public static INoInEdgeInOutVertexVertex DoubleColonOperator(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
@@ -2578,13 +2643,13 @@ namespace m0.ZeroUML.Instructions
 
             IList<string> FromTriggerQueries = new List<string>();
             IList<IVertex> FromTriggerFilters = new List<IVertex>();
-            IList<IVertex> FromToTransformFunctions = new List<IVertex>(); 
+            IList<IVertex> FromToTransformFunctions = new List<IVertex>();
             IList<string> ToTriggerQueries = new List<string>();
             IList<IVertex> ToTriggerFilters = new List<IVertex>();
             IList<IVertex> ToFromTransformFunctions = new List<IVertex>();
 
             IVertex innerVertex = GraphUtil.GetQueryOutFirst(instructionVertex, "CreateViewInner", null);
-    
+
 
             if (innerVertex == null)
                 return localStack;
@@ -2605,8 +2670,8 @@ namespace m0.ZeroUML.Instructions
                         IVertex queryInstruction = GraphUtil.GetQueryOutFirst(e.To, "Query", null);
 
                         if (queryInstruction == null)
-                            continue;                        
-                        
+                            continue;
+
                         foreach (IEdge executeEdge in exe.ExecuteInstructionByMontevideoPrinciples(inputStack, queryInstruction).OutEdges)
                             FromTriggerQueries.Add(GraphUtil.GetStringValue(executeEdge.To));
 
@@ -2620,7 +2685,7 @@ namespace m0.ZeroUML.Instructions
 
                         foreach (IEdge executeEdge in exe.ExecuteInstructionByMontevideoPrinciples(inputStack, valueInstruction).OutEdges)
                             FromTriggerFilters.Add(executeEdge.To);
-                        
+
                         break;
 
                     case "FromToTransformFunction":
@@ -2673,7 +2738,7 @@ namespace m0.ZeroUML.Instructions
             IVertex view = localStack.AddVertex(viewMeta, "");
 
             view.AddEdge(isMeta, viewMeta);
-            
+
             foreach (string query in FromTriggerQueries)
                 view.AddVertex(view_FromTriggerQueryMeta, query);
 
@@ -2781,11 +2846,11 @@ namespace m0.ZeroUML.Instructions
 
                         entry.AddEdge(httpMappingEntry_HandlerMeta, Handler);
 
-                        break;                    
+                        break;
                 }
             }
 
-            
+
 
             return localStack;
         }
