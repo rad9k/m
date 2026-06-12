@@ -124,6 +124,66 @@
 	@@dest <<copy&replace<< @@A
 ```
 
+```MinusZero
+"Temp"
+	"dest"
+		"A"
+			"B1"
+				"C1"
+				"C2"
+			"B2"
+				"C1"
+				"C2"
+	<@dest\A\B2>
+	"A"
+		"B1"
+			"C1"
+			"C2"
+		"B2"
+			"C1"
+			"C2"
+	@@dest <<copy&replace<< @@A
+```
+
+
+## <<move&replace<<
+
+```ZeroCode
+"Temp"
+	"dest"
+		"A"
+			"B2"
+	<@dest\A\B2>
+	"A"
+		"B1"
+			"C1"
+			"C2"
+		"B2"
+			"C1"
+			"C2"
+	@@dest <<copy&replace<< @@A
+```
+
+```MinusZero
+"Temp"
+	"dest"
+		"A"
+			"B1"
+				"C1"
+				"C2"
+			"B2"
+				"C1"
+				"C2"
+	<@dest\A\B2>
+	"A"
+		"B1"
+			"C1"
+			"C2"
+		"B2"
+			"C1"
+			"C2"
+	@@dest <<copy&replace<< @@A
+```
 
 
 ## Legend
