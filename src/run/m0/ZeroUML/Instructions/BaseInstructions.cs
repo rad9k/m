@@ -1,4 +1,5 @@
-﻿using m0.Foundation;
+﻿using m0.FormalTextLanguage;
+using m0.Foundation;
 using m0.Graph;
 using m0.Graph.ExecutionFlow;
 using m0.Util;
@@ -10,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using static m0.ZeroCode.Helpers.InstructionHelpers;
+using static System.Net.WebRequestMethods;
 
 namespace m0.ZeroUML.Instructions
 {
@@ -2338,14 +2340,12 @@ namespace m0.ZeroUML.Instructions
             if (expression == null)
                 return exe.Stack;
 
-            IVertex language;
+            IVertex languageProcessing = null;
 
             IVertex instuctionFormalTextLanguage = GraphUtil.GetQueryOutFirst(instructionVertex, "FormalTextLanguage", null);
 
-            if (instuctionFormalTextLanguage == null)
-                language = MinusZero.Instance.DefaultFormalTextLanguage;
-            else
-                language = GetFirstExecutionEdge(exe, instuctionFormalTextLanguage).To;
+            if (instuctionFormalTextLanguage != null)                
+                languageProcessing = GetFirstExecutionEdge(exe, instuctionFormalTextLanguage).To;
 
             INoInEdgeInOutVertexVertex expressionResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, expression);
 
@@ -2356,7 +2356,15 @@ namespace m0.ZeroUML.Instructions
                 IEdge newEdge = newStack.AddVertexAndReturnEdge(null, "");
 
                 IEdge baseEdge_new;
-                MinusZero.Instance.DefaultFormalTextParser.Parse(language, newEdge, e.To.Value.ToString(), CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new);
+
+                IVertex errorList;
+
+                if (languageProcessing == null)
+                    errorList = ZeroCodeProcessingHelper.Parse(newEdge, e.To.Value.ToString(), out baseEdge_new);
+                else
+                    errorList = ZeroCodeProcessingHelper.Parse(languageProcessing, newEdge, e.To.Value.ToString(), out baseEdge_new);
+
+                MinusZero.Instance.DefaultFormalTextParser.Parse(languageProcessing, newEdge, e.To.Value.ToString(), CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new);
             }
 
             return newStack;

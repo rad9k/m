@@ -177,17 +177,7 @@ namespace m0.UIWpf.Controls
         private IVertex GetBaseEdgeTo()
         {
             return GetBaseEdge().To;
-        }
-
-        private CodeRepresentationEnum GetCodeRepresentation()
-        {
-            IVertex CodeRepresentationVertex = Vertex.Get(false, @"CodeRepresentation:");
-
-            if (CodeRepresentationVertex != null)
-                return CodeRepresentationEnumHelper.GetEnum(CodeRepresentationVertex);
-            else
-                return CodeRepresentationEnum.VertexAndManyLines;
-        }
+        }        
 
         public void ExecuteParse()
         {            

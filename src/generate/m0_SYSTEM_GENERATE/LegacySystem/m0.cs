@@ -3112,6 +3112,8 @@ namespace m0
 
             di.AddEdge(DirectMeta, LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\ExecutionFlow"));
 
+            di.AddEdge(DirectMeta, LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\FormalTextLanguage"));
+
             di.AddEdge(DirectMeta, Root); // ROOT
 
             //
