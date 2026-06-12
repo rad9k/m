@@ -409,8 +409,10 @@ namespace m0.ZeroTypes
             return result;
         }
 
-        // Greedy best alignment of the copyable, non-link children of a and b, normalized by the larger
-        // child count (so missing/extra children reduce the score). Returns -1 when neither has children.
+        // Greedy best alignment of copyable, non-link children. Matches from the smaller side into the
+        // larger so a partial old subgraph (subset) is not penalized for extra children in the source.
+        // Normalizes by the smaller child count. Returns -1 when neither side has children, or when only
+        // one side has children (similarity falls back to local/name match only).
         static double ChildAlignment(IVertex a, IVertex b, int depth, Dictionary<IVertex, Dictionary<IVertex, double>> memo)
         {
             List<IEdge> childrenA = CopyableChildEdges(a);
@@ -420,24 +422,45 @@ namespace m0.ZeroTypes
                 return -1;
 
             if (childrenA.Count == 0 || childrenB.Count == 0)
-                return 0;
+                return -1;
 
-            bool[] usedB = new bool[childrenB.Count];
+            List<IEdge> smallerChildren;
+            List<IEdge> largerChildren;
+            bool smallerIsA;
+
+            if (childrenA.Count <= childrenB.Count)
+            {
+                smallerChildren = childrenA;
+                largerChildren = childrenB;
+                smallerIsA = true;
+            }
+            else
+            {
+                smallerChildren = childrenB;
+                largerChildren = childrenA;
+                smallerIsA = false;
+            }
+
+            bool[] usedLarger = new bool[largerChildren.Count];
             double total = 0;
 
-            foreach (IEdge edgeA in childrenA)
+            foreach (IEdge smallEdge in smallerChildren)
             {
                 double best = 0;
                 int bestIndex = -1;
 
-                for (int i = 0; i < childrenB.Count; i++)
+                for (int i = 0; i < largerChildren.Count; i++)
                 {
-                    if (usedB[i])
+                    if (usedLarger[i])
                         continue;
 
-                    double score = Similarity(edgeA.To, childrenB[i].To, depth + 1, memo);
+                    IEdge largeEdge = largerChildren[i];
+                    IEdge edgeA = smallerIsA ? smallEdge : largeEdge;
+                    IEdge edgeB = smallerIsA ? largeEdge : smallEdge;
 
-                    if (!GeneralUtil.CompareStrings(edgeA.Meta, childrenB[i].Meta))
+                    double score = Similarity(edgeA.To, edgeB.To, depth + 1, memo);
+
+                    if (!GeneralUtil.CompareStrings(edgeA.Meta, edgeB.Meta))
                         score *= Replace_MetaMismatchPenalty;
 
                     if (score > best)
@@ -449,12 +472,12 @@ namespace m0.ZeroTypes
 
                 if (bestIndex >= 0)
                 {
-                    usedB[bestIndex] = true;
+                    usedLarger[bestIndex] = true;
                     total += best;
                 }
             }
 
-            return total / Math.Max(childrenA.Count, childrenB.Count);
+            return total / smallerChildren.Count;
         }
 
         static double LocalSimilarity(IVertex a, IVertex b)

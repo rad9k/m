@@ -34,6 +34,7 @@
 			"C2"
 	@@dest <<copy<< @@A
 ```
+
 ## <<move<<
 
 ```ZeroCode
@@ -66,7 +67,62 @@
 >
 > Depending on certain conditions (edge set source operator, other operators) `From` part in the edge set can contain `null` or proper value. The edge set algebra is not very consistant in this area, and this is by the design - currently we are still figuring out what is the optimal balance.
 
+## <<copy&replace<<
 
+```ZeroCode
+"Temp"
+	"dest"
+		"A"
+			"B2"
+	<@dest\A\B2>
+	"A"
+		"B1"
+			"C1"
+			"C2"
+		"B2"
+			"C1"
+			"C2"
+	@@dest <<copy&replace<< @@A
+```
+
+```ZeroCode
+"Temp"
+	"dest"
+		"A"
+			"B1"
+				"C1"
+				"C2"
+			"B2"
+				"C1"
+				"C2"
+	<@dest\A\B2>
+	"A"
+		"B1"
+			"C1"
+			"C2"
+		"B2"
+			"C1"
+			"C2"
+	@@dest <<copy&replace<< @@A
+```
+
+## <<move&replace<<
+
+```ZeroCode
+"Temp"
+	"dest"
+		"A"
+			"B2"
+	<@dest\A\B2>
+	"A"
+		"B1"
+			"C1"
+			"C2"
+		"B2"
+			"C1"
+			"C2"
+	@@dest <<copy&replace<< @@A
+```
 
 
 
