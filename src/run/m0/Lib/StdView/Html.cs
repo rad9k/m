@@ -217,29 +217,33 @@ namespace m0.Lib.StdView
 
         private static ViewToken ViewTokenMatch(List<ViewToken> vtl_in, string text, int text_pos)
         {
-            int token_pos = 0;            
+            int start_pos = text_pos;
+            int token_pos = 0;
 
             List<ViewToken> vtl = vtl_in;
+            ViewToken bestMatch = null;
 
             while (vtl.Count > 0)
             {
-                List<ViewToken> vtl_next = new List<ViewToken>();
-
-                foreach (ViewToken vt in vtl)                
+                foreach (ViewToken vt in vtl)
                     if (token_pos + 1 == vt.tokenString.Length)
-                        return vt;
+                        bestMatch = vt;
 
-                text_pos++;
                 token_pos++;
 
-                foreach (ViewToken vt in vtl)                
-                    if (vt.tokenString.Length >= token_pos && vt.tokenString[token_pos] == text[text_pos])                    
-                        vtl_next.Add(vt);                                    
+                if (start_pos + token_pos >= text.Length)
+                    break;
+
+                List<ViewToken> vtl_next = new List<ViewToken>();
+
+                foreach (ViewToken vt in vtl)
+                    if (vt.tokenString.Length > token_pos && vt.tokenString[token_pos] == text[start_pos + token_pos])
+                        vtl_next.Add(vt);
 
                 vtl = vtl_next;
             }
 
-            return null;
+            return bestMatch;
         }
     }
 }
