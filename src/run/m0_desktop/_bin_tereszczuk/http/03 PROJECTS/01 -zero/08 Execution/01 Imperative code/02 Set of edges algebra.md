@@ -34,6 +34,41 @@
 			"C2"
 	@@dest <<copy<< @@A
 ```
+## <<move<<
+
+```ZeroCode
+"Temp"
+	"dest"
+	"A"
+		"B1"
+			"C1"
+			"C2"
+		"B2"
+			"C1"
+			"C2"
+	@@dest <<move<< $\:A
+```
+
+```ZeroCode
+"Temp"
+	"dest"
+		"A"
+			"B1"
+				"C1"
+				"C2"
+			"B2"
+				"C1"
+				"C2"
+	@@dest <<move<< $\:A
+```
+
+> Please mind that we are using `$\:A` here instead of `@@A`. This is because of the fact that `<<move<<` in order to delete the source sub graph anchor (here: the edge between `dest` and `A`) edge, needs to have edge with proper `From` on the right of `<<move<<`. 
+>
+> Depending on certain conditions (edge set source operator, other operators) `From` part in the edge set can contain `null` or proper value. The edge set algebra is not very consistant in this area, and this is by the design - currently we are still figuring out what is the optimal balance.
+
+
+
+
 
 ## Legend
 
