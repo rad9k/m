@@ -329,8 +329,8 @@ namespace m0_SYSTEM_GENERATE
         "\r\n\tvariable \"C\" @Vertex" +
         "\r\n\tvariable \"D\" @Integer" +
         "\r\n\tA = execute($ \\ : X \\ )" +
-        "\r\n\tB = generate @@System\\FormalTextLanguage\\ZeroCode ($ \\ : X \\ )" +
-        "\r\n\tC = parse @@System\\FormalTextLanguage\\ZeroCode (\"a+b\")" +
+        "\r\n\tB = generate @@System\\FormalTextLanguage\\ZeroCode_VertexAndManyLines ($ \\ : X \\ )" +
+        "\r\n\tC = parse @@System\\FormalTextLanguage\\ZeroCode_VertexAndManyLines (\"a+b\")" +
         "\r\n\tD = execute(parse(\"A + A\"))", m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new
         );
 

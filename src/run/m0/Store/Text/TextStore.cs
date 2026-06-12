@@ -61,9 +61,12 @@ namespace m0.Store.Text
                             new EdgeBase(null, null, root),
                             body,
                             out baseEdge_new);
-                            
 
-                        if (errorList.OutEdges.Count > 0)
+                        if (baseEdge_new != null)
+                            root = baseEdge_new.To; // mind that we loose Meta, as root is IVertex
+
+
+                    if (errorList.OutEdges.Count > 0)
                             properlyLoaded = false;
 
                         root.IsRoot = true; 

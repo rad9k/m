@@ -2353,18 +2353,26 @@ namespace m0.ZeroUML.Instructions
 
             foreach (IEdge e in expressionResult)
             {
-                IEdge newEdge = newStack.AddVertexAndReturnEdge(null, "");
+                //IEdge newEdge = newStack.AddVertexAndReturnEdge(null, "");
+
+                IEdge newEdge_temp = MinusZero.Instance.CreateTempEdge();
 
                 IEdge baseEdge_new;
 
                 IVertex errorList;
 
                 if (languageProcessing == null)
-                    errorList = ZeroCodeProcessingHelper.Parse(newEdge, e.To.Value.ToString(), out baseEdge_new);
+                    errorList = ZeroCodeProcessingHelper.Parse(newEdge_temp, e.To.Value.ToString(), out baseEdge_new);
                 else
-                    errorList = ZeroCodeProcessingHelper.Parse(languageProcessing, newEdge, e.To.Value.ToString(), out baseEdge_new);
+                    errorList = ZeroCodeProcessingHelper.Parse(languageProcessing, newEdge_temp, e.To.Value.ToString(), out baseEdge_new);
 
-                MinusZero.Instance.DefaultFormalTextParser.Parse(languageProcessing, newEdge, e.To.Value.ToString(), CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new);
+                if (errorList != null && errorList.OutEdges.Count == 0)
+                {
+                    if (baseEdge_new != null)
+                        newStack.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(baseEdge_new);
+                    else
+                        newStack.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(newEdge_temp);
+                }
             }
 
             return newStack;
