@@ -3,9 +3,18 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="info" Height="341.954" Width="510.3" WindowStartupLocation="CenterOwner" Background="{StaticResource 0VeryLightHighlightBrush}" Foreground="{StaticResource 0ForegroundBrush}" WindowStyle="ToolWindow">
     <Grid>
-        <StackPanel x:Name="content"  Margin="10,10,9,68" Orientation="Vertical"/>
+        <Grid x:Name="content" Margin="10,10,9,68">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" MaxHeight="60"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" MaxHeight="80"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+        </Grid>
+        <Button Content="Copy to clipboard" HorizontalAlignment="Right" Height="33" Margin="0,0,127,9.8" VerticalAlignment="Bottom" Width="130" Click="CopyButton_Click"/>
         <Button Content="OK" HorizontalAlignment="Right" Height="33" Margin="0,0,10,9.8" VerticalAlignment="Bottom" Width="107" Click="Button_Click"/>
-        
 
     </Grid>
 </Window>

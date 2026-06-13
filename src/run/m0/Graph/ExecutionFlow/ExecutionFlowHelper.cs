@@ -582,7 +582,7 @@ namespace m0.Graph.ExecutionFlow
                                 foreach (string meta in h.AddEdgeMeta)                            
                                     if (eventEdgeMeta.Value.ToString() == meta)
                                         AddToExecuteList(toExecute, HandlerTypeEnum.AddEdgeByMetaOrValueChangeHandler, h, EdgeHelper.CreateIEdgeFromEdgeVertex(eventEdge));                
-                }else
+                } else
                      if (eventType.Value.ToString() == "ValueChange")
                      {
                          IVertex EventChangedVertex = GraphUtil.GetQueryOutFirst(_event.To, "ChangedVertex", null);

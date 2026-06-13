@@ -3174,9 +3174,13 @@ namespace m0
             IVertex secondParameter)
         {
             IVertex ftl = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\FormalTextLanguage");
-
+            
             IVertex ftlp_v = ftl.AddVertex(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\FormalTextLanguageProcessing"),
                 name);
+
+            ftlp_v.AddEdge(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\$Is"),
+                LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\FormalTextLanguageProcessing"));
+
 
             IVertex generate_v = ftlp_v.AddVertex(LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\FormalTextLanguageProcessing\GeneratorHandler"),
                 "Generate");

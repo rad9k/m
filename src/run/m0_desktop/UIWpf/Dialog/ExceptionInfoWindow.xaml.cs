@@ -22,33 +22,45 @@ namespace m0.UIWpf.Dialog
         TextBox where;
         TextBox what;
 
+        int sectionRow = 0;
+
         TextBox AddSection(string label)
         {
-            //Label l = new Label();
-            TextBox l = new TextBox();
-            l.Text = label;
-            l.FontWeight = FontWeights.Bold;
-            l.Margin = new Thickness(0, 0, 0, 5);
-            l.Foreground = (Brush)FindResource("0ForegroundBrush");
-            l.BorderBrush = (Brush)FindResource("0VeryLightHighlightBrush");
-            l.Background = (Brush)FindResource("0VeryLightHighlightBrush");
+            TextBox labelTextBox = new TextBox();
+            labelTextBox.Text = label;
+            labelTextBox.FontWeight = FontWeights.Bold;
+            labelTextBox.Margin = new Thickness(0, 0, 0, 5);
+            labelTextBox.Foreground = (Brush)FindResource("0ForegroundBrush");
+            labelTextBox.BorderBrush = (Brush)FindResource("0VeryLightHighlightBrush");
+            labelTextBox.Background = (Brush)FindResource("0VeryLightHighlightBrush");
+            labelTextBox.SetValue(Grid.RowProperty, sectionRow);
+            content.Children.Add(labelTextBox);
+            sectionRow++;
 
+            TextBox contentTextBox = new TextBox();
+            contentTextBox.Margin = new Thickness(0, 0, 0, 5);
+            contentTextBox.TextWrapping = TextWrapping.WrapWithOverflow;
+            contentTextBox.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+            contentTextBox.IsReadOnly = true;
+            contentTextBox.Foreground = (Brush)FindResource("0ForegroundBrush");
+            contentTextBox.BorderBrush = (Brush)FindResource("0VeryLightHighlightBrush");
+            contentTextBox.Background = (Brush)FindResource("0VeryLightHighlightBrush");
+            contentTextBox.SetValue(Grid.RowProperty, sectionRow);
 
-            content.Children.Add(l);
+            if (sectionRow == 1)
+                contentTextBox.MaxHeight = 60;
+            else if (sectionRow == 3)
+                contentTextBox.MaxHeight = 80;
+            else if (sectionRow == 5)
+            {
+                contentTextBox.VerticalAlignment = VerticalAlignment.Stretch;
+                contentTextBox.MinHeight = 40;
+            }
 
-            TextBox t = new TextBox();
+            content.Children.Add(contentTextBox);
+            sectionRow++;
 
-            t.Margin = new Thickness(0, 0, 0, 5);
-
-            content.Children.Add(t);
-
-            t.TextWrapping = TextWrapping.WrapWithOverflow;
-            t.IsReadOnly = true;
-            t.Foreground = (Brush)FindResource("0ForegroundBrush");            
-            t.BorderBrush = (Brush)FindResource("0VeryLightHighlightBrush");
-            t.Background = (Brush)FindResource("0VeryLightHighlightBrush");
-
-            return t;
+            return contentTextBox;
         }
 
         public ExceptionInfoWindow()
@@ -63,6 +75,16 @@ namespace m0.UIWpf.Dialog
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void CopyButton_Click(object sender, RoutedEventArgs e)
+        {
+            Clipboard.SetText(GetFullContent());
+        }
+
+        private string GetFullContent()
+        {
+            return "Type:\r\n" + type.Text + "\r\n\r\nWhere:\r\n" + where.Text + "\r\n\r\nWhat:\r\n" + what.Text;
         }
 
         public string Type

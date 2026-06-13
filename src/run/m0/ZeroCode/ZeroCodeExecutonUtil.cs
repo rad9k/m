@@ -1,4 +1,6 @@
 ﻿using m0.Foundation;
+using m0.Graph;
+using m0.Util;
 using m0.ZeroCode.Helpers;
 using System;
 using System.Collections.Generic;
@@ -66,13 +68,15 @@ namespace m0.ZeroCode
         {
             isStackFrameReturn = false;
 
-            bool local_isStackFrameReturn;
+            try
+            {            
+                bool local_isStackFrameReturn;
 
-            INoInEdgeInOutVertexVertex possibleToReturnStack;
+                INoInEdgeInOutVertexVertex possibleToReturnStack;
 
-            foreach (IEdge e in baseVertex.OutEdgesRaw.ToList()) // ToList needed as code vertexes can be modified during execution
-                if (e.Meta != NextAtom_meta && !ZeroCodeUtil.ShouldNotExecute(e)) // EXECUTE BLOCK BEG
-                    {                        
+                foreach (IEdge e in baseVertex.OutEdgesRaw.ToList()) // ToList needed as code vertexes can be modified during execution
+                    if (e.Meta != NextAtom_meta && !ZeroCodeUtil.ShouldNotExecute(e)) // EXECUTE BLOCK BEG
+                    {
                         possibleToReturnStack = exe.ExecuteInstruction(inStack, e.To, out local_isStackFrameReturn);
 
                         if (local_isStackFrameReturn)
@@ -83,20 +87,27 @@ namespace m0.ZeroCode
                         }
                     } // EXECUTE BLOCK END
 
-            foreach (IEdge e in baseVertex.OutEdgesRaw.ToList()) // ToList needed as code vertexes can be modified during execution
-                if (e.Meta != NextAtom_meta)
-                {
-                    possibleToReturnStack = SequentiallyExecuteInstructions_NextEdges(exe, inStack, e.To, out local_isStackFrameReturn);
-
-                    if (local_isStackFrameReturn)
+                foreach (IEdge e in baseVertex.OutEdgesRaw.ToList()) // ToList needed as code vertexes can be modified during execution
+                    if (e.Meta != NextAtom_meta)
                     {
-                        isStackFrameReturn = true;
+                        possibleToReturnStack = SequentiallyExecuteInstructions_NextEdges(exe, inStack, e.To, out local_isStackFrameReturn);
 
-                        return possibleToReturnStack;
+                        if (local_isStackFrameReturn)
+                        {
+                            isStackFrameReturn = true;
+
+                            return possibleToReturnStack;
+                        }
                     }
-                }
 
-            return inStack;
+                return inStack;
+            } catch (Exception ex)
+            {                             
+                UserInteractionUtil.ShowException("Execution of code starting from vertex: " + GraphUtil.GetVertexIdString(baseVertex),                     
+                    ex.GetType().ToString() + " : " + ex.Message + "\n" + ex.StackTrace, ZeroTypes.ExceptionLevelEnum.Error);
+
+                return inStack;
+            }
         }
 
         public static INoInEdgeInOutVertexVertex SequentiallyExecuteInstructions_NextEdges(IExecution exe, INoInEdgeInOutVertexVertex inStack, IVertex baseVertex, out bool isStackFrameReturn)

@@ -2361,10 +2361,10 @@ namespace m0.ZeroUML.Instructions
 
                 IVertex errorList;
 
-                if (languageProcessing == null)
-                    errorList = ZeroCodeProcessingHelper.Parse(newEdge_temp, e.To.Value.ToString(), out baseEdge_new);
+                if (languageProcessing != null && GraphUtil.ExistQueryOut(languageProcessing, "$Is", "FormalTextLanguageProcessing"))
+                    errorList = ZeroCodeProcessingHelper.Parse(languageProcessing, newEdge_temp, e.To.Value.ToString(), out baseEdge_new);                
                 else
-                    errorList = ZeroCodeProcessingHelper.Parse(languageProcessing, newEdge_temp, e.To.Value.ToString(), out baseEdge_new);
+                    errorList = ZeroCodeProcessingHelper.Parse(newEdge_temp, e.To.Value.ToString(), out baseEdge_new);
 
                 if (errorList != null && errorList.OutEdges.Count == 0)
                 {

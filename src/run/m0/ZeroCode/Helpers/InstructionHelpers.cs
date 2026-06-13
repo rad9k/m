@@ -522,10 +522,5 @@ namespace m0.ZeroCode.Helpers
             else
                 return false;
         }
-
-        public static IVertex Get(bool metaMode, IVertex baseVertex, IVertex expression)
-        {
-            return MinusZero.Instance.DefaultExecuter.Get(metaMode, baseVertex, expression);
-        }
     }
 }
