@@ -13,7 +13,8 @@ using System.Windows;
 namespace m0.ZeroTypes
 {
     public class VertexOperations
-    {
+    {        
+        static string[] NoPassAsExecutionResult_MetaValue = { "$GraphChangeTrigger" };
         static string[] NoCopy_MetaValue = {"$GraphChangeTrigger"};
         static string[] NoCopy_VertexIsValue = { "GraphChangeTrigger" };
 
@@ -718,6 +719,15 @@ namespace m0.ZeroTypes
             }
 
             return false;
+        }
+
+        public static bool CanPassAsExecutionResult_ByEdge(IEdge e)
+        {
+            foreach (string s in NoPassAsExecutionResult_MetaValue)
+                if (e.Meta.Value.ToString() == s)
+                    return false;
+
+            return true;
         }
 
         public static bool CanCopy_ByEdge(IEdge e)

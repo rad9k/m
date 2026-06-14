@@ -2322,6 +2322,9 @@ namespace m0.ZeroUML.Instructions
 
             foreach (IEdge e in expressionResult)
             {
+                if (!VertexOperations.CanPassAsExecutionResult_ByEdge(e))
+                    continue;
+
                 INoInEdgeInOutVertexVertex nestedExpressionResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, e.To);
 
                 foreach (IEdge ee in nestedExpressionResult)

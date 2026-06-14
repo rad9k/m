@@ -28,9 +28,9 @@ namespace m0.ZeroCode.Helpers
 
         public static void AddToStack(INoInEdgeInOutVertexVertex destination, IEnumerable<IEdge> source)
         {
-            foreach (IEdge e in source)
+            foreach (IEdge e in source)  
                 //destination.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(e);
-                destination.AddEdgeForNoInEdgeInOutVertexVertex(e);
+                destination.AddEdgeForNoInEdgeInOutVertexVertex(e);                            
         }
 
         public static INoInEdgeInOutVertexVertex CreateStackAndCopy(IEnumerable<IEdge> source)
