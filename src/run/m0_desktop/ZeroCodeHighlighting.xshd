@@ -62,6 +62,7 @@
       <Word>execute</Word>
       <Word>parse</Word>
       <Word>generate</Word>
+	  <Word>with</Word>
       <Word>new</Word>
       <Word>in</Word>
       <Word>this</Word>

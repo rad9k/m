@@ -328,10 +328,10 @@ namespace m0_SYSTEM_GENERATE
         "\r\n\tvariable \"B\" @String" +
         "\r\n\tvariable \"C\" @Vertex" +
         "\r\n\tvariable \"D\" @Integer" +
-        "\r\n\tA = execute($ \\ : X \\ )" +
-        "\r\n\tB = generate @@System\\FormalTextLanguage\\ZeroCode_VertexAndManyLines ($ \\ : X \\ )" +
-        "\r\n\tC = parse @@System\\FormalTextLanguage\\ZeroCode_VertexAndManyLines (\"a+b\")" +
-        "\r\n\tD = execute(parse(\"A + A\"))", m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new
+        "\r\n\tA = execute $\\:X\\" +
+        "\r\n\tB = generate  $\\:X\\ with @@System\\FormalTextLanguage\\ZeroCode_VertexAndManyLines" +
+        "\r\n\tC = parse \"a+b\" with @@System\\FormalTextLanguage\\ZeroCode_VertexAndManyLines" +
+        "\r\n\tD = execute parse \"A + A\"", m0.ZeroTypes.UX.CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new
         );
 
             IEdge code11 = code.AddVertexAndReturnEdge(null, null);

@@ -2598,13 +2598,13 @@ namespace m0
             //
             // execute((?<expr>))
 
-            AddSingleOperator(k, smu, smb, keyword, any, "execute((?<expr>))", "Execute");
+            AddSingleOperator(k, smu, smb, keyword, any, "execute (?<expr>)", "Execute");
 
             // parse
             //
             // parse((?<expr>))
 
-            IVertex o_parse = k.AddVertex(keyword, "parse((?<expr>))");
+            IVertex o_parse = k.AddVertex(keyword, "parse (?<expr>)");
 
             IVertex o_parse_any = o_parse.AddVertex(any, "");
 
@@ -2616,7 +2616,7 @@ namespace m0
             //
             // parse (?<language>) ((?<expr>))
 
-            IVertex o_parse2 = k.AddVertex(keyword, "parse (?<language>) ((?<expr>))");
+            IVertex o_parse2 = k.AddVertex(keyword, "parse (?<expr>) with (?<language>)");
 
             IVertex o_parse2_any = o_parse2.AddVertex(any, "");
 
@@ -2630,7 +2630,7 @@ namespace m0
             //
             // generate((?<expr>))
 
-            IVertex o_generate = k.AddVertex(keyword, "generate((?<expr>))");
+            IVertex o_generate = k.AddVertex(keyword, "generate (?<expr>)");
 
             IVertex o_generate_any = o_generate.AddVertex(any, "");
 
@@ -2642,7 +2642,7 @@ namespace m0
             //
             // generate (?<language>) ((?<expr>))
 
-            IVertex o_generate2 = k.AddVertex(keyword, "generate (?<language>) ((?<expr>))");
+            IVertex o_generate2 = k.AddVertex(keyword, "generate (?<expr>) with (?<language>)");
 
             IVertex o_generate2_any = o_generate2.AddVertex(any, "");
 
@@ -6962,6 +6962,7 @@ namespace m0
               "execute",
               "parse",
               "generate",
+              "with",
               "new",
               "in ",
               "this",

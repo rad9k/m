@@ -2373,8 +2373,8 @@ namespace m0.ZeroUML.Instructions
                 {
                     if (baseEdge_new != null)
                         newStack.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(baseEdge_new);
-                    else
-                        newStack.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(newEdge_temp);
+                    else                    
+                        newStack.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(newEdge_temp);                    
                 }
             }
 
@@ -2390,14 +2390,12 @@ namespace m0.ZeroUML.Instructions
             if (expression == null)
                 return exe.Stack;
 
-            IVertex language;
+            IVertex formalTextLanguageProcessing = null;
 
             IVertex instuctionFormalTextLanguage = GraphUtil.GetQueryOutFirst(instructionVertex, "FormalTextLanguage", null);
 
-            if (instuctionFormalTextLanguage == null)
-                language = MinusZero.Instance.DefaultFormalTextLanguage;
-            else
-                language = GetFirstExecutionEdge(exe, instuctionFormalTextLanguage).To;
+            if (instuctionFormalTextLanguage != null)
+                formalTextLanguageProcessing = GetFirstExecutionEdge(exe, instuctionFormalTextLanguage).To;
 
             INoInEdgeInOutVertexVertex expressionResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, expression);
 
@@ -2405,7 +2403,12 @@ namespace m0.ZeroUML.Instructions
 
             foreach (IEdge e in expressionResult)
             {
-                string parsed = MinusZero.Instance.DefaultFormalTextGenerator.Generate(language, e, CodeRepresentationEnum.VertexAndManyLines);
+                string parsed;
+
+                if (formalTextLanguageProcessing == null)
+                    parsed = ZeroCodeProcessingHelper.Generate(e);
+                else
+                    parsed = ZeroCodeProcessingHelper.Generate(formalTextLanguageProcessing, e);                 
 
                 newStack.AddVertex(null, parsed);
             }

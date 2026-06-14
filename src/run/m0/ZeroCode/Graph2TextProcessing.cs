@@ -1394,6 +1394,9 @@ namespace m0.ZeroCode
 
         bool AppendEdge(IEdge e, IEdge parent, string path, bool ParentKmHasTabAddingOmmit)
         {
+            if (!ZeroCodeUtil.FilterEdgeForGraph2TextProcessing(e))
+                return false;
+
             if (IsMinCardinalityEdge(e))
                 LogMinCardinality("AppendEdge",
                     "enter path=" + path
