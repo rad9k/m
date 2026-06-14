@@ -1,6 +1,7 @@
 using m0.Foundation;
 using m0.Graph;
 using m0.UIWpf;
+using m0.UIWpf.Commands;
 using m0.UIWpf.Controls;
 using m0.UIWpf.Foundation;
 using m0.UIWpf.Visualisers.Controls;
@@ -38,6 +39,12 @@ namespace m0.UIWpf.Visualisers
         private bool suppressNextMouseUpSelection;
 
         private IVertex tempSelectedVertices;
+
+        private Point dndStartPoint;
+        private bool hasButtonBeenDown;
+        private bool isDragging;
+
+        private ScrollViewer wrappingScrollViewer;
 
         public event Notify SelectedEdgesChange;
 
@@ -78,6 +85,8 @@ namespace m0.UIWpf.Visualisers
 
             Children.Add(scrollViewer);
 
+            Loaded += IconVisualiser_Loaded;
+            Unloaded += IconVisualiser_Unloaded;
             SizeChanged += IconVisualiser_SizeChanged;
             scrollViewer.SizeChanged += IconVisualiser_SizeChanged;
 
@@ -98,9 +107,23 @@ namespace m0.UIWpf.Visualisers
             PreviewKeyDown += OnPreviewKeyDown;
             PreviewMouseLeftButtonDown += OnPreviewMouseLeftButtonDown;
             PreviewMouseLeftButtonUp += OnPreviewMouseLeftButtonUp;
+            PreviewMouseMove += OnPreviewMouseMoveForDnd;
+            Drop += OnDropForDnd;
+            MouseEnter += OnMouseEnterForDnd;
+            AllowDrop = true;
 
             SetVertexDefaultValues();
             ScaleChange();
+        }
+
+        private void IconVisualiser_Loaded(object sender, RoutedEventArgs e)
+        {
+            RefreshWrapLayout();
+        }
+
+        private void IconVisualiser_Unloaded(object sender, RoutedEventArgs e)
+        {
+            DetachFromWrappingScrollViewer();
         }
 
         private void IconVisualiser_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -108,20 +131,123 @@ namespace m0.UIWpf.Visualisers
             UpdateItemsPanelWidth();
         }
 
+        private void WrappingScrollViewer_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateItemsPanelWidth();
+        }
+
+        private void AttachToWrappingScrollViewer()
+        {
+            DetachFromWrappingScrollViewer();
+
+            DependencyObject current = Parent;
+
+            while (current != null)
+            {
+                if (current is ScrollViewer ancestorScrollViewer && ancestorScrollViewer != scrollViewer)
+                {
+                    wrappingScrollViewer = ancestorScrollViewer;
+                    wrappingScrollViewer.SizeChanged += WrappingScrollViewer_SizeChanged;
+                    return;
+                }
+
+                DependencyObject visualParent = VisualTreeHelper.GetParent(current);
+
+                if (visualParent != null)
+                    current = visualParent;
+                else
+                    current = LogicalTreeHelper.GetParent(current);
+            }
+        }
+
+        private void DetachFromWrappingScrollViewer()
+        {
+            if (wrappingScrollViewer == null)
+                return;
+
+            wrappingScrollViewer.SizeChanged -= WrappingScrollViewer_SizeChanged;
+            wrappingScrollViewer = null;
+        }
+
         private void UpdateItemsPanelWidth()
         {
-            double availableWidth = ActualWidth;
+            SyncHostWidthToWrappingViewport();
 
-            if (double.IsNaN(availableWidth) || availableWidth <= 0)
-                availableWidth = scrollViewer.ViewportWidth;
-
-            if (double.IsNaN(availableWidth) || availableWidth <= 0)
-                availableWidth = scrollViewer.ActualWidth;
+            double availableWidth = GetItemsPanelWrapWidth();
 
             if (availableWidth <= 0)
                 return;
 
             itemsPanel.Width = availableWidth;
+            itemsPanel.InvalidateMeasure();
+            itemsPanel.InvalidateArrange();
+            scrollViewer.InvalidateMeasure();
+            scrollViewer.InvalidateArrange();
+        }
+
+        public void RefreshWrapLayout()
+        {
+            AttachToWrappingScrollViewer();
+            UpdateItemsPanelWidth();
+        }
+
+        private void SyncHostWidthToWrappingViewport()
+        {
+            if (wrappingScrollViewer == null)
+                return;
+
+            double viewportWidth = wrappingScrollViewer.ViewportWidth;
+
+            if (double.IsNaN(viewportWidth) || viewportWidth <= 0)
+                viewportWidth = wrappingScrollViewer.ActualWidth;
+
+            if (viewportWidth <= 0)
+                return;
+
+            double hostWidth = Math.Max(100, viewportWidth - 4);
+            MaxWidth = hostWidth;
+            Width = double.NaN;
+        }
+
+        private double GetItemsPanelWrapWidth()
+        {
+            scrollViewer.UpdateLayout();
+
+            double innerViewportWidth = scrollViewer.ViewportWidth;
+
+            if (!double.IsNaN(innerViewportWidth) && innerViewportWidth > 0)
+                return innerViewportWidth;
+
+            double actualWidth = ActualWidth;
+
+            if (actualWidth > 0)
+                return actualWidth;
+
+            return GetAvailableWrapWidth();
+        }
+
+        private double GetAvailableWrapWidth()
+        {
+            if (wrappingScrollViewer != null)
+            {
+                double viewportWidth = wrappingScrollViewer.ViewportWidth;
+
+                if (double.IsNaN(viewportWidth) || viewportWidth <= 0)
+                    viewportWidth = wrappingScrollViewer.ActualWidth;
+
+                if (viewportWidth > 0)
+                    return viewportWidth;
+            }
+
+            double actualWidth = ActualWidth;
+
+            if (actualWidth > 0)
+                return actualWidth;
+
+            if (scrollViewer.ViewportWidth > 0)
+                return scrollViewer.ViewportWidth;
+
+            return scrollViewer.ActualWidth;
         }
 
         public IconVisualiser(IEdge edge)
@@ -376,6 +502,27 @@ namespace m0.UIWpf.Visualisers
 
         public IVertex GetEdgeByPoint(Point point)
         {
+            foreach (KeyValuePair<IEdge, IconVisualiserItem> pair in displayedEdgeItems)
+            {
+                IconVisualiserItem item = pair.Value;
+
+                if (item == null || pair.Key == null)
+                    continue;
+
+                Point pointInItem = TranslatePoint(point, item);
+
+                if (pointInItem.X < 0 || pointInItem.Y < 0
+                    || pointInItem.X > item.ActualWidth || pointInItem.Y > item.ActualHeight)
+                    continue;
+
+                IVertex edgeVertex = MinusZero.Instance.CreateTempVertex();
+                EdgeHelper.AddEdgeVertexEdges(edgeVertex, pair.Key);
+                return edgeVertex;
+            }
+
+            if (GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"Home:\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "StartAndEnd"))
+                return Vertex.Get(false, "BaseEdge:");
+
             return null;
         }
 
@@ -517,6 +664,10 @@ namespace m0.UIWpf.Visualisers
         private void OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Focus();
+            dndStartPoint = e.GetPosition(this);
+            hasButtonBeenDown = true;
+            CopySelectedVerticesToTemp();
+            MinusZero.Instance.IsGUIDragging = false;
         }
 
         private void OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -572,6 +723,85 @@ namespace m0.UIWpf.Visualisers
 
             if (SelectedEdgesChange != null)
                 SelectedEdgesChange();
+        }
+
+        private void OnPreviewMouseMoveForDnd(object sender, MouseEventArgs e)
+        {
+            if (!hasButtonBeenDown || isDragging)
+                return;
+
+            if (e.LeftButton != MouseButtonState.Pressed)
+                return;
+
+            if (WpfUtil.IsMouseOverScrollbar(sender, dndStartPoint))
+                return;
+
+            Point mousePosition = e.GetPosition(this);
+            Vector diff = dndStartPoint - mousePosition;
+
+            if (Math.Abs(diff.X) <= Dnd.MinimumHorizontalDragDistance
+                && Math.Abs(diff.Y) <= Dnd.MinimumVerticalDragDistance)
+                return;
+
+            isDragging = true;
+            suppressNextMouseUpSelection = true;
+            pendingMouseDownSelectionEdge = null;
+
+            RestoreSelectedVertices();
+
+            IVertex dndVertex = CreateDndVertex();
+
+            if (dndVertex.Count() > 0)
+            {
+                dndVertex.AddExternalReference();
+
+                DataObject dragData = new DataObject("Vertex", dndVertex);
+                dragData.SetData("DragSource", this);
+
+                Dnd.DoDragDrop(this, dragData);
+
+                e.Handled = true;
+            }
+
+            isDragging = false;
+            hasButtonBeenDown = false;
+        }
+
+        private IVertex CreateDndVertex()
+        {
+            IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
+
+            foreach (IEdge selectedEdgeVertexEdge in Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"))
+            {
+                if (selectedEdgeVertexEdge?.To != null)
+                    dndVertex.AddEdge(null, selectedEdgeVertexEdge.To);
+            }
+
+            if (dndVertex.Count() > 0)
+                return dndVertex;
+
+            IVertex edgeByPoint = GetEdgeByPoint(dndStartPoint);
+
+            if (edgeByPoint != null)
+                dndVertex.AddEdge(null, edgeByPoint);
+
+            return dndVertex;
+        }
+
+        private void OnDropForDnd(object sender, DragEventArgs e)
+        {
+            IVertex edgeVertex = GetEdgeByPoint(e.GetPosition(this));
+
+            if (edgeVertex == null && GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"Home:\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "OnlyEnd"))
+                edgeVertex = Vertex.Get(false, "BaseEdge:");
+
+            if (edgeVertex != null)
+                Dnd.DoDrop(null, edgeVertex.Get(false, "To:"), e);
+        }
+
+        private void OnMouseEnterForDnd(object sender, MouseEventArgs e)
+        {
+            hasButtonBeenDown = false;
         }
 
         private void OnPreviewKeyDown(object sender, KeyEventArgs e)

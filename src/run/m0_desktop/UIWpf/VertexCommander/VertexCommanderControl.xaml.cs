@@ -146,6 +146,21 @@ namespace m0.UIWpf.VertexCommander
         private void VertexCommanderControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             UpdateBottomCommandButtonsFontSize();
+            RefreshIconVisualiserLayouts();
+        }
+
+        private void RefreshIconVisualiserLayouts()
+        {
+            RefreshIconVisualiserLayout(LeftInEdgesVisualiserHost, LeftInEdgesSectionScrollViewer);
+            RefreshIconVisualiserLayout(RightInEdgesVisualiserHost, RightInEdgesSectionScrollViewer);
+            RefreshIconVisualiserLayout(LeftOutEdgesVisualiserHost, LeftOutEdgesSectionScrollViewer);
+            RefreshIconVisualiserLayout(RightOutEdgesVisualiserHost, RightOutEdgesSectionScrollViewer);
+        }
+
+        private static void RefreshIconVisualiserLayout(ContentControl visualiserHost, ScrollViewer sectionScrollViewer)
+        {
+            if (visualiserHost?.Content is IconVisualiser)
+                SetViewportSizeIfNeeded(visualiserHost.Content, sectionScrollViewer);
         }
 
         private void UpdateBottomCommandButtonsFontSize()
@@ -1853,9 +1868,6 @@ namespace m0.UIWpf.VertexCommander
             if (frameworkElement == null)
                 return;
 
-            if (!(visualiser is GraphVisualiser) && !(visualiser is GraphVisualiser3D))
-                return;
-
             double viewportWidth = sectionScrollViewer.ViewportWidth;
             double viewportHeight = sectionScrollViewer.ViewportHeight;
 
@@ -1864,6 +1876,17 @@ namespace m0.UIWpf.VertexCommander
 
             if (double.IsNaN(viewportHeight) || viewportHeight <= 0)
                 viewportHeight = sectionScrollViewer.ActualHeight;
+
+            if (visualiser is IconVisualiser iconVisualiser)
+            {
+                frameworkElement.MaxWidth = System.Math.Max(100, viewportWidth - 4);
+                frameworkElement.Width = double.NaN;
+                iconVisualiser.RefreshWrapLayout();
+                return;
+            }
+
+            if (!(visualiser is GraphVisualiser) && !(visualiser is GraphVisualiser3D))
+                return;
 
             frameworkElement.Width = System.Math.Max(100, viewportWidth - 4);
             frameworkElement.Height = System.Math.Max(100, viewportHeight - 40);
