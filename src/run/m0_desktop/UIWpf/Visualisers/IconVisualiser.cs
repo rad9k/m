@@ -1,6 +1,6 @@
 using m0.Foundation;
 using m0.Graph;
-using m0.Graph.ExecutionFlow;
+using m0.UIWpf;
 using m0.UIWpf.Controls;
 using m0.UIWpf.Foundation;
 using m0.UIWpf.Visualisers.Controls;
@@ -19,10 +19,13 @@ using System.Windows.Media;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class IconVisualiser : WrapPanel, IListVisualiser, ITypedEdge, IKeyboardHighlight
+    public class IconVisualiser : Grid, IListVisualiser, ITypedEdge, IKeyboardHighlight, IOwnScrolling
     {
         private const double DefaultIconSize = 64;
         private const double ItemMargin = 6;
+
+        private readonly ScrollViewer scrollViewer;
+        private readonly WrapPanel itemsPanel;
 
         private readonly Dictionary<IEdge, IconVisualiserItem> displayedEdgeItems = new Dictionary<IEdge, IconVisualiserItem>();
 
@@ -44,7 +47,7 @@ namespace m0.UIWpf.Visualisers
 
         public double Scale { get; set; }
 
-        static string[] metaTriggeringUpdateVertex = new string[0];
+        static string[] metaTriggeringUpdateVertex = new string[] { "FilterQuery" };
         public string[] MetaTriggeringUpdateVertex { get { return metaTriggeringUpdateVertex; } }
 
         static string[] metaTriggeringUpdateView = new string[] { "IconSize" };
@@ -53,23 +56,44 @@ namespace m0.UIWpf.Visualisers
         public IconVisualiser(IVertex baseEdgeVertex, IVertex parentVertex, bool isVolatile)
         {
             Scale = 1.0;
-            Background = (Brush)FindResource("0BackgroundBrush");
-            Orientation = Orientation.Horizontal;
             Focusable = true;
+            HorizontalAlignment = HorizontalAlignment.Stretch;
+            Background = (Brush)FindResource("0BackgroundBrush");
+
+            itemsPanel = new WrapPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Background = (Brush)FindResource("0BackgroundBrush")
+            };
+
+            scrollViewer = new ScrollViewer
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch,
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                Content = itemsPanel,
+                Background = (Brush)FindResource("0BackgroundBrush")
+            };
+
+            Children.Add(scrollViewer);
+
+            SizeChanged += IconVisualiser_SizeChanged;
+            scrollViewer.SizeChanged += IconVisualiser_SizeChanged;
+
+            IVertex iconMetaVertex = MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Icon");
 
             new ListVisualiserHelper(parentVertex,
                 isVolatile,
-                MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Icon"),
+                iconMetaVertex,
                 this,
                 "IconVisualiser",
                 this,
                 false,
-                new List<string> { @"BaseEdge:\To:" },
-                "Visualiser",
+                new List<string> { @"", @"BaseEdge:\", @"BaseEdge:\To:" },
+                "AtomVisualiserFull",
                 baseEdgeVertex,
                 UpdateBaseEdgeCallSchemeEnum.OmmitSecond);
-
-            ((ListVisualiserHelper)VisualiserHelper).CustomVertexChangeEvent += CustomVertexChange;
 
             PreviewKeyDown += OnPreviewKeyDown;
             PreviewMouseLeftButtonDown += OnPreviewMouseLeftButtonDown;
@@ -77,6 +101,27 @@ namespace m0.UIWpf.Visualisers
 
             SetVertexDefaultValues();
             ScaleChange();
+        }
+
+        private void IconVisualiser_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateItemsPanelWidth();
+        }
+
+        private void UpdateItemsPanelWidth()
+        {
+            double availableWidth = ActualWidth;
+
+            if (double.IsNaN(availableWidth) || availableWidth <= 0)
+                availableWidth = scrollViewer.ViewportWidth;
+
+            if (double.IsNaN(availableWidth) || availableWidth <= 0)
+                availableWidth = scrollViewer.ActualWidth;
+
+            if (availableWidth <= 0)
+                return;
+
+            itemsPanel.Width = availableWidth;
         }
 
         public IconVisualiser(IEdge edge)
@@ -145,20 +190,30 @@ namespace m0.UIWpf.Visualisers
             set { VisualiserHelper.SetVertex(value); }
         }
 
-        public void OnLoad(object sender, RoutedEventArgs e) { }
-
-        public void ViewAttributesUpdated()
+        public void OnLoad(object sender, RoutedEventArgs e)
         {
             BaseEdgeToUpdated();
         }
 
+        public void ViewAttributesUpdated()
+        {
+            ApplyIconSizeToAllItems();
+            UpdateItemsPanelWidth();
+            itemsPanel.InvalidateMeasure();
+            itemsPanel.InvalidateArrange();
+            scrollViewer.InvalidateMeasure();
+            scrollViewer.InvalidateArrange();
+        }
+
         public void ScaleChange()
         {
-            double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get(false, "Scale:"))) / 100.0;
+            double scale = ((double)(GraphUtil.GetIntegerValue(Vertex.Get(false, "Scale:")) ?? 100)) / 100.0;
             Scale = scale;
 
-            foreach (IconVisualiserItem item in displayedEdgeItems.Values)
-                item.ApplyScaleTransform(scale);
+            if (scale != 1.0)
+                LayoutTransform = new ScaleTransform(scale, scale);
+            else
+                LayoutTransform = null;
         }
 
         public void BaseEdgeToUpdated()
@@ -166,25 +221,32 @@ namespace m0.UIWpf.Visualisers
             IVertex baseEdgeTo = Vertex.Get(false, @"BaseEdge:\To:");
             IVertex meta = Vertex.Get(false, @"BaseEdge:\To:\$Is:");
 
-            if (baseEdgeTo == null || meta == null)
+            if (baseEdgeTo == null)
                 return;
 
-            Children.Clear();
+            itemsPanel.Children.Clear();
             displayedEdgeItems.Clear();
 
             double iconSize = GetIconSize();
-            double scale = Scale > 0 ? Scale : 1.0;
 
-            foreach (IEdge definitionEdge in VertexOperations.GetChildEdges(meta))
+            IList<IEdge> edgesToDisplay = GetEdgesToDisplay(baseEdgeTo, meta);
+
+            foreach (IEdge edge in edgesToDisplay)
             {
-                IEdge edge = GraphUtil.GetQueryOutFirstEdge(baseEdgeTo, definitionEdge.To.Value, null);
+                if (edge == null)
+                    continue;
 
-                if (edge != null && VisualiserUtil.FilterEdge(edge, Vertex))
-                    AddEdge(edge, iconSize, scale);
+                if (!VisualiserUtil.FilterEdge(edge, Vertex))
+                    continue;
+
+                AddEdge(edge, iconSize);
             }
 
             SelectedVerticesUpdated();
             RefreshKeyboardHighlightAfterItemsChanged();
+            UpdateItemsPanelWidth();
+            itemsPanel.InvalidateMeasure();
+            itemsPanel.InvalidateArrange();
         }
 
         public void UnselectAllSelectedEdges()
@@ -329,20 +391,79 @@ namespace m0.UIWpf.Visualisers
 
         private bool isDisposed;
 
-        protected virtual INoInEdgeInOutVertexVertex CustomVertexChange(IExecution exe)
+        private IList<IEdge> GetEdgesToDisplay(IVertex baseEdgeTo, IVertex meta)
         {
-            if (ExecutionFlowHelper.AllEventChildVisualiser(exe.Stack))
-                return exe.Stack;
+            IList<IEdge> schemaEdges = GetSchemaMatchedEdges(baseEdgeTo, meta);
 
-            BaseEdgeToUpdated();
+            if (schemaEdges.Count > 0)
+                return schemaEdges;
 
-            return exe.Stack;
+            return GetDirectOutEdges(baseEdgeTo);
+        }
+
+        private IList<IEdge> GetSchemaMatchedEdges(IVertex baseEdgeTo, IVertex meta)
+        {
+            IList<IEdge> result = new List<IEdge>();
+
+            if (meta == null)
+                return result;
+
+            foreach (IEdge definitionEdge in VertexOperations.GetChildEdges(meta))
+            {
+                object definitionMetaValue = definitionEdge.To?.Value;
+                IEdge edge = GraphUtil.GetQueryOutFirstEdge(baseEdgeTo, definitionMetaValue, null);
+
+                if (edge == null)
+                    continue;
+
+                result.Add(edge);
+            }
+
+            return result;
+        }
+
+        private IList<IEdge> GetDirectOutEdges(IVertex baseEdgeTo)
+        {
+            IList<IEdge> result = new List<IEdge>();
+            IVertex filterQueryVertex = Vertex.Get(false, @"FilterQuery:");
+
+            if (filterQueryVertex != null && filterQueryVertex.Value != null)
+            {
+                IVertex filteredData = VertexOperations.DoFilter(baseEdgeTo, filterQueryVertex);
+
+                if (filteredData == null)
+                    return result;
+
+                foreach (IEdge edge in filteredData)
+                    result.Add(edge);
+
+                return result;
+            }
+
+            foreach (IEdge edge in baseEdgeTo)
+                result.Add(edge);
+
+            return result;
         }
 
         private void SetVertexDefaultValues()
         {
-            Vertex.Get(false, "IconSize:").Value = (int)DefaultIconSize;
-            Vertex.Get(false, "Scale:").Value = 100;
+            IVertex iconSizeVertex = Vertex.Get(false, "IconSize:");
+            IVertex scaleVertex = Vertex.Get(false, "Scale:");
+
+            if (iconSizeVertex != null)
+                iconSizeVertex.Value = (int)DefaultIconSize;
+
+            if (scaleVertex != null)
+                scaleVertex.Value = 100;
+        }
+
+        private void ApplyIconSizeToAllItems()
+        {
+            double iconSize = GetIconSize();
+
+            foreach (IconVisualiserItem item in displayedEdgeItems.Values)
+                item.UpdateIconSize(iconSize);
         }
 
         private double GetIconSize()
@@ -355,17 +476,16 @@ namespace m0.UIWpf.Visualisers
             return iconSize.Value;
         }
 
-        private void AddEdge(IEdge edge, double iconSize, double scale)
+        private void AddEdge(IEdge edge, double iconSize)
         {
             IconVisualiserItem item = new IconVisualiserItem();
             item.Margin = new Thickness(ItemMargin);
             item.Initialize(edge, iconSize);
-            item.ApplyScaleTransform(scale);
 
             item.MouseLeftButtonDown += Item_MouseLeftButtonDown;
 
             displayedEdgeItems.Add(edge, item);
-            Children.Add(item);
+            itemsPanel.Children.Add(item);
         }
 
         private void Item_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -447,6 +567,8 @@ namespace m0.UIWpf.Visualisers
             }
 
             Interaction.EndInteractionWithGraph();
+
+            SetKeyboardHighlightEdge(pendingMouseDownSelectionEdge);
 
             if (SelectedEdgesChange != null)
                 SelectedEdgesChange();
@@ -642,7 +764,7 @@ namespace m0.UIWpf.Visualisers
         {
             item.UpdateLayout();
 
-            Point topLeft = item.TransformToAncestor(this).Transform(new Point(0, 0));
+            Point topLeft = item.TransformToAncestor(itemsPanel).Transform(new Point(0, 0));
 
             return new Point(topLeft.X + item.ActualWidth / 2, topLeft.Y + item.ActualHeight / 2);
         }
@@ -652,19 +774,13 @@ namespace m0.UIWpf.Visualisers
             if (keyboardHighlightedEdge == null)
                 return;
 
-            if (!displayedEdgeItems.ContainsKey(keyboardHighlightedEdge))
-            {
-                List<IEdge> edges = GetKeyboardHighlightEdges();
-
-                if (edges.Count == 0)
-                    ClearKeyboardHighlight();
-                else
-                    SetKeyboardHighlightEdge(edges[Math.Min(CurrentHighlightPosition, edges.Count - 1)]);
-            }
-            else
+            if (displayedEdgeItems.ContainsKey(keyboardHighlightedEdge))
             {
                 displayedEdgeItems[keyboardHighlightedEdge].SetKeyboardHighlighted(true);
+                return;
             }
+
+            ClearKeyboardHighlight();
         }
 
         private void UnselectAllItems()

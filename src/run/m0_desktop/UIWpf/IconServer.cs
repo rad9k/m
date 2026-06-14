@@ -39,10 +39,12 @@ namespace m0.UIWpf
         {
             string iconPath = TryFindIconPath(edge);
 
-            if (iconPath == null)
-                return null;
+            BitmapImage icon = iconPath != null ? LoadIconBitmap(iconPath) : null;
 
-            return LoadIconBitmap(iconPath);
+            if (icon != null)
+                return icon;
+
+            return GetIconByString("$Empty");
         }
 
         public static BitmapImage GetIconByString(string iconName)

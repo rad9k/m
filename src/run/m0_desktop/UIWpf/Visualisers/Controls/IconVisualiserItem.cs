@@ -1,6 +1,7 @@
 using m0.Foundation;
 using m0.UIWpf;
 using m0.UIWpf.Controls;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -21,7 +22,7 @@ namespace m0.UIWpf.Visualisers.Controls
 
         public IconVisualiserItem()
         {
-            BorderThickness = new Thickness(1);
+            BorderThickness = new Thickness(0);
             Padding = new Thickness(4);
             SnapsToDevicePixels = true;
             UseLayoutRounding = true;
@@ -58,9 +59,7 @@ namespace m0.UIWpf.Visualisers.Controls
         public void Initialize(IEdge baseEdge, double iconSize)
         {
             BaseEdge = baseEdge;
-
-            iconImage.Width = iconSize;
-            iconImage.Height = iconSize;
+            UpdateIconSize(iconSize);
 
             ImageSource iconSource = IconServer.GetIconByEdge(baseEdge);
 
@@ -81,6 +80,13 @@ namespace m0.UIWpf.Visualisers.Controls
             ApplyVisualState();
         }
 
+        public void UpdateIconSize(double iconSize)
+        {
+            iconImage.Width = iconSize;
+            iconImage.Height = iconSize;
+            labelControl.MaxWidth = Math.Max(iconSize * 2.5, 80);
+        }
+
         public void SetSelected(bool isSelected)
         {
             IsSelected = isSelected;
@@ -93,46 +99,29 @@ namespace m0.UIWpf.Visualisers.Controls
             ApplyVisualState();
         }
 
-        public void ApplyScaleTransform(double scale)
-        {
-            if (scale != 1.0)
-                LayoutTransform = new ScaleTransform(scale, scale);
-            else
-                LayoutTransform = null;
-        }
-
         public void ApplyVisualState()
         {
-            Brush backgroundBrush;
-            Brush borderBrush;
-
             if (IsKeyboardHighlighted)
             {
-                backgroundBrush = (Brush)FindResource("0HighlightBrush");
-                borderBrush = (Brush)FindResource("0HighlightBrush");
+                Background = (Brush)FindResource("0HighlightBrush");
                 labelControl.IsHighlighted = true;
                 labelControl.IsSelected = IsSelected;
                 labelControl.IsKeyboardHighlightedSelected = IsSelected;
             }
             else if (IsSelected)
             {
-                backgroundBrush = (Brush)FindResource("0SelectionBrush");
-                borderBrush = (Brush)FindResource("0SelectionBrush");
+                Background = (Brush)FindResource("0SelectionBrush");
                 labelControl.IsHighlighted = false;
                 labelControl.IsSelected = true;
                 labelControl.IsKeyboardHighlightedSelected = false;
             }
             else
             {
-                backgroundBrush = (Brush)FindResource("0BackgroundBrush");
-                borderBrush = (Brush)FindResource("0LightGrayBrush");
+                Background = (Brush)FindResource("0BackgroundBrush");
                 labelControl.IsHighlighted = false;
                 labelControl.IsSelected = false;
                 labelControl.IsKeyboardHighlightedSelected = false;
             }
-
-            Background = backgroundBrush;
-            BorderBrush = borderBrush;
         }
     }
 }
