@@ -323,16 +323,9 @@ namespace m0.UIWpf.Controls
             Paste.Click += OnPaste;
             this.Items.Add(Paste);
 
-            MenuItem PasteSpecial = createMenuItem("menu-Paste special","Paste special");            
-            this.Items.Add(PasteSpecial);
-
-            MenuItem PasteSpecial_Paste_to_store = createMenuItem("menu-Paste to store", "Paste to store");
-            PasteSpecial_Paste_to_store.Click += OnPasteSpecial_Paste_to_store;
-            PasteSpecial.Items.Add(PasteSpecial_Paste_to_store);
-
-            MenuItem PasteSpecial_Replace = createMenuItem("menu-Replace", "Replace");
-            PasteSpecial_Replace.Click += OnPasteSpecial_Replace;
-            PasteSpecial.Items.Add(PasteSpecial_Replace);
+            MenuItem Paste_Replace = createMenuItem("menu-Replace", "Replace");
+            Paste_Replace.Click += OnReplace;
+            this.Items.Add(Paste_Replace);
 
             MenuItem Delete = createMenuItem("menu-Delete","Delete");
             Delete.Click += OnDelete;
@@ -549,16 +542,18 @@ namespace m0.UIWpf.Controls
 
         void OnPaste(object sender, System.Windows.RoutedEventArgs e)
         {
-            BaseCommands.Paste(this.EdgeVertex, PlatformClassOfVisualiserMenuHasBeenOpenedOn.Vertex);
+            BaseCommands.Paste(this.EdgeVertex, PlatformClassOfVisualiserMenuHasBeenOpenedOn.Vertex, false);
 
             if (FromCopyPlatformClass is IHasSelectableEdges)
                 ((IHasSelectableEdges)FromCopyPlatformClass).UnselectAllSelectedEdges();        
         }
 
-        void OnPasteSpecial_Paste_to_store(object sender, System.Windows.RoutedEventArgs e) { }
+        void OnReplace(object sender, System.Windows.RoutedEventArgs e) {
+            BaseCommands.Paste(this.EdgeVertex, PlatformClassOfVisualiserMenuHasBeenOpenedOn.Vertex, true);
 
-
-        void OnPasteSpecial_Replace(object sender, System.Windows.RoutedEventArgs e) { }
+            if (FromCopyPlatformClass is IHasSelectableEdges)
+                ((IHasSelectableEdges)FromCopyPlatformClass).UnselectAllSelectedEdges();
+        }
 
         void OnDelete(object sender, System.Windows.RoutedEventArgs e)
         {

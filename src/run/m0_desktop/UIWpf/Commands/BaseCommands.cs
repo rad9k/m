@@ -153,7 +153,7 @@ namespace m0.UIWpf.Commands
 
 
 
-        public static void Paste(IVertex baseVertex, IVertex inputVertex)
+        public static void Paste(IVertex baseVertex, IVertex inputVertex, bool isReplace)
         {
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
@@ -163,7 +163,7 @@ namespace m0.UIWpf.Commands
             {
                 IVertex v = e.To;
 
-                if (GeneralUtil.CompareStrings(e.Meta, "ClipboardCut"))
+                /*if (GeneralUtil.CompareStrings(e.Meta, "ClipboardCut"))
                 {
                     IVertex v_From = GraphUtil.GetQueryOutFirst(v, "From", null);
                     IVertex v_Meta = GraphUtil.GetQueryOutFirst(v, "Meta", null);
@@ -174,17 +174,35 @@ namespace m0.UIWpf.Commands
                     IVertex baseVertex_To = GraphUtil.GetQueryOutFirst(baseVertex, "To", null);
 
                     baseVertex_To.AddEdge(v_Meta, v_To);
-                }
+                }*/
+
+                bool doCopy = false;
+                bool doCut = false;
 
                 if (GeneralUtil.CompareStrings(e.Meta, "ClipboardCopy"))
-                {
-                    IVertex baseVertex_To = GraphUtil.GetQueryOutFirst(baseVertex, "To", null);
+                    doCopy = true;
 
-                    IVertex v_To = GraphUtil.GetQueryOutFirst(v, "To", null);
+                if (GeneralUtil.CompareStrings(e.Meta, "ClipboardCut"))
+                    doCut = true;
 
-                    IEdge v_To_Edge = EdgeHelper.GetIEdgeByEdgeVertex(v);
+                IVertex baseVertex_To = GraphUtil.GetQueryOutFirst(baseVertex, "To", null);
 
-                    VertexOperations.CopyEdgesSet(v_To_Edge.To, baseVertex_To);
+                IVertex v_To = GraphUtil.GetQueryOutFirst(v, "To", null);
+
+                IEdge v_To_Edge = EdgeHelper.GetIEdgeByEdgeVertex(v);
+
+                if (doCopy) {
+                    if (isReplace)
+                        VertexOperations.CopyAndReplaceEdgesSet(v_To_Edge.To, baseVertex_To);
+                    else
+                        VertexOperations.CopyEdgesSet(v_To_Edge.To, baseVertex_To);
+                }
+
+                if (doCut) {
+                    if (isReplace)
+                        VertexOperations.MoveAndReplaceEdgesSet(v_To_Edge.To, baseVertex_To);
+                    else
+                        VertexOperations.MoveEdgesSet(v_To_Edge.To, baseVertex_To);
                 }
             }            
 
