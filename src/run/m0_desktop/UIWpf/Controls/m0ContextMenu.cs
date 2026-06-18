@@ -319,11 +319,15 @@ namespace m0.UIWpf.Controls
             Copy.Click += OnCopy;
             this.Items.Add(Copy);
 
-            MenuItem Paste = createMenuItem("menu-Paste", "Paste");
-            Paste.Click += OnPaste;
-            this.Items.Add(Paste);
+            MenuItem Paste_Shallow = createMenuItem("menu-Paste-Shallow", "Paste (shallow)");
+            Paste_Shallow.Click += OnPaste_Shallow;
+            this.Items.Add(Paste_Shallow);
 
-            MenuItem Paste_Replace = createMenuItem("menu-Replace", "Replace");
+            MenuItem Paste_Deep = createMenuItem("menu-Paste-Deep", "Paste (deep)");
+            Paste_Deep.Click += OnPaste_Deep;
+            this.Items.Add(Paste_Deep);
+
+            MenuItem Paste_Replace = createMenuItem("menu-Replace", "Replace (deep)");
             Paste_Replace.Click += OnReplace;
             this.Items.Add(Paste_Replace);
 
@@ -540,16 +544,24 @@ namespace m0.UIWpf.Controls
             FromCopyPlatformClass = PlatformClassOfVisualiserMenuHasBeenOpenedOn;
         }
 
-        void OnPaste(object sender, System.Windows.RoutedEventArgs e)
+        void OnPaste_Shallow(object sender, System.Windows.RoutedEventArgs e)
         {
-            BaseCommands.Paste(this.EdgeVertex, PlatformClassOfVisualiserMenuHasBeenOpenedOn.Vertex, false);
+            BaseCommands.Paste_Shallow(this.EdgeVertex, PlatformClassOfVisualiserMenuHasBeenOpenedOn.Vertex);
+
+            if (FromCopyPlatformClass is IHasSelectableEdges)
+                ((IHasSelectableEdges)FromCopyPlatformClass).UnselectAllSelectedEdges();
+        }
+
+        void OnPaste_Deep(object sender, System.Windows.RoutedEventArgs e)
+        {
+            BaseCommands.PasteOrReplace_Deep(this.EdgeVertex, PlatformClassOfVisualiserMenuHasBeenOpenedOn.Vertex, false);
 
             if (FromCopyPlatformClass is IHasSelectableEdges)
                 ((IHasSelectableEdges)FromCopyPlatformClass).UnselectAllSelectedEdges();        
         }
 
         void OnReplace(object sender, System.Windows.RoutedEventArgs e) {
-            BaseCommands.Paste(this.EdgeVertex, PlatformClassOfVisualiserMenuHasBeenOpenedOn.Vertex, true);
+            BaseCommands.PasteOrReplace_Deep(this.EdgeVertex, PlatformClassOfVisualiserMenuHasBeenOpenedOn.Vertex, true);
 
             if (FromCopyPlatformClass is IHasSelectableEdges)
                 ((IHasSelectableEdges)FromCopyPlatformClass).UnselectAllSelectedEdges();

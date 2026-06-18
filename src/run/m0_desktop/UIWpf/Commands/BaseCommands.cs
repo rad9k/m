@@ -157,9 +157,47 @@ namespace m0.UIWpf.Commands
             ////////////////////////////////////////
         }
 
+        public static void Paste_Shallow(IVertex baseVertex, IVertex inputVertex)
+        {
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
 
+            foreach (IEdge e in User.Clipboard.GetFromClipboard())
+            {
+                IVertex v = e.To;
 
-        public static void Paste(IVertex baseVertex, IVertex inputVertex, bool isReplace)
+                if (GeneralUtil.CompareStrings(e.Meta, "ClipboardCut"))
+                {
+                    IVertex v_From = GraphUtil.GetQueryOutFirst(v, "From", null);
+                    IVertex v_Meta = GraphUtil.GetQueryOutFirst(v, "Meta", null);
+                    IVertex v_To = GraphUtil.GetQueryOutFirst(v, "To", null);
+
+                    VertexOperations.DeleteOneEdge(v_From, v_Meta, v_To);
+
+                    IVertex baseVertex_To = GraphUtil.GetQueryOutFirst(baseVertex, "To", null);
+
+                    baseVertex_To.AddEdge(v_Meta, v_To);
+                }
+
+                if (GeneralUtil.CompareStrings(e.Meta, "ClipboardCopy"))
+                {
+                    IVertex baseVertex_To = GraphUtil.GetQueryOutFirst(baseVertex, "To", null);
+
+                    IVertex v_To = GraphUtil.GetQueryOutFirst(v, "To", null);
+
+                    IEdge v_To_Edge = EdgeHelper.GetIEdgeByEdgeVertex(v);
+
+                    VertexOperations.CopyEdgesSet(v_To_Edge.To, baseVertex_To);
+                }
+            }
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
+        }
+
+        public static void PasteOrReplace_Deep(IVertex baseVertex, IVertex inputVertex, bool isReplace)
         {
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();

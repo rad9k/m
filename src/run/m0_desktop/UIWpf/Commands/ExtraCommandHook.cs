@@ -37,9 +37,19 @@ namespace m0.UIWpf.Commands
             if (baseVertex == null)
                 return;
 
-            IVertex metaVertex = GraphUtil.GetQueryOutFirst(baseVertex, "Meta", null);
 
-            IList<IEdge> userCommands = GraphUtil.GetQueryOut(metaVertex, "UserCommand", null);
+            IVertex toVertex = GraphUtil.GetQueryOutFirst(baseVertex, null, "To");
+
+            IList<IEdge> isVertexes = GraphUtil.GetQueryOut(toVertex, "$Is", null);
+
+            IList<IEdge> userCommands = new List<IEdge>();
+
+            foreach (IEdge edge in isVertexes)
+            {
+                IList<IEdge> userCommands_forIs = GraphUtil.GetQueryOut(edge.to, "UserCommand", null);
+            }
+
+            
 
             bool anythingAdded = false;
 
@@ -92,4 +102,4 @@ namespace m0.UIWpf.Commands
             }
         }
     }
-}
+}}
