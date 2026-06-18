@@ -43,6 +43,15 @@ namespace m0.UIWpf.Controls
         public static readonly DependencyProperty IsHighlightedProperty =
             DependencyProperty.Register("IsHighlighted", typeof(bool), typeof(MetaToEdgeControl), new UIPropertyMetadata(false, IsHighlightedChangedCallback));
 
+        public bool IsMouseHoverHighlighted
+        {
+            get { return (bool)GetValue(IsMouseHoverHighlightedProperty); }
+            set { SetValue(IsMouseHoverHighlightedProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsMouseHoverHighlightedProperty =
+            DependencyProperty.Register("IsMouseHoverHighlighted", typeof(bool), typeof(MetaToEdgeControl), new UIPropertyMetadata(false, IsMouseHoverHighlightedChangedCallback));
+
         public bool ShowIcon
         {
             get { return (bool)GetValue(ShowIconProperty); }
@@ -85,6 +94,13 @@ namespace m0.UIWpf.Controls
         }
 
         public static void IsHighlightedChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
+        {
+            MetaToEdgeControl control = (MetaToEdgeControl)dependencyObject;
+
+            control.UpdateSelectionState();
+        }
+
+        public static void IsMouseHoverHighlightedChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
         {
             MetaToEdgeControl control = (MetaToEdgeControl)dependencyObject;
 
@@ -168,6 +184,11 @@ namespace m0.UIWpf.Controls
         public void RefreshVisuals()
         {
             UpdateVisuals(BaseEdge);
+        }
+
+        public void RefreshSelectionState()
+        {
+            UpdateSelectionState();
         }
 
         private void UpdateVisuals(IEdge edge)
@@ -291,6 +312,31 @@ namespace m0.UIWpf.Controls
             return FindResource("0HighlightForegroundBrush") as Brush ?? GetForegroundBrush();
         }
 
+        private Brush ResolveLabelForegroundBrush()
+        {
+            if (IsKeyboardHighlightedSelected)
+                return GetForegroundBrush();
+
+            if (IsHighlighted)
+                return GetHighlightForegroundBrush();
+
+            if (IsSelected)
+                return GetBackgroundBrush();
+
+            if (IsMouseHoverHighlighted)
+                return GetHighlightBrush();
+
+            return null;
+        }
+
+        private void ApplyLabelForeground(Brush normalMetaForeground, Brush normalToForeground)
+        {
+            Brush resolved = ResolveLabelForegroundBrush();
+
+            metaLabel.Foreground = resolved ?? normalMetaForeground;
+            toLabel.Foreground = resolved ?? normalToForeground;
+        }
+
         private void UpdateSelectionState()
         {
             if (ExternalBackgroundMode)
@@ -298,29 +344,35 @@ namespace m0.UIWpf.Controls
                 Background = null;
                 contentPanel.Background = null;
 
-                if (IsHighlighted)
-                {
-                    Brush highlightedForeground = IsKeyboardHighlightedSelected ? GetForegroundBrush() : GetHighlightForegroundBrush();
-                    metaLabel.Foreground = highlightedForeground;
-                    toLabel.Foreground = highlightedForeground;
-                }
-                else if (IsSelected)
-                {
-                    metaLabel.Foreground = GetBackgroundBrush();
-                    toLabel.Foreground = GetBackgroundBrush();
-                }
-                else
-                {
-                    metaLabel.Foreground = GetMetaForegroundBrush();
-                    toLabel.Foreground = GetForegroundBrush();
-                }
+                ApplyLabelForeground(GetMetaForegroundBrush(), GetForegroundBrush());
 
                 metaLabel.Background = null;
                 toLabel.Background = null;
                 return;
             }
 
-            if (IsSelected)
+            if (IsHighlighted)
+            {
+                Background = GetHighlightBrush();
+                contentPanel.Background = GetHighlightBrush();
+
+                Brush foreground = IsSelected
+                    ? GetForegroundBrush()
+                    : GetHighlightForegroundBrush();
+
+                metaLabel.Foreground = foreground;
+                toLabel.Foreground = foreground;
+            }
+            else if (IsMouseHoverHighlighted && IsSelected)
+            {
+                Background = GetForegroundBrush();
+                contentPanel.Background = GetForegroundBrush();
+
+                Brush highlightBrush = GetHighlightBrush();
+                metaLabel.Foreground = highlightBrush;
+                toLabel.Foreground = highlightBrush;
+            }
+            else if (IsSelected)
             {
                 Background = GetForegroundBrush();
                 contentPanel.Background = GetForegroundBrush();
@@ -328,13 +380,12 @@ namespace m0.UIWpf.Controls
                 metaLabel.Foreground = GetBackgroundBrush();
                 toLabel.Foreground = GetBackgroundBrush();
             }
-            else if (IsHighlighted)
+            else if (IsMouseHoverHighlighted)
             {
-                Background = null;
-                contentPanel.Background = null;
+                Background = GetBackgroundBrush();
+                contentPanel.Background = GetBackgroundBrush();
 
                 Brush highlightBrush = GetHighlightBrush();
-
                 metaLabel.Foreground = highlightBrush;
                 toLabel.Foreground = highlightBrush;
             }

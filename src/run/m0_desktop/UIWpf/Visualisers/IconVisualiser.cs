@@ -36,9 +36,8 @@ namespace m0.UIWpf.Visualisers
 
         private IEdge pendingMouseDownSelectionEdge;
         private bool pendingMouseDownSelectionIsCtrl;
+        private bool pendingWasInSelectionAtMouseDown;
         private bool suppressNextMouseUpSelection;
-
-        private IVertex tempSelectedVertices;
 
         private Point dndStartPoint;
         private bool hasButtonBeenDown;
@@ -630,6 +629,7 @@ namespace m0.UIWpf.Visualisers
             item.Initialize(edge, iconSize);
 
             item.MouseLeftButtonDown += Item_MouseLeftButtonDown;
+            item.MouseRightButtonDown += Item_MouseRightButtonDown;
 
             displayedEdgeItems.Add(edge, item);
             itemsPanel.Children.Add(item);
@@ -653,11 +653,24 @@ namespace m0.UIWpf.Visualisers
             if (SelectionProphibited)
                 return;
 
-            CopySelectedVerticesToTemp();
-
             pendingMouseDownSelectionEdge = item.BaseEdge;
             pendingMouseDownSelectionIsCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+            pendingWasInSelectionAtMouseDown = SelectedEdgesInteractionHelper.WasEdgeInSelectedEdges(
+                Vertex,
+                pendingMouseDownSelectionEdge);
             suppressNextMouseUpSelection = false;
+            e.Handled = true;
+        }
+
+        private void Item_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            IconVisualiserItem item = sender as IconVisualiserItem;
+
+            if (item == null || item.BaseEdge == null || SelectionProphibited)
+                return;
+
+            SelectedEdgesInteractionHelper.ApplyForContextMenu(Vertex, item.BaseEdge);
+            SelectedVerticesUpdated();
             e.Handled = true;
         }
 
@@ -666,63 +679,76 @@ namespace m0.UIWpf.Visualisers
             Focus();
             dndStartPoint = e.GetPosition(this);
             hasButtonBeenDown = true;
-            CopySelectedVerticesToTemp();
+            isDragging = false;
+            ClearPendingMouseDown();
+            suppressNextMouseUpSelection = false;
             MinusZero.Instance.IsGUIDragging = false;
         }
 
         private void OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             if (!suppressNextMouseUpSelection && pendingMouseDownSelectionEdge != null)
-                ApplyPendingMouseSelection();
-
-            pendingMouseDownSelectionEdge = null;
-            suppressNextMouseUpSelection = false;
-        }
-
-        private void ApplyPendingMouseSelection()
-        {
-            if (pendingMouseDownSelectionEdge == null || !displayedEdgeItems.ContainsKey(pendingMouseDownSelectionEdge))
-                return;
-
-            IconVisualiserItem item = displayedEdgeItems[pendingMouseDownSelectionEdge];
-            IVertex selectedEdges = Vertex.Get(false, "SelectedEdges:");
-            IVertex baseVertex = Vertex.Get(false, @"BaseEdge:\To:");
-
-            Interaction.BeginInteractionWithGraph();
-
-            if (pendingMouseDownSelectionIsCtrl)
             {
-                IEdge selectedEdgeVertexEdge = EdgeHelper.FindIEdgeVertexByIEdge(selectedEdges, pendingMouseDownSelectionEdge);
+                IEdge edgeAtUp = GetDisplayedEdgeAtPoint(e.GetPosition(this));
 
-                if (selectedEdgeVertexEdge != null)
-                {
-                    selectedEdges.DeleteEdge(selectedEdgeVertexEdge);
-                    item.SetSelected(false);
-                }
-                else if (baseVertex != null)
-                {
-                    EdgeHelper.AddEdgeVertex(selectedEdges, baseVertex, pendingMouseDownSelectionEdge.Meta, pendingMouseDownSelectionEdge.To);
-                    item.SetSelected(true);
-                }
+                if (edgeAtUp == pendingMouseDownSelectionEdge)
+                    TryApplyPendingMouseClick();
+                else
+                    ClearPendingMouseDown();
             }
             else
-            {
-                UnselectAllItems();
-                GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(selectedEdges);
+                ClearPendingMouseDown();
 
-                if (baseVertex != null)
-                {
-                    EdgeHelper.AddEdgeVertex(selectedEdges, baseVertex, pendingMouseDownSelectionEdge.Meta, pendingMouseDownSelectionEdge.To);
-                    item.SetSelected(true);
-                }
+            suppressNextMouseUpSelection = false;
+            hasButtonBeenDown = false;
+        }
+
+        private void TryApplyPendingMouseClick()
+        {
+            if (SelectionProphibited || pendingMouseDownSelectionEdge == null)
+            {
+                ClearPendingMouseDown();
+                return;
             }
 
-            Interaction.EndInteractionWithGraph();
+            PendingEdgeMouseGesture pendingGesture = new PendingEdgeMouseGesture
+            {
+                ClickedEdge = pendingMouseDownSelectionEdge,
+                IsCtrl = pendingMouseDownSelectionIsCtrl,
+                WasInSelectionAtMouseDown = pendingWasInSelectionAtMouseDown
+            };
 
-            SetKeyboardHighlightEdge(pendingMouseDownSelectionEdge);
+            SelectedEdgesInteractionHelper.ApplyForClick(Vertex, pendingGesture);
+            SelectedVerticesUpdated();
+            ClearPendingMouseDown();
+        }
 
-            if (SelectedEdgesChange != null)
-                SelectedEdgesChange();
+        private void ClearPendingMouseDown()
+        {
+            pendingMouseDownSelectionEdge = null;
+            pendingMouseDownSelectionIsCtrl = false;
+            pendingWasInSelectionAtMouseDown = false;
+        }
+
+        private IEdge GetDisplayedEdgeAtPoint(Point point)
+        {
+            foreach (KeyValuePair<IEdge, IconVisualiserItem> pair in displayedEdgeItems)
+            {
+                IconVisualiserItem item = pair.Value;
+
+                if (item == null || pair.Key == null)
+                    continue;
+
+                Point pointInItem = TranslatePoint(point, item);
+
+                if (pointInItem.X < 0 || pointInItem.Y < 0
+                    || pointInItem.X > item.ActualWidth || pointInItem.Y > item.ActualHeight)
+                    continue;
+
+                return pair.Key;
+            }
+
+            return null;
         }
 
         private void OnPreviewMouseMoveForDnd(object sender, MouseEventArgs e)
@@ -745,13 +771,10 @@ namespace m0.UIWpf.Visualisers
 
             isDragging = true;
             suppressNextMouseUpSelection = true;
-            pendingMouseDownSelectionEdge = null;
 
-            RestoreSelectedVertices();
+            IVertex dndVertex = TryPrepareDragAndBuildDndVertex();
 
-            IVertex dndVertex = CreateDndVertex();
-
-            if (dndVertex.Count() > 0)
+            if (dndVertex != null && dndVertex.Count() > 0)
             {
                 dndVertex.AddExternalReference();
 
@@ -767,23 +790,46 @@ namespace m0.UIWpf.Visualisers
             hasButtonBeenDown = false;
         }
 
-        private IVertex CreateDndVertex()
+        private IVertex TryPrepareDragAndBuildDndVertex()
         {
-            IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
+            IEdge clickedEdge = pendingMouseDownSelectionEdge;
+            bool isCtrl = pendingMouseDownSelectionIsCtrl;
+            bool wasInSelectionAtMouseDown = pendingWasInSelectionAtMouseDown;
+            IVertex fallbackEdgeVertex = GetEdgeByPoint(dndStartPoint);
 
-            foreach (IEdge selectedEdgeVertexEdge in Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"))
+            if (clickedEdge == null)
             {
-                if (selectedEdgeVertexEdge?.To != null)
-                    dndVertex.AddEdge(null, selectedEdgeVertexEdge.To);
+                if (fallbackEdgeVertex == null)
+                    return null;
+
+                clickedEdge = EdgeHelper.GetIEdgeByEdgeVertex(fallbackEdgeVertex);
+
+                if (clickedEdge == null)
+                {
+                    return SelectedEdgesInteractionHelper.BuildDndVertexFromSelectedEdges(
+                        Vertex,
+                        fallbackEdgeVertex);
+                }
+
+                isCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+                wasInSelectionAtMouseDown = SelectedEdgesInteractionHelper.WasEdgeInSelectedEdges(Vertex, clickedEdge);
             }
 
-            if (dndVertex.Count() > 0)
-                return dndVertex;
+            PendingEdgeMouseGesture pendingGesture = new PendingEdgeMouseGesture
+            {
+                ClickedEdge = clickedEdge,
+                IsCtrl = isCtrl,
+                WasInSelectionAtMouseDown = wasInSelectionAtMouseDown
+            };
 
-            IVertex edgeByPoint = GetEdgeByPoint(dndStartPoint);
+            SelectedEdgesInteractionHelper.ApplyForDrag(Vertex, pendingGesture);
+            SelectedVerticesUpdated();
 
-            if (edgeByPoint != null)
-                dndVertex.AddEdge(null, edgeByPoint);
+            IVertex dndVertex = SelectedEdgesInteractionHelper.BuildDndVertexFromSelectedEdges(
+                Vertex,
+                fallbackEdgeVertex);
+
+            ClearPendingMouseDown();
 
             return dndVertex;
         }
@@ -849,8 +895,6 @@ namespace m0.UIWpf.Visualisers
                 RaiseKeyboardHighlightActivated();
                 return;
             }
-
-            RestoreSelectedVertices();
 
             GraphUtil.ReplaceEdge(Vertex.Get(false, "BaseEdge:"), "To", targetVertex);
 
@@ -1017,27 +1061,6 @@ namespace m0.UIWpf.Visualisers
         {
             foreach (IconVisualiserItem item in displayedEdgeItems.Values)
                 item.SetSelected(false);
-        }
-
-        private void CopySelectedVerticesToTemp()
-        {
-            tempSelectedVertices = MinusZero.Instance.CreateTempVertex();
-            tempSelectedVertices.AddExternalReference();
-            GraphUtil.CopyShallow(Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"), tempSelectedVertices);
-        }
-
-        private void RestoreSelectedVertices()
-        {
-            IVertex selectedEdges = Vertex.Get(false, "SelectedEdges:");
-
-            if (tempSelectedVertices != null)
-            {
-                GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(selectedEdges);
-                GraphUtil.CopyShallow(tempSelectedVertices, selectedEdges);
-                GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(tempSelectedVertices);
-                tempSelectedVertices.RemoveExternalReference();
-                tempSelectedVertices = null;
-            }
         }
     }
 }

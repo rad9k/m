@@ -126,7 +126,7 @@ namespace m0.UIWpf.Visualisers
         {
             DataGridTemplateColumn valueColumn = new DataGridTemplateColumn(); // DELETE
 
-            valueColumn.CellStyle = (Style)FindResource("0ListValueColumn");
+            valueColumn.CellStyle = CreateHighlightedCellStyle("0ListValueColumn");
 
             valueColumn.CellTemplate = new DataTemplate();
             FrameworkElementFactory factory = new FrameworkElementFactory(typeof(Controls.DeleteButton));
@@ -140,7 +140,7 @@ namespace m0.UIWpf.Visualisers
         {
             DataGridTemplateColumn valueColumn = new DataGridTemplateColumn(); //INFO
 
-            valueColumn.CellStyle = (Style)FindResource("0ListValueColumn");
+            valueColumn.CellStyle = CreateHighlightedCellStyle("0ListValueColumn");
 
             valueColumn.CellTemplate = new DataTemplate();
             FrameworkElementFactory factory = new FrameworkElementFactory(typeof(Controls.InfoButton));
@@ -154,7 +154,7 @@ namespace m0.UIWpf.Visualisers
         {
             DataGridTemplateColumn valueColumn = new DataGridTemplateColumn();
 
-            valueColumn.CellStyle = (Style)FindResource("0ListValueColumn");
+            valueColumn.CellStyle = CreateHighlightedCellStyle("0ListValueColumn");
 
             //
             // CELL TEMPLATE

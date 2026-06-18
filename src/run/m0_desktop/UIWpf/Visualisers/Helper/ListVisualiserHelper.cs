@@ -17,6 +17,7 @@ using m0.UIWpf.Commands;
 using m0.Graph.ExecutionFlow;
 using m0.User.Process.UX;
 using System.Windows.Controls.Primitives;
+using m0.UIWpf.Visualisers;
 using m0.UIWpf.Visualisers.Helper;
 using static m0.Graph.ExecutionFlow.ExecutionFlowHelper;
 
@@ -181,42 +182,6 @@ namespace m0.UIWpf.Visualisers.Helper
 
         // DRAG AND DROP
 
-        IVertex tempSelectedVertices;
-
-        protected void CopySelectedVerticesToTemp()
-        {
-            tempSelectedVertices = MinusZero.Instance.CreateTempVertex();
-
-            tempSelectedVertices.AddExternalReference();
-
-            GraphUtil.CopyShallow(Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"), tempSelectedVertices);
-        }
-
-        protected void RestoreSelectedVertices()
-        {            
-            if (tempSelectedVertices != null)
-            {
-                VisualiserUtil.RemoveAllSelectedEdges(Visualiser);
-
-                IVertex sv = Vertex.Get(false, "SelectedEdges:");
-                GraphUtil.CopyShallow(tempSelectedVertices, sv);
-
-                tempSelectedVertices.RemoveExternalReference();
-            }
-        }
-
-        // Should be corrected as uncommeted makes dnd from tree to UXContainer not working
-
-        /*private override void dndPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            dndStartPoint = e.GetPosition(VisualiserAsFrameworkElement);
-            hasButtonBeenDown = true;
-
-            CopySelectedVerticesToTemp();
-
-            MinusZero.Instance.IsGUIDragging = false;
-        }*/
-
         protected override void dndPreviewMouseMove(object sender, MouseEventArgs e)
         {
             Point mousePos = e.GetPosition(VisualiserAsFrameworkElement);
@@ -243,21 +208,13 @@ namespace m0.UIWpf.Visualisers.Helper
             {
                 isDraggin = true;
 
-                RestoreSelectedVertices();
+                TreeVisualiser treeVisualiser = Visualiser as TreeVisualiser;
 
-                IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
+                IVertex dndVertex = treeVisualiser != null
+                    ? treeVisualiser.TryPrepareDragAndBuildDndVertex(dndStartPoint)
+                    : BuildLegacyDndVertex();
 
-                if (Vertex.Get(false, @"SelectedEdges:\") != null)
-                    foreach (IEdge ee in Vertex.GetAll(false, @"SelectedEdges:\"))
-                        dndVertex.AddEdge(null, ee.To);
-                else
-                {
-                    IVertex v = Visualiser.GetEdgeByPoint(dndStartPoint);
-                    if (v != null)
-                        dndVertex.AddEdge(null, v);
-                }
-
-                if (dndVertex.Count() > 0)
+                if (dndVertex != null && dndVertex.Count() > 0)
                 {
                     dndVertex.AddExternalReference();
 
@@ -270,7 +227,29 @@ namespace m0.UIWpf.Visualisers.Helper
                 }
 
                 isDraggin = false;
+                hasButtonBeenDown = false;
             }
+        }
+
+        private IVertex BuildLegacyDndVertex()
+        {
+            IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
+            IVertex selectedEdgeVertices = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
+
+            if (selectedEdgeVertices != null && selectedEdgeVertices.Count() > 0)
+            {
+                foreach (IEdge selectedEdgeVertexEdge in selectedEdgeVertices)
+                    dndVertex.AddEdge(null, selectedEdgeVertexEdge.To);
+
+                return dndVertex;
+            }
+
+            IVertex edgeByPoint = Visualiser.GetEdgeByPoint(dndStartPoint);
+
+            if (edgeByPoint != null)
+                dndVertex.AddEdge(null, edgeByPoint);
+
+            return dndVertex;
         }
 
         // Should be corrected as uncommeted makes dnd from tree to UXContainer not working
@@ -292,7 +271,7 @@ namespace m0.UIWpf.Visualisers.Helper
 
         protected override void dndMouseEnter(object sender, MouseEventArgs e)
         {
-            hasButtonBeenDown = false;
+            base.dndMouseEnter(sender, e);
         }
     }
 }

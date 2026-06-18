@@ -41,6 +41,7 @@ namespace m0.UIWpf.Visualisers
         private bool isExpandCollapseAnimationInProgress;
         private ToggleButton expanderToggleButton;
         private bool isKeyboardHighlighted;
+        private bool isMouseHoverHighlighted;
 
         private void Select(bool IsCtrl)
         {
@@ -63,42 +64,72 @@ namespace m0.UIWpf.Visualisers
             get { return _IsSelected; }
             set
             {
+                if (_IsSelected == value)
+                    return;
+
                 _IsSelected = value;
-
-                MetaToEdgeControl headerControl = Header as MetaToEdgeControl;
-
-                if (headerControl != null)
-                    headerControl.IsSelected = value;
-
-                UpdateFullWidthVisualState();
-                InvalidateVisual();
+                ApplyEdgeVisualState();
             }
         }
 
         public TreeVisualiser ParentVisualiser {get; set;}
+
+        public bool IsMouseHoverHighlighted
+        {
+            get { return isMouseHoverHighlighted; }
+            set
+            {
+                if (isMouseHoverHighlighted == value)
+                    return;
+
+                isMouseHoverHighlighted = value;
+                ApplyEdgeVisualState();
+            }
+        }
 
         public bool IsKeyboardHighlighted
         {
             get { return isKeyboardHighlighted; }
             set
             {
+                if (isKeyboardHighlighted == value)
+                    return;
+
                 isKeyboardHighlighted = value;
-
-                MetaToEdgeControl headerControl = Header as MetaToEdgeControl;
-
-                if (headerControl != null)
-                    headerControl.IsHighlighted = value;
-
-                UpdateFullWidthVisualState();
-                InvalidateVisual();
+                ApplyEdgeVisualState();
             }
+        }
+
+        private void ApplyEdgeVisualState()
+        {
+            if (ParentVisualiser == null)
+                return;
+
+            MetaToEdgeControl headerControl = Header as MetaToEdgeControl;
+
+            if (headerControl != null)
+            {
+                headerControl.ExternalBackgroundMode = true;
+                headerControl.IsKeyboardHighlightedSelected = IsSelected && isKeyboardHighlighted;
+                headerControl.IsSelected = _IsSelected;
+                headerControl.IsHighlighted = isKeyboardHighlighted;
+                headerControl.IsMouseHoverHighlighted = isMouseHoverHighlighted;
+                headerControl.HorizontalAlignment = HorizontalAlignment.Stretch;
+                headerControl.ClearValue(FrameworkElement.MarginProperty);
+                headerControl.ClearValue(FrameworkElement.WidthProperty);
+                headerControl.RefreshSelectionState();
+            }
+
+            HorizontalContentAlignment = HorizontalAlignment.Stretch;
+            ClearValue(Control.BackgroundProperty);
+            InvalidateVisual();
         }
 
         protected override void OnRender(DrawingContext drawingContext)
         {
             base.OnRender(drawingContext);
 
-            if (ParentVisualiser == null || !ParentVisualiser.FullWidthSelectionHighlight)
+            if (ParentVisualiser == null)
                 return;
 
             Brush backgroundBrush = null;
@@ -113,7 +144,12 @@ namespace m0.UIWpf.Visualisers
 
             FrameworkElement headerElement = Header as FrameworkElement;
 
-            if (headerElement == null)
+            if (headerElement == null || headerElement.ActualHeight <= 0)
+                return;
+
+            double backgroundWidth = ParentVisualiser.GetFullWidthBackgroundWidth();
+
+            if (backgroundWidth <= 0)
                 return;
 
             Point itemPositionInTree;
@@ -132,7 +168,7 @@ namespace m0.UIWpf.Visualisers
             Rect backgroundRect = new Rect(
                 -itemPositionInTree.X,
                 headerPositionInItem.Y,
-                ParentVisualiser.ActualWidth,
+                backgroundWidth,
                 headerElement.ActualHeight);
 
             drawingContext.DrawRectangle(backgroundBrush, null, backgroundRect);
@@ -225,6 +261,8 @@ namespace m0.UIWpf.Visualisers
             }
 
             a.Handled = true;
+
+            ParentVisualiser.RegisterPendingMouseDownFromItem(this);
         }
 
         IEdge GetEdge()
@@ -241,25 +279,18 @@ namespace m0.UIWpf.Visualisers
                 return;
             }
 
-            bool IsCtrl = false;
-
-            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
-                IsCtrl = true;
-
-            bool WasSelected = IsSelected;            
-
-            if (!IsCtrl)            
-                ParentVisualiser.ClearAllSelectedItems();
-
-            if (WasSelected)
-                Unselect(IsCtrl);
-            else
-                Select(IsCtrl);
+            ParentVisualiser.TryApplyPendingMouseClickFromItem(this);
 
             a.Handled = true;
+        }
 
-            //base.OnMouseLeftButtonDown(a);
-        }        
+        protected override void OnMouseRightButtonDown(MouseButtonEventArgs a)
+        {
+            if (IsInExpandCollapseClickArea(a.GetPosition(this)))
+                return;
+
+            ParentVisualiser.TryApplyContextMenuSelectionFromItem(this);
+        }
 
         private bool IsInExpandCollapseClickArea(Point position)
         {
@@ -442,8 +473,6 @@ namespace m0.UIWpf.Visualisers
 
         public void UpdateHeader()
         {
-            bool wasSelected = _IsSelected;
-
             MetaToEdgeControl headerControl = Header as MetaToEdgeControl;
 
             if (headerControl == null)
@@ -457,8 +486,7 @@ namespace m0.UIWpf.Visualisers
             headerControl.ShowIcon = ParentVisualiser.ShowIcons;
             headerControl.BaseEdge = GetEdge();
             headerControl.RefreshVisuals();
-            headerControl.IsSelected = wasSelected;
-            UpdateFullWidthVisualState();
+            ApplyEdgeVisualState();
         }
 
         private void HeaderControlMouseEnter(object sender, MouseEventArgs e)
@@ -473,42 +501,7 @@ namespace m0.UIWpf.Visualisers
 
         public void SetHeaderHighlight(bool isHighlighted)
         {
-            IsKeyboardHighlighted = isHighlighted;
-        }
-
-        private void UpdateFullWidthVisualState()
-        {
-            if (ParentVisualiser == null)
-                return;
-
-            if (!ParentVisualiser.FullWidthSelectionHighlight)
-            {
-                MetaToEdgeControl normalHeaderControl = Header as MetaToEdgeControl;
-
-                if (normalHeaderControl != null)
-                    normalHeaderControl.ExternalBackgroundMode = false;
-
-                ClearValue(Control.BackgroundProperty);
-                return;
-            }
-
-            if (Header == null)
-                return;
-
-            MetaToEdgeControl headerControl = Header as MetaToEdgeControl;
-
-            if (headerControl != null)
-            {
-                headerControl.ExternalBackgroundMode = true;
-                headerControl.IsKeyboardHighlightedSelected = IsSelected && isKeyboardHighlighted;
-                headerControl.HorizontalAlignment = HorizontalAlignment.Stretch;
-                headerControl.ClearValue(FrameworkElement.MarginProperty);
-                headerControl.ClearValue(FrameworkElement.WidthProperty);
-            }
-
-            HorizontalContentAlignment = HorizontalAlignment.Stretch;
-            ClearValue(Control.BackgroundProperty);
-            InvalidateVisual();
+            IsMouseHoverHighlighted = isHighlighted;
         }
 
         public INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
@@ -613,7 +606,7 @@ namespace m0.UIWpf.Visualisers
 
         public bool SelectionProphibited { get; set; }
 
-        private bool fullWidthSelectionHighlight;
+        private bool fullWidthSelectionHighlight = true;
 
         public bool FullWidthSelectionHighlight
         {
@@ -622,6 +615,7 @@ namespace m0.UIWpf.Visualisers
             {
                 fullWidthSelectionHighlight = value;
                 ApplyFullWidthSelectionHighlightToAllItems();
+                ScheduleFullWidthVisualRefresh();
             }
         }
 
@@ -633,6 +627,12 @@ namespace m0.UIWpf.Visualisers
         protected bool TurnOffSelectedItemsUpdate = false;
 
         protected bool TurnOffSelectedVerticesUpdate = false;
+
+        private TreeVisualiserViewItem pendingMouseDownItem;
+        private IEdge pendingMouseDownEdge;
+        private bool pendingMouseDownIsCtrl;
+        private bool pendingWasInSelectionAtMouseDown;
+        private bool suppressNextMouseUpSelection;
 
         public TreeVisualiser() : this(null, null, false) { }
 
@@ -733,6 +733,7 @@ namespace m0.UIWpf.Visualisers
             this.BorderThickness = new Thickness(0);
             this.Padding = new Thickness(0);
             this.AllowDrop = true;
+            this.SizeChanged += TreeVisualiser_SizeChanged;
 
             // THIS REDUCES PERFORMANCE ON LARGE TREES SO commented out
             //VirtualizingStackPanel.SetIsVirtualizing(this, true); 
@@ -847,6 +848,62 @@ namespace m0.UIWpf.Visualisers
             // must re-register so that the trigger always observes the currently visualised
             // root vertex.
             RegisterRootTreeBaseListener();
+            ScheduleFullWidthVisualRefresh();
+        }
+
+        internal double GetFullWidthBackgroundWidth()
+        {
+            if (ActualWidth > 0)
+                return ActualWidth;
+
+            if (RenderSize.Width > 0)
+                return RenderSize.Width;
+
+            return 0;
+        }
+
+        private void TreeVisualiser_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (!fullWidthSelectionHighlight || e.NewSize.Width <= 0)
+                return;
+
+            InvalidateFullWidthItemVisuals();
+        }
+
+        private void ScheduleFullWidthVisualRefresh()
+        {
+            if (!fullWidthSelectionHighlight)
+                return;
+
+            Dispatcher.BeginInvoke(new Action(RefreshFullWidthItemVisuals), DispatcherPriority.Loaded);
+        }
+
+        private void RefreshFullWidthItemVisuals()
+        {
+            if (!fullWidthSelectionHighlight)
+                return;
+
+            ApplyFullWidthSelectionHighlightToAllItems();
+            InvalidateFullWidthItemVisuals();
+        }
+
+        private void InvalidateFullWidthItemVisuals()
+        {
+            InvalidateFullWidthItemVisuals(Items);
+        }
+
+        private void InvalidateFullWidthItemVisuals(ItemCollection items)
+        {
+            foreach (object item in items)
+            {
+                TreeVisualiserViewItem treeItem = item as TreeVisualiserViewItem;
+
+                if (treeItem == null)
+                    continue;
+
+                treeItem.InvalidateVisual();
+                InvalidateFullWidthItemVisuals(treeItem.Items);
+            }
         }
 
         public void ScaleChange()
@@ -1008,29 +1065,37 @@ namespace m0.UIWpf.Visualisers
 
             TurnOffSelectedVerticesUpdate = true;
 
-            IVertex sv = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
+            IVertex selectedEdges = Vertex.Get(false, @"SelectedEdges:");
+
+            if (selectedEdges == null)
+            {
+                foreach (TreeViewItem i in Items)
+                    ClearAllSelectedItems_Reccurent(i);
+
+                TurnOffSelectedVerticesUpdate = false;
+                return;
+            }
 
             foreach (TreeViewItem i in Items)
-                SelectedVerticesUpdated_Reccurent(i,sv);
+                SelectedVerticesUpdated_Reccurent(i, selectedEdges);
 
             TurnOffSelectedVerticesUpdate = false;
         }
 
-        private void SelectedVerticesUpdated_Reccurent(TreeViewItem i,IVertex sv)
+        private void SelectedVerticesUpdated_Reccurent(TreeViewItem i, IVertex selectedEdges)
         {
             if (i is TreeVisualiserViewItem)
             {
                 TreeVisualiserViewItem ii = (TreeVisualiserViewItem)i;
 
-                
-                if (EdgeHelper.FindEdgeVertexByToVertex(sv, ((IEdge)ii.Tag).To)!=null)                
-                    ii.IsSelected = true;
-                else
-                    ii.IsSelected = false;
+                bool isSelected = selectedEdges != null
+                    && EdgeHelper.FindIEdgeVertexByIEdge(selectedEdges, (IEdge)ii.Tag) != null;
+
+                ii.IsSelected = isSelected;
             }
 
             foreach (TreeViewItem ii in i.Items)
-                SelectedVerticesUpdated_Reccurent(ii, sv);
+                SelectedVerticesUpdated_Reccurent(ii, selectedEdges);
         }
 
         public void UpdateSelectedVertices(bool IsCtrl, TreeVisualiserViewItem item)
@@ -1063,24 +1128,11 @@ namespace m0.UIWpf.Visualisers
             if (item.IsSelected)
                 EdgeHelper.AddEdgeVertex(sv, e);
             else
-                EdgeHelper.DeleteVertexByEdgeOnlyToVertex(sv, e);
+                EdgeHelper.DeleteVertexByEdge(sv, e);
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////
-
-            // LEGACY
-            //
-            // currently there is no support for same vertex in two places in tree begin selected / unselected
-            // this is due to performance
-            //
-            /*IVertex sv = Vertex.Get(false, "SelectedVertices:");
-
-            GraphUtil.RemoveAllEdges(sv);
-
-            foreach (TreeViewItem i in Items)
-                UpdateSelectedVertices_Reccurent(i, sv);
-             */
 
             TurnOffSelectedItemsUpdate = false;
         }
@@ -1104,6 +1156,107 @@ namespace m0.UIWpf.Visualisers
         {            
             foreach (TreeViewItem i in Items)
                 ClearAllSelectedItems_Reccurent(i);            
+        }
+
+        internal void RegisterPendingMouseDownFromItem(TreeVisualiserViewItem item)
+        {
+            if (SelectionProphibited || item == null)
+                return;
+
+            pendingMouseDownItem = item;
+            pendingMouseDownEdge = (IEdge)item.Tag;
+            pendingMouseDownIsCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+            pendingWasInSelectionAtMouseDown = SelectedEdgesInteractionHelper.WasEdgeInSelectedEdges(
+                Vertex,
+                pendingMouseDownEdge);
+            suppressNextMouseUpSelection = false;
+        }
+
+        internal void TryApplyContextMenuSelectionFromItem(TreeVisualiserViewItem item)
+        {
+            if (SelectionProphibited || item == null)
+                return;
+
+            SelectedEdgesInteractionHelper.ApplyForContextMenu(Vertex, (IEdge)item.Tag);
+            SelectedVerticesUpdated();
+        }
+
+        internal void TryApplyPendingMouseClickFromItem(TreeVisualiserViewItem item)
+        {
+            if (suppressNextMouseUpSelection)
+            {
+                ClearPendingMouseDown();
+                return;
+            }
+
+            if (SelectionProphibited
+                || pendingMouseDownItem == null
+                || pendingMouseDownEdge == null
+                || pendingMouseDownItem != item)
+            {
+                ClearPendingMouseDown();
+                return;
+            }
+
+            PendingEdgeMouseGesture pendingGesture = new PendingEdgeMouseGesture
+            {
+                ClickedEdge = pendingMouseDownEdge,
+                IsCtrl = pendingMouseDownIsCtrl,
+                WasInSelectionAtMouseDown = pendingWasInSelectionAtMouseDown
+            };
+
+            SelectedEdgesInteractionHelper.ApplyForClick(Vertex, pendingGesture);
+            SelectedVerticesUpdated();
+            ClearPendingMouseDown();
+        }
+
+        internal IVertex TryPrepareDragAndBuildDndVertex(Point dndStartPoint)
+        {
+            IEdge clickedEdge = pendingMouseDownEdge;
+            bool isCtrl = pendingMouseDownIsCtrl;
+            bool wasInSelectionAtMouseDown = pendingWasInSelectionAtMouseDown;
+            IVertex fallbackEdgeVertex = null;
+
+            if (clickedEdge == null)
+            {
+                fallbackEdgeVertex = GetEdgeByPoint(dndStartPoint);
+
+                if (fallbackEdgeVertex == null)
+                    return null;
+
+                clickedEdge = EdgeHelper.GetIEdgeByEdgeVertex(fallbackEdgeVertex);
+                isCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+                wasInSelectionAtMouseDown = SelectedEdgesInteractionHelper.WasEdgeInSelectedEdges(Vertex, clickedEdge);
+            }
+            else
+                fallbackEdgeVertex = GetEdgeByPoint(dndStartPoint);
+
+            PendingEdgeMouseGesture pendingGesture = new PendingEdgeMouseGesture
+            {
+                ClickedEdge = clickedEdge,
+                IsCtrl = isCtrl,
+                WasInSelectionAtMouseDown = wasInSelectionAtMouseDown
+            };
+
+            SelectedEdgesInteractionHelper.ApplyForDrag(Vertex, pendingGesture);
+            SelectedVerticesUpdated();
+            suppressNextMouseUpSelection = true;
+
+            IVertex dndVertex = SelectedEdgesInteractionHelper.BuildDndVertexFromSelectedEdges(
+                Vertex,
+                fallbackEdgeVertex);
+
+            ClearPendingMouseDown();
+
+            return dndVertex;
+        }
+
+        internal void ClearPendingMouseDown()
+        {
+            pendingMouseDownItem = null;
+            pendingMouseDownEdge = null;
+            pendingMouseDownIsCtrl = false;
+            pendingWasInSelectionAtMouseDown = false;
         }
 
         private void ApplyFullWidthSelectionHighlightToAllItems()
@@ -1229,6 +1382,7 @@ namespace m0.UIWpf.Visualisers
             isAfterLastKeyboardPosition = false;
             keyboardHighlightedItem.IsKeyboardHighlighted = true;
             keyboardHighlightedItem.BringIntoView();
+            ScheduleFullWidthVisualRefresh();
         }
 
         private void GoBeforeFirstKeyboardHighlightPosition()
@@ -1327,9 +1481,9 @@ namespace m0.UIWpf.Visualisers
 
             TurnOffSelectedVerticesUpdate = true;
 
-            IVertex sv = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
+            IVertex selectedEdges = Vertex.Get(false, @"SelectedEdges:");
 
-            if (EdgeHelper.FindIEdgeVertexByIEdge(sv, e)!=null)
+            if (selectedEdges != null && EdgeHelper.FindIEdgeVertexByIEdge(selectedEdges, e) != null)
                 i.IsSelected = true;
 
             TurnOffSelectedVerticesUpdate = false;

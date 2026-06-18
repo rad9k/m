@@ -319,15 +319,15 @@ namespace m0.UIWpf.Controls
             Copy.Click += OnCopy;
             this.Items.Add(Copy);
 
-            MenuItem Paste_Shallow = createMenuItem("menu-Paste-Shallow", "Paste (shallow)");
+            MenuItem Paste_Shallow = createMenuItem("menu-Paste-Shallow", "Paste Edge (shallow)");
             Paste_Shallow.Click += OnPaste_Shallow;
             this.Items.Add(Paste_Shallow);
 
-            MenuItem Paste_Deep = createMenuItem("menu-Paste-Deep", "Paste (deep)");
+            MenuItem Paste_Deep = createMenuItem("menu-Paste-Deep", "Paste Subgraph (deep)");
             Paste_Deep.Click += OnPaste_Deep;
             this.Items.Add(Paste_Deep);
 
-            MenuItem Paste_Replace = createMenuItem("menu-Replace", "Replace (deep)");
+            MenuItem Paste_Replace = createMenuItem("menu-Replace", "Replace Subgraph(deep)");
             Paste_Replace.Click += OnReplace;
             this.Items.Add(Paste_Replace);
 

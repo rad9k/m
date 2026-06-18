@@ -1537,7 +1537,9 @@ namespace m0.UIWpf.VertexCommander
 
             currentKeyboardHighlightPane = pane;
             currentKeyboardHighlightSection = KeyboardHighlightSection.OutEdges;
-            SetKeyboardHighlightPosition(pane, KeyboardHighlightSection.OutEdges, true);
+            Dispatcher.BeginInvoke(
+                new Action(() => SetKeyboardHighlightPosition(pane, KeyboardHighlightSection.OutEdges, true)),
+                System.Windows.Threading.DispatcherPriority.Loaded);
         }
 
         private void SetKeyboardHighlightPosition(

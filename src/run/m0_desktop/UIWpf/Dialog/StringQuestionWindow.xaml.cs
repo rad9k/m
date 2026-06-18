@@ -43,12 +43,20 @@ namespace m0.UIWpf.Dialog
             if (position!=null)
             {
                 _mousePosition =(Point) position;
-                //this.Loaded += new RoutedEventHandler(OnLoad);
             }
             else
                 Owner = m0Main.Instance;
 
+            Loaded += StringQuestionWindow_Loaded;
+
             ShowDialog();
+        }
+
+        private void StringQuestionWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            Dispatcher.BeginInvoke(
+                new Action(() => AnswerBox.Focus()),
+                System.Windows.Threading.DispatcherPriority.Input);
         }
 
         void FinishDialog()

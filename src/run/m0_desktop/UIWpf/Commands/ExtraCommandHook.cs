@@ -38,7 +38,7 @@ namespace m0.UIWpf.Commands
                 return;
 
 
-            IVertex toVertex = GraphUtil.GetQueryOutFirst(baseVertex, null, "To");
+            IVertex toVertex = GraphUtil.GetQueryOutFirst(baseVertex, "To", null);
 
             IList<IEdge> isVertexes = GraphUtil.GetQueryOut(toVertex, "$Is", null);
 
@@ -46,9 +46,11 @@ namespace m0.UIWpf.Commands
 
             foreach (IEdge edge in isVertexes)
             {
-                IList<IEdge> userCommands_forIs = GraphUtil.GetQueryOut(edge.to, "UserCommand", null);
-            }
+                IList<IEdge> userCommands_forIs = GraphUtil.GetQueryOut(edge.To, "UserCommand", null);
 
+                foreach (IEdge e in userCommands_forIs)
+                    userCommands.Add(e);
+            }
             
 
             bool anythingAdded = false;
@@ -102,4 +104,4 @@ namespace m0.UIWpf.Commands
             }
         }
     }
-}}
+}

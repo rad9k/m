@@ -431,6 +431,7 @@ namespace m0.UIWpf.Visualisers
 
             this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
             this.PreviewMouseMove += dndPreviewMouseMove;
+            this.PreviewMouseRightButtonDown += OnGraphPreviewMouseRightButtonDown;
             this.Drop += dndDrop;
             this.AllowDrop = true;
 
@@ -1009,7 +1010,7 @@ namespace m0.UIWpf.Visualisers
             }
         }
         
-        protected override void OnMouseDown(MouseButtonEventArgs e)
+        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
             if (e.ClickCount == 2) // switch to another BaseVertex
             {
@@ -1027,8 +1028,6 @@ namespace m0.UIWpf.Visualisers
                         return;
                     }
 
-                    RestoreSelectedVertices();
-
                     GraphUtil.ReplaceEdge(Vertex.Get(false, "BaseEdge:"), "To", kvp.Key);
 
                     IVertex updatedBaseTo = Vertex.Get(false, @"BaseEdge:\To:");
@@ -1043,74 +1042,73 @@ namespace m0.UIWpf.Visualisers
                 if (SelectionProphibited)
                     return;
 
-                   KeyValuePair<IVertex, SimpleVisualiserWrapper> kvp =
-                       GetVertexWrapperByEventSource(e.OriginalSource ?? e.Source);
+                KeyValuePair<IVertex, SimpleVisualiserWrapper> kvp =
+                    GetVertexWrapperByEventSource(e.OriginalSource ?? e.Source);
 
-                   if (kvp.Key != null)
-                   {
-                       bool IsCtrl = false;
+                if (kvp.Key != null)
+                {
+                    bool IsCtrl = false;
 
-                       if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
-                           IsCtrl = true;
+                    if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+                        IsCtrl = true;
 
-                       pendingMouseDownSelectionVertex = kvp.Key;
-                       pendingMouseDownSelectionIsCtrl = IsCtrl;
-                       suppressNextMouseUpSelection = false;
-
+                    pendingMouseDownSelectionVertex = kvp.Key;
+                    pendingMouseDownSelectionIsCtrl = IsCtrl;
+                    pendingWasInSelectionAtMouseDown =
+                        SelectedEdgesInteractionHelper.WasToVertexInSelectedEdges(Vertex, kvp.Key);
+                    suppressNextMouseUpSelection = false;
                 }
             }
-            
+
             e.Handled = true;
 
-            base.OnMouseDown(e);
+            base.OnMouseLeftButtonDown(e);
         }
 
-        protected override void OnMouseUp(MouseButtonEventArgs e)
+        protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
         {
             if (!suppressNextMouseUpSelection && pendingMouseDownSelectionVertex != null)
-                ApplyPendingMouseSelection();
+            {
+                KeyValuePair<IVertex, SimpleVisualiserWrapper> kvp =
+                    GetVertexWrapperByEventSource(e.OriginalSource ?? e.Source);
+
+                if (kvp.Key == pendingMouseDownSelectionVertex)
+                    ApplyPendingMouseSelection();
+            }
 
             pendingMouseDownSelectionVertex = null;
+            pendingWasInSelectionAtMouseDown = false;
             suppressNextMouseUpSelection = false;
 
-            base.OnMouseUp(e);
+            base.OnMouseLeftButtonUp(e);
         }
 
         private void ApplyPendingMouseSelection()
         {
-            if (pendingMouseDownSelectionVertex == null
-                || DisplayedVerticesUIElements == null
-                || !DisplayedVerticesUIElements.ContainsKey(pendingMouseDownSelectionVertex))
+            if (pendingMouseDownSelectionVertex == null || SelectionProphibited)
                 return;
 
-            SimpleVisualiserWrapper wrapper = DisplayedVerticesUIElements[pendingMouseDownSelectionVertex];
-            IVertex selectedEdges = Vertex.Get(false, "SelectedEdges:");
-
-            Interaction.BeginInteractionWithGraph();
-
-            if (pendingMouseDownSelectionIsCtrl)
+            PendingToVertexMouseGesture pendingGesture = new PendingToVertexMouseGesture
             {
-                if (wrapper.IsSelected)
-                {
-                    wrapper.Unselect();
-                    EdgeHelper.DeleteVertexByEdgeTo(selectedEdges, pendingMouseDownSelectionVertex);
-                }
-                else
-                {
-                    wrapper.Select();
-                    EdgeHelper.AddEdgeVertexByToVertex(selectedEdges, pendingMouseDownSelectionVertex);
-                }
-            }
-            else
-            {
-                UnselectAllSelected();
-                GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(selectedEdges);
-                wrapper.Select();
-                EdgeHelper.AddEdgeVertexByToVertex(selectedEdges, pendingMouseDownSelectionVertex);
-            }
+                ClickedToVertex = pendingMouseDownSelectionVertex,
+                IsCtrl = pendingMouseDownSelectionIsCtrl,
+                WasInSelectionAtMouseDown = pendingWasInSelectionAtMouseDown
+            };
 
-            Interaction.EndInteractionWithGraph();
+            SelectedEdgesInteractionHelper.ApplyForClickByToVertex(Vertex, pendingGesture);
+            SelectedVerticesUpdated();
+        }
 
+        private void OnGraphPreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            KeyValuePair<IVertex, SimpleVisualiserWrapper> kvp =
+                GetVertexWrapperByEventSource(e.OriginalSource ?? e.Source);
+
+            if (kvp.Key == null || SelectionProphibited)
+                return;
+
+            SelectedEdgesInteractionHelper.ApplyForContextMenuByToVertex(Vertex, kvp.Key);
+            SelectedVerticesUpdated();
         }
 
         public void ClearKeyboardHighlight()
@@ -1326,33 +1324,8 @@ namespace m0.UIWpf.Visualisers
 
         private IVertex pendingMouseDownSelectionVertex;
         private bool pendingMouseDownSelectionIsCtrl;
+        private bool pendingWasInSelectionAtMouseDown;
         private bool suppressNextMouseUpSelection;
-
-        IVertex tempSelectedVertices;
-
-        protected void CopySelectedVerticesToTemp()
-        {
-            tempSelectedVertices = MinusZero.Instance.CreateTempVertex();
-            tempSelectedVertices.AddExternalReference();
-
-            GraphUtil.CopyShallow(Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"), tempSelectedVertices);
-        }
-
-        protected void RestoreSelectedVertices()
-        {
-            IVertex sv = Vertex.Get(false, "SelectedEdges:");
-
-            if (tempSelectedVertices != null)
-            {
-                GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
-
-                GraphUtil.CopyShallow(tempSelectedVertices, sv);
-
-                GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(tempSelectedVertices); // 11.10.2018 ADDED. should cause no problems
-                tempSelectedVertices.RemoveExternalReference();
-                tempSelectedVertices = null;
-            }
-        }
 
         protected void UnselectAll()
         {
@@ -1463,9 +1436,41 @@ namespace m0.UIWpf.Visualisers
             dndStartPoint = e.GetPosition(this);
             hasButtonBeenDown = true;
 
-            CopySelectedVerticesToTemp();
-
             MinusZero.Instance.IsGUIDragging = false;
+        }
+
+        private IVertex TryPrepareDragAndBuildDndVertex()
+        {
+            IVertex clickedToVertex = pendingMouseDownSelectionVertex;
+            bool isCtrl = pendingMouseDownSelectionIsCtrl;
+            bool wasInSelectionAtMouseDown = pendingWasInSelectionAtMouseDown;
+            IVertex fallbackEdgeVertex = GetEdgeByPoint(dndStartPoint);
+
+            if (clickedToVertex == null)
+            {
+                if (fallbackEdgeVertex == null)
+                    return null;
+
+                clickedToVertex = GraphUtil.GetQueryOutFirst(fallbackEdgeVertex, "To", null);
+
+                if (clickedToVertex == null)
+                    return null;
+
+                isCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+                wasInSelectionAtMouseDown = SelectedEdgesInteractionHelper.WasToVertexInSelectedEdges(Vertex, clickedToVertex);
+            }
+
+            PendingToVertexMouseGesture pendingGesture = new PendingToVertexMouseGesture
+            {
+                ClickedToVertex = clickedToVertex,
+                IsCtrl = isCtrl,
+                WasInSelectionAtMouseDown = wasInSelectionAtMouseDown
+            };
+
+            SelectedEdgesInteractionHelper.ApplyForDragByToVertex(Vertex, pendingGesture);
+            SelectedVerticesUpdated();
+
+            return SelectedEdgesInteractionHelper.BuildDndVertexFromSelectedEdges(Vertex, fallbackEdgeVertex);
         }
 
         private void dndPreviewMouseMove(object sender, MouseEventArgs e)
@@ -1480,23 +1485,13 @@ namespace m0.UIWpf.Visualisers
                 (Math.Abs(diff.Y) > Dnd.MinimumVerticalDragDistance)))
             {
                 suppressNextMouseUpSelection = true;
+
+                IVertex dndVertex = TryPrepareDragAndBuildDndVertex();
+
                 pendingMouseDownSelectionVertex = null;
+                pendingWasInSelectionAtMouseDown = false;
 
-                RestoreSelectedVertices();
-
-                IVertex dndVertex = MinusZero.Instance.CreateTempVertex();
-
-                if (Vertex.Get(false, @"SelectedEdges:\{$Is:Edge}") != null)
-                    foreach (IEdge ee in Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"))
-                        dndVertex.AddEdge(null, ee.To);
-                else
-                {
-                    IVertex v = GetEdgeByPoint(dndStartPoint);
-                    if (v != null)
-                        dndVertex.AddEdge(null, v);
-                }
-
-                if (dndVertex.Count() > 0)
+                if (dndVertex != null && dndVertex.Count() > 0)
                 {
                     dndVertex.AddExternalReference();
 
@@ -1504,7 +1499,11 @@ namespace m0.UIWpf.Visualisers
                     dragData.SetData("DragSource", this);
 
                     Dnd.DoDragDrop(this, dragData);
+
+                    e.Handled = true;
                 }
+
+                hasButtonBeenDown = false;
             }
         }
 

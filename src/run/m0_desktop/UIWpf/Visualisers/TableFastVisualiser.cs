@@ -31,7 +31,7 @@ namespace m0.UIWpf.Visualisers
         {
             DataGridTemplateColumn valueColumn = new DataGridTemplateColumn();
 
-            valueColumn.CellStyle = (Style)FindResource("0ListValueColumn");
+            valueColumn.CellStyle = CreateHighlightedCellStyle("0ListValueColumn");
 
             //
             // CELL TEMPLATE
