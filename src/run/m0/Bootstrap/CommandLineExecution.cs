@@ -122,7 +122,7 @@ namespace m0.Bootstrap
 
             user.AddVertex(QueriesRoot_meta, null);
 
-            user.Get(false, "Settings:").AddEdge(AllowBlankAreaDragAndDrop_meta, sm.Get(false, @"ZeroTypes\User\AllowBlankAreaDragAndDropEnum\StartAndEnd"));
+            user.Get(false, "Settings:").AddEdge(AllowBlankAreaDragAndDrop_meta, sm.Get(false, @"ZeroTypes\User\AllowBlankAreaDragAndDropEnum\No"));
 
             user.AddEdge(Is_meta, User_meta);
             user.Get(false, "Settings:").AddEdge(Is_meta, smzu.Get(false, @"Settings"));

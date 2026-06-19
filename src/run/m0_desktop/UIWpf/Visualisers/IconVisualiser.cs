@@ -106,6 +106,7 @@ namespace m0.UIWpf.Visualisers
             PreviewKeyDown += OnPreviewKeyDown;
             PreviewMouseLeftButtonDown += OnPreviewMouseLeftButtonDown;
             PreviewMouseLeftButtonUp += OnPreviewMouseLeftButtonUp;
+            PreviewMouseRightButtonDown += OnPreviewMouseRightButtonDown;
             PreviewMouseMove += OnPreviewMouseMoveForDnd;
             Drop += OnDropForDnd;
             MouseEnter += OnMouseEnterForDnd;
@@ -317,6 +318,7 @@ namespace m0.UIWpf.Visualisers
 
         public void OnLoad(object sender, RoutedEventArgs e)
         {
+            VisualiserHelper.AddContextMenu();
             BaseEdgeToUpdated();
         }
 
@@ -629,7 +631,6 @@ namespace m0.UIWpf.Visualisers
             item.Initialize(edge, iconSize);
 
             item.MouseLeftButtonDown += Item_MouseLeftButtonDown;
-            item.MouseRightButtonDown += Item_MouseRightButtonDown;
 
             displayedEdgeItems.Add(edge, item);
             itemsPanel.Children.Add(item);
@@ -662,16 +663,15 @@ namespace m0.UIWpf.Visualisers
             e.Handled = true;
         }
 
-        private void Item_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        private void OnPreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            IconVisualiserItem item = sender as IconVisualiserItem;
+            IEdge clickedEdge = GetDisplayedEdgeAtPoint(e.GetPosition(this));
 
-            if (item == null || item.BaseEdge == null || SelectionProphibited)
+            if (clickedEdge == null || SelectionProphibited)
                 return;
 
-            SelectedEdgesInteractionHelper.ApplyForContextMenu(Vertex, item.BaseEdge);
+            SelectedEdgesInteractionHelper.ApplyForContextMenu(Vertex, clickedEdge);
             SelectedVerticesUpdated();
-            e.Handled = true;
         }
 
         private void OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
