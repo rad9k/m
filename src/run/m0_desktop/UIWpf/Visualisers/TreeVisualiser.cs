@@ -290,6 +290,7 @@ namespace m0.UIWpf.Visualisers
                 return;
 
             ParentVisualiser.TryApplyContextMenuSelectionFromItem(this);
+            a.Handled = true;
         }
 
         private bool IsInExpandCollapseClickArea(Point position)
@@ -1660,7 +1661,8 @@ namespace m0.UIWpf.Visualisers
             return max;
         }
 
-        protected IVertex GetVertexByLocation_Reccurent(ItemCollection items,Point p){
+        protected IVertex GetVertexByLocation_Reccurent(ItemCollection items, Point p)
+        {
             foreach (TreeViewItem i in items)
             {
                 if (IsPointOverTreeViewItemHeaderText(i, p))

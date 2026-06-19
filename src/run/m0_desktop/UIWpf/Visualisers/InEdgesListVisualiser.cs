@@ -19,12 +19,15 @@ using m0.User.Process.UX;
 using m0.Util;
 using m0.ZeroTypes;
 using m0.ZeroUML;
+using static m0.Graph.ExecutionFlow.ExecutionFlowHelper;
 
 namespace m0.UIWpf.Visualisers
 {
     public class InEdgesListVisualiser : StackPanel, IListVisualiser, ITypedEdge, IKeyboardHighlight
     {
         private const double ColumnResizeCursorHotZone = 6.0;
+        private const bool InteractionLogEnabled = true;
+        private const string InteractionLogWhere = "InEdgesListVisualiser.Interaction";
 
         private static readonly IValueConverter FromIconSourceConverter = new InEdgesListVisualiserFromIconSourceConverter();
         private static readonly IValueConverter FromIconVisibilityConverter = new InEdgesListVisualiserFromIconVisibilityConverter();
@@ -38,9 +41,7 @@ namespace m0.UIWpf.Visualisers
 
         protected DataGrid ThisDataGrid;
 
-        protected bool TurnOffSelectedItemsUpdate = false;
-
-        protected bool TurnOffSelectedVerticesUpdate = false;
+        private bool suppressSelectionClear;
 
         private int currentHighlightPosition = -1;
         private bool isBeforeFirstPosition;
@@ -83,6 +84,8 @@ namespace m0.UIWpf.Visualisers
             ThisDataGrid.CanUserDeleteRows = false;
             ThisDataGrid.CanUserResizeColumns = true;
             ThisDataGrid.IsReadOnly = true;
+            ThisDataGrid.IsTabStop = false;
+            ThisDataGrid.FocusVisualStyle = null;
             ThisDataGrid.RowBackground = (Brush)FindResource("0BackgroundBrush");
             ThisDataGrid.Background = (Brush)FindResource("0BackgroundBrush");
             ThisDataGrid.HorizontalGridLinesBrush = (Brush)FindResource("0ForegroundBrush");
@@ -91,7 +94,6 @@ namespace m0.UIWpf.Visualisers
             ThisDataGrid.HeadersVisibility = DataGridHeadersVisibility.Column;
             ThisDataGrid.ColumnHeaderStyle = CreateResizableColumnHeaderStyle(false, false);
             ThisDataGrid.RowStyle = CreateHighlightedRowStyle();
-            ThisDataGrid.SelectedValuePath = "From";
             VirtualizingStackPanel.SetIsVirtualizing(ThisDataGrid, false);
 
             MinusZero mz = MinusZero.Instance;
@@ -103,10 +105,172 @@ namespace m0.UIWpf.Visualisers
                 SetVertexDefaultValues();
                 CreateView();
 
-                ThisDataGrid.SelectionChanged += OnSelectionChanged;
+                ThisDataGrid.SelectionChanged += OnDataGridSelectionChanged;
+                ThisDataGrid.PreviewMouseLeftButtonDown += OnDataGridPreviewMouseLeftButtonDown;
+                ThisDataGrid.PreviewMouseLeftButtonUp += OnDataGridPreviewMouseLeftButtonUp;
+                ThisDataGrid.PreviewMouseRightButtonDown += OnDataGridPreviewMouseRightButtonDown;
                 ThisDataGrid.PreviewKeyDown += OnKeyboardHighlightPreviewKeyDown;
                 ThisDataGrid.MouseDoubleClick += OnKeyboardHighlightMouseDoubleClick;
             }
+        }
+
+        private static void LogInteraction(string message)
+        {
+            if (!InteractionLogEnabled)
+                return;
+
+            MinusZero.Instance.Log(1, InteractionLogWhere, message);
+        }
+
+        private string DescribeSelectedEdgesSnapshot()
+        {
+            int count = Vertex?.GetAll(false, @"SelectedEdges:\{$Is:Edge}")?.Count() ?? 0;
+
+            return "selectedEdgesCount=" + count
+                + " selectionProhibited=" + SelectionProphibited
+                + " selectedItems=" + (ThisDataGrid?.SelectedItems?.Count ?? 0)
+                + " " + DescribeDataGridFocusSnapshot();
+        }
+
+        private string DescribeDataGridFocusSnapshot()
+        {
+            if (ThisDataGrid == null)
+                return "currentCell=invalid focusWithin=false";
+
+            DataGridCellInfo currentCell = ThisDataGrid.CurrentCell;
+
+            return "currentCell="
+                + (currentCell.IsValid
+                    ? "col=" + (currentCell.Column?.Header ?? "?") + " item=" + DescribeEdge(currentCell.Item as IEdge)
+                    : "invalid")
+                + " focusWithin=" + ThisDataGrid.IsKeyboardFocusWithin;
+        }
+
+        private static string DescribeEdge(IEdge edge)
+        {
+            if (edge == null)
+                return "null";
+
+            return "From=" + (edge.From?.Value?.ToString() ?? "")
+                + " Meta=" + (edge.Meta?.Value?.ToString() ?? "")
+                + " To=" + (edge.To?.Value?.ToString() ?? "");
+        }
+
+        private string DescribeRow(DataGridRow row)
+        {
+            if (row == null)
+                return "row=null";
+
+            return "rowIndex=" + row.GetIndex()
+                + " isSelected=" + row.IsSelected
+                + " isMouseOver=" + row.IsMouseOver
+                + " item={" + DescribeEdge(row.Item as IEdge) + "}";
+        }
+
+        private DataGridRow GetDataGridRowFromEventSource(DependencyObject source)
+        {
+            while (source != null && !(source is DataGridRow))
+                source = VisualTreeHelper.GetParent(source);
+
+            return source as DataGridRow;
+        }
+
+        private bool IsMouseOverColumnHeader(Point pointInDataGrid)
+        {
+            DataGridColumnHeadersPresenter headersPresenter =
+                WpfUtil.FindVisualChild<DataGridColumnHeadersPresenter>(ThisDataGrid);
+
+            return headersPresenter != null && pointInDataGrid.Y <= headersPresenter.ActualHeight;
+        }
+
+        private void ClearDataGridRowSelectionState(string reason)
+        {
+            if (ThisDataGrid == null)
+                return;
+
+            suppressSelectionClear = true;
+
+            try
+            {
+                ThisDataGrid.UnselectAll();
+
+                if (ThisDataGrid.CurrentCell.IsValid)
+                    ThisDataGrid.CurrentCell = new DataGridCellInfo();
+
+                LogInteraction(
+                    "ClearDataGridRowSelectionState reason=" + reason
+                    + " " + DescribeSelectedEdgesSnapshot());
+            }
+            finally
+            {
+                suppressSelectionClear = false;
+            }
+        }
+
+        private void OnDataGridSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            LogInteraction(
+                "SelectionChanged added=" + e.AddedItems.Count
+                + " removed=" + e.RemovedItems.Count
+                + " " + DescribeSelectedEdgesSnapshot());
+
+            if (suppressSelectionClear || ThisDataGrid.SelectedItems.Count == 0)
+                return;
+
+            ClearDataGridRowSelectionState("SelectionChanged");
+        }
+
+        private void OnDataGridPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (IsMouseOverColumnHeader(e.GetPosition(ThisDataGrid)))
+                return;
+
+            DataGridRow row = GetDataGridRowFromEventSource(e.OriginalSource as DependencyObject);
+
+            if (row == null)
+                return;
+
+            LogInteraction(
+                "PreviewMouseLeftButtonDown clickCount=" + e.ClickCount
+                + " " + DescribeRow(row)
+                + " " + DescribeSelectedEdgesSnapshot());
+
+            ClearDataGridRowSelectionState("PreviewMouseLeftButtonDown");
+
+            if (e.ClickCount >= 2)
+                return;
+
+            if (!ThisDataGrid.IsKeyboardFocusWithin)
+                Keyboard.Focus(this);
+
+            e.Handled = true;
+        }
+
+        private void OnDataGridPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (IsMouseOverColumnHeader(e.GetPosition(ThisDataGrid)))
+                return;
+
+            DataGridRow row = GetDataGridRowFromEventSource(e.OriginalSource as DependencyObject);
+
+            LogInteraction(
+                "PreviewMouseLeftButtonUp clickCount=" + e.ClickCount
+                + " " + DescribeRow(row)
+                + " " + DescribeSelectedEdgesSnapshot());
+        }
+
+        private void OnDataGridPreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (IsMouseOverColumnHeader(e.GetPosition(ThisDataGrid)))
+                return;
+
+            DataGridRow row = GetDataGridRowFromEventSource(e.OriginalSource as DependencyObject);
+
+            LogInteraction(
+                "PreviewMouseRightButtonDown " + DescribeRow(row)
+                + " " + DescribeSelectedEdgesSnapshot());
+
+            ClearDataGridRowSelectionState("PreviewMouseRightButtonDown");
         }
 
         public int CurrentHighlightPosition
@@ -179,6 +343,7 @@ namespace m0.UIWpf.Visualisers
             rowStyle.Setters.Add(new Setter(Control.BackgroundProperty, (Brush)FindResource("0BackgroundBrush")));
             rowStyle.Setters.Add(new Setter(Control.ForegroundProperty, (Brush)FindResource("0ForegroundBrush")));
             rowStyle.Setters.Add(new Setter(Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Stretch));
+            rowStyle.Setters.Add(new Setter(Control.FocusVisualStyleProperty, null));
 
             Trigger mouseOverTrigger = new Trigger
             {
@@ -188,15 +353,6 @@ namespace m0.UIWpf.Visualisers
             mouseOverTrigger.Setters.Add(new Setter(Control.ForegroundProperty, (Brush)FindResource("0HighlightBrush")));
             rowStyle.Triggers.Add(mouseOverTrigger);
 
-            Trigger selectedTrigger = new Trigger
-            {
-                Property = DataGridRow.IsSelectedProperty,
-                Value = true
-            };
-            selectedTrigger.Setters.Add(new Setter(Control.BackgroundProperty, (Brush)FindResource("0SelectionBrush")));
-            selectedTrigger.Setters.Add(new Setter(Control.BorderBrushProperty, (Brush)FindResource("0SelectionBrush")));
-            rowStyle.Triggers.Add(selectedTrigger);
-
             return rowStyle;
         }
 
@@ -204,6 +360,8 @@ namespace m0.UIWpf.Visualisers
         {
             Style baseCellStyle = (Style)FindResource("0ListValueColumn");
             Style cellStyle = new Style(typeof(DataGridCell), baseCellStyle);
+
+            cellStyle.Setters.Add(new Setter(Control.FocusVisualStyleProperty, null));
 
             DataTrigger rowMouseOverTrigger = new DataTrigger
             {
@@ -216,22 +374,12 @@ namespace m0.UIWpf.Visualisers
             rowMouseOverTrigger.Setters.Add(new Setter(Control.ForegroundProperty, (Brush)FindResource("0HighlightBrush")));
             cellStyle.Triggers.Add(rowMouseOverTrigger);
 
-            Trigger selectedTrigger = new Trigger
-            {
-                Property = DataGridCell.IsSelectedProperty,
-                Value = true
-            };
-            selectedTrigger.Setters.Add(new Setter(Control.BackgroundProperty, Brushes.Transparent));
-            selectedTrigger.Setters.Add(new Setter(Control.ForegroundProperty, (Brush)FindResource("0BackgroundBrush")));
-            selectedTrigger.Setters.Add(new Setter(Control.BorderBrushProperty, Brushes.Transparent));
-            cellStyle.Triggers.Add(selectedTrigger);
-
             return cellStyle;
         }
 
         private void OnKeyboardHighlightPreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key != Key.Up && e.Key != Key.Down && e.Key != Key.Space && e.Key != Key.Enter)
+            if (e.Key != Key.Up && e.Key != Key.Down && e.Key != Key.Enter)
                 return;
 
             e.Handled = true;
@@ -243,8 +391,6 @@ namespace m0.UIWpf.Visualisers
                 MoveKeyboardHighlight(-1);
             else if (e.Key == Key.Down)
                 MoveKeyboardHighlight(1);
-            else if (e.Key == Key.Space)
-                ToggleKeyboardHighlightedEdgeSelection();
             else
                 RaiseKeyboardHighlightEnterPressed();
         }
@@ -310,6 +456,11 @@ namespace m0.UIWpf.Visualisers
             isAfterLastPosition = false;
             currentKeyboardHighlightedEdge = GetKeyboardHighlightedEdge();
 
+            LogInteraction(
+                "SetKeyboardHighlightPosition pos=" + position
+                + " edge={" + DescribeEdge(currentKeyboardHighlightedEdge) + "}"
+                + " " + DescribeSelectedEdgesSnapshot());
+
             ApplyKeyboardHighlight();
         }
 
@@ -344,9 +495,7 @@ namespace m0.UIWpf.Visualisers
             if (row == null)
                 return;
 
-            Brush foregroundBrush = IsKeyboardHighlightedEdgeSelected()
-                ? (Brush)FindResource("0ForegroundBrush")
-                : (Brush)FindResource("0HighlightForegroundBrush");
+            Brush foregroundBrush = (Brush)FindResource("0HighlightForegroundBrush");
 
             row.Background = (Brush)FindResource("0HighlightBrush");
             row.Foreground = foregroundBrush;
@@ -364,27 +513,7 @@ namespace m0.UIWpf.Visualisers
 
         public void ToggleKeyboardHighlightedEdgeSelection()
         {
-            if (SelectionProphibited)
-                return;
-
-            IEdge keyboardHighlightedEdge = GetKeyboardHighlightedEdge();
-
-            if (keyboardHighlightedEdge == null)
-                return;
-
-            IVertex selectedEdges = Vertex.Get(false, "SelectedEdges:");
-            IEdge selectedEdgeVertexEdge = EdgeHelper.FindIEdgeVertexByIEdge(selectedEdges, keyboardHighlightedEdge);
-
-            Interaction.BeginInteractionWithGraph();
-
-            if (selectedEdgeVertexEdge != null)
-                selectedEdges.DeleteEdge(selectedEdgeVertexEdge);
-            else
-                EdgeHelper.AddEdgeVertex(selectedEdges, keyboardHighlightedEdge);
-
-            Interaction.EndInteractionWithGraph();
-
-            RefreshVisualStatesAfterItemsChanged();
+            LogInteraction("ToggleKeyboardHighlightedEdgeSelection (no-op) " + DescribeSelectedEdgesSnapshot());
         }
 
         private void RaiseKeyboardHighlightEnterPressed()
@@ -419,26 +548,10 @@ namespace m0.UIWpf.Visualisers
             SetKeyboardHighlightPosition(position);
             RaiseKeyboardHighlightEnterPressed();
             e.Handled = true;
-        }
 
-        private DataGridRow GetDataGridRowFromEventSource(DependencyObject dependencyObject)
-        {
-            while (dependencyObject != null && !(dependencyObject is DataGridRow))
-                dependencyObject = VisualTreeHelper.GetParent(dependencyObject);
-
-            return dependencyObject as DataGridRow;
-        }
-
-        private bool IsKeyboardHighlightedEdgeSelected()
-        {
-            IEdge keyboardHighlightedEdge = GetKeyboardHighlightedEdge();
-
-            if (keyboardHighlightedEdge == null)
-                return false;
-
-            IVertex selectedEdges = Vertex.Get(false, "SelectedEdges:");
-
-            return selectedEdges != null && EdgeHelper.FindIEdgeVertexByIEdge(selectedEdges, keyboardHighlightedEdge) != null;
+            LogInteraction(
+                "MouseDoubleClick -> navigate " + DescribeEdge(row.Item as IEdge)
+                + " " + DescribeSelectedEdgesSnapshot());
         }
 
         private IEdge GetKeyboardHighlightedEdge()
@@ -482,9 +595,6 @@ namespace m0.UIWpf.Visualisers
                     cell.ClearValue(Control.ForegroundProperty);
                     cell.ClearValue(Control.BorderBrushProperty);
                 }
-
-                if (ThisDataGrid.SelectedItems.Contains(row.Item))
-                    ApplySelectedRowVisualState(row);
             }
 
             currentHighlightPosition = -1;
@@ -611,6 +721,47 @@ namespace m0.UIWpf.Visualisers
             }
         }
 
+        private INoInEdgeInOutVertexVertex InEdgesListVertexChange(IExecution exe)
+        {
+            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "Scale"))
+                ScaleChange();
+
+            ListVisualiserHelper helper = (ListVisualiserHelper)VisualiserHelper;
+
+            if (helper.BaseEdgeToEventTriggeringUpdateVertex && (
+                IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:"))
+                || IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:\To:"))))
+            {
+                LogInteraction("VertexChange -> BaseEdgeToUpdated " + DescribeSelectedEdgesSnapshot());
+                BaseEdgeToUpdated();
+            }
+            else
+            {
+                bool needToUpdateBaseEdge = false;
+
+                foreach (string meta in MetaTriggeringUpdateVertex)
+                    if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, meta))
+                        needToUpdateBaseEdge = true;
+
+                if (needToUpdateBaseEdge)
+                {
+                    LogInteraction("VertexChange -> BaseEdgeToUpdated(meta) " + DescribeSelectedEdgesSnapshot());
+                    BaseEdgeToUpdated();
+                }
+
+                bool needToUpdateView = false;
+
+                foreach (string meta in MetaTriggeringUpdateView)
+                    if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, meta))
+                        needToUpdateView = true;
+
+                if (needToUpdateView)
+                    ViewAttributesUpdated();
+            }
+
+            return exe.Stack;
+        }
+
         protected virtual void PlatformClassInitialize(IVertex baseEdgeVertex)
         {
             new ListVisualiserHelper(parentVisualiser,
@@ -624,6 +775,8 @@ namespace m0.UIWpf.Visualisers
                 "AtomVisualiserFull",
                 baseEdgeVertex,
                 UpdateBaseEdgeCallSchemeEnum.OmmitFirst);
+
+            ((ListVisualiserHelper)VisualiserHelper).CustomVertexChangeEvent += InEdgesListVertexChange;
         }
 
         public void OnLoad(object sender, RoutedEventArgs e)
@@ -633,52 +786,7 @@ namespace m0.UIWpf.Visualisers
 
         public void UnselectAllSelectedEdges()
         {
-            ////////////////////////////////////////
-            Interaction.BeginInteractionWithGraph();
-            ////////////////////////////////////////
-
-            IVertex sv = Vertex.Get(false, "SelectedEdges:");
-
-            GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(sv);
-
-            ////////////////////////////////////////
-            Interaction.EndInteractionWithGraph();
-            ////////////////////////////////////////
-        }
-
-        protected void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (SelectionProphibited)
-            {
-                TurnOffSelectedVerticesUpdate = true;
-                ThisDataGrid.SelectedItems.Clear();
-                TurnOffSelectedVerticesUpdate = false;
-                return;
-            }
-
-            if (!TurnOffSelectedVerticesUpdate)
-            {
-                TurnOffSelectedItemsUpdate = true;
-
-                IVertex sv = Vertex.Get(false, "SelectedEdges:");
-
-                ////////////////////////////////////////
-                Interaction.BeginInteractionWithGraph();
-                ////////////////////////////////////////
-
-                UnselectAllSelectedEdges();
-
-                foreach (IEdge selectedEdge in ThisDataGrid.SelectedItems)
-                    EdgeHelper.AddEdgeVertex(sv, selectedEdge);
-
-                ////////////////////////////////////////
-                Interaction.EndInteractionWithGraph();
-                ////////////////////////////////////////
-
-                TurnOffSelectedItemsUpdate = false;
-                RefreshSelectedRowsVisualState();
-                RefreshKeyboardHighlightAfterItemsChanged();
-            }
+            LogInteraction("UnselectAllSelectedEdges (no-op) " + DescribeSelectedEdgesSnapshot());
         }
 
         protected virtual void CreateView()
@@ -827,44 +935,7 @@ namespace m0.UIWpf.Visualisers
 
         public void SelectedVerticesUpdated()
         {
-            if (SelectedEdgesChange != null)
-                SelectedEdgesChange();
-
-            if (SelectionProphibited)
-                return;
-
-            if (TurnOffSelectedItemsUpdate)
-                return;
-
-            TurnOffSelectedVerticesUpdate = true;
-
-            ThisDataGrid.SelectedItems.Clear();
-
-            IVertex selectedEdges = Vertex.Get(false, "SelectedEdges:");
-
-            if (selectedEdges != null)
-            {
-                foreach (IEdge selectedEdgeVertexEdge in selectedEdges)
-                {
-                    if (selectedEdgeVertexEdge.Meta.Value.ToString() != "Edge")
-                        continue;
-
-                    IVertex edgeVertex = selectedEdgeVertexEdge.To;
-                    IVertex from = edgeVertex.Get(false, "From:");
-                    IVertex meta = edgeVertex.Get(false, "Meta:");
-                    IVertex to = edgeVertex.Get(false, "To:");
-
-                    foreach (object item in ThisDataGrid.Items)
-                    {
-                        IEdge inEdge = item as IEdge;
-
-                        if (inEdge != null && inEdge.From == from && inEdge.Meta == meta && inEdge.To == to)
-                            ThisDataGrid.SelectedItems.Add(inEdge);
-                    }
-                }
-            }
-
-            TurnOffSelectedVerticesUpdate = false;
+            LogInteraction("SelectedVerticesUpdated (no grid/SelectedEdges sync) " + DescribeSelectedEdgesSnapshot());
         }
 
         protected virtual void SetVertexDefaultValues()
@@ -910,64 +981,7 @@ namespace m0.UIWpf.Visualisers
 
         private void RefreshVisualStatesAfterItemsChanged()
         {
-            SelectedVerticesUpdated();
-            RefreshSelectedRowsVisualState();
             RefreshKeyboardHighlightAfterItemsChanged();
-        }
-
-        private void RefreshSelectedRowsVisualState()
-        {
-            if (ThisDataGrid == null || ThisDataGrid.Items == null)
-                return;
-
-            foreach (object item in ThisDataGrid.Items)
-            {
-                DataGridRow row = GetDataGridRow(item);
-
-                if (row == null)
-                    continue;
-
-                ClearSelectedRowVisualState(row);
-
-                if (ThisDataGrid.SelectedItems.Contains(item))
-                    ApplySelectedRowVisualState(row);
-            }
-        }
-
-        private DataGridRow GetDataGridRow(object item)
-        {
-            ThisDataGrid.ScrollIntoView(item);
-            ThisDataGrid.UpdateLayout();
-
-            return ThisDataGrid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
-        }
-
-        private void ApplySelectedRowVisualState(DataGridRow row)
-        {
-            row.Background = (Brush)FindResource("0SelectionBrush");
-            row.Foreground = (Brush)FindResource("0BackgroundBrush");
-            row.BorderBrush = (Brush)FindResource("0SelectionBrush");
-
-            foreach (DataGridCell cell in FindVisualChildren<DataGridCell>(row))
-            {
-                cell.Background = Brushes.Transparent;
-                cell.Foreground = (Brush)FindResource("0BackgroundBrush");
-                cell.BorderBrush = Brushes.Transparent;
-            }
-        }
-
-        private void ClearSelectedRowVisualState(DataGridRow row)
-        {
-            row.ClearValue(Control.BackgroundProperty);
-            row.ClearValue(Control.ForegroundProperty);
-            row.ClearValue(Control.BorderBrushProperty);
-
-            foreach (DataGridCell cell in FindVisualChildren<DataGridCell>(row))
-            {
-                cell.ClearValue(Control.BackgroundProperty);
-                cell.ClearValue(Control.ForegroundProperty);
-                cell.ClearValue(Control.BorderBrushProperty);
-            }
         }
 
         private void RefreshKeyboardHighlightAfterItemsChanged()

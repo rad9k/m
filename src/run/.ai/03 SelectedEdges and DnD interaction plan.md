@@ -87,8 +87,8 @@ Do not switch these to `FullIEdge` without explicit product decision.
 | 3 ListVisualiser | done | `ListVisualiser.cs` |
 | 4 GraphVisualiser | done | `GraphVisualiser.cs`, `SelectedEdgesInteractionHelper.cs` — `ToVertexOnly` |
 | 5 IconVisualiser | done | `IconVisualiser.cs` |
-| 6 GraphVisualiser3D | pending | `GraphVisualiser3D.cs` — keep `ToVertexOnly` |
-| 7 FormVisualiser drag | pending | `FormVisualiser.cs` |
+| 6 GraphVisualiser3D | done | `GraphVisualiser3D.cs` — keep `ToVertexOnly` |
+| 7 FormVisualiser drag | done | `FormVisualiser.cs` |
 
 Remove from drag paths: `CopySelectedVerticesToTemp`, `RestoreSelectedVertices`.
 

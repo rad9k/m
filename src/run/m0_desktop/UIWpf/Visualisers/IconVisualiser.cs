@@ -425,6 +425,7 @@ namespace m0.UIWpf.Visualisers
         public void MoveKeyboardHighlight(int positionDelta)
         {
             List<IEdge> edges = GetKeyboardHighlightEdges();
+            int currentIndex = CurrentHighlightPosition;
 
             if (edges.Count == 0)
             {
@@ -435,8 +436,6 @@ namespace m0.UIWpf.Visualisers
 
                 return;
             }
-
-            int currentIndex = CurrentHighlightPosition;
 
             if (currentIndex < 0)
                 currentIndex = positionDelta < 0 ? edges.Count : -1;
@@ -453,7 +452,18 @@ namespace m0.UIWpf.Visualisers
 
         public void MoveKeyboardHighlight(KeyboardHighlightMoveDirection direction)
         {
-            MoveKeyboardHighlightDirectional(direction);
+            bool moved = MoveKeyboardHighlightDirectional(direction);
+
+            if (moved
+                || KeyboardHighlightActivated == null
+                || (direction != KeyboardHighlightMoveDirection.Up
+                    && direction != KeyboardHighlightMoveDirection.Down))
+                return;
+
+            if (direction == KeyboardHighlightMoveDirection.Up)
+                GoBeforeFirstKeyboardHighlightPosition();
+            else
+                GoAfterLastKeyboardHighlightPosition();
         }
 
         public void ToggleKeyboardHighlightedEdgeSelection()
@@ -676,8 +686,14 @@ namespace m0.UIWpf.Visualisers
 
         private void OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Focus();
             dndStartPoint = e.GetPosition(this);
+
+            if (KeyboardHighlightActivated == null)
+            {
+                Focus();
+                UpdateLayout();
+            }
+
             hasButtonBeenDown = true;
             isDragging = false;
             ClearPendingMouseDown();
@@ -687,10 +703,10 @@ namespace m0.UIWpf.Visualisers
 
         private void OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            IEdge edgeAtUp = GetDisplayedEdgeAtPoint(e.GetPosition(this));
+
             if (!suppressNextMouseUpSelection && pendingMouseDownSelectionEdge != null)
             {
-                IEdge edgeAtUp = GetDisplayedEdgeAtPoint(e.GetPosition(this));
-
                 if (edgeAtUp == pendingMouseDownSelectionEdge)
                     TryApplyPendingMouseClick();
                 else
@@ -763,10 +779,10 @@ namespace m0.UIWpf.Visualisers
                 return;
 
             Point mousePosition = e.GetPosition(this);
-            Vector diff = dndStartPoint - mousePosition;
+            Vector controlDiff = dndStartPoint - mousePosition;
 
-            if (Math.Abs(diff.X) <= Dnd.MinimumHorizontalDragDistance
-                && Math.Abs(diff.Y) <= Dnd.MinimumVerticalDragDistance)
+            if (Math.Abs(controlDiff.X) <= Dnd.MinimumHorizontalDragDistance
+                && Math.Abs(controlDiff.Y) <= Dnd.MinimumVerticalDragDistance)
                 return;
 
             isDragging = true;
@@ -949,7 +965,9 @@ namespace m0.UIWpf.Visualisers
 
             IconVisualiserItem item = displayedEdgeItems[edge];
             item.SetKeyboardHighlighted(true);
+
             item.BringIntoView();
+            UpdateLayout();
         }
 
         private void GoBeforeFirstKeyboardHighlightPosition()
@@ -980,16 +998,16 @@ namespace m0.UIWpf.Visualisers
                 .ToList();
         }
 
-        private void MoveKeyboardHighlightDirectional(KeyboardHighlightMoveDirection direction)
+        private bool MoveKeyboardHighlightDirectional(KeyboardHighlightMoveDirection direction)
         {
             if (keyboardHighlightedEdge == null)
             {
                 SetKeyboardHighlightToFirst();
-                return;
+                return true;
             }
 
             if (!displayedEdgeItems.ContainsKey(keyboardHighlightedEdge))
-                return;
+                return false;
 
             Point current = GetItemCenter(displayedEdgeItems[keyboardHighlightedEdge]);
             IEdge bestEdge = null;
@@ -1017,7 +1035,12 @@ namespace m0.UIWpf.Visualisers
             }
 
             if (bestEdge != null)
+            {
                 SetKeyboardHighlightEdge(bestEdge);
+                return true;
+            }
+
+            return false;
         }
 
         private static bool IsCandidateInDirection(KeyboardHighlightMoveDirection direction, double dx, double dy)

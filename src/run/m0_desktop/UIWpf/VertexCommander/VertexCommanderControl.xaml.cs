@@ -15,6 +15,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Input;
 
 namespace m0.UIWpf.VertexCommander
 {
@@ -1609,6 +1610,8 @@ namespace m0.UIWpf.VertexCommander
 
             if (dataGrid != null)
                 dataGrid.Focus();
+            else if (host?.Content is UIElement contentElement)
+                contentElement.Focus();
         }
 
         private static T FindVisualChild<T>(DependencyObject dependencyObject) where T : DependencyObject

@@ -20,12 +20,19 @@ namespace m0.UIWpf.Commands
 
         public static void DoDragDrop(DependencyObject o, DataObject dragData)
         {
-            if (!MinusZero.Instance.IsGUIDragging)
-            {
-                MinusZero.Instance.IsGUIDragging = true;
-                dragData.SetData("DragSource", o);
+            if (MinusZero.Instance.IsGUIDragging)
+                return;
 
-                DragDrop.DoDragDrop(o, dragData, DragDropEffects.Copy);                
+            MinusZero.Instance.IsGUIDragging = true;
+            dragData.SetData("DragSource", o);
+
+            try
+            {
+                DragDrop.DoDragDrop(o, dragData, DragDropEffects.Copy);
+            }
+            finally
+            {
+                MinusZero.Instance.IsGUIDragging = false;
             }
         }
 
