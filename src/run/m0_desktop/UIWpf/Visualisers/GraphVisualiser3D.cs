@@ -950,7 +950,8 @@ namespace m0.UIWpf.Visualisers
 
         public void RequestRepaint()
         {
-            if (isPainting || repaintQueued) return;
+            if (isPainting || repaintQueued || animationInProgress)
+                return;
 
             repaintQueued = true;
             Dispatcher.BeginInvoke(new Action(() =>

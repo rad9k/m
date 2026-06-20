@@ -251,21 +251,7 @@ namespace m0.UIWpf.VertexCommander
 
             IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(droppedEdge);
 
-            if (pane == KeyboardHighlightPane.Left)
-            {
-                LeftBaseEdge = baseEdgeVertex;
-                SetCodeControlQueryText(LeftQueryStringCodeControl, LeftBaseEdge);
-                RecreateLeftInEdgesVisualiser();
-                RecreateLeftOutEdgesVisualiser();
-            }
-            else
-            {
-                RightBaseEdge = baseEdgeVertex;
-                SetCodeControlQueryText(RightQueryStringCodeControl, RightBaseEdge);
-                RecreateRightInEdgesVisualiser();
-                RecreateRightOutEdgesVisualiser();
-            }
-
+            ApplyPaneBaseEdgeUpdate(pane, baseEdgeVertex);
             SetKeyboardHighlightAfterBaseEdgeChange(pane);
             RecordPaneQueryHistory(pane);
 
@@ -350,8 +336,7 @@ namespace m0.UIWpf.VertexCommander
                 return;
 
             GraphUtil.ReplaceEdge(LeftBaseEdge, "To", baseEdgeTo);
-            RecreateLeftInEdgesVisualiser();
-            RecreateLeftOutEdgesVisualiser();
+            ApplyPaneBaseEdgeUpdate(KeyboardHighlightPane.Left, LeftBaseEdge);
             SetKeyboardHighlightAfterBaseEdgeChange(KeyboardHighlightPane.Left);
             RecordPaneQueryHistory(KeyboardHighlightPane.Left);
         }
@@ -364,8 +349,7 @@ namespace m0.UIWpf.VertexCommander
                 return;
 
             GraphUtil.ReplaceEdge(RightBaseEdge, "To", baseEdgeTo);
-            RecreateRightInEdgesVisualiser();
-            RecreateRightOutEdgesVisualiser();
+            ApplyPaneBaseEdgeUpdate(KeyboardHighlightPane.Right, RightBaseEdge);
             SetKeyboardHighlightAfterBaseEdgeChange(KeyboardHighlightPane.Right);
             RecordPaneQueryHistory(KeyboardHighlightPane.Right);
         }
@@ -486,10 +470,7 @@ namespace m0.UIWpf.VertexCommander
                     return;
 
                 GraphUtil.ReplaceEdge(LeftBaseEdge, "To", baseEdgeTo);
-                LeftQueryStringCodeControl.editor.Text = entry.QueryText ?? "";
-                LeftQueryStringCodeControl.editor.Background = null;
-                RecreateLeftInEdgesVisualiser();
-                RecreateLeftOutEdgesVisualiser();
+                ApplyPaneBaseEdgeUpdate(KeyboardHighlightPane.Left, LeftBaseEdge, entry.QueryText);
             }
             else
             {
@@ -497,10 +478,7 @@ namespace m0.UIWpf.VertexCommander
                     return;
 
                 GraphUtil.ReplaceEdge(RightBaseEdge, "To", baseEdgeTo);
-                RightQueryStringCodeControl.editor.Text = entry.QueryText ?? "";
-                RightQueryStringCodeControl.editor.Background = null;
-                RecreateRightInEdgesVisualiser();
-                RecreateRightOutEdgesVisualiser();
+                ApplyPaneBaseEdgeUpdate(KeyboardHighlightPane.Right, RightBaseEdge, entry.QueryText);
             }
 
             SetKeyboardHighlightAfterBaseEdgeChange(pane);
@@ -1188,32 +1166,68 @@ namespace m0.UIWpf.VertexCommander
 
         private void ApplyLiveSyncDetailBaseEdge(KeyboardHighlightPane detailPane, IVertex baseEdgeVertex)
         {
+            ApplyPaneBaseEdgeUpdate(detailPane, baseEdgeVertex);
+        }
+
+        private void ApplyPaneBaseEdgeUpdate(KeyboardHighlightPane pane, IVertex baseEdgeVertex, string queryTextOverride = null)
+        {
             if (baseEdgeVertex == null)
                 return;
 
-            IVertex inEdgesVisualiserInstance = detailPane == KeyboardHighlightPane.Left
+            CodeControl queryCodeControl = pane == KeyboardHighlightPane.Left
+                ? LeftQueryStringCodeControl
+                : RightQueryStringCodeControl;
+
+            if (pane == KeyboardHighlightPane.Left)
+                LeftBaseEdge = baseEdgeVertex;
+            else
+                RightBaseEdge = baseEdgeVertex;
+
+            if (!string.IsNullOrWhiteSpace(queryTextOverride))
+            {
+                queryCodeControl.editor.Text = queryTextOverride;
+                queryCodeControl.editor.Background = null;
+            }
+            else
+                SetCodeControlQueryText(queryCodeControl, baseEdgeVertex);
+
+            IVertex inEdgesVisualiserInstance = pane == KeyboardHighlightPane.Left
                 ? leftInEdgesVisuliserInstance
                 : rightInEdgesVisuliserInstance;
 
-            IVertex outEdgesVisualiserInstance = detailPane == KeyboardHighlightPane.Left
+            IVertex outEdgesVisualiserInstance = pane == KeyboardHighlightPane.Left
                 ? leftOutEdgesVisuliserInstance
                 : rightOutEdgesVisuliserInstance;
 
-            if (inEdgesVisualiserInstance != null)
-                GraphUtil.ReplaceEdge(inEdgesVisualiserInstance, "BaseEdge", baseEdgeVertex);
-
-            if (outEdgesVisualiserInstance != null)
-                GraphUtil.ReplaceEdge(outEdgesVisualiserInstance, "BaseEdge", baseEdgeVertex);
-
-            if (detailPane == KeyboardHighlightPane.Left)
+            if (inEdgesVisualiserInstance == null && outEdgesVisualiserInstance == null)
             {
-                LeftBaseEdge = baseEdgeVertex;
-                SetCodeControlQueryText(LeftQueryStringCodeControl, LeftBaseEdge);
+                if (pane == KeyboardHighlightPane.Left)
+                {
+                    RecreateLeftInEdgesVisualiser();
+                    RecreateLeftOutEdgesVisualiser();
+                }
+                else
+                {
+                    RecreateRightInEdgesVisualiser();
+                    RecreateRightOutEdgesVisualiser();
+                }
+
+                return;
             }
-            else
+
+            Interaction.BeginInteractionWithGraph();
+
+            try
             {
-                RightBaseEdge = baseEdgeVertex;
-                SetCodeControlQueryText(RightQueryStringCodeControl, RightBaseEdge);
+                if (inEdgesVisualiserInstance != null)
+                    GraphUtil.ReplaceEdge(inEdgesVisualiserInstance, "BaseEdge", baseEdgeVertex);
+
+                if (outEdgesVisualiserInstance != null)
+                    GraphUtil.ReplaceEdge(outEdgesVisualiserInstance, "BaseEdge", baseEdgeVertex);
+            }
+            finally
+            {
+                Interaction.EndInteractionWithGraph();
             }
         }
 
@@ -1519,21 +1533,7 @@ namespace m0.UIWpf.VertexCommander
         {
             IVertex newBaseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(newBaseEdge);
 
-            if (pane == KeyboardHighlightPane.Left)
-            {
-                LeftBaseEdge = newBaseEdgeVertex;
-                SetCodeControlQueryText(LeftQueryStringCodeControl, LeftBaseEdge);
-                RecreateLeftInEdgesVisualiser();
-                RecreateLeftOutEdgesVisualiser();
-            }
-            else
-            {
-                RightBaseEdge = newBaseEdgeVertex;
-                SetCodeControlQueryText(RightQueryStringCodeControl, RightBaseEdge);
-                RecreateRightInEdgesVisualiser();
-                RecreateRightOutEdgesVisualiser();
-            }
-
+            ApplyPaneBaseEdgeUpdate(pane, newBaseEdgeVertex);
             RecordPaneQueryHistory(pane);
 
             currentKeyboardHighlightPane = pane;
