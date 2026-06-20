@@ -21,17 +21,19 @@ namespace m0.User
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
             
-            IVertex currenSession = m0.MinusZero.Instance.root.Get(false, @"Home:\CurrentUser:\CurrentSession:");
+            IVertex currentSession = m0.MinusZero.Instance.root.Get(false, @"Home:\CurrentUser:\CurrentSession:");
 
-            IEnumerable<IEdge> allClipboard = currenSession.GetAll(false, @"ClipboardCut:");
-
-            foreach (IEdge e in allClipboard)
-                currenSession.DeleteEdge(e);
-
-            allClipboard = currenSession.GetAll(false, @"ClipboardCopy:");
+            IEnumerable<IEdge> allClipboard = currentSession.GetAll(false, @"ClipboardCut:");
 
             foreach (IEdge e in allClipboard)
-                currenSession.DeleteEdge(e);
+                currentSession.DeleteEdge(e);
+
+            allClipboard = currentSession.GetAll(false, @"ClipboardCopy:");
+
+            currentSession.DeleteEdgesList(allClipboard);
+
+            //foreach (IEdge e in allClipboard)
+              //  currentSession.DeleteEdge(e);
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();

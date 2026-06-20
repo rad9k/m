@@ -320,6 +320,9 @@ namespace m0.UIWpf.Controls
             if (IsHighlighted)
                 return GetHighlightForegroundBrush();
 
+            if (IsMouseHoverHighlighted && IsSelected)
+                return GetHighlightBrush();
+
             if (IsSelected)
                 return GetBackgroundBrush();
 

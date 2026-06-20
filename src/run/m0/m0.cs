@@ -18,6 +18,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using m0.Lib.REST;
+using m0.User;
 
 
 
@@ -309,7 +310,8 @@ namespace m0
         void Finalize()
         {
             UserInteraction.UserInteractionFinalize();
-            
+
+            Clipboard.ClearClipboard();
 
             GraphChangeTriggerWatcher.RemoveAllGraphChangeTriggers();
 
@@ -565,20 +567,18 @@ namespace m0
         }
 
         private void InitializeGracefullExit()
-        {
-            // gdy przyjdzie SIGTERM lub Ctrl+C — anuluj
+        {            
             Console.CancelKeyPress += (s, e) =>
             {
                 e.Cancel = true;
-                GracefullExitToken.Cancel();        // "naciśnij przycisk"
+                GracefullExitToken.Cancel();        
             };
 
             AppDomain.CurrentDomain.ProcessExit += (s, e) =>
             {
-                GracefullExitToken.Cancel();        // "naciśnij przycisk"
-                Thread.Sleep(5000);  // poczekaj na cleanup
+                GracefullExitToken.Cancel();        
+                Thread.Sleep(5000);  
             };
-
         }
 
         public void BuildVariantsInitialize()

@@ -529,7 +529,7 @@ namespace m0.UIWpf.Controls
 
         void OnCut(object sender, System.Windows.RoutedEventArgs e)
         {
-            BaseCommands.Cut(this.EdgeVertex, PlatformClassOfVisualiserMenuHasBeenOpenedOn.Vertex);
+            BaseCommands.CutOrCopy(this.EdgeVertex, PlatformClassOfVisualiserMenuHasBeenOpenedOn.Vertex, true);
 
             FromCopyPlatformClass = PlatformClassOfVisualiserMenuHasBeenOpenedOn;
         }
@@ -539,7 +539,7 @@ namespace m0.UIWpf.Controls
 
         void OnCopy(object sender, System.Windows.RoutedEventArgs e)
         {
-            BaseCommands.Copy(this.EdgeVertex, PlatformClassOfVisualiserMenuHasBeenOpenedOn.Vertex);
+            BaseCommands.CutOrCopy(this.EdgeVertex, PlatformClassOfVisualiserMenuHasBeenOpenedOn.Vertex, false);
 
             FromCopyPlatformClass = PlatformClassOfVisualiserMenuHasBeenOpenedOn;
         }

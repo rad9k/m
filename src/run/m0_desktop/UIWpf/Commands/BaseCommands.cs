@@ -110,7 +110,7 @@ namespace m0.UIWpf.Commands
         }
 
         static bool IsCut = false;
-        public static void Cut(IVertex baseVertex, IVertex inputVertex)
+        public static void CutOrCopy(IVertex baseVertex, IVertex inputVertex, bool isCut)
         {
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
@@ -121,36 +121,12 @@ namespace m0.UIWpf.Commands
             //
 
             if (inputVertex.Get(false, "SelectedEdges:") == null || inputVertex.Get(false, "SelectedEdges:").Count() == 0)
-                User.Clipboard.PutToClipboard(baseVertex, true);
+                User.Clipboard.PutToClipboard(baseVertex, isCut);
             else
                 foreach (IEdge e in inputVertex.Get(false, "SelectedEdges:"))
-                    User.Clipboard.PutToClipboard(e.To, true);
+                    User.Clipboard.PutToClipboard(e.To, isCut);
 
-            IsCut = true;
-
-            ////////////////////////////////////////
-            Interaction.EndInteractionWithGraph();
-            ////////////////////////////////////////
-        }
-
-        public static void Copy(IVertex baseVertex, IVertex inputVertex)
-        {            
-            ////////////////////////////////////////
-            Interaction.BeginInteractionWithGraph();
-            ////////////////////////////////////////
-
-            User.Clipboard.ClearClipboard();            
-
-            //
-
-            if (inputVertex.Get(false, "SelectedEdges:") == null || inputVertex.Get(false, "SelectedEdges:").Count() == 0)
-                User.Clipboard.PutToClipboard(baseVertex, false);            
-            else
-                foreach (IEdge e in inputVertex.Get(false, "SelectedEdges:"))
-                    User.Clipboard.PutToClipboard(e.To, false);
-
-
-            IsCut = false;
+            IsCut = isCut;
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
@@ -161,36 +137,34 @@ namespace m0.UIWpf.Commands
         {
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
-            ////////////////////////////////////////
+            ////////////////////////////////////////                       
 
             foreach (IEdge e in User.Clipboard.GetFromClipboard())
             {
                 IVertex v = e.To;
 
+                IVertex baseVertex_To = GraphUtil.GetQueryOutFirst(baseVertex, "To", null);
+
+                IVertex v_From = GraphUtil.GetQueryOutFirst(v, "From", null);
+                IVertex v_Meta = GraphUtil.GetQueryOutFirst(v, "Meta", null);
+                IVertex v_To = GraphUtil.GetQueryOutFirst(v, "To", null);
+
                 if (GeneralUtil.CompareStrings(e.Meta, "ClipboardCut"))
-                {
-                    IVertex v_From = GraphUtil.GetQueryOutFirst(v, "From", null);
-                    IVertex v_Meta = GraphUtil.GetQueryOutFirst(v, "Meta", null);
-                    IVertex v_To = GraphUtil.GetQueryOutFirst(v, "To", null);
-
+                {                 
                     VertexOperations.DeleteOneEdge(v_From, v_Meta, v_To);
-
-                    IVertex baseVertex_To = GraphUtil.GetQueryOutFirst(baseVertex, "To", null);
 
                     baseVertex_To.AddEdge(v_Meta, v_To);
                 }
 
                 if (GeneralUtil.CompareStrings(e.Meta, "ClipboardCopy"))
-                {
-                    IVertex baseVertex_To = GraphUtil.GetQueryOutFirst(baseVertex, "To", null);
-
-                    IVertex v_To = GraphUtil.GetQueryOutFirst(v, "To", null);
-
-                    IEdge v_To_Edge = EdgeHelper.GetIEdgeByEdgeVertex(v);
-
-                    VertexOperations.CopyEdgesSet(v_To_Edge.To, baseVertex_To);
+                {                                        
+                    baseVertex_To.AddEdge(v_Meta, v_To);
                 }
             }
+
+            //
+
+            User.Clipboard.ClearClipboard();            
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
@@ -208,14 +182,13 @@ namespace m0.UIWpf.Commands
             IVertex baseVertex_To = GraphUtil.GetQueryOutFirst(baseVertex, "To", null);
 
             foreach (IEdge e in User.Clipboard.GetFromClipboard())
+                if (e.Meta.Value.ToString() == "ClipboardCut" || e.Meta.Value.ToString() == "ClipboardCopy")
             {
                 IVertex v = e.To;
 
                 IVertex v_From = GraphUtil.GetQueryOutFirst(v, "From", null);
                 IVertex v_Meta = GraphUtil.GetQueryOutFirst(v, "Meta", null);
-                IVertex v_To = GraphUtil.GetQueryOutFirst(v, "To", null);
-
-                VertexOperations.DeleteOneEdge(v_From, v_Meta, v_To);
+                IVertex v_To = GraphUtil.GetQueryOutFirst(v, "To", null);                
 
                 edgesFromClipboard.Add(new EasyEdge(v_From, v_Meta, v_To));
             }
@@ -235,6 +208,10 @@ namespace m0.UIWpf.Commands
                 else
                     VertexOperations.MoveEdgesSet(edgesFromClipboard, baseVertex_To);
             }
+
+            //
+
+            User.Clipboard.ClearClipboard();
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
