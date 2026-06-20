@@ -48,8 +48,6 @@ namespace m0.ZeroTypes
         {
             List<IEdge> roots = edgesToMove.ToList();
 
-            HashSet<IEdge> inputEdges = new HashSet<IEdge>(roots);
-
             Dictionary<IVertex, IVertex> oldToNew = new Dictionary<IVertex, IVertex>();
 
             CopySubGraphIntoVertex(roots, moveTo, oldToNew);
@@ -65,7 +63,7 @@ namespace m0.ZeroTypes
 
                 foreach (IEdge inEdge in oldVertex.InEdgesRaw.ToList())
                 {
-                    if (oldToNew.ContainsKey(inEdge.From) || inputEdges.Contains(inEdge))
+                    if (oldToNew.ContainsKey(inEdge.From) || IsSameEdgeAsAny(inEdge, roots))
                         continue;
 
                     IVertex meta = oldToNew.ContainsKey(inEdge.Meta) ? oldToNew[inEdge.Meta] : inEdge.Meta;
@@ -76,7 +74,7 @@ namespace m0.ZeroTypes
 
                 foreach (IEdge metaInEdge in oldVertex.MetaInEdgesRaw.ToList())
                 {
-                    if (oldToNew.ContainsKey(metaInEdge.From) || inputEdges.Contains(metaInEdge))
+                    if (oldToNew.ContainsKey(metaInEdge.From) || IsSameEdgeAsAny(metaInEdge, roots))
                         continue;
 
                     IVertex to = oldToNew.ContainsKey(metaInEdge.To) ? oldToNew[metaInEdge.To] : metaInEdge.To;
@@ -146,22 +144,21 @@ namespace m0.ZeroTypes
 
             // 4. Collect repins (order-preserving). The input and old-root edges are never repinned; edges
             //    internal to the old/new/source scopes are skipped too.
-            HashSet<IEdge> excluded = new HashSet<IEdge>(oldRootEdges);
-            foreach (IEdge inputEdge in roots)
-                excluded.Add(inputEdge);
+            List<IEdge> excludedEdges = new List<IEdge>(oldRootEdges);
+            excludedEdges.AddRange(roots);
 
             Dictionary<IVertex, List<EdgeRewrite>> byFrom = new Dictionary<IVertex, List<EdgeRewrite>>();
 
             // Old-side: external referrers of matched old vertices -> new (meta remapped via oldToNew).
             foreach (KeyValuePair<IVertex, IVertex> match in oldToNew)
                 CollectExternalReferrerRepins(match.Key, match.Value, oldToNew, byFrom,
-                    oldScope, newScope, sourceScope, excluded);
+                    oldScope, newScope, sourceScope, excludedEdges);
 
             // Source-side (move only): external referrers of source vertices -> new (meta via sourceToNew).
             if (moveSource)
                 foreach (KeyValuePair<IVertex, IVertex> pair in sourceToNew)
                     CollectExternalReferrerRepins(pair.Key, pair.Value, sourceToNew, byFrom,
-                        sourceScope, newScope, oldScope, excluded);
+                        sourceScope, newScope, oldScope, excludedEdges);
 
             // 5. Apply repins. No disposal happens here (every RewriteFrom re-adds before deleting).
             foreach (KeyValuePair<IVertex, List<EdgeRewrite>> kv in byFrom)
@@ -187,12 +184,12 @@ namespace m0.ZeroTypes
         // Referrers coming from ownScope/newScope/otherScope or that are excluded are left untouched.
         static void CollectExternalReferrerRepins(IVertex source, IVertex target, Dictionary<IVertex, IVertex> map,
             Dictionary<IVertex, List<EdgeRewrite>> byFrom, HashSet<IVertex> ownScope, HashSet<IVertex> newScope,
-            HashSet<IVertex> otherScope, HashSet<IEdge> excluded)
+            HashSet<IVertex> otherScope, IEnumerable<IEdge> excludedEdges)
         {
             foreach (IEdge inEdge in source.InEdgesRaw.ToList())
             {
                 if (ownScope.Contains(inEdge.From) || newScope.Contains(inEdge.From)
-                    || otherScope.Contains(inEdge.From) || excluded.Contains(inEdge))
+                    || otherScope.Contains(inEdge.From) || IsSameEdgeAsAny(inEdge, excludedEdges))
                     continue;
 
                 AddRewrite(byFrom, inEdge.From, new EdgeRewrite
@@ -206,7 +203,7 @@ namespace m0.ZeroTypes
             foreach (IEdge metaInEdge in source.MetaInEdgesRaw.ToList())
             {
                 if (ownScope.Contains(metaInEdge.From) || newScope.Contains(metaInEdge.From)
-                    || otherScope.Contains(metaInEdge.From) || excluded.Contains(metaInEdge))
+                    || otherScope.Contains(metaInEdge.From) || IsSameEdgeAsAny(metaInEdge, excludedEdges))
                     continue;
 
                 AddRewrite(byFrom, metaInEdge.From, new EdgeRewrite
@@ -216,6 +213,28 @@ namespace m0.ZeroTypes
                     NewTo = Remap(map, metaInEdge.To)
                 });
             }
+        }
+
+        static bool IsSameEdge(IEdge a, IEdge b)
+        {
+            if (a == null || b == null)
+                return false;
+
+            return ReferenceEquals(a.From, b.From)
+                && ReferenceEquals(a.Meta, b.Meta)
+                && ReferenceEquals(a.To, b.To);
+        }
+
+        static bool IsSameEdgeAsAny(IEdge edge, IEnumerable<IEdge> candidates)
+        {
+            if (edge == null || candidates == null)
+                return false;
+
+            foreach (IEdge candidate in candidates)
+                if (IsSameEdge(edge, candidate))
+                    return true;
+
+            return false;
         }
 
         static void DeleteMatchingEdge(IVertex from, IVertex meta, IVertex to)

@@ -478,11 +478,6 @@ namespace m0.Graph
         //      edge.From.DetachEdge(item);
         public override void DeleteEdge(IEdge _edge)
         {
-            if (_edge.Meta.Value.ToString() == "Item")
-            {
-                int x = 0;
-            }
-
             if (DisposedState == DisposeStateEnum.Disposed)
                 throw new Exception("Vertex not live");            
 

@@ -137,7 +137,7 @@ namespace m0.UIWpf.Commands
         {
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
-            ////////////////////////////////////////                       
+            ////////////////////////////////////////
 
             foreach (IEdge e in User.Clipboard.GetFromClipboard())
             {
@@ -150,21 +150,21 @@ namespace m0.UIWpf.Commands
                 IVertex v_To = GraphUtil.GetQueryOutFirst(v, "To", null);
 
                 if (GeneralUtil.CompareStrings(e.Meta, "ClipboardCut"))
-                {                 
+                {
                     VertexOperations.DeleteOneEdge(v_From, v_Meta, v_To);
 
                     baseVertex_To.AddEdge(v_Meta, v_To);
                 }
 
                 if (GeneralUtil.CompareStrings(e.Meta, "ClipboardCopy"))
-                {                                        
+                {
                     baseVertex_To.AddEdge(v_Meta, v_To);
                 }
             }
 
             //
 
-            User.Clipboard.ClearClipboard();            
+            User.Clipboard.ClearClipboard();
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
@@ -176,7 +176,7 @@ namespace m0.UIWpf.Commands
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
-            
+
             IList<IEdge> edgesFromClipboard = new List<IEdge>();
 
             IVertex baseVertex_To = GraphUtil.GetQueryOutFirst(baseVertex, "To", null);
@@ -188,7 +188,7 @@ namespace m0.UIWpf.Commands
 
                 IVertex v_From = GraphUtil.GetQueryOutFirst(v, "From", null);
                 IVertex v_Meta = GraphUtil.GetQueryOutFirst(v, "Meta", null);
-                IVertex v_To = GraphUtil.GetQueryOutFirst(v, "To", null);                
+                IVertex v_To = GraphUtil.GetQueryOutFirst(v, "To", null);
 
                 edgesFromClipboard.Add(new EasyEdge(v_From, v_Meta, v_To));
             }

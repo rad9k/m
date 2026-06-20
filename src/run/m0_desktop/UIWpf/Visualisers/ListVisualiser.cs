@@ -28,7 +28,7 @@ namespace m0.UIWpf.Visualisers
 {
     public class ListVisualiser : StackPanel,  IListVisualiser, ITypedEdge, IKeyboardHighlight
     {
-        private const bool EditGestureLogEnabled = true;
+        private const bool EditGestureLogEnabled = false;
         private const string EditGestureLogWhere = "ListVisualiser.EditGesture";
 
         private static readonly IValueConverter EdgeIconSourceConverter = new ListVisualiserEdgeIconSourceConverter();

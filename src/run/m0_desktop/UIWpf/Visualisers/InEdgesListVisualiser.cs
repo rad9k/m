@@ -26,7 +26,7 @@ namespace m0.UIWpf.Visualisers
     public class InEdgesListVisualiser : StackPanel, IListVisualiser, ITypedEdge, IKeyboardHighlight
     {
         private const double ColumnResizeCursorHotZone = 6.0;
-        private const bool InteractionLogEnabled = true;
+        private const bool InteractionLogEnabled = false;
         private const string InteractionLogWhere = "InEdgesListVisualiser.Interaction";
 
         private static readonly IValueConverter FromIconSourceConverter = new InEdgesListVisualiserFromIconSourceConverter();

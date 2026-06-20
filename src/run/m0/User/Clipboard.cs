@@ -108,7 +108,7 @@ namespace m0.User
             List<IEdge> retEdges = new List<IEdge>();
 
             foreach (IEdge e in ret)
-                retEdges.Add(EdgeHelper.FindEdgeVertexByToVertex(currentSession, e.To.Get(false, "To:")));            
+                retEdges.Add(EdgeHelper.FindEdgeVertexByToVertex(currentSession, e.To.Get(false, "To:")));
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
