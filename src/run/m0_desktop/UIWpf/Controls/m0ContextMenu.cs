@@ -327,7 +327,7 @@ namespace m0.UIWpf.Controls
             Paste_Deep.Click += OnPaste_Deep;
             this.Items.Add(Paste_Deep);
 
-            MenuItem Paste_Replace = createMenuItem("menu-Replace", "Replace Subgraph(deep)");
+            MenuItem Paste_Replace = createMenuItem("menu-Replace", "Replace Subgraph (deep)");
             Paste_Replace.Click += OnReplace;
             this.Items.Add(Paste_Replace);
 
