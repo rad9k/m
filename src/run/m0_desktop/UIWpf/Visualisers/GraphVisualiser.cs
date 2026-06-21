@@ -374,6 +374,8 @@ namespace m0.UIWpf.Visualisers
             get { return GetKeyboardHighlightVertices().Count > 0; }
         }
 
+        public bool IsVertexCommanderKeyboardHighlightEnabled { get; set; }
+
         public IEdge KeyboardHighlightedEdge
         {
             get
@@ -1021,7 +1023,8 @@ namespace m0.UIWpf.Visualisers
 
                 if (kvp.Key != null)
                 {
-                    SetKeyboardHighlightVertex(kvp.Key);
+                    if (IsVertexCommanderKeyboardHighlightEnabled)
+                        SetKeyboardHighlightVertex(kvp.Key);
 
                     if (KeyboardHighlightActivated != null)
                     {
@@ -1128,6 +1131,9 @@ namespace m0.UIWpf.Visualisers
 
         public void MoveKeyboardHighlight(int positionDelta)
         {
+            if (!IsVertexCommanderKeyboardHighlightEnabled)
+                return;
+
             List<IVertex> vertices = GetKeyboardHighlightVertices();
 
             if (vertices.Count == 0)
@@ -1165,7 +1171,7 @@ namespace m0.UIWpf.Visualisers
 
         public void ToggleKeyboardHighlightedEdgeSelection()
         {
-            if (SelectionProhibited || keyboardHighlightedVertex == null)
+            if (!IsVertexCommanderKeyboardHighlightEnabled || SelectionProhibited || keyboardHighlightedVertex == null)
                 return;
 
             IVertex sv = Vertex.Get(false, "SelectedEdges:");
@@ -1204,6 +1210,9 @@ namespace m0.UIWpf.Visualisers
 
         private void SetKeyboardHighlightVertex(IVertex vertex)
         {
+            if (!IsVertexCommanderKeyboardHighlightEnabled)
+                return;
+
             ClearKeyboardHighlight();
             ClearMouseHoverHighlight();
 

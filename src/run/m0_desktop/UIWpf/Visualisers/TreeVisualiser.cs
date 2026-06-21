@@ -691,6 +691,8 @@ namespace m0.UIWpf.Visualisers
             get { return GetKeyboardHighlightItems().Count > 0; }
         }
 
+        public bool IsVertexCommanderKeyboardHighlightEnabled { get; set; }
+
         public IEdge KeyboardHighlightedEdge
         {
             get
@@ -1299,6 +1301,9 @@ namespace m0.UIWpf.Visualisers
 
         public void MoveKeyboardHighlight(int positionDelta)
         {
+            if (!IsVertexCommanderKeyboardHighlightEnabled)
+                return;
+
             List<TreeVisualiserViewItem> items = GetKeyboardHighlightItems();
 
             if (items.Count == 0)
@@ -1340,7 +1345,7 @@ namespace m0.UIWpf.Visualisers
 
         public void ToggleKeyboardHighlightedEdgeSelection()
         {
-            if (SelectionProhibited || keyboardHighlightedItem == null)
+            if (!IsVertexCommanderKeyboardHighlightEnabled || SelectionProhibited || keyboardHighlightedItem == null)
                 return;
 
             bool wasSelected = keyboardHighlightedItem.IsSelected;
@@ -1351,7 +1356,7 @@ namespace m0.UIWpf.Visualisers
 
         public bool ActivateKeyboardHighlightItem(TreeVisualiserViewItem item)
         {
-            if (item == null)
+            if (item == null || !IsVertexCommanderKeyboardHighlightEnabled)
                 return false;
 
             SetKeyboardHighlightItem(item);
@@ -1382,6 +1387,9 @@ namespace m0.UIWpf.Visualisers
 
         private void SetKeyboardHighlightItem(TreeVisualiserViewItem item)
         {
+            if (!IsVertexCommanderKeyboardHighlightEnabled)
+                return;
+
             ClearKeyboardHighlight();
 
             keyboardHighlightedItem = item;

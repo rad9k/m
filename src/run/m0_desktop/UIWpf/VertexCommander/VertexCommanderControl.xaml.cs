@@ -1824,6 +1824,13 @@ namespace m0.UIWpf.VertexCommander
             if (keyboardHighlight == null)
                 return;
 
+            keyboardHighlight.IsVertexCommanderKeyboardHighlightEnabled = true;
+
+            FormVisualiser formVisualiser = visualiser as FormVisualiser;
+
+            if (formVisualiser != null)
+                formVisualiser.EnableNestedVertexCommanderKeyboardHighlight();
+
             keyboardHighlight.GoneBeforeFirstPosition += goneBeforeFirstPositionHandler;
             keyboardHighlight.GoneAfterLastPosition += goneAfterLastPositionHandler;
             keyboardHighlight.KeyboardHighlightActivated += keyboardHighlightActivatedHandler;
@@ -1842,6 +1849,8 @@ namespace m0.UIWpf.VertexCommander
         {
             if (keyboardHighlight != null)
             {
+                keyboardHighlight.IsVertexCommanderKeyboardHighlightEnabled = false;
+                keyboardHighlight.ClearKeyboardHighlight();
                 keyboardHighlight.GoneBeforeFirstPosition -= goneBeforeFirstPositionHandler;
                 keyboardHighlight.GoneAfterLastPosition -= goneAfterLastPositionHandler;
                 keyboardHighlight.KeyboardHighlightActivated -= keyboardHighlightActivatedHandler;

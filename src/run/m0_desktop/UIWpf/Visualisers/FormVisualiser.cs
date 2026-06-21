@@ -159,6 +159,8 @@ namespace m0.UIWpf.Visualisers
             get { return GetKeyboardHighlightControlInfos(getActiveTabInfo()).Count > 0; }
         }
 
+        public bool IsVertexCommanderKeyboardHighlightEnabled { get; set; }
+
         public IEdge KeyboardHighlightedEdge
         {
             get
@@ -285,6 +287,9 @@ namespace m0.UIWpf.Visualisers
 
         public void MoveKeyboardHighlight(int positionDelta)
         {
+            if (!IsVertexCommanderKeyboardHighlightEnabled)
+                return;
+
             TabInfo activeTabInfo = getActiveTabInfo();
             List<ControlInfo> controls = GetKeyboardHighlightControlInfos(activeTabInfo);
 
@@ -343,6 +348,9 @@ namespace m0.UIWpf.Visualisers
 
         public void MoveKeyboardHighlight(KeyboardHighlightMoveDirection direction)
         {
+            if (!IsVertexCommanderKeyboardHighlightEnabled)
+                return;
+
             IKeyboardHighlight nestedKeyboardHighlight = keyboardHighlightedControlInfo != null
                 ? GetNestedKeyboardHighlight(keyboardHighlightedControlInfo)
                 : null;
@@ -371,7 +379,7 @@ namespace m0.UIWpf.Visualisers
 
         public void ToggleKeyboardHighlightedEdgeSelection()
         {
-            if (SelectionProhibited)
+            if (!IsVertexCommanderKeyboardHighlightEnabled || SelectionProhibited)
                 return;
 
             IKeyboardHighlight nestedKeyboardHighlight = keyboardHighlightedControlInfo != null
@@ -421,6 +429,9 @@ namespace m0.UIWpf.Visualisers
 
         private void SetKeyboardHighlightControlInfo(ControlInfo controlInfo, bool nestedFirstPosition = true)
         {
+            if (!IsVertexCommanderKeyboardHighlightEnabled)
+                return;
+
             LogKeyboardNav(
                 "SetKeyboardHighlightControlInfo control=" + DescribeControlInfo(controlInfo)
                 + " nestedFirst=" + nestedFirstPosition
@@ -685,6 +696,9 @@ namespace m0.UIWpf.Visualisers
 
         private void SetControlInfoKeyboardHighlight(ControlInfo controlInfo, bool isHighlighted)
         {
+            if (isHighlighted && !IsVertexCommanderKeyboardHighlightEnabled)
+                isHighlighted = false;
+
             if (isHighlighted)
             {
                 LogKeyboardNav(
@@ -778,6 +792,9 @@ namespace m0.UIWpf.Visualisers
 
             if (nestedKeyboardHighlight == null)
                 return;
+
+            if (IsVertexCommanderKeyboardHighlightEnabled)
+                nestedKeyboardHighlight.IsVertexCommanderKeyboardHighlightEnabled = true;
 
             nestedKeyboardHighlight.KeyboardHighlightActivated += delegate
             {
@@ -2190,7 +2207,13 @@ namespace m0.UIWpf.Visualisers
 
         private bool IsVertexCommanderMode()
         {
-            return KeyboardHighlightActivated != null;
+            return IsVertexCommanderKeyboardHighlightEnabled;
+        }
+
+        internal void EnableNestedVertexCommanderKeyboardHighlight()
+        {
+            foreach (IKeyboardHighlight nestedKeyboardHighlight in GetNestedKeyboardHighlights())
+                nestedKeyboardHighlight.IsVertexCommanderKeyboardHighlightEnabled = true;
         }
 
         private static void LogSelection(string message)

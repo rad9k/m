@@ -91,6 +91,8 @@ namespace m0.UIWpf.Visualisers
             get { return keyboardHighlightElements.Count > 0; }
         }
 
+        public bool IsVertexCommanderKeyboardHighlightEnabled { get; set; }
+
         public IEdge KeyboardHighlightedEdge
         {
             get
@@ -206,7 +208,7 @@ namespace m0.UIWpf.Visualisers
 
         private void DebugLine_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.ClickCount != 2)
+            if (!IsVertexCommanderKeyboardHighlightEnabled || e.ClickCount != 2)
                 return;
 
             int index = keyboardHighlightElements.IndexOf((FrameworkElement)sender);
@@ -247,6 +249,9 @@ namespace m0.UIWpf.Visualisers
 
         public void MoveKeyboardHighlight(int positionDelta)
         {
+            if (!IsVertexCommanderKeyboardHighlightEnabled)
+                return;
+
             if (keyboardHighlightElements.Count == 0)
             {
                 if (positionDelta < 0)
@@ -282,6 +287,9 @@ namespace m0.UIWpf.Visualisers
 
         private void SetKeyboardHighlightPosition(int position)
         {
+            if (!IsVertexCommanderKeyboardHighlightEnabled)
+                return;
+
             ClearKeyboardHighlight();
 
             if (position < 0 || position >= keyboardHighlightElements.Count)

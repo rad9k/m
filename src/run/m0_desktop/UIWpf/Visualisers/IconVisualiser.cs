@@ -300,6 +300,8 @@ namespace m0.UIWpf.Visualisers
 
         public bool HasKeyboardHighlightItems { get { return GetKeyboardHighlightEdges().Count > 0; } }
 
+        public bool IsVertexCommanderKeyboardHighlightEnabled { get; set; }
+
         public IEdge KeyboardHighlightedEdge { get { return keyboardHighlightedEdge; } }
 
         public event EventHandler KeyboardHighlightActivated;
@@ -407,7 +409,8 @@ namespace m0.UIWpf.Visualisers
                     displayedEdgeItems[selectedEdge].SetSelected(true);
             }
 
-            if (keyboardHighlightedEdge != null && displayedEdgeItems.ContainsKey(keyboardHighlightedEdge))
+            if (keyboardHighlightedEdge != null && displayedEdgeItems.ContainsKey(keyboardHighlightedEdge)
+                && IsVertexCommanderKeyboardHighlightEnabled)
                 displayedEdgeItems[keyboardHighlightedEdge].SetKeyboardHighlighted(true);
 
             if (SelectedEdgesChange != null)
@@ -426,6 +429,9 @@ namespace m0.UIWpf.Visualisers
 
         public void MoveKeyboardHighlight(int positionDelta)
         {
+            if (!IsVertexCommanderKeyboardHighlightEnabled)
+                return;
+
             List<IEdge> edges = GetKeyboardHighlightEdges();
             int currentIndex = CurrentHighlightPosition;
 
@@ -470,7 +476,7 @@ namespace m0.UIWpf.Visualisers
 
         public void ToggleKeyboardHighlightedEdgeSelection()
         {
-            if (SelectionProhibited || keyboardHighlightedEdge == null)
+            if (!IsVertexCommanderKeyboardHighlightEnabled || SelectionProhibited || keyboardHighlightedEdge == null)
                 return;
 
             IVertex selectedEdges = Vertex.Get(false, "SelectedEdges:");
@@ -657,6 +663,9 @@ namespace m0.UIWpf.Visualisers
 
             if (e.ClickCount == 2)
             {
+                if (!IsVertexCommanderKeyboardHighlightEnabled)
+                    return;
+
                 SetKeyboardHighlightEdge(item.BaseEdge);
                 ActivateKeyboardHighlightedItem();
                 e.Handled = true;
@@ -956,6 +965,9 @@ namespace m0.UIWpf.Visualisers
 
         private void SetKeyboardHighlightEdge(IEdge edge)
         {
+            if (!IsVertexCommanderKeyboardHighlightEnabled)
+                return;
+
             ClearKeyboardHighlight();
 
             if (edge == null || !displayedEdgeItems.ContainsKey(edge))
@@ -1070,7 +1082,7 @@ namespace m0.UIWpf.Visualisers
 
         private void RefreshKeyboardHighlightAfterItemsChanged()
         {
-            if (keyboardHighlightedEdge == null)
+            if (!IsVertexCommanderKeyboardHighlightEnabled || keyboardHighlightedEdge == null)
                 return;
 
             if (displayedEdgeItems.ContainsKey(keyboardHighlightedEdge))

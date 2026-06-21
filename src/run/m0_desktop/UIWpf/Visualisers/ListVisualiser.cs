@@ -208,6 +208,8 @@ namespace m0.UIWpf.Visualisers
             get { return GetKeyboardHighlightItemCount() > 0; }
         }
 
+        public bool IsVertexCommanderKeyboardHighlightEnabled { get; set; }
+
         public event EventHandler GoneBeforeFirstPosition;
 
         public event EventHandler GoneAfterLastPosition;
@@ -836,6 +838,9 @@ namespace m0.UIWpf.Visualisers
 
         private void OnKeyboardHighlightPreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
+            if (!IsVertexCommanderKeyboardHighlightEnabled)
+                return;
+
             if (e.Key != Key.Up && e.Key != Key.Down && e.Key != Key.Space && e.Key != Key.Enter)
                 return;
 
@@ -876,6 +881,9 @@ namespace m0.UIWpf.Visualisers
 
         public void MoveKeyboardHighlight(int positionDelta)
         {
+            if (!IsVertexCommanderKeyboardHighlightEnabled)
+                return;
+
             int itemCount = GetKeyboardHighlightItemCount();
 
             if (itemCount == 0)
@@ -908,6 +916,9 @@ namespace m0.UIWpf.Visualisers
 
         private void SetKeyboardHighlightPosition(int position)
         {
+            if (!IsVertexCommanderKeyboardHighlightEnabled)
+                return;
+
             ClearKeyboardHighlight();
 
             currentHighlightPosition = position;
@@ -944,6 +955,9 @@ namespace m0.UIWpf.Visualisers
 
         private void ApplyKeyboardHighlight()
         {
+            if (!IsVertexCommanderKeyboardHighlightEnabled)
+                return;
+
             DataGridRow row = GetKeyboardHighlightRow();
 
             if (row == null)
@@ -971,7 +985,7 @@ namespace m0.UIWpf.Visualisers
 
         public void ToggleKeyboardHighlightedEdgeSelection()
         {
-            if (SelectionProhibited)
+            if (!IsVertexCommanderKeyboardHighlightEnabled || SelectionProhibited)
                 return;
 
             IEdge keyboardHighlightedEdge = GetKeyboardHighlightedEdge();
@@ -1018,6 +1032,9 @@ namespace m0.UIWpf.Visualisers
 
         private void OnKeyboardHighlightMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            if (!IsVertexCommanderKeyboardHighlightEnabled)
+                return;
+
             DataGridRow row = GetDataGridRowFromEventSource(e.OriginalSource as DependencyObject);
 
             if (IsAnyDataGridRowEditing())

@@ -34,6 +34,8 @@ namespace m0.UIWpf.Visualisers
 
         bool HasKeyboardHighlightItems { get; }
 
+        bool IsVertexCommanderKeyboardHighlightEnabled { get; set; }
+
         IEdge KeyboardHighlightedEdge { get; }
 
         void ClearKeyboardHighlight();

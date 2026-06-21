@@ -568,7 +568,7 @@ namespace m0_SYSTEM_GENERATE.Music
 
             GraphUtil.AddInherits(Song, HasLength);
 
-            GraphUtil.AddAttribute(Song, "ExtendTimeLength", FloatMeta, 1, 1, 1.0);
+            GraphUtil.AddAttribute(Song, "ExtendTimeLength", IntegerMeta, 1, 1, 1);
             //GraphUtil.AddAttribute(Song, "Name", String, 0, 1);
             GraphUtil.AddAggregation(Song, "Track", Track, 0, -1);
             GraphUtil.AddAttribute(Song, "Input", NoteInput, 0, 1);

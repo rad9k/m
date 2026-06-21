@@ -762,6 +762,8 @@ namespace m0.UIWpf.Visualisers
             get { return GetKeyboardHighlightNodes().Count > 0; }
         }
 
+        public bool IsVertexCommanderKeyboardHighlightEnabled { get; set; }
+
         public IEdge KeyboardHighlightedEdge
         {
             get
@@ -1478,7 +1480,8 @@ namespace m0.UIWpf.Visualisers
                 if (IsMouseCaptured)
                     ReleaseMouseCapture();
 
-                SetKeyboardHighlightNode(hit);
+                if (IsVertexCommanderKeyboardHighlightEnabled)
+                    SetKeyboardHighlightNode(hit);
 
                 if (KeyboardHighlightActivated != null)
                 {
@@ -1814,6 +1817,9 @@ namespace m0.UIWpf.Visualisers
 
         public void MoveKeyboardHighlight(int positionDelta)
         {
+            if (!IsVertexCommanderKeyboardHighlightEnabled)
+                return;
+
             List<GraphVisualiser3DNode> nodes = GetKeyboardHighlightNodes();
 
             if (nodes.Count == 0)
@@ -1851,7 +1857,7 @@ namespace m0.UIWpf.Visualisers
 
         public void ToggleKeyboardHighlightedEdgeSelection()
         {
-            if (SelectionProhibited || keyboardHighlightedNode == null || keyboardHighlightedNode.BaseVertex == null)
+            if (!IsVertexCommanderKeyboardHighlightEnabled || SelectionProhibited || keyboardHighlightedNode == null || keyboardHighlightedNode.BaseVertex == null)
                 return;
 
             IVertex selectedEdges = Vertex.Get(false, "SelectedEdges:");
@@ -1890,6 +1896,9 @@ namespace m0.UIWpf.Visualisers
 
         private void SetKeyboardHighlightNode(GraphVisualiser3DNode node)
         {
+            if (!IsVertexCommanderKeyboardHighlightEnabled)
+                return;
+
             ClearKeyboardHighlight();
             ClearMouseHoverNode();
 
