@@ -1,0 +1,6 @@
+"ZeroUML"
+	import @System\Meta\ZeroUML direct meta	
+	 
+	"additional"
+		"component"
+			<@Package>

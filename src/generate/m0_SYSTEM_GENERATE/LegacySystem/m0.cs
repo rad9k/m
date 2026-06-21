@@ -6896,6 +6896,22 @@ namespace m0
                 "SQL");
         }
 
+        void AddZeroUMLFromFile()
+        {
+            IVertex zu = Root.Get(false, @"System\Meta\ZeroUML");
+
+            GraphUtil.LoadTXTParseAndMove(@"_RES\ZeroUML.txt",
+                zu,
+                "additional");
+
+            foreach (IEdge e in Root.Get(false, @"System\Meta\ZeroUML\additional"))
+                zu.AddEdge(e.Meta, e.To);
+
+            IEdge additonalEdge = Root.GetAll(false, @"System\Meta\ZeroUML\additional").FirstOrDefault();
+
+            zu.DeleteEdge(additonalEdge);
+        }
+
         void CreateSystemMetaCustomDomain()
         {
             IVertex sm = Root.Get(false, @"System\Meta");
@@ -7139,6 +7155,8 @@ namespace m0
             CreateSystemMetaCustomDomain();
 
             CreateSystemDataUXZeroUMLTemplate();
+
+            AddZeroUMLFromFile();
 
             //
 

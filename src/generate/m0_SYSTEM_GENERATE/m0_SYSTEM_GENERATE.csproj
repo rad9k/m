@@ -127,6 +127,9 @@
     <Content Include="_RES\UXTemplate\ZeroUML.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="_RES\ZeroUML.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\m0\m0.csproj">
