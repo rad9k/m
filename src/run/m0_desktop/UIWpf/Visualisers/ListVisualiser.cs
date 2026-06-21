@@ -35,7 +35,7 @@ namespace m0.UIWpf.Visualisers
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
-        public bool SelectionProphibited { get; set; }
+        public bool SelectionProhibited { get; set; }
 
         protected System.Windows.Controls.DataGrid ThisDataGrid;
 
@@ -258,7 +258,7 @@ namespace m0.UIWpf.Visualisers
         }
 
         protected void _OnSelectionChanged(object sender, SelectionChangedEventArgs e){
-            if (SelectionProphibited)
+            if (SelectionProhibited)
             {
                 TurnOffSelectedVerticesUpdate = true;
                 ThisDataGrid.SelectedItems.Clear();
@@ -314,7 +314,7 @@ namespace m0.UIWpf.Visualisers
 
             object mouseUpFullRowItem = GetDataGridItemByFullRowPoint(e.GetPosition(this));
 
-            if (SelectionProphibited
+            if (SelectionProhibited
                 || dataGridMouseDownFullRowItem == null
                 || dataGridMouseDownFullRowItem != mouseUpFullRowItem)
             {
@@ -369,7 +369,7 @@ namespace m0.UIWpf.Visualisers
             object rowItem = GetDataGridItemByFullRowPoint(e.GetPosition(this));
             IEdge clickedEdge = rowItem as IEdge;
 
-            if (clickedEdge == null || SelectionProphibited)
+            if (clickedEdge == null || SelectionProhibited)
                 return;
 
             SelectedEdgesInteractionHelper.ApplyForContextMenu(Vertex, clickedEdge);
@@ -971,7 +971,7 @@ namespace m0.UIWpf.Visualisers
 
         public void ToggleKeyboardHighlightedEdgeSelection()
         {
-            if (SelectionProphibited)
+            if (SelectionProhibited)
                 return;
 
             IEdge keyboardHighlightedEdge = GetKeyboardHighlightedEdge();
@@ -1311,7 +1311,7 @@ namespace m0.UIWpf.Visualisers
             if (SelectedEdgesChange != null)
                 SelectedEdgesChange();
 
-            if (SelectionProphibited)
+            if (SelectionProhibited)
                 return;
 
             if (TurnOffSelectedItemsUpdate)

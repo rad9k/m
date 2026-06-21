@@ -314,7 +314,7 @@ namespace m0.UIWpf.Visualisers
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
-        public bool SelectionProphibited { get; set; }
+        public bool SelectionProhibited { get; set; }
 
         SimpleVisualiserWrapper Highlighted;
         private IVertex keyboardHighlightedVertex;
@@ -1041,7 +1041,7 @@ namespace m0.UIWpf.Visualisers
 
             if (e.ClickCount == 1) // change Selection
             {
-                if (SelectionProphibited)
+                if (SelectionProhibited)
                     return;
 
                 KeyValuePair<IVertex, SimpleVisualiserWrapper> kvp =
@@ -1087,7 +1087,7 @@ namespace m0.UIWpf.Visualisers
 
         private void ApplyPendingMouseSelection()
         {
-            if (pendingMouseDownSelectionVertex == null || SelectionProphibited)
+            if (pendingMouseDownSelectionVertex == null || SelectionProhibited)
                 return;
 
             PendingToVertexMouseGesture pendingGesture = new PendingToVertexMouseGesture
@@ -1106,7 +1106,7 @@ namespace m0.UIWpf.Visualisers
             KeyValuePair<IVertex, SimpleVisualiserWrapper> kvp =
                 GetVertexWrapperByEventSource(e.OriginalSource ?? e.Source);
 
-            if (kvp.Key == null || SelectionProphibited)
+            if (kvp.Key == null || SelectionProhibited)
                 return;
 
             SelectedEdgesInteractionHelper.ApplyForContextMenuByToVertex(Vertex, kvp.Key);
@@ -1165,7 +1165,7 @@ namespace m0.UIWpf.Visualisers
 
         public void ToggleKeyboardHighlightedEdgeSelection()
         {
-            if (SelectionProphibited || keyboardHighlightedVertex == null)
+            if (SelectionProhibited || keyboardHighlightedVertex == null)
                 return;
 
             IVertex sv = Vertex.Get(false, "SelectedEdges:");

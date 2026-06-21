@@ -1746,7 +1746,7 @@ namespace m0.UIWpf.VertexCommander
 
                 if (visualiserAsVisualiser != null)
                 {
-                    visualiserAsVisualiser.SelectionProphibited = isInEdgesVisualiser;
+                    visualiserAsVisualiser.SelectionProhibited = isInEdgesVisualiser;
                     ConfigureVertexCommanderVisualiser(visualiser);
                     ConfigureEdgesVisibility(visualiserAsVisualiser, isInEdgesVisualiser);
 

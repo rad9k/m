@@ -23,7 +23,7 @@ namespace m0.UIWpf.Visualisers
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }
 
-        public bool SelectionProphibited { get; set; }
+        public bool SelectionProhibited { get; set; }
         private readonly List<FrameworkElement> keyboardHighlightElements = new List<FrameworkElement>();
         private readonly List<IEdge> keyboardHighlightEdges = new List<IEdge>();
         private int currentHighlightPosition = -1;

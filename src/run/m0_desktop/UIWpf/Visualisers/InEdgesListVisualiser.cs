@@ -35,7 +35,7 @@ namespace m0.UIWpf.Visualisers
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }
 
-        public bool SelectionProphibited { get; set; }
+        public bool SelectionProhibited { get; set; }
 
         protected DataGrid ThisDataGrid;
 

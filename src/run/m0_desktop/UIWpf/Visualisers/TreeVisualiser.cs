@@ -608,7 +608,7 @@ namespace m0.UIWpf.Visualisers
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
-        public bool SelectionProphibited { get; set; }
+        public bool SelectionProhibited { get; set; }
 
         private bool fullWidthSelectionHighlight = true;
 
@@ -1106,7 +1106,7 @@ namespace m0.UIWpf.Visualisers
 
         public void UpdateSelectedVertices(bool IsCtrl, TreeVisualiserViewItem item)
         {
-            if (SelectionProphibited)
+            if (SelectionProhibited)
                 return;
 
             if (TurnOffSelectedVerticesUpdate)
@@ -1166,7 +1166,7 @@ namespace m0.UIWpf.Visualisers
 
         internal void RegisterPendingMouseDownFromItem(TreeVisualiserViewItem item)
         {
-            if (SelectionProphibited || item == null)
+            if (SelectionProhibited || item == null)
                 return;
 
             pendingMouseDownItem = item;
@@ -1180,7 +1180,7 @@ namespace m0.UIWpf.Visualisers
 
         internal void TryApplyContextMenuSelectionFromItem(TreeVisualiserViewItem item)
         {
-            if (SelectionProphibited || item == null)
+            if (SelectionProhibited || item == null)
                 return;
 
             SelectedEdgesInteractionHelper.ApplyForContextMenu(Vertex, (IEdge)item.Tag);
@@ -1195,7 +1195,7 @@ namespace m0.UIWpf.Visualisers
                 return;
             }
 
-            if (SelectionProphibited
+            if (SelectionProhibited
                 || pendingMouseDownItem == null
                 || pendingMouseDownEdge == null
                 || pendingMouseDownItem != item)
@@ -1340,7 +1340,7 @@ namespace m0.UIWpf.Visualisers
 
         public void ToggleKeyboardHighlightedEdgeSelection()
         {
-            if (SelectionProphibited || keyboardHighlightedItem == null)
+            if (SelectionProhibited || keyboardHighlightedItem == null)
                 return;
 
             bool wasSelected = keyboardHighlightedItem.IsSelected;

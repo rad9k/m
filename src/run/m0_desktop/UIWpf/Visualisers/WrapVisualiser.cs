@@ -25,7 +25,7 @@ namespace m0.UIWpf.Visualisers
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
-        public bool SelectionProphibited { get; set; }
+        public bool SelectionProhibited { get; set; }
 
         public double Scale { get; set; } // do not want to expose those as PlatformClass.Vertex
 

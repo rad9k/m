@@ -1,4 +1,4 @@
-﻿using m0;
+using m0;
 using m0.Foundation;
 using m0.Graph;
 using m0.Graph.ExecutionFlow;
@@ -102,6 +102,136 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         bool canDraw = false;
 
+        private const string LogWhere = "Set2DVisualiser";
+
+        void LogDiagnostic(string method, string message)
+        {
+            MinusZero.Instance.Log(1, LogWhere + "." + method, message);
+        }
+
+        static string FormatVertex(IVertex vertex)
+        {
+            if (vertex == null)
+                return "(null)";
+
+            return vertex.Value == null ? "(no value)" : vertex.Value.ToString();
+        }
+
+        static string FormatEdgeMeta(IEdge edge)
+        {
+            if (edge == null)
+                return "(null edge)";
+
+            return FormatVertex(edge.Meta) + " -> " + FormatVertex(edge.To);
+        }
+
+        IList<IVertex> CollectNumericFieldMetasFromTypeVertex(IVertex typeVertex)
+        {
+            List<IVertex> numericFieldMetas = new List<IVertex>();
+
+            if (typeVertex == null)
+                return numericFieldMetas;
+
+            IVertex childEdges = VertexOperations.GetChildEdges(typeVertex);
+
+            if (childEdges == null)
+                return numericFieldMetas;
+
+            foreach (IEdge childEdge in childEdges)
+            {
+                string rejectReason;
+                if (IsMetaSuitableForAxis(childEdge.To, out rejectReason))
+                    numericFieldMetas.Add(childEdge.To);
+            }
+
+            return numericFieldMetas;
+        }
+
+        IList<IVertex> GetNumericFieldMetasForType(IVertex typeMetaVertex)
+        {
+            IList<IVertex> numericFieldMetas = CollectNumericFieldMetasFromTypeVertex(typeMetaVertex);
+
+            if (numericFieldMetas.Count > 0 || VisualizedVertex == null || typeMetaVertex?.Value == null)
+                return numericFieldMetas;
+
+            IList<IEdge> instances = GraphUtil.GetQueryOut(VisualizedVertex, typeMetaVertex.Value.ToString(), null);
+
+            if (instances == null || instances.Count == 0)
+                return numericFieldMetas;
+
+            IVertex typeClassVertex = GraphUtil.GetQueryOutFirst(instances[0].To, "$Is", null);
+
+            if (typeClassVertex == null || typeClassVertex == typeMetaVertex)
+                return numericFieldMetas;
+
+            LogDiagnostic("GetNumericFieldMetasForType", "resolved type class via $Is: '"
+                + FormatVertex(typeClassVertex) + "' for meta '" + FormatVertex(typeMetaVertex) + "'");
+
+            return CollectNumericFieldMetasFromTypeVertex(typeClassVertex);
+        }
+
+        int GetNumericFieldCountForType(IVertex typeMetaVertex)
+        {
+            return GetNumericFieldMetasForType(typeMetaVertex).Count;
+        }
+
+        void AddAxisMetaComboBoxItem(ComboBox comboBox, IVertex fieldMetaVertex)
+        {
+            ComboBoxItem item = new ComboBoxItem();
+            item.Content = fieldMetaVertex.Value;
+            item.Tag = fieldMetaVertex;
+            comboBox.Items.Add(item);
+        }
+
+        void PopulateAxisMetaComboBoxes()
+        {
+            SetItemHorizontalAxisMetaComboBox.Items.Clear();
+            SetItemVerticalAxisMetaComboBox.Items.Clear();
+
+            IList<IVertex> numericFieldMetas = GetNumericFieldMetasForType(SetItemsDefiningMeta);
+
+            LogDiagnostic("PopulateAxisMetaComboBoxes", "type '" + SetItemsDefiningMetaString
+                + "' numericFieldCount=" + numericFieldMetas.Count);
+
+            for (int fieldIndex = 0; fieldIndex < numericFieldMetas.Count; fieldIndex++)
+            {
+                IVertex fieldMetaVertex = numericFieldMetas[fieldIndex];
+
+                AddAxisMetaComboBoxItem(SetItemHorizontalAxisMetaComboBox, fieldMetaVertex);
+                AddAxisMetaComboBoxItem(SetItemVerticalAxisMetaComboBox, fieldMetaVertex);
+
+                LogDiagnostic("PopulateAxisMetaComboBoxes", "ADDED field '" + FormatVertex(fieldMetaVertex) + "' index=" + fieldIndex);
+            }
+
+            if (SetItemHorizontalAxisMetaComboBox.Items.Count > 0)
+            {
+                ommit_SetItemHorizontalAxisMetaComboBox_SelectionChanged = true;
+                ((ComboBoxItem)SetItemHorizontalAxisMetaComboBox.Items[0]).IsSelected = true;
+                LogDiagnostic("PopulateAxisMetaComboBoxes", "auto-selected Horizontal '"
+                    + FormatVertex(((ComboBoxItem)SetItemHorizontalAxisMetaComboBox.Items[0]).Tag as IVertex) + "'");
+            }
+
+            if (SetItemVerticalAxisMetaComboBox.Items.Count > 1)
+            {
+                ommit_SetItemVerticalAxisMetaComboBox_SelectionChanged = true;
+                ((ComboBoxItem)SetItemVerticalAxisMetaComboBox.Items[1]).IsSelected = true;
+                LogDiagnostic("PopulateAxisMetaComboBoxes", "auto-selected Vertical '"
+                    + FormatVertex(((ComboBoxItem)SetItemVerticalAxisMetaComboBox.Items[1]).Tag as IVertex) + "'");
+            }
+            else if (SetItemVerticalAxisMetaComboBox.Items.Count == 1)
+            {
+                ommit_SetItemVerticalAxisMetaComboBox_SelectionChanged = true;
+                ((ComboBoxItem)SetItemVerticalAxisMetaComboBox.Items[0]).IsSelected = true;
+            }
+
+            canDraw = HasAxisMetaSelection();
+            LogDiagnostic("PopulateAxisMetaComboBoxes", "canDraw=" + canDraw
+                + " horizontal='" + SetItemHorizontalAxisMetaString
+                + "' vertical='" + SetItemVerticalAxisMetaString + "'");
+
+            RequestAxisAndDrawIfReady();
+        }
+
         // Set2D end
 
         static string[] _MetaTriggeringUpdateVertex = new string[] { "ShowArrowLines", "CanEdit", "ConnectPoints", "ShowToolbarNames", "ScaleLinesDensity" };
@@ -166,21 +296,71 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             base.ChildControlsLoaded();
 
-            canDraw = true;
+            if (HasAxisMetaSelection())
+                canDraw = true;
+
+            RequestAxisAndDrawIfReady();
+        }
+
+        void RequestAxisAndDrawIfReady()
+        {
+            if (!isLoaded || !HasAxisMetaSelection())
+            {
+                LogDiagnostic("RequestAxisAndDrawIfReady", "SKIP isLoaded=" + isLoaded
+                    + " hasAxisMetaSelection=" + HasAxisMetaSelection());
+                return;
+            }
 
             UpdateAxisAndDraw();
         }
 
+        bool IsScreenCoordinateValid(double coordinate)
+        {
+            return !double.IsNaN(coordinate) && !double.IsInfinity(coordinate);
+        }
+
+        bool AreAxisDecoratorsReady()
+        {
+            return HorizontalAD != null && VerticalAD != null;
+        }
+
         void UpdateAxisAndDraw()
         {
-            AxisUpdate();
+            LogDiagnostic("UpdateAxisAndDraw", "canDraw(before)=" + canDraw
+                + ", SetItemsDefiningMeta=" + FormatVertex(SetItemsDefiningMeta)
+                + ", horizontal=" + SetItemHorizontalAxisMetaString
+                + ", vertical=" + SetItemVerticalAxisMetaString
+                + ", isLoaded=" + isLoaded);
 
-            if (verticalMax_fromData == verticalMin_fromData || horizontalMax_fromData == horizontalMin_fromData)
-                canDraw = false;
+            if (!AreAxisDecoratorsReady())
+            {
+                LogDiagnostic("UpdateAxisAndDraw", "SKIP axis decorators not created yet");
+                return;
+            }
 
-            AxisMinMaxValuesUpdate();
+            bool axisUpdated = AxisUpdate();
 
-            VisualiserDraw();
+            if (axisUpdated)
+            {
+                if (verticalMax_fromData == verticalMin_fromData || horizontalMax_fromData == horizontalMin_fromData)
+                {
+                    LogDiagnostic("UpdateAxisAndDraw", "canDraw=false (degenerate axis range)"
+                        + " h=[" + horizontalMin_fromData + ".." + horizontalMax_fromData + "]"
+                        + " v=[" + verticalMin_fromData + ".." + verticalMax_fromData + "]");
+                    canDraw = false;
+                }
+                else if (HasAxisMetaSelection())
+                {
+                    canDraw = true;
+                }
+
+                AxisMinMaxValuesUpdate();
+            }
+
+            LogDiagnostic("UpdateAxisAndDraw", "canDraw(after)=" + canDraw);
+
+            if (canDraw && isLoaded)
+                VisualiserDraw();
         }
 
         public override double GetSnappedPosition(double position)
@@ -207,35 +387,86 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         
         protected void ComboBoxesUpdate()
         {
+            IVertex baseEdgeTo = Vertex.Get(false, @"BaseEdge:\To:");
+            LogDiagnostic("ComboBoxesUpdate", "VisualizedVertex=" + FormatVertex(VisualizedVertex)
+                + ", BaseEdge:\\To=" + FormatVertex(baseEdgeTo)
+                + ", sameRef=" + ReferenceEquals(VisualizedVertex, baseEdgeTo));
+
+            if (VisualizedVertex == null)
+            {
+                LogDiagnostic("ComboBoxesUpdate", "ABORT - VisualizedVertex is null (ComboBoxesUpdate may have run before UpdateVariablesFromBaseVertex)");
+                return;
+            }
+
             Dictionary<IVertex, int> metaCount = new Dictionary<IVertex, int>();
+            int totalEdges = 0;
+            int filteredOutEdges = 0;
 
             foreach (IEdge e in VisualizedVertex)
-                if (VisualiserUtil.FilterEdge(e, this.Vertex)) {
+            {
+                totalEdges++;
+
+                if (VisualiserUtil.FilterEdge(e, this.Vertex))
+                {
                     if (metaCount.ContainsKey(e.Meta))
                         metaCount[e.Meta]++;
                     else
                         metaCount.Add(e.Meta, 1);
                 }
+                else
+                {
+                    filteredOutEdges++;
+                    LogDiagnostic("ComboBoxesUpdate", "FilterEdge rejected " + FormatEdgeMeta(e));
+                }
+            }
+
+            LogDiagnostic("ComboBoxesUpdate", "totalEdges=" + totalEdges
+                + ", filteredOut=" + filteredOutEdges
+                + ", distinctMeta=" + metaCount.Count);
+
+            HashSet<IVertex> processedMetas = new HashSet<IVertex>();
+
+            foreach (KeyValuePair<IVertex, int> kvp in metaCount)
+            {
+                int numericFieldCount = GetNumericFieldCountForType(kvp.Key);
+                string inclusion = numericFieldCount > 1
+                    ? " -> INCLUDED in Items"
+                    : " -> SKIPPED (requires more than one numeric field)";
+
+                LogDiagnostic("ComboBoxesUpdate", "meta '" + FormatVertex(kvp.Key) + "' instanceCount=" + kvp.Value
+                    + " numericFieldCount=" + numericFieldCount + inclusion);
+            }
 
             SetItemsDefiningMetaComboBox.Items.Clear();
 
             bool isFirst = true;
+            int itemsAdded = 0;
 
+            foreach (KeyValuePair<IVertex, int> kvp in metaCount)
+            {
+                if (processedMetas.Contains(kvp.Key))
+                    continue;
 
-            foreach (KeyValuePair<IVertex,int> kvp in metaCount)
-                if(kvp.Value > 1)                    
-                    {
-                        ComboBoxItem i = new ComboBoxItem();
-                        i.Content = kvp.Key.Value;
-                        i.Tag = kvp.Key;
-                        SetItemsDefiningMetaComboBox.Items.Add(i);
+                processedMetas.Add(kvp.Key);
 
-                        if (isFirst)
-                        {
-                            isFirst = false;
-                            i.IsSelected = true;
-                        }
-                    }
+                if (GetNumericFieldCountForType(kvp.Key) <= 1)
+                    continue;
+
+                ComboBoxItem i = new ComboBoxItem();
+                i.Content = kvp.Key.Value;
+                i.Tag = kvp.Key;
+                SetItemsDefiningMetaComboBox.Items.Add(i);
+                itemsAdded++;
+
+                if (isFirst)
+                {
+                    isFirst = false;
+                    i.IsSelected = true;
+                    LogDiagnostic("ComboBoxesUpdate", "auto-selected Items meta '" + FormatVertex(kvp.Key) + "'");
+                }
+            }
+
+            LogDiagnostic("ComboBoxesUpdate", "Items dropdown count=" + itemsAdded);
         }
 
         bool VisualizedVertexToUpdated_executed = false;
@@ -246,6 +477,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             if (baseEdgeTo != null && !VisualizedVertexToUpdated_executed)
             {
+                VisualizedVertex = baseEdgeTo;
+                LogDiagnostic("CheckBaseEdgeChange", "first run ComboBoxesUpdate, baseEdgeTo=" + FormatVertex(baseEdgeTo));
                 ComboBoxesUpdate();
                 VisualizedVertexToUpdated_executed = true;
             }
@@ -281,8 +514,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
                 UpdateVariablesFromBaseVertex();
 
-                // SnapToGridComboBox_SelectionChange(); in UpdateVertexValues() does this;
-                VisualiserDraw();
+                RequestAxisAndDrawIfReady();
             }
         }
 
@@ -308,8 +540,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override void UpdateVertexValues()
         {
-            IVertex r = MinusZero.Instance.root;
-
             bool dummy = false;
             
             ShowArowLines = GraphUtil.GetBooleanValue(Vertex.Get(false, "ShowArrowLines:"), ref dummy);
@@ -318,8 +548,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             ConnectPoints = GraphUtil.GetBooleanValue(Vertex.Get(false, "ConnectPoints:"), ref dummy);
 
             ScaleLinesDensity = GraphUtil.GetDoubleValue(Vertex.Get(false, "ScaleLinesDensity:"), ref dummy);
-
-            VisualiserDraw();
 
             ShowToolbarNames_SelectionChange();
 
@@ -365,6 +593,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         {
             VisualizedVertex = Vertex.Get(false, @"BaseEdge:\To:");
 
+            LogDiagnostic("UpdateVariablesFromBaseVertex", "VisualizedVertex=" + FormatVertex(VisualizedVertex));
+
             if (VisualizedVertex == null)
                 return;                       
         }   
@@ -406,11 +636,17 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         Point GetPointFromVertex(IVertex itemVertex)
         {
+            if (!AreAxisDecoratorsReady() || !HasAxisMetaSelection())
+                return new Point(0, 0);
+
             double horizontalValue = GetHorizontal(itemVertex);
             double horizontalPosition = HorizontalAD.ValueSpaceToScreen(horizontalValue);
 
             double verticalValue = GetVertical(itemVertex);
             double verticalPosition = VerticalAD.ValueSpaceToScreen(verticalValue);
+
+            if (!IsScreenCoordinateValid(horizontalPosition) || !IsScreenCoordinateValid(verticalPosition))
+                return new Point(0, 0);
 
             return new Point(horizontalPosition, verticalPosition);
         }
@@ -473,8 +709,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override void DrawItems()
         {
-             if (!canDraw)
+             if (!canDraw || !AreAxisDecoratorsReady())
+             {
+                LogDiagnostic("DrawItems", "SKIP canDraw=" + canDraw
+                    + " axisDecoratorsReady=" + AreAxisDecoratorsReady());
                 return;
+             }
 
           //  cnt++;
 
@@ -516,6 +756,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 Point from = GetPointFromVertex(sortedItemEdges[cnt].To);
                 Point to = GetPointFromVertex(sortedItemEdges[cnt + 1].To);
 
+                if (!IsScreenCoordinateValid(from.X) || !IsScreenCoordinateValid(from.Y)
+                    || !IsScreenCoordinateValid(to.X) || !IsScreenCoordinateValid(to.Y))
+                    continue;
+
                 Line l = new Line();
 
                 WpfUtil.SetLinePosition(l, from.X, from.Y, to.X, to.Y);
@@ -531,7 +775,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         void LinesUpdateIfNeeded()
         {
-            if (ConnectPoints)
+            if (ConnectPoints && canDraw && AreAxisDecoratorsReady())
             {
                 IList<IEdge> itemEdges = GetItemEdges();
 
@@ -667,101 +911,117 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             VisualiserDraw();
         }
 
-        private bool IsMetaSuitableForAxis(IVertex v)
+        private bool IsMetaSuitableForAxis(IVertex v, out string rejectReason)
         {
+            rejectReason = null;
+
+            if (v == null)
+            {
+                rejectReason = "vertex is null";
+                return false;
+            }
+
             IVertex edgeTarget = v.Get(false, "$EdgeTarget:");
 
             if (edgeTarget == null)
+            {
+                rejectReason = "no $EdgeTarget on '" + FormatVertex(v) + "'";
                 return false;
+            }
 
-            string type = edgeTarget. Value.ToString();
+            string type = edgeTarget.Value == null ? "(null)" : edgeTarget.Value.ToString();
 
             if (type == "Integer" 
                 || type == "Float" 
                 || type == "Decimal")
                 return true;
 
+            rejectReason = "$EdgeTarget type '" + type + "' on '" + FormatVertex(v) + "' is not numeric";
             return false;
         }
+
+        private bool IsMetaSuitableForAxis(IVertex v)
+        {
+            string rejectReason;
+            return IsMetaSuitableForAxis(v, out rejectReason);
+        }
         bool ommit_SetItemHorizontalAxisMetaComboBox_SelectionChanged = false;
+        bool ommit_SetItemVerticalAxisMetaComboBox_SelectionChanged = false;
 
         private void SetItemsDefiningMetaComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (SetItemsDefiningMetaComboBox.SelectedItem == null)
+            {
+                LogDiagnostic("SetItemsDefiningMetaComboBox_SelectionChanged", "SelectedItem is null");
                 return;
+            }
 
             SetItemsDefiningMeta = (IVertex) ((ComboBoxItem)SetItemsDefiningMetaComboBox.SelectedItem).Tag;
 
             SetItemsDefiningMetaString = SetItemsDefiningMeta.Value.ToString();
 
-            SetItemHorizontalAxisMetaComboBox.Items.Clear();
-            SetItemVerticalAxisMetaComboBox.Items.Clear();
+            LogDiagnostic("SetItemsDefiningMetaComboBox_SelectionChanged", "selected Items meta '" + SetItemsDefiningMetaString + "'");
 
-            int cnt = 0;
+            PopulateAxisMetaComboBoxes();
 
-            foreach(IEdge _e in SetItemsDefiningMeta.GetAll(false, @"$EdgeTarget:\"))
-                if(IsMetaSuitableForAxis(_e.To))
-                {
-                    if (VisualiserUtil.FilterEdge(_e, this.Vertex))
-                    {
-                        ComboBoxItem i = new ComboBoxItem();
-                        i.Content = _e.To.Value;
-                        i.Tag = _e.To;
-
-                        SetItemHorizontalAxisMetaComboBox.Items.Add(i);
-
-                        if (cnt == 0)
-                        {
-                            ommit_SetItemHorizontalAxisMetaComboBox_SelectionChanged = true;
-                            i.IsSelected = true;
-                        }
-
-                        //
-
-                        i = new ComboBoxItem();
-                        i.Content = _e.To.Value;
-                        i.Tag = _e.To;
-
-                        SetItemVerticalAxisMetaComboBox.Items.Add(i);
-
-                        if (cnt == 1)
-                            i.IsSelected = true;
-
-                        cnt++;
-                    }
-                }
+            LogDiagnostic("SetItemsDefiningMetaComboBox_SelectionChanged", "Horizontal count=" + SetItemHorizontalAxisMetaComboBox.Items.Count
+                + ", Vertical count=" + SetItemVerticalAxisMetaComboBox.Items.Count);
         }
 
         private void SetItemHorizontalAxisMetaComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (SetItemHorizontalAxisMetaComboBox.SelectedItem == null)
+            {
+                LogDiagnostic("SetItemHorizontalAxisMetaComboBox_SelectionChanged", "SelectedItem is null");
                 return;
+            }
 
             SetItemHorizontalAxisMetaVertex = (IVertex)((ComboBoxItem)SetItemHorizontalAxisMetaComboBox.SelectedItem).Tag;
 
             SetItemHorizontalAxisMetaString = SetItemHorizontalAxisMetaVertex.Value.ToString();
 
+            LogDiagnostic("SetItemHorizontalAxisMetaComboBox_SelectionChanged", "horizontal='" + SetItemHorizontalAxisMetaString + "'");
 
-            if (ommit_SetItemHorizontalAxisMetaComboBox_SelectionChanged)                            
+            if (ommit_SetItemHorizontalAxisMetaComboBox_SelectionChanged)
+            {
                 ommit_SetItemHorizontalAxisMetaComboBox_SelectionChanged = false;
-            else
-                canDraw = true;
+                return;
+            }
 
-            UpdateAxisAndDraw();            
+            canDraw = HasAxisMetaSelection();
+
+            RequestAxisAndDrawIfReady();            
         }
 
         private void SetItemVerticalAxisMetaComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (SetItemVerticalAxisMetaComboBox.SelectedItem == null)
+            {
+                LogDiagnostic("SetItemVerticalAxisMetaComboBox_SelectionChanged", "SelectedItem is null");
                 return;
+            }
 
             SetItemVerticalAxisMetaVertex = (IVertex)((ComboBoxItem)SetItemVerticalAxisMetaComboBox.SelectedItem).Tag;
 
             SetItemVerticalAxisMetaString = SetItemVerticalAxisMetaVertex.Value.ToString();
 
-            canDraw = true;
+            LogDiagnostic("SetItemVerticalAxisMetaComboBox_SelectionChanged", "vertical='" + SetItemVerticalAxisMetaString + "'");
 
-            UpdateAxisAndDraw();
+            if (ommit_SetItemVerticalAxisMetaComboBox_SelectionChanged)
+            {
+                ommit_SetItemVerticalAxisMetaComboBox_SelectionChanged = false;
+                return;
+            }
+
+            canDraw = HasAxisMetaSelection();
+
+            RequestAxisAndDrawIfReady();
+        }
+
+        bool HasAxisMetaSelection()
+        {
+            return !string.IsNullOrEmpty(SetItemHorizontalAxisMetaString)
+                && !string.IsNullOrEmpty(SetItemVerticalAxisMetaString);
         }
 
         double GetHorizontal(IVertex item)
@@ -776,15 +1036,24 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             return GraphUtil.GetDoubleValueOr0(verticalVertex);
         }
 
-        void AxisUpdate()
+        bool AxisUpdate()
         {
             if (SetItemsDefiningMetaString == null
                 || HorizontalAD == null
                 || VerticalAD == null)
-                return;
+            {
+                LogDiagnostic("AxisUpdate", "SKIP (SetItemsDefiningMetaString=" + (SetItemsDefiningMetaString ?? "(null)")
+                    + ", HorizontalAD=" + (HorizontalAD == null ? "null" : "ok")
+                    + ", VerticalAD=" + (VerticalAD == null ? "null" : "ok") + ")");
+                return false;
+            }
 
-            if (!canDraw)
-                return;
+            if (!HasAxisMetaSelection())
+            {
+                LogDiagnostic("AxisUpdate", "SKIP axis meta not selected (horizontal='"
+                    + SetItemHorizontalAxisMetaString + "', vertical='" + SetItemVerticalAxisMetaString + "')");
+                return false;
+            }
 
             horizontalMin_fromData = double.PositiveInfinity;
             horizontalMax_fromData = double.NegativeInfinity;
@@ -792,8 +1061,12 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             verticalMin_fromData = double.PositiveInfinity;
             verticalMax_fromData = double.NegativeInfinity;
 
+            int itemEdgeCount = 0;
+
             foreach (IEdge e in GetItemEdges())
             {
+                itemEdgeCount++;
+
                 double horizontalValue = GetHorizontal(e.To);
 
                 double verticalValue = GetVertical(e.To);
@@ -815,6 +1088,15 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             verticalMax = verticalMax_fromData;
             horizontalMin = horizontalMin_fromData;
             horizontalMax = horizontalMax_fromData;
+
+            LogDiagnostic("AxisUpdate", "itemEdges=" + itemEdgeCount
+                + " via meta '" + SetItemsDefiningMetaString + "'"
+                + " h=[" + horizontalMin_fromData + ".." + horizontalMax_fromData + "]"
+                + " v=[" + verticalMin_fromData + ".." + verticalMax_fromData + "]");
+
+            return itemEdgeCount > 0
+                && double.IsFinite(horizontalMin_fromData) && double.IsFinite(horizontalMax_fromData)
+                && double.IsFinite(verticalMin_fromData) && double.IsFinite(verticalMax_fromData);
         }
 
         public void AxisMinMaxValuesUpdate()

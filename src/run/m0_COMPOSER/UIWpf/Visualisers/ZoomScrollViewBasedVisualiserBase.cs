@@ -33,6 +33,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }
 
+        public bool SelectionProhibited { get; set; }
+
         public bool ZoomSliderZero;
 
         static string[] _MetaTriggeringUpdateVertex = new string[] { };
@@ -387,20 +389,20 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                     break;
 
                 case CursorStateEnum.Eraser:
-                    WpfUtil.SetCursorFromResource("/m0_desktop;component/_resources/basic/eraser.cur");
+                    WpfUtil.SetCursorFromResource("/m0_COMPOSER;component/_resources/basic/eraser.cur");
                     break;
 
                 case CursorStateEnum.PenDown:
                 case CursorStateEnum.PenUp:
-                    WpfUtil.SetCursorFromResource("/m0_desktop;component/_resources/basic/pen.cur");
+                    WpfUtil.SetCursorFromResource("/m0_COMPOSER;component/_resources/basic/pen.cur");
                     break;
 
                 case CursorStateEnum.Glue:                
-                    WpfUtil.SetCursorFromResource("/m0_desktop;component/_resources/basic/glue.cur");
+                    WpfUtil.SetCursorFromResource("/m0_COMPOSER;component/_resources/basic/glue.cur");
                     break;
 
                 case CursorStateEnum.Razor:
-                    WpfUtil.SetCursorFromResource("/m0_desktop;component/_resources/basic/razor.cur");
+                    WpfUtil.SetCursorFromResource("/m0_COMPOSER;component/_resources/basic/razor.cur");
                     break;
             }
         }
@@ -1390,6 +1392,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void SelectItem(IItem item)
         {
+            if (SelectionProhibited)
+                return;
+
             MainDownEnum ic = GetItemContext(item);
 
             if (PreviousSelectedItemContext != ic)
@@ -1404,6 +1409,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void UnselectItem(IItem item)
         {
+            if (SelectionProhibited)
+                return;
+
             item.NoHighlight();
 
             EdgeHelper.DeleteVertexByEdge(Vertex.Get(false, "SelectedEdges:"), item.BaseEdge);
@@ -2447,6 +2455,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected void UnselectAllSelectedItems()
         {
+            if (SelectionProhibited)
+                return;
+
             foreach (IItem i in Items)
                 i.NoHighlight();
 
@@ -2458,6 +2469,9 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         public void UnselectAllSelectedEdges()
         {
+            if (SelectionProhibited)
+                return;
+
             IVertex sv = Vertex.Get(false, "SelectedEdges:");
 
             //TurnOffSelectedEdgesFireChange();

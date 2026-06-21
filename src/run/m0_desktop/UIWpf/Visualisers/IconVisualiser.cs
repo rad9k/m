@@ -49,7 +49,7 @@ namespace m0.UIWpf.Visualisers
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }
 
-        public bool SelectionProphibited { get; set; }
+        public bool SelectionProhibited { get; set; }
 
         public double Scale { get; set; }
 
@@ -470,7 +470,7 @@ namespace m0.UIWpf.Visualisers
 
         public void ToggleKeyboardHighlightedEdgeSelection()
         {
-            if (SelectionProphibited || keyboardHighlightedEdge == null)
+            if (SelectionProhibited || keyboardHighlightedEdge == null)
                 return;
 
             IVertex selectedEdges = Vertex.Get(false, "SelectedEdges:");
@@ -663,7 +663,7 @@ namespace m0.UIWpf.Visualisers
                 return;
             }
 
-            if (SelectionProphibited)
+            if (SelectionProhibited)
                 return;
 
             pendingMouseDownSelectionEdge = item.BaseEdge;
@@ -679,7 +679,7 @@ namespace m0.UIWpf.Visualisers
         {
             IEdge clickedEdge = GetDisplayedEdgeAtPoint(e.GetPosition(this));
 
-            if (clickedEdge == null || SelectionProphibited)
+            if (clickedEdge == null || SelectionProhibited)
                 return;
 
             SelectedEdgesInteractionHelper.ApplyForContextMenu(Vertex, clickedEdge);
@@ -723,7 +723,7 @@ namespace m0.UIWpf.Visualisers
 
         private void TryApplyPendingMouseClick()
         {
-            if (SelectionProphibited || pendingMouseDownSelectionEdge == null)
+            if (SelectionProhibited || pendingMouseDownSelectionEdge == null)
             {
                 ClearPendingMouseDown();
                 return;

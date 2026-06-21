@@ -13,7 +13,7 @@ namespace m0.UIWpf.Visualisers.Helper
     {
         AtomVisualiserHelper VisualiserHelper { get; set; }      
 
-        bool SelectionProphibited { get; set; }
+        bool SelectionProhibited { get; set; }
 
         void OnLoad(object sender, RoutedEventArgs e);
 

@@ -646,7 +646,7 @@ namespace m0.UIWpf.Visualisers
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }
 
-        public bool SelectionProphibited { get; set; }
+        public bool SelectionProhibited { get; set; }
 
         private readonly Viewport3D viewport;
         private readonly Canvas labelOverlay;
@@ -1594,7 +1594,7 @@ namespace m0.UIWpf.Visualisers
             Point point = e.GetPosition(this);
             GraphVisualiser3DNode hit = HitTestNodeLabelAt(point) ?? HitTestVertexAt(e.GetPosition(viewport));
 
-            if (hit == null || hit.BaseVertex == null || SelectionProphibited)
+            if (hit == null || hit.BaseVertex == null || SelectionProhibited)
                 return;
 
             SelectedEdgesInteractionHelper.ApplyForContextMenuByToVertex(Vertex, hit.BaseVertex);
@@ -1603,7 +1603,7 @@ namespace m0.UIWpf.Visualisers
 
         private void TryApplyPendingMouseClick()
         {
-            if (SelectionProphibited || pendingMouseDownNode == null || pendingMouseDownNode.BaseVertex == null)
+            if (SelectionProhibited || pendingMouseDownNode == null || pendingMouseDownNode.BaseVertex == null)
             {
                 ClearPendingMouseDownNode();
                 return;
@@ -1851,7 +1851,7 @@ namespace m0.UIWpf.Visualisers
 
         public void ToggleKeyboardHighlightedEdgeSelection()
         {
-            if (SelectionProphibited || keyboardHighlightedNode == null || keyboardHighlightedNode.BaseVertex == null)
+            if (SelectionProhibited || keyboardHighlightedNode == null || keyboardHighlightedNode.BaseVertex == null)
                 return;
 
             IVertex selectedEdges = Vertex.Get(false, "SelectedEdges:");

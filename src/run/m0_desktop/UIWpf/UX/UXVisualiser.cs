@@ -62,7 +62,7 @@ namespace m0.UIWpf.UX
 
         public event Notify SelectedEdgesChange;
 
-        public bool SelectionProphibited { get; set; }
+        public bool SelectionProhibited { get; set; }
 
         static IVertex systemMetaBaseVertex = m0.MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex");
 

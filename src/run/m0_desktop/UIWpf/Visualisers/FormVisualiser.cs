@@ -66,7 +66,7 @@ namespace m0.UIWpf.Visualisers
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
-        public bool SelectionProphibited { get; set; }
+        public bool SelectionProhibited { get; set; }
 
         bool DisplayBaseVertex = true; /////////////////////////////////////////
 
@@ -371,7 +371,7 @@ namespace m0.UIWpf.Visualisers
 
         public void ToggleKeyboardHighlightedEdgeSelection()
         {
-            if (SelectionProphibited)
+            if (SelectionProhibited)
                 return;
 
             IKeyboardHighlight nestedKeyboardHighlight = keyboardHighlightedControlInfo != null
@@ -987,7 +987,7 @@ namespace m0.UIWpf.Visualisers
         {
             ControlInfo controlInfo = GetControlInfoByElement(sender as FrameworkElement);
 
-            if (controlInfo == null || controlInfo.BaseEdge == null || SelectionProphibited)
+            if (controlInfo == null || controlInfo.BaseEdge == null || SelectionProhibited)
                 return;
 
             if (SelectedEdgesInteractionHelper.WasEdgeInSelectedEdges(Vertex, controlInfo.BaseEdge))
@@ -1019,7 +1019,7 @@ namespace m0.UIWpf.Visualisers
 
         private void TryApplyPendingMouseClick()
         {
-            if (SelectionProphibited || pendingMouseDownControlInfo == null || pendingMouseDownControlInfo.BaseEdge == null)
+            if (SelectionProhibited || pendingMouseDownControlInfo == null || pendingMouseDownControlInfo.BaseEdge == null)
                 return;
 
             ApplyFormEdgeGesture(
@@ -1084,7 +1084,7 @@ namespace m0.UIWpf.Visualisers
             bool wasInSelectionAtMouseDown,
             bool isDrag)
         {
-            if (SelectionProphibited || edge == null || Vertex == null)
+            if (SelectionProhibited || edge == null || Vertex == null)
                 return;
 
             PendingEdgeMouseGesture gesture = new PendingEdgeMouseGesture

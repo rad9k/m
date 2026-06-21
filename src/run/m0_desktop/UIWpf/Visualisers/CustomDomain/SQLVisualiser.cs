@@ -23,7 +23,7 @@ namespace m0.UIWpf.Visualisers.CustomDomain
     {
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
 
-        public bool SelectionProphibited { get; set; }
+        public bool SelectionProhibited { get; set; }
 
         List<IVertex> manuallyAddedVertexChangeListeners = new List<IVertex>();
 
