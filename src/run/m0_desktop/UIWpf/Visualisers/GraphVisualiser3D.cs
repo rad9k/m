@@ -2023,6 +2023,8 @@ namespace m0.UIWpf.Visualisers
 
         public void BaseEdgeToUpdated()
         {
+            UnselectAllSelectedEdges();
+
             if (!isFirstPainted)
             {
                 PaintGraph();

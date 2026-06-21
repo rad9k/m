@@ -345,6 +345,8 @@ namespace m0.UIWpf.Visualisers
 
         public void BaseEdgeToUpdated()
         {
+            UnselectAllSelectedEdges();
+
             IVertex baseEdgeTo = Vertex.Get(false, @"BaseEdge:\To:");
             IVertex meta = Vertex.Get(false, @"BaseEdge:\To:\$Is:");
 

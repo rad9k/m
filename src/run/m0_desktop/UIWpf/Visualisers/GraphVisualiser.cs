@@ -920,6 +920,8 @@ namespace m0.UIWpf.Visualisers
         }        
 
         public void BaseEdgeToUpdated(){
+            UnselectAllSelectedEdges();
+
             IVertex bv = Vertex.Get(false, @"BaseEdge:\To:");
 
             if (bv != null)

@@ -90,7 +90,7 @@ namespace m0.ZeroTypes
                 if (e.From != null && e.From.DisposedState == DisposeStateEnum.Live)
                     e.From.DeleteEdge(e);
 
-            MinusZero.Instance.Log(1, "VertexOperations.MoveVertex",
+            MinusZero.Instance.Log(1, "VertexOperations.MoveEdgesSet",
                 "roots=" + roots.Count + " scopeVertices=" + oldToNew.Count);
         }
 

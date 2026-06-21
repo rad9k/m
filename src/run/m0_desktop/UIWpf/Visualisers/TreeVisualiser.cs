@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using m0.Foundation;
@@ -67,21 +66,9 @@ namespace m0.UIWpf.Visualisers
                 if (_IsSelected == value)
                     return;
 
-                bool previous = _IsSelected;
                 _IsSelected = value;
-
-                if (ParentVisualiser != null)
-                    ParentVisualiser.LogInteraction(
-                        "IsSelected " + previous + "->" + value + " "
-                        + TreeVisualiser.DescribeTreeItem(this));
-
                 ApplyEdgeVisualState();
             }
-        }
-
-        internal bool IgnoreNextMouseLeftButtonUpForLog
-        {
-            get { return ignoreNextMouseLeftButtonUp; }
         }
 
         public TreeVisualiser ParentVisualiser {get; set;}
@@ -240,10 +227,6 @@ namespace m0.UIWpf.Visualisers
 
         private void ExpanderToggleButtonPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            ParentVisualiser.LogInteraction(
-                "ExpanderToggle PreviewMouseLeftButtonDown -> toggle ignoreNextUp=true "
-                + TreeVisualiser.DescribeTreeItem(this)
-                + " ignoreNextUp(before)=" + ignoreNextMouseLeftButtonUp);
             ToggleExpandedWithAnimation();
             ignoreNextMouseLeftButtonUp = true;
             e.Handled = true;
@@ -255,17 +238,11 @@ namespace m0.UIWpf.Visualisers
             {
                 if (ParentVisualiser.ActivateKeyboardHighlightItem(this))
                 {
-                    ParentVisualiser.LogInteraction(
-                        "MouseDown dbl-click -> ActivateKeyboardHighlight ignoreNextUp edge="
-                        + TreeVisualiser.DescribeEdge(GetEdge()));
                     ignoreNextMouseLeftButtonUp = true;
                     e.Handled = true;
                     return;
                 }
 
-                ParentVisualiser.LogInteraction(
-                    "MouseDown dbl-click -> OpenDefaultVisualiser ignoreNextUp edge="
-                    + TreeVisualiser.DescribeEdge(GetEdge()));
                 ignoreNextMouseLeftButtonUp = true;
                 BaseCommands.OpenDefaultVisualiser(EdgeHelper.CreateTempEdgeVertex(GetEdge()), false);
                 e.Handled = true;
@@ -279,11 +256,6 @@ namespace m0.UIWpf.Visualisers
 
             if (inExpandArea)
             {
-                ParentVisualiser.LogInteraction(
-                    "MouseLeftButtonDown expandArea -> toggle ignoreNextUp "
-                    + TreeVisualiser.DescribeTreeItem(this)
-                    + " pos=" + position.X.ToString("0.##") + "," + position.Y.ToString("0.##")
-                    + " ignoreNextUp(before)=" + ignoreNextMouseLeftButtonUp);
                 ToggleExpandedWithAnimation();
                 ignoreNextMouseLeftButtonUp = true;
                 a.Handled = true;
@@ -292,15 +264,8 @@ namespace m0.UIWpf.Visualisers
 
             a.Handled = true;
 
-            ParentVisualiser.LogInteraction(
-                "MouseLeftButtonDown -> RegisterPending "
-                + TreeVisualiser.DescribeTreeItem(this)
-                + " pos=" + position.X.ToString("0.##") + "," + position.Y.ToString("0.##")
-                + " inExpandArea=false ignoreNextUp(before)=" + ignoreNextMouseLeftButtonUp);
+            ignoreNextMouseLeftButtonUp = false;
             ParentVisualiser.RegisterPendingMouseDownFromItem(this);
-            ParentVisualiser.LogInteraction(
-                "MouseLeftButtonDown after RegisterPending ignoreNextUp(after)=" + ignoreNextMouseLeftButtonUp
-                + " " + TreeVisualiser.DescribeTreeItem(this));
         }
 
         IEdge GetEdge()
@@ -312,19 +277,11 @@ namespace m0.UIWpf.Visualisers
         {
             if (ignoreNextMouseLeftButtonUp)
             {
-                ParentVisualiser.LogInteraction(
-                    "MouseLeftButtonUp ignored ignoreNextUp=true "
-                    + TreeVisualiser.DescribeTreeItem(this)
-                    + " " + ParentVisualiser.DescribePendingMouseSnapshot());
                 ignoreNextMouseLeftButtonUp = false;
                 a.Handled = true;
                 return;
             }
 
-            ParentVisualiser.LogInteraction(
-                "MouseLeftButtonUp -> TryApplyPending "
-                + TreeVisualiser.DescribeTreeItem(this)
-                + " " + ParentVisualiser.DescribePendingMouseSnapshot());
             ParentVisualiser.TryApplyPendingMouseClickFromItem(this);
 
             a.Handled = true;
@@ -653,128 +610,6 @@ namespace m0.UIWpf.Visualisers
 
         public bool SelectionProphibited { get; set; }
 
-        private const bool InteractionLogEnabled = true;
-        private const string InteractionLogWhere = "TreeVisualiser.Interaction";
-
-        internal void LogInteraction(string message)
-        {
-            if (!InteractionLogEnabled)
-                return;
-
-            MinusZero.Instance.Log(1, InteractionLogWhere, message);
-        }
-
-        internal static string DescribeEdge(IEdge edge)
-        {
-            if (edge == null)
-                return "edge=null";
-
-            return "Meta=" + (edge.Meta?.Value?.ToString() ?? "")
-                + " To=" + (edge.To?.Value?.ToString() ?? "")
-                + " From=" + (edge.From?.Value?.ToString() ?? "");
-        }
-
-        internal static string DescribeTreeItem(TreeVisualiserViewItem item)
-        {
-            if (item == null)
-                return "item=null";
-
-            return "itemHash=" + item.GetHashCode()
-                + " edge={" + DescribeEdge(item.Tag as IEdge) + "}";
-        }
-
-        internal string DescribePendingMouseSnapshot()
-        {
-            return "pendingItem="
-                + (pendingMouseDownItem == null ? "null" : "hash=" + pendingMouseDownItem.GetHashCode())
-                + " pendingEdge={" + DescribeEdge(pendingMouseDownEdge) + "}"
-                + " suppressNextMouseUp=" + suppressNextMouseUpSelection
-                + " wasInSelectionAtDown=" + pendingWasInSelectionAtMouseDown
-                + " isCtrl=" + pendingMouseDownIsCtrl
-                + " " + DescribeSelectedEdgesSnapshot();
-        }
-
-        internal string DescribeSelectedEdgesSnapshot()
-        {
-            int count = Vertex?.GetAll(false, @"SelectedEdges:\{$Is:Edge}")?.Count() ?? 0;
-
-            return "selectedEdgesCount=" + count
-                + " selectionProhibited=" + SelectionProphibited
-                + " graphSelected=[" + DescribeSelectedEdgesInGraph() + "]";
-        }
-
-        internal string DescribeSelectedEdgesInGraph()
-        {
-            IVertex selectedEdgeVertices = Vertex?.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
-
-            if (selectedEdgeVertices == null)
-                return "";
-
-            StringBuilder sb = new StringBuilder();
-            int index = 0;
-
-            foreach (IEdge edgeVertexEdge in selectedEdgeVertices)
-            {
-                if (index > 0)
-                    sb.Append("; ");
-
-                IVertex edgeVertex = edgeVertexEdge.To;
-                IEdge graphEdge = edgeVertex == null ? null : EdgeHelper.GetIEdgeByEdgeVertex(edgeVertex);
-
-                sb.Append("[").Append(index).Append("]=");
-
-                if (graphEdge != null)
-                    sb.Append("{").Append(DescribeEdge(graphEdge)).Append("}");
-                else
-                    sb.Append("edgeVertexUnresolved");
-
-                index++;
-            }
-
-            return sb.ToString();
-        }
-
-        internal void LogSelectionSyncSnapshot(string context)
-        {
-            if (!InteractionLogEnabled)
-                return;
-
-            LogInteraction(
-                context
-                + " uiSelected=[" + DescribeUiSelectedTreeItems() + "] "
-                + DescribeSelectedEdgesSnapshot());
-        }
-
-        internal string DescribeUiSelectedTreeItems()
-        {
-            StringBuilder sb = new StringBuilder();
-            AppendUiSelectedTreeItems(Items, sb, 0);
-            return sb.ToString();
-        }
-
-        void AppendUiSelectedTreeItems(ItemCollection items, StringBuilder sb, int depth)
-        {
-            foreach (object item in items)
-            {
-                TreeVisualiserViewItem treeItem = item as TreeVisualiserViewItem;
-
-                if (treeItem == null)
-                    continue;
-
-                if (treeItem.IsSelected)
-                {
-                    if (sb.Length > 0)
-                        sb.Append("; ");
-
-                    sb.Append(new string(' ', depth * 2))
-                        .Append(DescribeTreeItem(treeItem))
-                        .Append(" ignoreNextUp=").Append(treeItem.IgnoreNextMouseLeftButtonUpForLog);
-                }
-
-                AppendUiSelectedTreeItems(treeItem.Items, sb, depth + 1);
-            }
-        }
-
         private bool fullWidthSelectionHighlight = true;
 
         public bool FullWidthSelectionHighlight
@@ -999,6 +834,8 @@ namespace m0.UIWpf.Visualisers
 
         public void BaseEdgeToUpdated()
         {
+            UnselectAllSelectedEdges();
+
             ClearAllItems();
 
             IVertex bas = Vertex.Get(false, @"BaseEdge:\To:");
@@ -1230,10 +1067,7 @@ namespace m0.UIWpf.Visualisers
                 SelectedEdgesChange();
 
             if (TurnOffSelectedItemsUpdate)
-            {
-                LogInteraction("SelectedVerticesUpdated skipped TurnOffSelectedItemsUpdate=true");
                 return;
-            }
 
             TurnOffSelectedVerticesUpdate = true;
 
@@ -1245,7 +1079,6 @@ namespace m0.UIWpf.Visualisers
                     ClearAllSelectedItems_Reccurent(i);
 
                 TurnOffSelectedVerticesUpdate = false;
-                LogSelectionSyncSnapshot("SelectedVerticesUpdated cleared (selectedEdges=null)");
                 return;
             }
 
@@ -1253,8 +1086,6 @@ namespace m0.UIWpf.Visualisers
                 SelectedVerticesUpdated_Reccurent(i, selectedEdges);
 
             TurnOffSelectedVerticesUpdate = false;
-
-            LogSelectionSyncSnapshot("SelectedVerticesUpdated");
         }
 
         private void SelectedVerticesUpdated_Reccurent(TreeViewItem i, IVertex selectedEdges)
@@ -1265,12 +1096,6 @@ namespace m0.UIWpf.Visualisers
 
                 bool isSelected = selectedEdges != null
                     && EdgeHelper.FindIEdgeVertexByIEdge(selectedEdges, (IEdge)ii.Tag) != null;
-
-                if (ii.IsSelected != isSelected)
-                    LogInteraction(
-                        "SelectedVerticesUpdated_Reccurent willSetIsSelected "
-                        + isSelected + " "
-                        + DescribeTreeItem(ii));
 
                 ii.IsSelected = isSelected;
             }
@@ -1342,13 +1167,7 @@ namespace m0.UIWpf.Visualisers
         internal void RegisterPendingMouseDownFromItem(TreeVisualiserViewItem item)
         {
             if (SelectionProphibited || item == null)
-            {
-                LogInteraction(
-                    "RegisterPending skipped selectionProhibited=" + SelectionProphibited
-                    + " item=" + (item == null ? "null" : DescribeTreeItem(item))
-                    + " " + DescribePendingMouseSnapshot());
                 return;
-            }
 
             pendingMouseDownItem = item;
             pendingMouseDownEdge = (IEdge)item.Tag;
@@ -1357,9 +1176,6 @@ namespace m0.UIWpf.Visualisers
                 Vertex,
                 pendingMouseDownEdge);
             suppressNextMouseUpSelection = false;
-
-            LogInteraction(
-                "RegisterPending ok " + DescribeTreeItem(item) + " " + DescribePendingMouseSnapshot());
         }
 
         internal void TryApplyContextMenuSelectionFromItem(TreeVisualiserViewItem item)
@@ -1375,10 +1191,6 @@ namespace m0.UIWpf.Visualisers
         {
             if (suppressNextMouseUpSelection)
             {
-                LogInteraction(
-                    "TryApplyPending skipped suppressNextMouseUpSelection upItem="
-                    + DescribeTreeItem(item)
-                    + " " + DescribePendingMouseSnapshot());
                 ClearPendingMouseDown();
                 return;
             }
@@ -1388,20 +1200,6 @@ namespace m0.UIWpf.Visualisers
                 || pendingMouseDownEdge == null
                 || pendingMouseDownItem != item)
             {
-                LogInteraction(
-                    "TryApplyPending skipped selectionProhibited=" + SelectionProphibited
-                    + " pendingItemNull=" + (pendingMouseDownItem == null)
-                    + " pendingEdgeNull=" + (pendingMouseDownEdge == null)
-                    + " pendingItemMismatch="
-                    + (pendingMouseDownItem != null && item != null
-                        && pendingMouseDownItem != item
-                        ? "pendingHash=" + pendingMouseDownItem.GetHashCode()
-                            + " upHash=" + item.GetHashCode()
-                            + " sameEdge="
-                            + ReferenceEquals(pendingMouseDownEdge, item.Tag as IEdge)
-                        : (pendingMouseDownItem == null || item == null ? "n/a" : "false"))
-                    + " upItem=" + DescribeTreeItem(item)
-                    + " " + DescribePendingMouseSnapshot());
                 ClearPendingMouseDown();
                 return;
             }
@@ -1413,16 +1211,8 @@ namespace m0.UIWpf.Visualisers
                 WasInSelectionAtMouseDown = pendingWasInSelectionAtMouseDown
             };
 
-            LogInteraction(
-                "TryApplyPending -> ApplyForClick " + DescribeTreeItem(item)
-                + " " + DescribePendingMouseSnapshot());
-
             SelectedEdgesInteractionHelper.ApplyForClick(Vertex, pendingGesture);
             SelectedVerticesUpdated();
-
-            LogInteraction(
-                "TryApplyPending done " + DescribeSelectedEdgesSnapshot()
-                + " uiSelected=[" + DescribeUiSelectedTreeItems() + "]");
 
             ClearPendingMouseDown();
         }
@@ -1458,10 +1248,6 @@ namespace m0.UIWpf.Visualisers
             SelectedEdgesInteractionHelper.ApplyForDrag(Vertex, pendingGesture);
             SelectedVerticesUpdated();
             suppressNextMouseUpSelection = true;
-
-            LogInteraction(
-                "TryPrepareDrag suppressNextMouseUp=true edge=" + DescribeEdge(clickedEdge)
-                + " " + DescribeSelectedEdgesSnapshot());
 
             IVertex dndVertex = SelectedEdgesInteractionHelper.BuildDndVertexFromSelectedEdges(
                 Vertex,

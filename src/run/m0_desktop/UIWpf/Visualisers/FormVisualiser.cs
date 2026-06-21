@@ -1514,6 +1514,7 @@ namespace m0.UIWpf.Visualisers
 
             ClearKeyboardHighlight();
             ClearPendingMouseSelection();
+            UnselectAllSelectedEdges();
 
             VisualiserHelper.DisposeAllChildVisualisersExceptWrap();
 

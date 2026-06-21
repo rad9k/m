@@ -1,4 +1,4 @@
-﻿using m0.Foundation;
+using m0.Foundation;
 using System;
 using System.Collections;
 using System.Collections.Generic;

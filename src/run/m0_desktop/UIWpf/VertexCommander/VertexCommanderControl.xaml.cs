@@ -679,6 +679,13 @@ namespace m0.UIWpf.VertexCommander
                 : rightOutEdgesVisuliserInstance;
         }
 
+        private IVertex GetPaneOutEdgesInstance(KeyboardHighlightPane pane)
+        {
+            return pane == KeyboardHighlightPane.Left
+                ? leftOutEdgesVisuliserInstance
+                : rightOutEdgesVisuliserInstance;
+        }
+
         private IList<IEdge> GetActivePaneSelectedIEdges()
         {
             List<IEdge> result = new List<IEdge>();

@@ -206,6 +206,9 @@ namespace m0.UIWpf.Visualisers
         IVertex ToShowEdgesMeta;
 
         public override void BaseEdgeToUpdated(){
+            UnselectAllSelectedEdges();
+            ClearPendingMouseGesture();
+
             IVertex bas = Vertex.Get(false, @"BaseEdge:\To:");
 
             if (Vertex.Get(false, @"ToShowEdgesMeta:\Meta:") == null) // check if we are in the middle of ToShowEdgesMeta sub Vertices switching
