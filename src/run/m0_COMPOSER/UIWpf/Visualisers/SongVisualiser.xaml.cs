@@ -64,56 +64,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected double ExtendTimeLength_Song;
 
-        const string DiagnosticLogWhere = "SongVisualiser";
-        const bool DiagnosticLogEnabled = true;
-
-        void LogDiagnostic(string method, string message)
-        {
-            if (!DiagnosticLogEnabled)
-                return;
-
-            MinusZero.Instance.Log(1, DiagnosticLogWhere + "." + method, message);
-        }
-
-        string DescribeSegment(AxisSegment segment)
-        {
-            if (segment == null)
-                return "null";
-
-            return "track=" + (segment.BaseVertex != null ? segment.BaseVertex.ToString() : "null")
-                + " start=" + segment.StartPosition
-                + " end=" + segment.EndPosition;
-        }
-
-        int GetTrackCount()
-        {
-            if (VisualizedVertex == null)
-                return 0;
-
-            int count = 0;
-
-            foreach (IEdge trackEdge in VisualizedVertex.GetAll(false, "Track:"))
-                count++;
-
-            return count;
-        }
-
-        string BuildPenStateMessage(string phase)
-        {
-            double newItemWidth = NewItemShape != null ? NewItemShape.Width : -1;
-
-            return phase
-                + " cursor=" + CurrentCursorState
-                + " segment=" + DescribeSegment(NewItemSegment)
-                + " NewItemShape.Width=" + newItemWidth
-                + " IsCurrentPenItemCenter=" + IsCurrentPenItemCenter
-                + " NewItemWidthOneSnapLimit=" + NewItemWidthOneSnapLimit
-                + " trackCount=" + GetTrackCount()
-                + " VerticalAD=" + (VerticalAD != null ? "set" : "null")
-                + " HorizontalAD=" + (HorizontalAD != null ? "set" : "null")
-                + " VisualizedVertex=" + (VisualizedVertex != null ? VisualizedVertex.ToString() : "null");
-        }
-
         //
 
         bool ShowToolbarNames;
@@ -221,41 +171,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         protected override INoInEdgeInOutVertexVertex CheckBaseEdgeChange(IExecution exe)
         {
             if (ExecutionFlowHelper.IsVertexChange(exe.Stack, "Tempo"))
-            {
-                LogDiagnostic("CheckBaseEdgeChange", "Tempo change -> UpdateTempo");
                 UpdateTempo(); // executes VisualiserDraw();
-            }
             else
-            {
-                LogDiagnostic("CheckBaseEdgeChange", "non-Tempo change -> RedrawTracks");
                 RedrawTracks();
-            }
 
             return exe.Stack;
-        }
-
-        protected override AxisSegment FindVerticalSegment(double position)
-        {
-            int segmentCount = VerticalAD != null && VerticalAD.Segments != null ? VerticalAD.Segments.Count : 0;
-
-            AxisSegment segment = base.FindVerticalSegment(position);
-
-            LogDiagnostic("FindVerticalSegment",
-                "y=" + position
-                + " segmentCount=" + segmentCount
-                + " found=" + (segment != null)
-                + " " + DescribeSegment(segment));
-
-            return segment;
-        }
-
-        protected override void PenUp(object sender, MouseButtonEventArgs e)
-        {
-            LogDiagnostic("PenUp", BuildPenStateMessage("before "));
-
-            base.PenUp(sender, e);
-
-            LogDiagnostic("PenUp", BuildPenStateMessage("after "));
         }
 
         /*
@@ -370,12 +290,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override IEdge AddItemVertex(AxisSegment itemSegment, double startPosition_Screen, double lengthPosition_Screen)
         {
-            if (itemSegment == null)
-            {
-                LogDiagnostic("AddItemVertex", "abort: itemSegment is null");
-                return null;
-            }
-
             IVertex trackVertex = itemSegment.BaseVertex;
 
             bool needsSnapCorrection = false;
@@ -387,20 +301,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
             int lengthPosition = ScreenPositionToMusicTime(lengthPosition_Screen, needsSnapCorrection);
 
-            LogDiagnostic("AddItemVertex",
-                DescribeSegment(itemSegment)
-                + " startScreen=" + startPosition_Screen
-                + " lengthScreen=" + lengthPosition_Screen
-                + " startMusic=" + startPosition
-                + " lengthMusic=" + lengthPosition
-                + " needsSnapCorrection=" + needsSnapCorrection);
-
-            IEdge newEdge = Song.AddSequenceEventVertex(trackVertex, startPosition, lengthPosition);
-
-            LogDiagnostic("AddItemVertex",
-                "created edge=" + (newEdge != null ? newEdge.To.ToString() : "null"));
-
-            return newEdge;
+            return Song.AddSequenceEventVertex(trackVertex, startPosition, lengthPosition);
         }
 
         static IVertex sequnceEventMeta = MinusZero.Instance.root.Get(false, @"System\Lib\Music\Track\SequenceEvent");
@@ -581,12 +482,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         private void RedrawTracks()
         {
-            LogDiagnostic("RedrawTracks",
-                "VisualizedVertex=" + (VisualizedVertex != null ? VisualizedVertex.ToString() : "null")
-                + " trackCount=" + GetTrackCount()
-                + " Length=" + Length
-                + " VerticalAD=" + (VerticalAD != null ? "set" : "null"));
-
             if(VerticalAD != null)
                 VerticalAD.SetBaseVertex(VisualizedVertex);
 
@@ -878,15 +773,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             else
                 Length = GetMusicTimeFromRealTime(ExtendTimeLength_Song);
 
-            LogDiagnostic("SetupLocalVariablesFromBaseVertexVertexes",
-                "Tempo=" + Tempo
-                + " ExtendTimeLength_Song=" + ExtendTimeLength_Song
-                + " ExtendTimeLength(base)=" + ExtendTimeLength
-                + " Length=" + Length
-                + " LengthFromVertex=" + (VisualizedVertex.Get(false, "Length:") != null)
-                + " extendDeltaMusic=" + GetMusicTimeFromRealTime(ExtendTimeLength_Song)
-                + " IsDrum=" + GraphUtil.GetBooleanValue(VisualizedVertex.Get(false, "IsDrum:"), ref dummy));
-
             SaveLength();
 
             IsDrum = GraphUtil.GetBooleanValue(VisualizedVertex.Get(false, "IsDrum:"), ref dummy);
@@ -897,27 +783,10 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override void TruncateButton_Click(object sender, RoutedEventArgs e)
         {
-            int extendDeltaMusic = GetMusicTimeFromRealTime(ExtendTimeLength_Song);
-            int lengthBefore = Length;
-            bool guardBlocks = (Length - ExtendTimeLength) <= 0;
-
-            LogDiagnostic("TruncateButton_Click",
-                "Length=" + lengthBefore
-                + " ExtendTimeLength(base)=" + ExtendTimeLength
-                + " ExtendTimeLength_Song=" + ExtendTimeLength_Song
-                + " extendDeltaMusic=" + extendDeltaMusic
-                + " guardUsesBaseExtendTimeLength=" + guardBlocks
-                + " guardWouldUseSongDelta=" + ((Length - extendDeltaMusic) <= 0));
-
-            if (guardBlocks)
-            {
-                LogDiagnostic("TruncateButton_Click", "abort: guard (Length - ExtendTimeLength) <= 0");
+            if ((Length - ExtendTimeLength) <= 0)
                 return;
-            }
 
-            Length -= extendDeltaMusic;
-
-            LogDiagnostic("TruncateButton_Click", "Length after truncate=" + Length);
+            Length -= GetMusicTimeFromRealTime(ExtendTimeLength_Song);
 
             SaveLength();
 
@@ -928,17 +797,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         protected override void ExtendButton_Click(object sender, RoutedEventArgs e)
         {
-            int extendDeltaMusic = GetMusicTimeFromRealTime(ExtendTimeLength_Song);
-            int lengthBefore = Length;
-
-            LogDiagnostic("ExtendButton_Click",
-                "Length=" + lengthBefore
-                + " ExtendTimeLength_Song=" + ExtendTimeLength_Song
-                + " extendDeltaMusic=" + extendDeltaMusic);
-
-            Length += extendDeltaMusic;
-
-            LogDiagnostic("ExtendButton_Click", "Length after extend=" + Length);
+            Length += GetMusicTimeFromRealTime(ExtendTimeLength_Song);
 
             SaveLength();
 
@@ -987,11 +846,6 @@ namespace m0_COMPOSER.UIWpf.Visualisers
         void UpdateHorizontalADLength()
         {
             double RealTimeLength = GetRealTimeFromMusicTime(Length);
-
-            LogDiagnostic("UpdateHorizontalADLength",
-                "Length=" + Length
-                + " RealTimeLength(minutes)=" + RealTimeLength
-                + " HorizontalAD=" + (HorizontalAD != null ? "set" : "null"));
 
             HorizontalAD.ValueSpaceMax = RealTimeLength;
         }

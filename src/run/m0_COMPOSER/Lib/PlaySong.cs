@@ -75,7 +75,7 @@ namespace m0_COMPOSER.Lib
         static IVertex programChangeProgramNumberMeta = r.Get(false, @"System\Lib\Music\NoteOutput\ProgramChange\programNumber");
         
 
-        protected double GetMidiTicksPerMilisecond(int tempo)
+        protected double GetMidiTicksPerMilisecond(double tempo)
         {
             double ticksInMinute = tempo * Midi.Standard.MidiTicksPerBeat;
 
@@ -86,7 +86,7 @@ namespace m0_COMPOSER.Lib
 
         private void UpdateTempo()
         {
-            int tempo = GraphUtil.GetIntegerValueOr0(SongVertex.Get(false, "Tempo:"));
+            double tempo = GraphUtil.GetDoubleValueOr0(SongVertex.Get(false, "Tempo:"));
 
             TicksPerMilisecond = GetMidiTicksPerMilisecond(tempo);
         }
@@ -280,6 +280,9 @@ namespace m0_COMPOSER.Lib
 
         protected INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
+            if (ExecutionFlowHelper.IsVertexChange(exe.Stack, "Tempo"))
+                UpdateTempo();
+
             UpdateEventDictionaries();
             return exe.Stack;
         }
