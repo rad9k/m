@@ -708,29 +708,37 @@ namespace m0.UIWpf.Visualisers
             }
 
             bool isSelected = IsOwnSelectedControlInfo(controlInfo);
-            Brush background;
-            Brush foreground;
+            Brush dataBackground;
+            Brush dataForeground;
+            Brush metaBackground;
+            Brush metaForeground;
 
             if (isHighlighted)
             {
-                background = (Brush)FindResource("0HighlightBrush");
-                foreground = isSelected
+                dataBackground = (Brush)FindResource("0HighlightBrush");
+                dataForeground = isSelected
                     ? (Brush)FindResource("0ForegroundBrush")
                     : (Brush)FindResource("0HighlightForegroundBrush");
+                metaBackground = dataBackground;
+                metaForeground = dataForeground;
             }
             else if (isSelected)
             {
-                background = (Brush)FindResource("0SelectionBrush");
-                foreground = (Brush)FindResource("0BackgroundBrush");
+                dataBackground = (Brush)FindResource("0SelectionBrush");
+                dataForeground = (Brush)FindResource("0BackgroundBrush");
+                metaBackground = dataBackground;
+                metaForeground = dataForeground;
             }
             else
             {
-                background = (Brush)FindResource("0BackgroundBrush");
-                foreground = (Brush)FindResource("0ForegroundBrush");
+                dataBackground = (Brush)FindResource("0BackgroundBrush");
+                dataForeground = (Brush)FindResource("0ForegroundBrush");
+                metaBackground = Brushes.Transparent;
+                metaForeground = (Brush)FindResource("0ForegroundBrush");
             }
 
-            SetElementHighlight(controlInfo.MetaControl, background, foreground);
-            SetElementHighlight(controlInfo.DataControl, background, foreground);
+            SetElementHighlight(controlInfo.MetaControl, metaBackground, metaForeground);
+            SetElementHighlight(controlInfo.DataControl, dataBackground, dataForeground);
         }
 
         private bool IsOwnSelectedControlInfo(ControlInfo controlInfo)
@@ -2005,7 +2013,6 @@ namespace m0.UIWpf.Visualisers
             metaControl.FontStyle = FontStyles.Italic;
             metaControl.FontWeight = WpfUtil.MetaWeight;
             metaControl.Foreground = (Brush)FindResource("0GrayBrush");
-            metaControl.FontStyle = FontStyles.Italic;
             metaControl.Background = Brushes.Transparent;
 
             if (!WpfUtil.HasParentsGotContextMenu(metaControl))
