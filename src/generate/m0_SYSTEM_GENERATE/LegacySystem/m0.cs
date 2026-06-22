@@ -6910,6 +6910,8 @@ namespace m0
             IEdge additonalEdge = Root.GetAll(false, @"System\Meta\ZeroUML\additional").FirstOrDefault();
 
             zu.DeleteEdge(additonalEdge);
+
+            IVertex package = Root.Get(false, @"System\Meta\ZeroUML\Package");
         }
 
         void CreateSystemMetaCustomDomain()

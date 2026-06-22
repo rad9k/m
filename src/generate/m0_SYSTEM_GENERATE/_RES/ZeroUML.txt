@@ -2,5 +2,46 @@
 	import @System\Meta\ZeroUML direct meta	
 	 
 	"additional"
-		"component"
-			<@Package>
+		class "Component"
+			assoctiaton "Relation" @additional\Component "0":"-1"
+			"Create"
+				<@$EdgeTarget :: @additional\Component>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+			"Read"
+				<@$EdgeTarget :: @additional\Component>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+			"Write"
+				<@$EdgeTarget :: @additional\Component>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+			"Deploy"
+				<@$EdgeTarget :: @additional\Component>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+			"Component"
+				<@$EdgeTarget :: @additional\Component>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+				<@$IsAggregation :: @$Empty>
+		"Machine"
+		"Workstation"
+			<@$Inherits :: @additional\Machine>
+		"Server"
+			<@$Inherits :: @additional\Machine>
+		"Data"
+			<@$Inherits :: @additional\Component>
+		"Enironment"
+			<@$Inherits :: @additional\Component>
+		"System"
+		"Firewall"
+		"LoadBalancer"
+		"Database"
+		"MinusZero"
+		"Container"
+			<@$Inherits :: @additional\Enironment>
+		"OperatingSystem"
+			<@$Inherits :: @additional\Enironment>
+		"Interface"
+		"Operation"
