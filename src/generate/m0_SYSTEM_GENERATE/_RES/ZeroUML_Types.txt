@@ -11,7 +11,7 @@
 			aggregation "Component" @additional\Component "0":"-1"
 		class "Machine"
 		class "Workstation"
-			inherits @Types\Machine			
+			inherits @Types\Machine
 		class "Server"
 			<@$Inherits :: @Types\Machine>
 		class "Data"

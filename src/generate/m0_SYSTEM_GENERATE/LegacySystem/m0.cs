@@ -1374,7 +1374,7 @@ namespace m0
 
             importDirectMeta.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$ImportDirectMeta"), "import[ ]+@(?<link>[^ ]+)[ ]+direct[ ]+meta[ ]*\\r");
 
-            IVertex importDirectMeta_link = importDirectMeta.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$ImportDirectMeta"), "(?<link>)");
+            //IVertex importDirectMeta_link = importDirectMeta.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$ImportDirectMeta"), "(?<link>)");
 
 
             /*  // comment
@@ -1400,7 +1400,10 @@ namespace m0
 
             IVertex _inherits = k.AddVertex(keyword, "inherits (?<link>)");
 
-            _inherits.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Inherits"), "(?<link>)");
+            //_inherits.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Inherits"), "(?<link>)");
+
+            _inherits.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$ImportDirectMeta"), "(?<link>)");
+            
 
             // class
             //
