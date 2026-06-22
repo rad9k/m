@@ -127,7 +127,7 @@
     <Content Include="_RES\UXTemplate\ZeroUML.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="_RES\ZeroUML.txt">
+    <Content Include="_RES\ZeroUML_Types.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

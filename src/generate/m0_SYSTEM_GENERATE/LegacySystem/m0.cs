@@ -199,7 +199,7 @@ namespace m0
         {
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, null, "{Base{$,Vertex{$IsLink,$Inherits,$NoInherit,$NoCopy,$StackFrameInherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,$Name,$ExecutableEndPoint,$GraphChangeTrigger,$VertexEval,$InstanceCreationPriority,$EmptyValueInstance,$EmptyMetaInstance,MetaEdge,Author,Dependency,$TargetQuery,UserCommand,HelpURL},$Import,$ImportMeta,$Keyword,$KeywordGroupDefinition,$$KeywordGroup,$$KeywordManyRoot,$$LocalRoot,$$StartInLocalRoot,$$EmptyKeyword,$$NewVertexKeyword,$$ForceNewVertex,$$LinkKeyword,$$NonSelfRecursiveParameters,$$Import,$$ImportDirect,$$ImportMeta,$$ImportDirectMeta,$$NoSequentialExecution,$$NextAtomRoot,$NewLine,$ParseRoot,$ParseArtefacts,Link,Home}}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, null, "{Base{$,Vertex{$IsLink,$Inherits,$NoInherit,$NoCopy,$StackFrameInherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,$Name,$ExecutableEndPoint,$GraphChangeTrigger,$VertexEval,$InstanceCreationPriority,$EmptyValueInstance,$EmptyMetaInstance,MetaEdge,Author,Dependency,$TargetQuery,UserCommand,HelpURL},$Import,$ImportMeta,$Keyword,$KeywordGroupDefinition,$$KeywordGroup,$$KeywordManyRoot,$$LocalRoot,$$StartInLocalRoot,$$EmptyKeyword,$$NewVertexKeyword,$$ForceNewVertex,$$LinkKeyword,$$NonSelfRecursiveParameters,$$Import,$$ImportDirect,$$ImportMeta,$$ImportDirectMeta,$$NoSequentialExecution,$$NextAtomRoot,$NewLine,$ParseRoot,$ParseArtefacts,Link,Contains,Home}}");
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base").AddEdge(
                 null,
@@ -207,6 +207,10 @@ namespace m0
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Link").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$IsLink"),
+                null);
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Contains").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$IsAggregation"),
                 null);
 
 
@@ -1253,20 +1257,22 @@ namespace m0
             // package
             IVertex package = LegacySystem.Graph.EasyVertex.Get(smu, false, "Package");
 
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Package"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Variable"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Function"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Class"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Method"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "Block"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "NamedBlock"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "While"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "If"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "ForVertex"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(smu, false, "ForEdge"));
+            IVertex link = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Link");
 
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\$Import"));
-            package.AddEdge(null, LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\$ImportMeta"));
+            package.AddEdge(link, LegacySystem.Graph.EasyVertex.Get(smu, false, "Package"));
+            package.AddEdge(link, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Variable"));
+            package.AddEdge(link, LegacySystem.Graph.EasyVertex.Get(smu, false, "Function"));
+            package.AddEdge(link, LegacySystem.Graph.EasyVertex.Get(smu, false, "Class"));
+            package.AddEdge(link, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Class\Method"));
+            package.AddEdge(link, LegacySystem.Graph.EasyVertex.Get(smu, false, "Block"));
+            package.AddEdge(link, LegacySystem.Graph.EasyVertex.Get(smu, false, "NamedBlock"));
+            package.AddEdge(link, LegacySystem.Graph.EasyVertex.Get(smu, false, "While"));
+            package.AddEdge(link, LegacySystem.Graph.EasyVertex.Get(smu, false, "If"));
+            package.AddEdge(link, LegacySystem.Graph.EasyVertex.Get(smu, false, "ForVertex"));
+            package.AddEdge(link, LegacySystem.Graph.EasyVertex.Get(smu, false, "ForEdge"));
+
+            package.AddEdge(link, LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\$Import"));
+            package.AddEdge(link, LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\$ImportMeta"));
         }
 
         void CreateSystemFormalTextLanguegeZeroCode_Keywords()
@@ -6900,16 +6906,9 @@ namespace m0
         {
             IVertex zu = Root.Get(false, @"System\Meta\ZeroUML");
 
-            GraphUtil.LoadTXTParseAndMove(@"_RES\ZeroUML.txt",
+            GraphUtil.LoadTXTParseAndMove(@"_RES\ZeroUML_Types.txt",
                 zu,
-                "additional");
-
-            foreach (IEdge e in Root.Get(false, @"System\Meta\ZeroUML\additional"))
-                zu.AddEdge(e.Meta, e.To);
-
-            IEdge additonalEdge = Root.GetAll(false, @"System\Meta\ZeroUML\additional").FirstOrDefault();
-
-            zu.DeleteEdge(additonalEdge);
+                "Types");            
 
             IVertex package = Root.Get(false, @"System\Meta\ZeroUML\Package");
         }

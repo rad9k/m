@@ -1,7 +1,7 @@
 "ZeroUML"
 	import @System\Meta\ZeroUML direct meta	
 	 
-	"additional"
+	"Types"
 		class "Component"
 			assoctiaton "Relation" @additional\Component "0":"-1"
 			"Create"
