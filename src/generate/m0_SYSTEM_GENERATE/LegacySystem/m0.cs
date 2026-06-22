@@ -1400,7 +1400,7 @@ namespace m0
 
             IVertex _inherits = k.AddVertex(keyword, "inherits (?<link>)");
 
-            _inherits.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Inherits"), "(?<link>)");
+            _inherits.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Inherits"), "(?<link>)");
 
             // class
             //
