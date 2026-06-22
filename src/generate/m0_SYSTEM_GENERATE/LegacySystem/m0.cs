@@ -1394,6 +1394,14 @@ namespace m0
 
             _default.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$DefaultValue"), "(?<expr>)");
 
+            // inherits
+            //
+            // inherits (?<link>)
+
+            IVertex _inherits = k.AddVertex(keyword, "inherits (?<link>)");
+
+            _inherits.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$Inherits"), "(?<link>)");
+
             // class
             //
             // class (?<name>)

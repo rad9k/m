@@ -4,44 +4,28 @@
 	"Types"
 		class "Component"
 			assoctiaton "Relation" @additional\Component "0":"-1"
-			"Create"
-				<@$EdgeTarget :: @additional\Component>
-				<@$MinCardinality :: "0">
-				<@$MaxCardinality :: "-1">
-			"Read"
-				<@$EdgeTarget :: @additional\Component>
-				<@$MinCardinality :: "0">
-				<@$MaxCardinality :: "-1">
-			"Write"
-				<@$EdgeTarget :: @additional\Component>
-				<@$MinCardinality :: "0">
-				<@$MaxCardinality :: "-1">
-			"Deploy"
-				<@$EdgeTarget :: @additional\Component>
-				<@$MinCardinality :: "0">
-				<@$MaxCardinality :: "-1">
-			"Component"
-				<@$EdgeTarget :: @additional\Component>
-				<@$MinCardinality :: "0">
-				<@$MaxCardinality :: "-1">
-				<@$IsAggregation :: @$Empty>
-		"Machine"
-		"Workstation"
-			<@$Inherits :: @additional\Machine>
-		"Server"
-			<@$Inherits :: @additional\Machine>
-		"Data"
-			<@$Inherits :: @additional\Component>
-		"Enironment"
-			<@$Inherits :: @additional\Component>
-		"System"
-		"Firewall"
-		"LoadBalancer"
-		"Database"
-		"MinusZero"
-		"Container"
-			<@$Inherits :: @additional\Enironment>
-		"OperatingSystem"
-			<@$Inherits :: @additional\Enironment>
-		"Interface"
-		"Operation"
+			assoctiaton "Create" @additional\Component "0":"-1"
+			assoctiaton "Read" @additional\Component "0":"-1"
+			assoctiaton "Write" @additional\Component "0":"-1"
+			assoctiaton "Deploy" @additional\Component "0":"-1"
+			aggregation "Component" @additional\Component "0":"-1"
+		class "Machine"
+		class "Workstation"
+			inherits @Types\Machine			
+		class "Server"
+			<@$Inherits :: @Types\Machine>
+		class "Data"
+			<@$Inherits :: @Types\Component>
+		class "Enironment"
+			<@$Inherits :: @Types\Component>
+		class "System"
+		class "Firewall"
+		class "LoadBalancer"
+		class "Database"
+		class "MinusZero"
+		class "Container"
+			<@$Inherits :: @Types\Enironment>
+		class "OperatingSystem"
+			<@$Inherits :: @Types\Enironment>
+		class "Interface"
+		class "Operation"
