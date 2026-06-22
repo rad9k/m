@@ -1398,7 +1398,7 @@ namespace m0
             //
             // inherits (?<link>)
 
-            IVertex _inherits = k.AddVertex(keyword, "inherits (?<link>)");
+            IVertex _inherits = k.AddVertex(keyword, "kala (?<link>)");
 
             _inherits.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Inherits"), "(?<link>)");
                         
