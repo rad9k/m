@@ -4304,12 +4304,14 @@ namespace m0
             smzu.Get(false, @"LabeledItem\UseCodeLabel").AddEdge(sm.Get(false, @"?$Section"), Labeled_section);
             smzu.Get(false, @"LabeledItem\ShowMeta").AddEdge(sm.Get(false, @"?$Section"), Labeled_section);
             smzu.Get(false, @"LabeledItem\HideLabel").AddEdge(sm.Get(false, @"?$Section"), Labeled_section);
+            smzu.Get(false, @"LabeledItem\ShowIcons").AddEdge(sm.Get(false, @"?$Section"), Labeled_section);
 
             smzu.Get(false, @"LabeledItem\ConstantLabel").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
             smzu.Get(false, @"LabeledItem\ConstantLabel").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
             smzu.Get(false, @"LabeledItem\UseCodeLabel").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
             smzu.Get(false, @"LabeledItem\ShowMeta").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
             smzu.Get(false, @"LabeledItem\HideLabel").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
+            smzu.Get(false, @"LabeledItem\ShowIcons").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
 
 
             // RectangleItem
@@ -6922,6 +6924,13 @@ namespace m0
                 "Types");            
 
             IVertex package = Root.Get(false, @"System\Meta\ZeroUML\Package");
+
+            IVertex inherits = Root.Get(false, @"System\Meta\Base\Vertex\$Inherits");
+
+            package.AddEdge(inherits, Root.Get(false, @"System\Meta\ZeroUML\Types\Component"));
+
+            zu.Get(false, @"Types\Interface").AddEdge(inherits, package);
+        
         }
 
         void CreateSystemMetaCustomDomain()
