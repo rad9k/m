@@ -3,29 +3,43 @@
 	 
 	"Types"
 		class "Component"
-			assoctiaton "Relation" @additional\Component "0":"-1"
-			assoctiaton "Create" @additional\Component "0":"-1"
-			assoctiaton "Read" @additional\Component "0":"-1"
-			assoctiaton "Write" @additional\Component "0":"-1"
-			assoctiaton "Deploy" @additional\Component "0":"-1"
-			aggregation "Component" @additional\Component "0":"-1"
+			association "Relation" @Types\Component "0":"-1"
+			association "Create" @Types\Component "0":"-1"
+			association "Read" @Types\Component "0":"-1"
+			association "Write" @Types\Component "0":"-1"
+			association "Use" @Types\Component "0":"-1"
+			association "Deploy" @Types\Machine "0":"-1"
+			aggregation "Component" @Types\Component "0":"-1"
 		class "Machine"
 		class "Workstation"
-			
+			inherits @Types\Machine
 		class "Server"
-			<@$Inherits :: @Types\Machine>
+			inherits @Types\Machine
 		class "Data"
-			<@$Inherits :: @Types\Component>
+			inherits @Types\Component
 		class "Enironment"
-			<@$Inherits :: @Types\Component>
+			inherits @Types\Component
+			aggregation "System" @Types\System "0":"-1"
 		class "System"
+			inherits @Types\Component
+			aggregation "Interface" @Types\Interface "0":"-1"
+			aggregation "Operation" @Types\Operation "0":"-1"
 		class "Firewall"
+			inherits @Types\System
 		class "LoadBalancer"
+			inherits @Types\System
 		class "Database"
+			inherits @Types\System
 		class "MinusZero"
+			inherits @Types\System
 		class "Container"
-			<@$Inherits :: @Types\Enironment>
+			inherits @Types\Enironment
+			aggregation "OperatingSystem" @Types\OperatingSystem "0":"1"
 		class "OperatingSystem"
-			<@$Inherits :: @Types\Enironment>
+			inherits @Types\Enironment
 		class "Interface"
+			inherits @System\Meta\ZeroUML\Package
+			aggregation "Operation" @Types\Operation "0":"-1"
 		class "Operation"
+			association "Input" @Types\Data "0":"-1"
+			association "Output" @Types\Data "0":"-1"
