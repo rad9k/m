@@ -39,6 +39,7 @@
     </Span>
 
     <Keywords color="keyword">
+	  <Word>inherits</Word>
       <Word>package</Word>
       <Word>import</Word>
       <Word>meta</Word>
