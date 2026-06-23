@@ -1337,6 +1337,37 @@ namespace m0.ZeroCode
 
         bool ShouldAppendKeywordHere(IEdge e, string path)
         {
+            if (IsInheritEdge(e))
+            {
+                bool isOldLink = VertexOperations.IsLink_OldVersion(e);
+                bool subGraphContainsTo = SubGraphVerticesDictionary.ContainsKey(e.To);
+                string storedLinkString = subGraphContainsTo
+                    ? SubGraphVerticesDictionary[e.To].LinkString
+                    : "<missing>";
+                bool pathMatches = subGraphContainsTo && SubGraphVerticesDictionary[e.To].LinkString == path;
+
+                if (isOldLink)
+                {
+                    LogInherit("ShouldAppendKeywordHere",
+                        "returning false because IsLink_OldVersion is true. path=" + path
+                        + ", edge=" + EdgeToDebugString(e)
+                        + ", storedLinkString=" + storedLinkString
+                        + ", pathMatches=" + pathMatches);
+
+                    return false; // 20260413. that was oposite but ...should be that way obviously. now lets check what it breakes (needed for BaseEdge g2t bug)
+                }
+
+                bool result = pathMatches;
+
+                LogInherit("ShouldAppendKeywordHere",
+                    "returning " + result + ". path=" + path
+                    + ", edge=" + EdgeToDebugString(e)
+                    + ", storedLinkString=" + storedLinkString
+                    + ", pathMatches=" + pathMatches);
+
+                return result;
+            }
+
             if (VertexOperations.IsLink_OldVersion(e)) // XXX should work
                 return false; // 20260413. that was oposite but ...should be that way obviously. now lets check what it breakes (needed for BaseEdge g2t bug)
 
@@ -1347,6 +1378,15 @@ namespace m0.ZeroCode
         }
 
         bool ommitOnce_AppendEdge_Meta = false;
+
+        bool IsInheritEdge(IEdge e)
+        {
+            if (e == null || e.Meta == null || e.Meta.Value == null)
+                return false;
+
+            return GeneralUtil.CompareStrings(e.Meta.Value, "$Inherit")
+                || GeneralUtil.CompareStrings(e.Meta.Value, "$Inherits");
+        }
 
         bool IsMinCardinalityEdge(IEdge e)
         {
@@ -1392,6 +1432,11 @@ namespace m0.ZeroCode
             MinusZero.Instance.Log(1, "Graph2TextProcessing.$MinCardinality." + area, message);
         }
 
+        void LogInherit(string area, string message)
+        {
+            MinusZero.Instance.Log(1, "Graph2TextProcessing.$Inherit." + area, message);
+        }
+
         bool AppendEdge(IEdge e, IEdge parent, string path, bool ParentKmHasTabAddingOmmit)
         {
             if (!ZeroCodeUtil.FilterEdgeForGraph2TextProcessing(e))
@@ -1405,11 +1450,38 @@ namespace m0.ZeroCode
                     + ", keywordMatched=" + KeywordMatchedSubGraphEdges.ContainsKey(e)
                     + ", been=" + BeenList.Contains(e));
 
+            if (IsInheritEdge(e))
+                LogInherit("AppendEdge",
+                    "enter path=" + path
+                    + ", parent=" + EdgeToDebugString(parent)
+                    + ", edge=" + EdgeToDebugString(e)
+                    + ", keywordMatched=" + KeywordMatchedSubGraphEdges.ContainsKey(e)
+                    + ", isOldLink=" + VertexOperations.IsLink_OldVersion(e)
+                    + ", been=" + BeenList.Contains(e));
+
             if (KeywordMatchedSubGraphEdges.ContainsKey(e))
-                if (ShouldAppendKeywordHere(e, path) || e.Meta.Value.ToString() == "NextExpression")
+            {
+                bool shouldAppendKeywordHere = ShouldAppendKeywordHere(e, path);
+                bool isNextExpression = e.Meta.Value.ToString() == "NextExpression";
+
+                if (IsInheritEdge(e))
+                    LogInherit("AppendEdge",
+                        "keyword match present. path=" + path
+                        + ", edge=" + EdgeToDebugString(e)
+                        + ", shouldAppendKeywordHere=" + shouldAppendKeywordHere
+                        + ", isNextExpression=" + isNextExpression
+                        + ", baseEdge=" + EdgeToDebugString(KeywordMatchedSubGraphEdges[e].BaseEdge)
+                        + ", keywordDefinition=" + VertexToDebugString(KeywordMatchedSubGraphEdges[e].KeywordDefinition));
+
+                if (shouldAppendKeywordHere || isNextExpression)
                 {
                     if (IsMinCardinalityEdge(e))
                         LogMinCardinality("AppendEdge",
+                            "delegating to AppendKeyword path=" + path
+                            + ", edge=" + EdgeToDebugString(e));
+
+                    if (IsInheritEdge(e))
+                        LogInherit("AppendEdge",
                             "delegating to AppendKeyword path=" + path
                             + ", edge=" + EdgeToDebugString(e));
 
@@ -1424,8 +1496,20 @@ namespace m0.ZeroCode
                                 + ", baseEdge=" + EdgeToDebugString(KeywordMatchedSubGraphEdges[e].BaseEdge)
                                 + ", edge=" + EdgeToDebugString(e));
 
+                        if (IsInheritEdge(e))
+                            LogInherit("AppendEdge",
+                                "skipping edge because keyword match base edge points to another vertex. path=" + path
+                                + ", baseEdge=" + EdgeToDebugString(KeywordMatchedSubGraphEdges[e].BaseEdge)
+                                + ", edge=" + EdgeToDebugString(e));
+
                         return true; // ?????????????????????? or true?
                     }
+                    else if (IsInheritEdge(e))
+                        LogInherit("AppendEdge",
+                            "fallthrough to normal graph serialization because keyword match was not appended here. path=" + path
+                            + ", edge=" + EdgeToDebugString(e)
+                            + ", baseEdge=" + EdgeToDebugString(KeywordMatchedSubGraphEdges[e].BaseEdge));
+            }
 
             if (AppendNewLines_onlyRemember(e))
                 return false;
@@ -1694,6 +1778,16 @@ namespace m0.ZeroCode
             if (!IsKeywordVertexWildcard(keywordEdge.To))
                 searchString_secondPart = keywordEdge.To.ToString();
 
+            bool isInheritKeywordEdge = IsInheritEdge(keywordEdge);
+
+            if (isInheritKeywordEdge)
+                LogInherit("GetGraphMatch",
+                    "enter parentToCheck=" + VertexToDebugString(parentToCheck)
+                    + ", keywordEdge=" + EdgeToDebugString(keywordEdge)
+                    + ", searchString_firstPart=" + searchString_firstPart
+                    + ", searchString_secondPart=" + (searchString_secondPart ?? "<null>")
+                    + ", isOldLink=" + VertexOperations.IsLink_OldVersion(keywordEdge));
+
             bool toReturn = false;
 
             foreach (IEdge searchResult in GraphUtil.GetQueryOut(parentToCheck, searchString_firstPart, searchString_secondPart))
@@ -1704,6 +1798,12 @@ namespace m0.ZeroCode
                             if (!ZeroCodeUtil.IsDoubleDolarMeta(subKeywordEdge)
                                 && GetGraphMatch(searchResult.To, subKeywordEdge) == false)
                                 return false;
+                    else if (isInheritKeywordEdge)
+                        LogInherit("GetGraphMatch",
+                            "skipping nested keyword match because IsLink_OldVersion is true. parentToCheck="
+                            + VertexToDebugString(parentToCheck)
+                            + ", keywordEdge=" + EdgeToDebugString(keywordEdge)
+                            + ", searchResult=" + EdgeToDebugString(searchResult));
 
                     currentMatchGraphEdgeList.Add(searchResult);
 
@@ -1718,6 +1818,11 @@ namespace m0.ZeroCode
             if (GraphUtil.ExistQueryOut(keywordEdge.To, "$$KeywordManyRoot", null)
                 || GraphUtil.ExistQueryOut(keywordEdge.To, "$$LocalRoot", null))
                 return true;
+
+            if (isInheritKeywordEdge)
+                LogInherit("GetGraphMatch",
+                    "returning " + toReturn + ". parentToCheck=" + VertexToDebugString(parentToCheck)
+                    + ", keywordEdge=" + EdgeToDebugString(keywordEdge));
 
             return toReturn;
         }
@@ -1748,6 +1853,14 @@ namespace m0.ZeroCode
             newValueString = null;
 
             currentMatchGraphEdgeList = new List<IEdge>();
+
+            bool isInheritEdgeToCheck = IsInheritEdge(edgeToCheck);
+
+            if (isInheritEdgeToCheck)
+                LogInherit("MatchGraphs",
+                    "enter edgeToCheck=" + EdgeToDebugString(edgeToCheck)
+                    + ", keywordToCompare=" + VertexToDebugString(keywordToCompare)
+                    + ", isOldLink=" + VertexOperations.IsLink_OldVersion(edgeToCheck));
 
             IList<IEdge> firstMatchingEdgesInGraphToCompare;
 
@@ -1804,13 +1917,37 @@ namespace m0.ZeroCode
                         foreach (IEdge keywordEdgeNested in firstMatchEdgeInGraphToCompare.To.OutEdgesRaw)
                             // if (!IsLink(keywordEdgeNested))
                             if (GetGraphMatch(edgeToCheck.To, keywordEdgeNested) == false)
+                            {
+                                if (isInheritEdgeToCheck)
+                                    LogInherit("MatchGraphs",
+                                        "returning null because GetGraphMatch failed for nested keyword edge. edgeToCheck="
+                                        + EdgeToDebugString(edgeToCheck)
+                                        + ", keywordEdgeNested=" + EdgeToDebugString(keywordEdgeNested));
+
                                 return null;
+                            }
                     }
                     else
                         if (GetGraphMatch(edgeToCheck.From, keywordEdge) == false)
+                        {
+                            if (isInheritEdgeToCheck)
+                                LogInherit("MatchGraphs",
+                                    "returning null because GetGraphMatch failed for sibling keyword edge. edgeToCheck="
+                                    + EdgeToDebugString(edgeToCheck)
+                                    + ", keywordEdge=" + EdgeToDebugString(keywordEdge));
+
                             return null;
+                        }
                 }
             }
+
+            if (isInheritEdgeToCheck)
+                LogInherit("MatchGraphs",
+                    "returning matchedEdges count=" + currentMatchGraphEdgeList.Count
+                    + ", firstMatchEdgeInGraphToCompare="
+                    + (firstMatchEdgeInGraphToCompare == null ? "<null>" : EdgeToDebugString(firstMatchEdgeInGraphToCompare))
+                    + ", edgeToCheck=" + EdgeToDebugString(edgeToCheck)
+                    + ", keywordToCompare=" + VertexToDebugString(keywordToCompare));
 
             return currentMatchGraphEdgeList;
         }
@@ -1871,11 +2008,28 @@ namespace m0.ZeroCode
             if (newVertexKeywordVertexList.Contains(keywordVertex))
                 return false;
 
+            bool isInheritEdgeToCheck = IsInheritEdge(edgeToCheck);
+
+            if (isInheritEdgeToCheck)
+                LogInherit("CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch",
+                    "enter path=" + path
+                    + ", edgeToCheck=" + EdgeToDebugString(edgeToCheck)
+                    + ", keywordVertex=" + VertexToDebugString(keywordVertex)
+                    + ", keywordDefinition=" + (keywordVertex.Value == null ? "<null>" : keywordVertex.Value.ToString()));
+
             bool thereWasMatch = false;
 
             string newValueKeyword;
 
             IList<IEdge> matchedEdges = MatchGraphs(edgeToCheck, keywordVertex, out newValueKeyword);
+
+            if (isInheritEdgeToCheck)
+                LogInherit("CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch",
+                    "MatchGraphs result matchedEdges="
+                    + (matchedEdges == null ? "<null>" : matchedEdges.Count.ToString())
+                    + ", newValueKeyword=" + (newValueKeyword ?? "<null>")
+                    + ", path=" + path
+                    + ", edgeToCheck=" + EdgeToDebugString(edgeToCheck));
 
             if (matchedEdges != null && matchedEdges.Count > 0)
             {
@@ -1922,7 +2076,16 @@ namespace m0.ZeroCode
                     else
                         KeywordMatchedSubGraphEdges.Add(e, match);
                 }
+
+                if (isInheritEdgeToCheck)
+                    LogInherit("CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch",
+                        "registered keyword match. path=" + path
+                        + ", baseEdgePath=" + match.BaseEdgePath
+                        + ", matchedEdgesCount=" + match.MatchedEdges.Count
+                        + ", edgeToCheck=" + EdgeToDebugString(edgeToCheck)
+                        + ", keywordDefinition=" + (keywordVertex.Value == null ? "<null>" : keywordVertex.Value.ToString()));
             }
+
             return thereWasMatch;
         }
 
@@ -2071,11 +2234,24 @@ namespace m0.ZeroCode
             KeywordMatch thisKm = null;
 
             if (KeywordMatchedSubGraphEdges.ContainsKey(baseEdge))
-                if (ShouldAppendKeywordHere(baseEdge, path))
+            {
+                bool shouldAppendKeywordHere = ShouldAppendKeywordHere(baseEdge, path);
+
+                if (IsInheritEdge(baseEdge))
+                    LogInherit("ZeroCodeGraph2String_Reccurent",
+                        "keyword match present before AppendEdge. path=" + path
+                        + ", edge=" + EdgeToDebugString(baseEdge)
+                        + ", shouldAppendKeywordHere=" + shouldAppendKeywordHere
+                        + ", isOldLink=" + isLink
+                        + ", keywordDefinition="
+                        + VertexToDebugString(KeywordMatchedSubGraphEdges[baseEdge].KeywordDefinition));
+
+                if (shouldAppendKeywordHere)
                 {
                     thisKm = KeywordMatchedSubGraphEdges[baseEdge];
                     thisKm.tabTimesForRootVertex = level;
                 }
+            }
 
             bool appendAsNew = AppendEdge(baseEdge, parent, path, false);
 

@@ -199,7 +199,7 @@ namespace m0
         {
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, null, "{Base{$,Vertex{$IsLink,$Inherits,$NoInherit,$NoCopy,$StackFrameInherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,$Name,$ExecutableEndPoint,$GraphChangeTrigger,$VertexEval,$InstanceCreationPriority,$EmptyValueInstance,$EmptyMetaInstance,MetaEdge,Author,Dependency,$TargetQuery,UserCommand,HelpURL},$Import,$ImportMeta,$Keyword,$KeywordGroupDefinition,$$KeywordGroup,$$KeywordManyRoot,$$LocalRoot,$$StartInLocalRoot,$$EmptyKeyword,$$NewVertexKeyword,$$ForceNewVertex,$$LinkKeyword,$$NonSelfRecursiveParameters,$$Import,$$ImportDirect,$$ImportMeta,$$ImportDirectMeta,$$NoSequentialExecution,$$NextAtomRoot,$NewLine,$ParseRoot,$ParseArtefacts,Link,Contains,Home}}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, null, "{Base{$,Vertex{$IsLink,$Inherits,$Inherit,$NoInherit,$NoCopy,$StackFrameInherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,$Name,$ExecutableEndPoint,$GraphChangeTrigger,$VertexEval,$InstanceCreationPriority,$EmptyValueInstance,$EmptyMetaInstance,MetaEdge,Author,Dependency,$TargetQuery,UserCommand,HelpURL},$Import,$ImportMeta,$Keyword,$KeywordGroupDefinition,$$KeywordGroup,$$KeywordManyRoot,$$LocalRoot,$$StartInLocalRoot,$$EmptyKeyword,$$NewVertexKeyword,$$ForceNewVertex,$$LinkKeyword,$$NonSelfRecursiveParameters,$$Import,$$ImportDirect,$$ImportMeta,$$ImportDirectMeta,$$NoSequentialExecution,$$NextAtomRoot,$NewLine,$ParseRoot,$ParseArtefacts,Link,Contains,Home}}");
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base").AddEdge(
                 null,
@@ -247,6 +247,18 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$Inherits").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$NoInherit"),
                 Empty);
+
+            //
+
+             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$Inherit").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+               LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex"));
+          
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$Inherit").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$NoInherit"),
+                Empty);
+          
+            //
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$Is").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
@@ -1398,10 +1410,12 @@ namespace m0
             //
             // inherits (?<link>)
 
-            IVertex _inherits = k.AddVertex(keyword, "kala (?<link>)");
+            IVertex _inherits = k.AddVertex(keyword, "inherits (?<link>)");
 
-            _inherits.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Inherits"), "(?<link>)");
-                        
+            _inherits.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Inherit"), "(?<link>)");
+
+            //_inherits.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Description"), "(?<link>)");
+
 
             // class
             //
