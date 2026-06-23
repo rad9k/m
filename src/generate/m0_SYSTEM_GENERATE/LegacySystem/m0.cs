@@ -6927,10 +6927,7 @@ namespace m0
 
             IVertex inherits = Root.Get(false, @"System\Meta\Base\Vertex\$Inherits");
 
-            package.AddEdge(inherits, Root.Get(false, @"System\Meta\ZeroUML\Types\Component"));
-
-            zu.Get(false, @"Types\Interface").AddEdge(inherits, package);
-        
+            package.AddEdge(inherits, Root.Get(false, @"System\Meta\ZeroUML\Types\Component"));                    
         }
 
         void CreateSystemMetaCustomDomain()
