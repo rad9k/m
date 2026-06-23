@@ -1337,6 +1337,18 @@ namespace m0.ZeroCode
 
         bool ShouldAppendKeywordHere(IEdge e, string path)
         {
+            if (KeywordMatchedSubGraphEdges.ContainsKey(e)
+                && KeywordMatchedSubGraphEdges[e].BaseEdgePath == path)
+            {
+                if (IsInheritEdge(e))
+                    LogInherit("ShouldAppendKeywordHere",
+                        "returning true because registered keyword match path equals current path. path=" + path
+                        + ", edge=" + EdgeToDebugString(e)
+                        + ", baseEdgePath=" + KeywordMatchedSubGraphEdges[e].BaseEdgePath);
+
+                return true;
+            }
+
             if (IsInheritEdge(e))
             {
                 bool isOldLink = VertexOperations.IsLink_OldVersion(e);
