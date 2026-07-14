@@ -647,7 +647,7 @@ namespace m0.UIWpf.UX
                 foreach (IUXItem decorator in item.Decorators) // calculate LineDecorator number and Edges number for each Meta/To edge pair
                                                                //foreach (IEdge l in item.Vertex.GetAll(false, "DiagramLine:")) // calculate DiagramLines number and Edges number for each Meta/To edge pair
                 {
-                    if (!(decorator is ILineDecoratorBase))
+                    if (decorator is ILineDecoratorBase)
                     {
                         ILineDecoratorBase line_decorator = (ILineDecoratorBase)decorator;
 
@@ -673,7 +673,7 @@ namespace m0.UIWpf.UX
                         newpair.NumberOfDecoratorsWithSameMetaTo = 1;
                         newpair.NumberOfEdgesWithSameMetaTo = 0;
 
-                        foreach (IEdge e in item.BaseEdge.To)
+                        foreach (IEdge e in GetEdgesForDiagramLineDecorators(item))
                             if (newpair.Meta == e.Meta && newpair.To == e.To)
                                 newpair.NumberOfEdgesWithSameMetaTo++;
 
@@ -1524,7 +1524,7 @@ namespace m0.UIWpf.UX
 
             IVertex fromItemBaseEdgeTo = fromItem.BaseEdgeTo;
 
-            foreach (IEdge e in fromItemBaseEdgeTo)
+            foreach (IEdge e in GetEdgesForDiagramLineDecorators(fromItem))
                 if (e.Meta == meta && e.To == to)
                     toMoveEdge = e;
 
@@ -2266,25 +2266,56 @@ namespace m0.UIWpf.UX
             return false;
         }
 
+        private static IEnumerable<IEdge> GetEdgesForDiagramLineDecorators(IUXItem item)
+        {
+            if (item == null || item.BaseEdgeTo == null)
+                return Enumerable.Empty<IEdge>();
+
+            if (item.UXTemplate != null && item.UXTemplate.DoNotShowInherited)
+                return item.BaseEdgeTo.OutEdgesRaw;
+
+            return item.BaseEdgeTo.OutEdges;
+        }
+
+        private void RemoveDiagramLineDecoratorsWithoutMatchingEdges(IUXItem item, IEnumerable<IEdge> edges)
+        {
+            List<IEdge> unmatchedEdges = edges.Where(e => !IsContainerEdge(e)).ToList();
+
+            foreach (IUXItem decorator in item.Decorators)
+            {
+                if (!(decorator is ILineDecoratorBase))
+                    continue;
+
+                ILineDecoratorBase lineDecorator = (ILineDecoratorBase)decorator;
+                Edge decoratorBaseEdge = lineDecorator.BaseEdge;
+
+                if (decoratorBaseEdge == null)
+                    continue;
+
+                IEdge matchingEdge = unmatchedEdges.FirstOrDefault(e =>
+                    e.Meta == decoratorBaseEdge.Meta && e.To == decoratorBaseEdge.To);
+
+                if (matchingEdge != null)
+                    unmatchedEdges.Remove(matchingEdge);
+                else
+                    item.RemoveDiagramLine(lineDecorator);
+            }
+        }
+
         public void CheckAndUpdateDiagramLinesForItem(IUXItem item)
         {
             if (item == this) // currently support for Visualiser lines is limited
                 return;
 
-            IEnumerable<IEdge> edges;
-
-            IVertex item_BaseEdgeTo = item.BaseEdgeTo;
-
-            if (item.UXTemplate.DoNotShowInherited)
-                edges = item_BaseEdgeTo.OutEdgesRaw;
-            else
-                edges = item_BaseEdgeTo;
+            List<IEdge> edges = GetEdgesForDiagramLineDecorators(item).ToList();
 
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
 
-            foreach (IEdge e in item_BaseEdgeTo)
+            RemoveDiagramLineDecoratorsWithoutMatchingEdges(item, edges);
+
+            foreach (IEdge e in edges)
             {
                 if (IsContainerEdge(e))
                     continue;

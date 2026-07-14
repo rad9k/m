@@ -66,6 +66,7 @@
 			<@MetaVertexTestQuery :: "Class">
 			<@ItemClass :: @RectangleVisualiserItem>
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@DoNotShowInherited :: "True">
 			<@ForceShowEditForm :: "True">
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StaticItemVertex>

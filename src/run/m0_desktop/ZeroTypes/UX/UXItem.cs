@@ -507,8 +507,12 @@ namespace m0.ZeroTypes.UX
             if (IsVertexChange(exe.Stack, baseEdgeTo))
                 BaseEdgeToUpdated();
 
+            bool edgeWasRemovedFromBaseEdgeTo = false;
+
             foreach (IVertex edgeVertex in GetEdgesRemovedFrom(exe.Stack, baseEdgeTo))
             {
+                edgeWasRemovedFromBaseEdgeTo = true;
+
                 ILineDecoratorBase toRemove = null;
 
                 foreach (IUXItem _l in Decorators)
@@ -526,7 +530,8 @@ namespace m0.ZeroTypes.UX
                     RemoveDiagramLine(toRemove);
             }
 
-            if (IsEdgeAddedTo(exe.Stack, baseEdgeTo) && CanAutomaticallyAddEdges)
+            if ((edgeWasRemovedFromBaseEdgeTo || IsEdgeAddedTo(exe.Stack, baseEdgeTo))
+                && CanAutomaticallyAddEdges)
                 OwningVisualiser.CheckAndUpdateDiagramLinesForItem(this);
 
             if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "BackgroundColor")
