@@ -990,16 +990,18 @@ namespace m0.UIWpf.Visualisers
             KeyValuePair<IVertex, SimpleVisualiserWrapper> kvp =
                 GetVertexWrapperByEventSource(e.OriginalSource ?? e.Source);
 
-            if (kvp.Value != null&&((SimpleVisualiserWrapper)kvp.Value).IsHighlighted==false)
+            if (kvp.Value != null && kvp.Value != Highlighted)
             {
-                SimpleVisualiserWrapper wrapper=(SimpleVisualiserWrapper)kvp.Value;
-
                 if (Highlighted != null)
                     Highlighted.UnhighlightThisAndDescendants();
 
-                wrapper.HighlightThisAndDescendants();
-                
-                Highlighted = wrapper;
+                kvp.Value.HighlightThisAndDescendants();
+
+                Highlighted = kvp.Value;
+            }
+            else if (kvp.Value == null && Highlighted != null)
+            {
+                ClearMouseHoverHighlight();
             }
 
             base.OnMouseMove(e);
