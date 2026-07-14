@@ -61,38 +61,6 @@ namespace m0.ZeroCode.Helpers
             return false;
         }
 
-        // PROPER BEG
-
-        public static bool CheckIfIsOrInherits(IVertex baseVertex, string test)
-        {
-            IList<IEdge> allIs = InstructionHelpers.GetAllIs(baseVertex);
-
-            foreach (IEdge e in allIs)
-                if (GraphUtil.GetValueAndCompareStrings(e.To, test))
-                    return true;
-
-            foreach (IEdge e in allIs)
-                if (CheckIfInherits(e.To, test))
-                    return true;
-
-            return false;
-        }
-
-        public static bool CheckIfInherits(IVertex baseVertex, string test)
-        {
-            foreach (IEdge e in GraphUtil.GetQueryOut(baseVertex, "$Inherits", null)) {
-                if (GraphUtil.GetValueAndCompareStrings(e.To, test))
-                    return true;
-
-                if (CheckIfInherits(e.To, test))
-                    return true;
-            }
-
-            return false;
-        }
-        
-        // PROPER END
-
         // WRONG BEG
 
         public static bool CheckIfInherits_WRONG(IVertex v, string i) // need to recursively check $Inheritence
@@ -141,7 +109,7 @@ namespace m0.ZeroCode.Helpers
             if (is_v == null)
                 return true;
 
-            return CheckIfIsOrInherits(is_v, "AtomType");
+            return m0.ZeroTypes.VertexOperations.CheckIfIsOrInherits(is_v, "AtomType");
         }
 
         // WRONG END

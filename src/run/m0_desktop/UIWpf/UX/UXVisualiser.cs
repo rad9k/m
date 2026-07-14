@@ -2073,7 +2073,7 @@ namespace m0.UIWpf.UX
 
             if (eToEdgeTarget != null
                 && eToEdgeTarget != "Vertex" // Vertices do not have $Is:Vertex     
-                && !InstructionHelpers.CheckIfIsOrInherits(toEdge.To, eToEdgeTarget))
+                && !VertexOperations.CheckIfIsOrInherits(toEdge.To, eToEdgeTarget))
                 return false;
 
             // 2025.04.17 - we use CreateEdgeOnly for Variables. the code below seems to be not needed now
@@ -2082,7 +2082,7 @@ namespace m0.UIWpf.UX
             //if (tem.CreateEdgeOnly && // normally we have CreateEdgeOnly being FALSE, so... we want to activatge this only if CreateEdgeOnly = True
               //above is WRONG for sure
                 eToVertexTarget != null
-                && !InstructionHelpers.CheckIfIsOrInherits(toEdge.To, eToVertexTarget))
+                && !VertexOperations.CheckIfIsOrInherits(toEdge.To, eToVertexTarget))
                 return false;*/
 
             return true;

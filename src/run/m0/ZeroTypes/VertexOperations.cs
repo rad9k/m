@@ -907,6 +907,35 @@ namespace m0.ZeroTypes
                 return true;
         }
 
+        public static bool CheckIfIsOrInherits(IVertex baseVertex, string test)
+        {
+            IList<IEdge> allIs = GraphUtil.GetQueryOut(baseVertex, "$Is", null);
+
+            foreach (IEdge e in allIs)
+                if (GraphUtil.GetValueAndCompareStrings(e.To, test))
+                    return true;
+
+            foreach (IEdge e in allIs)
+                if (CheckIfInherits(e.To, test))
+                    return true;
+
+            return false;
+        }
+
+        public static bool CheckIfInherits(IVertex baseVertex, string test)
+        {
+            foreach (IEdge e in GraphUtil.GetQueryOut(baseVertex, "$Inherits", null))
+            {
+                if (GraphUtil.GetValueAndCompareStrings(e.To, test))
+                    return true;
+
+                if (CheckIfInherits(e.To, test))
+                    return true;
+            }
+
+            return false;
+        }
+
         public static bool IsInherited(IVertex baseVertex, string isInheritedFrom_String)
         {
             foreach (IEdge e in GraphUtil.GetQueryOut(baseVertex, "$Inherits",null))
