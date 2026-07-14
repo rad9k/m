@@ -73,6 +73,13 @@
 				<@LabeledItem\ShowMeta :: "False">
 				<@LabeledItem\ConstantLabel :: "class">
 				<@RectangleVisualiserItem\VisualiserClass :: @System\Meta\Visualiser\Class>
+			<@UXDecoratorTemplate :: "Inherits">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Inherits">
+				<@ToDiagramItemTestQuery :: "UXTemplate:Class">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Triangle>
 			<@UXDecoratorTemplate :: "Association">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "$Is:Class\Association">

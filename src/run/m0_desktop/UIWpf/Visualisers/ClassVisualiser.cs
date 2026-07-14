@@ -77,8 +77,10 @@ namespace m0.UIWpf.Visualisers
 
             stackPanel.Children.Clear();
 
-            if (bv != null && bv.Value != null /*&& ((String)bv.Value)!="$Empty"*/) {                                                
-                foreach (IEdge e in GraphUtil.GetQueryOut(bv, "Attribute", null)) {                     
+            if (bv != null && bv.Value != null /*&& ((String)bv.Value)!="$Empty"*/) {
+                IEnumerable<IEdge> directAttributes = GraphUtil.GetQueryOut(bv, "Attribute", null).Intersect(bv.OutEdgesRaw);
+
+                foreach (IEdge e in directAttributes) {
                     StackPanel s = new StackPanel();
                     s.Orientation = Orientation.Horizontal;
                     stackPanel.Children.Add(s);
