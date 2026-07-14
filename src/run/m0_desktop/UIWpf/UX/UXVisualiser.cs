@@ -1978,6 +1978,11 @@ namespace m0.UIWpf.UX
 
                 if (tem.EdgeTestQuery == "$EdgeTarget") // $EdgeTarget is not present as there is no inheritance from Vertex                    
                     AddNewLineOption(v, tem, GraphUtil.GetQueryOutFirstEdge(systemMetaBaseVertex, null, "$EdgeTarget").To);
+
+                if (tem.EdgeTestQuery == "$Inherits"
+                    && (tem.ToDiagramItemTestQuery == null
+                        || toItem.Vertex.Get(false, tem.ToDiagramItemTestQuery) != null))
+                    AddNewLineOption(v, tem, MinusZero.Instance.Inherits);
             }
 
             if (v.Count() == 0)
@@ -2442,6 +2447,9 @@ namespace m0.UIWpf.UX
                     canReturn = false;
 
                     if (edgeTestQuery == "$EdgeTarget" && e.Meta.Value.ToString() == "$EdgeTarget")
+                        canReturn = true;
+
+                    if (edgeTestQuery == "$Inherits" && e.Meta == MinusZero.Instance.Inherits)
                         canReturn = true;
 
                     foreach (IEdge toTest in item.BaseEdgeTo.GetAll(false, edgeTestQuery))

@@ -79,7 +79,8 @@
 				<@ToDiagramItemTestQuery :: "UXTemplate:Class">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Triangle>
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Triangle>
+					<@LineDecorator\HideLabel :: "True">
 			<@UXDecoratorTemplate :: "Association">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "$Is:Class\Association">
