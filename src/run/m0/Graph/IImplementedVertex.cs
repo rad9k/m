@@ -11,10 +11,6 @@ namespace m0.Graph
     {
         void InheritChildsDictionariesNeedsRebuild(bool inDictiories);
 
-        IEnumerable<IVertex> GetInheritedVertices();
-
-        void InheritedVerticesNeedRebuild();
-
         bool HasInheritance { get; set; }
 
         //void FireChange(VertexChangeEventArgs e);

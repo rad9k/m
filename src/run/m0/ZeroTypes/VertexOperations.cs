@@ -918,8 +918,8 @@ namespace m0.ZeroTypes
 
         public static bool CheckIfInherits(IVertex baseVertex, string test)
         {
-            foreach (IVertex inheritedVertex in GetInheritedTypes(baseVertex))
-                if (GraphUtil.GetValueAndCompareStrings(inheritedVertex, test))
+            foreach (IEdge inheritsEdge in GraphUtil.GetQueryOut(baseVertex, "$Inherits", null))
+                if (GraphUtil.GetValueAndCompareStrings(inheritsEdge.To, test))
                     return true;
 
             return false;
@@ -948,29 +948,10 @@ namespace m0.ZeroTypes
 
             result.Add(typeVertex);
 
-            foreach (IVertex inheritedVertex in GetInheritedTypes(typeVertex))
-                result.Add(inheritedVertex);
+            foreach (IEdge inheritsEdge in GraphUtil.GetQueryOut(typeVertex, "$Inherits", null))
+                result.Add(inheritsEdge.To);
 
             return result;
-        }
-
-        private static IEnumerable<IVertex> GetInheritedTypes(IVertex typeVertex)
-        {
-            if (typeVertex is IImplementedVertex)
-                return ((IImplementedVertex)typeVertex).GetInheritedVertices();
-
-            HashSet<IVertex> inheritedVertices = new HashSet<IVertex>();
-            AddInheritedTypesRaw(typeVertex, inheritedVertices);
-            return inheritedVertices;
-        }
-
-        private static void AddInheritedTypesRaw(IVertex typeVertex, HashSet<IVertex> inheritedVertices)
-        {
-            foreach (IEdge edge in typeVertex.OutEdgesRaw)
-                if (edge.Meta != null
-                    && GraphUtil.GetValueAndCompareStrings(edge.Meta, "$Inherits")
-                    && inheritedVertices.Add(edge.To))
-                    AddInheritedTypesRaw(edge.To, inheritedVertices);
         }
 
         public static bool IsInherited(IVertex baseVertex, string isInheritedFrom_String)
