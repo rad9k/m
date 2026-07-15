@@ -153,20 +153,85 @@ namespace m0.ZeroUML.Instructions
 
             foreach (IEdge expression in expressions)
             {
-                newQs = CreateStack();
-
-                foreach (IEdge e in oldQs)
+                if (IsIsHierarchyFilterExpression(expression.To))
+                    newQs = ProcessIsHierarchyFilter(exe, oldQs, expression.To);
+                else
                 {
-                    IVertex outQs = exe.ExecuteInstructionByMontevideoPrinciples(e.To, expression.To);
+                    newQs = CreateStack();
 
-                    if (outQs.OutEdges.Count() > 0)
-                        newQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(e);
+                    foreach (IEdge e in oldQs)
+                    {
+                        IVertex outQs = exe.ExecuteInstructionByMontevideoPrinciples(e.To, expression.To);
+
+                        if (outQs.OutEdges.Count() > 0)
+                            newQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(e);
+                    }
                 }
 
                 oldQs = newQs;
             }
 
             return NextExpressionHandle(exe, newQs, instructionVertex);
+        }
+
+        private static bool IsIsHierarchyFilterExpression(IVertex expression)
+        {
+            if (expression == null || !CheckIfIs(expression, "Colon"))
+                return false;
+
+            IVertex leftExpression = GetLeft(expression);
+            IVertex rightExpression = GetRight(expression);
+
+            if (leftExpression == null || rightExpression == null
+                || !CheckIfIs(leftExpression, "Query")
+                || !GraphUtil.GetValueAndCompareStrings(leftExpression, "$Is"))
+                return false;
+
+            return GetNextExpression(expression) == null
+                && GetNextExpression(leftExpression) == null
+                && GetNextExpression(rightExpression) == null;
+        }
+
+        private static INoInEdgeInOutVertexVertex ProcessIsHierarchyFilter(
+            ZeroCodeExecution exe,
+            INoInEdgeInOutVertexVertex inputEdges,
+            IVertex expression)
+        {
+            Dictionary<IEdge, ISet<IVertex>> typesByInputEdge = new Dictionary<IEdge, ISet<IVertex>>();
+            HashSet<IVertex> allTypes = new HashSet<IVertex>();
+
+            foreach (IEdge inputEdge in inputEdges)
+            {
+                if (typesByInputEdge.ContainsKey(inputEdge))
+                    continue;
+
+                ISet<IVertex> inputEdgeTypes = VertexOperations.GetIsAndInheritedTypes(inputEdge.To);
+                typesByInputEdge.Add(inputEdge, inputEdgeTypes);
+
+                foreach (IVertex typeVertex in inputEdgeTypes)
+                    allTypes.Add(typeVertex);
+            }
+
+            INoInEdgeInOutVertexVertex typeEdges = CreateStack();
+
+            foreach (IVertex typeVertex in allTypes)
+                typeEdges.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(
+                    GraphUtil.CreateArtificialEdge(isMeta, typeVertex));
+
+            IVertex matchingTypeEdges = exe.ExecuteInstructionByMontevideoPrinciples(typeEdges, expression);
+            HashSet<IVertex> matchingTypes = new HashSet<IVertex>();
+
+            foreach (IEdge matchingTypeEdge in matchingTypeEdges)
+                if (allTypes.Contains(matchingTypeEdge.To))
+                    matchingTypes.Add(matchingTypeEdge.To);
+
+            INoInEdgeInOutVertexVertex result = CreateStack();
+
+            foreach (IEdge inputEdge in inputEdges)
+                if (typesByInputEdge[inputEdge].Any(typeVertex => matchingTypes.Contains(typeVertex)))
+                    result.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(inputEdge);
+
+            return result;
         }
 
         public static INoInEdgeInOutVertexVertex QuestionMarkOperator(ZeroCodeExecution exe, IVertex inputQs, IVertex instructionVertex, out bool isStackFrameReturn)

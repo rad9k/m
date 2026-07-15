@@ -56,6 +56,9 @@ namespace m0.Graph.Internal
 
             edgeDictionaries.Vertex.InheritChildsDictionariesNeedsRebuild(false);
 
+            if (item.Meta != null && GeneralUtil.CompareStrings(item.Meta.Value, "$Inherits"))
+                edgeDictionaries.Vertex.InheritedVerticesNeedRebuild();
+
             //edgeDictionaries.vertex.FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeAdded, item));
 
             GraphUtil.Debug(item.From, GraphUtil.DebugOperationEnum.OutEdgeAdd);
@@ -81,6 +84,9 @@ namespace m0.Graph.Internal
 
             edgeDictionaries.Vertex.OutEdgesDictionariesNeedsRebuild = true;
             edgeDictionaries.Vertex.InheritChildsDictionariesNeedsRebuild(false);
+
+            if (item.Meta != null && GeneralUtil.CompareStrings(item.Meta.Value, "$Inherits"))
+                edgeDictionaries.Vertex.InheritedVerticesNeedRebuild();
 
             edgeDictionaries.Vertex.DetachEdge(item);
             item.To.DetachInEdge(item);

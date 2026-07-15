@@ -909,14 +909,8 @@ namespace m0.ZeroTypes
 
         public static bool CheckIfIsOrInherits(IVertex baseVertex, string test)
         {
-            IList<IEdge> allIs = GraphUtil.GetQueryOut(baseVertex, "$Is", null);
-
-            foreach (IEdge e in allIs)
-                if (GraphUtil.GetValueAndCompareStrings(e.To, test))
-                    return true;
-
-            foreach (IEdge e in allIs)
-                if (CheckIfInherits(e.To, test))
+            foreach (IVertex typeVertex in GetIsAndInheritedTypes(baseVertex))
+                if (GraphUtil.GetValueAndCompareStrings(typeVertex, test))
                     return true;
 
             return false;
@@ -924,16 +918,59 @@ namespace m0.ZeroTypes
 
         public static bool CheckIfInherits(IVertex baseVertex, string test)
         {
-            foreach (IEdge e in GraphUtil.GetQueryOut(baseVertex, "$Inherits", null))
-            {
-                if (GraphUtil.GetValueAndCompareStrings(e.To, test))
+            foreach (IVertex inheritedVertex in GetInheritedTypes(baseVertex))
+                if (GraphUtil.GetValueAndCompareStrings(inheritedVertex, test))
                     return true;
-
-                if (CheckIfInherits(e.To, test))
-                    return true;
-            }
 
             return false;
+        }
+
+        public static ISet<IVertex> GetIsAndInheritedTypes(IVertex baseVertex)
+        {
+            HashSet<IVertex> result = new HashSet<IVertex>();
+
+            if (baseVertex == null)
+                return result;
+
+            foreach (IEdge isEdge in GraphUtil.GetQueryOut(baseVertex, "$Is", null))
+                foreach (IVertex typeVertex in GetTypeAndInheritedTypes(isEdge.To))
+                    result.Add(typeVertex);
+
+            return result;
+        }
+
+        public static ISet<IVertex> GetTypeAndInheritedTypes(IVertex typeVertex)
+        {
+            HashSet<IVertex> result = new HashSet<IVertex>();
+
+            if (typeVertex == null)
+                return result;
+
+            result.Add(typeVertex);
+
+            foreach (IVertex inheritedVertex in GetInheritedTypes(typeVertex))
+                result.Add(inheritedVertex);
+
+            return result;
+        }
+
+        private static IEnumerable<IVertex> GetInheritedTypes(IVertex typeVertex)
+        {
+            if (typeVertex is IImplementedVertex)
+                return ((IImplementedVertex)typeVertex).GetInheritedVertices();
+
+            HashSet<IVertex> inheritedVertices = new HashSet<IVertex>();
+            AddInheritedTypesRaw(typeVertex, inheritedVertices);
+            return inheritedVertices;
+        }
+
+        private static void AddInheritedTypesRaw(IVertex typeVertex, HashSet<IVertex> inheritedVertices)
+        {
+            foreach (IEdge edge in typeVertex.OutEdgesRaw)
+                if (edge.Meta != null
+                    && GraphUtil.GetValueAndCompareStrings(edge.Meta, "$Inherits")
+                    && inheritedVertices.Add(edge.To))
+                    AddInheritedTypesRaw(edge.To, inheritedVertices);
         }
 
         public static bool IsInherited(IVertex baseVertex, string isInheritedFrom_String)

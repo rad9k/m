@@ -94,6 +94,31 @@ namespace m0.Graph
 
         public IList<IEdge> InheritsOutEdges;
 
+        [NonSerialized]
+        private HashSet<IVertex> inheritedVertices;
+
+        private bool inheritedVerticesNeedRebuild = true;
+
+        public IEnumerable<IVertex> GetInheritedVertices()
+        {
+            if (inheritedVertices == null || inheritedVerticesNeedRebuild)
+            {
+                inheritedVertices = VertexHelper.GetInheritParents(this);
+                inheritedVerticesNeedRebuild = false;
+            }
+
+            return inheritedVertices;
+        }
+
+        public void InheritedVerticesNeedRebuild()
+        {
+            inheritedVerticesNeedRebuild = true;
+
+            foreach (IVertex inheritedChild in VertexHelper.GetInheritChilds(this))
+                if (inheritedChild is EasyVertex)
+                    ((EasyVertex)inheritedChild).inheritedVerticesNeedRebuild = true;
+        }
+
         public override IList<IEdge> InEdgesRaw { get { return edgeDictionaries.In; } }
 
         private IList<IEdge> _InEdges;
@@ -132,9 +157,7 @@ namespace m0.Graph
             {
                 List<IEdge> FullEdges = OutEdgesRaw.ToList();
 
-                HashSet<IVertex> parents = VertexHelper.GetInheritParents(this);
-
-                foreach (IVertex v in parents)
+                foreach (IVertex v in GetInheritedVertices())
                     GraphUtil.AddRange_NoNoInherit(FullEdges, v.OutEdgesRaw);                    
 
                 _OutEdges = FullEdges;
