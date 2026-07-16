@@ -26,6 +26,12 @@ if (args.Contains("--watcher-diagnostics"))
     return;
 }
 
+if (args.Contains("--detach-attach-diagnostics"))
+{
+    GraphDiagnosticsRunner.RunDetachAttachPhases();
+    return;
+}
+
 if (args.Contains("--diagnostics"))
 {
     GraphDiagnosticsRunner.Run();

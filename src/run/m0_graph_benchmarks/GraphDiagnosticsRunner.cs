@@ -4,6 +4,7 @@ using m0;
 using m0.Graph;
 using m0.Graph.ExecutionFlow;
 using m0.Foundation;
+using m0.Store;
 using m0.ZeroCode;
 using m0.ZeroCode.Helpers;
 using m0_graph_test_support;
@@ -246,6 +247,147 @@ internal static class GraphDiagnosticsRunner
         Console.WriteLine(JsonSerializer.Serialize(
             report,
             new JsonSerializerOptions { WriteIndented = true }));
+    }
+
+    public static void RunDetachAttachPhases()
+    {
+        var reports = new List<object>();
+
+        foreach (var edgeCount in
+            new[] { 1, 100, 1000 })
+        {
+            int iterationCount = edgeCount switch
+            {
+                1 => 10000,
+                100 => 1000,
+                _ => 100
+            };
+            var identifierSuffix =
+                Guid.NewGuid().ToString("N");
+            var accessLevels = new[]
+            {
+                AccessLevelEnum.NoRestrictions
+            };
+            var sourceStore = new MemoryStore(
+                $"diagnostic-source-{identifierSuffix}",
+                MinusZero.Instance,
+                accessLevels,
+                true);
+            var targetStore = new MemoryStore(
+                $"diagnostic-target-{identifierSuffix}",
+                MinusZero.Instance,
+                accessLevels,
+                true);
+            var meta = new EasyVertex(sourceStore)
+            {
+                Value = "Meta"
+            };
+            var target = new EasyVertex(targetStore)
+            {
+                Value = "Target"
+            };
+
+            for (var index = 0;
+                 index < edgeCount;
+                 index++)
+            {
+                var source = new EasyVertex(sourceStore)
+                {
+                    Value = $"Source-{index}"
+                };
+                source.AddEdge(meta, target);
+            }
+
+            for (var index = 0; index < 10; index++)
+            {
+                sourceStore.Detach();
+                sourceStore.Attach();
+            }
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+
+            long detachTimestampTicks = 0;
+            long attachTimestampTicks = 0;
+            long detachAllocatedBytes = 0;
+            long attachAllocatedBytes = 0;
+
+            for (var index = 0;
+                 index < iterationCount;
+                 index++)
+            {
+                long allocatedBefore =
+                    GC.GetAllocatedBytesForCurrentThread();
+                long timestampBefore =
+                    Stopwatch.GetTimestamp();
+                sourceStore.Detach();
+                detachTimestampTicks +=
+                    Stopwatch.GetTimestamp() -
+                    timestampBefore;
+                detachAllocatedBytes +=
+                    GC.GetAllocatedBytesForCurrentThread() -
+                    allocatedBefore;
+
+                allocatedBefore =
+                    GC.GetAllocatedBytesForCurrentThread();
+                timestampBefore =
+                    Stopwatch.GetTimestamp();
+                sourceStore.Attach();
+                attachTimestampTicks +=
+                    Stopwatch.GetTimestamp() -
+                    timestampBefore;
+                attachAllocatedBytes +=
+                    GC.GetAllocatedBytesForCurrentThread() -
+                    allocatedBefore;
+            }
+
+            reports.Add(new
+            {
+                EdgeCount = edgeCount,
+                Iterations = iterationCount,
+                StoreCount =
+                    MinusZero.Instance.Stores.Count,
+                Detach = new
+                {
+                    MeanMicroseconds =
+                        TicksToMeanMicroseconds(
+                            detachTimestampTicks,
+                            iterationCount),
+                    AllocatedBytesPerOperation =
+                        detachAllocatedBytes /
+                        iterationCount
+                },
+                Attach = new
+                {
+                    MeanMicroseconds =
+                        TicksToMeanMicroseconds(
+                            attachTimestampTicks,
+                            iterationCount),
+                    AllocatedBytesPerOperation =
+                        attachAllocatedBytes /
+                        iterationCount
+                },
+                FinalIncomingEdgeCount =
+                    target.InEdgesRaw.Count
+            });
+
+            MinusZero.Instance.RemoveStore(sourceStore);
+            MinusZero.Instance.RemoveStore(targetStore);
+        }
+
+        Console.WriteLine(JsonSerializer.Serialize(
+            reports,
+            new JsonSerializerOptions { WriteIndented = true }));
+    }
+
+    private static double TicksToMeanMicroseconds(
+        long timestampTicks,
+        int operationCount)
+    {
+        return timestampTicks * 1000000d /
+            Stopwatch.Frequency /
+            operationCount;
     }
 
     public static void Run()

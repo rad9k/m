@@ -398,7 +398,7 @@ The mixed diagnostic workload records 104 logical-edge rebuilds, 104 query-meta 
 
 The 10,011-stack lifecycle diagnostic leaves TempStore at 886 entries before and after, for zero growth. Controlled bootstrap performs 100 parsed-query-cache lookups: 32 hits, 68 misses, 32% hit rate, 68/512 regular occupancy, and 0/128 meta-mode occupancy.
 
-Cross-store detach+attach currently measures 193.5 ns, 18.922 us, and 497.937 us for 1, 100, and 1000 edges under the default job, with unchanged allocation of 504 B, 44,066 B, and 440,080 B. The 1- and 100-edge cases are 8.7% and 5.3% faster than the correction-3 default acceptance run; the 1000-edge case is 51.7% slower by mean. Its current result is close to the earlier correction-3 `ShortRun` mean of 490.358 us, so this is retained as a scaling watch item rather than attributed to a later semantic change.
+The initial full-rebaseline cross-store detach+attach run measured 362.2 ns, 35.095 us, and 560.947 us for 1, 100, and 1000 edges, with 504 B, 44,066 B, and 440,080 B allocated. A focused default run produced 193.5 ns, 18.922 us, and 497.937 us. The disagreement between jobs led to the phase-level follow-up recorded below rather than treating the isolated default mean as proof of an algorithmic regression.
 
 ## Selected optimization: cached GraphChange watcher definitions
 
@@ -432,3 +432,36 @@ The new integration contract warms the cache, adds duplicate scope definitions d
 | Ten value changes, no added listener | 131.3 us | 16.44 us | -87.5% | 92.16 KB | 6.52 KB | -92.9% |
 
 Against Stage 0, listener commit time is lower by 91.3% for one change and 95.8% for ten changes. Allocations are lower by 84.0% and 88.9%. The in-process time confidence interval for the one-change listener case remains wide, but allocation reductions and the direct 100-iteration preparation diagnostic independently confirm the removed work.
+
+## Cross-store acceptance follow-up: allocation-free store lookup
+
+Phase diagnostics showed linear scaling rather than a new superlinear regression. At 1000 edges, detach accounted for 558.328 us and 64,071 B, while attach accounted for 700.985 us and 376,010 B in the controlled timestamp diagnostic. The attach allocation was exactly 376 B per edge at every tested scale.
+
+`EasyEdge.Attach()` resolves target and meta stores for every edge. `MinusZero.GetStore()` previously implemented each lookup as `Where(...).FirstOrDefault()` with a captured predicate. Two such lookups dominated attach allocations. The implementation now scans the existing `List<IStore>` by index and preserves the same fallback that creates a missing store.
+
+### Store lookup isolation — default job
+
+| Store count | Legacy LINQ mean | Indexed loop mean | Mean change | Legacy allocated | Loop allocated |
+|---:|---:|---:|---:|---:|---:|
+| 2 | 57.49 ns | 27.89 ns | -51.5% | 136 B | 0 B |
+| 32 | 500.06 ns | 504.57 ns | +0.9% | 136 B | 0 B |
+
+At 32 stores the means are equivalent within their dispersion, while the loop remains allocation-free. The cross-store workload has two stores and therefore uses the 51.5% faster case.
+
+### Attach phase after lookup change
+
+| Edges | Before mean | Current mean | Mean change | Before allocated | Current allocated | Allocation change |
+|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 1.193 us | 0.932 us | -21.9% | 376 B | 40 B | -89.4% |
+| 100 | 80.513 us | 61.828 us | -23.2% | 37,601 B | 4,000 B | -89.4% |
+| 1000 | 700.985 us | 499.124 us | -28.8% | 376,010 B | 40,000 B | -89.4% |
+
+### End-to-end detach+attach — comparable ShortRun
+
+| Edges | Correction 3 | Full rebaseline before lookup change | Current | Change vs correction 3 | Current allocated |
+|---:|---:|---:|---:|---:|---:|
+| 1 | 337.6 ns | 362.2 ns | 231.4 ns | -31.5% | 168 B |
+| 100 | 31.368 us | 35.095 us | 22.713 us | -27.6% | 10,464 B |
+| 1000 | 490.358 us | 560.947 us | 444.666 us | -9.3% | 104,068 B |
+
+Relative to the immediate full rebaseline, current means are lower by 36.1%, 35.3%, and 20.7%. End-to-end allocation falls by 66.7%, 76.3%, and 76.4%. The 1000-edge scaling watch item is therefore closed: the comparable job is faster than both the correction-3 acceptance state and the immediate pre-change rebaseline, with unchanged edge identity and reverse-link contracts.

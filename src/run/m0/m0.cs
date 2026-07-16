@@ -383,7 +383,21 @@ namespace m0
 
         public IStore GetStore(string StoreTypeName, string StoreIdentifier)
         {
-            IStore store = Stores.Where(s => s.TypeName == StoreTypeName & s.Identifier == StoreIdentifier).FirstOrDefault();
+            IStore store = null;
+
+            for (var index = 0;
+                 index < stores.Count;
+                 index++)
+            {
+                IStore candidate = stores[index];
+
+                if (candidate.TypeName == StoreTypeName &&
+                    candidate.Identifier == StoreIdentifier)
+                {
+                    store = candidate;
+                    break;
+                }
+            }
 
             if (store != null)
                 return store;
@@ -398,7 +412,20 @@ namespace m0
 
         public IStore GetStore(string StoreIdentifier)
         {
-            IStore store = Stores.Where(s => s.Identifier == StoreIdentifier).FirstOrDefault();
+            IStore store = null;
+
+            for (var index = 0;
+                 index < stores.Count;
+                 index++)
+            {
+                IStore candidate = stores[index];
+
+                if (candidate.Identifier == StoreIdentifier)
+                {
+                    store = candidate;
+                    break;
+                }
+            }
 
             if (store != null)
                 return store;

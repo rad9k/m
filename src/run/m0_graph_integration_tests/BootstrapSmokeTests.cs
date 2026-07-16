@@ -1,4 +1,6 @@
 using m0;
+using m0.Foundation;
+using m0.Store;
 using m0.ZeroCode.Helpers;
 
 namespace m0_graph_integration_tests;
@@ -61,5 +63,38 @@ public sealed class BootstrapSmokeTests
         Assert.Equal(
             initialStoreVertexCount,
             tempStore.VertexIdentifiersDictionary.Count);
+    }
+
+    [Fact]
+    public void StoreLookupReturnsExistingInstanceWithoutAddingDuplicate()
+    {
+        var initialStoreCount =
+            MinusZero.Instance.Stores.Count;
+        var identifier =
+            $"store-lookup-{Guid.NewGuid():N}";
+        var store = new MemoryStore(
+            identifier,
+            MinusZero.Instance,
+            new[] { AccessLevelEnum.NoRestrictions },
+            true);
+
+        try
+        {
+            Assert.Same(
+                store,
+                MinusZero.Instance.GetStore(
+                    store.TypeName,
+                    identifier));
+            Assert.Same(
+                store,
+                MinusZero.Instance.GetStore(identifier));
+            Assert.Equal(
+                initialStoreCount + 1,
+                MinusZero.Instance.Stores.Count);
+        }
+        finally
+        {
+            MinusZero.Instance.RemoveStore(store);
+        }
     }
 }

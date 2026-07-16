@@ -66,3 +66,65 @@ public class CrossStoreDetachAttachBenchmarks
         MinusZero.Instance.RemoveStore(targetStore);
     }
 }
+
+[MemoryDiagnoser]
+public class StoreLookupBenchmarks
+{
+    private readonly List<IStore> createdStores =
+        new();
+    private string storeTypeName = null!;
+    private string storeIdentifier = null!;
+
+    [Params(2, 32)]
+    public int StoreCount { get; set; }
+
+    [GlobalSetup]
+    public void Setup()
+    {
+        var accessLevels =
+            new[] { AccessLevelEnum.NoRestrictions };
+        var identifierSuffix =
+            Guid.NewGuid().ToString("N");
+
+        for (var index = 0;
+             index < StoreCount;
+             index++)
+        {
+            createdStores.Add(
+                new MemoryStore(
+                    $"lookup-{identifierSuffix}-{index}",
+                    MinusZero.Instance,
+                    accessLevels,
+                    true));
+        }
+
+        IStore targetStore = createdStores[^1];
+        storeTypeName = targetStore.TypeName;
+        storeIdentifier = targetStore.Identifier;
+    }
+
+    [Benchmark(Baseline = true)]
+    public IStore LegacyLinqLookup()
+    {
+        return MinusZero.Instance.Stores
+            .Where(store =>
+                store.TypeName == storeTypeName &
+                store.Identifier == storeIdentifier)
+            .FirstOrDefault()!;
+    }
+
+    [Benchmark]
+    public IStore AllocationFreeLoopLookup()
+    {
+        return MinusZero.Instance.GetStore(
+            storeTypeName,
+            storeIdentifier);
+    }
+
+    [GlobalCleanup]
+    public void Cleanup()
+    {
+        foreach (IStore store in createdStores)
+            MinusZero.Instance.RemoveStore(store);
+    }
+}

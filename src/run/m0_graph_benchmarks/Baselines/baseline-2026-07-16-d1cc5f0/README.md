@@ -63,9 +63,11 @@ Post-baseline correction 9 verification has 57 passing isolated tests and 28 pas
 
 Post-baseline correction 11 verification has 61 passing isolated tests and 31 passing bootstrapped integration tests, with no skipped tests. Collision enforcement, root protection, atomic filesystem rename and rollback, directory no-mutation failure, and both `FileContentVertex` modes are covered. Four focused acceptance measurements are appended to `benchmark-results.md`.
 
-The full post-correction rebaseline completed 61 `ShortRun` cases across 13 classes. Of 35 semantically equivalent Stage 0 comparisons, 34 are faster by mean. The complete runtime solution, including WPF UI projects, builds with zero errors; 61 isolated and 32 integration tests pass with no skips.
+The full post-correction rebaseline completed 61 `ShortRun` cases across 13 classes. Of 35 semantically equivalent Stage 0 comparisons, 34 are faster by mean. The complete runtime solution, including WPF UI projects, builds with zero errors; 61 isolated and 33 integration tests pass with no skips.
 
 The first profile-selected optimization caches GraphChange watcher definitions while retaining dynamic scope evaluation and definition-change detection. Direct watcher preparation falls from 189.668 us and 89,784 B to 12.342 us and 2,088 B. Stage 0 listener commits are now 91.3% faster for one mutation and 95.8% faster for ten, with allocation reductions of 84.0% and 88.9%.
+
+The cross-store acceptance follow-up found no superlinear detach/attach regression. Replacing the two per-edge LINQ store lookups with an allocation-free indexed scan makes the two-store lookup 51.5% faster and removes 136 B per lookup. Comparable `ShortRun` detach+attach means are 231.4 ns, 22.713 us, and 444.666 us for 1/100/1000 edges; allocation is 168 B, 10,464 B, and 104,068 B.
 
 ## Commands
 
@@ -77,6 +79,7 @@ dotnet run --project m0_graph_benchmarks/m0_graph_benchmarks.csproj --configurat
 dotnet run --project m0_graph_benchmarks/m0_graph_benchmarks.csproj --configuration Release -- --stack-lifecycle-diagnostics
 dotnet run --project m0_graph_benchmarks/m0_graph_benchmarks.csproj --configuration Release -- --transaction-diagnostics
 dotnet run --project m0_graph_benchmarks/m0_graph_benchmarks.csproj --configuration Release -- --watcher-diagnostics
+dotnet run --project m0_graph_benchmarks/m0_graph_benchmarks.csproj --configuration Release -- --detach-attach-diagnostics
 dotnet run --project m0_graph_benchmarks/m0_graph_benchmarks.csproj --configuration Release -- --filter "*" --job short
 ```
 
