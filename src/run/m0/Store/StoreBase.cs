@@ -112,14 +112,14 @@ namespace m0.Store
         {
             _DetachState = DetachStateEnum.InDetaching;          
 
-            foreach (IVertex v in VertexIdentifiersDictionary.Values)
+            foreach (IVertex v in VertexIdentifiersDictionary.Values.ToList())
             {
-                foreach (IEdge e in v.InEdgesRaw)
-                    if (e.From.Store == InDetachStore)
+                foreach (IEdge e in v.InEdgesRaw.ToList())
+                    if (e.From != null && e.From.Store == InDetachStore)
                         v.InEdgesRaw.Remove(e);
 
-                foreach (IEdge e in v.MetaInEdgesRaw) // XXX ??? I do not know what this function does but I think that there should be also this part :)
-                    if (e.From.Store == InDetachStore)
+                foreach (IEdge e in v.MetaInEdgesRaw.ToList()) // XXX ??? I do not know what this function does but I think that there should be also this part :)
+                    if (e.From != null && e.From.Store == InDetachStore)
                         v.MetaInEdgesRaw.Remove(e);
             }
 
@@ -184,23 +184,70 @@ namespace m0.Store
         }
 
         public Dictionary<object, IVertex> VertexIdentifiersDictionary; // XXX was protected
+
+        private readonly object
+            vertexIdentifiersSynchronizationRoot =
+                new object();
        
-        public virtual void StoreVertexIdentifier(IVertex Vertex)
-        {            
-            if (!VertexIdentifiersDictionary.ContainsKey(Vertex.Identifier))
-                VertexIdentifiersDictionary.Add(Vertex.Identifier,Vertex);
-            else // XXX
+        public virtual void StoreVertexIdentifier(IVertex vertex)
+        {
+            if (vertex == null)
+                throw new ArgumentNullException(nameof(vertex));
+
+            lock (vertexIdentifiersSynchronizationRoot)
             {
-                if (VertexIdentifiersDictionary[Vertex.Identifier] != Vertex)
+                if (!VertexIdentifiersDictionary.TryGetValue(
+                    vertex.Identifier,
+                    out IVertex existingVertex))
                 {
-                    int x = 0;
+                    VertexIdentifiersDictionary.Add(
+                        vertex.Identifier,
+                        vertex);
+                    return;
                 }
+
+                if (!ReferenceEquals(existingVertex, vertex))
+                    throw CreateIdentifierCollisionException(
+                        vertex,
+                        existingVertex);
             }
         }
 
-        public virtual void RemoveVertexIdentifier(IVertex Vertex)
-        {            
-            VertexIdentifiersDictionary.Remove(Vertex.Identifier);            
+        public virtual void RemoveVertexIdentifier(IVertex vertex)
+        {
+            if (vertex == null)
+                throw new ArgumentNullException(nameof(vertex));
+
+            lock (vertexIdentifiersSynchronizationRoot)
+            {
+                if (!VertexIdentifiersDictionary.TryGetValue(
+                    vertex.Identifier,
+                    out IVertex existingVertex))
+                {
+                    return;
+                }
+
+                if (!ReferenceEquals(existingVertex, vertex))
+                    throw CreateIdentifierCollisionException(
+                        vertex,
+                        existingVertex);
+
+                VertexIdentifiersDictionary.Remove(
+                    vertex.Identifier);
+            }
+        }
+
+        private InvalidOperationException
+            CreateIdentifierCollisionException(
+                IVertex vertex,
+                IVertex existingVertex)
+        {
+            return new InvalidOperationException(
+                $"Store '{Identifier}' already contains a different " +
+                $"vertex with identifier '{vertex.Identifier}'. " +
+                $"Existing vertex type: " +
+                $"'{existingVertex.GetType().FullName}', " +
+                $"new vertex type: '{vertex.GetType().FullName}'.");
         }
 
         public virtual IVertex GetVertexByIdentifier(object VertexIdentifier)

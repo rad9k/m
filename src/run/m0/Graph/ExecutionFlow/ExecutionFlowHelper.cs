@@ -4,6 +4,7 @@ using m0.ZeroCode;
 using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace m0.Graph.ExecutionFlow
 {
@@ -56,6 +57,30 @@ namespace m0.Graph.ExecutionFlow
 
     public class ExecutionFlowHelper
     {
+        private sealed class GraphChangeWatchState
+        {
+            internal GraphChangeWatchState(
+                ITransaction transaction,
+                bool previousValue,
+                GraphChangeWatchState previousState)
+            {
+                Transaction = transaction;
+                PreviousValue = previousValue;
+                PreviousState = previousState;
+            }
+
+            internal ITransaction Transaction { get; }
+
+            internal bool PreviousValue { get; }
+
+            internal GraphChangeWatchState PreviousState { get; }
+        }
+
+        private static readonly
+            AsyncLocal<GraphChangeWatchState>
+            graphChangeWatchState = new
+                AsyncLocal<GraphChangeWatchState>();
+
         static IVertex _is_meta;
 
         static IVertex dotNetStaticMethod_meta;
@@ -116,6 +141,14 @@ namespace m0.Graph.ExecutionFlow
         {
             ITransaction currentTransaction = MinusZero.Instance.GetTopTransaction();
 
+            if (currentTransaction == null)
+                return;
+
+            graphChangeWatchState.Value =
+                new GraphChangeWatchState(
+                    currentTransaction,
+                    currentTransaction.GraphChangeWatchActive,
+                    graphChangeWatchState.Value);
             currentTransaction.GraphChangeWatchActive = false;
         }
 
@@ -123,7 +156,20 @@ namespace m0.Graph.ExecutionFlow
         {
             ITransaction currentTransaction = MinusZero.Instance.GetTopTransaction();
 
-            currentTransaction.GraphChangeWatchActive = true;
+            GraphChangeWatchState state =
+                graphChangeWatchState.Value;
+
+            if (state == null)
+            {
+                if (currentTransaction != null)
+                    currentTransaction.GraphChangeWatchActive = true;
+
+                return;
+            }
+
+            state.Transaction.GraphChangeWatchActive =
+                state.PreviousValue;
+            graphChangeWatchState.Value = state.PreviousState;
         }
 
         public static void AddTransactionAtom(ITransactionAtom atom)

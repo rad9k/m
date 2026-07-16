@@ -25,45 +25,33 @@ namespace m0.Store.FileSystem
             }
             set
             {
-                object oldValue;
+                if (!(value is string valueString))
+                    return;
 
-                if (value is string)
-                {
-                    oldValue = _Value;
+                string newDirectoryName =
+                    FileSystemUtil.GetFileNamePart(valueString);
 
-                    string newFileName = FileSystemUtil.GetFileNamePart((string)value);
+                if (string.IsNullOrWhiteSpace(newDirectoryName))
+                    return;
 
-                    if (newFileName == "")
-                        return;
-                    
-                    string DI_DirectoryName = DI.FullName.Substring(0, DI.FullName.LastIndexOf(Path.DirectorySeparatorChar));
+                string parentDirectoryName =
+                    DI.FullName.Substring(
+                        0,
+                        DI.FullName.LastIndexOf(
+                            Path.DirectorySeparatorChar));
+                string newIdentifier =
+                    parentDirectoryName +
+                    Path.DirectorySeparatorChar +
+                    newDirectoryName.Trim();
 
-                    newFileName = DI_DirectoryName + Path.DirectorySeparatorChar + newFileName.Trim();
+                if (newIdentifier[newIdentifier.Length - 1] == '.')
+                    newIdentifier = newIdentifier.Substring(
+                        0,
+                        newIdentifier.Length - 1);
 
-                    if (newFileName[newFileName.Length - 1] == '.')
-                        newFileName = newFileName.Substring(0, newFileName.Length - 1);
-
-                    if (newFileName != DI.FullName)
-                    {
-                        while (System.IO.Directory.Exists(newFileName) || System.IO.Directory.Exists(newFileName))
-                            newFileName = FileSystemUtil.AddNew(newFileName);
-
-                        _Identifier = newFileName;
-
-                        //System.IO.Directory.Move(DI.FullName, newFileName);
-                        throw new Exception("trying to rename directory, not implemented yet");
-
-                        DI = new DirectoryInfo(newFileName);
-
-                        if (CanEmitGraphChangeEvents)
-                            ExecutionFlowHelper.AddTransactionAtom(new GraphChangeTransactionAtom(
-                                this,
-                                AtomGraphChangeTypeEnum.ValueChange,
-                                oldValue,
-                                _Value,
-                                null));
-                    }
-                }
+                if (newIdentifier != DI.FullName)
+                    throw new NotSupportedException(
+                        "Directory rename is not implemented.");
             }
         }
 
@@ -192,11 +180,7 @@ namespace m0.Store.FileSystem
         public DirectoryVertex(IStore store, string identifier)
             : base(store, identifier)
         {
-            _Identifier = identifier;
-
             DI = new DirectoryInfo(Identifier.ToString());
-
-            FileSystemStore.DirectoryVertexDictionary.Add(identifier, this);            
         }
     }
 }

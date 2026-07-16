@@ -68,22 +68,32 @@ namespace m0.Graph.Internal
             {
                 item.EdgeRemovalExecuting = true;
 
-                if (item.Meta != null)
-                    item.Meta.MetaInEdgesRaw.Remove(item);
-                
-                item.To.InEdgesRaw.Remove(item);
+                try
+                {
+                    if (item.Meta != null)
+                        item.Meta.MetaInEdgesRaw.Remove(item);
 
-                item.EdgeRemovalExecuting = false;
+                    if (item.To != null)
+                        item.To.InEdgesRaw.Remove(item);
+                }
+                finally
+                {
+                    item.EdgeRemovalExecuting = false;
+                }
 
                 GraphUtil.Debug(item.From, GraphUtil.DebugOperationEnum.OutEdgeRemove);
-                GraphUtil.Debug(item.To, GraphUtil.DebugOperationEnum.InEdgeRemove);
+
+                if (item.To != null)
+                    GraphUtil.Debug(item.To, GraphUtil.DebugOperationEnum.InEdgeRemove);
             }
 
             edgeDictionaries.Vertex.OutEdgesDictionariesNeedsRebuild = true;
             edgeDictionaries.Vertex.InheritChildsOutEdgesDictionariesNeedsRebuild();
 
             edgeDictionaries.Vertex.DetachEdge(item);
-            item.To.DetachInEdge(item);
+
+            if (item.To != null)
+                item.To.DetachInEdge(item);
 
             //
 

@@ -20,31 +20,72 @@ namespace m0.Graph.ExecutionFlow
 
     public class GraphChangeTriggerWatcher
     {
-        static bool triggerListChanged = false;
+        private sealed class DefinitionEdgeState
+        {
+            public IEdge Edge;
+            public IVertex Meta;
+            public IVertex To;
+            public string MetaValue;
+            public string ToValue;
+        }
 
-        static HashSet<IEdge> triggerEdgeList = new HashSet<IEdge>();
+        private sealed class TriggerDefinitionState
+        {
+            public IVertex SourceVertex;
+            public IVertex TriggerVertex;
+            public IList<DefinitionEdgeState> Edges;
+        }
+
+        static readonly object synchronizationRoot =
+            new object();
+
+        static bool triggerListChanged = true;
+
+        static HashSet<IEdge> triggerEdgeList =
+            new HashSet<IEdge>(
+                ReferenceEqualityComparer.Instance);
         
         static IList<WatcherEntry> watcherEntryList;
+        static Dictionary<IEdge, TriggerDefinitionState>
+            triggerDefinitionStates;
+
+        internal static int TriggerCount
+        {
+            get
+            {
+                lock (synchronizationRoot)
+                    return triggerEdgeList.Count;
+            }
+        }
 
         public static void AddGraphChangeTrigger(IEdge triggerEdge)
         {
-            triggerEdgeList.Add(triggerEdge);
-
-            triggerListChanged = true;
+            lock (synchronizationRoot)
+            {
+                if (triggerEdgeList.Add(triggerEdge))
+                    triggerListChanged = true;
+            }
         }
 
         public static void RemoveGraphChangeTrigger(IEdge triggerEdge)
         {
            // triggerEdge.To.Dispose(); // this is redundant and sometimes makes troubles
 
-            triggerEdgeList.Remove(triggerEdge);
-
-            triggerListChanged = true;
+            lock (synchronizationRoot)
+            {
+                if (triggerEdgeList.Remove(triggerEdge))
+                    triggerListChanged = true;
+            }
         }
 
         public static void RemoveAllGraphChangeTriggers()
         {
-            foreach (IEdge e in triggerEdgeList.ToList())
+            IEdge[] triggerEdges;
+
+            lock (synchronizationRoot)
+                triggerEdges = triggerEdgeList.ToArray();
+
+            foreach (IEdge e in triggerEdges)
                 RemoveGraphChangeTrigger(e);
         }
 
@@ -122,40 +163,180 @@ namespace m0.Graph.ExecutionFlow
                 
                 watcherEntryList.Add(en);
             }
+
+            CaptureTriggerDefinitionStates();
+            triggerListChanged = false;
         }
 
-        private static void FillVertexInScope()
+        private static bool TriggerDefinitionsAreCurrent()
         {
-            foreach(WatcherEntry en in watcherEntryList)
+            if (triggerListChanged ||
+                watcherEntryList == null ||
+                triggerDefinitionStates == null ||
+                triggerDefinitionStates.Count !=
+                    triggerEdgeList.Count)
             {
-                en.vertexInScope = new List<IVertex>();
-                
-                if(!en.FilterOutRootVertexEvents)
-                    en.vertexInScope.Add(en.sourceVertex); 
-
-                if (en.scopeQuery != null)
-                    foreach(string s in en.scopeQuery)
-                        foreach(IEdge e in en.sourceVertex.GetAll(false, s))
-                            en.vertexInScope.Add(e.To);
+                return false;
             }
-        }        
+
+            foreach (IEdge triggerEdge in triggerEdgeList)
+            {
+                if (!triggerDefinitionStates.TryGetValue(
+                    triggerEdge,
+                    out TriggerDefinitionState state))
+                {
+                    return false;
+                }
+
+                if (!ReferenceEquals(
+                        state.SourceVertex,
+                        triggerEdge.From) ||
+                    !ReferenceEquals(
+                        state.TriggerVertex,
+                        triggerEdge.To))
+                {
+                    return false;
+                }
+
+                IList<IEdge> currentEdges =
+                    triggerEdge.To.OutEdges;
+                if (currentEdges.Count != state.Edges.Count)
+                    return false;
+
+                for (var index = 0;
+                     index < currentEdges.Count;
+                     index++)
+                {
+                    IEdge currentEdge = currentEdges[index];
+                    DefinitionEdgeState edgeState =
+                        state.Edges[index];
+
+                    if (!ReferenceEquals(
+                            edgeState.Edge,
+                            currentEdge) ||
+                        !ReferenceEquals(
+                            edgeState.Meta,
+                            currentEdge.Meta) ||
+                        !ReferenceEquals(
+                            edgeState.To,
+                            currentEdge.To) ||
+                        edgeState.MetaValue !=
+                            GetValueString(
+                                currentEdge.Meta) ||
+                        edgeState.ToValue !=
+                            GetValueString(
+                                currentEdge.To))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        private static void CaptureTriggerDefinitionStates()
+        {
+            triggerDefinitionStates =
+                new Dictionary<IEdge, TriggerDefinitionState>(
+                    ReferenceEqualityComparer.Instance);
+
+            foreach (IEdge triggerEdge in triggerEdgeList)
+            {
+                IList<DefinitionEdgeState> edgeStates =
+                    new List<DefinitionEdgeState>();
+
+                foreach (IEdge edge in triggerEdge.To.OutEdges)
+                    edgeStates.Add(
+                        new DefinitionEdgeState
+                        {
+                            Edge = edge,
+                            Meta = edge.Meta,
+                            To = edge.To,
+                            MetaValue =
+                                GetValueString(edge.Meta),
+                            ToValue =
+                                GetValueString(edge.To)
+                        });
+
+                triggerDefinitionStates.Add(
+                    triggerEdge,
+                    new TriggerDefinitionState
+                    {
+                        SourceVertex = triggerEdge.From,
+                        TriggerVertex = triggerEdge.To,
+                        Edges = edgeStates
+                    });
+            }
+        }
+
+        private static string GetValueString(
+            IVertex vertex)
+        {
+            return vertex?.Value?.ToString();
+        }
+
+        private static void AddWatchedVertex(
+            Dictionary<IVertex, List<WatcherEntry>>
+                watchedVertexDictionary,
+            IVertex vertex,
+            WatcherEntry watcherEntry)
+        {
+            if (!watchedVertexDictionary.TryGetValue(
+                vertex,
+                out List<WatcherEntry> entries))
+            {
+                entries = new List<WatcherEntry>();
+                watchedVertexDictionary.Add(vertex, entries);
+            }
+
+            if (!entries.Contains(watcherEntry))
+                entries.Add(watcherEntry);
+        }
 
         public static Dictionary<IVertex, List<WatcherEntry>> GetWatchedVertexDictionary()
-        {            
-            CreateWatcherEntryList();
+        {
+            lock (synchronizationRoot)
+            {
+                if (!TriggerDefinitionsAreCurrent())
+                    CreateWatcherEntryList();
 
-            FillVertexInScope();
+                Dictionary<IVertex, List<WatcherEntry>> dict =
+                    new Dictionary<IVertex, List<WatcherEntry>>(
+                        ReferenceEqualityComparer.Instance);
 
-            Dictionary<IVertex, List<WatcherEntry>> dict = new Dictionary<IVertex, List<WatcherEntry>>();
+                foreach (WatcherEntry en in watcherEntryList)
+                {
+                    if (en.triggerVertex.DisposedState !=
+                        DisposeStateEnum.Live)
+                    {
+                        continue;
+                    }
 
-            foreach(WatcherEntry en in watcherEntryList)
-                foreach(IVertex v in en.vertexInScope)
-                    if(en.triggerVertex.DisposedState == DisposeStateEnum.Live)
-                        GeneralUtil.DictionaryAdd<IVertex, WatcherEntry>(dict, v, en);
+                    if (!en.FilterOutRootVertexEvents)
+                        AddWatchedVertex(
+                            dict,
+                            en.sourceVertex,
+                            en);
 
-            triggerListChanged = false;            
+                    if (en.scopeQuery == null)
+                        continue;
 
-            return dict;
+                    foreach (string scopeQuery in en.scopeQuery)
+                        foreach (IEdge edge in
+                            en.sourceVertex.GetAll(
+                                false,
+                                scopeQuery))
+                        {
+                            AddWatchedVertex(
+                                dict,
+                                edge.To,
+                                en);
+                        }
+                }
+
+                return dict;
+            }
         }        
     }
 }

@@ -27,6 +27,7 @@ namespace m0.Store
             :base(identifier, storeUniverse, accessLeveList)
         {
             root = new EasyVertex(this);
+            root.IsRoot = true;
         }
 
         public MemoryStore(String identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList, bool _IsTemporaryStore)

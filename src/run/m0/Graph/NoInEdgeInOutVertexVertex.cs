@@ -9,11 +9,25 @@ namespace m0.Graph
 {
     public class NoInEdgeInOutVertexVertex: EasyVertex, INoInEdgeInOutVertexVertex
     {
-        public NoInEdgeInOutVertexVertex(IStore _Store): base(_Store)
+        public NoInEdgeInOutVertexVertex(IStore store)
+            : this(
+                store,
+                VertexIdentifierRegistrationMode.Registered)
+        {
+        }
+
+        internal NoInEdgeInOutVertexVertex(
+            IStore store,
+            VertexIdentifierRegistrationMode registrationMode)
+            : base(store, registrationMode)
         {
             AllowInheritance = false;
             CanEmitGraphChangeEvents = false;
             edgeDictionaries.NoInEdgeInOutVertexVertexMode = true;
+            GraphPerformanceCounters.RecordStackCreated(
+                ReferenceEquals(
+                    store,
+                    MinusZero.Instance.TempStore));
         }
 
         protected override IVertex CreateVertexInstance()

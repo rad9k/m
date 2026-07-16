@@ -2078,8 +2078,6 @@ namespace m0.ZeroUML.Instructions
         {
             isStackFrameReturn = false;
 
-            INoInEdgeInOutVertexVertex newStack = CreateStack();
-
             IVertex target = GraphUtil.GetQueryOutFirst(instructionVertex, "Target", null);
 
             if (target != null)

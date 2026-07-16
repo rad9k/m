@@ -47,20 +47,25 @@ namespace m0.Graph.Internal
 
         public override void OnRemove(IEdge item)
         {
-            if (item.From.Store.DetachState != DetachStateEnum.Attached)
-                return;
+            bool shouldCascadeRemoval =
+                item.From != null &&
+                item.From.Store.DetachState == DetachStateEnum.Attached;
 
-            if (!item.EdgeRemovalExecuting)
+            if (shouldCascadeRemoval && !item.EdgeRemovalExecuting)
             {
                 item.EdgeRemovalExecuting = true;
 
-                if (item.From != null)
+                try
+                {
                     item.From.OutEdgesRaw.Remove(item);
 
-                if (item.To != null)
-                    item.To.InEdgesRaw.Remove(item);
-
-                item.EdgeRemovalExecuting = false;
+                    if (item.To != null)
+                        item.To.InEdgesRaw.Remove(item);
+                }
+                finally
+                {
+                    item.EdgeRemovalExecuting = false;
+                }
             }
 
             int cumulativeEdgesCount = 0;
@@ -69,6 +74,7 @@ namespace m0.Graph.Internal
             cumulativeEdgesCount += edgeDictionaries.MetaIn.Count;
 
             if (cumulativeEdgesCount == 0
+                && shouldCascadeRemoval
                 && edgeDictionaries.Vertex.Store.DetachState == DetachStateEnum.Attached
                 && !edgeDictionaries.Vertex.IsRoot)
                 ExecutionFlowHelper.AddSecondStageCommitAction(edgeDictionaries.Vertex);

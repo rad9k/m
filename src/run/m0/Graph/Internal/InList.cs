@@ -47,20 +47,25 @@ namespace m0.Graph.Internal
 
         public override void OnRemove(IEdge item)
         {
-            if (item.From.Store.DetachState != DetachStateEnum.Attached)
-                return;
+            bool shouldCascadeRemoval =
+                item.From != null &&
+                item.From.Store.DetachState == DetachStateEnum.Attached;
 
-            if (!item.EdgeRemovalExecuting)
+            if (shouldCascadeRemoval && !item.EdgeRemovalExecuting)
             {
                 item.EdgeRemovalExecuting = true;
 
-                if (item.From != null)
+                try
+                {
                     item.From.OutEdgesRaw.Remove(item);
 
-                if (item.Meta != null)
-                    item.Meta.MetaInEdgesRaw.Remove(item);
-
-                item.EdgeRemovalExecuting = false;
+                    if (item.Meta != null)
+                        item.Meta.MetaInEdgesRaw.Remove(item);
+                }
+                finally
+                {
+                    item.EdgeRemovalExecuting = false;
+                }
             }
 
             //
@@ -69,7 +74,8 @@ namespace m0.Graph.Internal
 
             //
 
-            edgeDictionaries.Vertex.CheckIfShouldDispose();
+            if (shouldCascadeRemoval)
+                edgeDictionaries.Vertex.CheckIfShouldDispose();
 
             /*int cumulativeEdgesCount = 0;
 

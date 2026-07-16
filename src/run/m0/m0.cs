@@ -497,6 +497,8 @@ namespace m0
             if (IsInitialized)
                 return;
 
+            EasyVertex.ResetQueryParseCaches();
+
             LogLevel = CommandLineParameters.GetM0LogLevel();
 
             ApplicationPath = AppContext.BaseDirectory;

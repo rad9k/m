@@ -19,6 +19,12 @@ using m0.ZeroTypes;
 
 namespace m0.Graph
 {
+    internal enum VertexIdentifierRegistrationMode
+    {
+        Registered,
+        Ephemeral
+    }
+
     [Serializable]
     public class EasyVertex: VertexBase, IDisposable, IImplementedVertex, ISecondStageCommitAction
     {
@@ -75,9 +81,24 @@ namespace m0.Graph
 
         protected void ValueChanged()
         {
-            foreach (IEdge e in InEdgesRaw)
-                if(e.From!=null) // there could be artificial edge, with From==null
-                    e.From.OutEdgesDictionariesNeedsRebuild = true;
+            if (InEdgesRaw.Count == 1)
+            {
+                IVertex sourceVertex = InEdgesRaw[0].From;
+
+                if (sourceVertex != null)
+                    InvalidateOutValueIndexes(sourceVertex);
+            }
+            else if (InEdgesRaw.Count > 1)
+            {
+                HashSet<IVertex> affectedSourceVertices = new HashSet<IVertex>();
+
+                foreach (IEdge e in InEdgesRaw)
+                    if (e.From != null) // there could be artificial edge, with From==null
+                        affectedSourceVertices.Add(e.From);
+
+                foreach (IVertex sourceVertex in affectedSourceVertices)
+                    InvalidateOutValueIndexes(sourceVertex);
+            }
 
             foreach (IEdge e in OutEdgesRaw)
                 e.To.InEdgesDictionariesNeedsRebuild = true;
@@ -86,6 +107,33 @@ namespace m0.Graph
 
             if (MetaInEdgesRaw.Count > 0 || InheritsInEdges.Count > 0)
                 InvalidateMetaQueryIndexesForThisAndInheritChildren(true);
+        }
+
+        private static void InvalidateOutValueIndexes(IVertex sourceVertex)
+        {
+            MarkOutValueIndexesNeedRebuild(sourceVertex);
+
+            if (sourceVertex is EasyVertex easySourceVertex &&
+                easySourceVertex.InheritsInEdges.Count == 0)
+                return;
+
+            HashSet<IVertex> inheritChildren = VertexHelper.GetInheritChilds(sourceVertex);
+            GraphPerformanceCounters.RecordInvalidatedInheritChildren(inheritChildren.Count);
+
+            foreach (IVertex inheritChild in inheritChildren)
+                MarkOutValueIndexesNeedRebuild(inheritChild);
+        }
+
+        private static void MarkOutValueIndexesNeedRebuild(IVertex vertex)
+        {
+            if (vertex is EasyVertex easyVertex)
+            {
+                easyVertex.OutEdgesDictionariesNeedsRebuild_Value = true;
+                easyVertex.OutEdgesDictionariesNeedsRebuild_MetaAndValue = true;
+                return;
+            }
+
+            vertex.OutEdgesDictionariesNeedsRebuild = true;
         }
 
         public bool HasInheritance { get; set; }
@@ -144,6 +192,9 @@ namespace m0.Graph
             else
                 _OutEdges = OutEdgesRaw;
 
+            GraphPerformanceCounters.RecordOutEdgesRebuild(
+                OutEdgesRebuildKind.LogicalEdges,
+                HasInheritance && AllowInheritance ? _OutEdges.Count : 0);
             OutEdgesDictionariesNeedsRebuild_Edges = false;
         }
 
@@ -178,6 +229,9 @@ namespace m0.Graph
                     GetQueryDictionaryKey(edge.Meta?.Value),
                     edge);
 
+            GraphPerformanceCounters.RecordOutEdgesRebuild(
+                OutEdgesRebuildKind.DirectMeta,
+                outEdges.Count);
             OutEdgesDictionariesNeedsRebuild_Meta = false;
         }
 
@@ -193,6 +247,9 @@ namespace m0.Graph
                 foreach (string queryMetaKey in GetMetaQueryKeys(edge.Meta))
                     AddEdgeToDictionary(queryEdgesByMeta, queryMetaKey, edge);
 
+            GraphPerformanceCounters.RecordOutEdgesRebuild(
+                OutEdgesRebuildKind.QueryMeta,
+                outEdges.Count);
             OutEdgesDictionariesNeedsRebuild_QueryMeta = false;
         }
 
@@ -227,6 +284,9 @@ namespace m0.Graph
                     GetQueryDictionaryKey(edge.To?.Value),
                     edge);
 
+            GraphPerformanceCounters.RecordOutEdgesRebuild(
+                OutEdgesRebuildKind.Value,
+                outEdges.Count);
             OutEdgesDictionariesNeedsRebuild_Value = false;
         }
 
@@ -262,6 +322,9 @@ namespace m0.Graph
                         new GraphUtil.MetaAndValueKey(queryMetaKey, edge.To?.Value),
                         edge);
 
+            GraphPerformanceCounters.RecordOutEdgesRebuild(
+                OutEdgesRebuildKind.QueryMetaAndValue,
+                outEdges.Count);
             OutEdgesDictionariesNeedsRebuild_MetaAndValue = false;
         }
 
@@ -424,6 +487,7 @@ namespace m0.Graph
             if (destVertex.DisposedState == DisposeStateEnum.Disposed)
                 throw new Exception("Vertex not live");
 
+            ValidateInheritanceEdge(metaVertex, destVertex);
 
             EdgeBase ne = new EasyEdge(this, metaVertex, destVertex);
 
@@ -441,6 +505,21 @@ namespace m0.Graph
                     ne));
 
             return ne;
+        }
+
+        private void ValidateInheritanceEdge(IVertex metaVertex, IVertex parentVertex)
+        {
+            if (metaVertex == null ||
+                !GeneralUtil.CompareStrings(metaVertex.Value, "$Inherits"))
+                return;
+
+            if (ReferenceEquals(this, parentVertex))
+                throw new InvalidOperationException(
+                    "A vertex cannot inherit from itself.");
+
+            if (VertexHelper.GetInheritParents(parentVertex).Contains(this))
+                throw new InvalidOperationException(
+                    "The $Inherits edge would create an inheritance cycle.");
         }
 
         public override void AttachInEdge(IEdge edge)
@@ -526,6 +605,9 @@ namespace m0.Graph
         //      edge.From.DetachEdge(item);
         public override void DeleteEdge(IEdge _edge)
         {
+            if (_edge == null)
+                return;
+
             if (DisposedState == DisposeStateEnum.Disposed)
                 throw new Exception("Vertex not live");            
 
@@ -556,8 +638,50 @@ namespace m0.Graph
                 DeleteEdge(e); // Meta/To check to be performed
         }       
 
-        private static IDictionary<String, IVertex> QueryParseCache = new Dictionary<String, IVertex>();
-        private static IDictionary<String, IVertex> QueryParseCache_metaMode = new Dictionary<String, IVertex>();        
+        private const int DefaultQueryParseCacheCapacity = 512;
+        private const int DefaultMetaQueryParseCacheCapacity = 128;
+
+        private static readonly object queryParseCacheSynchronizationRoot =
+            new object();
+        private static readonly BoundedQueryParseCache queryParseCache =
+            new BoundedQueryParseCache(
+                DefaultQueryParseCacheCapacity,
+                queryParseCacheSynchronizationRoot);
+        private static readonly BoundedQueryParseCache metaQueryParseCache =
+            new BoundedQueryParseCache(
+                DefaultMetaQueryParseCacheCapacity,
+                queryParseCacheSynchronizationRoot);
+
+        public static int QueryParseCacheCapacity
+        {
+            get { return queryParseCache.Capacity; }
+            set { queryParseCache.Capacity = value; }
+        }
+
+        public static int MetaQueryParseCacheCapacity
+        {
+            get { return metaQueryParseCache.Capacity; }
+            set { metaQueryParseCache.Capacity = value; }
+        }
+
+        public static int QueryParseCacheEntryCount
+        {
+            get { return queryParseCache.State.Count; }
+        }
+
+        public static int MetaQueryParseCacheEntryCount
+        {
+            get { return metaQueryParseCache.State.Count; }
+        }
+
+        public static void ResetQueryParseCaches()
+        {
+            lock (queryParseCacheSynchronizationRoot)
+            {
+                queryParseCache.Clear();
+                metaQueryParseCache.Clear();
+            }
+        }
 
         public override void Dispose()
         {
@@ -620,6 +744,8 @@ namespace m0.Graph
         public void InheritChildsOutEdgesDictionariesNeedsRebuild()
         {
             HashSet<IVertex> inheritsSet = VertexHelper.GetInheritChilds(this);
+
+            GraphPerformanceCounters.RecordInvalidatedInheritChildren(inheritsSet.Count);
 
             foreach (IVertex v in inheritsSet)
                 v.OutEdgesDictionariesNeedsRebuild = true;
@@ -767,71 +893,106 @@ namespace m0.Graph
 
         public override IVertex Get(bool metaMode, string query)
         {
-            IVertex queryVertex = null;
-            IVertex parseError = null;
+            QueryParseCacheLease queryLease =
+                GetParsedQuery(
+                    metaMode,
+                    query,
+                    out bool parseFailed);
 
-            IDictionary<String, IVertex> cache;
-
-            if (metaMode)
-                cache = QueryParseCache_metaMode;
-            else
-                cache = QueryParseCache;
-
-            if (cache.ContainsKey(query))
-                queryVertex = cache[query];
-            else
+            try
             {
-                queryVertex = MinusZero.Instance.CreateTempVertex();
+                if (parseFailed)
+                    return null;
 
-                IEdge baseEdge_new;
-                parseError = MinusZero.Instance.DefaultFormalTextParser.Parse( new EdgeBase(null, null, queryVertex), query, CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new);
-
-                if (parseError == null || parseError.Count() == 0 /* && !cache.ContainsKey(query)*/)
-                {
-                    cache.Add(query, queryVertex);
-                    queryVertex.AddExternalReference();
-                }
+                return MinusZero.Instance.DefaultExecuter.Get(
+                    metaMode,
+                    this,
+                    queryLease.Vertex);
             }
-
-            if (parseError != null && parseError.Count() > 0)
-                return null;
-
-            return MinusZero.Instance.DefaultExecuter.Get(metaMode, this, queryVertex);
+            finally
+            {
+                queryLease.Dispose();
+            }
         }
 
         public override IVertex GetAll(bool metaMode, string query)
         {
-            IVertex queryVertex = null;
-            IVertex parseError = null;
+            QueryParseCacheLease queryLease =
+                GetParsedQuery(
+                    metaMode,
+                    query,
+                    out bool parseFailed);
 
-            IDictionary<String, IVertex> cache;
-
-            if (metaMode)
-                cache = QueryParseCache_metaMode;
-            else
-                cache = QueryParseCache;
-
-            if (cache.ContainsKey(query))
-                queryVertex = cache[query];
-            else
+            try
             {
-                queryVertex = MinusZero.Instance.CreateTempVertex();
+                if (parseFailed)
+                    return null;
 
-                IEdge baseEdge_new;
-                parseError = MinusZero.Instance.DefaultFormalTextParser.Parse(new EdgeBase(null, null, queryVertex), query, CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new);
-
-                if (parseError == null || parseError.Count() == 0/* && || !cache.ContainsKey(query)*/)  // it happens to exist there so need to check again
-                {
-                    cache.Add(query, queryVertex);
-                    queryVertex.AddExternalReference();
-                }
+                return MinusZero.Instance.DefaultExecuter.GetAll(
+                    metaMode,
+                    this,
+                    queryLease.Vertex);
             }
+            finally
+            {
+                queryLease.Dispose();
+            }
+        }
 
-            if (parseError != null && parseError.Count() > 0)
-                return null;
+        private static QueryParseCacheLease GetParsedQuery(
+            bool metaMode,
+            string query,
+            out bool parseFailed)
+        {
+            BoundedQueryParseCache cache = metaMode
+                ? metaQueryParseCache
+                : queryParseCache;
+            bool factoryParseFailed = false;
 
-            return MinusZero.Instance.DefaultExecuter.GetAll(metaMode, this, queryVertex);            
-        }        
+            QueryParseCacheLease queryLease =
+                cache.GetOrCreate(
+                    query,
+                    () =>
+                    {
+                        IVertex queryVertex =
+                            MinusZero.Instance.CreateTempVertex();
+
+                        try
+                        {
+                            IEdge baseEdge;
+                            IVertex parseError =
+                                MinusZero.Instance.DefaultFormalTextParser.Parse(
+                                    new EdgeBase(
+                                        null,
+                                        null,
+                                        queryVertex),
+                                    query,
+                                    CodeRepresentationEnum.VertexAndManyLines,
+                                    out baseEdge);
+
+                            factoryParseFailed =
+                                parseError != null &&
+                                parseError.Count() > 0;
+
+                            return new QueryParseCacheValue(
+                                queryVertex,
+                                !factoryParseFailed);
+                        }
+                        catch
+                        {
+                            queryVertex.Dispose();
+                            throw;
+                        }
+                    });
+
+            GraphPerformanceCounters.RecordQueryParseCacheLookup(
+                queryLease.Hit,
+                QueryParseCacheEntryCount +
+                MetaQueryParseCacheEntryCount);
+
+            parseFailed = factoryParseFailed;
+            return queryLease;
+        }
         
         public override IVertex Get(bool metaMode, IVertex expression)
         {
@@ -870,6 +1031,13 @@ namespace m0.Graph
         static object lock_object = new object();        
         protected virtual void VertexInit()
         {
+            VertexInit(
+                VertexIdentifierRegistrationMode.Registered);
+        }
+
+        private protected void VertexInit(
+            VertexIdentifierRegistrationMode registrationMode)
+        {
             lock (lock_object)
             {
                 VertexInit_First();
@@ -882,7 +1050,11 @@ namespace m0.Graph
 
                 GraphUtil.Debug(this, DebugOperationEnum.Init);
 
-                Store.StoreVertexIdentifier(this);
+                if (registrationMode ==
+                    VertexIdentifierRegistrationMode.Registered)
+                {
+                    Store.StoreVertexIdentifier(this);
+                }
             }
         }
 
@@ -897,7 +1069,15 @@ namespace m0.Graph
         public EasyVertex(IStore _store) : base(_store)
         {
             VertexInit();
-        }     
+        }
+
+        private protected EasyVertex(
+            IStore _store,
+            VertexIdentifierRegistrationMode registrationMode)
+            : base(_store)
+        {
+            VertexInit(registrationMode);
+        }
 
         public EasyVertex(IStore _store, object toBeIdentifier) : base(_store)
         {

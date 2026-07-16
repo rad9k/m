@@ -16,7 +16,9 @@ namespace m0.ZeroCode.Helpers
     {
         public static INoInEdgeInOutVertexVertex CreateStack()
         {
-            return new NoInEdgeInOutVertexVertex(MinusZero.Instance.TempStore);
+            return new NoInEdgeInOutVertexVertex(
+                MinusZero.Instance.TempStore,
+                VertexIdentifierRegistrationMode.Ephemeral);
         }
 
         public static void AddToStack_BAD_BEHAVIOR_IEdge_MANY_TIMES(INoInEdgeInOutVertexVertex destination, IEnumerable<IEdge> source)

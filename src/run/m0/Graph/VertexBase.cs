@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 using m0.Foundation;
@@ -215,6 +216,16 @@ namespace m0.Graph
             return (IVertex)Activator.CreateInstance(this.GetType(), new object[] { this.Store });
         }
 
+        internal IVertex CreateVertexInstanceForCopy(object value)
+        {
+            IVertex vertex = CreateVertexInstance();
+
+            if (value != null)
+                vertex.Value = value;
+
+            return vertex;
+        }
+
         public virtual IVertex AddVertex(IVertex metaVertex, object val)
         {
             return AddVertexAndReturnEdge(metaVertex, val).To;
@@ -358,18 +369,31 @@ namespace m0.Graph
             throw new NotImplementedException();
         }
 
-        public int ExternalReferenceCount { get; private set; } = 0;
+        private int externalReferenceCount;
+
+        public int ExternalReferenceCount
+        {
+            get { return Volatile.Read(ref externalReferenceCount); }
+        }
 
         public void AddExternalReference()
         {
-            ExternalReferenceCount++;
+            Interlocked.Increment(ref externalReferenceCount);
         }
 
         public void RemoveExternalReference()
         {
-            ExternalReferenceCount--;
+            int remainingReferences =
+                Interlocked.Decrement(ref externalReferenceCount);
 
-            if (ExternalReferenceCount == 0)
+            if (remainingReferences < 0)
+            {
+                Interlocked.Increment(ref externalReferenceCount);
+                throw new InvalidOperationException(
+                    "External reference count cannot be negative.");
+            }
+
+            if (remainingReferences == 0)
                 CheckIfShouldDispose();
         }
 

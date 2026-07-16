@@ -17,9 +17,19 @@ namespace m0.Graph.ExecutionFlow
 
             ExecutionFlowHelper.GraphChangeWatchOff();
 
-            IVertex eventVertex = gcta.CreateEventVertex_GraphChange(triggerVertex, gcta.ChangedVertex, edgeDirection);
-
-            ExecutionFlowHelper.GraphChangeWatchOn();
+            IVertex eventVertex;
+            try
+            {
+                eventVertex =
+                    gcta.CreateEventVertex_GraphChange(
+                        triggerVertex,
+                        gcta.ChangedVertex,
+                        edgeDirection);
+            }
+            finally
+            {
+                ExecutionFlowHelper.GraphChangeWatchOn();
+            }
 
             foreach (IEdge e in triggerVertex.GetAll(false, @"Listener:"))
             {

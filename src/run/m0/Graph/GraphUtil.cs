@@ -640,7 +640,11 @@ namespace m0.Graph
 
             foreach (IEdge e in GraphUtil.GetQueryOut(baseVertex, "$Is", null))
             {
-                tempLevel = GetInheritanceLevel(e.To, _startMeta, 0);
+                tempLevel = GetInheritanceLevel(
+                    e.To,
+                    _startMeta,
+                    0,
+                    new HashSet<IVertex>());
 
                 if (tempLevel >= highestInheritanceLevel_level)
                 {
@@ -652,21 +656,39 @@ namespace m0.Graph
             return highestInheritanceLevel; // if highestInheritanceLevel_level==0 then startMeta was not found
         }
 
-        private static int GetInheritanceLevel(IVertex testMeta, IVertex startMeta, int input)
+        private static int GetInheritanceLevel(
+            IVertex testMeta,
+            IVertex startMeta,
+            int input,
+            HashSet<IVertex> activePath)
         {
-            if (testMeta == startMeta)
-                return input;
+            if (!activePath.Add(testMeta))
+                return 0;
 
-            int biggest = 0;
-
-            foreach (IEdge e in GraphUtil.GetQueryOut(testMeta, "$Inherits", false))
+            try
             {
-                int temp = GetInheritanceLevel(e.To, startMeta, input + 1);
-                if (temp > biggest)
-                    biggest = temp;
-            }
+                if (testMeta == startMeta)
+                    return input;
 
-            return biggest;
+                int biggest = 0;
+
+                foreach (IEdge e in GraphUtil.GetQueryOut(testMeta, "$Inherits", false))
+                {
+                    int temp = GetInheritanceLevel(
+                        e.To,
+                        startMeta,
+                        input + 1,
+                        activePath);
+                    if (temp > biggest)
+                        biggest = temp;
+                }
+
+                return biggest;
+            }
+            finally
+            {
+                activePath.Remove(testMeta);
+            }
         }
 
         public static object GetValue(IVertex vertex)
@@ -1109,7 +1131,23 @@ namespace m0.Graph
 
         static public IEdge FindEdgeByMetaVertex(IVertex Vertex, IVertex metaVertex)
         {
-            return GetQueryOutFirstEdge(Vertex, metaVertex.Value.ToString(), null);
+            Vertex.QueryOutEdges(
+                metaVertex.Value.ToString(),
+                null,
+                out IEdge result,
+                out IList<IEdge> results);
+
+            if (result != null)
+                return ReferenceEquals(result.Meta, metaVertex)
+                    ? result
+                    : null;
+
+            if (results != null)
+                foreach (IEdge edge in results)
+                    if (ReferenceEquals(edge.Meta, metaVertex))
+                        return edge;
+
+            return null;
         }
 
         static public IEdge FindEdge(IVertex Vertex, IVertex metaVertex, IVertex toVertex)
@@ -1218,7 +1256,8 @@ namespace m0.Graph
         {
             IEdge toReplace = FindEdgeByMetaVertex(Vertex, metaVertex);
 
-            Vertex.DeleteEdge(toReplace);
+            if (toReplace != null)
+                Vertex.DeleteEdge(toReplace);
 
             return Vertex.AddVertex(metaVertex, value);
         }
@@ -1364,29 +1403,65 @@ namespace m0.Graph
 
         static public void DeepCopyByVertex(IVertex vertexToCopy, IVertex copyTo)
         {
-            HashSet<IVertex> visited = new HashSet<IVertex>();
+            HashSet<IVertex> copyScope = new HashSet<IVertex>();
+            CollectDeepCopyScope(vertexToCopy, copyScope);
 
-            DeepCopyByVertex_Reccurent(vertexToCopy, copyTo, visited);
-        }
+            Dictionary<IVertex, IVertex> originalToCopy =
+                new Dictionary<IVertex, IVertex>
+                {
+                    [vertexToCopy] = copyTo
+                };
 
-        static void DeepCopyByVertex_Reccurent(IVertex vertexToCopy, IVertex copyTo, HashSet<IVertex> visited)
-        {
             copyTo.Value = vertexToCopy.Value;
 
-            visited.Add(vertexToCopy);
+            if (!(copyTo is VertexBase copyFactory))
+                throw new NotSupportedException(
+                    "Deep copy requires a VertexBase destination.");
 
-            foreach (IEdge e in vertexToCopy.OutEdgesRaw)
-                if (VertexOperations.CanCopy_ByEdge(e))
+            foreach (IVertex source in copyScope)
+                if (!ReferenceEquals(source, vertexToCopy))
+                    originalToCopy[source] =
+                        copyFactory.CreateVertexInstanceForCopy(
+                            source.Value);
+
+            foreach (IVertex source in copyScope)
+            {
+                IVertex copiedSource = originalToCopy[source];
+
+                foreach (IEdge edge in source.OutEdgesRaw)
                 {
-                    if (!visited.Contains(e.To) && !VertexOperations.IsLink(e))
-                    {
-                        IVertex newVertex = copyTo.AddVertex(e.Meta, null);
+                    if (!VertexOperations.CanCopy_ByEdge(edge))
+                        continue;
 
-                        DeepCopyByVertex_Reccurent(e.To, newVertex, visited);
-                    }
-                    else
-                        copyTo.AddEdge(e.Meta, e.To);
+                    IVertex copiedMeta =
+                        originalToCopy.TryGetValue(
+                            edge.Meta,
+                            out IVertex mappedMeta)
+                            ? mappedMeta
+                            : edge.Meta;
+                    IVertex copiedTarget =
+                        originalToCopy.TryGetValue(
+                            edge.To,
+                            out IVertex mappedTarget)
+                            ? mappedTarget
+                            : edge.To;
+
+                    copiedSource.AddEdge(copiedMeta, copiedTarget);
                 }
+            }
+        }
+
+        static void CollectDeepCopyScope(
+            IVertex vertex,
+            HashSet<IVertex> copyScope)
+        {
+            if (!copyScope.Add(vertex))
+                return;
+
+            foreach (IEdge edge in vertex.OutEdgesRaw)
+                if (VertexOperations.CanCopy_ByEdge(edge) &&
+                    !VertexOperations.IsLink(edge))
+                    CollectDeepCopyScope(edge.To, copyScope);
         }
 
         static public IEnumerable<IVertex> GetSubGraphWithoutLinksAsList(IVertex iterationRoot)

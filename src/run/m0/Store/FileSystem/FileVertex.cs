@@ -33,72 +33,69 @@ namespace m0.Store.FileSystem
             }
             set
             {
-                object oldValue;
-
-                if (value is string)
+                if (!(value is string valueString) ||
+                    string.IsNullOrWhiteSpace(valueString))
                 {
-                    if (value== null || (string)value == "")
-                        return;
-
-                    oldValue = _Value;
-
-                    string newFileName = FileSystemUtil.GetFileNamePart((string)value);
-
-                    if (newFileName == "")
-                        return;
-
-                    newFileName = FI.DirectoryName + Path.DirectorySeparatorChar + newFileName.Trim();
-
-                    if (newFileName[newFileName.Length - 1] == '.')
-                        newFileName = newFileName.Substring(0, newFileName.Length - 1);
-
-                    if (newFileName != FI.FullName){
-                        while (System.IO.File.Exists(newFileName) || System.IO.Directory.Exists(newFileName))
-                            newFileName = FileSystemUtil.AddNew(newFileName);
-                        
-                        FI.MoveTo(newFileName);
-
-                        _Identifier = newFileName;                        
-
-                        string extension = FileSystemUtil.GetExtension(newFileName).ToLower();
-                        if (extension == "m0j" || extension == "m0t" || extension == "m0x")
-
-                        {
-                            GraphUtil.RemoveAllEdges(this);
-
-                            Refresh();
-                        }
-
-                        if (CanEmitGraphChangeEvents)
-                            ExecutionFlowHelper.AddTransactionAtom(new GraphChangeTransactionAtom(
-                                this,
-                                AtomGraphChangeTypeEnum.ValueChange,
-                                oldValue,
-                                _Value,
-                                null));
-                    }
-                    else
-                    {
-                        oldValue = _Value;
-
-                        if (value == null)
-                            return;
-
-                        _Value = value;
-
-                        ValueChanged();                        
-
-                        if (CanEmitGraphChangeEvents)
-                            ExecutionFlowHelper.AddTransactionAtom(new GraphChangeTransactionAtom(
-                                this,
-                                AtomGraphChangeTypeEnum.ValueChange,
-                                oldValue,
-                                _Value,
-                                null));
-                    }
+                    return;
                 }
+
+                object oldValue = Value;
+                string oldIdentifier = FI.FullName;
+                string newFileName =
+                    FileSystemUtil.GetFileNamePart(valueString);
+
+                if (string.IsNullOrWhiteSpace(newFileName))
+                    return;
+
+                newFileName =
+                    FI.DirectoryName +
+                    Path.DirectorySeparatorChar +
+                    newFileName.Trim();
+
+                if (newFileName[newFileName.Length - 1] == '.')
+                    newFileName = newFileName.Substring(
+                        0,
+                        newFileName.Length - 1);
+
+                if (newFileName == oldIdentifier)
+                    return;
+
+                while (System.IO.File.Exists(newFileName) ||
+                       System.IO.Directory.Exists(newFileName))
+                {
+                    newFileName =
+                        FileSystemUtil.AddNew(newFileName);
+                }
+
+                string finalNewFileName = newFileName;
+                ((FileSystemStore)Store).RenameFileVertex(
+                    this,
+                    oldIdentifier,
+                    finalNewFileName,
+                    () => FI.MoveTo(finalNewFileName),
+                    () => FI.MoveTo(oldIdentifier));
+
+                _Value = FI.Name;
+                ValueChanged();
+
+                if (CanEmitGraphChangeEvents)
+                    ExecutionFlowHelper.AddTransactionAtom(
+                        new GraphChangeTransactionAtom(
+                            this,
+                            AtomGraphChangeTypeEnum.ValueChange,
+                            oldValue,
+                            Value,
+                            null));
+
+                Refresh();
             }
         }                        
+
+        internal void SetIdentifierAfterRename(
+            string identifier)
+        {
+            _Identifier = identifier;
+        }
 
         public override void Refresh()
         {            
@@ -173,11 +170,7 @@ namespace m0.Store.FileSystem
         public FileVertex(IStore store, string identifier)
             : base(store, identifier)
         {
-            _Identifier = identifier;            
-
             FI = new FileInfo(Identifier.ToString());
-
-            FileSystemStore.FileVertexDictionary.Add(identifier, this);            
         }
     }
 }

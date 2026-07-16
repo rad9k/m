@@ -12,6 +12,10 @@ namespace m0.Store.FileSystem
         static public Dictionary<string, IVertex> FileVertexDictionary = new Dictionary<string, IVertex>();
         static public Dictionary<string, IVertex> DirectoryVertexDictionary = new Dictionary<string, IVertex>();
 
+        private static readonly object
+            vertexRegistrySynchronizationRoot =
+                new object();
+
         public bool IncludeFileContent { get; set; }
 
         protected IStoreUniverse _StoreUniverse;
@@ -77,18 +81,40 @@ namespace m0.Store.FileSystem
 
         public bool AlwaysPresent { get { return false; } }
 
-        public void StoreVertexIdentifier(IVertex Vertex)
+        public void StoreVertexIdentifier(IVertex vertex)
         {
-           // if (!(Vertex.Identifier is string)) // will brake for FileContentVertex. I do not know a reason the code exist so far
-           // {
-           //     throw new Exception("Not a string vertex identifier in file system store");                
-           // }
-            //throw new NotImplementedException();
+            if (vertex is FileVertex)
+            {
+                StoreFileSystemVertexIdentifier(
+                    FileVertexDictionary,
+                    DirectoryVertexDictionary,
+                    vertex,
+                    "file");
+            }
+            else if (vertex is DirectoryVertex)
+            {
+                StoreFileSystemVertexIdentifier(
+                    DirectoryVertexDictionary,
+                    FileVertexDictionary,
+                    vertex,
+                    "directory");
+            }
         }
 
-        public void RemoveVertexIdentifier(IVertex Vertex)
+        public void RemoveVertexIdentifier(IVertex vertex)
         {
-            //throw new NotImplementedException();
+            if (vertex is FileVertex)
+            {
+                RemoveFileSystemVertexIdentifier(
+                    FileVertexDictionary,
+                    vertex);
+            }
+            else if (vertex is DirectoryVertex)
+            {
+                RemoveFileSystemVertexIdentifier(
+                    DirectoryVertexDictionary,
+                    vertex);
+            }
         }
 
         public IVertex GetVertexByIdentifier(object VertexIdentifier)
@@ -103,26 +129,252 @@ namespace m0.Store.FileSystem
 
             string fileName = (string)VertexIdentifier;
 
-            if (System.IO.File.Exists(fileName))
+            lock (vertexRegistrySynchronizationRoot)
             {
-                if (FileVertexDictionary.ContainsKey(fileName))
-                    return FileVertexDictionary[fileName];
+                if (System.IO.File.Exists(fileName))
+                {
+                    if (FileVertexDictionary.TryGetValue(
+                        fileName,
+                        out IVertex fileVertex))
+                    {
+                        return fileVertex;
+                    }
 
-                return new FileVertex(this, fileName);
-            }
+                    return new FileVertex(this, fileName);
+                }
 
-            if (System.IO.Directory.Exists(fileName) || (fileName.Length == 3 && fileName[1] == ':' && fileName[2] == '\\'))
-            {
-                if (DirectoryVertexDictionary.ContainsKey(fileName))
-                    return DirectoryVertexDictionary[fileName];
+                if (System.IO.Directory.Exists(fileName) ||
+                    (fileName.Length == 3 &&
+                     fileName[1] == ':' &&
+                     fileName[2] == '\\'))
+                {
+                    if (DirectoryVertexDictionary.TryGetValue(
+                        fileName,
+                        out IVertex directoryVertex))
+                    {
+                        return directoryVertex;
+                    }
 
-                return new DirectoryVertex(this, fileName);
+                    return new DirectoryVertex(this, fileName);
+                }
             }
 
             UserInteractionUtil.ShowException("trying to create FileSystemStore vertex from identifier " + fileName 
                 + "in the " + Identifier + " store", "file or directory not found"
                 , ZeroTypes.ExceptionLevelEnum.Error);
             return null;
+        }
+
+        internal void RenameFileVertex(
+            FileVertex vertex,
+            string oldIdentifier,
+            string newIdentifier,
+            Action moveToNewIdentifier,
+            Action moveBackToOldIdentifier)
+        {
+            if (vertex == null)
+                throw new ArgumentNullException(nameof(vertex));
+            if (moveToNewIdentifier == null)
+                throw new ArgumentNullException(
+                    nameof(moveToNewIdentifier));
+            if (moveBackToOldIdentifier == null)
+                throw new ArgumentNullException(
+                    nameof(moveBackToOldIdentifier));
+            if (!ReferenceEquals(vertex.Store, this))
+                throw new InvalidOperationException(
+                    "Cannot rename a vertex owned by another store.");
+
+            lock (vertexRegistrySynchronizationRoot)
+            {
+                EnsureRegisteredVertex(
+                    FileVertexDictionary,
+                    oldIdentifier,
+                    vertex);
+                EnsureIdentifierAvailable(
+                    newIdentifier,
+                    vertex);
+
+                bool externalMutationCompleted = false;
+                try
+                {
+                    moveToNewIdentifier();
+                    externalMutationCompleted = true;
+
+                    FileVertexDictionary.Remove(oldIdentifier);
+                    vertex.SetIdentifierAfterRename(
+                        newIdentifier);
+                    FileVertexDictionary.Add(
+                        newIdentifier,
+                        vertex);
+                }
+                catch (Exception renameException)
+                {
+                    if (!externalMutationCompleted)
+                        throw;
+
+                    try
+                    {
+                        moveBackToOldIdentifier();
+                    }
+                    catch (Exception rollbackException)
+                    {
+                        FileVertexDictionary.Remove(
+                            oldIdentifier);
+                        vertex.SetIdentifierAfterRename(
+                            newIdentifier);
+                        FileVertexDictionary[newIdentifier] =
+                            vertex;
+
+                        throw new AggregateException(
+                            "File rename failed after moving the file, " +
+                            "and restoring the original path also failed. " +
+                            "The vertex remains registered at the new path.",
+                            renameException,
+                            rollbackException);
+                    }
+
+                    if (FileVertexDictionary.TryGetValue(
+                        newIdentifier,
+                        out IVertex newIdentifierVertex) &&
+                        ReferenceEquals(
+                            newIdentifierVertex,
+                            vertex))
+                    {
+                        FileVertexDictionary.Remove(
+                            newIdentifier);
+                    }
+
+                    vertex.SetIdentifierAfterRename(
+                        oldIdentifier);
+                    FileVertexDictionary[oldIdentifier] =
+                        vertex;
+                    throw;
+                }
+            }
+        }
+
+        private static void StoreFileSystemVertexIdentifier(
+            Dictionary<string, IVertex> targetDictionary,
+            Dictionary<string, IVertex> otherDictionary,
+            IVertex vertex,
+            string vertexKind)
+        {
+            if (!(vertex.Identifier is string identifier))
+                throw new InvalidOperationException(
+                    $"A file-system {vertexKind} vertex must have " +
+                    "a string identifier.");
+
+            lock (vertexRegistrySynchronizationRoot)
+            {
+                if (targetDictionary.TryGetValue(
+                    identifier,
+                    out IVertex existingVertex))
+                {
+                    if (!ReferenceEquals(existingVertex, vertex))
+                        throw CreateIdentifierCollisionException(
+                            identifier,
+                            existingVertex,
+                            vertex);
+
+                    return;
+                }
+
+                if (otherDictionary.TryGetValue(
+                    identifier,
+                    out existingVertex))
+                {
+                    throw CreateIdentifierCollisionException(
+                        identifier,
+                        existingVertex,
+                        vertex);
+                }
+
+                targetDictionary.Add(identifier, vertex);
+            }
+        }
+
+        private static void RemoveFileSystemVertexIdentifier(
+            Dictionary<string, IVertex> dictionary,
+            IVertex vertex)
+        {
+            if (!(vertex.Identifier is string identifier))
+                return;
+
+            lock (vertexRegistrySynchronizationRoot)
+            {
+                if (!dictionary.TryGetValue(
+                    identifier,
+                    out IVertex existingVertex))
+                {
+                    return;
+                }
+
+                if (!ReferenceEquals(existingVertex, vertex))
+                    throw CreateIdentifierCollisionException(
+                        identifier,
+                        existingVertex,
+                        vertex);
+
+                dictionary.Remove(identifier);
+            }
+        }
+
+        private static void EnsureRegisteredVertex(
+            Dictionary<string, IVertex> dictionary,
+            string identifier,
+            IVertex expectedVertex)
+        {
+            if (!dictionary.TryGetValue(
+                identifier,
+                out IVertex registeredVertex) ||
+                !ReferenceEquals(
+                    registeredVertex,
+                    expectedVertex))
+            {
+                throw new InvalidOperationException(
+                    $"File-system vertex '{identifier}' is not " +
+                    "registered as the expected instance.");
+            }
+        }
+
+        private static void EnsureIdentifierAvailable(
+            string identifier,
+            IVertex vertex)
+        {
+            if (FileVertexDictionary.TryGetValue(
+                identifier,
+                out IVertex existingVertex) &&
+                !ReferenceEquals(existingVertex, vertex))
+            {
+                throw CreateIdentifierCollisionException(
+                    identifier,
+                    existingVertex,
+                    vertex);
+            }
+
+            if (DirectoryVertexDictionary.TryGetValue(
+                identifier,
+                out existingVertex) &&
+                !ReferenceEquals(existingVertex, vertex))
+            {
+                throw CreateIdentifierCollisionException(
+                    identifier,
+                    existingVertex,
+                    vertex);
+            }
+        }
+
+        private static InvalidOperationException
+            CreateIdentifierCollisionException(
+                string identifier,
+                IVertex existingVertex,
+                IVertex newVertex)
+        {
+            return new InvalidOperationException(
+                $"File-system vertex identifier collision for " +
+                $"'{identifier}'. Existing vertex type: " +
+                $"'{existingVertex.GetType().FullName}', new vertex " +
+                $"type: '{newVertex.GetType().FullName}'.");
         }
 
         public void Refresh()

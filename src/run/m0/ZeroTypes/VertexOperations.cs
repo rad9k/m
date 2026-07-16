@@ -615,7 +615,7 @@ namespace m0.ZeroTypes
             // are wired. The holder churn is hidden from graph change watchers.
             List<IEdge> tempEdges = new List<IEdge>();
 
-            bool previousWatch = TurnGraphChangeWatchOff();
+            TurnGraphChangeWatchOff();
             try
             {
                 foreach (IVertex source in scope)
@@ -628,7 +628,7 @@ namespace m0.ZeroTypes
             }
             finally
             {
-                RestoreGraphChangeWatch(previousWatch);
+                RestoreGraphChangeWatch();
             }
 
             // Recreate inner edges with meta/to remapping.
@@ -657,7 +657,7 @@ namespace m0.ZeroTypes
             }
 
             // Drop the temporary holder edges. Every copy now has real incoming edges.
-            previousWatch = TurnGraphChangeWatchOff();
+            TurnGraphChangeWatchOff();
             try
             {
                 foreach (IEdge holder in tempEdges)
@@ -665,7 +665,7 @@ namespace m0.ZeroTypes
             }
             finally
             {
-                RestoreGraphChangeWatch(previousWatch);
+                RestoreGraphChangeWatch();
             }
         }
 
@@ -679,31 +679,24 @@ namespace m0.ZeroTypes
                     CollectCopyScope(e.To, visited);
         }
 
-        static bool TurnGraphChangeWatchOff()
-        {
-            ITransaction transaction = MinusZero.Instance.GetTopTransaction();
-
-            if (transaction == null)
-                return true;
-
-            bool previousWatch = transaction.GraphChangeWatchActive;
-
-            ExecutionFlowHelper.GraphChangeWatchOff();
-
-            return previousWatch;
-        }
-
-        static void RestoreGraphChangeWatch(bool previousWatch)
+        static void TurnGraphChangeWatchOff()
         {
             ITransaction transaction = MinusZero.Instance.GetTopTransaction();
 
             if (transaction == null)
                 return;
 
-            if (previousWatch)
-                ExecutionFlowHelper.GraphChangeWatchOn();
-            else
-                ExecutionFlowHelper.GraphChangeWatchOff();
+            ExecutionFlowHelper.GraphChangeWatchOff();
+        }
+
+        static void RestoreGraphChangeWatch()
+        {
+            ITransaction transaction = MinusZero.Instance.GetTopTransaction();
+
+            if (transaction == null)
+                return;
+
+            ExecutionFlowHelper.GraphChangeWatchOn();
         }
 
         /* if something is not working I'm leaving the old version also
@@ -918,9 +911,23 @@ namespace m0.ZeroTypes
 
         public static bool CheckIfInherits(IVertex baseVertex, string test)
         {
-            foreach (IEdge inheritsEdge in GraphUtil.GetQueryOut(baseVertex, "$Inherits", null))
-                if (GraphUtil.GetValueAndCompareStrings(inheritsEdge.To, test))
-                    return true;
+            baseVertex.QueryOutEdges(
+                "$Inherits",
+                null,
+                out IEdge result,
+                out IList<IEdge> results);
+
+            if (result != null)
+                return GraphUtil.GetValueAndCompareStrings(
+                    result.To,
+                    test);
+
+            if (results != null)
+                foreach (IEdge inheritsEdge in results)
+                    if (GraphUtil.GetValueAndCompareStrings(
+                        inheritsEdge.To,
+                        test))
+                        return true;
 
             return false;
         }
@@ -956,23 +963,9 @@ namespace m0.ZeroTypes
 
         public static bool IsInherited(IVertex baseVertex, string isInheritedFrom_String)
         {
-            foreach (IEdge e in GraphUtil.GetQueryOut(baseVertex, "$Inherits",null))
-                if (_IsInherited(e.To, isInheritedFrom_String))
-                    return true;
-
-            return false;
-        }
-
-        private static bool _IsInherited(IVertex baseVertex, string isInheritedFrom_String)
-        {
-            if (GraphUtil.ExistQueryOut(baseVertex, isInheritedFrom_String, null))
-                return true;
-
-            foreach (IEdge e in GraphUtil.GetQueryOut(baseVertex, "$Inherits", null))
-                if (_IsInherited(e.To, isInheritedFrom_String))
-                    return true;
-
-            return false;
+            return CheckIfInherits(
+                baseVertex,
+                isInheritedFrom_String);
         }
 
         public static void DeleteOneEdge(IVertex source, IVertex metaVertex, IVertex toVertex)
@@ -1096,11 +1089,25 @@ namespace m0.ZeroTypes
 
         public static bool InheritanceCompare(IVertex baseVertex, string toCompare)
         {
+            return InheritanceCompare(
+                baseVertex,
+                toCompare,
+                new HashSet<IVertex>());
+        }
+
+        private static bool InheritanceCompare(
+            IVertex baseVertex,
+            string toCompare,
+            HashSet<IVertex> visitedVertices)
+        {
+            if (!visitedVertices.Add(baseVertex))
+                return false;
+
             if (GeneralUtil.CompareStrings(baseVertex.Value, toCompare))
                 return true;
 
             foreach (IEdge e in GraphUtil.GetQueryOut(baseVertex, "$Inherits", null))
-                if (InheritanceCompare(e.To, toCompare))
+                if (InheritanceCompare(e.To, toCompare, visitedVertices))
                     return true;
 
             return false;
@@ -1138,7 +1145,7 @@ namespace m0.ZeroTypes
                     if (e.Meta == metaVertex)
                         cnt++;
 
-                if ((cnt + 1) > MaxCardinality)
+                if ((cnt + 1) > MaxTargetCardinality)
                 {
                     IVertex v = MinusZero.Instance.CreateTempVertex();
 

@@ -83,36 +83,87 @@ namespace m0.Graph
             if (DetachState != DetachStateEnum.Detached)
                 throw new Exception("Edge not in Detached state");
 
-            // to
+            IStore targetStore = MinusZero.Instance.GetStore(ToStoreTypeName, ToStoreIdentifier);
 
-            //IStore store = From.Store.StoreUniverse.GetStore(ToStoreTypeName, ToStoreIdentifier);
-            IStore store = MinusZero.Instance.GetStore(ToStoreTypeName, ToStoreIdentifier);
-
-            if (store == null)
+            if (targetStore == null)
                 throw new Exception(ToStoreIdentifier + " store not found");
 
-            _to = store.GetVertexByIdentifier(ToIdentifier);
+            IVertex targetVertex = targetStore.GetVertexByIdentifier(ToIdentifier);
 
-            if(To !=null)
-                To.InEdgesRaw.Add(this);
+            if (targetVertex == null)
+                throw new Exception(ToIdentifier + " target vertex not found");
 
-            // meta
+            if (targetVertex.DisposedState != DisposeStateEnum.Live)
+                throw new Exception(ToIdentifier + " target vertex not live");
 
-            //store = From.Store.StoreUniverse.GetStore(MetaStoreTypeName, MetaStoreIdentifier);
-            store = MinusZero.Instance.GetStore(MetaStoreTypeName, MetaStoreIdentifier);
+            IStore metaStore = MinusZero.Instance.GetStore(MetaStoreTypeName, MetaStoreIdentifier);
 
-            if (store == null)
+            if (metaStore == null)
                 throw new Exception(MetaStoreIdentifier + " store not found");
 
-            _meta = store.GetVertexByIdentifier(MetaIdentifier);
+            IVertex metaVertex = metaStore.GetVertexByIdentifier(MetaIdentifier);
 
-            if (Meta != null)
-                Meta.MetaInEdgesRaw.Add(this);
+            if (metaVertex == null)
+                throw new Exception(MetaIdentifier + " meta vertex not found");
 
-            From.AttachEdge(this);
-            To.AttachInEdge(this);
+            if (metaVertex.DisposedState != DisposeStateEnum.Live)
+                throw new Exception(MetaIdentifier + " meta vertex not live");
 
-            _DetachState = DetachStateEnum.Attached;
+            bool targetReverseEdgeAttachmentStarted = false;
+            bool metaReverseEdgeAttachmentStarted = false;
+            bool sourceHookAttachmentStarted = false;
+            bool targetHookAttachmentStarted = false;
+
+            _to = targetVertex;
+            _meta = metaVertex;
+
+            try
+            {
+                targetReverseEdgeAttachmentStarted = true;
+                targetVertex.InEdgesRaw.Add(this);
+
+                metaReverseEdgeAttachmentStarted = true;
+                metaVertex.MetaInEdgesRaw.Add(this);
+
+                sourceHookAttachmentStarted = true;
+                From.AttachEdge(this);
+
+                targetHookAttachmentStarted = true;
+                targetVertex.AttachInEdge(this);
+
+                _DetachState = DetachStateEnum.Attached;
+            }
+            catch
+            {
+                bool previousEdgeRemovalExecuting = EdgeRemovalExecuting;
+                EdgeRemovalExecuting = true;
+
+                try
+                {
+                    if (targetHookAttachmentStarted)
+                        targetVertex.DetachInEdge(this);
+
+                    if (sourceHookAttachmentStarted)
+                        From.DetachEdge(this);
+
+                    if (metaReverseEdgeAttachmentStarted &&
+                        metaVertex.MetaInEdgesRaw.Contains(this))
+                        metaVertex.MetaInEdgesRaw.Remove(this);
+
+                    if (targetReverseEdgeAttachmentStarted &&
+                        targetVertex.InEdgesRaw.Contains(this))
+                        targetVertex.InEdgesRaw.Remove(this);
+                }
+                finally
+                {
+                    EdgeRemovalExecuting = previousEdgeRemovalExecuting;
+                    _to = null;
+                    _meta = null;
+                    _DetachState = DetachStateEnum.Detached;
+                }
+
+                throw;
+            }
         }      
 
     }

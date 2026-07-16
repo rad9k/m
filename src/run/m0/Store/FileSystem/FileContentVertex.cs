@@ -12,8 +12,6 @@ namespace m0.Store.FileSystem
     {
         string fileName;
 
-        object _value;
-
         public override object Value
         {
             get
@@ -21,7 +19,7 @@ namespace m0.Store.FileSystem
                 if (fileName == null)
                 {
                     // this is a "normal" vertex, not identified by file name
-                    return _value;
+                    return base.Value;
                 }
 
                 try
@@ -36,16 +34,12 @@ namespace m0.Store.FileSystem
                 if (fileName == null)
                 {
                     // this is a "normal" vertex, not identified by file name
-                    _value = value;
+                    base.Value = value;
                     return;
                 }
 
-                // for now we do not want this
-
-                //System.IO.StreamWriter file = new System.IO.StreamWriter(Identifier.ToString());
-                //file.WriteLine(value);
-
-                //file.Close();
+                throw new NotSupportedException(
+                    "File-backed content vertices are read-only.");
             }
         }
 
