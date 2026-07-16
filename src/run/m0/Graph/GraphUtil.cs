@@ -534,18 +534,46 @@ namespace m0.Graph
             return false;
         }
 
+        [Serializable]
+        public readonly struct MetaAndValueKey : IEquatable<MetaAndValueKey>
+        {
+            private readonly string meta;
+            private readonly string value;
+
+            public MetaAndValueKey(object meta, object value)
+            {
+                this.meta = meta as string ?? meta?.ToString() ?? "";
+                this.value = value as string ?? value?.ToString() ?? "";
+            }
+
+            public bool Equals(MetaAndValueKey other)
+            {
+                return StringComparer.Ordinal.Equals(meta, other.meta)
+                    && StringComparer.Ordinal.Equals(value, other.value);
+            }
+
+            public override bool Equals(object obj)
+            {
+                return obj is MetaAndValueKey other && Equals(other);
+            }
+
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    int hashCode = 17;
+                    hashCode = hashCode * 31
+                        + (meta == null ? 0 : StringComparer.Ordinal.GetHashCode(meta));
+                    hashCode = hashCode * 31
+                        + (value == null ? 0 : StringComparer.Ordinal.GetHashCode(value));
+                    return hashCode;
+                }
+            }
+        }
+
         public static object GetMetaAndValueObject(object meta, object value)
         {
-            int toRet = 0;
-
-            if (meta != null)
-                toRet = meta.GetHashCode();
-
-
-            if (value != null)
-                toRet += -2 * value.GetHashCode();
-
-            return toRet;
+            return new MetaAndValueKey(meta, value);
         }
 
 

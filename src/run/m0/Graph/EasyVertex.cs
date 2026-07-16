@@ -22,6 +22,13 @@ namespace m0.Graph
     [Serializable]
     public class EasyVertex: VertexBase, IDisposable, IImplementedVertex, ISecondStageCommitAction
     {
+        private static readonly string[] emptyMetaQueryKeys = new string[] { "" };
+
+        [NonSerialized]
+        private string[] metaQueryKeys;
+
+        private Dictionary<string, object> outEdgesByQueryMeta;
+
         protected bool CanEmitGraphChangeEvents = true;
 
         protected EdgeDictionaries edgeDictionaries;
@@ -72,8 +79,13 @@ namespace m0.Graph
                 if(e.From!=null) // there could be artificial edge, with From==null
                     e.From.OutEdgesDictionariesNeedsRebuild = true;
 
-            foreach (IEdge e in OutEdges)
+            foreach (IEdge e in OutEdgesRaw)
                 e.To.InEdgesDictionariesNeedsRebuild = true;
+
+            metaQueryKeys = null;
+
+            if (MetaInEdgesRaw.Count > 0 || InheritsInEdges.Count > 0)
+                InvalidateMetaQueryIndexesForThisAndInheritChildren(true);
         }
 
         public bool HasInheritance { get; set; }
@@ -147,211 +159,253 @@ namespace m0.Graph
 
         private void InEdgesDictionariesRebuild_Meta()
         {
-            _InEdgesByMeta = new Dictionary<object, object>();
+            IList<IEdge> inEdges = InEdges;
+            Dictionary<string, object> edgesByMeta =
+                new Dictionary<string, object>(inEdges.Count);
 
-            foreach(IEdge e in InEdges)
-            {
-                //object key = e.Meta.Value;
-                object key = e.Meta.Value.ToString();
-                IEdge value = e;
+            _InEdgesByMeta = edgesByMeta;
 
-                if (_InEdgesByMeta.ContainsKey(key))
-                {
-                    object existingValue = _InEdgesByMeta[key];
-
-                    if (existingValue is List_VertexBase) // list exists
-                    {
-                        ((IList<IEdge>)existingValue).Add(value);
-                    }
-                    else // need to create list
-                    {
-                        IList<IEdge> list = new List_VertexBase();
-                        list.Add((IEdge)existingValue);
-                        list.Add(value);
-
-                        _InEdgesByMeta[key] = list;
-                    }                        
-                }
-                else
-                    _InEdgesByMeta.Add(key, value);
-            }
+            foreach (IEdge edge in inEdges)
+                AddEdgeToDictionary(
+                    edgesByMeta,
+                    GetQueryDictionaryKey(edge.Meta?.Value),
+                    edge);
 
             InEdgesDictionariesNeedsRebuild_Meta = false;
         }
 
         private void OutEdgesDictionariesRebuild_Meta()
         {
-            _OutEdgesByMeta = new Dictionary<object, object>();
+            IList<IEdge> outEdges = OutEdges;
+            Dictionary<object, object> directEdgesByMeta =
+                new Dictionary<object, object>(outEdges.Count);
 
-            foreach (IEdge e in OutEdges)
-            {
-                //object key = e.Meta.Value;
-                object key;
+            _OutEdgesByMeta = directEdgesByMeta;
 
-                if (e.Meta == null)
-                    key = "";
-                else
-                    key = e.Meta.Value.ToString();
-
-                IEdge value = e;
-
-                if (_OutEdgesByMeta.ContainsKey(key))
-                {
-                    object existingValue = _OutEdgesByMeta[key];
-
-                    if (existingValue is List_VertexBase) // list exists
-                    {
-                        ((IList<IEdge>)existingValue).Add(value);
-                    }
-                    else // need to create list
-                    {
-                        IList<IEdge> list = new List_VertexBase();
-                        list.Add((IEdge)existingValue);
-                        list.Add(value);
-
-                        _OutEdgesByMeta[key] = list;
-                    }
-                }
-                else
-                    _OutEdgesByMeta.Add(key, value);
-            }
+            foreach (IEdge edge in outEdges)
+                AddEdgeToDictionary(
+                    directEdgesByMeta,
+                    GetQueryDictionaryKey(edge.Meta?.Value),
+                    edge);
 
             OutEdgesDictionariesNeedsRebuild_Meta = false;
         }
 
+        private void OutEdgesDictionariesRebuild_QueryMeta()
+        {
+            IList<IEdge> outEdges = OutEdges;
+            Dictionary<string, object> queryEdgesByMeta =
+                new Dictionary<string, object>(outEdges.Count);
+
+            outEdgesByQueryMeta = queryEdgesByMeta;
+
+            foreach (IEdge edge in outEdges)
+                foreach (string queryMetaKey in GetMetaQueryKeys(edge.Meta))
+                    AddEdgeToDictionary(queryEdgesByMeta, queryMetaKey, edge);
+
+            OutEdgesDictionariesNeedsRebuild_QueryMeta = false;
+        }
+
         private void InEdgesDictionariesRebuild_Value()
         {
-            _InEdgesByValue = new Dictionary<object, object>();
+            IList<IEdge> inEdges = InEdges;
+            Dictionary<string, object> edgesByValue =
+                new Dictionary<string, object>(inEdges.Count);
 
-            foreach (IEdge e in InEdges)
-            {
-                //object key = e.From.Value;
-                object key = e.From.Value.ToString();
-                IEdge value = e;
+            _InEdgesByValue = edgesByValue;
 
-                if (_InEdgesByValue.ContainsKey(key))
-                {
-                    object existingValue = _InEdgesByValue[key];
-
-                    if (existingValue is List_VertexBase) // list exists
-                    {
-                        ((IList<IEdge>)existingValue).Add(value);
-                    }
-                    else // need to create list
-                    {
-                        IList<IEdge> list = new List_VertexBase();
-                        list.Add((IEdge)existingValue);
-                        list.Add(value);
-
-                        _InEdgesByValue[key] = list;
-                    }
-                }
-                else
-                    _InEdgesByValue.Add(key, value);
-            }
+            foreach (IEdge edge in inEdges)
+                AddEdgeToDictionary(
+                    edgesByValue,
+                    GetQueryDictionaryKey(edge.From?.Value),
+                    edge);
 
             InEdgesDictionariesNeedsRebuild_Value = false;
         }
 
         private void OutEdgesDictionariesRebuild_Value()
         {
-            _OutEdgesByValue = new Dictionary<object, object>();
+            IList<IEdge> outEdges = OutEdges;
+            Dictionary<string, object> edgesByValue =
+                new Dictionary<string, object>(outEdges.Count);
 
-            foreach (IEdge e in OutEdges)
-            {
-                //object key = e.To.Value;
-                object key = e.To.Value.ToString();
-                IEdge value = e;
+            _OutEdgesByValue = edgesByValue;
 
-                if (_OutEdgesByValue.ContainsKey(key))
-                {
-                    object existingValue = _OutEdgesByValue[key];
-
-                    if (existingValue is List_VertexBase) // list exists
-                    {
-                        ((IList<IEdge>)existingValue).Add(value);
-                    }
-                    else // need to create list
-                    {
-                        IList<IEdge> list = new List_VertexBase();
-                        list.Add((IEdge)existingValue);
-                        list.Add(value);
-
-                        _OutEdgesByValue[key] = list;
-                    }
-                }
-                else
-                    _OutEdgesByValue.Add(key, value);
-            }
+            foreach (IEdge edge in outEdges)
+                AddEdgeToDictionary(
+                    edgesByValue,
+                    GetQueryDictionaryKey(edge.To?.Value),
+                    edge);
 
             OutEdgesDictionariesNeedsRebuild_Value = false;
         }
 
         private void InEdgesDictionariesRebuild_MetaAndValue()
         {
-            _InEdgesByMetaAndValue = new Dictionary<object, object>();
+            IList<IEdge> inEdges = InEdges;
+            Dictionary<GraphUtil.MetaAndValueKey, object> edgesByMetaAndValue =
+                new Dictionary<GraphUtil.MetaAndValueKey, object>(inEdges.Count);
 
-            foreach (IEdge e in InEdges)
-            {
-                object key = GraphUtil.GetMetaAndValueObject(e.Meta.Value, e.From.Value);
-                IEdge value = e;
+            _InEdgesByMetaAndValue = edgesByMetaAndValue;
 
-                if (_InEdgesByMetaAndValue.ContainsKey(key))
-                {
-                    object existingValue = _InEdgesByMetaAndValue[key];
-
-                    if (existingValue is List_VertexBase) // list exists
-                    {
-                        ((IList<IEdge>)existingValue).Add(value);
-                    }
-                    else // need to create list
-                    {
-                        IList<IEdge> list = new List_VertexBase();
-                        list.Add((IEdge)existingValue);
-                        list.Add(value);
-
-                        _InEdgesByMetaAndValue[key] = list;
-                    }
-                }
-                else
-                    _InEdgesByMetaAndValue.Add(key, value);
-            }
+            foreach (IEdge edge in inEdges)
+                AddEdgeToDictionary(
+                    edgesByMetaAndValue,
+                    new GraphUtil.MetaAndValueKey(edge.Meta?.Value, edge.From?.Value),
+                    edge);
 
             InEdgesDictionariesNeedsRebuild_MetaAndValue = false;
         }
 
         private void OutEdgesDictionariesRebuild_MetaAndValue()
         {
-            _OutEdgesByMetaAndValue = new Dictionary<object, object>();
+            IList<IEdge> outEdges = OutEdges;
+            Dictionary<GraphUtil.MetaAndValueKey, object> queryEdgesByMetaAndValue =
+                new Dictionary<GraphUtil.MetaAndValueKey, object>(outEdges.Count);
 
-            foreach (IEdge e in OutEdges)
-            {
-                //object key = GraphUtil.GetMetaAndValueObject(e.Meta.Value,e.To.Value);
-                object key = GraphUtil.GetMetaAndValueObject(e.Meta.Value.ToString(), e.To.Value.ToString());
-                IEdge value = e;
+            _OutEdgesByMetaAndValue = queryEdgesByMetaAndValue;
 
-                if (_OutEdgesByMetaAndValue.ContainsKey(key))
-                {
-                    object existingValue = _OutEdgesByMetaAndValue[key];
-
-                    if (existingValue is List_VertexBase) // list exists
-                    {
-                        ((IList<IEdge>)existingValue).Add(value);
-                    }
-                    else // need to create list
-                    {
-                        IList<IEdge> list = new List_VertexBase();
-                        list.Add((IEdge)existingValue);
-                        list.Add(value);
-
-                        _OutEdgesByMetaAndValue[key] = list;
-                    }
-                }
-                else
-                    _OutEdgesByMetaAndValue.Add(key, value);
-            }
+            foreach (IEdge edge in outEdges)
+                foreach (string queryMetaKey in GetMetaQueryKeys(edge.Meta))
+                    AddEdgeToDictionary(
+                        queryEdgesByMetaAndValue,
+                        new GraphUtil.MetaAndValueKey(queryMetaKey, edge.To?.Value),
+                        edge);
 
             OutEdgesDictionariesNeedsRebuild_MetaAndValue = false;
+        }
+
+        private static string GetQueryDictionaryKey(object value)
+        {
+            return value as string ?? value?.ToString() ?? "";
+        }
+
+        private static void AddEdgeToDictionary<TKey>(
+            Dictionary<TKey, object> dictionary,
+            TKey key,
+            IEdge edge) where TKey : notnull
+        {
+            bool exists;
+            ref object dictionaryValue = ref CollectionsMarshal.GetValueRefOrAddDefault(
+                dictionary,
+                key,
+                out exists);
+
+            if (!exists)
+            {
+                dictionaryValue = edge;
+                return;
+            }
+
+            if (dictionaryValue is List_VertexBase list)
+            {
+                list.Add(edge);
+                return;
+            }
+
+            List_VertexBase newList = new List_VertexBase
+            {
+                (IEdge)dictionaryValue,
+                edge
+            };
+
+            dictionaryValue = newList;
+        }
+
+        private static string[] GetMetaQueryKeys(IVertex metaVertex)
+        {
+            if (metaVertex == null)
+                return emptyMetaQueryKeys;
+
+            if (metaVertex is EasyVertex easyMetaVertex)
+            {
+                if (easyMetaVertex.metaQueryKeys == null)
+                    easyMetaVertex.metaQueryKeys = CreateMetaQueryKeys(metaVertex);
+
+                return easyMetaVertex.metaQueryKeys;
+            }
+
+            return CreateMetaQueryKeys(metaVertex);
+        }
+
+        private static string[] CreateMetaQueryKeys(IVertex metaVertex)
+        {
+            HashSet<string> keys = new HashSet<string>(StringComparer.Ordinal);
+            keys.Add(GetQueryDictionaryKey(metaVertex.Value));
+
+            foreach (IVertex parent in VertexHelper.GetInheritParents(metaVertex))
+                keys.Add(GetQueryDictionaryKey(parent.Value));
+
+            return keys.ToArray();
+        }
+
+        private void InvalidateMetaQueryIndexesForThisAndInheritChildren(
+            bool directMetaValueChanged)
+        {
+            HashSet<IVertex> affectedMetaVertices = VertexHelper.GetInheritChilds(this);
+            affectedMetaVertices.Add(this);
+
+            HashSet<IVertex> affectedSourceVertices = new HashSet<IVertex>();
+            HashSet<IVertex> directMetaSourceVertices = directMetaValueChanged
+                ? new HashSet<IVertex>()
+                : null;
+
+            foreach (IVertex metaVertex in affectedMetaVertices)
+            {
+                if (metaVertex is EasyVertex easyMetaVertex)
+                    easyMetaVertex.metaQueryKeys = null;
+
+                foreach (IEdge metaInEdge in metaVertex.MetaInEdgesRaw)
+                    if (metaInEdge.From != null)
+                    {
+                        affectedSourceVertices.Add(metaInEdge.From);
+
+                        if (directMetaValueChanged && metaVertex == this)
+                        {
+                            directMetaSourceVertices.Add(metaInEdge.From);
+
+                            if (metaInEdge.To != null)
+                                metaInEdge.To.InEdgesDictionariesNeedsRebuild = true;
+                        }
+                    }
+            }
+
+            AddInheritChildren(affectedSourceVertices);
+
+            foreach (IVertex sourceVertex in affectedSourceVertices)
+                if (sourceVertex is EasyVertex easySourceVertex)
+                    easySourceVertex.MarkMetaQueryIndexesNeedRebuild(false);
+                else
+                    sourceVertex.OutEdgesDictionariesNeedsRebuild = true;
+
+            if (directMetaSourceVertices != null)
+            {
+                AddInheritChildren(directMetaSourceVertices);
+
+                foreach (IVertex sourceVertex in directMetaSourceVertices)
+                    if (sourceVertex is EasyVertex easySourceVertex)
+                        easySourceVertex.MarkMetaQueryIndexesNeedRebuild(true);
+                    else
+                        sourceVertex.OutEdgesDictionariesNeedsRebuild = true;
+            }
+        }
+
+        private static void AddInheritChildren(HashSet<IVertex> sourceVertices)
+        {
+            IVertex[] originalSourceVertices = sourceVertices.ToArray();
+
+            foreach (IVertex sourceVertex in originalSourceVertices)
+                foreach (IVertex inheritChild in VertexHelper.GetInheritChilds(sourceVertex))
+                    sourceVertices.Add(inheritChild);
+        }
+
+        private void MarkMetaQueryIndexesNeedRebuild(bool directMeta)
+        {
+            OutEdgesDictionariesNeedsRebuild_QueryMeta = true;
+            OutEdgesDictionariesNeedsRebuild_MetaAndValue = true;
+
+            if (directMeta)
+                OutEdgesDictionariesNeedsRebuild_Meta = true;
         }
 
         // edge = new Edge in Attached state
@@ -412,6 +466,8 @@ namespace m0.Graph
                 InheritsOutEdges.Add(edge);                
 
                 HasInheritance = true;
+
+                InvalidateMetaQueryIndexesForThisAndInheritChildren(false);
             }
 
             if (GeneralUtil.CompareStrings(edge.Meta.Value, "$GraphChangeTrigger"))
@@ -441,6 +497,8 @@ namespace m0.Graph
 
                     if (InheritsOutEdges.Count == 0)
                         HasInheritance = false;
+
+                    InvalidateMetaQueryIndexesForThisAndInheritChildren(false);
                 }
 
                 if (GeneralUtil.CompareStrings(edge.Meta.Value, "$GraphChangeTrigger")) {
@@ -595,16 +653,17 @@ namespace m0.Graph
 
             if (meta!=null && to == null)
             {
-                if (OutEdgesDictionariesNeedsRebuild_Meta)
-                    OutEdgesDictionariesRebuild_Meta();
+                if (OutEdgesDictionariesNeedsRebuild_QueryMeta || outEdgesByQueryMeta == null)
+                    OutEdgesDictionariesRebuild_QueryMeta();
 
-                if (!OutEdgesByMeta.ContainsKey(meta))
-                    return; 
+                string metaKey = GetQueryDictionaryKey(meta);
+                object val;
 
-                object val = OutEdgesByMeta[meta];
+                if (!outEdgesByQueryMeta.TryGetValue(metaKey, out val))
+                    return;
 
-                if (val is List_VertexBase)
-                    results = (IList<IEdge>)val;
+                if (val is List_VertexBase list)
+                    results = list;
                 else
                     result = (IEdge)val;
 
@@ -616,13 +675,14 @@ namespace m0.Graph
                 if (OutEdgesDictionariesNeedsRebuild_Value)
                     OutEdgesDictionariesRebuild_Value();
 
-                if (!OutEdgesByValue.ContainsKey(to))
+                string toKey = GetQueryDictionaryKey(to);
+                object val;
+
+                if (!OutEdgesByValue.TryGetValue(toKey, out val))
                     return;
 
-                object val = OutEdgesByValue[to];
-
-                if (val is List_VertexBase)
-                    results = (IList<IEdge>)val;
+                if (val is List_VertexBase list)
+                    results = list;
                 else
                     result = (IEdge)val;
 
@@ -634,15 +694,15 @@ namespace m0.Graph
                if (OutEdgesDictionariesNeedsRebuild_MetaAndValue)
                     OutEdgesDictionariesRebuild_MetaAndValue();
 
-                object searchKey = GraphUtil.GetMetaAndValueObject(meta, to);
+                GraphUtil.MetaAndValueKey searchKey =
+                    new GraphUtil.MetaAndValueKey(meta, to);
+                object val;
 
-                if (!OutEdgesByMetaAndValue.ContainsKey(searchKey))
+                if (!OutEdgesByMetaAndValue.TryGetValue(searchKey, out val))
                     return;
 
-                object val = OutEdgesByMetaAndValue[searchKey];
-
-                if (val is List_VertexBase)
-                    results = (IList<IEdge>)val;
+                if (val is List_VertexBase list)
+                    results = list;
                 else
                     result = (IEdge)val;
 
@@ -662,13 +722,14 @@ namespace m0.Graph
                 if (InEdgesDictionariesNeedsRebuild_Meta)
                     InEdgesDictionariesRebuild_Meta();
 
-                if (!InEdgesByMeta.ContainsKey(meta))
+                string metaKey = GetQueryDictionaryKey(meta);
+                object val;
+
+                if (!InEdgesByMeta.TryGetValue(metaKey, out val))
                     return;
 
-                object val = InEdgesByMeta[meta];
-
-                if (val is List_VertexBase)
-                    results = (IList<IEdge>)val;
+                if (val is List_VertexBase list)
+                    results = list;
                 else
                     result = (IEdge)val;
 
@@ -680,13 +741,14 @@ namespace m0.Graph
                 if (InEdgesDictionariesNeedsRebuild_Value)
                     InEdgesDictionariesRebuild_Value();
 
-                if (!InEdgesByValue.ContainsKey(from))
+                string fromKey = GetQueryDictionaryKey(from);
+                object val;
+
+                if (!InEdgesByValue.TryGetValue(fromKey, out val))
                     return;
 
-                object val = InEdgesByValue[from];
-
-                if (val is List_VertexBase)
-                    results = (IList<IEdge>)val;
+                if (val is List_VertexBase list)
+                    results = list;
                 else
                     result = (IEdge)val;
 
@@ -698,15 +760,15 @@ namespace m0.Graph
                 if (InEdgesDictionariesNeedsRebuild_MetaAndValue)
                     InEdgesDictionariesRebuild_MetaAndValue();
 
-                object searchKey = GraphUtil.GetMetaAndValueObject(meta, from);
+                GraphUtil.MetaAndValueKey searchKey =
+                    new GraphUtil.MetaAndValueKey(meta, from);
+                object val;
 
-                if (!InEdgesByMetaAndValue.ContainsKey(searchKey))
+                if (!InEdgesByMetaAndValue.TryGetValue(searchKey, out val))
                     return;
 
-                object val = InEdgesByMetaAndValue[searchKey];
-
-                if (val is List_VertexBase)
-                    results = (IList<IEdge>)val;
+                if (val is List_VertexBase list)
+                    results = list;
                 else
                     result = (IEdge)val;
 
@@ -905,6 +967,8 @@ namespace m0.Graph
 
 
             _OutEdgesByMeta = null;
+            outEdgesByQueryMeta = null;
+            metaQueryKeys = null;
             _OutEdgesByValue = null;
             _OutEdgesByMetaAndValue = null;
             _InEdgesByMeta = null;

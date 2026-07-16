@@ -23,20 +23,20 @@ namespace m0.Graph
         protected IDictionary<object, object> _OutEdgesByMeta;
         public IDictionary<object, object> OutEdgesByMeta { get { return _OutEdgesByMeta; } }
 
-        protected IDictionary<object, object> _OutEdgesByValue;
-        public IDictionary<object, object> OutEdgesByValue { get { return _OutEdgesByValue; } }
+        protected Dictionary<string, object> _OutEdgesByValue;
+        public Dictionary<string, object> OutEdgesByValue { get { return _OutEdgesByValue; } }
 
-        protected IDictionary<object, object> _OutEdgesByMetaAndValue;
-        public IDictionary<object, object> OutEdgesByMetaAndValue { get { return _OutEdgesByMetaAndValue; } }
+        protected Dictionary<GraphUtil.MetaAndValueKey, object> _OutEdgesByMetaAndValue;
+        public Dictionary<GraphUtil.MetaAndValueKey, object> OutEdgesByMetaAndValue { get { return _OutEdgesByMetaAndValue; } }
 
-        protected IDictionary<object, object> _InEdgesByMeta;
-        public IDictionary<object, object> InEdgesByMeta { get { return _InEdgesByMeta; } }
+        protected Dictionary<string, object> _InEdgesByMeta;
+        public Dictionary<string, object> InEdgesByMeta { get { return _InEdgesByMeta; } }
 
-        protected IDictionary<object, object> _InEdgesByValue;
-        public IDictionary<object, object> InEdgesByValue { get { return _InEdgesByValue; } }
+        protected Dictionary<string, object> _InEdgesByValue;
+        public Dictionary<string, object> InEdgesByValue { get { return _InEdgesByValue; } }
 
-        protected IDictionary<object, object> _InEdgesByMetaAndValue;
-        public IDictionary<object, object> InEdgesByMetaAndValue { get { return _InEdgesByMetaAndValue; } }
+        protected Dictionary<GraphUtil.MetaAndValueKey, object> _InEdgesByMetaAndValue;
+        public Dictionary<GraphUtil.MetaAndValueKey, object> InEdgesByMetaAndValue { get { return _InEdgesByMetaAndValue; } }
 
         private bool _InEdgesDictionariesNeedsRebuild;
         public bool InEdgesDictionariesNeedsRebuild {
@@ -85,6 +85,7 @@ namespace m0.Graph
 
                     OutEdgesDictionariesNeedsRebuild_Edges = true;
                     OutEdgesDictionariesNeedsRebuild_Meta = true;
+                    OutEdgesDictionariesNeedsRebuild_QueryMeta = true;
                     OutEdgesDictionariesNeedsRebuild_Value = true;
                     OutEdgesDictionariesNeedsRebuild_MetaAndValue = true;
                 }
@@ -94,6 +95,7 @@ namespace m0.Graph
 
                     OutEdgesDictionariesNeedsRebuild_Edges = false;
                     OutEdgesDictionariesNeedsRebuild_Meta = false;
+                    OutEdgesDictionariesNeedsRebuild_QueryMeta = false;
                     OutEdgesDictionariesNeedsRebuild_Value = false;
                     OutEdgesDictionariesNeedsRebuild_MetaAndValue = false;
                 }
@@ -103,6 +105,8 @@ namespace m0.Graph
         protected bool OutEdgesDictionariesNeedsRebuild_Edges { get; set; }
 
         protected bool OutEdgesDictionariesNeedsRebuild_Meta { get; set; }
+
+        protected bool OutEdgesDictionariesNeedsRebuild_QueryMeta { get; set; }
 
         protected bool OutEdgesDictionariesNeedsRebuild_Value { get; set; }
 
