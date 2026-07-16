@@ -1050,7 +1050,7 @@ namespace m0.UIWpf.Visualisers
                 result.AddRange(VisualiserUtil.FilterEdges(vertex.OutEdges, Vertex));
 
             if (showInEdges)
-                result.AddRange(ApplyShowesInEdgesInEdgeFilter(VisualiserUtil.FilterEdges(vertex.InEdges, Vertex)));
+                result.AddRange(ApplyShowesInEdgesInEdgeFilter(VisualiserUtil.FilterEdges(vertex.InEdgesRaw, Vertex)));
 
             return result.Where(CanAddEdge);
         }

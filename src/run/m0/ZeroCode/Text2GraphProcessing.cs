@@ -672,7 +672,7 @@ namespace m0.ZeroCode
                         return value;
                 }
 
-                foreach (IEdge inEdge in mock.parentVertex.InEdges)
+                foreach (IEdge inEdge in mock.parentVertex.InEdgesRaw)
                 {
                     IVertex value = SearchForParentLink(link, inEdge);
 
@@ -2593,7 +2593,7 @@ namespace m0.ZeroCode
 
         bool IsVertexParentKeywordManyRoot(IVertex v)
         {
-            foreach (IEdge e in v.InEdges)
+            foreach (IEdge e in v.InEdgesRaw)
                 if (GraphUtil.GetQueryOutFirst(e.From, "$$KeywordManyRoot", null) != null)
                     return true;
 

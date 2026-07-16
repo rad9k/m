@@ -882,7 +882,7 @@ namespace m0.UIWpf.Visualisers
             {
                 ResetView();
 
-                itemsSourceValue = baseVertex.InEdges.ToList();
+                itemsSourceValue = baseVertex.InEdgesRaw.ToList();
 
                 IList<IEdge> visibleInEdges = new List<IEdge>();
 

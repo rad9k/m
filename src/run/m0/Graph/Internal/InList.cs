@@ -43,8 +43,6 @@ namespace m0.Graph.Internal
         public override void OnAdd(IEdge item)
         {
             edgeDictionaries.Vertex.InEdgesDictionariesNeedsRebuild = true;
-
-            edgeDictionaries.Vertex.InheritChildsDictionariesNeedsRebuild(true);
         }
 
         public override void OnRemove(IEdge item)
@@ -68,8 +66,6 @@ namespace m0.Graph.Internal
             //
 
             edgeDictionaries.Vertex.InEdgesDictionariesNeedsRebuild = true;
-
-            edgeDictionaries.Vertex.InheritChildsDictionariesNeedsRebuild(true);
 
             //
 

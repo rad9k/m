@@ -41,7 +41,7 @@ namespace m0.UIWpf.VertexCommander
         private IKeyboardHighlight rightOutEdgesKeyboardHighlight;
 
         private KeyboardHighlightPane currentKeyboardHighlightPane = KeyboardHighlightPane.Left;
-        private KeyboardHighlightSection currentKeyboardHighlightSection = KeyboardHighlightSection.InEdges;
+        private KeyboardHighlightSection currentKeyboardHighlightSection = KeyboardHighlightSection.IncomingEdges;
 
         private const int QueryHistoryMax = 10;
         private const int KeyboardHighlightPageStep = 10;
@@ -72,7 +72,7 @@ namespace m0.UIWpf.VertexCommander
 
         private enum KeyboardHighlightSection
         {
-            InEdges,
+            IncomingEdges,
             OutEdges
         }
 
@@ -1131,7 +1131,7 @@ namespace m0.UIWpf.VertexCommander
             if (currentKeyboardHighlightPane != masterPane)
                 return;
 
-            // master tracks OutEdges only; ignore when the highlight sits on InEdges
+            // master tracks OutEdges only; ignore when the highlight sits on incoming edges
             if (currentKeyboardHighlightSection != KeyboardHighlightSection.OutEdges)
                 return;
 
@@ -1278,12 +1278,12 @@ namespace m0.UIWpf.VertexCommander
                 return;
             }
 
-            IKeyboardHighlight inEdgesKeyboardHighlight = GetKeyboardHighlight(pane, KeyboardHighlightSection.InEdges);
+            IKeyboardHighlight inEdgesKeyboardHighlight = GetKeyboardHighlight(pane, KeyboardHighlightSection.IncomingEdges);
 
             if (inEdgesKeyboardHighlight != null)
             {
-                currentKeyboardHighlightSection = KeyboardHighlightSection.InEdges;
-                SetKeyboardHighlightPosition(pane, KeyboardHighlightSection.InEdges, true);
+                currentKeyboardHighlightSection = KeyboardHighlightSection.IncomingEdges;
+                SetKeyboardHighlightPosition(pane, KeyboardHighlightSection.IncomingEdges, true);
             }
         }
 
@@ -1402,8 +1402,8 @@ namespace m0.UIWpf.VertexCommander
         private void LeftInEdgesKeyboardHighlight_GoneBeforeFirstPosition(object sender, System.EventArgs e)
         {
             currentKeyboardHighlightPane = KeyboardHighlightPane.Left;
-            currentKeyboardHighlightSection = KeyboardHighlightSection.InEdges;
-            SetKeyboardHighlightPosition(KeyboardHighlightPane.Left, KeyboardHighlightSection.InEdges, true);
+            currentKeyboardHighlightSection = KeyboardHighlightSection.IncomingEdges;
+            SetKeyboardHighlightPosition(KeyboardHighlightPane.Left, KeyboardHighlightSection.IncomingEdges, true);
         }
 
         private void LeftInEdgesKeyboardHighlight_GoneAfterLastPosition(object sender, System.EventArgs e)
@@ -1415,14 +1415,14 @@ namespace m0.UIWpf.VertexCommander
 
         private void LeftInEdgesKeyboardHighlight_KeyboardHighlightActivated(object sender, System.EventArgs e)
         {
-            ActivateKeyboardHighlight(KeyboardHighlightPane.Left, KeyboardHighlightSection.InEdges, leftInEdgesKeyboardHighlight);
+            ActivateKeyboardHighlight(KeyboardHighlightPane.Left, KeyboardHighlightSection.IncomingEdges, leftInEdgesKeyboardHighlight);
         }
 
         private void LeftOutEdgesKeyboardHighlight_GoneBeforeFirstPosition(object sender, System.EventArgs e)
         {
             currentKeyboardHighlightPane = KeyboardHighlightPane.Left;
-            currentKeyboardHighlightSection = KeyboardHighlightSection.InEdges;
-            SetKeyboardHighlightPosition(KeyboardHighlightPane.Left, KeyboardHighlightSection.InEdges, false);
+            currentKeyboardHighlightSection = KeyboardHighlightSection.IncomingEdges;
+            SetKeyboardHighlightPosition(KeyboardHighlightPane.Left, KeyboardHighlightSection.IncomingEdges, false);
         }
 
         private void LeftOutEdgesKeyboardHighlight_GoneAfterLastPosition(object sender, System.EventArgs e)
@@ -1440,8 +1440,8 @@ namespace m0.UIWpf.VertexCommander
         private void RightInEdgesKeyboardHighlight_GoneBeforeFirstPosition(object sender, System.EventArgs e)
         {
             currentKeyboardHighlightPane = KeyboardHighlightPane.Right;
-            currentKeyboardHighlightSection = KeyboardHighlightSection.InEdges;
-            SetKeyboardHighlightPosition(KeyboardHighlightPane.Right, KeyboardHighlightSection.InEdges, true);
+            currentKeyboardHighlightSection = KeyboardHighlightSection.IncomingEdges;
+            SetKeyboardHighlightPosition(KeyboardHighlightPane.Right, KeyboardHighlightSection.IncomingEdges, true);
         }
 
         private void RightInEdgesKeyboardHighlight_GoneAfterLastPosition(object sender, System.EventArgs e)
@@ -1453,14 +1453,14 @@ namespace m0.UIWpf.VertexCommander
 
         private void RightInEdgesKeyboardHighlight_KeyboardHighlightActivated(object sender, System.EventArgs e)
         {
-            ActivateKeyboardHighlight(KeyboardHighlightPane.Right, KeyboardHighlightSection.InEdges, rightInEdgesKeyboardHighlight);
+            ActivateKeyboardHighlight(KeyboardHighlightPane.Right, KeyboardHighlightSection.IncomingEdges, rightInEdgesKeyboardHighlight);
         }
 
         private void RightOutEdgesKeyboardHighlight_GoneBeforeFirstPosition(object sender, System.EventArgs e)
         {
             currentKeyboardHighlightPane = KeyboardHighlightPane.Right;
-            currentKeyboardHighlightSection = KeyboardHighlightSection.InEdges;
-            SetKeyboardHighlightPosition(KeyboardHighlightPane.Right, KeyboardHighlightSection.InEdges, false);
+            currentKeyboardHighlightSection = KeyboardHighlightSection.IncomingEdges;
+            SetKeyboardHighlightPosition(KeyboardHighlightPane.Right, KeyboardHighlightSection.IncomingEdges, false);
         }
 
         private void RightOutEdgesKeyboardHighlight_GoneAfterLastPosition(object sender, System.EventArgs e)
@@ -1491,12 +1491,12 @@ namespace m0.UIWpf.VertexCommander
 
         private void LeftInEdgesKeyboardHighlight_KeyboardHighlightEnterPressed(object sender, System.EventArgs e)
         {
-            HandleKeyboardHighlightEnter(KeyboardHighlightPane.Left, KeyboardHighlightSection.InEdges, leftInEdgesKeyboardHighlight?.KeyboardHighlightedEdge);
+            HandleKeyboardHighlightEnter(KeyboardHighlightPane.Left, KeyboardHighlightSection.IncomingEdges, leftInEdgesKeyboardHighlight?.KeyboardHighlightedEdge);
         }
 
         private void RightInEdgesKeyboardHighlight_KeyboardHighlightEnterPressed(object sender, System.EventArgs e)
         {
-            HandleKeyboardHighlightEnter(KeyboardHighlightPane.Right, KeyboardHighlightSection.InEdges, rightInEdgesKeyboardHighlight?.KeyboardHighlightedEdge);
+            HandleKeyboardHighlightEnter(KeyboardHighlightPane.Right, KeyboardHighlightSection.IncomingEdges, rightInEdgesKeyboardHighlight?.KeyboardHighlightedEdge);
         }
 
         private void LeftOutEdgesKeyboardHighlight_KeyboardHighlightEnterPressed(object sender, System.EventArgs e)
@@ -1575,11 +1575,11 @@ namespace m0.UIWpf.VertexCommander
         private IKeyboardHighlight GetKeyboardHighlight(KeyboardHighlightPane pane, KeyboardHighlightSection section)
         {
             if (pane == KeyboardHighlightPane.Left)
-                return section == KeyboardHighlightSection.InEdges
+                return section == KeyboardHighlightSection.IncomingEdges
                     ? leftInEdgesKeyboardHighlight
                     : leftOutEdgesKeyboardHighlight;
 
-            return section == KeyboardHighlightSection.InEdges
+            return section == KeyboardHighlightSection.IncomingEdges
                 ? rightInEdgesKeyboardHighlight
                 : rightOutEdgesKeyboardHighlight;
         }
@@ -1605,11 +1605,11 @@ namespace m0.UIWpf.VertexCommander
             ContentControl host;
 
             if (pane == KeyboardHighlightPane.Left)
-                host = section == KeyboardHighlightSection.InEdges
+                host = section == KeyboardHighlightSection.IncomingEdges
                     ? LeftInEdgesVisualiserHost
                     : LeftOutEdgesVisualiserHost;
             else
-                host = section == KeyboardHighlightSection.InEdges
+                host = section == KeyboardHighlightSection.IncomingEdges
                     ? RightInEdgesVisualiserHost
                     : RightOutEdgesVisualiserHost;
 

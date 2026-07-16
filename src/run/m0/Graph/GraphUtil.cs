@@ -1525,7 +1525,7 @@ namespace m0.Graph
                 if (v == to)
                     break;
 
-                foreach (IEdge e in v.InEdges)
+                foreach (IEdge e in v.InEdgesRaw)
                 {
                     IVertex eFrom = e.From;
 

@@ -267,7 +267,7 @@ namespace m0.ZeroUML.Instructions
 
             bool isFirstOperatorInExpression = true;
 
-            foreach (IEdge e in instructionVertex.InEdges)
+            foreach (IEdge e in instructionVertex.InEdgesRaw)
             {
                 IList<IEdge> metaIsValuesList = GraphUtil.GetQueryOut(e.From, "$Is", null);
 
@@ -285,13 +285,13 @@ namespace m0.ZeroUML.Instructions
                         fromVertexList.Add(e.From);
 
                 foreach (IVertex e in fromVertexList)
-                    foreach (IEdge ee in e.InEdges)
+                    foreach (IEdge ee in e.InEdgesRaw)
                         newQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(GraphUtil.CreateArtificialEdge(ee.Meta, ee.From));
             }
             else
             {
                 foreach (IEdge e in inputQs)
-                    foreach (IEdge ee in e.To.InEdges)
+                    foreach (IEdge ee in e.To.InEdgesRaw)
                         newQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(GraphUtil.CreateArtificialEdge(ee.Meta, ee.From));
             }
 

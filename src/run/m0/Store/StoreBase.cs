@@ -114,7 +114,6 @@ namespace m0.Store
 
             foreach (IVertex v in VertexIdentifiersDictionary.Values)
             {
-                //foreach (IEdge e in v.InEdges)
                 foreach (IEdge e in v.InEdgesRaw)
                     if (e.From.Store == InDetachStore)
                         v.InEdgesRaw.Remove(e);

@@ -10,7 +10,7 @@ namespace m0.Graph.Internal
 {
     internal class VertexHelper
     {
-        // InEdges
+        // InEdgesRaw
         // from == who inherits from me
         // meta == $Inherits
         // to == this

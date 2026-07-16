@@ -58,7 +58,7 @@ namespace m0.Graph.OLD
 
         protected void ValueChanged()
         {
-            foreach (IEdge e in InEdges)
+            foreach (IEdge e in InEdgesRaw)
                 if(e.From!=null) // there could be artificial edge, with From==null
                     e.From.OutEdgesDictionariesNeedsRebuild = true;
 
@@ -75,40 +75,6 @@ namespace m0.Graph.OLD
         protected IList<IEdge> _InEdgesRaw;
 
         public override IList<IEdge> InEdgesRaw { get { return _InEdgesRaw; } }
-
-        private IList<IEdge> _InEdges;
-
-        public override IList<IEdge> InEdges
-        {
-            get
-            {
-                if (InEdgesDictionariesNeedsRebuild_Edges)
-                {
-                    InEdgesDictionariesRebuild_Edges();
-                    InEdgesDictionariesNeedsRebuild_Edges = false;
-                    return _InEdges;
-                }
-                else
-                    return _InEdges;
-            }                       
-        }
-
-        private void InEdgesDictionariesRebuild_Edges()
-        {
-            if (HasInheritance && AllowInheritance)
-            {
-                List<IEdge> FullEdges = InEdgesRaw.ToList();
-
-                HashSet<IVertex> parents = GraphUtil.GetInheritParents_RawEnumerate(this);
-
-                foreach (IVertex v in parents)
-                    FullEdges.AddRange(v.InEdgesRaw);
-
-                _InEdges = FullEdges;
-            }
-            else
-                _InEdges = InEdgesRaw;
-        }
 
         protected IList<IEdge> _OutEdgesRaw;
 
@@ -157,7 +123,7 @@ namespace m0.Graph.OLD
         {
             _InEdgesByMeta = new Dictionary<object, object>();
 
-            foreach(IEdge e in InEdges)
+            foreach(IEdge e in InEdgesRaw)
             {
                 //object key = e.Meta.Value;
                 object key = e.Meta.Value.ToString();
@@ -225,7 +191,7 @@ namespace m0.Graph.OLD
         {
             _InEdgesByValue = new Dictionary<object, object>();
 
-            foreach (IEdge e in InEdges)
+            foreach (IEdge e in InEdgesRaw)
             {
                 //object key = e.From.Value;
                 object key = e.From.Value.ToString();
@@ -292,7 +258,7 @@ namespace m0.Graph.OLD
         {
             _InEdgesByMetaAndValue = new Dictionary<object, object>();
 
-            foreach (IEdge e in InEdges)
+            foreach (IEdge e in InEdgesRaw)
             {
                 object key = GraphUtil.GetMetaAndValueObject(e.Meta.Value, e.From.Value);
                 IEdge value = e;
@@ -748,7 +714,7 @@ namespace m0.Graph.OLD
                 return;
             }
 
-            results = InEdges.ToList();
+            results = InEdgesRaw.ToList();
         }
 
         public override IVertex Get(bool metaMode, string query)

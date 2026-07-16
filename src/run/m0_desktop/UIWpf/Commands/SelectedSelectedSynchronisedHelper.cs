@@ -29,7 +29,7 @@ namespace m0.UIWpf.Commands
         {
             selectedEdgesVertex_Listener = ExecutionFlowHelper.AddTriggerAndListener(selectedEdgesVertex, synchroniseMasterVisualiser_VertexChange);
 
-            IEdge detailVisualiserVertexIncomingEdge = detailVisualiserVertex.InEdges[0];
+            IEdge detailVisualiserVertexIncomingEdge = detailVisualiserVertex.InEdgesRaw[0];
 
             detailVisuliserVertex_Listener = ExecutionFlowHelper.AddTriggerAndListener(detailVisualiserVertexIncomingEdge.From,
                 new List<string> { },

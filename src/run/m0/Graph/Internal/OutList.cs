@@ -54,7 +54,7 @@ namespace m0.Graph.Internal
 
             edgeDictionaries.Vertex.OutEdgesDictionariesNeedsRebuild = true;
 
-            edgeDictionaries.Vertex.InheritChildsDictionariesNeedsRebuild(false);
+            edgeDictionaries.Vertex.InheritChildsOutEdgesDictionariesNeedsRebuild();
 
             //edgeDictionaries.vertex.FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeAdded, item));
 
@@ -80,7 +80,7 @@ namespace m0.Graph.Internal
             }
 
             edgeDictionaries.Vertex.OutEdgesDictionariesNeedsRebuild = true;
-            edgeDictionaries.Vertex.InheritChildsDictionariesNeedsRebuild(false);
+            edgeDictionaries.Vertex.InheritChildsOutEdgesDictionariesNeedsRebuild();
 
             edgeDictionaries.Vertex.DetachEdge(item);
             item.To.DetachInEdge(item);

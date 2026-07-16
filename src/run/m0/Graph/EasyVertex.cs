@@ -75,7 +75,7 @@ namespace m0.Graph
 
         protected void ValueChanged()
         {
-            foreach (IEdge e in InEdges)
+            foreach (IEdge e in InEdgesRaw)
                 if(e.From!=null) // there could be artificial edge, with From==null
                     e.From.OutEdgesDictionariesNeedsRebuild = true;
 
@@ -92,7 +92,7 @@ namespace m0.Graph
 
         public bool AllowInheritance = true;
 
-        // InEdges
+        // InEdgesRaw
         // from == who inherits from me
         // meta == $Inherits
         // to == this
@@ -107,16 +107,6 @@ namespace m0.Graph
         public IList<IEdge> InheritsOutEdges;
 
         public override IList<IEdge> InEdgesRaw { get { return edgeDictionaries.In; } }
-
-        private IList<IEdge> _InEdges;
-
-        public override IList<IEdge> InEdges
-        {
-            get
-            {                
-                return InEdgesRaw;
-            }                       
-        }        
 
         public override IList<IEdge> OutEdgesRaw { get { return edgeDictionaries.Out; } }
 
@@ -159,7 +149,7 @@ namespace m0.Graph
 
         private void InEdgesDictionariesRebuild_Meta()
         {
-            IList<IEdge> inEdges = InEdges;
+            IList<IEdge> inEdges = InEdgesRaw;
             Dictionary<string, object> edgesByMeta =
                 new Dictionary<string, object>(inEdges.Count);
 
@@ -208,7 +198,7 @@ namespace m0.Graph
 
         private void InEdgesDictionariesRebuild_Value()
         {
-            IList<IEdge> inEdges = InEdges;
+            IList<IEdge> inEdges = InEdgesRaw;
             Dictionary<string, object> edgesByValue =
                 new Dictionary<string, object>(inEdges.Count);
 
@@ -242,7 +232,7 @@ namespace m0.Graph
 
         private void InEdgesDictionariesRebuild_MetaAndValue()
         {
-            IList<IEdge> inEdges = InEdges;
+            IList<IEdge> inEdges = InEdgesRaw;
             Dictionary<GraphUtil.MetaAndValueKey, object> edgesByMetaAndValue =
                 new Dictionary<GraphUtil.MetaAndValueKey, object>(inEdges.Count);
 
@@ -627,15 +617,12 @@ namespace m0.Graph
             }            
         }
 
-        public void InheritChildsDictionariesNeedsRebuild(bool inDictiories)
+        public void InheritChildsOutEdgesDictionariesNeedsRebuild()
         {
             HashSet<IVertex> inheritsSet = VertexHelper.GetInheritChilds(this);
 
             foreach (IVertex v in inheritsSet)
-                if (inDictiories)
-                    v.InEdgesDictionariesNeedsRebuild = true;
-                else
-                    v.OutEdgesDictionariesNeedsRebuild = true;
+                v.OutEdgesDictionariesNeedsRebuild = true;
         }
 
         public IDictionary<object, object> GetOutOdgesByMeta()
@@ -775,7 +762,7 @@ namespace m0.Graph
                 return;
             }
 
-            results = InEdges.ToList();
+            results = InEdgesRaw.ToList();
         }
 
         public override IVertex Get(bool metaMode, string query)

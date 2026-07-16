@@ -1134,7 +1134,7 @@ namespace m0.ZeroTypes
             {
                 int cnt = 0;
 
-                foreach (IEdge e in toVertex.InEdges)
+                foreach (IEdge e in toVertex.InEdgesRaw)
                     if (e.Meta == metaVertex)
                         cnt++;
 

@@ -9,7 +9,7 @@ namespace m0.Graph
 {
     public interface IImplementedVertex : IVertex
     {
-        void InheritChildsDictionariesNeedsRebuild(bool inDictiories);
+        void InheritChildsOutEdgesDictionariesNeedsRebuild();
 
         bool HasInheritance { get; set; }
 

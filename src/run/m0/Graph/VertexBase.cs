@@ -190,11 +190,6 @@ namespace m0.Graph
             }
         }
 
-        public virtual IList<IEdge> InEdges
-        {
-            get { throw new NotImplementedException(); }
-        }
-
         public virtual IList<IEdge> InEdgesRaw
         {
             get { throw new NotImplementedException(); }

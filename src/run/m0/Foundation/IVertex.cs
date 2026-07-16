@@ -44,8 +44,6 @@ namespace m0.Foundation
 
         IList<IEdge> InEdgesRaw { get; } // without $Inherits
 
-        IList<IEdge> InEdges { get; }        
-
         IList<IEdge> MetaInEdgesRaw { get; } // without $Inherits
 
         INoInEdgeInOutVertexVertex Execute(IExecution exe);

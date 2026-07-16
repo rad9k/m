@@ -15,24 +15,24 @@ using System.Threading.Tasks;
 
 
 From:                 To
-OutEdges              InEdges
+OutEdgesRaw           InEdgesRaw
 
                       Meta
-	                  InMetaEdges
+	                  MetaInEdgesRaw
 
 
 >From.AddEdge:
 
-	+From.OutEdges
-	+To.InEdges
-	+Meta.InMetaEdges
+	+From.OutEdgesRaw
+	+To.InEdgesRaw
+	+Meta.MetaInEdgesRaw
 
 
 >From.DeleteEdge
 
-	-From.OutEdges
-	-To.InEdges
-	-Meta.InMetaEdges
+	-From.OutEdgesRaw
+	-To.InEdgesRaw
+	-Meta.MetaInEdgesRaw
      
 */
 
