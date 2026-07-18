@@ -67,38 +67,139 @@ namespace m0.ZeroUML.Instructions
 
             INoInEdgeInOutVertexVertex newQs = CreateStack();
 
-            IEdge e;
-            IList<IEdge> eList;
-
-            bool queryByVariable;
-            IList<string> processedValueList = processQueryValue(exe, value, out queryByVariable);
-
-
-            foreach (string processedValue in processedValueList)
+            if (value.Length <= 2 ||
+                value[0] != '(' ||
+                value[value.Length - 1] != ')')
             {
-                if (queryByVariable)
-                {
-                    if (processedValue.Length > 0 && processedValue[0] == ':')
-                        inputQs.QueryOutEdges(null, processedValue.Substring(1), out e, out eList);
-                    else
-                        inputQs.QueryOutEdges(processedValue, null, out e, out eList);
-                }
-                else
-                {
-                    if (exe.MetaMode)
-                        inputQs.QueryOutEdges(processedValue, null, out e, out eList);
-                    else
-                        inputQs.QueryOutEdges(null, processedValue, out e, out eList);
-                }
+                AddQueryOperatorMatches(
+                    exe,
+                    inputQs,
+                    newQs,
+                    value,
+                    false);
+            }
+            else
+            {
+                bool queryByVariable;
+                IList<string> processedValueList =
+                    processQueryValue(
+                        exe,
+                        value,
+                        out queryByVariable);
 
-                if (e != null)
-                    newQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(e);
-
-                if (eList != null)
-                    AddToStack_BAD_BEHAVIOR_IEdge_MANY_TIMES(newQs, eList);
+                foreach (string processedValue in processedValueList)
+                    AddQueryOperatorMatches(
+                        exe,
+                        inputQs,
+                        newQs,
+                        processedValue,
+                        queryByVariable);
             }
 
             return NextExpressionHandle(exe, newQs, instructionVertex);
+        }
+
+        private static void AddQueryOperatorMatches(
+            ZeroCodeExecution exe,
+            IVertex inputQs,
+            INoInEdgeInOutVertexVertex output,
+            string processedValue,
+            bool queryByVariable)
+        {
+            IEdge edge;
+            IList<IEdge> edges;
+
+            if (queryByVariable)
+            {
+                if (processedValue.Length > 0 &&
+                    processedValue[0] == ':')
+                    inputQs.QueryOutEdges(
+                        null,
+                        processedValue.Substring(1),
+                        out edge,
+                        out edges);
+                else
+                    inputQs.QueryOutEdges(
+                        processedValue,
+                        null,
+                        out edge,
+                        out edges);
+            }
+            else if (exe.MetaMode)
+                inputQs.QueryOutEdges(
+                    processedValue,
+                    null,
+                    out edge,
+                    out edges);
+            else
+                inputQs.QueryOutEdges(
+                    null,
+                    processedValue,
+                    out edge,
+                    out edges);
+
+            if (exe.CollapseQueryResultsByFromMeta)
+            {
+                long collapsedEdgeCount = 0;
+
+                if (edge != null &&
+                    !AddDistinctFromMetaQueryMatch(
+                        output,
+                        edge))
+                    collapsedEdgeCount++;
+
+                if (edges != null)
+                    foreach (IEdge matchingEdge in edges)
+                        if (!AddDistinctFromMetaQueryMatch(
+                            output,
+                            matchingEdge))
+                            collapsedEdgeCount++;
+
+                ZeroCodePerformanceCounters
+                    .RecordCollapsedAssignmentQueryEdges(
+                        collapsedEdgeCount);
+            }
+            else
+            {
+                if (edge != null)
+                    output
+                        .AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(
+                            edge);
+
+                if (edges != null)
+                    AddToStack_BAD_BEHAVIOR_IEdge_MANY_TIMES(
+                        output,
+                        edges);
+            }
+        }
+
+        private static bool AddDistinctFromMetaQueryMatch(
+            INoInEdgeInOutVertexVertex output,
+            IEdge candidate)
+        {
+            if (candidate == null)
+                return false;
+
+            IList<IEdge> existingEdges =
+                output.OutEdgesRaw;
+            for (int index = 0;
+                index < existingEdges.Count;
+                index++)
+            {
+                IEdge existing = existingEdges[index];
+                if (ReferenceEquals(
+                        existing.From,
+                        candidate.From) &&
+                    ReferenceEquals(
+                        existing.Meta,
+                        candidate.Meta))
+                    return false;
+            }
+
+            output
+                .AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(
+                    candidate);
+            return true;
         }
 
         private static List<string> processQueryValue(ZeroCodeExecution exe, string value)
@@ -172,7 +273,7 @@ namespace m0.ZeroUML.Instructions
                         nestedExecutionCount++;
                         IVertex outQs = exe.ExecuteInstructionByMontevideoPrinciples(e.To, expression.To);
 
-                        if (outQs.OutEdges.Count() > 0)
+                        if (outQs.OutEdges.Count > 0)
                             newQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(e);
                     }
                 }
@@ -469,40 +570,112 @@ namespace m0.ZeroUML.Instructions
             // left
 
             INoInEdgeInOutVertexVertex leftStack = CreateStack();
+            INoInEdgeInOutVertexVertex rightStack = null;
+            INoInEdgeInOutVertexVertex leftExecuteResult = null;
+            INoInEdgeInOutVertexVertex _rightExecuteResult = null;
 
-            exe.NewVertexCreationSpace = leftStack;
-
-            INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, leftExpression);
-
-            // right
-
-            exe.NewVertexCreationSpace = CreateStack();
-
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, rightExpression);
-
-            exe.NewVertexCreationSpace = newVertexCreationSpace_copy;
-
-            // NEW
-
-            IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
-
-            IDictionary<EdgeKey_FromMeta, IList<IEdge>> leftFromMeta_dict = CreateEdgeKey_FromMetaDictionary(leftExecuteResult);
-
-            foreach (KeyValuePair<EdgeKey_FromMeta, IList<IEdge>> localLeft in leftFromMeta_dict)
+            try
             {
-                IEdge toAdd = localLeft.Value[0];
+                exe.NewVertexCreationSpace = leftStack;
+                leftExecuteResult =
+                    exe.ExecuteInstructionByMontevideoPrinciples(
+                        exe.Stack,
+                        leftExpression);
 
-                toAdd.From.DeleteEdgesList(localLeft.Value);
+                // right
 
-                foreach (IEdge e in rightExecuteResult)
-                    //if (leftPropagateToStackExpression && exe.stack == exe.newVertexCreationSpace) // left expression was separated from exe.stack
-                    if (leftPropagateToStackExpression /*&& exe.stack == exe.newVertexCreationSpace*/) // XXX EXPERIMENTA !!!! for issue 84
-                        exe.Stack.AddEdge(toAdd.Meta, e.To);
-                    else
-                        toAdd.From.AddEdge(toAdd.Meta, e.To);
+                rightStack = CreateStack();
+                exe.NewVertexCreationSpace = rightStack;
+                _rightExecuteResult =
+                    exe.ExecuteInstructionByMontevideoPrinciples(
+                        exe.Stack,
+                        rightExpression);
+
+                // NEW
+
+                IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
+
+                if (leftExecuteResult.OutEdges.Count == 1)
+                {
+                    IEdge toAdd =
+                        leftExecuteResult.OutEdges[0];
+
+                    toAdd.From.DeleteEdge(toAdd);
+
+                    foreach (IEdge e in rightExecuteResult)
+                        //if (leftPropagateToStackExpression && exe.stack == exe.newVertexCreationSpace) // left expression was separated from exe.stack
+                        if (leftPropagateToStackExpression /*&& exe.stack == exe.newVertexCreationSpace*/) // XXX EXPERIMENTA !!!! for issue 84
+                            exe.Stack.AddEdge(toAdd.Meta, e.To);
+                        else
+                            toAdd.From.AddEdge(toAdd.Meta, e.To);
+                }
+                else
+                {
+                    IDictionary<EdgeKey_FromMeta, IList<IEdge>> leftFromMeta_dict =
+                        CreateEdgeKey_FromMetaDictionary(
+                            leftExecuteResult);
+
+                    foreach (KeyValuePair<EdgeKey_FromMeta, IList<IEdge>> localLeft in leftFromMeta_dict)
+                    {
+                        IEdge toAdd = localLeft.Value[0];
+
+                        toAdd.From.DeleteEdgesList(localLeft.Value);
+
+                        foreach (IEdge e in rightExecuteResult)
+                            //if (leftPropagateToStackExpression && exe.stack == exe.newVertexCreationSpace) // left expression was separated from exe.stack
+                            if (leftPropagateToStackExpression /*&& exe.stack == exe.newVertexCreationSpace*/) // XXX EXPERIMENTA !!!! for issue 84
+                                exe.Stack.AddEdge(toAdd.Meta, e.To);
+                            else
+                                toAdd.From.AddEdge(toAdd.Meta, e.To);
+                    }
+                }
+
+                return exe.Stack;
             }
+            finally
+            {
+                exe.NewVertexCreationSpace =
+                    newVertexCreationSpace_copy;
 
-            return exe.Stack;
+                if (!ReferenceEquals(
+                        leftExecuteResult,
+                        leftStack) &&
+                    !ReferenceEquals(
+                        leftExecuteResult,
+                        rightStack))
+                    ReleaseTemporaryStack(
+                        leftExecuteResult,
+                        inputStack,
+                        exe.Stack,
+                        newVertexCreationSpace_copy);
+
+                if (!ReferenceEquals(
+                        _rightExecuteResult,
+                        leftStack) &&
+                    !ReferenceEquals(
+                        _rightExecuteResult,
+                        rightStack))
+                    ReleaseTemporaryStack(
+                        _rightExecuteResult,
+                        inputStack,
+                        exe.Stack,
+                        newVertexCreationSpace_copy);
+
+                if (leftStack.OutEdgesRaw.Count == 0)
+                    ReleaseTemporaryStack(
+                        leftStack,
+                        inputStack,
+                        exe.Stack,
+                        newVertexCreationSpace_copy);
+
+                if (rightStack != null &&
+                    rightStack.OutEdgesRaw.Count == 0)
+                    ReleaseTemporaryStack(
+                        rightStack,
+                        inputStack,
+                        exe.Stack,
+                        newVertexCreationSpace_copy);
+            }
         }
 
         // +=
@@ -516,31 +689,101 @@ namespace m0.ZeroUML.Instructions
             if (leftExpression == null || rightExpression == null)
                 return exe.Stack;
 
-            INoInEdgeInOutVertexVertex leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, leftExpression);
+            bool collapseQueryResults =
+                string.Equals(
+                    GetIs(leftExpression)?.Value?.ToString(),
+                    "Query",
+                    StringComparison.Ordinal) &&
+                GetNextExpression(leftExpression) == null;
+            bool previousCollapseQueryResults =
+                exe.CollapseQueryResultsByFromMeta;
+            INoInEdgeInOutVertexVertex leftExecuteResult;
+
+            try
+            {
+                exe.CollapseQueryResultsByFromMeta =
+                    collapseQueryResults;
+                leftExecuteResult =
+                    exe.ExecuteInstructionByMontevideoPrinciples(
+                        exe.Stack,
+                        leftExpression);
+            }
+            finally
+            {
+                exe.CollapseQueryResultsByFromMeta =
+                    previousCollapseQueryResults;
+            }
 
             //INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
 
             IVertex newVertexCreationSpace_copy = exe.NewVertexCreationSpace;
-            exe.NewVertexCreationSpace = CreateStack();
+            INoInEdgeInOutVertexVertex rightStack = CreateStack();
+            INoInEdgeInOutVertexVertex _rightExecuteResult = null;
 
-            INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, rightExpression);
-
-            exe.NewVertexCreationSpace = newVertexCreationSpace_copy;
-            // NEW
-
-            IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
-
-            IDictionary<EdgeKey_FromMeta, IList<IEdge>> leftFromMeta_dict = CreateEdgeKey_FromMetaDictionary(leftExecuteResult);
-
-            foreach (KeyValuePair<EdgeKey_FromMeta, IList<IEdge>> localLeft in leftFromMeta_dict)
+            try
             {
-                IEdge toAdd = localLeft.Value[0];
+                exe.NewVertexCreationSpace = rightStack;
+                _rightExecuteResult =
+                    exe.ExecuteInstructionByMontevideoPrinciples(
+                        exe.Stack,
+                        rightExpression);
 
-                foreach (IEdge e in rightExecuteResult)
-                    toAdd.From.AddEdge(toAdd.Meta, e.To);
+                // NEW
+
+                IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
+
+                if (leftExecuteResult.OutEdges.Count == 1)
+                {
+                    IEdge toAdd =
+                        leftExecuteResult.OutEdges[0];
+
+                    foreach (IEdge e in rightExecuteResult)
+                        toAdd.From.AddEdge(toAdd.Meta, e.To);
+                }
+                else
+                {
+                    IDictionary<EdgeKey_FromMeta, IEdge> leftFromMeta_dict =
+                        CreateEdgeKey_FromMetaFirstDictionary(
+                            leftExecuteResult);
+
+                    foreach (KeyValuePair<EdgeKey_FromMeta, IEdge> localLeft in leftFromMeta_dict)
+                    {
+                        IEdge toAdd = localLeft.Value;
+
+                        foreach (IEdge e in rightExecuteResult)
+                            toAdd.From.AddEdge(toAdd.Meta, e.To);
+                    }
+                }
+
+                return exe.Stack;
             }
+            finally
+            {
+                exe.NewVertexCreationSpace =
+                    newVertexCreationSpace_copy;
 
-            return exe.Stack;
+                ReleaseTemporaryStack(
+                    leftExecuteResult,
+                    inputStack,
+                    exe.Stack,
+                    newVertexCreationSpace_copy);
+
+                if (!ReferenceEquals(
+                    _rightExecuteResult,
+                    rightStack))
+                    ReleaseTemporaryStack(
+                        _rightExecuteResult,
+                        inputStack,
+                        exe.Stack,
+                        newVertexCreationSpace_copy);
+
+                if (rightStack.OutEdgesRaw.Count == 0)
+                    ReleaseTemporaryStack(
+                        rightStack,
+                        inputStack,
+                        exe.Stack,
+                        newVertexCreationSpace_copy);
+            }
         }
 
         // +<
@@ -739,7 +982,7 @@ namespace m0.ZeroUML.Instructions
 
             exe.NewVertexCreationSpace = newVertexCreationSpace_copy;
 
-            if (leftExecuteResult.Count() > 0)
+            if (leftExecuteResult.OutEdges.Count > 0)
             {
                 foreach (IEdge e in leftExecuteResult)
                     VertexOperations.CopyEdgesSet(rightExecuteResult.OutEdges, e.To);
@@ -769,7 +1012,7 @@ namespace m0.ZeroUML.Instructions
 
             exe.NewVertexCreationSpace = newVertexCreationSpace_copy;
 
-            if (leftExecuteResult.Count() > 0)
+            if (leftExecuteResult.OutEdges.Count > 0)
             {
                 foreach (IEdge e in leftExecuteResult)
                     VertexOperations.MoveEdgesSet(rightExecuteResult.OutEdges, e.To);
@@ -799,7 +1042,7 @@ namespace m0.ZeroUML.Instructions
 
             exe.NewVertexCreationSpace = newVertexCreationSpace_copy;
 
-            if (leftExecuteResult.Count() > 0)
+            if (leftExecuteResult.OutEdges.Count > 0)
             {
                 foreach (IEdge e in leftExecuteResult)
                     VertexOperations.CopyAndReplaceEdgesSet(rightExecuteResult.OutEdges, e.To);
@@ -829,7 +1072,7 @@ namespace m0.ZeroUML.Instructions
 
             exe.NewVertexCreationSpace = newVertexCreationSpace_copy;
 
-            if (leftExecuteResult.Count() > 0)
+            if (leftExecuteResult.OutEdges.Count > 0)
             {
                 foreach (IEdge e in leftExecuteResult)
                     VertexOperations.MoveAndReplaceEdgesSet(rightExecuteResult.OutEdges, e.To);
@@ -933,7 +1176,7 @@ namespace m0.ZeroUML.Instructions
 
             INoInEdgeInOutVertexVertex localStack = CreateStack();
 
-            localStack.AddVertex(null, inputStack.OutEdges.Count());
+            localStack.AddVertex(null, inputStack.OutEdges.Count);
 
             return localStack;
         }
@@ -970,34 +1213,91 @@ namespace m0.ZeroUML.Instructions
             INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, leftExpression);
             INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, rightExpression);
 
-            IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
-            IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
-
-            NumericTypeEnum leftResultType;
-            NumericTypeEnum rightResultType;
-
-            IList<object> leftNumbers = GetNumberList(leftExecuteResult, out leftResultType);
-            IList<object> rightNumbers = GetNumberList(rightExecuteResult, out rightResultType);
-
-            if (leftNumbers.Count == 0)
-                return CreateStackAndCopy(rightExecuteResult);
-
-            if (rightNumbers.Count == 0)
-                return CreateStackAndCopy(leftExecuteResult);
-
-            switch (GetCommonNubmerResultDenominator(leftResultType, rightResultType))
+            try
             {
-                case NumericTypeEnum.Integer:
-                    return _Add_Logic_int(leftNumbers, rightNumbers); // can not use generics when doing T + T
+                IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
+                IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 
-                case NumericTypeEnum.Double:
-                    return _Add_Logic_double(leftNumbers, rightNumbers);
+                if (TryGetSingleNumber(
+                        leftExecuteResult,
+                        out object leftNumber,
+                        out NumericTypeEnum singleLeftResultType) &&
+                    TryGetSingleNumber(
+                        rightExecuteResult,
+                        out object rightNumber,
+                        out NumericTypeEnum singleRightResultType))
+                {
+                    INoInEdgeInOutVertexVertex singleResult =
+                        CreateStack();
 
-                case NumericTypeEnum.Decimal:
-                    return _Add_Logic_decimal(leftNumbers, rightNumbers);
+                    switch (GetCommonNubmerResultDenominator(
+                        singleLeftResultType,
+                        singleRightResultType))
+                    {
+                        case NumericTypeEnum.Integer:
+                            singleResult.AddVertex(
+                                null,
+                                Convert.ToInt32(leftNumber) +
+                                Convert.ToInt32(rightNumber));
+                            break;
+
+                        case NumericTypeEnum.Double:
+                            singleResult.AddVertex(
+                                null,
+                                Convert.ToDouble(leftNumber) +
+                                Convert.ToDouble(rightNumber));
+                            break;
+
+                        case NumericTypeEnum.Decimal:
+                            singleResult.AddVertex(
+                                null,
+                                Convert.ToDecimal(leftNumber) +
+                                Convert.ToDecimal(rightNumber));
+                            break;
+                    }
+
+                    return singleResult;
+                }
+
+                NumericTypeEnum leftResultType;
+                NumericTypeEnum rightResultType;
+
+                IList<object> leftNumbers = GetNumberList(leftExecuteResult, out leftResultType);
+                IList<object> rightNumbers = GetNumberList(rightExecuteResult, out rightResultType);
+
+                if (leftNumbers.Count == 0)
+                    return CreateStackAndCopy(rightExecuteResult);
+
+                if (rightNumbers.Count == 0)
+                    return CreateStackAndCopy(leftExecuteResult);
+
+                switch (GetCommonNubmerResultDenominator(leftResultType, rightResultType))
+                {
+                    case NumericTypeEnum.Integer:
+                        return _Add_Logic_int(leftNumbers, rightNumbers); // can not use generics when doing T + T
+
+                    case NumericTypeEnum.Double:
+                        return _Add_Logic_double(leftNumbers, rightNumbers);
+
+                    case NumericTypeEnum.Decimal:
+                        return _Add_Logic_decimal(leftNumbers, rightNumbers);
+                }
+
+                return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
             }
-
-            return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
+            finally
+            {
+                ReleaseTemporaryStack(
+                    _leftExecuteResult,
+                    inputStack,
+                    exe.Stack,
+                    exe.NewVertexCreationSpace);
+                ReleaseTemporaryStack(
+                    _rightExecuteResult,
+                    inputStack,
+                    exe.Stack,
+                    exe.NewVertexCreationSpace);
+            }
         }
 
         static INoInEdgeInOutVertexVertex _Add_Logic_int(IList<object> leftNumbers, IList<object> rightNumbers)
@@ -1219,34 +1519,91 @@ namespace m0.ZeroUML.Instructions
             INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, leftExpression);
             INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, rightExpression);
 
-            IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
-            IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
-
-            NumericTypeEnum leftResultType;
-            NumericTypeEnum rightResultType;
-
-            IList<object> leftNumbers = GetNumberList(leftExecuteResult, out leftResultType);
-            IList<object> rightNumbers = GetNumberList(rightExecuteResult, out rightResultType);
-
-            if (leftNumbers.Count == 0)
-                return CreateStackAndCopy(rightExecuteResult);
-
-            if (rightNumbers.Count == 0)
-                return CreateStackAndCopy(leftExecuteResult);
-
-            switch (GetCommonNubmerResultDenominator(leftResultType, rightResultType))
+            try
             {
-                case NumericTypeEnum.Integer:
-                    return _Multiply_Logic_int(leftNumbers, rightNumbers); // can not use generics when doing T + T
+                IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
+                IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 
-                case NumericTypeEnum.Double:
-                    return _Multiply_Logic_double(leftNumbers, rightNumbers);
+                if (TryGetSingleNumber(
+                        leftExecuteResult,
+                        out object leftNumber,
+                        out NumericTypeEnum singleLeftResultType) &&
+                    TryGetSingleNumber(
+                        rightExecuteResult,
+                        out object rightNumber,
+                        out NumericTypeEnum singleRightResultType))
+                {
+                    INoInEdgeInOutVertexVertex singleResult =
+                        CreateStack();
 
-                case NumericTypeEnum.Decimal:
-                    return _Multiply_Logic_decimal(leftNumbers, rightNumbers);
+                    switch (GetCommonNubmerResultDenominator(
+                        singleLeftResultType,
+                        singleRightResultType))
+                    {
+                        case NumericTypeEnum.Integer:
+                            singleResult.AddVertex(
+                                null,
+                                Convert.ToInt32(leftNumber) *
+                                Convert.ToInt32(rightNumber));
+                            break;
+
+                        case NumericTypeEnum.Double:
+                            singleResult.AddVertex(
+                                null,
+                                Convert.ToDouble(leftNumber) *
+                                Convert.ToDouble(rightNumber));
+                            break;
+
+                        case NumericTypeEnum.Decimal:
+                            singleResult.AddVertex(
+                                null,
+                                Convert.ToDecimal(leftNumber) *
+                                Convert.ToDecimal(rightNumber));
+                            break;
+                    }
+
+                    return singleResult;
+                }
+
+                NumericTypeEnum leftResultType;
+                NumericTypeEnum rightResultType;
+
+                IList<object> leftNumbers = GetNumberList(leftExecuteResult, out leftResultType);
+                IList<object> rightNumbers = GetNumberList(rightExecuteResult, out rightResultType);
+
+                if (leftNumbers.Count == 0)
+                    return CreateStackAndCopy(rightExecuteResult);
+
+                if (rightNumbers.Count == 0)
+                    return CreateStackAndCopy(leftExecuteResult);
+
+                switch (GetCommonNubmerResultDenominator(leftResultType, rightResultType))
+                {
+                    case NumericTypeEnum.Integer:
+                        return _Multiply_Logic_int(leftNumbers, rightNumbers); // can not use generics when doing T + T
+
+                    case NumericTypeEnum.Double:
+                        return _Multiply_Logic_double(leftNumbers, rightNumbers);
+
+                    case NumericTypeEnum.Decimal:
+                        return _Multiply_Logic_decimal(leftNumbers, rightNumbers);
+                }
+
+                return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
             }
-
-            return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
+            finally
+            {
+                ReleaseTemporaryStack(
+                    _leftExecuteResult,
+                    inputStack,
+                    exe.Stack,
+                    exe.NewVertexCreationSpace);
+                ReleaseTemporaryStack(
+                    _rightExecuteResult,
+                    inputStack,
+                    exe.Stack,
+                    exe.NewVertexCreationSpace);
+            }
         }
 
         static INoInEdgeInOutVertexVertex _Multiply_Logic_int(IList<object> leftNumbers, IList<object> rightNumbers)
@@ -1477,49 +1834,65 @@ namespace m0.ZeroUML.Instructions
             INoInEdgeInOutVertexVertex _leftExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, leftExpression);
             INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, rightExpression);
 
-            IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
-            IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
-
-            int toBeProcessedCount;
-
-            INoInEdgeInOutVertexVertex localStack = CreateStack();
-
-            if (operationType == LogicDoubleOpertorEnum.ExactEqual &&
-                leftExecuteResult.Count != rightExecuteResult.Count)
+            try
             {
-                localStack.AddVertex(null, "False");
+                IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
+                IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
+
+                int toBeProcessedCount;
+
+                INoInEdgeInOutVertexVertex localStack = CreateStack();
+
+                if (operationType == LogicDoubleOpertorEnum.ExactEqual &&
+                    leftExecuteResult.Count != rightExecuteResult.Count)
+                {
+                    localStack.AddVertex(null, "False");
+                    return localStack;
+                }
+
+                if (leftExecuteResult.Count > rightExecuteResult.Count)
+                    toBeProcessedCount = rightExecuteResult.Count;
+                else
+                    toBeProcessedCount = leftExecuteResult.Count;
+
+                if (toBeProcessedCount == 0) // left and right empty
+                {
+                    localStack.AddVertex(null, leftAndRightResultsEmptyOperatorResult);
+                }
+                else
+                {
+                    for (int x = 0; x < toBeProcessedCount; x++)
+                    {
+                        bool logicalResult = false;
+
+                        IVertex leftVertex = leftExecuteResult[x].To;
+                        IVertex rightVertex = rightExecuteResult[x].To;
+
+                        logicalResult = LogicDoubleOperator_VertexLevel(leftVertex, rightVertex, operationType);
+
+                        if (logicalResult)
+                            localStack.AddVertex(null, "True");
+                        else
+                            localStack.AddVertex(null, "False");
+
+                    }
+                }
+
                 return localStack;
             }
-
-            if (leftExecuteResult.Count > rightExecuteResult.Count)
-                toBeProcessedCount = rightExecuteResult.Count;
-            else
-                toBeProcessedCount = leftExecuteResult.Count;
-
-            if (toBeProcessedCount == 0) // left and right empty
+            finally
             {
-                localStack.AddVertex(null, leftAndRightResultsEmptyOperatorResult);
+                ReleaseTemporaryStack(
+                    _leftExecuteResult,
+                    inputStack,
+                    exe.Stack,
+                    exe.NewVertexCreationSpace);
+                ReleaseTemporaryStack(
+                    _rightExecuteResult,
+                    inputStack,
+                    exe.Stack,
+                    exe.NewVertexCreationSpace);
             }
-            else
-            {
-                for (int x = 0; x < toBeProcessedCount; x++)
-                {
-                    bool logicalResult = false;
-
-                    IVertex leftVertex = leftExecuteResult[x].To;
-                    IVertex rightVertex = rightExecuteResult[x].To;
-
-                    logicalResult = LogicDoubleOperator_VertexLevel(leftVertex, rightVertex, operationType);
-
-                    if (logicalResult)
-                        localStack.AddVertex(null, "True");
-                    else
-                        localStack.AddVertex(null, "False");
-
-                }
-            }
-
-            return localStack;
         }
 
         enum LogicDoubleOpertorEnum { Equal, ExactEqual, VertexEqual, NotEqual, And, Or, MoreThan, LessThan, MoreOrEqualThan, LessOrEqualThan }
@@ -1544,6 +1917,13 @@ namespace m0.ZeroUML.Instructions
 
             if (leftNumber != null && rightNumber != null)
             {
+                if (leftNumber is int leftInteger &&
+                    rightNumber is int rightInteger)
+                    return LogicDoubleOperator_ExecuteInteger(
+                        leftInteger,
+                        rightInteger,
+                        operationType);
+
                 switch (GetCommonNumericTypeDenominator(leftNumber, rightNumber))
                 {
                     case NumericTypeEnum.Integer:
@@ -1569,6 +1949,35 @@ namespace m0.ZeroUML.Instructions
                 logicalResult = LogicDoubleOperator_ExecuteString(leftVertex, rightVertex, operationType);
 
             return logicalResult;
+        }
+
+        private static bool LogicDoubleOperator_ExecuteInteger(
+            int leftValue,
+            int rightValue,
+            LogicDoubleOpertorEnum operationType)
+        {
+            switch (operationType)
+            {
+                case LogicDoubleOpertorEnum.Equal:
+                case LogicDoubleOpertorEnum.ExactEqual:
+                    return leftValue == rightValue;
+                case LogicDoubleOpertorEnum.NotEqual:
+                    return leftValue != rightValue;
+                case LogicDoubleOpertorEnum.And:
+                    return leftValue > 0 && rightValue > 0;
+                case LogicDoubleOpertorEnum.Or:
+                    return leftValue > 0 || rightValue > 0;
+                case LogicDoubleOpertorEnum.MoreThan:
+                    return leftValue > rightValue;
+                case LogicDoubleOpertorEnum.LessThan:
+                    return leftValue < rightValue;
+                case LogicDoubleOpertorEnum.MoreOrEqualThan:
+                    return leftValue >= rightValue;
+                case LogicDoubleOpertorEnum.LessOrEqualThan:
+                    return leftValue <= rightValue;
+                default:
+                    return false;
+            }
         }
 
         private static bool LogicDoubleOperator_ExecuteNumeric<T>(T leftValue, T rightValue, LogicDoubleOpertorEnum operationType, T zeroValue)
@@ -1921,8 +2330,14 @@ namespace m0.ZeroUML.Instructions
 
                 // currently only one target BUT we can have set! of targets. to support this need to implement
                 // name based call params passing instead of only index based
-                if (targetExpressionExecution.Count() > 0)
+                if (targetExpressionExecution.OutEdges.Count > 0)
                     target = targetExpressionExecution.OutEdges[0].To;
+
+                ReleaseTemporaryStack(
+                    targetExpressionExecution,
+                    inputStack,
+                    exe.Stack,
+                    exe.NewVertexCreationSpace);
             }
 
             if (target == null)
@@ -1932,21 +2347,21 @@ namespace m0.ZeroUML.Instructions
 
             exe.Stack.AddEdge(functionTarget_meta, target); // to be able to know the function target vertex in the function body
 
-            IList<IEdge> expressions =
-                GraphUtil.GetQueryOut(
+            EdgeQueryResult expressions =
+                GraphUtil.GetQueryOutResult(
                     instructionVertex,
                     "Expression",
                     null);
-            IList<IEdge> inputParameters =
-                GraphUtil.GetQueryOut(
+            EdgeQueryResult inputParameters =
+                GraphUtil.GetQueryOutResult(
                     target,
                     "InputParameter",
                     null);
 
             int minParameters =
                 Math.Min(
-                    expressions.Count(),
-                    inputParameters.Count());
+                    expressions.Count,
+                    inputParameters.Count);
 
             for (int x = 0; x < minParameters; x++)
             {
@@ -1957,6 +2372,12 @@ namespace m0.ZeroUML.Instructions
 
                 foreach (IEdge e in expressionExecution)
                     exe.Stack.AddEdge(inputParameter, e.To);
+
+                ReleaseTemporaryStack(
+                    expressionExecution,
+                    inputStack,
+                    exe.Stack,
+                    exe.NewVertexCreationSpace);
             }
 
             //bool local_isStackFrameReturn;
@@ -1965,7 +2386,17 @@ namespace m0.ZeroUML.Instructions
 
             INoInEdgeInOutVertexVertex toReturnStack = target.Execute(exe);
 
+            INoInEdgeInOutVertexVertex completedFrame =
+                exe.Stack;
             exe.RemoveStackFrame(); // LEAVE NEW STACK
+            if (!ReferenceEquals(
+                toReturnStack,
+                completedFrame))
+                ReleaseTemporaryStack(
+                    completedFrame,
+                    inputStack,
+                    exe.Stack,
+                    exe.NewVertexCreationSpace);
 
             //if (local_isStackFrameReturn)
 
@@ -2021,8 +2452,21 @@ namespace m0.ZeroUML.Instructions
                     if (local_isStackFrameReturn)
                         break;
 
+                    INoInEdgeInOutVertexVertex completedFrame =
+                        exe.Stack;
                     exe.RemoveStackFrame();  // LEAVE NEW STACK
+                    ReleaseTemporaryStack(
+                        completedFrame,
+                        inputStack,
+                        exe.Stack,
+                        exe.NewVertexCreationSpace);
                 }
+
+                ReleaseTemporaryStack(
+                    setExecution,
+                    inputStack,
+                    exe.Stack,
+                    exe.NewVertexCreationSpace);
 
                 if (local_isStackFrameReturn)
                     return possibleToReturnStack;
@@ -2060,8 +2504,21 @@ namespace m0.ZeroUML.Instructions
                     if (local_isStackFrameReturn)
                         break;
 
+                    INoInEdgeInOutVertexVertex completedFrame =
+                        exe.Stack;
                     exe.RemoveStackFrame();  // LEAVE NEW STACK
+                    ReleaseTemporaryStack(
+                        completedFrame,
+                        inputStack,
+                        exe.Stack,
+                        exe.NewVertexCreationSpace);
                 }
+
+                ReleaseTemporaryStack(
+                    setExecution,
+                    inputStack,
+                    exe.Stack,
+                    exe.NewVertexCreationSpace);
 
                 if (local_isStackFrameReturn)
                     return possibleToReturnStack;
@@ -2097,13 +2554,43 @@ namespace m0.ZeroUML.Instructions
                         break;
 
 
-                    testResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, test);
+                    INoInEdgeInOutVertexVertex previousTestResult =
+                        testResult;
+                    testResult =
+                        exe.ExecuteInstructionByMontevideoPrinciples(
+                            exe.Stack,
+                            test);
+                    ReleaseTemporaryStack(
+                        previousTestResult,
+                        inputStack,
+                        exe.Stack,
+                        exe.NewVertexCreationSpace);
 
+                    INoInEdgeInOutVertexVertex completedFrame =
+                        exe.Stack;
                     exe.RemoveStackFrame(); // LEAVE NEW STACK
+                    ReleaseTemporaryStack(
+                        completedFrame,
+                        inputStack,
+                        exe.Stack,
+                        exe.NewVertexCreationSpace);
                 }
 
                 if (local_isStackFrameReturn)
+                {
+                    ReleaseTemporaryStack(
+                        testResult,
+                        inputStack,
+                        exe.Stack,
+                        exe.NewVertexCreationSpace);
                     return possibleToReturnStack;
+                }
+
+                ReleaseTemporaryStack(
+                    testResult,
+                    inputStack,
+                    exe.Stack,
+                    exe.NewVertexCreationSpace);
             }
 
             return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
@@ -2592,8 +3079,8 @@ namespace m0.ZeroUML.Instructions
 
             int minParameters =
                 Math.Min(
-                    parameterExpressions.Count(),
-                    inputParameters.Count());
+                    parameterExpressions.Count,
+                    inputParameters.Count);
 
             exe.AddStackFrame(theObject); // ENTER NEW STACK
             exe.AddStackFrame();

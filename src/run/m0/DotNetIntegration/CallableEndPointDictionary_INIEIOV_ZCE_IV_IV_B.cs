@@ -2,7 +2,7 @@
 using m0.Graph;
 using m0.ZeroCode;
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -21,7 +21,8 @@ namespace m0.DotNetIntegration
     {
         delegate INoInEdgeInOutVertexVertex CallableEndPointDelegate(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool IsStackFrameReturn);
 
-        static Dictionary<IVertex, CallableEndPointDelegate> DotNetEndPointDictionary = new Dictionary<IVertex, CallableEndPointDelegate>();
+        static ConcurrentDictionary<IVertex, CallableEndPointDelegate> DotNetEndPointDictionary =
+            new ConcurrentDictionary<IVertex, CallableEndPointDelegate>();
 
         public static INoInEdgeInOutVertexVertex CallEndPoint(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex)
         {
@@ -32,28 +33,64 @@ namespace m0.DotNetIntegration
 
         public static INoInEdgeInOutVertexVertex CallEndPoint(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool IsStackFrameReturn)
         {
-            IsStackFrameReturn = false;
-
-            CallableEndPointDelegate del = null;
-
             IVertex _is = GraphUtil.GetQueryOutFirst(instructionVertex, "$Is", null);
 
             if (_is == null)
+            {
+                IsStackFrameReturn = false;
                 return null;
+            }
 
-            bool endpointCacheHit =
-                DotNetEndPointDictionary.ContainsKey(_is);
+            return CallEndPoint(
+                exe,
+                inputStack,
+                instructionVertex,
+                _is,
+                out IsStackFrameReturn);
+        }
+
+        internal static INoInEdgeInOutVertexVertex CallEndPoint(
+            ZeroCodeExecution exe,
+            IVertex inputStack,
+            IVertex instructionVertex,
+            IVertex instructionType,
+            out bool IsStackFrameReturn)
+        {
+            TryCallEndPoint(
+                exe,
+                inputStack,
+                instructionVertex,
+                instructionType,
+                out INoInEdgeInOutVertexVertex result,
+                out IsStackFrameReturn);
+            return result;
+        }
+
+        internal static bool TryCallEndPoint(
+            ZeroCodeExecution exe,
+            IVertex inputStack,
+            IVertex instructionVertex,
+            IVertex instructionType,
+            out INoInEdgeInOutVertexVertex result,
+            out bool IsStackFrameReturn)
+        {
+            IsStackFrameReturn = false;
+            result = null;
+
+            CallableEndPointDelegate del;
+
+            bool endpointCacheHit = DotNetEndPointDictionary.TryGetValue(
+                instructionType,
+                out del);
             ZeroCodePerformanceCounters.RecordEndpointCacheLookup(
                 endpointCacheHit);
 
-            if (endpointCacheHit)
-                del = DotNetEndPointDictionary[_is];
-            else
+            if (!endpointCacheHit)
             {            
-                IVertex ep = GraphUtil.GetQueryOutFirst(_is, "$ExecutableEndPoint", null);
+                IVertex ep = GraphUtil.GetQueryOutFirst(instructionType, "$ExecutableEndPoint", null);
 
                 if (ep == null)
-                    return null;
+                    return false;
 
                 if (GraphUtil.GetQueryOutFirst(ep, "$Is", "DotNetStaticMethod") != null)
                 {
@@ -67,13 +104,20 @@ namespace m0.DotNetIntegration
                 }
 
                 if (del != null)
-                    DotNetEndPointDictionary.Add(_is, del);
+                    DotNetEndPointDictionary.TryAdd(
+                        instructionType,
+                        del);
             }
 
             if (del == null)
-                return null;
+                return true;
 
-            return del.Invoke(exe, inputStack, instructionVertex, out IsStackFrameReturn);            
+            result = del.Invoke(
+                exe,
+                inputStack,
+                instructionVertex,
+                out IsStackFrameReturn);
+            return true;
         }
     }
 }

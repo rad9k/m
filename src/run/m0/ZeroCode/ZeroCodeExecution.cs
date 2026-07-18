@@ -20,7 +20,9 @@ namespace m0.ZeroCode
 
         public IVertex NewVertexCreationSpace { get; set; }
 
-        public bool MetaMode { get; set; }        
+        public bool MetaMode { get; set; }
+
+        internal bool CollapseQueryResultsByFromMeta { get; set; }
 
         public ZeroCodeExecution()
         {
@@ -144,13 +146,22 @@ namespace m0.ZeroCode
             try
             {
                 is_v = InstructionHelpers.GetIs(instructionVertex);
+                INoInEdgeInOutVertexVertex endpointResult = null;
                 bool isExecutable =
-                    InstructionHelpers.CheckIfHasExecutableEndPoint(is_v);
+                    is_v != null &&
+                    CallableEndPointDictionary_INIEIOV_ZCE_IV_IV_B
+                        .TryCallEndPoint(
+                            this,
+                            inputQs,
+                            instructionVertex,
+                            is_v,
+                            out endpointResult,
+                            out isStackFrameReturn);
                 ZeroCodePerformanceCounters.RecordInstructionResolution(
                     isExecutable);
 
                 if (isExecutable)  // execute if you can.....
-                    return CallableEndPointDictionary_INIEIOV_ZCE_IV_IV_B.CallEndPoint(this, inputQs, instructionVertex, out isStackFrameReturn);
+                    return endpointResult;
 
                 // ...OR...
                 INoInEdgeInOutVertexVertex stack_ = InstructionHelpers.CreateStack();
@@ -177,13 +188,22 @@ namespace m0.ZeroCode
             try
             {
                 is_v = InstructionHelpers.GetIs(instructionVertex);
+                INoInEdgeInOutVertexVertex endpointResult = null;
                 bool isExecutable =
-                    InstructionHelpers.CheckIfHasExecutableEndPoint(is_v);
+                    is_v != null &&
+                    CallableEndPointDictionary_INIEIOV_ZCE_IV_IV_B
+                        .TryCallEndPoint(
+                            this,
+                            inputQs,
+                            instructionVertex,
+                            is_v,
+                            out endpointResult,
+                            out isStackFrameReturn);
                 ZeroCodePerformanceCounters.RecordInstructionResolution(
                     isExecutable);
 
                 if (isExecutable)  // execute if you can
-                    return CallableEndPointDictionary_INIEIOV_ZCE_IV_IV_B.CallEndPoint(this, inputQs, instructionVertex, out isStackFrameReturn);
+                    return endpointResult;
 
                 return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputQs);
             }

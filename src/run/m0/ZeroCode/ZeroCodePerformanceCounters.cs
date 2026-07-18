@@ -29,10 +29,14 @@ namespace m0.ZeroCode
         long InnerOperatorCalls,
         long InnerOperatorNestedExecutions,
         long ColonOperatorQueryCombinations,
+        long CollapsedAssignmentQueryEdges,
         long ForVertexIterations,
         long ForEdgeIterations,
         long WhileIterations,
-        long CreatedStacks,
+        long StackRequests,
+        long AllocatedStacks,
+        long ReusedStacks,
+        long ReturnedStacks,
         long OriginalStackEdgeBatches,
         long OriginalStackEdgesBatched,
         long StackParentFrameCacheHits,
@@ -86,10 +90,14 @@ namespace m0.ZeroCode
         private static long innerOperatorCalls;
         private static long innerOperatorNestedExecutions;
         private static long colonOperatorQueryCombinations;
+        private static long collapsedAssignmentQueryEdges;
         private static long forVertexIterations;
         private static long forEdgeIterations;
         private static long whileIterations;
-        private static long createdStacks;
+        private static long stackRequests;
+        private static long allocatedStacks;
+        private static long reusedStacks;
+        private static long returnedStacks;
         private static long originalStackEdgeBatches;
         private static long originalStackEdgesBatched;
         private static long stackParentFrameCacheHits;
@@ -117,10 +125,14 @@ namespace m0.ZeroCode
             Interlocked.Exchange(ref innerOperatorCalls, 0);
             Interlocked.Exchange(ref innerOperatorNestedExecutions, 0);
             Interlocked.Exchange(ref colonOperatorQueryCombinations, 0);
+            Interlocked.Exchange(ref collapsedAssignmentQueryEdges, 0);
             Interlocked.Exchange(ref forVertexIterations, 0);
             Interlocked.Exchange(ref forEdgeIterations, 0);
             Interlocked.Exchange(ref whileIterations, 0);
-            Interlocked.Exchange(ref createdStacks, 0);
+            Interlocked.Exchange(ref stackRequests, 0);
+            Interlocked.Exchange(ref allocatedStacks, 0);
+            Interlocked.Exchange(ref reusedStacks, 0);
+            Interlocked.Exchange(ref returnedStacks, 0);
             Interlocked.Exchange(ref originalStackEdgeBatches, 0);
             Interlocked.Exchange(ref originalStackEdgesBatched, 0);
             Interlocked.Exchange(ref stackParentFrameCacheHits, 0);
@@ -162,10 +174,14 @@ namespace m0.ZeroCode
                 Volatile.Read(ref innerOperatorCalls),
                 Volatile.Read(ref innerOperatorNestedExecutions),
                 Volatile.Read(ref colonOperatorQueryCombinations),
+                Volatile.Read(ref collapsedAssignmentQueryEdges),
                 Volatile.Read(ref forVertexIterations),
                 Volatile.Read(ref forEdgeIterations),
                 Volatile.Read(ref whileIterations),
-                Volatile.Read(ref createdStacks),
+                Volatile.Read(ref stackRequests),
+                Volatile.Read(ref allocatedStacks),
+                Volatile.Read(ref reusedStacks),
+                Volatile.Read(ref returnedStacks),
                 Volatile.Read(ref originalStackEdgeBatches),
                 Volatile.Read(ref originalStackEdgesBatched),
                 Volatile.Read(ref stackParentFrameCacheHits),
@@ -210,10 +226,18 @@ namespace m0.ZeroCode
                 .Append(", inner-nested=")
                 .Append(snapshot.InnerOperatorNestedExecutions)
                 .Append(", colon-query-combinations=")
+                .Append(snapshot.ColonOperatorQueryCombinations)
+                .Append(", collapsed-assignment-query-edges=")
                 .AppendLine(
-                    snapshot.ColonOperatorQueryCombinations.ToString());
-            report.Append("temporary stacks: created=")
-                .Append(snapshot.CreatedStacks)
+                    snapshot.CollapsedAssignmentQueryEdges.ToString());
+            report.Append("temporary stacks: requests=")
+                .Append(snapshot.StackRequests)
+                .Append(", allocated=")
+                .Append(snapshot.AllocatedStacks)
+                .Append(", reused=")
+                .Append(snapshot.ReusedStacks)
+                .Append(", returned=")
+                .Append(snapshot.ReturnedStacks)
                 .Append(", original-edge-batches=")
                 .Append(snapshot.OriginalStackEdgeBatches)
                 .Append(", original-edges-batched=")
@@ -388,6 +412,15 @@ namespace m0.ZeroCode
                     queryCombinations);
         }
 
+        internal static void RecordCollapsedAssignmentQueryEdges(
+            long edgeCount)
+        {
+            if (Enabled)
+                Interlocked.Add(
+                    ref collapsedAssignmentQueryEdges,
+                    edgeCount);
+        }
+
         internal static void RecordForVertexIteration()
         {
             if (Enabled)
@@ -406,10 +439,22 @@ namespace m0.ZeroCode
                 Interlocked.Increment(ref whileIterations);
         }
 
-        internal static void RecordStackCreated()
+        internal static void RecordStackCreated(bool reused)
+        {
+            if (!Enabled)
+                return;
+
+            Interlocked.Increment(ref stackRequests);
+            if (reused)
+                Interlocked.Increment(ref reusedStacks);
+            else
+                Interlocked.Increment(ref allocatedStacks);
+        }
+
+        internal static void RecordStackReturnedToPool()
         {
             if (Enabled)
-                Interlocked.Increment(ref createdStacks);
+                Interlocked.Increment(ref returnedStacks);
         }
 
         internal static void RecordOriginalStackEdgeBatch(int edgeCount)

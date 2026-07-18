@@ -2,6 +2,7 @@ using m0;
 using m0.FormalTextLanguage;
 using m0.Foundation;
 using m0.Graph;
+using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
 using m0_graph_test_support;
 
@@ -31,6 +32,66 @@ public sealed class ZeroCodePerformanceWorkloadTests
             programName => Assert.Contains(programName, programNames));
     }
 
+    [Fact]
+    public void FreshPerformanceWorkloadExecutesWithoutReportedErrors()
+    {
+        IEdge parsedRootEdge = ParseWorkload();
+        RecordingUserInteraction userInteraction =
+            new RecordingUserInteraction();
+        IUserInteraction previousUserInteraction =
+            MinusZero.Instance.UserInteraction;
+        MinusZero.Instance.SetUserInteraction(userInteraction);
+
+        try
+        {
+            foreach (string programName in
+                ZeroCodePerformanceWorkload.ProgramNames)
+            {
+                IVertex program = parsedRootEdge.To
+                    .OutEdgesRaw
+                    .Single(
+                        edge => string.Equals(
+                            edge.To?.Value?.ToString(),
+                            programName,
+                            StringComparison.Ordinal))
+                    .To;
+                int previousErrorCount =
+                    userInteraction.Exceptions.Count;
+                IVertex result =
+                    MinusZero.Instance.DefaultExecuter.Execute(
+                        InstructionHelpers.CreateStack(),
+                        program);
+
+                Assert.NotNull(result);
+                Assert.Equal(
+                    previousErrorCount,
+                    userInteraction.Exceptions.Count);
+
+                if (programName == "Code7")
+                    Assert.Equal(
+                        4369,
+                        GraphUtil.GetQueryOutCount(
+                            result,
+                            "E",
+                            null));
+                else if (programName == "Code8")
+                    Assert.Equal(
+                        100001,
+                        Convert.ToInt32(
+                            GraphUtil.GetQueryOutFirst(
+                                result,
+                                "A",
+                                null)
+                                ?.Value));
+            }
+        }
+        finally
+        {
+            MinusZero.Instance.SetUserInteraction(
+                previousUserInteraction);
+        }
+    }
+
     private static IEdge ParseWorkload()
     {
         IVertex parseParent = MinusZero.Instance.TempStore.Root
@@ -58,5 +119,18 @@ public sealed class ZeroCodePerformanceWorkloadTests
                             "<error without value>")));
         Assert.NotNull(parsedRootEdge);
         return parsedRootEdge;
+    }
+
+    private sealed class RecordingUserInteraction
+        : NoOpUserInteraction
+    {
+        internal List<IVertex> Exceptions { get; } =
+            new List<IVertex>();
+
+        public override void InteractionOutputException(
+            IVertex exception)
+        {
+            Exceptions.Add(exception);
+        }
     }
 }

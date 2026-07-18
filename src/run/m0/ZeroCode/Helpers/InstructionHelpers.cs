@@ -14,14 +14,59 @@ namespace m0.ZeroCode.Helpers
 {
     public class InstructionHelpers
     {
+        private const int MaximumTemporaryStackPoolSize = 128;
+
+        [ThreadStatic]
+        private static Stack<NoInEdgeInOutVertexVertex>
+            temporaryStackPool;
+
         public static INoInEdgeInOutVertexVertex CreateStack()
         {
-            INoInEdgeInOutVertexVertex stack =
+            Stack<NoInEdgeInOutVertexVertex> pool =
+                temporaryStackPool;
+            if (pool != null && pool.Count > 0)
+            {
+                NoInEdgeInOutVertexVertex reusedStack =
+                    pool.Pop();
+                reusedStack.PrepareAfterTemporaryPoolRent();
+                ZeroCodePerformanceCounters.RecordStackCreated(
+                    true);
+                return reusedStack;
+            }
+
+            INoInEdgeInOutVertexVertex newStack =
                 new NoInEdgeInOutVertexVertex(
                 MinusZero.Instance.TempStore,
                 VertexIdentifierRegistrationMode.Ephemeral);
-            ZeroCodePerformanceCounters.RecordStackCreated();
-            return stack;
+            ZeroCodePerformanceCounters.RecordStackCreated(
+                false);
+            return newStack;
+        }
+
+        public static bool ReleaseTemporaryStack(
+            INoInEdgeInOutVertexVertex stack,
+            IVertex protectedVertex1 = null,
+            IVertex protectedVertex2 = null,
+            IVertex protectedVertex3 = null)
+        {
+            if (stack == null ||
+                ReferenceEquals(stack, protectedVertex1) ||
+                ReferenceEquals(stack, protectedVertex2) ||
+                ReferenceEquals(stack, protectedVertex3) ||
+                !(stack is NoInEdgeInOutVertexVertex reusableStack))
+                return false;
+
+            Stack<NoInEdgeInOutVertexVertex> pool =
+                temporaryStackPool ??=
+                    new Stack<NoInEdgeInOutVertexVertex>();
+            if (pool.Count >= MaximumTemporaryStackPoolSize ||
+                !reusableStack.TryResetForTemporaryPool())
+                return false;
+
+            pool.Push(reusableStack);
+            ZeroCodePerformanceCounters
+                .RecordStackReturnedToPool();
+            return true;
         }
 
         public static void AddToStack_BAD_BEHAVIOR_IEdge_MANY_TIMES(INoInEdgeInOutVertexVertex destination, IEnumerable<IEdge> source)
@@ -190,17 +235,34 @@ namespace m0.ZeroCode.Helpers
             {
                 EdgeKey_FromMeta ekfm = new EdgeKey_FromMeta(e);
 
-                if (dict.ContainsKey(ekfm))
-                    dict[ekfm].Add(e);
+                if (dict.TryGetValue(
+                    ekfm,
+                    out IList<IEdge> existingEdges))
+                    existingEdges.Add(e);
                 else
                 {
-                    IList<IEdge> list = new List<IEdge>();
-                    list.Add(e);
-                    dict.Add(ekfm, list);
+                    dict.Add(
+                        ekfm,
+                        new List<IEdge> { e });
                 }
             }
 
             return dict;
+        }
+
+        public static IDictionary<EdgeKey_FromMeta, IEdge>
+            CreateEdgeKey_FromMetaFirstDictionary(
+                INoInEdgeInOutVertexVertex queryResult)
+        {
+            IDictionary<EdgeKey_FromMeta, IEdge> dictionary =
+                new Dictionary<EdgeKey_FromMeta, IEdge>();
+
+            foreach (IEdge edge in queryResult)
+                dictionary.TryAdd(
+                    new EdgeKey_FromMeta(edge),
+                    edge);
+
+            return dictionary;
         }
 
         public static IList<IEdge> CreateEdgeKey_MetaToEdgesList(INoInEdgeInOutVertexVertex queryResult)
@@ -234,6 +296,31 @@ namespace m0.ZeroCode.Helpers
         }
 
         public enum NumericTypeEnum { Integer, Double, Decimal }
+
+        public static bool TryGetSingleNumber(
+            IList<IEdge> edges,
+            out object number,
+            out NumericTypeEnum resultType)
+        {
+            number = null;
+            resultType = NumericTypeEnum.Decimal;
+
+            if (edges == null || edges.Count != 1)
+                return false;
+
+            GraphUtil.GetNumberValue(
+                edges[0].To,
+                out number);
+            if (number == null)
+                return false;
+
+            if (number is int)
+                resultType = NumericTypeEnum.Integer;
+            else if (number is double)
+                resultType = NumericTypeEnum.Double;
+
+            return true;
+        }
 
         public static IList<object> GetNumberList(IList<IEdge> edges, out NumericTypeEnum resultType)
         {
@@ -315,7 +402,7 @@ namespace m0.ZeroCode.Helpers
 
         public static bool IsTrue_Stack(IVertex baseVertex)
         {
-            if (baseVertex == null || baseVertex.Count() == 0)
+            if (baseVertex == null || baseVertex.OutEdges.Count == 0)
                 return false;
 
             foreach (IEdge e in baseVertex)

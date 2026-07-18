@@ -7,43 +7,42 @@ using System.Threading.Tasks;
 
 namespace m0.ZeroCode.Helpers
 {
-    public class EdgeKey_FromMeta
+    public readonly struct EdgeKey_FromMeta
+        : IEquatable<EdgeKey_FromMeta>
     {
-        public IEdge edge;
+        private readonly IVertex from;
+        private readonly IVertex meta;
 
         public EdgeKey_FromMeta(IEdge _edge)
         {
-            edge = _edge;
+            from = _edge.From;
+            meta = _edge.Meta;
         }
 
         public override int GetHashCode()
         {
-            if (edge.From!=null && edge.Meta!=null)
-                return edge.From.GetHashCode() + edge.Meta.GetHashCode();
+            if (from != null && meta != null)
+                return from.GetHashCode() + meta.GetHashCode();
 
-            if (edge.From != null)
-                return edge.From.GetHashCode();
+            if (from != null)
+                return from.GetHashCode();
 
-            if (edge.Meta != null)
-                return -1 * edge.Meta.GetHashCode();
+            if (meta != null)
+                return -1 * meta.GetHashCode();
 
             return 0;
         }
 
         public override bool Equals(object obj)
         {
-            if (obj == null || GetType() != obj.GetType())
-                return false;
+            return obj is EdgeKey_FromMeta other &&
+                Equals(other);
+        }
 
-            EdgeKey_FromMeta other = (EdgeKey_FromMeta)obj;
-
-            if (this.edge.From != other.edge.From)
-                return false;
-
-            if (this.edge.Meta != other.edge.Meta)
-                return false;
-
-            return true;
+        public bool Equals(EdgeKey_FromMeta other)
+        {
+            return ReferenceEquals(from, other.from) &&
+                ReferenceEquals(meta, other.meta);
         }
     }
 }

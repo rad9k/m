@@ -19,6 +19,11 @@ namespace m0.Graph
         [NonSerialized]
         private object cachedParentStackFrame;
 
+        [NonSerialized]
+        private bool isInTemporaryPool;
+
+        private readonly bool canUseTemporaryPool;
+
         public NoInEdgeInOutVertexVertex(IStore store)
             : this(
                 store,
@@ -36,6 +41,12 @@ namespace m0.Graph
         {
             AllowInheritance = false;
             CanEmitGraphChangeEvents = false;
+            canUseTemporaryPool =
+                registrationMode ==
+                    VertexIdentifierRegistrationMode.Ephemeral &&
+                ReferenceEquals(
+                    store,
+                    MinusZero.Instance.TempStore);
         }
 
         protected override IVertex CreateVertexInstance()
@@ -231,6 +242,32 @@ namespace m0.Graph
         private void InvalidateParentStackFrameCache()
         {
             cachedParentStackFrame = null;
+        }
+
+        internal bool TryResetForTemporaryPool()
+        {
+            if (!canUseTemporaryPool ||
+                isInTemporaryPool ||
+                ExternalReferenceCount != 0 ||
+                edgeDictionaries.InCount != 0 ||
+                edgeDictionaries.MetaInCount != 0)
+                return false;
+
+            edgeDictionaries.Out.Clear();
+            ClearDictionaries();
+            cachedParentStackFrame = null;
+            Value = "";
+            isInTemporaryPool = true;
+            return true;
+        }
+
+        internal void PrepareAfterTemporaryPoolRent()
+        {
+            if (!isInTemporaryPool)
+                throw new InvalidOperationException(
+                    "The ZeroCode stack was not in the temporary pool.");
+
+            isInTemporaryPool = false;
         }
     }
 }

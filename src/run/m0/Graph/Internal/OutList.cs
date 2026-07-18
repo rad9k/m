@@ -102,8 +102,7 @@ namespace m0.Graph.Internal
                 easyVertex.HandleLocalOutEdgeMutation(
                     item,
                     true,
-                    !edgeDictionaries
-                        .NoInEdgeInOutVertexVertexMode);
+                    true);
             else
                 edgeDictionaries.Vertex
                     .OutEdgesDictionariesNeedsRebuild = true;
@@ -146,8 +145,7 @@ namespace m0.Graph.Internal
                 easyVertex.HandleLocalOutEdgeMutation(
                     item,
                     false,
-                    !edgeDictionaries
-                        .NoInEdgeInOutVertexVertexMode);
+                    true);
             else
                 edgeDictionaries.Vertex
                     .OutEdgesDictionariesNeedsRebuild = true;
