@@ -129,6 +129,57 @@ public sealed class FileSystemInvariantTests
     }
 
     [Fact]
+    public void FileRenameInvalidatesCachedOverlayMetadata()
+    {
+        var directoryName = CreateTemporaryDirectory();
+        var oldFileName =
+            Path.Combine(directoryName, "before.bin");
+        var newFileName =
+            Path.Combine(directoryName, "after.dat");
+        File.WriteAllText(oldFileName, "content");
+        var store = CreateFileSystemStore(directoryName);
+        var root = store.Root;
+        _ = root.OutEdges;
+        var fileVertex =
+            Assert.IsType<FileVertex>(
+                GraphUtil.GetQueryOutFirst(
+                    root,
+                    "File",
+                    "before.bin"));
+
+        try
+        {
+            Assert.Single(
+                GraphUtil.GetQueryOut(
+                    fileVertex,
+                    "Filename",
+                    "before.bin"));
+
+            fileVertex.Value = "after.dat";
+
+            Assert.Empty(
+                GraphUtil.GetQueryOut(
+                    fileVertex,
+                    "Filename",
+                    "before.bin"));
+            Assert.Single(
+                GraphUtil.GetQueryOut(
+                    fileVertex,
+                    "Filename",
+                    "after.dat"));
+            Assert.True(File.Exists(newFileName));
+        }
+        finally
+        {
+            RemoveFileSystemStore(
+                store,
+                fileVertex,
+                root);
+            Directory.Delete(directoryName, true);
+        }
+    }
+
+    [Fact]
     public void FailedFileMovePreservesIdentifierAndRegistry()
     {
         if (!OperatingSystem.IsWindows())
@@ -235,6 +286,180 @@ public sealed class FileSystemInvariantTests
         finally
         {
             RemoveFileSystemStore(store, child, root);
+            Directory.Delete(directoryName, true);
+        }
+    }
+
+    [Fact]
+    public void FileContentQueriesReadOnlyWhenContentIsRequested()
+    {
+        var directoryName = CreateTemporaryDirectory();
+        var fileName =
+            Path.Combine(
+                directoryName,
+                "payload.txt");
+        File.WriteAllText(fileName, "Before");
+        var store =
+            CreateFileSystemStore(directoryName);
+        var root = store.Root;
+        _ = root.OutEdges;
+        var fileVertex =
+            Assert.IsType<FileVertex>(
+                GraphUtil.GetQueryOutFirst(
+                    root,
+                    "File",
+                    "payload.txt"));
+
+        try
+        {
+            var contentEdge =
+                Assert.Single(
+                    GraphUtil.GetQueryOut(
+                        fileVertex,
+                        "Content",
+                        null));
+
+            Assert.Single(
+                GraphUtil.GetQueryOut(
+                    fileVertex,
+                    "Filename",
+                    "payload.txt"));
+
+            Assert.Equal(
+                new[] { contentEdge },
+                GraphUtil.GetQueryOut(
+                    fileVertex,
+                    "Content",
+                    "Before"));
+            File.WriteAllText(fileName, "After");
+            Assert.Empty(
+                GraphUtil.GetQueryOut(
+                    fileVertex,
+                    "Content",
+                    "Before"));
+            Assert.Equal(
+                new[] { contentEdge },
+                GraphUtil.GetQueryOut(
+                    fileVertex,
+                    "Content",
+                    "After"));
+        }
+        finally
+        {
+            RemoveFileSystemStore(
+                store,
+                fileVertex,
+                root);
+            Directory.Delete(directoryName, true);
+        }
+    }
+
+    [Fact]
+    public void FileSystemOverlayExcludesInheritedNoInheritEdges()
+    {
+        var directoryName = CreateTemporaryDirectory();
+        var fileName =
+            Path.Combine(
+                directoryName,
+                "payload.txt");
+        File.WriteAllText(fileName, "content");
+        var store =
+            CreateFileSystemStore(directoryName);
+        var root = store.Root;
+        _ = root.OutEdges;
+        var fileVertex =
+            Assert.IsType<FileVertex>(
+                GraphUtil.GetQueryOutFirst(
+                    root,
+                    "File",
+                    "payload.txt"));
+        var tempStore = MinusZero.Instance.TempStore;
+        var noInheritMeta =
+            new EasyVertex(tempStore)
+            {
+                Value = "$NoInherit"
+            };
+        var blockedMeta =
+            new EasyVertex(tempStore)
+            {
+                Value = "Blocked"
+            };
+        var marker =
+            new EasyVertex(tempStore)
+            {
+                Value = "Marker"
+            };
+        var markerEdge =
+            blockedMeta.AddEdge(
+                noInheritMeta,
+                marker);
+        var parent =
+            new EasyVertex(tempStore)
+            {
+                Value = "Parent"
+            };
+        var blockedEdge =
+            parent.AddEdge(
+                blockedMeta,
+                new EasyVertex(tempStore)
+                {
+                    Value = "Target"
+                });
+        fileVertex.AddEdge(
+            MinusZero.Instance.Inherits,
+            parent);
+
+        try
+        {
+            Assert.Empty(
+                GraphUtil.GetQueryOut(
+                    fileVertex,
+                    "Blocked",
+                    null));
+            Assert.Single(
+                GraphUtil.GetQueryOut(
+                    fileVertex,
+                    "Filename",
+                    "payload.txt"));
+            Assert.DoesNotContain(
+                blockedEdge,
+                fileVertex.OutEdges);
+
+            blockedMeta.DeleteEdge(markerEdge);
+
+            Assert.Equal(
+                new[] { blockedEdge },
+                GraphUtil.GetQueryOut(
+                    fileVertex,
+                    "Blocked",
+                    null));
+            Assert.Single(
+                GraphUtil.GetQueryOut(
+                    fileVertex,
+                    "Filename",
+                    "payload.txt"));
+
+            blockedMeta.AddEdge(
+                noInheritMeta,
+                marker);
+
+            Assert.Empty(
+                GraphUtil.GetQueryOut(
+                    fileVertex,
+                    "Blocked",
+                    null));
+            Assert.Single(
+                GraphUtil.GetQueryOut(
+                    fileVertex,
+                    "Filename",
+                    "payload.txt"));
+        }
+        finally
+        {
+            RemoveFileSystemStore(
+                store,
+                fileVertex,
+                root);
             Directory.Delete(directoryName, true);
         }
     }

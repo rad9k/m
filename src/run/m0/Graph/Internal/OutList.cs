@@ -41,6 +41,52 @@ namespace m0.Graph.Internal
             return null; 
         }
 
+        internal int AddRangeOriginalStackEdges(
+            IEnumerable<IEdge> edges)
+        {
+            if (edges == null)
+                throw new ArgumentNullException(
+                    nameof(edges));
+
+            if (!edgeDictionaries
+                .NoInEdgeInOutVertexVertexMode)
+            {
+                throw new InvalidOperationException(
+                    "Original-edge batches are valid only " +
+                    "for NoInEdgeInOutVertexVertex.");
+            }
+
+            int initialCount = Count;
+
+            try
+            {
+                AddRangeWithoutCallbacks(edges);
+            }
+            finally
+            {
+                int addedCount = Count - initialCount;
+
+                if (addedCount > 0)
+                {
+                    if (edgeDictionaries.Vertex is
+                        EasyVertex easyVertex)
+                    {
+                        easyVertex
+                            .InvalidateOutIndexesAfterBatchMutation();
+                    }
+                    else
+                    {
+                        edgeDictionaries.Vertex
+                            .OutEdgesDictionariesNeedsRebuild =
+                            true;
+                    }
+
+                }
+            }
+
+            return Count - initialCount;
+        }
+
         public override void OnAdd(IEdge item)
         {
             if (!edgeDictionaries.NoInEdgeInOutVertexVertexMode)
@@ -52,9 +98,18 @@ namespace m0.Graph.Internal
                     item.To.InEdgesRaw.Add(item);                
             }
 
-            edgeDictionaries.Vertex.OutEdgesDictionariesNeedsRebuild = true;
+            if (edgeDictionaries.Vertex is EasyVertex easyVertex)
+                easyVertex.HandleLocalOutEdgeMutation(
+                    item,
+                    true,
+                    !edgeDictionaries
+                        .NoInEdgeInOutVertexVertexMode);
+            else
+                edgeDictionaries.Vertex
+                    .OutEdgesDictionariesNeedsRebuild = true;
 
-            edgeDictionaries.Vertex.InheritChildsOutEdgesDictionariesNeedsRebuild();
+            if (!edgeDictionaries.NoInEdgeInOutVertexVertexMode)
+                edgeDictionaries.Vertex.NotifyOutEdgesChanged();
 
             //edgeDictionaries.vertex.FireChange(new VertexChangeEventArgs(VertexChangeType.EdgeAdded, item));
 
@@ -87,8 +142,18 @@ namespace m0.Graph.Internal
                     GraphUtil.Debug(item.To, GraphUtil.DebugOperationEnum.InEdgeRemove);
             }
 
-            edgeDictionaries.Vertex.OutEdgesDictionariesNeedsRebuild = true;
-            edgeDictionaries.Vertex.InheritChildsOutEdgesDictionariesNeedsRebuild();
+            if (edgeDictionaries.Vertex is EasyVertex easyVertex)
+                easyVertex.HandleLocalOutEdgeMutation(
+                    item,
+                    false,
+                    !edgeDictionaries
+                        .NoInEdgeInOutVertexVertexMode);
+            else
+                edgeDictionaries.Vertex
+                    .OutEdgesDictionariesNeedsRebuild = true;
+
+            if (!edgeDictionaries.NoInEdgeInOutVertexVertexMode)
+                edgeDictionaries.Vertex.NotifyOutEdgesChanged();
 
             edgeDictionaries.Vertex.DetachEdge(item);
 

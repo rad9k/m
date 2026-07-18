@@ -47,6 +47,12 @@ namespace m0.Util
             OnAdd(item);
         }
 
+        protected void AddRangeWithoutCallbacks(
+            IEnumerable<T> items)
+        {
+            list.AddRange(items);
+        }
+
         public void Clear()
         {
             ((IList<T>)list).Clear();

@@ -45,18 +45,50 @@ namespace m0.Graph.Internal
         public bool NoInEdgeInOutVertexVertexMode = false;
 
         public OutList Out;
-        public MetaInList MetaIn;
-        public InList In;
+        private MetaInList metaIn;
+        private InList inEdges;
+
+        public IList<IEdge> MetaIn
+        {
+            get
+            {
+                return metaIn ??=
+                    new MetaInList(this);
+            }
+        }
+
+        public IList<IEdge> In
+        {
+            get
+            {
+                return inEdges ??=
+                    new InList(this);
+            }
+        }
+
+        internal int MetaInCount =>
+            metaIn?.Count ?? 0;
+
+        internal int InCount =>
+            inEdges?.Count ?? 0;
 
         public IImplementedVertex Vertex;
 
-        public EdgeDictionaries(IImplementedVertex _v)
+        public EdgeDictionaries(
+            IImplementedVertex _v,
+            bool noIncomingEdgeStorage = false)
         {
             Vertex = _v;
+            NoInEdgeInOutVertexVertexMode =
+                noIncomingEdgeStorage;
 
             Out = new OutList(this);
-            MetaIn = new MetaInList(this);
-            In = new InList(this);
+
+            if (!noIncomingEdgeStorage)
+            {
+                metaIn = new MetaInList(this);
+                inEdges = new InList(this);
+            }
         }
     }
 }

@@ -18,46 +18,61 @@ namespace m0.Graph.Internal
         public static HashSet<IVertex> GetInheritChilds(IVertex baseVertex)
         {
             HashSet<IVertex> inheritsSet = new HashSet<IVertex>();
-
-            GetInheritChilds_RawEnumerate_recurrent(
+            Stack<IVertex> pending =
+                new Stack<IVertex>();
+            PushInheritChildrenInReverse(
                 baseVertex,
-                baseVertex,
-                inheritsSet);
+                pending);
 
-            GraphPerformanceCounters.RecordInheritChildTraversal(inheritsSet.Count);
+            while (pending.Count > 0)
+            {
+                IVertex child = pending.Pop();
+
+                if (ReferenceEquals(
+                        child,
+                        baseVertex) ||
+                    !inheritsSet.Add(child))
+                    continue;
+
+                PushInheritChildrenInReverse(
+                    child,
+                    pending);
+            }
+
             return inheritsSet;
         }
 
-        private static void GetInheritChilds_RawEnumerate_recurrent(
+        private static void PushInheritChildrenInReverse(
             IVertex baseVertex,
-            IVertex startingVertex,
-            HashSet<IVertex> inheritedSet)
+            Stack<IVertex> pending)
         {
-           if (baseVertex is EasyVertex) // FAST
+            if (baseVertex is EasyVertex easyVertex)
             {
-                EasyVertex baseVertex_EasyVertex = (EasyVertex)baseVertex;
+                IList<IEdge> edges =
+                    easyVertex.InheritsInEdges;
 
-                foreach (IEdge e in baseVertex_EasyVertex.InheritsInEdges)
-                    if (!ReferenceEquals(e.From, startingVertex) &&
-                        inheritedSet.Add(e.From))
-                    {
-                        GetInheritChilds_RawEnumerate_recurrent(
-                            e.From,
-                            startingVertex,
-                            inheritedSet);
-                    }
+                for (int index = edges.Count - 1;
+                    index >= 0;
+                    index--)
+                    pending.Push(edges[index].From);
+
+                return;
             }
-            else // SLOW
-                foreach (IEdge e in baseVertex.InEdgesRaw)
-                    if (GeneralUtil.CompareStrings(e.Meta, "$Inherits") &&
-                        !ReferenceEquals(e.From, startingVertex) &&
-                        inheritedSet.Add(e.From))
-                    {
-                        GetInheritChilds_RawEnumerate_recurrent(
-                            e.From,
-                            startingVertex,
-                            inheritedSet);
-                    }
+
+            IList<IEdge> rawEdges =
+                baseVertex.InEdgesRaw;
+
+            for (int index = rawEdges.Count - 1;
+                index >= 0;
+                index--)
+            {
+                IEdge edge = rawEdges[index];
+
+                if (GeneralUtil.CompareStrings(
+                    edge.Meta,
+                    "$Inherits"))
+                    pending.Push(edge.From);
+            }
         }
 
         // OutEdgesRaw
@@ -67,45 +82,61 @@ namespace m0.Graph.Internal
         public static HashSet<IVertex> GetInheritParents(IVertex baseVertex)
         {
             HashSet<IVertex> inheritsSet = new HashSet<IVertex>();
+            Stack<IVertex> pending =
+                new Stack<IVertex>();
+            PushInheritParentsInReverse(
+                baseVertex,
+                pending);
 
-            GetInheritParents_RawEnumerate_recurrent(
-                baseVertex,
-                baseVertex,
-                inheritsSet);
+            while (pending.Count > 0)
+            {
+                IVertex parent = pending.Pop();
+
+                if (ReferenceEquals(
+                        parent,
+                        baseVertex) ||
+                    !inheritsSet.Add(parent))
+                    continue;
+
+                PushInheritParentsInReverse(
+                    parent,
+                    pending);
+            }
 
             return inheritsSet;
         }
 
-        private static void GetInheritParents_RawEnumerate_recurrent(
+        private static void PushInheritParentsInReverse(
             IVertex baseVertex,
-            IVertex startingVertex,
-            HashSet<IVertex> inheritedSet)
+            Stack<IVertex> pending)
         {
-            if (baseVertex is EasyVertex) // FAST
+            if (baseVertex is EasyVertex easyVertex)
             {
-                EasyVertex baseVertex_EasyVertex = (EasyVertex)baseVertex;
+                IList<IEdge> edges =
+                    easyVertex.InheritsOutEdges;
 
-                foreach (IEdge e in baseVertex_EasyVertex.InheritsOutEdges)
-                    if (!ReferenceEquals(e.To, startingVertex) &&
-                        inheritedSet.Add(e.To))
-                    {
-                        GetInheritParents_RawEnumerate_recurrent(
-                            e.To,
-                            startingVertex,
-                            inheritedSet);
-                    }
-            } 
-            else // SLOW
-                foreach (IEdge e in baseVertex.OutEdgesRaw)
-                    if (GeneralUtil.CompareStrings(e.Meta, "$Inherits") &&
-                        !ReferenceEquals(e.To, startingVertex) &&
-                        inheritedSet.Add(e.To))
-                    {
-                        GetInheritParents_RawEnumerate_recurrent(
-                            e.To,
-                            startingVertex,
-                            inheritedSet);
-                    }
+                for (int index = edges.Count - 1;
+                    index >= 0;
+                    index--)
+                    pending.Push(edges[index].To);
+
+                return;
+            }
+
+            IList<IEdge> rawEdges =
+                baseVertex.OutEdgesRaw;
+
+            for (int index = rawEdges.Count - 1;
+                index >= 0;
+                index--)
+            {
+                IEdge edge = rawEdges[index];
+
+                if (GeneralUtil.CompareStrings(
+                    edge.Meta,
+                    "$Inherits"))
+                    pending.Push(edge.To);
+            }
         }
     }
 }

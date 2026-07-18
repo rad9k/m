@@ -1,0 +1,37 @@
+{
+  "Workload": {
+    "DirectEdgeCount": 1000,
+    "WideHierarchyChildCount": 100,
+    "DeepHierarchyDepth": 25,
+    "CreatedStackCount": 100
+  },
+  "Counters": {
+    "LogicalOutEdgesRebuilds": 103,
+    "DirectMetaIndexRebuilds": 0,
+    "QueryMetaIndexRebuilds": 103,
+    "ValueIndexRebuilds": 0,
+    "QueryMetaAndValueIndexRebuilds": 2,
+    "RebuildScannedEdges": 3226,
+    "InheritChildTraversalCalls": 0,
+    "TraversedInheritChildren": 0,
+    "InvalidatedInheritChildren": 0,
+    "CreatedStacks": 101,
+    "CreatedTempStoreStacks": 0,
+    "OriginalStackEdgeBatches": 0,
+    "OriginalStackEdgesBatched": 0,
+    "QueryParseCacheHits": 0,
+    "QueryParseCacheMisses": 0,
+    "MaximumQueryParseCacheSize": 0,
+    "RollbackJournalAtoms": 1,
+    "CoalescedGraphChangeAtoms": 0,
+    "InheritanceGenerationBumps": 2,
+    "InheritanceDependencyChecks": 100,
+    "CheckedInheritanceDependencies": 100,
+    "StaleInheritanceDependencyChecks": 100
+  },
+  "CacheSizes": {
+    "ValueIndexEntries": 0,
+    "MetaAndValueIndexEntries": 1000,
+    "StoreVertexCount": 1235
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "Workload": {
+    "EdgeCount": 1000,
+    "Mutation": "warm add/query/remove/query",
+    "QueryResultCount": 2003
+  },
+  "Counters": {
+    "LogicalOutEdgesRebuilds": 0,
+    "DirectMetaIndexRebuilds": 0,
+    "QueryMetaIndexRebuilds": 0,
+    "ValueIndexRebuilds": 0,
+    "QueryMetaAndValueIndexRebuilds": 0,
+    "RebuildScannedEdges": 0,
+    "InheritChildTraversalCalls": 0,
+    "TraversedInheritChildren": 0,
+    "InvalidatedInheritChildren": 0,
+    "CreatedStacks": 0,
+    "CreatedTempStoreStacks": 0,
+    "OriginalStackEdgeBatches": 0,
+    "OriginalStackEdgesBatched": 0,
+    "QueryParseCacheHits": 0,
+    "QueryParseCacheMisses": 0,
+    "MaximumQueryParseCacheSize": 0,
+    "RollbackJournalAtoms": 0,
+    "CoalescedGraphChangeAtoms": 0,
+    "InheritanceGenerationBumps": 0,
+    "InheritanceDependencyChecks": 0,
+    "CheckedInheritanceDependencies": 0,
+    "StaleInheritanceDependencyChecks": 0,
+    "IncrementalOutIndexAdds": 1,
+    "IncrementalOutIndexRemoves": 1,
+    "IncrementalOutIndexFallbacks": 0,
+    "IncrementalOutIndexBudgetIncreases": 0,
+    "MaximumIncrementalOutIndexMutationBudget": 0,
+    "IncrementalBucketPromotions": 0,
+    "IncrementalBucketCollapses": 0,
+    "IncrementalBucketKeyRemovals": 2
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "Workload": {
+    "FrameDepth": 100,
+    "Iterations": 1000,
+    "ResolvedResultCount": 1000,
+    "MissingResultCount": 0
+  },
+  "StackParentFrameCacheHits": 201000,
+  "StackParentFrameCacheMisses": 0
+}

@@ -57,6 +57,7 @@ namespace m0.Store.FileSystem
 
         public override void Refresh()
         {
+            OutEdgesDictionariesNeedsRebuild = true;
             FileSystemVertex.DeleteAllEdges();
 
             AddVertexToFileSystemVertex(MinusZero.Instance.Is, FileSystemStore.Directory);

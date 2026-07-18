@@ -53,6 +53,26 @@ public sealed class PersistenceRoundtripTests
             Assert.Equal("Target", reloadedEdge.To.Value);
             Assert.Contains(reloadedEdge, reloadedEdge.To.InEdgesRaw);
             Assert.Contains(reloadedEdge, reloadedEdge.Meta.MetaInEdgesRaw);
+
+            _ = GraphUtil.GetQueryOut(
+                reloadedSource,
+                "Relation",
+                null);
+            var addedTarget =
+                reloadedStore.Root.AddVertex(
+                    MinusZero.Instance.Empty,
+                    "AddedTarget");
+            var addedEdge =
+                reloadedSource.AddEdge(
+                    reloadedEdge.Meta,
+                    addedTarget);
+
+            Assert.Equal(
+                new[] { addedEdge },
+                GraphUtil.GetQueryOut(
+                    reloadedSource,
+                    "Relation",
+                    "AddedTarget"));
         }
         finally
         {

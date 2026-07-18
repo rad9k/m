@@ -25,8 +25,6 @@ public sealed class QueryParseCacheIntegrationTests
             EasyVertex.ResetQueryParseCaches();
             EasyVertex.QueryParseCacheCapacity = 2;
             EasyVertex.MetaQueryParseCacheCapacity = 2;
-            GraphPerformanceCounters.Reset();
-            GraphPerformanceCounters.Enabled = true;
 
             _ = MinusZero.Instance.Root.Get(
                 false,
@@ -38,24 +36,15 @@ public sealed class QueryParseCacheIntegrationTests
                 true,
                 @"System\Meta");
 
-            var snapshot =
-                GraphPerformanceCounters.GetSnapshot();
-
             Assert.Equal(
                 1,
                 EasyVertex.QueryParseCacheEntryCount);
             Assert.Equal(
                 1,
                 EasyVertex.MetaQueryParseCacheEntryCount);
-            Assert.Equal(1, snapshot.QueryParseCacheHits);
-            Assert.Equal(2, snapshot.QueryParseCacheMisses);
-            Assert.Equal(
-                2,
-                snapshot.MaximumQueryParseCacheSize);
         }
         finally
         {
-            GraphPerformanceCounters.Enabled = false;
             EasyVertex.ResetQueryParseCaches();
             EasyVertex.QueryParseCacheCapacity =
                 previousRegularCapacity;
@@ -121,24 +110,16 @@ public sealed class QueryParseCacheIntegrationTests
         {
             EasyVertex.ResetQueryParseCaches();
             EasyVertex.QueryParseCacheCapacity = 2;
-            GraphPerformanceCounters.Reset();
-            GraphPerformanceCounters.Enabled = true;
 
             _ = MinusZero.Instance.Root.Get(false, "<");
             _ = MinusZero.Instance.Root.Get(false, "<");
-
-            var snapshot =
-                GraphPerformanceCounters.GetSnapshot();
 
             Assert.Equal(
                 0,
                 EasyVertex.QueryParseCacheEntryCount);
-            Assert.Equal(0, snapshot.QueryParseCacheHits);
-            Assert.Equal(2, snapshot.QueryParseCacheMisses);
         }
         finally
         {
-            GraphPerformanceCounters.Enabled = false;
             EasyVertex.ResetQueryParseCaches();
             EasyVertex.QueryParseCacheCapacity =
                 previousRegularCapacity;

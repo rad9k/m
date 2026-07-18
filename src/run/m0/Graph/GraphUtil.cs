@@ -378,6 +378,15 @@ namespace m0.Graph
 
         public static IVertex GetQueryOutFirst(IVertex baseVertex, object meta, object value)
         {
+            if (meta == null && value == null)
+            {
+                IList<IEdge> outEdges =
+                    baseVertex.OutEdges;
+                return outEdges.Count > 0
+                    ? outEdges[0].To
+                    : null;
+            }
+
             IEdge result;
             IList<IEdge> results;
 
@@ -387,13 +396,22 @@ namespace m0.Graph
                 return result.To;
 
             if (results != null && results.Count > 0)
-                return results.First().To;
+                return results[0].To;
 
             return null;
         }
 
         public static IVertex GetQueryInFirst(IVertex baseVertex, object meta, object value)
         {
+            if (meta == null && value == null)
+            {
+                IList<IEdge> inEdges =
+                    baseVertex.InEdgesRaw;
+                return inEdges.Count > 0
+                    ? inEdges[0].From
+                    : null;
+            }
+
             IEdge result;
             IList<IEdge> results;
 
@@ -403,13 +421,22 @@ namespace m0.Graph
                 return result.From;
 
             if (results != null && results.Count > 0)
-                return results.First().From;
+                return results[0].From;
 
             return null;
         }
 
         public static IEdge GetQueryOutFirstEdge(IVertex baseVertex, object meta, object value)
         {
+            if (meta == null && value == null)
+            {
+                IList<IEdge> outEdges =
+                    baseVertex.OutEdges;
+                return outEdges.Count > 0
+                    ? outEdges[0]
+                    : null;
+            }
+
             IEdge result;
             IList<IEdge> results;
 
@@ -419,13 +446,22 @@ namespace m0.Graph
                 return result;
 
             if (results != null && results.Count > 0)
-                return results.First();
+                return results[0];
 
             return null;
         }
 
         public static IEdge GetQueryInFirstEdge(IVertex baseVertex, object meta, object value)
         {
+            if (meta == null && value == null)
+            {
+                IList<IEdge> inEdges =
+                    baseVertex.InEdgesRaw;
+                return inEdges.Count > 0
+                    ? inEdges[0]
+                    : null;
+            }
+
             IEdge result;
             IList<IEdge> results;
 
@@ -435,9 +471,47 @@ namespace m0.Graph
                 return result;
 
             if (results != null && results.Count > 0)
-                return results.First();
+                return results[0];
 
             return null;
+        }
+
+        public static EdgeQueryResult GetQueryOutResult(
+            IVertex baseVertex,
+            object meta,
+            object value)
+        {
+            if (meta == null && value == null)
+                return new EdgeQueryResult(
+                    baseVertex.OutEdges);
+
+            baseVertex.QueryOutEdges(
+                meta,
+                value,
+                out IEdge result,
+                out IList<IEdge> results);
+            return new EdgeQueryResult(
+                result,
+                results);
+        }
+
+        public static EdgeQueryResult GetQueryInResult(
+            IVertex baseVertex,
+            object meta,
+            object from)
+        {
+            if (meta == null && from == null)
+                return new EdgeQueryResult(
+                    baseVertex.InEdgesRaw);
+
+            baseVertex.QueryInEdges(
+                meta,
+                from,
+                out IEdge result,
+                out IList<IEdge> results);
+            return new EdgeQueryResult(
+                result,
+                results);
         }
 
         public static IList<IEdge> GetQueryOut(IVertex baseVertex, object meta, object value)
@@ -482,6 +556,9 @@ namespace m0.Graph
 
         public static int GetQueryOutCount(IVertex baseVertex, object meta, object value)
         {
+            if (meta == null && value == null)
+                return baseVertex.OutEdges.Count;
+
             IEdge result;
             IList<IEdge> results;
 
@@ -493,13 +570,16 @@ namespace m0.Graph
             }
 
             if (results != null)
-                return results.Count();
+                return results.Count;
 
             return 0;
         }
 
         public static bool ExistQueryOut(IVertex baseVertex, object meta, object value)
         {
+            if (meta == null && value == null)
+                return baseVertex.OutEdges.Count > 0;
+
             IEdge result;
             IList<IEdge> results;
 
@@ -518,6 +598,9 @@ namespace m0.Graph
 
         public static bool ExistQueryIn(IVertex baseVertex, object meta, object value)
         {
+            if (meta == null && value == null)
+                return baseVertex.InEdgesRaw.Count > 0;
+
             IEdge result;
             IList<IEdge> results;
 
@@ -580,9 +663,29 @@ namespace m0.Graph
 
         public static void AddRange_NoNoInherit(IList<IEdge> to, IList<IEdge> from)
         {
+            IVertex previousMeta = null;
+            bool previousMetaHasNoInherit = false;
+            bool hasPreviousMeta = false;
+
             foreach (IEdge e in from)
-                if (!GraphUtil.ExistQueryOut(e.Meta, "$NoInherit", null))
+            {
+                if (!hasPreviousMeta ||
+                    !ReferenceEquals(
+                        previousMeta,
+                        e.Meta))
+                {
+                    previousMeta = e.Meta;
+                    previousMetaHasNoInherit =
+                        GraphUtil.ExistQueryOut(
+                            e.Meta,
+                            "$NoInherit",
+                            null);
+                    hasPreviousMeta = true;
+                }
+
+                if (!previousMetaHasNoInherit)
                     to.Add(e);
+            }
         }
 
         public static string GetQueryStringPart_MetaMode(FormalTextLanguageDictinaries dict, IVertex meta, IVertex to)
@@ -613,13 +716,17 @@ namespace m0.Graph
             else
             {
                 int pos = 0;
-                IList<IEdge> q = GraphUtil.GetQueryOut(e.From, e.Meta.Value, e.To.Value);
+                EdgeQueryResult q =
+                    GraphUtil.GetQueryOutResult(
+                        e.From,
+                        e.Meta.Value,
+                        e.To.Value);
                 //IVertex q = e.From.GetAll(false, ZeroCodeCommon.stringToPossiblyEscapedString(e.Meta.ToString()) + ZeroCodeCommon.MetaSeparator + ZeroCodeCommon.stringToPossiblyEscapedString(e.To.ToString()));                    
 
                 IVertex tv;
                 do
                 {
-                    tv = q.ElementAt(pos).To;
+                    tv = q[pos].To;
                     pos++;
                 } while (tv != e.To && pos < q.Count);
 
@@ -638,7 +745,11 @@ namespace m0.Graph
 
             int tempLevel;
 
-            foreach (IEdge e in GraphUtil.GetQueryOut(baseVertex, "$Is", null))
+            foreach (IEdge e in
+                GraphUtil.GetQueryOutResult(
+                    baseVertex,
+                    "$Is",
+                    null))
             {
                 tempLevel = GetInheritanceLevel(
                     e.To,
@@ -656,6 +767,14 @@ namespace m0.Graph
             return highestInheritanceLevel; // if highestInheritanceLevel_level==0 then startMeta was not found
         }
 
+        private struct InheritanceLevelFrame
+        {
+            public IVertex Vertex;
+            public int Depth;
+            public EdgeQueryResult Edges;
+            public int NextIndex;
+        }
+
         private static int GetInheritanceLevel(
             IVertex testMeta,
             IVertex startMeta,
@@ -665,30 +784,77 @@ namespace m0.Graph
             if (!activePath.Add(testMeta))
                 return 0;
 
-            try
-            {
-                if (testMeta == startMeta)
-                    return input;
-
-                int biggest = 0;
-
-                foreach (IEdge e in GraphUtil.GetQueryOut(testMeta, "$Inherits", false))
-                {
-                    int temp = GetInheritanceLevel(
-                        e.To,
-                        startMeta,
-                        input + 1,
-                        activePath);
-                    if (temp > biggest)
-                        biggest = temp;
-                }
-
-                return biggest;
-            }
-            finally
+            if (testMeta == startMeta)
             {
                 activePath.Remove(testMeta);
+                return input;
             }
+
+            int biggest = 0;
+            Stack<InheritanceLevelFrame> pending =
+                new Stack<InheritanceLevelFrame>();
+            pending.Push(
+                CreateInheritanceLevelFrame(
+                    testMeta,
+                    input));
+
+            while (pending.Count > 0)
+            {
+                InheritanceLevelFrame frame =
+                    pending.Pop();
+
+                if (frame.NextIndex >=
+                    frame.Edges.Count)
+                {
+                    activePath.Remove(frame.Vertex);
+                    continue;
+                }
+
+                IVertex parent =
+                    frame.Edges[frame.NextIndex].To;
+                frame.NextIndex++;
+                pending.Push(frame);
+
+                if (!activePath.Add(parent))
+                    continue;
+
+                int parentDepth =
+                    frame.Depth + 1;
+
+                if (parent == startMeta)
+                {
+                    if (parentDepth > biggest)
+                        biggest = parentDepth;
+
+                    activePath.Remove(parent);
+                    continue;
+                }
+
+                pending.Push(
+                    CreateInheritanceLevelFrame(
+                        parent,
+                        parentDepth));
+            }
+
+            return biggest;
+        }
+
+        private static InheritanceLevelFrame
+            CreateInheritanceLevelFrame(
+                IVertex vertex,
+                int depth)
+        {
+            return new InheritanceLevelFrame
+            {
+                Vertex = vertex,
+                Depth = depth,
+                Edges =
+                    GraphUtil.GetQueryOutResult(
+                        vertex,
+                        "$Inherits",
+                        false),
+                NextIndex = 0
+            };
         }
 
         public static object GetValue(IVertex vertex)
@@ -747,7 +913,11 @@ namespace m0.Graph
             if (vertex == null || metaVertex == null)
                 return null;
 
-            IEdge edgeByMeta = GetQueryOut(vertex, metaVertex.Value, null).FirstOrDefault();
+            IEdge edgeByMeta =
+                GetQueryOutFirstEdge(
+                    vertex,
+                    metaVertex.Value,
+                    null);
 
             if (edgeByMeta == null)
                 return vertex.AddVertex(metaVertex, value);
@@ -1152,7 +1322,11 @@ namespace m0.Graph
 
         static public IEdge FindEdge(IVertex Vertex, IVertex metaVertex, IVertex toVertex)
         {
-            foreach (IEdge e in GraphUtil.GetQueryOut(Vertex, metaVertex.Value.ToString(), toVertex.Value.ToString()))
+            foreach (IEdge e in
+                GraphUtil.GetQueryOutResult(
+                    Vertex,
+                    metaVertex.Value.ToString(),
+                    toVertex.Value.ToString()))
                 if (e.Meta == metaVertex && e.To == toVertex)
                     return e;
             return null;
@@ -1169,7 +1343,11 @@ namespace m0.Graph
 
         static public IEdge FindEdgeByToVertex_fromVertex(IVertex v, IVertex toVertex)
         {
-            foreach (IEdge e in GraphUtil.GetQueryOut(v, null, toVertex.Value.ToString()))
+            foreach (IEdge e in
+                GraphUtil.GetQueryOutResult(
+                    v,
+                    null,
+                    toVertex.Value.ToString()))
                 if (e.To == toVertex)
                     return e;
 
@@ -1287,50 +1465,59 @@ namespace m0.Graph
 
         static public IEnumerable<IVertex> DeepIterator(IVertex iterationRoot, GraphIteratorIterate iterate, bool isSingleResult, bool canModifyOutEdges, bool canGoIntoLinks)
         {
-            HashSet<IVertex> visited = new HashSet<IVertex>();
+            HashSet<IVertex> visited =
+                new HashSet<IVertex>();
+            List<IVertex> returnList =
+                new List<IVertex>();
+            Stack<IEdge> pending =
+                new Stack<IEdge>();
+            PushDeepIteratorEdgesInReverse(
+                iterationRoot,
+                pending,
+                canModifyOutEdges);
 
-            List<IVertex> returnList = new List<IVertex>();
+            while (pending.Count > 0)
+            {
+                IEdge edge = pending.Pop();
 
-            DeepIterator_Reccurent(iterationRoot, iterate, visited, returnList, isSingleResult, canModifyOutEdges, canGoIntoLinks);
+                if (iterate(edge))
+                {
+                    returnList.Add(edge.To);
+
+                    if (isSingleResult)
+                        return returnList;
+                }
+
+                if (!visited.Contains(edge.To) &&
+                    (canGoIntoLinks ||
+                     !VertexOperations.IsLink(edge)))
+                {
+                    visited.Add(edge.To);
+                    PushDeepIteratorEdgesInReverse(
+                        edge.To,
+                        pending,
+                        canModifyOutEdges);
+                }
+            }
 
             return returnList;
         }
 
-        static bool DeepIterator_Reccurent(IVertex iterationRoot, GraphIteratorIterate iterate, HashSet<IVertex> visited, List<IVertex> returnList, bool isSingleResult, bool canModifyOutEdges, bool canGoIntoLinks)
+        private static void
+            PushDeepIteratorEdgesInReverse(
+                IVertex vertex,
+                Stack<IEdge> pending,
+                bool canModifyOutEdges)
         {
-            bool toReturn = false;
+            IList<IEdge> edges =
+                canModifyOutEdges
+                    ? vertex.OutEdges.ToList()
+                    : vertex.OutEdges;
 
-            IEnumerable<IEdge> outEdges;
-
-            if (canModifyOutEdges)
-                outEdges = iterationRoot.OutEdges.ToList();
-            else
-                outEdges = iterationRoot.OutEdges;
-
-            //foreach (IEdge e in iterationRoot.OutEdges)
-            foreach (IEdge e in outEdges)
-            {
-                if (iterate(e))
-                {
-                    returnList.Add(e.To);
-                    if (isSingleResult)
-                        return true;
-                }
-
-                if (!visited.Contains(e.To) && (canGoIntoLinks || !VertexOperations.IsLink(e))) // this canGoIntoLinks looks bad, should be canGoIntoLinks XXX TO BE TESTED
-                {
-                    visited.Add(e.To);
-
-                    if (DeepIterator_Reccurent(e.To, iterate, visited, returnList, isSingleResult, canModifyOutEdges, canGoIntoLinks))
-                    {
-                        toReturn = true;
-
-                        break;
-                    }
-                }
-            }
-
-            return toReturn;
+            for (int index = edges.Count - 1;
+                index >= 0;
+                index--)
+                pending.Push(edges[index]);
         }
 
         static public IEnumerable<IVertex> DeepIterator_OldVersion(IVertex iterationRoot, GraphIteratorIterate iterate, bool isSingleResult, bool canModifyOutEdges, bool canGoIntoLinks)
@@ -1455,31 +1642,62 @@ namespace m0.Graph
             IVertex vertex,
             HashSet<IVertex> copyScope)
         {
-            if (!copyScope.Add(vertex))
-                return;
+            Stack<IVertex> pending =
+                new Stack<IVertex>();
+            pending.Push(vertex);
 
-            foreach (IEdge edge in vertex.OutEdgesRaw)
-                if (VertexOperations.CanCopy_ByEdge(edge) &&
-                    !VertexOperations.IsLink(edge))
-                    CollectDeepCopyScope(edge.To, copyScope);
+            while (pending.Count > 0)
+            {
+                IVertex current = pending.Pop();
+
+                if (!copyScope.Add(current))
+                    continue;
+
+                IList<IEdge> edges =
+                    current.OutEdgesRaw;
+
+                for (int index = edges.Count - 1;
+                    index >= 0;
+                    index--)
+                {
+                    IEdge edge = edges[index];
+
+                    if (VertexOperations.CanCopy_ByEdge(edge) &&
+                        !VertexOperations.IsLink(edge))
+                        pending.Push(edge.To);
+                }
+            }
         }
 
         static public IEnumerable<IVertex> GetSubGraphWithoutLinksAsList(IVertex iterationRoot)
         {
             HashSet<IVertex> visited = new HashSet<IVertex>();
+            Stack<IVertex> pending =
+                new Stack<IVertex>();
+            pending.Push(iterationRoot);
 
-            GetSubGraphWithoutLinks_Reccurent(iterationRoot, visited);
+            while (pending.Count > 0)
+            {
+                IVertex current = pending.Pop();
+
+                if (!visited.Add(current))
+                    continue;
+
+                IList<IEdge> edges =
+                    current.OutEdgesRaw;
+
+                for (int index = edges.Count - 1;
+                    index >= 0;
+                    index--)
+                {
+                    IEdge edge = edges[index];
+
+                    if (!VertexOperations.IsLink(edge))
+                        pending.Push(edge.To);
+                }
+            }
 
             return visited;
-        }
-
-        static void GetSubGraphWithoutLinks_Reccurent(IVertex baseVertex, HashSet<IVertex> visited)
-        {
-            visited.Add(baseVertex);
-
-            foreach (IEdge e in baseVertex.OutEdgesRaw)
-                if (!visited.Contains(e.To) && !VertexOperations.IsLink(e))
-                    GetSubGraphWithoutLinks_Reccurent(e.To, visited);
         }
 
         static public List<IEdge> GetSubGraphAsEdgesWithoutLinksAsList(IEdge iterationRoot)
@@ -1489,80 +1707,126 @@ namespace m0.Graph
             List<IEdge> edges = new List<IEdge>();
 
             if (!VertexOperations.IsLink(iterationRoot))
-                GetSubGraphAsEdgesWithoutLinks_Reccurent(iterationRoot, visited, edges);
+            {
+                Stack<IEdge> pending =
+                    new Stack<IEdge>();
+                pending.Push(iterationRoot);
+
+                while (pending.Count > 0)
+                {
+                    IEdge edge = pending.Pop();
+                    edges.Add(edge);
+
+                    if (VertexOperations.IsLink(edge) ||
+                        !visited.Add(edge.To))
+                        continue;
+
+                    IList<IEdge> childEdges =
+                        edge.To.OutEdgesRaw;
+
+                    for (int index =
+                            childEdges.Count - 1;
+                        index >= 0;
+                        index--)
+                        pending.Push(
+                            childEdges[index]);
+                }
+            }
             else
                 edges.Add(iterationRoot);
 
             return edges;
         }
 
-        static void GetSubGraphAsEdgesWithoutLinks_Reccurent(IEdge baseEdge, HashSet<IVertex> visited, List<IEdge> edges)
-        {
-            edges.Add(baseEdge);
-
-            if (!visited.Contains(baseEdge.To) && !VertexOperations.IsLink(baseEdge))
-            {
-                visited.Add(baseEdge.To);
-
-                foreach (IEdge e in baseEdge.To.OutEdgesRaw)
-                    GetSubGraphAsEdgesWithoutLinks_Reccurent(e, visited, edges);
-
-            }
-        }
-
         static public IEnumerable<IVertex> GetSubGraphWithLinksAsListButExcludeRoot(IVertex iterationRoot)
         {
             HashSet<IVertex> visited = new HashSet<IVertex>();
+            Stack<IVertex> pending =
+                new Stack<IVertex>();
+            pending.Push(iterationRoot);
 
-            GetSubGraphWithLinksButExcludeRoot_Reccurent(iterationRoot, visited);
+            while (pending.Count > 0)
+            {
+                IVertex current = pending.Pop();
+
+                if (!visited.Add(current))
+                    continue;
+
+                IList<IEdge> edges =
+                    current.OutEdgesRaw;
+
+                for (int index = edges.Count - 1;
+                    index >= 0;
+                    index--)
+                    if (edges[index].To !=
+                        MinusZero.Instance.root)
+                        pending.Push(
+                            edges[index].To);
+            }
 
             return visited;
-        }
-
-        static void GetSubGraphWithLinksButExcludeRoot_Reccurent(IVertex baseVertex, HashSet<IVertex> visited)
-        {
-            visited.Add(baseVertex);
-
-            foreach (IEdge e in baseVertex.OutEdgesRaw)
-                if (!visited.Contains(e.To) && e.To != MinusZero.Instance.root)
-                    GetSubGraphWithLinksButExcludeRoot_Reccurent(e.To, visited);
         }
 
         static public IEnumerable<IVertex> GetSubGraphWithLinksAsListButExcludeList(IVertex iterationRoot, HashSet<IVertex> excludeList)
         {
             HashSet<IVertex> visited = new HashSet<IVertex>();
+            Stack<IVertex> pending =
+                new Stack<IVertex>();
+            pending.Push(iterationRoot);
 
-            GetSubGraph_Reccurent_ExcludeList(iterationRoot, visited, excludeList);
+            while (pending.Count > 0)
+            {
+                IVertex current = pending.Pop();
+
+                if (!visited.Add(current))
+                    continue;
+
+                IList<IEdge> edges =
+                    current.OutEdgesRaw;
+
+                for (int index = edges.Count - 1;
+                    index >= 0;
+                    index--)
+                    if (!excludeList.Contains(
+                        edges[index].To))
+                        pending.Push(
+                            edges[index].To);
+            }
 
             return visited;
-        }
-
-        static void GetSubGraph_Reccurent_ExcludeList(IVertex baseVertex, HashSet<IVertex> visited, HashSet<IVertex> excludeList)
-        {
-            visited.Add(baseVertex);
-
-            foreach (IEdge e in baseVertex.OutEdgesRaw)
-                if (!visited.Contains(e.To) && !excludeList.Contains(e.To))
-                    GetSubGraph_Reccurent_ExcludeList(e.To, visited, excludeList);
         }
 
 
         static public IEnumerable<IVertex> GetSubGraphWithoutLinksAsListButExcludeList(IVertex iterationRoot, HashSet<IVertex> excludeList)
         {
             HashSet<IVertex> visited = new HashSet<IVertex>();
+            Stack<IVertex> pending =
+                new Stack<IVertex>();
+            pending.Push(iterationRoot);
 
-            GetSubGraphWithoutLinks_Reccurent_ExcludeList(iterationRoot, visited, excludeList);
+            while (pending.Count > 0)
+            {
+                IVertex current = pending.Pop();
+
+                if (!visited.Add(current))
+                    continue;
+
+                IList<IEdge> edges =
+                    current.OutEdgesRaw;
+
+                for (int index = edges.Count - 1;
+                    index >= 0;
+                    index--)
+                {
+                    IEdge edge = edges[index];
+
+                    if (!excludeList.Contains(edge.To) &&
+                        !VertexOperations.IsLink(edge))
+                        pending.Push(edge.To);
+                }
+            }
 
             return visited;
-        }
-
-        static void GetSubGraphWithoutLinks_Reccurent_ExcludeList(IVertex baseVertex, HashSet<IVertex> visited, HashSet<IVertex> excludeList)
-        {
-            visited.Add(baseVertex);
-
-            foreach (IEdge e in baseVertex.OutEdgesRaw)
-                if (!visited.Contains(e.To) && !excludeList.Contains(e.To) && !VertexOperations.IsLink(e))
-                    GetSubGraphWithoutLinks_Reccurent_ExcludeList(e.To, visited, excludeList);
         }
 
         public static IVertex GetVertex(string storeName, long id)

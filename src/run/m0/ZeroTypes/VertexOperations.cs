@@ -1,6 +1,7 @@
 ﻿using m0.Foundation;
 using m0.Graph;
 using m0.Graph.ExecutionFlow;
+using m0.Graph.Internal;
 using m0.Util;
 using m0.ZeroCode.Helpers;
 using Microsoft.AspNetCore.StaticAssets;
@@ -671,12 +672,31 @@ namespace m0.ZeroTypes
 
         static void CollectCopyScope(IVertex vertex, HashSet<IVertex> visited)
         {
-            if (!visited.Add(vertex))
-                return;
+            Stack<IVertex> pending =
+                new Stack<IVertex>();
+            pending.Push(vertex);
 
-            foreach (IEdge e in vertex.OutEdgesRaw)
-                if (CanCopy_ByEdge(e) && !VertexOperations.IsLink(e))
-                    CollectCopyScope(e.To, visited);
+            while (pending.Count > 0)
+            {
+                IVertex current = pending.Pop();
+
+                if (!visited.Add(current))
+                    continue;
+
+                IList<IEdge> edges =
+                    current.OutEdgesRaw;
+
+                for (int index = edges.Count - 1;
+                    index >= 0;
+                    index--)
+                {
+                    IEdge edge = edges[index];
+
+                    if (CanCopy_ByEdge(edge) &&
+                        !VertexOperations.IsLink(edge))
+                        pending.Push(edge.To);
+                }
+            }
         }
 
         static void TurnGraphChangeWatchOff()
@@ -1089,25 +1109,18 @@ namespace m0.ZeroTypes
 
         public static bool InheritanceCompare(IVertex baseVertex, string toCompare)
         {
-            return InheritanceCompare(
-                baseVertex,
-                toCompare,
-                new HashSet<IVertex>());
-        }
-
-        private static bool InheritanceCompare(
-            IVertex baseVertex,
-            string toCompare,
-            HashSet<IVertex> visitedVertices)
-        {
-            if (!visitedVertices.Add(baseVertex))
+            if (baseVertex == null)
                 return false;
 
             if (GeneralUtil.CompareStrings(baseVertex.Value, toCompare))
                 return true;
 
-            foreach (IEdge e in GraphUtil.GetQueryOut(baseVertex, "$Inherits", null))
-                if (InheritanceCompare(e.To, toCompare, visitedVertices))
+            foreach (IVertex parent in
+                VertexHelper.GetInheritParents(
+                    baseVertex))
+                if (GeneralUtil.CompareStrings(
+                    parent.Value,
+                    toCompare))
                     return true;
 
             return false;

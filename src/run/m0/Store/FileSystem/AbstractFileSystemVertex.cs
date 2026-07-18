@@ -32,6 +32,8 @@ namespace m0.Store.FileSystem
                     FileSystemVertexFilled = true;
                 }
 
+                EnsureInheritedLogicalOutEdgesCurrent();
+
                 if (OutEdgesDictionariesNeedsRebuild_Edges)
                 {
                     OutEdgesDictionariesRebuild_Edges();
@@ -43,6 +45,19 @@ namespace m0.Store.FileSystem
         }
 
         public virtual void Refresh() { }
+
+        protected override bool
+            CanIncrementallyUpdateLocalOutIndexes(
+                IEdge edge)
+        {
+            return false;
+        }
+
+        protected override bool
+            CanShareOutEdgesRebuild()
+        {
+            return false;
+        }
 
         public override IVertex AddVertex(IVertex metaVertex, object val)
         {
@@ -61,28 +76,26 @@ namespace m0.Store.FileSystem
 
         protected override void OutEdgesDictionariesRebuild_Edges()
         {
+            HashSet<IVertex> parents = null;
+            List<IEdge> fullEdges =
+                OutEdgesRaw.ToList();
+
             if (HasInheritance && AllowInheritance)
             {
-                List<IEdge> FullEdges = OutEdgesRaw.ToList();
-
-                HashSet<IVertex> parents = VertexHelper.GetInheritParents(this);
+                parents = VertexHelper.GetInheritParents(this);
 
                 foreach (IVertex v in parents)
-                    FullEdges.AddRange(v.OutEdgesRaw);
-
-                _OutEdges = FullEdges;
+                    GraphUtil.AddRange_NoNoInherit(
+                        fullEdges,
+                        v.OutEdgesRaw);
             }
-            else
-                _OutEdges = OutEdgesRaw;
 
-            List<IEdge> FileSystemExtendedOutEdges = new List<IEdge>();
-
-            FileSystemExtendedOutEdges.AddRange(_OutEdges);
-            FileSystemExtendedOutEdges.AddRange(FileSystemVertex.OutEdges);
-
-            _OutEdges = FileSystemExtendedOutEdges;
+            fullEdges.AddRange(
+                FileSystemVertex.OutEdges);
+            _OutEdges = fullEdges;
 
             OutEdgesDictionariesNeedsRebuild_Edges = false;
+            CompleteLogicalOutEdgesRebuild(parents);
         }
 
         public AbstractFileSystemVertex(IStore store, string identifier)

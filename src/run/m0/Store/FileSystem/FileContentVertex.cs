@@ -4,13 +4,20 @@ using System.Linq;
 using System.Text;
 using m0.Foundation;
 using m0.Graph;
+using m0.Graph.Internal;
 using System.IO;
 
 namespace m0.Store.FileSystem
 {
-    public class FileContentVertex : EasyVertex
+    public class FileContentVertex
+        : EasyVertex,
+        IExplicitQueryValueVertex
     {
         string fileName;
+
+        bool IExplicitQueryValueVertex
+            .RequiresExplicitQueryValueEvaluation =>
+                fileName != null;
 
         public override object Value
         {
@@ -24,7 +31,10 @@ namespace m0.Store.FileSystem
 
                 try
                 {
-                    return System.IO.File.ReadAllText(fileName);
+                    string content =
+                        System.IO.File.ReadAllText(
+                            fileName);
+                    return content;
                 }
                 catch (Exception e) { }
                 return "";

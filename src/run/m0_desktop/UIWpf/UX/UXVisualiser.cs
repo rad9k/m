@@ -162,8 +162,18 @@ namespace m0.UIWpf.UX
 
         public UXVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile)
         {
-            if (VisualisersList.GetVisualiser(baseEdgeVertex.Get(false, "To:")) != null)
+            IVertex baseEdgeTo = baseEdgeVertex == null ? null : baseEdgeVertex.Get(false, "To:");
+            IVisualiser alreadyOpened = VisualisersList.GetVisualiser(baseEdgeTo);
+
+            if (alreadyOpened != null)
             {
+                MinusZero.Instance.Log(1, "UXVisualiser.DisposeNesting",
+                    "ctor blocked alreadyOpened type=" + alreadyOpened.GetType().Name
+                    + " baseEdgeTo=" + DescribeVertexForDisposeNestingLog(baseEdgeTo)
+                    + " parentVisualiser=" + DescribeVertexForDisposeNestingLog(parentVisualiser)
+                    + " isVolatile=" + isVolatile
+                    + " alreadyOpenedIsDisposed=" + DescribeDisposedFlag(alreadyOpened));
+
                 UserInteractionUtil.ShowException("Diagram Visualiser", "There is allready Diagram Visualiser opened for this Edge", ExceptionLevelEnum.Warning);
 
                 canLoad = false;
@@ -191,6 +201,13 @@ namespace m0.UIWpf.UX
                 baseEdgeVertex,
                 UpdateBaseEdgeCallSchemeEnum.OmmitFirst,
                 true);
+
+            MinusZero.Instance.Log(1, "UXVisualiser.DisposeNesting",
+                "ctor created baseEdgeTo=" + DescribeVertexForDisposeNestingLog(baseEdgeTo)
+                + " registeredVertex=" + DescribeVertexForDisposeNestingLog(Vertex)
+                + " parentVisualiser=" + DescribeVertexForDisposeNestingLog(parentVisualiser)
+                + " isVolatile=" + isVolatile
+                + " note=AddVertexFalse_noItemEdgeOnParent");
 
             this.AllowDrop = true;
             this.Loaded += new RoutedEventHandler(OnLoad);
@@ -1645,6 +1662,10 @@ namespace m0.UIWpf.UX
             {
                 IsDisposed = true;
 
+                MinusZero.Instance.Log(1, "UXVisualiser.DisposeNesting",
+                    "Dispose begin IsVisualiser=" + IsVisualiser
+                    + " vertex=" + DescribeVertexForDisposeNestingLog(Vertex));
+
                 if (IsVisualiser)
                 {
                     VisualisersList.RemoveVisualiser(this);
@@ -1654,12 +1675,42 @@ namespace m0.UIWpf.UX
                     DisposeAllItems();
 
                     SaveDiagram();
+
+                    MinusZero.Instance.Log(1, "UXVisualiser.DisposeNesting",
+                        "Dispose end removedFromVisualisersList vertex=" + DescribeVertexForDisposeNestingLog(Vertex));
                 }
                 else
                 {
                     TypedEdge.RemoveFromDictionary(this);
+
+                    MinusZero.Instance.Log(1, "UXVisualiser.DisposeNesting",
+                        "Dispose end TypedEdge path vertex=" + DescribeVertexForDisposeNestingLog(Vertex));
                 }
             }
+            else
+            {
+                MinusZero.Instance.Log(1, "UXVisualiser.DisposeNesting",
+                    "Dispose skipped alreadyDisposed vertex=" + DescribeVertexForDisposeNestingLog(Vertex));
+            }
+        }
+
+        private static string DescribeVertexForDisposeNestingLog(IVertex vertex)
+        {
+            if (vertex == null)
+                return "null";
+
+            return "val=" + (vertex.Value == null ? "null" : vertex.Value.ToString())
+                + " hash=" + vertex.GetHashCode();
+        }
+
+        private static string DescribeDisposedFlag(IVisualiser visualiser)
+        {
+            UXVisualiser uxVisualiser = visualiser as UXVisualiser;
+
+            if (uxVisualiser != null)
+                return uxVisualiser.IsDisposed.ToString();
+
+            return "unknown";
         }
 
         private void SaveDiagram()

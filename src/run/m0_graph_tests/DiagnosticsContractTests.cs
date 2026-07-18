@@ -6,28 +6,44 @@ namespace m0_graph_tests;
 public sealed class DiagnosticsContractTests
 {
     [Fact]
-    public void EnabledCountersReportRebuildsAndScannedEdges()
+    public void InheritedFirstQuerySharesLogicalScanAndLeavesOtherIndexesLazy()
     {
         var fixture = new GraphFixture();
-        var source = fixture.CreateVertex("Source");
+        var parent = fixture.CreateVertex("Parent");
+        var child = fixture.CreateVertex("Child");
         var meta = fixture.CreateVertex("Meta");
-        fixture.AddEdges(source, meta, 2);
-        GraphPerformanceCounters.Reset();
-        GraphPerformanceCounters.Enabled = true;
+        fixture.AddInheritance(child, parent);
+        parent.AddEdge(
+            meta,
+            fixture.CreateVertex("Existing"));
+        _ = GraphUtil.GetQueryOut(
+            child,
+            "Meta",
+            null);
 
-        try
-        {
-            source.QueryOutEdges("Meta", null, out _, out _);
-            var snapshot = GraphPerformanceCounters.GetSnapshot();
+        parent.AddEdge(
+            meta,
+            fixture.CreateVertex("Added"));
+        var result = GraphUtil.GetQueryOut(
+            child,
+            "Meta",
+            null);
 
-            Assert.Equal(1, snapshot.LogicalOutEdgesRebuilds);
-            Assert.Equal(1, snapshot.QueryMetaIndexRebuilds);
-            Assert.Equal(2, snapshot.RebuildScannedEdges);
-        }
-        finally
-        {
-            GraphPerformanceCounters.Enabled = false;
-            GraphPerformanceCounters.Reset();
-        }
+        Assert.Equal(2, result.Count);
+
+        Assert.True(
+            ((EasyVertex)child)
+                .GetOutOdgesByMeta()
+                .ContainsKey("Meta"));
+        Assert.Single(
+            GraphUtil.GetQueryOut(
+                child,
+                null,
+                "Added"));
+        Assert.Single(
+            GraphUtil.GetQueryOut(
+                child,
+                "Meta",
+                "Added"));
     }
 }

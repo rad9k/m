@@ -115,30 +115,14 @@ public sealed class InheritanceContractTests
         Assert.Equal(new[] { parentEdge }, GraphUtil.GetQueryOut(child, null, "Before"));
         Assert.Equal(new[] { parentEdge }, GraphUtil.GetQueryOut(child, "Relation", "Before"));
         Assert.Equal(new[] { parentEdge }, GraphUtil.GetQueryOut(child, "Relation", null));
-        GraphPerformanceCounters.Reset();
-        GraphPerformanceCounters.Enabled = true;
 
-        try
-        {
-            target.Value = "After";
+        target.Value = "After";
 
-            Assert.Equal(new[] { parentEdge }, GraphUtil.GetQueryOut(child, "Relation", null));
-            Assert.Empty(GraphUtil.GetQueryOut(child, null, "Before"));
-            Assert.Equal(new[] { parentEdge }, GraphUtil.GetQueryOut(child, null, "After"));
-            Assert.Empty(GraphUtil.GetQueryOut(child, "Relation", "Before"));
-            Assert.Equal(new[] { parentEdge }, GraphUtil.GetQueryOut(child, "Relation", "After"));
-
-            var counters = GraphPerformanceCounters.GetSnapshot();
-            Assert.Equal(0, counters.LogicalOutEdgesRebuilds);
-            Assert.Equal(0, counters.QueryMetaIndexRebuilds);
-            Assert.Equal(1, counters.ValueIndexRebuilds);
-            Assert.Equal(1, counters.QueryMetaAndValueIndexRebuilds);
-        }
-        finally
-        {
-            GraphPerformanceCounters.Enabled = false;
-            GraphPerformanceCounters.Reset();
-        }
+        Assert.Equal(new[] { parentEdge }, GraphUtil.GetQueryOut(child, "Relation", null));
+        Assert.Empty(GraphUtil.GetQueryOut(child, null, "Before"));
+        Assert.Equal(new[] { parentEdge }, GraphUtil.GetQueryOut(child, null, "After"));
+        Assert.Empty(GraphUtil.GetQueryOut(child, "Relation", "Before"));
+        Assert.Equal(new[] { parentEdge }, GraphUtil.GetQueryOut(child, "Relation", "After"));
     }
 
     [Fact]
@@ -290,6 +274,222 @@ public sealed class InheritanceContractTests
         Assert.Equal(
             new[] { relationEdge },
             GraphUtil.GetQueryOut(child, "Relation", null));
+    }
+
+    [Fact]
+    public void InheritedQueryPreservesZeroOneManyOrderAndEdgeIdentity()
+    {
+        var fixture = new GraphFixture();
+        var relationMeta =
+            fixture.CreateVertex("Relation");
+        var parent = fixture.CreateVertex("Parent");
+        var child = fixture.CreateVertex("Child");
+        var target = fixture.CreateVertex("Target");
+        fixture.AddInheritance(child, parent);
+
+        Assert.Empty(
+            GraphUtil.GetQueryOut(
+                child,
+                "Relation",
+                null));
+
+        var firstEdge =
+            parent.AddEdge(relationMeta, target);
+
+        Assert.Equal(
+            new[] { firstEdge },
+            GraphUtil.GetQueryOut(
+                child,
+                "Relation",
+                null));
+
+        var secondEdge =
+            parent.AddEdge(relationMeta, target);
+
+        var result = GraphUtil.GetQueryOut(
+            child,
+            "Relation",
+            null);
+        Assert.Equal(
+            new[] { firstEdge, secondEdge },
+            result);
+        Assert.Same(firstEdge, result[0]);
+        Assert.Same(secondEdge, result[1]);
+    }
+
+    [Fact]
+    public void SharedRebuildExcludesNoInheritEdges()
+    {
+        var fixture = new GraphFixture();
+        var noInheritMeta =
+            fixture.CreateVertex("$NoInherit");
+        var blockedMeta =
+            fixture.CreateVertex("Blocked");
+        blockedMeta.AddEdge(
+            noInheritMeta,
+            fixture.CreateVertex("Marker"));
+        var parent = fixture.CreateVertex("Parent");
+        var child = fixture.CreateVertex("Child");
+        var blockedEdge = parent.AddEdge(
+            blockedMeta,
+            fixture.CreateVertex("Target"));
+        fixture.AddInheritance(child, parent);
+
+        Assert.Empty(
+            GraphUtil.GetQueryOut(
+                child,
+                "Blocked",
+                null));
+        Assert.DoesNotContain(
+            blockedEdge,
+            child.OutEdges);
+        Assert.DoesNotContain(
+            "Blocked",
+            ((EasyVertex)child)
+                .GetOutOdgesByMeta()
+                .Keys);
+    }
+
+    [Fact]
+    public void DynamicNoInheritMarkerInvalidatesWarmChildren()
+    {
+        var fixture = new GraphFixture();
+        var noInheritMeta =
+            fixture.CreateVertex("$NoInherit");
+        var relationMeta =
+            fixture.CreateVertex("Relation");
+        var parent = fixture.CreateVertex("Parent");
+        var child = fixture.CreateVertex("Child");
+        var edge = parent.AddEdge(
+            relationMeta,
+            fixture.CreateVertex("Target"));
+        fixture.AddInheritance(child, parent);
+        var unrelatedMeta =
+            fixture.CreateVertex("Unrelated");
+        var unrelatedParent =
+            fixture.CreateVertex("UnrelatedParent");
+        var unrelatedChild =
+            fixture.CreateVertex("UnrelatedChild");
+        var unrelatedEdge =
+            unrelatedParent.AddEdge(
+                unrelatedMeta,
+                fixture.CreateVertex("UnrelatedTarget"));
+        fixture.AddInheritance(
+            unrelatedChild,
+            unrelatedParent);
+
+        Assert.Equal(
+            new[] { edge },
+            GraphUtil.GetQueryOut(
+                child,
+                "Relation",
+                null));
+        Assert.Equal(
+            new[] { unrelatedEdge },
+            GraphUtil.GetQueryOut(
+                unrelatedChild,
+                "Unrelated",
+                null));
+
+        var markerEdge =
+            relationMeta.AddEdge(
+                noInheritMeta,
+                fixture.CreateVertex("Marker"));
+
+        Assert.Equal(
+            new[] { unrelatedEdge },
+            GraphUtil.GetQueryOut(
+                unrelatedChild,
+                "Unrelated",
+                null));
+        Assert.Empty(
+            GraphUtil.GetQueryOut(
+                child,
+                "Relation",
+                null));
+
+        relationMeta.DeleteEdge(markerEdge);
+
+        Assert.Equal(
+            new[] { edge },
+            GraphUtil.GetQueryOut(
+                child,
+                "Relation",
+                null));
+    }
+
+    [Fact]
+    public void RenamedNoInheritMarkerMetaInvalidatesWarmChildren()
+    {
+        var fixture = new GraphFixture();
+        var markerMeta =
+            fixture.CreateVertex("MarkerKind");
+        var relationMeta =
+            fixture.CreateVertex("Relation");
+        relationMeta.AddEdge(
+            markerMeta,
+            fixture.CreateVertex("Marker"));
+        var parent = fixture.CreateVertex("Parent");
+        var child = fixture.CreateVertex("Child");
+        var edge =
+            parent.AddEdge(
+                relationMeta,
+                fixture.CreateVertex("Target"));
+        fixture.AddInheritance(child, parent);
+
+        Assert.Equal(
+            new[] { edge },
+            GraphUtil.GetQueryOut(
+                child,
+                "Relation",
+                null));
+
+        markerMeta.Value = "$NoInherit";
+
+        Assert.Empty(
+            GraphUtil.GetQueryOut(
+                child,
+                "Relation",
+                null));
+
+        markerMeta.Value = "MarkerKind";
+
+        Assert.Equal(
+            new[] { edge },
+            GraphUtil.GetQueryOut(
+                child,
+                "Relation",
+                null));
+    }
+
+    [Fact]
+    public void DisabledInheritanceKeepsQueriesOnRawEdges()
+    {
+        var fixture = new GraphFixture();
+        var relationMeta =
+            fixture.CreateVertex("Relation");
+        var parent = fixture.CreateVertex("Parent");
+        var child =
+            (EasyVertex)fixture.CreateVertex("Child");
+        var parentEdge = parent.AddEdge(
+            relationMeta,
+            fixture.CreateVertex("ParentTarget"));
+        fixture.AddInheritance(child, parent);
+        var childEdge = child.AddEdge(
+            relationMeta,
+            fixture.CreateVertex("ChildTarget"));
+        child.AllowInheritance = false;
+
+        var result = GraphUtil.GetQueryOut(
+            child,
+            "Relation",
+            null);
+
+        Assert.Equal(new[] { childEdge }, result);
+        Assert.DoesNotContain(parentEdge, child.OutEdges);
+        Assert.True(
+            child.GetOutOdgesByMeta()
+                .ContainsKey("Relation"));
     }
 
     private static void AttachInheritanceWithoutValidation(

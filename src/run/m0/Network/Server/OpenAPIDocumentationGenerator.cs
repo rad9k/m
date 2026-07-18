@@ -283,11 +283,18 @@ namespace m0.Network.Server
                 }
 
                 // Check if this vertex represents a class (has Attribute, Aggregation, or Association)
-                IList<IEdge> attributes = GraphUtil.GetQueryOut(typeVertex, "Attribute", null);
-                IList<IEdge> aggregations = GraphUtil.GetQueryOut(typeVertex, "Aggregation", null);
-                IList<IEdge> associations = GraphUtil.GetQueryOut(typeVertex, "Association", null);
-
-                if (attributes.Count > 0 || aggregations.Count > 0 || associations.Count > 0)
+                if (GraphUtil.ExistQueryOut(
+                        typeVertex,
+                        "Attribute",
+                        null) ||
+                    GraphUtil.ExistQueryOut(
+                        typeVertex,
+                        "Aggregation",
+                        null) ||
+                    GraphUtil.ExistQueryOut(
+                        typeVertex,
+                        "Association",
+                        null))
                 {
                     // This is a class, collect it
                     ClassInfo newClass = CollectClassFromVertex(typeVertex);

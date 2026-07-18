@@ -522,8 +522,6 @@ namespace m0.Graph.ExecutionFlow
             if (ShouldRecordRollbackJournalAtom(gcta))
             {
                 rollbackJournal.Add(gcta);
-                GraphPerformanceCounters
-                    .RecordRollbackJournalAtom();
             }
 
             AddOutListenerChange(gcta);
@@ -703,8 +701,6 @@ namespace m0.Graph.ExecutionFlow
                     }
 
                     existing.NewValue = atom.NewValue;
-                    GraphPerformanceCounters
-                        .RecordCoalescedGraphChangeAtom();
 
                     if (object.Equals(
                         existing.OldValue,
@@ -724,8 +720,6 @@ namespace m0.Graph.ExecutionFlow
                     atom.OldValue,
                     atom.NewValue))
                 {
-                    GraphPerformanceCounters
-                        .RecordCoalescedGraphChangeAtom();
                     RemoveEmptyChangeSetBucket(
                         changeSet,
                         changedVertex,
@@ -751,8 +745,6 @@ namespace m0.Graph.ExecutionFlow
                         continue;
                     }
 
-                    GraphPerformanceCounters
-                        .RecordCoalescedGraphChangeAtom();
 
                     if (existing.Type == atom.Type)
                         return;

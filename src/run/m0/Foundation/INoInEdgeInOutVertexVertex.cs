@@ -11,5 +11,8 @@ namespace m0.Foundation
         void AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(IEdge e);
 
         void AddEdgeForNoInEdgeInOutVertexVertex(IEdge e);
+
+        void AddRangeOriginalEdges(
+            IEnumerable<IEdge> edges);
     }
 }

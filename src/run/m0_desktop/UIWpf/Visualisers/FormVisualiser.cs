@@ -61,6 +61,7 @@ namespace m0.UIWpf.Visualisers
         private const string SelectionLogWhere = "FormVisualiser.Selection";
         private const bool KeyboardNavLogEnabled = true;
         private const string KeyboardNavLogWhere = "FormVisualiser.KeyboardNav";
+        private const string DisposeNestingLogWhere = "FormVisualiser.DisposeNesting";
 
         public event Notify SelectedEdgesChange;
 
@@ -1521,7 +1522,17 @@ namespace m0.UIWpf.Visualisers
 
                 this.SizeChanged -= FormVisualiser_SizeChanged;
 
+                MinusZero.Instance.Log(1, DisposeNestingLogWhere,
+                    "Dispose begin formVertex=" + DescribeVertex(Vertex)
+                    + " itemEdges=" + DescribeItemEdges(Vertex)
+                    + " tabDataControls=" + DescribeTabListDataControls());
+
                 VisualiserHelper.Dispose();
+
+                MinusZero.Instance.Log(1, DisposeNestingLogWhere,
+                    "Dispose end formVertex=" + DescribeVertex(Vertex)
+                    + " itemEdgesAfterHelper=" + DescribeItemEdges(Vertex)
+                    + " tabDataControlsStillHeld=" + DescribeTabListDataControls());
             }
         }
 
@@ -1541,7 +1552,17 @@ namespace m0.UIWpf.Visualisers
             ClearPendingMouseSelection();
             UnselectAllSelectedEdges();
 
+            MinusZero.Instance.Log(1, DisposeNestingLogWhere,
+                "BaseEdgeToUpdated before DisposeAllChildVisualisersExceptWrap formVertex=" + DescribeVertex(Vertex)
+                + " itemEdges=" + DescribeItemEdges(Vertex)
+                + " tabDataControls=" + DescribeTabListDataControls());
+
             VisualiserHelper.DisposeAllChildVisualisersExceptWrap();
+
+            MinusZero.Instance.Log(1, DisposeNestingLogWhere,
+                "BaseEdgeToUpdated after DisposeAllChildVisualisersExceptWrap formVertex=" + DescribeVertex(Vertex)
+                + " itemEdges=" + DescribeItemEdges(Vertex)
+                + " tabDataControlsStillHeld=" + DescribeTabListDataControls());
 
             BaseVertexEdgeAdded_PreFill = false;
             BaseVertexEdgeAdded = false;
@@ -2040,7 +2061,13 @@ namespace m0.UIWpf.Visualisers
 
                 // no need for this
 
-                dataControl = tableVisualiser; 
+                dataControl = tableVisualiser;
+
+                MinusZero.Instance.Log(1, DisposeNestingLogWhere,
+                    "AddEdge child kind=TableVisualiser meta=" + DescribeVertex(meta)
+                    + " childVertex=" + DescribeVertex(tableVisualiser.Vertex)
+                    + " parentFormVertex=" + DescribeVertex(Vertex)
+                    + " itemEdgesNow=" + DescribeItemEdges(Vertex));
             }
             else
             {
@@ -2055,10 +2082,24 @@ namespace m0.UIWpf.Visualisers
                     baseEdgeVertex.AddExternalReference();
 
                     dataControl = sv;
+
+                    MinusZero.Instance.Log(1, DisposeNestingLogWhere,
+                        "AddEdge child kind=StringVisualiser meta=" + DescribeVertex(meta)
+                        + " childVertex=" + DescribeVertex(sv.Vertex)
+                        + " parentFormVertex=" + DescribeVertex(Vertex)
+                        + " itemEdgesNow=" + DescribeItemEdges(Vertex));
                 }
                 else
                 if (ExecutableVisualiserFactory.IsExecutableVertex(meta))
+                {
                     dataControl = ExecutableVisualiserFactory.CreateExecutableVisualiser(Vertex.GetAll(false, @"BaseEdge:\To:").FirstOrDefault(), meta);
+
+                    MinusZero.Instance.Log(1, DisposeNestingLogWhere,
+                        "AddEdge child kind=ExecutableVisualiser meta=" + DescribeVertex(meta)
+                        + " dataControlType=" + (dataControl == null ? "null" : dataControl.GetType().Name)
+                        + " parentFormVertex=" + DescribeVertex(Vertex)
+                        + " itemEdgesNow=" + DescribeItemEdges(Vertex));
+                }
                 else
                 {
                     VisualiserEditWrapper w = new VisualiserEditWrapper(Vertex);
@@ -2075,6 +2116,13 @@ namespace m0.UIWpf.Visualisers
                         w.BaseEdge = e;
 
                     dataControl = w;
+
+                    MinusZero.Instance.Log(1, DisposeNestingLogWhere,
+                        "AddEdge child kind=VisualiserEditWrapper meta=" + DescribeVertex(meta)
+                        + " contentType=" + (w.Content == null ? "null" : w.Content.GetType().Name)
+                        + " contentAsIVisualiserVertex=" + DescribeIVisualiserVertex(w.Content)
+                        + " parentFormVertex=" + DescribeVertex(Vertex)
+                        + " itemEdgesNow=" + DescribeItemEdges(Vertex));
                 }
                 
            
@@ -2237,6 +2285,79 @@ namespace m0.UIWpf.Visualisers
                 return;
 
             MinusZero.Instance.Log(1, KeyboardNavLogWhere, message);
+        }
+
+        private static string DescribeVertex(IVertex vertex)
+        {
+            if (vertex == null)
+                return "null";
+
+            return "val=" + (vertex.Value == null ? "null" : vertex.Value.ToString())
+                + " hash=" + vertex.GetHashCode();
+        }
+
+        private static string DescribeIVisualiserVertex(object content)
+        {
+            IVisualiser visualiser = content as IVisualiser;
+
+            if (visualiser == null)
+                return "n/a";
+
+            return DescribeVertex(visualiser.Vertex);
+        }
+
+        private string DescribeTabListDataControls()
+        {
+            if (TabList == null)
+                return "tabList=null";
+
+            List<string> parts = new List<string>();
+
+            foreach (TabInfo tabInfo in TabList.Values)
+            {
+                foreach (ControlInfo controlInfo in tabInfo.ControlInfos.Values)
+                {
+                    FrameworkElement dataControl = controlInfo.DataControl;
+
+                    if (dataControl == null)
+                    {
+                        parts.Add("null");
+                        continue;
+                    }
+
+                    string part = dataControl.GetType().Name;
+
+                    VisualiserEditWrapper wrapper = dataControl as VisualiserEditWrapper;
+
+                    if (wrapper != null)
+                        part += "{content=" + (wrapper.Content == null ? "null" : wrapper.Content.GetType().Name)
+                            + " contentVertex=" + DescribeIVisualiserVertex(wrapper.Content) + "}";
+                    else if (dataControl is IVisualiser nestedVisualiser)
+                        part += "{vertex=" + DescribeVertex(nestedVisualiser.Vertex) + "}";
+
+                    parts.Add(part);
+                }
+            }
+
+            return "count=" + parts.Count + " [" + string.Join("; ", parts) + "]";
+        }
+
+        private static string DescribeItemEdges(IVertex formVertex)
+        {
+            if (formVertex == null)
+                return "formVertex=null";
+
+            List<string> parts = new List<string>();
+
+            foreach (IEdge itemEdge in formVertex.GetAll(false, "Item:"))
+            {
+                IVisualiser childVisualiser = VisualisersList.GetVisualiser(itemEdge.To);
+
+                parts.Add("to=" + DescribeVertex(itemEdge.To)
+                    + " listedAs=" + (childVisualiser == null ? "null" : childVisualiser.GetType().Name));
+            }
+
+            return "count=" + parts.Count + " [" + string.Join("; ", parts) + "]";
         }
 
         private string DescribeSelectedEdgesSnapshot()

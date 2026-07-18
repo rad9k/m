@@ -98,7 +98,8 @@ namespace m0.Store.FileSystem
         }
 
         public override void Refresh()
-        {            
+        {
+            OutEdgesDictionariesNeedsRebuild = true;
             GraphUtil.RemoveAllEdges(FileSystemVertex);
 
             AddVertexToFileSystemVertex(MinusZero.Instance.Is, FileSystemStore.File);

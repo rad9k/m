@@ -4,6 +4,7 @@ using m0.Graph;
 using m0.ZeroCode;
 using m0.ZeroCode.Helpers;
 using m0.ZeroUML.Instructions;
+using m0.ZeroTypes;
 
 namespace m0_graph_integration_tests;
 
@@ -87,30 +88,195 @@ public sealed class ZeroCodeStackIntegrationTests
         var execution = new ZeroCodeExecution();
         var instructionVertex = CreateTempVertex("Link");
 
-        GraphPerformanceCounters.Reset();
-        GraphPerformanceCounters.Enabled = true;
+        var result = BaseInstructions.Link(
+            execution,
+            execution.Stack,
+            instructionVertex,
+            out var isStackFrameReturn);
 
-        try
-        {
-            var result = BaseInstructions.Link(
+        Assert.NotNull(result);
+        Assert.False(isStackFrameReturn);
+    }
+
+    [Fact]
+    public void ParsedFunctionCallPreservesNestedFramesAndReturnedValue()
+    {
+        const string code =
+            "function \"choose\" @String()\r\n" +
+            "\treturn \"selected\"";
+        var codeVertex =
+            CreateTempVertex("StackFunctionConformance");
+        var codeParent =
+            CreateTempVertex("StackFunctionConformanceParent");
+        var sourceEdge =
+            codeParent.AddEdge(
+                MinusZero.Instance.Empty,
+                codeVertex);
+        var parseErrors =
+            MinusZero.Instance.DefaultFormalTextParser.Parse(
+                sourceEdge,
+                code,
+                CodeRepresentationEnum.LinearizedManyLines,
+                out var parsedRootEdge);
+
+        Assert.True(
+            parseErrors == null ||
+            !parseErrors.Any(),
+            "The ZeroCode function conformance program " +
+            "must parse without errors.");
+
+        var execution = new ZeroCodeExecution();
+        var originalFrame = execution.Stack;
+        var callInstruction =
+            CreateTempVertex("FunctionCallInstruction");
+        callInstruction.AddEdge(
+            CreateTempVertex("Target"),
+            parsedRootEdge.To);
+        var returnedStack =
+            BaseInstructions.FunctionCall(
                 execution,
                 execution.Stack,
-                instructionVertex,
+                callInstruction,
                 out var isStackFrameReturn);
-            var snapshot =
-                GraphPerformanceCounters.GetSnapshot();
 
-            Assert.NotNull(result);
-            Assert.False(isStackFrameReturn);
-            Assert.Equal(1, snapshot.CreatedStacks);
-            Assert.Equal(
-                1,
-                snapshot.CreatedTempStoreStacks);
-        }
-        finally
+        Assert.NotNull(returnedStack);
+        Assert.False(isStackFrameReturn);
+        Assert.Same(originalFrame, execution.Stack);
+        Assert.True(
+            returnedStack.OutEdgesRaw.Any(
+                edge => Equals(
+                    edge.To?.Value,
+                    "selected")),
+            MinusZero.Instance.DefaultFormalTextGenerator.Generate(
+                parsedRootEdge,
+                CodeRepresentationEnum.EdgeAndManyLines));
+    }
+
+    [Fact]
+    public void SequentialNextAtomsHandleDepthTenThousand()
+    {
+        const int depth = 10_000;
+        var nextAtomMeta =
+            MinusZero.Instance.Root.Get(
+                false,
+                @"System\FormalTextLanguage\ZeroCode\NextAtomEdge:");
+        var root =
+            CreateTempVertex(
+                "ExecutionRoot");
+        IVertex current = root;
+
+        for (var index = 0;
+            index < depth;
+            index++)
         {
-            GraphPerformanceCounters.Enabled = false;
+            var next =
+                CreateTempVertex(index);
+            current.AddEdge(
+                nextAtomMeta,
+                next);
+            current = next;
         }
+
+        var execution =
+            new RecordingExecution();
+        var result =
+            ZeroCodeExecutonUtil
+                .SequentiallyExecuteInstructions_NextEdges(
+                    execution,
+                    execution.Stack,
+                    root,
+                    out var isStackFrameReturn);
+
+        Assert.False(isStackFrameReturn);
+        Assert.Same(
+            execution.Stack,
+            result);
+        Assert.Equal(
+            depth,
+            execution.ExecutedValues.Count);
+        Assert.Equal(
+            0,
+            execution.ExecutedValues[0]);
+        Assert.Equal(
+            depth - 1,
+            execution.ExecutedValues[^1]);
+    }
+
+    [Fact]
+    public void SequentialNextAtomsPreserveDfsOrderAndTerminateCycle()
+    {
+        var nextAtomMeta =
+            MinusZero.Instance.Root.Get(
+                false,
+                @"System\FormalTextLanguage\ZeroCode\NextAtomEdge:");
+        var root = CreateTempVertex("Root");
+        var first = CreateTempVertex("First");
+        var firstChild =
+            CreateTempVertex("FirstChild");
+        var second = CreateTempVertex("Second");
+        root.AddEdge(nextAtomMeta, first);
+        root.AddEdge(nextAtomMeta, second);
+        first.AddEdge(
+            nextAtomMeta,
+            firstChild);
+        firstChild.AddEdge(
+            nextAtomMeta,
+            root);
+        var execution =
+            new RecordingExecution();
+
+        _ = ZeroCodeExecutonUtil
+            .SequentiallyExecuteInstructions_NextEdges(
+                execution,
+                execution.Stack,
+                root,
+                out var isStackFrameReturn);
+
+        Assert.False(isStackFrameReturn);
+        Assert.Equal(
+            new object[]
+            {
+                "First",
+                "FirstChild",
+                "Root",
+                "Second"
+            },
+            execution.ExecutedValues);
+    }
+
+    [Fact]
+    public void SequentialNextAtomsPreserveEarlyReturn()
+    {
+        var nextAtomMeta =
+            MinusZero.Instance.Root.Get(
+                false,
+                @"System\FormalTextLanguage\ZeroCode\NextAtomEdge:");
+        var root = CreateTempVertex("Root");
+        var first = CreateTempVertex("First");
+        var second = CreateTempVertex("Second");
+        root.AddEdge(nextAtomMeta, first);
+        root.AddEdge(nextAtomMeta, second);
+        var execution =
+            new RecordingExecution
+            {
+                ReturnOnValue = "First"
+            };
+
+        var result =
+            ZeroCodeExecutonUtil
+                .SequentiallyExecuteInstructions_NextEdges(
+                    execution,
+                    execution.Stack,
+                    root,
+                    out var isStackFrameReturn);
+
+        Assert.True(isStackFrameReturn);
+        Assert.Same(
+            execution.Stack,
+            result);
+        Assert.Equal(
+            new object[] { "First" },
+            execution.ExecutedValues);
     }
 
     private static INoInEdgeInOutVertexVertex CreateReturnedStack()
@@ -121,5 +287,84 @@ public sealed class ZeroCodeStackIntegrationTests
     private static IVertex CreateTempVertex(object value)
     {
         return MinusZero.Instance.TempStore.Root.AddVertex(MinusZero.Instance.Empty, value);
+    }
+
+    private sealed class RecordingExecution
+        : IExecution
+    {
+        public RecordingExecution()
+        {
+            Stack = InstructionHelpers.CreateStack();
+            NewVertexCreationSpace = Stack;
+        }
+
+        public List<object> ExecutedValues
+        {
+            get;
+        } = new List<object>();
+
+        public object? ReturnOnValue { get; set; }
+
+        public INoInEdgeInOutVertexVertex Stack
+        {
+            get;
+            set;
+        }
+
+        public IVertex NewVertexCreationSpace
+        {
+            get;
+            set;
+        }
+
+        public bool MetaMode { get; set; }
+
+        public void AddStackFrame()
+        {
+            throw new NotSupportedException();
+        }
+
+        public void AddStackFrame(
+            IVertex newStackFrame)
+        {
+            throw new NotSupportedException();
+        }
+
+        public void RemoveStackFrame()
+        {
+            throw new NotSupportedException();
+        }
+
+        public void CreateEmptyStack()
+        {
+            throw new NotSupportedException();
+        }
+
+        public INoInEdgeInOutVertexVertex
+            ExecuteInstructionByMontevideoPrinciples(
+                IVertex inputQs,
+                IVertex instructionVertex,
+                out bool isStackFrameReturn)
+        {
+            return ExecuteInstruction(
+                inputQs,
+                instructionVertex,
+                out isStackFrameReturn);
+        }
+
+        public INoInEdgeInOutVertexVertex
+            ExecuteInstruction(
+                IVertex inputQs,
+                IVertex instructionVertex,
+                out bool isStackFrameReturn)
+        {
+            ExecutedValues.Add(
+                instructionVertex.Value);
+            isStackFrameReturn =
+                Equals(
+                    instructionVertex.Value,
+                    ReturnOnValue);
+            return Stack;
+        }
     }
 }

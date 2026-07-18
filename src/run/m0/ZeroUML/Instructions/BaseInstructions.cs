@@ -146,7 +146,11 @@ namespace m0.ZeroUML.Instructions
 
             INoInEdgeInOutVertexVertex _inputQs = Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputQs);
 
-            IList<IEdge> expressions = GraphUtil.GetQueryOut(instructionVertex, "Expression", null);
+            IList<IEdge> expressions =
+                GraphUtil.GetQueryOut(
+                    instructionVertex,
+                    "Expression",
+                    null);
 
             INoInEdgeInOutVertexVertex newQs = _inputQs;
             INoInEdgeInOutVertexVertex oldQs = _inputQs;
@@ -253,8 +257,7 @@ namespace m0.ZeroUML.Instructions
             INoInEdgeInOutVertexVertex newQs = CreateStack();
 
             foreach (IEdge e in inputQs)
-                foreach (IEdge ee in e.To)
-                    newQs.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(ee);
+                newQs.AddRangeOriginalEdges(e.To);
 
             return NextExpressionHandle(exe, newQs, instructionVertex);
         }
@@ -269,7 +272,11 @@ namespace m0.ZeroUML.Instructions
 
             foreach (IEdge e in instructionVertex.InEdgesRaw)
             {
-                IList<IEdge> metaIsValuesList = GraphUtil.GetQueryOut(e.From, "$Is", null);
+                IList<IEdge> metaIsValuesList =
+                    GraphUtil.GetQueryOut(
+                        e.From,
+                        "$Is",
+                        null);
 
                 foreach (IEdge ee in metaIsValuesList)
                     if (GeneralUtil.CompareStrings(ee.To, new string[] { "Query", "{}", "Colon", "\\ ", "?", "InEdgesSlash" }))
@@ -1914,10 +1921,21 @@ namespace m0.ZeroUML.Instructions
 
             exe.Stack.AddEdge(functionTarget_meta, target); // to be able to know the function target vertex in the function body
 
-            IList<IEdge> expressions = GraphUtil.GetQueryOut(instructionVertex, "Expression", null);
-            IList<IEdge> inputParameters = GraphUtil.GetQueryOut(target, "InputParameter", null);
+            IList<IEdge> expressions =
+                GraphUtil.GetQueryOut(
+                    instructionVertex,
+                    "Expression",
+                    null);
+            IList<IEdge> inputParameters =
+                GraphUtil.GetQueryOut(
+                    target,
+                    "InputParameter",
+                    null);
 
-            int minParameters = Math.Min(expressions.Count(), inputParameters.Count());
+            int minParameters =
+                Math.Min(
+                    expressions.Count(),
+                    inputParameters.Count());
 
             for (int x = 0; x < minParameters; x++)
             {
@@ -2126,7 +2144,11 @@ namespace m0.ZeroUML.Instructions
 
             IVertex firstExpression = expressionExecution.OutEdges[0].To;
 
-            IList<IEdge> cases = GraphUtil.GetQueryOut(instructionVertex, "Case", null);
+            IList<IEdge> cases =
+                GraphUtil.GetQueryOut(
+                    instructionVertex,
+                    "Case",
+                    null);
 
             foreach (IEdge _case in cases)
             {
@@ -2390,8 +2412,8 @@ namespace m0.ZeroUML.Instructions
 
                 INoInEdgeInOutVertexVertex nestedExpressionResult = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, e.To);
 
-                foreach (IEdge ee in nestedExpressionResult)
-                    newStack.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(ee);
+                newStack.AddRangeOriginalEdges(
+                    nestedExpressionResult);
             }
 
             return newStack;
@@ -2498,7 +2520,11 @@ namespace m0.ZeroUML.Instructions
             if (targetExpression == null)
                 return exe.Stack;
 
-            IList<IEdge> parameterExpressions = GraphUtil.GetQueryOut(instructionVertex, "Expression", null);
+            IList<IEdge> parameterExpressions =
+                GraphUtil.GetQueryOut(
+                    instructionVertex,
+                    "Expression",
+                    null);
 
             INoInEdgeInOutVertexVertex newStack = CreateStack();
 
@@ -2506,8 +2532,8 @@ namespace m0.ZeroUML.Instructions
             {
                 INoInEdgeInOutVertexVertex returnedStack = MethodCallForOneObject(objectEdge.To, exe, targetExpression, parameterExpressions);
 
-                foreach (IEdge e in returnedStack)
-                    newStack.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(e);
+                newStack.AddRangeOriginalEdges(
+                    returnedStack);
             }
 
             // return newStack; want to have []\
@@ -2541,9 +2567,16 @@ namespace m0.ZeroUML.Instructions
 
         private static INoInEdgeInOutVertexVertex MethodCallForOneObject_Internal(IVertex theObject, ZeroCodeExecution exe, IList<IEdge> parameterExpressions, IVertex methodBody)
         {
-            IList<IEdge> inputParameters = GraphUtil.GetQueryOut(methodBody, "InputParameter", null);
+            IList<IEdge> inputParameters =
+                GraphUtil.GetQueryOut(
+                    methodBody,
+                    "InputParameter",
+                    null);
 
-            int minParameters = Math.Min(parameterExpressions.Count(), inputParameters.Count());
+            int minParameters =
+                Math.Min(
+                    parameterExpressions.Count(),
+                    inputParameters.Count());
 
             exe.AddStackFrame(theObject); // ENTER NEW STACK
             exe.AddStackFrame();
@@ -2581,7 +2614,11 @@ namespace m0.ZeroUML.Instructions
             if (target == null)
                 return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputStack);
 
-            IList<IEdge> parameterExpressions = GraphUtil.GetQueryOut(instructionVertex, "Expression", null);
+            IList<IEdge> parameterExpressions =
+                GraphUtil.GetQueryOut(
+                    instructionVertex,
+                    "Expression",
+                    null);
 
             INoInEdgeInOutVertexVertex targetExecution = exe.ExecuteInstructionByMontevideoPrinciples(inputStack, target);
 

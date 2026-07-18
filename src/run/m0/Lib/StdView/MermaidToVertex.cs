@@ -322,7 +322,11 @@ namespace m0.Lib.StdView
             if (baseVertex == null)
                 return null;
 
-            if (GraphUtil.GetStringValue(baseVertex) == SqlRootValue || GraphUtil.GetQueryOut(baseVertex, GetMetaValue(TableMeta), null).Count > 0)
+            if (GraphUtil.GetStringValue(baseVertex) == SqlRootValue ||
+                GraphUtil.ExistQueryOut(
+                    baseVertex,
+                    GetMetaValue(TableMeta),
+                    null))
                 return baseVertex;
 
             return GraphUtil.GetQueryOutFirst(baseVertex, null, SqlRootValue);
