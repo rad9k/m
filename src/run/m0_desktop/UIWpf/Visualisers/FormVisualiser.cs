@@ -1527,6 +1527,10 @@ namespace m0.UIWpf.Visualisers
                     + " itemEdges=" + DescribeItemEdges(Vertex)
                     + " tabDataControls=" + DescribeTabListDataControls());
 
+                // Nested UX (and other edit visualisers) are hosted in TabList via VisualiserEditWrapper
+                // with AddVertex=false, so they are not reachable through Item: edges.
+                DisposeTabListDataControls();
+
                 VisualiserHelper.Dispose();
 
                 MinusZero.Instance.Log(1, DisposeNestingLogWhere,
@@ -1553,14 +1557,18 @@ namespace m0.UIWpf.Visualisers
             UnselectAllSelectedEdges();
 
             MinusZero.Instance.Log(1, DisposeNestingLogWhere,
-                "BaseEdgeToUpdated before DisposeAllChildVisualisersExceptWrap formVertex=" + DescribeVertex(Vertex)
+                "BaseEdgeToUpdated before DisposeTabListAndChildVisualisers formVertex=" + DescribeVertex(Vertex)
                 + " itemEdges=" + DescribeItemEdges(Vertex)
                 + " tabDataControls=" + DescribeTabListDataControls());
+
+            // Dispose TabList hosts first so nested UX (AddVertex=false) leaves VisualisersList
+            // before Item:-based cleanup and UI rebuild.
+            DisposeTabListDataControls();
 
             VisualiserHelper.DisposeAllChildVisualisersExceptWrap();
 
             MinusZero.Instance.Log(1, DisposeNestingLogWhere,
-                "BaseEdgeToUpdated after DisposeAllChildVisualisersExceptWrap formVertex=" + DescribeVertex(Vertex)
+                "BaseEdgeToUpdated after DisposeTabListAndChildVisualisers formVertex=" + DescribeVertex(Vertex)
                 + " itemEdges=" + DescribeItemEdges(Vertex)
                 + " tabDataControlsStillHeld=" + DescribeTabListDataControls());
 
@@ -2285,6 +2293,57 @@ namespace m0.UIWpf.Visualisers
                 return;
 
             MinusZero.Instance.Log(1, KeyboardNavLogWhere, message);
+        }
+
+        private void DisposeTabListDataControls()
+        {
+            if (TabList == null)
+            {
+                MinusZero.Instance.Log(1, DisposeNestingLogWhere, "DisposeTabListDataControls skipped tabList=null");
+                return;
+            }
+
+            MinusZero.Instance.Log(1, DisposeNestingLogWhere,
+                "DisposeTabListDataControls begin " + DescribeTabListDataControls());
+
+            foreach (TabInfo tabInfo in TabList.Values)
+            {
+                foreach (ControlInfo controlInfo in tabInfo.ControlInfos.Values)
+                {
+                    FrameworkElement dataControl = controlInfo.DataControl;
+
+                    if (dataControl == null)
+                        continue;
+
+                    MinusZero.Instance.Log(1, DisposeNestingLogWhere,
+                        "DisposeTabListDataControls disposing type=" + dataControl.GetType().Name
+                        + " contentType=" + DescribeDataControlContentType(dataControl)
+                        + " contentVertex=" + DescribeIVisualiserVertex(
+                            dataControl is VisualiserEditWrapper wrapper ? wrapper.Content : dataControl));
+
+                    if (dataControl is IDisposable disposableDataControl)
+                        disposableDataControl.Dispose();
+
+                    controlInfo.DataControl = null;
+                }
+
+                tabInfo.ControlInfos.Clear();
+            }
+
+            TabList.Clear();
+            TabList = null;
+
+            MinusZero.Instance.Log(1, DisposeNestingLogWhere, "DisposeTabListDataControls end");
+        }
+
+        private static string DescribeDataControlContentType(FrameworkElement dataControl)
+        {
+            VisualiserEditWrapper wrapper = dataControl as VisualiserEditWrapper;
+
+            if (wrapper == null)
+                return "n/a";
+
+            return wrapper.Content == null ? "null" : wrapper.Content.GetType().Name;
         }
 
         private static string DescribeVertex(IVertex vertex)
