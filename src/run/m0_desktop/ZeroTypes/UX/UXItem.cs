@@ -90,7 +90,8 @@ namespace m0.ZeroTypes.UX
         }
 
         private void UXItem_SizeChanged(object sender, SizeChangedEventArgs e)
-        {            
+        {
+            UXPerfLog.Count("UXItem.SizeChanged->UpdateDiagramLines");
             UpdateDiagramLines();
         }
 
@@ -322,6 +323,8 @@ namespace m0.ZeroTypes.UX
             if (Position == null)
                 return;
 
+            long tMove = UXPerfLog.Timestamp();
+
             if (!(ParentItem is IUXVisualiser) && ParentItem != null && !onlyAnchors)
             {
                 Point localCanvasPosition = localCanvasPosition = OwningVisualiser.Canvas.TranslatePoint(new Point(x, y), ((IUXContainer)ParentItem).Canvas);
@@ -363,13 +366,21 @@ namespace m0.ZeroTypes.UX
                 Canvas.SetTop(a, Canvas.GetTop(a) - deltay);
             }
 
+            long tLayout = UXPerfLog.Timestamp();
             UpdateLayout();
+            UXPerfLog.Record("UXItem.MoveItem.UpdateLayout", UXPerfLog.Timestamp() - tLayout);
 
+            long tSub = UXPerfLog.Timestamp();
             UpdateDiagramLinesInSubItems();
+            UXPerfLog.Record("UXItem.MoveItem.UpdateDiagramLinesInSubItems", UXPerfLog.Timestamp() - tSub);
 
+            long tLines = UXPerfLog.Timestamp();
             UpdateDiagramLines();
+            UXPerfLog.Record("UXItem.MoveItem.UpdateDiagramLines", UXPerfLog.Timestamp() - tLines);
 
             OwningVisualiser.CheckAndUpdateItemParent(this, true);
+
+            UXPerfLog.Record("UXItem.MoveItem.total", UXPerfLog.Timestamp() - tMove, onlyAnchors ? 1 : 0, "onlyAnchors");
         }
 
         static public IUXItem GetUXItem(IItem parent, ITypedEdge i)
@@ -609,13 +620,18 @@ namespace m0.ZeroTypes.UX
 
         void RebuidDiagramLinesDictionary()
         {
+            long t0 = UXPerfLog.Timestamp();
+
             DiagramLinesToDiagramItemDictionary.Clear();
             DiagramLinesBaseEdgeToDictionary.Clear();
+
+            int lineCount = 0;
 
             foreach (IUXItem _l in Decorators)
                 if (_l is ILineDecoratorBase)
                 {
                     ILineDecoratorBase l = (ILineDecoratorBase)_l;
+                    lineCount++;
 
                     // ToDiagramItem:
 
@@ -647,6 +663,8 @@ namespace m0.ZeroTypes.UX
                 }
 
             needRebuildDiagramLinesDictionary = false;
+
+            UXPerfLog.Record("UXItem.RebuidDiagramLinesDictionary", UXPerfLog.Timestamp() - t0, lineCount, "lines");
         }
 
         // OPTIMISATION END
@@ -734,34 +752,46 @@ namespace m0.ZeroTypes.UX
 
         public void UpdateDiagramLines()
         {
+            long t0 = UXPerfLog.Timestamp();
+
             foreach (ILineDecoratorBase m in DiagramToAsMetaLines)
                 m.UpdateMetaPosition();
 
             List<IUXItem> updatedItems = new List<IUXItem>();
 
+            int decoratorLineTouches = 0;
+            int incomingLineTouches = 0;
+            int peerUpdates = 0;
 
             foreach (IUXItem _l in Decorators)
                 if (_l is ILineDecoratorBase)
                 {
                     ILineDecoratorBase l = (ILineDecoratorBase)_l;
+                    decoratorLineTouches++;
 
                     if (!updatedItems.Contains(l.ToItem))
                     {
                         UpdateDiagramLines(l.ToItem);
+                        peerUpdates++;
 
                         updatedItems.Add(l.ToItem);
                     }
                 }
 
             foreach (ILineDecoratorBase l in DiagramToLines)
+            {
+                incomingLineTouches++;
+
                 if (!updatedItems.Contains(l.FromDiagramItem))
                 {
                     UpdateDiagramLines(l.FromDiagramItem);
+                    peerUpdates++;
 
                     updatedItems.Add(l.FromDiagramItem);
                 }
+            }
 
-            //
+            int subItemUpdates = 0;
 
             foreach (ITypedEdge _i in Items)
             {
@@ -770,8 +800,14 @@ namespace m0.ZeroTypes.UX
                 if (i == null)
                     continue;
 
+                subItemUpdates++;
                 i.UpdateDiagramLines();
             }
+
+            UXPerfLog.Record("UXItem.UpdateDiagramLines", UXPerfLog.Timestamp() - t0,
+                decoratorLineTouches + incomingLineTouches, "lineTouches");
+            UXPerfLog.CountWithExtra("UXItem.UpdateDiagramLines.peers", 1, peerUpdates, "peerUpdates");
+            UXPerfLog.CountWithExtra("UXItem.UpdateDiagramLines.subItems", 1, subItemUpdates, "subItemUpdates");
         }
 
         public void HighlightThisAndAllConectedByDiagramLine()
@@ -1129,8 +1165,13 @@ namespace m0.ZeroTypes.UX
 
         public virtual Point GetLineAnchorLocation(IUXItem _toItem, bool useToPoint, Point toPoint, int toItemDiagramLinesCount, int toItemDiagramLineNumber, bool isSelfStart)
         {
+            long t0 = UXPerfLog.Timestamp();
+
             if (!(_toItem is FrameworkElement) || OwningVisualiser == null)
+            {
+                UXPerfLog.Record("UXItem.GetLineAnchorLocation", UXPerfLog.Timestamp() - t0);
                 return new Point();
+            }
 
             FrameworkElement toItem = (FrameworkElement)_toItem;
 
@@ -1141,9 +1182,11 @@ namespace m0.ZeroTypes.UX
             Point thisLeftTop = new Point();
 
 
+            long tTranslate = UXPerfLog.Timestamp();
             toItemLeftTop = toItem.TranslatePoint(new Point(0, 0), OwningVisualiser.Canvas);
 
             thisLeftTop = TranslatePoint(new Point(0, 0), OwningVisualiser.Canvas);
+            UXPerfLog.Record("UXItem.GetLineAnchorLocation.TranslatePoint", UXPerfLog.Timestamp() - tTranslate, 2, "calls");
 
             //
 
@@ -1187,6 +1230,7 @@ namespace m0.ZeroTypes.UX
                         p.X = thisLeftTop.X + (((double)toItemDiagramLineNumber + 1) / ((double)toItemDiagramLinesCount + 1) * this.ActualWidth);
                         p.Y = tY - this.ActualHeight / 2;
 
+                        UXPerfLog.Record("UXItem.GetLineAnchorLocation", UXPerfLog.Timestamp() - t0);
                         return p;
                     }
                     else
@@ -1194,6 +1238,7 @@ namespace m0.ZeroTypes.UX
                         p.X = tX + this.ActualWidth / 2;
                         p.Y = thisLeftTop.Y + (((double)(toItemDiagramLinesCount - toItemDiagramLineNumber)) / ((double)toItemDiagramLinesCount + 1) * this.ActualHeight);
 
+                        UXPerfLog.Record("UXItem.GetLineAnchorLocation", UXPerfLog.Timestamp() - t0);
                         return p;
                     }
                 }
@@ -1231,6 +1276,7 @@ namespace m0.ZeroTypes.UX
                         p.X = tX;
                         p.Y = tY - this.ActualHeight / 2;
 
+                        UXPerfLog.Record("UXItem.GetLineAnchorLocation", UXPerfLog.Timestamp() - t0);
                         return p;
                     }
                     else
@@ -1238,6 +1284,7 @@ namespace m0.ZeroTypes.UX
                         p.X = tX + this.ActualWidth / 2;
                         p.Y = tY;
 
+                        UXPerfLog.Record("UXItem.GetLineAnchorLocation", UXPerfLog.Timestamp() - t0);
                         return p;
                     }
                 }
@@ -1267,6 +1314,7 @@ namespace m0.ZeroTypes.UX
                 }
             }
 
+            UXPerfLog.Record("UXItem.GetLineAnchorLocation", UXPerfLog.Timestamp() - t0);
             return p;
         }
 
@@ -1278,6 +1326,8 @@ namespace m0.ZeroTypes.UX
         // fromPoint as a safe fallback so the caller can detect "no change".
         public virtual Point GetLineEdgeIntersection(Point fromPoint, Vector direction)
         {
+            long t0 = UXPerfLog.Timestamp();
+
             if (OwningVisualiser == null)
                 return fromPoint;
 
@@ -1319,8 +1369,12 @@ namespace m0.ZeroTypes.UX
             ConsiderRectangleCandidate(candidateRight, fromPoint, direction, left, top, right, bottom, tol, ref best, ref bestDistance);
 
             if (bestDistance == double.MaxValue)
+            {
+                UXPerfLog.Record("UXItem.GetLineEdgeIntersection", UXPerfLog.Timestamp() - t0);
                 return fromPoint;
+            }
 
+            UXPerfLog.Record("UXItem.GetLineEdgeIntersection", UXPerfLog.Timestamp() - t0);
             return best;
         }
 
@@ -1601,6 +1655,8 @@ namespace m0.ZeroTypes.UX
         {
             get
             {
+                long t0 = UXPerfLog.Timestamp();
+
                 IList<IEdge> list = GraphUtil.GetQueryOut(Vertex, "Decorator", null);
 
                 IList<IUXItem> ret = new List<IUXItem>();
@@ -1613,6 +1669,7 @@ namespace m0.ZeroTypes.UX
                         ret.Add((IUXItem)_i);                    
                 }
 
+                UXPerfLog.Record("UXItem.Decorators.get", UXPerfLog.Timestamp() - t0, ret.Count, "count");
                 return ret;
             }
         }
@@ -1712,6 +1769,8 @@ namespace m0.ZeroTypes.UX
         {
             get
             {
+                long t0 = UXPerfLog.Timestamp();
+
                 IList<IEdge> list = GraphUtil.GetQueryOut(Vertex, "Item", null);
 
                 IList<ITypedEdge> ret = new List<ITypedEdge>();
@@ -1729,6 +1788,7 @@ namespace m0.ZeroTypes.UX
                     }
                 }
 
+                UXPerfLog.Record("UXItem.Items.get", UXPerfLog.Timestamp() - t0, ret.Count, "count");
                 return ret;
             }
         }

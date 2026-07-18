@@ -3,7 +3,7 @@ using m0.ZeroTypes;
 
 namespace m0_graph_test_support;
 
-public sealed class NoOpUserInteraction : IUserInteraction
+public class NoOpUserInteraction : IUserInteraction
 {
     public PlatformTypeEnum GetPlatformType()
     {
@@ -26,11 +26,11 @@ public sealed class NoOpUserInteraction : IUserInteraction
     {
     }
 
-    public void InteractionOutputException(IVertex exception)
+    public virtual void InteractionOutputException(IVertex exception)
     {
     }
 
-    public void InteractionOutput(string info)
+    public virtual void InteractionOutput(string info)
     {
     }
 

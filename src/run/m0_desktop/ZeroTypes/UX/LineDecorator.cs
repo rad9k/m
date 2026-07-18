@@ -305,6 +305,8 @@ namespace m0.ZeroTypes.UX
 
         public override void SetPosition(double _FromX, double _FromY, double _ToX, double _ToY, bool _isSelfRelation, double selfRelationX, double selfRelationY)
         {
+            long t0 = UXPerfLog.Timestamp();
+
             FromX = _FromX;
             FromY = _FromY;
             ToX = _ToX;
@@ -336,7 +338,11 @@ namespace m0.ZeroTypes.UX
             LineEndings.Points = pc;
             Line.Points = pc;
 
+            long tCrow = UXPerfLog.Timestamp();
             ComputeCrowFootSideTips();
+            UXPerfLog.Record("LineDecorator.SetPosition.ComputeCrowFootSideTips", UXPerfLog.Timestamp() - tCrow);
+
+            UXPerfLog.Record("LineDecorator.SetPosition", UXPerfLog.Timestamp() - t0, isSelfRelation ? 1 : 0, "self");
         }
 
         // Computes the two side prong tips of CrowFoot at each end (only for
@@ -415,12 +421,19 @@ namespace m0.ZeroTypes.UX
 
         public override double GetMouseDistance(Point p)
         {
+            long t0 = UXPerfLog.Timestamp();
+
             if (OwningVisualiser == null)
+            {
+                UXPerfLog.Record("LineDecorator.GetMouseDistance", UXPerfLog.Timestamp() - t0);
                 return double.MaxValue;
+            }
+
+            double result;
 
             if (!isSelfRelation)
             {
-                return GetMouseDistance_Helper(p, FromX, FromY, ToX, ToY);
+                result = GetMouseDistance_Helper(p, FromX, FromY, ToX, ToY);
             }
             else
             {
@@ -437,8 +450,11 @@ namespace m0.ZeroTypes.UX
                         min = distance;
                 }
 
-                return min;
+                result = min;
             }
+
+            UXPerfLog.Record("LineDecorator.GetMouseDistance", UXPerfLog.Timestamp() - t0);
+            return result;
         }
 
         private double GetMouseDistance_Helper(Point p, double _FromX, double _FromY, double _ToX, double _ToY)

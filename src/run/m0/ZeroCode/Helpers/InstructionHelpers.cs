@@ -16,9 +16,12 @@ namespace m0.ZeroCode.Helpers
     {
         public static INoInEdgeInOutVertexVertex CreateStack()
         {
-            return new NoInEdgeInOutVertexVertex(
+            INoInEdgeInOutVertexVertex stack =
+                new NoInEdgeInOutVertexVertex(
                 MinusZero.Instance.TempStore,
                 VertexIdentifierRegistrationMode.Ephemeral);
+            ZeroCodePerformanceCounters.RecordStackCreated();
+            return stack;
         }
 
         public static void AddToStack_BAD_BEHAVIOR_IEdge_MANY_TIMES(INoInEdgeInOutVertexVertex destination, IEnumerable<IEdge> source)
@@ -170,7 +173,11 @@ namespace m0.ZeroCode.Helpers
             IVertex nextExpression = InstructionHelpers.GetNextExpression(instructionVertex);
 
             if (nextExpression != null)
+            {
+                ZeroCodePerformanceCounters
+                    .RecordNextExpressionTransition();
                 return exe.ExecuteInstructionByMontevideoPrinciples(inStack, nextExpression, out isStackFrameReturn);
+            }
 
             return Create_INoInEdgeInOutVertexVertex_FromEdgesList(inStack);
         }

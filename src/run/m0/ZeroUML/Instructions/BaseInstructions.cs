@@ -154,17 +154,22 @@ namespace m0.ZeroUML.Instructions
 
             INoInEdgeInOutVertexVertex newQs = _inputQs;
             INoInEdgeInOutVertexVertex oldQs = _inputQs;
+            long nestedExecutionCount = 0;
 
             foreach (IEdge expression in expressions)
             {
                 if (IsIsHierarchyFilterExpression(expression.To))
+                {
+                    nestedExecutionCount++;
                     newQs = ProcessIsHierarchyFilter(exe, oldQs, expression.To);
+                }
                 else
                 {
                     newQs = CreateStack();
 
                     foreach (IEdge e in oldQs)
                     {
+                        nestedExecutionCount++;
                         IVertex outQs = exe.ExecuteInstructionByMontevideoPrinciples(e.To, expression.To);
 
                         if (outQs.OutEdges.Count() > 0)
@@ -175,6 +180,8 @@ namespace m0.ZeroUML.Instructions
                 oldQs = newQs;
             }
 
+            ZeroCodePerformanceCounters.RecordInnerOperator(
+                nestedExecutionCount);
             return NextExpressionHandle(exe, newQs, instructionVertex);
         }
 
@@ -362,6 +369,10 @@ namespace m0.ZeroUML.Instructions
             {
                 IEdge e;
                 IList<IEdge> eList;
+                ZeroCodePerformanceCounters
+                    .RecordColonOperatorQueryCombinations(
+                        (long)processedToQueryStrings.Count *
+                        processedMetaQueryStrings.Count);
 
                 foreach (string processedToString in processedToQueryStrings)
                     foreach (string processedMetaString in processedMetaQueryStrings)
@@ -1997,6 +2008,8 @@ namespace m0.ZeroUML.Instructions
 
                 foreach (IEdge setEdge in setExecution)
                 {
+                    ZeroCodePerformanceCounters
+                        .RecordForVertexIteration();
                     exe.AddStackFrame(); // ENTER NEW STACK
 
                     IEdge variableEdge = GraphUtil.CreateArtificialEdge(variable, setEdge.To);
@@ -2034,6 +2047,8 @@ namespace m0.ZeroUML.Instructions
 
                 foreach (IEdge setEdge in setExecution)
                 {
+                    ZeroCodePerformanceCounters
+                        .RecordForEdgeIteration();
                     exe.AddStackFrame(); // ENTER NEW STACK
 
                     IEdge variableEdge = GraphUtil.CreateArtificialEdge(variable, EdgeHelper.CreateTempEdgeVertex(setEdge));
@@ -2072,6 +2087,8 @@ namespace m0.ZeroUML.Instructions
 
                 while (IsTrue_Stack(testResult))
                 {
+                    ZeroCodePerformanceCounters
+                        .RecordWhileIteration();
                     exe.AddStackFrame(); // ENTER NEW STACK
 
                     possibleToReturnStack = ZeroCodeExecutonUtil.SequentiallyExecuteInstructions(exe, exe.Stack, instructionVertex, out local_isStackFrameReturn);

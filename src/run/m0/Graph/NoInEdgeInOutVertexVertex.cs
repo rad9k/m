@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using m0.Foundation;
 using m0.Util;
+using m0.ZeroCode;
 
 namespace m0.Graph
 {
@@ -108,15 +109,19 @@ namespace m0.Graph
         public void AddRangeOriginalEdges(
             IEnumerable<IEdge> edges)
         {
+            int addedEdgeCount = 0;
             try
             {
-                edgeDictionaries.Out
+                addedEdgeCount = edgeDictionaries.Out
                     .AddRangeOriginalStackEdges(edges);
             }
             finally
             {
                 InvalidateParentStackFrameCache();
             }
+
+            ZeroCodePerformanceCounters.RecordOriginalStackEdgeBatch(
+                addedEdgeCount);
         }
         
         public override void QueryOutEdges(object meta, object from, out IEdge result, out IList<IEdge> results)
@@ -196,6 +201,8 @@ namespace m0.Graph
 
             if (cachedParent != null)
             {
+                ZeroCodePerformanceCounters
+                    .RecordStackParentFrameCacheLookup(true);
                 return ReferenceEquals(
                     cachedParent,
                     NoParentStackFrame)
@@ -203,7 +210,8 @@ namespace m0.Graph
                         : (IVertex)cachedParent;
             }
 
-
+            ZeroCodePerformanceCounters
+                .RecordStackParentFrameCacheLookup(false);
             base.QueryOutEdges(
                 "$StackFrameInherits",
                 null,

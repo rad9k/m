@@ -41,7 +41,12 @@ namespace m0.DotNetIntegration
             if (_is == null)
                 return null;
 
-            if (DotNetEndPointDictionary.ContainsKey(_is))
+            bool endpointCacheHit =
+                DotNetEndPointDictionary.ContainsKey(_is);
+            ZeroCodePerformanceCounters.RecordEndpointCacheLookup(
+                endpointCacheHit);
+
+            if (endpointCacheHit)
                 del = DotNetEndPointDictionary[_is];
             else
             {            

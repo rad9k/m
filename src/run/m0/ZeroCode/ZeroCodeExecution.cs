@@ -14,6 +14,8 @@ namespace m0.ZeroCode
 {
     public class ZeroCodeExecution: IExecution
     {
+        private int stackFrameDepth;
+
         public INoInEdgeInOutVertexVertex Stack { get; set; }
 
         public IVertex NewVertexCreationSpace { get; set; }
@@ -85,7 +87,10 @@ namespace m0.ZeroCode
 
             newStackFrame.AddEdge(MinusZero.Instance.StackFrameInherits, Stack);
 
-            Stack = newStackFrame;            
+            Stack = newStackFrame;
+            stackFrameDepth++;
+            ZeroCodePerformanceCounters.RecordStackFramePush(
+                stackFrameDepth);
         }
 
         public void AddStackFrame(IVertex newStackFrame)
@@ -95,6 +100,9 @@ namespace m0.ZeroCode
             newStackFrameINIEIOV.AddEdge(MinusZero.Instance.StackFrameInherits, Stack);
 
             Stack = newStackFrameINIEIOV;
+            stackFrameDepth++;
+            ZeroCodePerformanceCounters.RecordStackFramePush(
+                stackFrameDepth);
         }
 
         public void RemoveStackFrame()
@@ -112,7 +120,10 @@ namespace m0.ZeroCode
             {
                 INoInEdgeInOutVertexVertex prevStackFrame = (INoInEdgeInOutVertexVertex)_prevStackFrame;
 
-                Stack = prevStackFrame;                
+                Stack = prevStackFrame;
+                if (stackFrameDepth > 0)
+                    stackFrameDepth--;
+                ZeroCodePerformanceCounters.RecordStackFramePop();
             }
         }
 
@@ -126,30 +137,62 @@ namespace m0.ZeroCode
         public INoInEdgeInOutVertexVertex ExecuteInstructionByMontevideoPrinciples(IVertex inputQs, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
+            ZeroCodeInstructionTimingToken timingToken =
+                ZeroCodePerformanceCounters.BeginInstruction(true);
+            IVertex is_v = null;
 
-            IVertex is_v = InstructionHelpers.GetIs(instructionVertex);            
+            try
+            {
+                is_v = InstructionHelpers.GetIs(instructionVertex);
+                bool isExecutable =
+                    InstructionHelpers.CheckIfHasExecutableEndPoint(is_v);
+                ZeroCodePerformanceCounters.RecordInstructionResolution(
+                    isExecutable);
 
-            if (InstructionHelpers.CheckIfHasExecutableEndPoint(is_v))  // execute if you can.....
-                return CallableEndPointDictionary_INIEIOV_ZCE_IV_IV_B.CallEndPoint(this, inputQs, instructionVertex, out isStackFrameReturn);
+                if (isExecutable)  // execute if you can.....
+                    return CallableEndPointDictionary_INIEIOV_ZCE_IV_IV_B.CallEndPoint(this, inputQs, instructionVertex, out isStackFrameReturn);
 
-            // ...OR...
-            INoInEdgeInOutVertexVertex stack_ = InstructionHelpers.CreateStack();
+                // ...OR...
+                INoInEdgeInOutVertexVertex stack_ = InstructionHelpers.CreateStack();
 
-            stack_.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(GraphUtil.CreateArtificialEdge(null, instructionVertex)); // create stack and put reference
+                stack_.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(GraphUtil.CreateArtificialEdge(null, instructionVertex)); // create stack and put reference
 
-            return stack_;
+                return stack_;
+            }
+            finally
+            {
+                ZeroCodePerformanceCounters.EndInstruction(
+                    timingToken,
+                    is_v);
+            }
         }
 
         public INoInEdgeInOutVertexVertex ExecuteInstruction(IVertex inputQs, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
+            ZeroCodeInstructionTimingToken timingToken =
+                ZeroCodePerformanceCounters.BeginInstruction(false);
+            IVertex is_v = null;
 
-            IVertex is_v = InstructionHelpers.GetIs(instructionVertex);
+            try
+            {
+                is_v = InstructionHelpers.GetIs(instructionVertex);
+                bool isExecutable =
+                    InstructionHelpers.CheckIfHasExecutableEndPoint(is_v);
+                ZeroCodePerformanceCounters.RecordInstructionResolution(
+                    isExecutable);
 
-            if (InstructionHelpers.CheckIfHasExecutableEndPoint(is_v))  // execute if you can
-                return CallableEndPointDictionary_INIEIOV_ZCE_IV_IV_B.CallEndPoint(this, inputQs, instructionVertex, out isStackFrameReturn);           
+                if (isExecutable)  // execute if you can
+                    return CallableEndPointDictionary_INIEIOV_ZCE_IV_IV_B.CallEndPoint(this, inputQs, instructionVertex, out isStackFrameReturn);
 
-            return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputQs);
+                return InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(inputQs);
+            }
+            finally
+            {
+                ZeroCodePerformanceCounters.EndInstruction(
+                    timingToken,
+                    is_v);
+            }
         }
     }
 }

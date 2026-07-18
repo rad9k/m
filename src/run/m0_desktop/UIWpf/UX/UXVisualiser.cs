@@ -593,7 +593,9 @@ namespace m0.UIWpf.UX
             }
             //
 
+            long tLayout = UXPerfLog.Timestamp();
             item_UIElement.UpdateLayout();
+            UXPerfLog.Record("UXVisualiser.HostItem.UpdateLayout", UXPerfLog.Timestamp() - tLayout);
 
             FindAndOrCreateContainerEdge(item, newItemCreation);
         }
@@ -829,6 +831,8 @@ namespace m0.UIWpf.UX
         {
             if (ActualHeight != 0 || IsFirstPainted)
             {
+                long tPaint = UXPerfLog.Timestamp();
+
                 ScaleChange();
 
                 Canvas.Children.Clear();
@@ -847,6 +851,9 @@ namespace m0.UIWpf.UX
 
                 //
 
+                long tHost = UXPerfLog.Timestamp();
+                int hosted = 0;
+
                 foreach (ITypedEdge _i in Items)
                 {
                     IUXItem i = UXItem.GetUXItem(this, _i);
@@ -855,14 +862,23 @@ namespace m0.UIWpf.UX
                         continue;
 
                     if (CheckIfItemIsValidAndRemoveIfInvalid(i))
+                    {
                         HostItem(this, i, false);
+                        hosted++;
+                    }
                 }
+
+                UXPerfLog.Record("UXVisualiser.Paint.HostItems", UXPerfLog.Timestamp() - tHost, hosted, "items");
 
                 //
 
+                long tLayout = UXPerfLog.Timestamp();
                 UpdateLayout(); // here
+                UXPerfLog.Record("UXVisualiser.Paint.UpdateLayout", UXPerfLog.Timestamp() - tLayout);
 
+                long tLines = UXPerfLog.Timestamp();
                 AddLineObjects();
+                UXPerfLog.Record("UXVisualiser.Paint.AddLineObjects", UXPerfLog.Timestamp() - tLines);
 
                 SelectionArea = new SelectionArea(Canvas);
 
@@ -875,12 +891,17 @@ namespace m0.UIWpf.UX
                 IsFirstPainted = true;
 
 
+                long tCheck = UXPerfLog.Timestamp();
                 CheckAndUpdateDiagramLines();
+                UXPerfLog.Record("UXVisualiser.Paint.CheckAndUpdateDiagramLines", UXPerfLog.Timestamp() - tCheck);
 
 
                 ////////////////////////////////////////
                 Interaction.EndInteractionWithGraph();
                 ////////////////////////////////////////    
+
+                UXPerfLog.Record("UXVisualiser.Paint.total", UXPerfLog.Timestamp() - tPaint, Items_all.Count, "Items_all");
+                UXPerfLog.FlushNow("Paint");
             }
         }
 
@@ -1434,9 +1455,15 @@ namespace m0.UIWpf.UX
 
         private void CheckIfLineNeedsSelection(System.Windows.Point p)
         {
+            long t0 = UXPerfLog.Timestamp();
+
             double best = 999999;
             ILineDecoratorBase bestLine = null;
             IUXItem bestLine_FromItem = null;
+
+            int itemsScanned = 0;
+            int decoratorsScanned = 0;
+            int linesDistanceChecked = 0;
 
             foreach (ITypedEdge _i in Items_all)
             {
@@ -1445,10 +1472,16 @@ namespace m0.UIWpf.UX
                 if (i == null)
                     continue;
 
+                itemsScanned++;
+
                 foreach (IUXItem _line in i.Decorators)
+                {
+                    decoratorsScanned++;
+
                     if (_line is ILineDecoratorBase)
                     {
                         ILineDecoratorBase line = (ILineDecoratorBase)_line;
+                        linesDistanceChecked++;
 
                         double len = line.GetMouseDistance(p);
 
@@ -1459,7 +1492,12 @@ namespace m0.UIWpf.UX
                             bestLine_FromItem = i;
                         }
                     }
+                }
             }
+
+            UXPerfLog.Record("UXVisualiser.CheckIfLineNeedsSelection", UXPerfLog.Timestamp() - t0, linesDistanceChecked, "lines");
+            UXPerfLog.CountWithExtra("UXVisualiser.CheckIfLineNeedsSelection.items", 1, itemsScanned, "items");
+            UXPerfLog.CountWithExtra("UXVisualiser.CheckIfLineNeedsSelection.decorators", 1, decoratorsScanned, "decorators");
 
             if (best < LineSelectionDelta && bestLine != null)
             {
@@ -2299,6 +2337,9 @@ namespace m0.UIWpf.UX
 
         public void CheckAndUpdateDiagramLines()
         {
+            long t0 = UXPerfLog.Timestamp();
+            int itemCount = 0;
+
             foreach (ITypedEdge _i in Items_all)
             {
                 IUXItem item = UXItem.GetUXItem(this, _i);
@@ -2306,8 +2347,11 @@ namespace m0.UIWpf.UX
                 if (item == null)
                     continue;
 
+                itemCount++;
                 CheckAndUpdateDiagramLinesForItem((IUXItem)item);
             }
+
+            UXPerfLog.Record("UXVisualiser.CheckAndUpdateDiagramLines", UXPerfLog.Timestamp() - t0, itemCount, "items");
         }
 
         bool IsContainerEdge(IEdge e)
@@ -2363,6 +2407,8 @@ namespace m0.UIWpf.UX
             if (item == this) // currently support for Visualiser lines is limited
                 return;
 
+            long t0 = UXPerfLog.Timestamp();
+
             List<IEdge> edges = GetEdgesForDiagramLineDecorators(item).ToList();
 
             ////////////////////////////////////////
@@ -2371,8 +2417,12 @@ namespace m0.UIWpf.UX
 
             RemoveDiagramLineDecoratorsWithoutMatchingEdges(item, edges);
 
+            int edgesChecked = 0;
+
             foreach (IEdge e in edges)
             {
+                edgesChecked++;
+
                 if (IsContainerEdge(e))
                     continue;
 
@@ -2403,6 +2453,8 @@ namespace m0.UIWpf.UX
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////
+
+            UXPerfLog.Record("UXVisualiser.CheckAndUpdateDiagramLinesForItem", UXPerfLog.Timestamp() - t0, edgesChecked, "edges");
         }
 
         private bool CanAddLine(IUXItem item, IEdge e)
