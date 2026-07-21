@@ -41,6 +41,17 @@ namespace m0.ZeroTypes.UX
                 "DiagramLine",
                 VertexChange);
         }
+
+        public override void Dispose()
+        {
+            if (!IsDisposed)
+            {
+                GraphChangeTrigger.RemoveListener(graphChangeListenerEdge);
+                graphChangeListenerEdge = null;
+            }
+
+            base.Dispose();
+        }
      
         public LineDecorator(IEdge _edge) : base(_edge)
         {
@@ -150,11 +161,17 @@ namespace m0.ZeroTypes.UX
 
                 IVertex edgeFrom = edge.Get(false, "From:");
                 IVertex edgeMeta = edge.Get(false, "Meta:");
+                IVertex edgeTo = edge.Get(false, "To:");
 
                 if (edgeFrom == edgeStub && GraphUtil.GetValueAndCompareStrings(edgeMeta, "To"))
                     return true;
 
-                if (baseEdgeFrom != null && baseEdgeMeta != null && edgeFrom == baseEdgeFrom && edgeMeta == baseEdgeMeta)
+                if (baseEdgeFrom != null
+                    && baseEdgeMeta != null
+                    && baseEdgeTo != null
+                    && edgeFrom == baseEdgeFrom
+                    && edgeMeta == baseEdgeMeta
+                    && edgeTo == baseEdgeTo)
                     return true;
             }
 

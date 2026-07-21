@@ -250,7 +250,9 @@ namespace m0.ZeroTypes.UX
 
             line.RemoveFromCanvas();
 
-            Vertex.DeleteEdge(line.Edge);
+            IEdge decoratorEdge = line.Edge;
+            line.Dispose();
+            Vertex.DeleteEdge(decoratorEdge);
         }
 
         public virtual void Select()

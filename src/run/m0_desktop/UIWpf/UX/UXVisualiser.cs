@@ -1554,14 +1554,28 @@ namespace m0.UIWpf.UX
 
             UXDecoratorTemplate tem = (UXDecoratorTemplate)line.UXTemplate;
 
+            bool isSpecialEdgeQuery = tem.EdgeTestQuery == "$Inherits"
+                || tem.EdgeTestQuery == "$EdgeTarget";
+
+            if (isSpecialEdgeQuery)
+            {
+                bool targetMatches = string.IsNullOrEmpty(tem.ToDiagramItemTestQuery)
+                    || toItem.Vertex.Get(false, tem.ToDiagramItemTestQuery) != null;
+                IVertex validationError = targetMatches
+                    ? VertexOperations.TestIfNewEdgeValid(fromItem.BaseEdgeTo, line.BaseEdge.Meta, toItem.BaseEdgeTo)
+                    : null;
+
+                return targetMatches && validationError == null;
+            }
+
             IVertex edgesToTest = fromItem.BaseEdgeTo;
 
             if (tem.EdgeTestQuery != null)
                 edgesToTest = fromItem.BaseEdgeTo.GetAll(false, tem.EdgeTestQuery);
 
             foreach (IEdge e in edgesToTest)
-                if (CanAddLineByDecoratorTemplateAndFromItemBaseEdgeToQuery(toItem, toItem.BaseEdge, tem, e)) ;
-            canAdd = true;
+                if (CanAddLineByDecoratorTemplateAndFromItemBaseEdgeToQuery(toItem, toItem.BaseEdge, tem, e))
+                    canAdd = true;
 
             return canAdd;
         }
