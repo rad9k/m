@@ -249,7 +249,7 @@ namespace m0.UIWpf
 
         void CheckVisibility_DownRight()
         {
-            if (!MainVisualiserHasSelectableEdges)
+            if (!MainVisualiserHasSelectableEdges || platformClassObject is INoDownRightVisualiser)
             {
                 ExpanderVisible_Down = false;
                 ExpanderVisible_Right = false;

@@ -23,6 +23,14 @@ namespace m0.UIWpf.Dialog
     /// </summary>
     public partial class Edit : UserControl
     {
+        private sealed class EditFormVisualiser : FormVisualiser, INoDownRightVisualiser
+        {
+            public EditFormVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile)
+                : base(baseEdgeVertex, parentVisualiser, isVolatile)
+            {
+            }
+        }
+
         IVertex baseVertex;
         Point _mousePosition;
 
@@ -52,7 +60,7 @@ namespace m0.UIWpf.Dialog
 
             IVertex baseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, null, baseVertex);
 
-            FormVisualiser = new FormVisualiser(baseEdgeVertex, null, false);
+            FormVisualiser = new EditFormVisualiser(baseEdgeVertex, null, false);
 
             Wrap.SetContent(FormVisualiser);
 

@@ -9,4 +9,8 @@ namespace m0.UIWpf.Visualisers
     public interface INoDownVisualiser
     {
     }
+
+    public interface INoDownRightVisualiser : INoDownVisualiser
+    {
+    }
 }
