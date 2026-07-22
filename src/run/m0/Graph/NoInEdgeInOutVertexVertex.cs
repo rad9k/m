@@ -58,6 +58,8 @@ namespace m0.Graph
             IVertex metaVertex,
             IVertex destVertex)
         {
+            bool changesParentStackFrame =
+                IsParentStackFrameMeta(metaVertex);
             try
             {
                 return base.AddEdge(
@@ -66,19 +68,23 @@ namespace m0.Graph
             }
             finally
             {
-                InvalidateParentStackFrameCache();
+                if (changesParentStackFrame)
+                    InvalidateParentStackFrameCache();
             }
         }
 
         public override void DeleteEdge(IEdge edge)
         {
+            bool changesParentStackFrame =
+                IsParentStackFrameMeta(edge?.Meta);
             try
             {
                 base.DeleteEdge(edge);
             }
             finally
             {
-                InvalidateParentStackFrameCache();
+                if (changesParentStackFrame)
+                    InvalidateParentStackFrameCache();
             }
         }
 
@@ -94,7 +100,8 @@ namespace m0.Graph
             }
             finally
             {
-                InvalidateParentStackFrameCache();
+                if (IsParentStackFrameMeta(e?.Meta))
+                    InvalidateParentStackFrameCache();
             }
 
             //OutEdgesRaw.Add(ne); //eat this!
@@ -113,7 +120,8 @@ namespace m0.Graph
             }
             finally
             {
-                InvalidateParentStackFrameCache();
+                if (IsParentStackFrameMeta(e?.Meta))
+                    InvalidateParentStackFrameCache();
             }
         }
 
@@ -242,6 +250,18 @@ namespace m0.Graph
         private void InvalidateParentStackFrameCache()
         {
             cachedParentStackFrame = null;
+        }
+
+        private static bool IsParentStackFrameMeta(
+            IVertex meta)
+        {
+            return ReferenceEquals(
+                    meta,
+                    MinusZero.Instance.StackFrameInherits) ||
+                string.Equals(
+                    meta?.Value?.ToString(),
+                    "$StackFrameInherits",
+                    StringComparison.Ordinal);
         }
 
         internal bool TryResetForTemporaryPool()

@@ -144,6 +144,12 @@ namespace m0.Graph
         private long outValueGeneration;
 
         [NonSerialized]
+        private long trackedLocalMutationVersion;
+
+        [NonSerialized]
+        private volatile bool trackLocalMutations;
+
+        [NonSerialized]
         private InheritedOutDependencyStamp outEdgesDependencyStamp;
 
         [NonSerialized]
@@ -229,6 +235,7 @@ namespace m0.Graph
                     return;                
 
                 _Value = value;
+                RecordTrackedLocalMutation();
 
                 ValueChanged();
 
@@ -1382,6 +1389,7 @@ namespace m0.Graph
             bool added,
             bool allowIncremental)
         {
+            RecordTrackedLocalMutation();
             byte indexMask = currentOutIndexMask;
 
             if (indexMask == 0)
@@ -1418,6 +1426,25 @@ namespace m0.Graph
                 added,
                 allowIncremental);
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void RecordTrackedLocalMutation()
+        {
+            if (trackLocalMutations)
+                Interlocked.Increment(
+                    ref trackedLocalMutationVersion);
+        }
+
+        internal long EnableTrackedLocalMutationVersion()
+        {
+            trackLocalMutations = true;
+            return Interlocked.Read(
+                ref trackedLocalMutationVersion);
+        }
+
+        internal long TrackedLocalMutationVersion =>
+            Interlocked.Read(
+                ref trackedLocalMutationVersion);
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         private void HandleLocalOutEdgeMutationSlow(

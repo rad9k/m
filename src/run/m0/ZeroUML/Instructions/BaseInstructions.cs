@@ -10,6 +10,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using static m0.ZeroCode.Helpers.InstructionHelpers;
 using static System.Net.WebRequestMethods;
 
@@ -551,6 +552,559 @@ namespace m0.ZeroUML.Instructions
 
         #region EdgeOperators
 
+        private enum SimpleScalarNumberStatus
+        {
+            Number,
+            NoNumber,
+            Unsupported
+        }
+
+        private enum SimpleScalarNodeKind
+        {
+            Unsupported,
+            Literal,
+            Query,
+            Add,
+            Multiply,
+            Bracket
+        }
+
+        private sealed class SimpleScalarNode
+        {
+            internal EasyVertex Source;
+            internal long SourceVersion;
+            internal SimpleScalarNodeKind Kind;
+            internal string QueryValue;
+            internal object LiteralNumber;
+            internal NumericTypeEnum LiteralType;
+            internal bool LiteralHasNumber;
+            internal bool ContainsOperator;
+            internal SimpleScalarNode Left;
+            internal SimpleScalarNode Right;
+            internal SimpleScalarNode Inner;
+
+            internal bool IsValid =>
+                Source.TrackedLocalMutationVersion ==
+                SourceVersion;
+        }
+
+        private sealed class SimpleScalarLessOrEqualPlan
+        {
+            internal EasyVertex Source;
+            internal long SourceVersion;
+            internal SimpleScalarNode Left;
+            internal SimpleScalarNode Right;
+
+            internal bool IsValid =>
+                Source.TrackedLocalMutationVersion ==
+                SourceVersion;
+        }
+
+        private static readonly
+            ConditionalWeakTable<IVertex, SimpleScalarNode>
+                simpleScalarNodeCache =
+                    new ConditionalWeakTable<
+                        IVertex,
+                        SimpleScalarNode>();
+
+        private static SimpleScalarNode GetSimpleScalarNode(
+            IVertex expression)
+        {
+            if (expression == null)
+                return null;
+
+            if (simpleScalarNodeCache.TryGetValue(
+                    expression,
+                    out SimpleScalarNode cachedNode) &&
+                cachedNode.IsValid)
+                return cachedNode;
+
+            lock (simpleScalarNodeCache)
+            {
+                return GetSimpleScalarNode(
+                    expression,
+                    new HashSet<IVertex>(
+                        ReferenceEqualityComparer.Instance),
+                    0);
+            }
+        }
+
+        private static SimpleScalarNode GetSimpleScalarNode(
+            IVertex expression,
+            HashSet<IVertex> visiting,
+            int depth)
+        {
+            if (depth > 64 ||
+                !(expression is EasyVertex easyExpression))
+                return null;
+
+            if (simpleScalarNodeCache.TryGetValue(
+                    expression,
+                    out SimpleScalarNode cachedNode))
+            {
+                if (cachedNode.IsValid)
+                    return cachedNode;
+
+                simpleScalarNodeCache.Remove(expression);
+            }
+
+            if (!visiting.Add(expression))
+                return null;
+
+            long sourceVersion =
+                easyExpression
+                    .EnableTrackedLocalMutationVersion();
+            SimpleScalarNode node =
+                CompileSimpleScalarNode(
+                    expression,
+                    easyExpression,
+                    sourceVersion,
+                    visiting,
+                    depth);
+            visiting.Remove(expression);
+
+            if (node == null ||
+                easyExpression
+                    .TrackedLocalMutationVersion !=
+                sourceVersion)
+                return null;
+
+            simpleScalarNodeCache.Add(
+                expression,
+                node);
+            return node;
+        }
+
+        private static SimpleScalarNode CompileSimpleScalarNode(
+            IVertex expression,
+            EasyVertex easyExpression,
+            long sourceVersion,
+            HashSet<IVertex> visiting,
+            int depth)
+        {
+            SimpleScalarNode node =
+                new SimpleScalarNode
+                {
+                    Source = easyExpression,
+                    SourceVersion = sourceVersion,
+                    Kind =
+                        SimpleScalarNodeKind.Unsupported
+                };
+            IVertex instructionType = GetIs(expression);
+            if (instructionType == null)
+            {
+                GraphUtil.GetNumberValue(
+                    expression,
+                    out node.LiteralNumber);
+                node.LiteralHasNumber =
+                    node.LiteralNumber != null;
+                node.LiteralType =
+                    GetSimpleScalarNumericType(
+                        node.LiteralNumber);
+                node.Kind = SimpleScalarNodeKind.Literal;
+                return node;
+            }
+
+            string operation =
+                instructionType.Value?.ToString();
+            if (string.Equals(
+                    operation,
+                    "Query",
+                    StringComparison.Ordinal))
+            {
+                string queryValue =
+                    expression.Value?.ToString();
+                if (GetNextExpression(expression) == null &&
+                    !string.IsNullOrEmpty(queryValue) &&
+                    (queryValue.Length <= 2 ||
+                        queryValue[0] != '(' ||
+                        queryValue[
+                            queryValue.Length - 1] != ')'))
+                {
+                    node.Kind =
+                        SimpleScalarNodeKind.Query;
+                    node.QueryValue = queryValue;
+                }
+
+                return node;
+            }
+
+            if (string.Equals(
+                    operation,
+                    "+",
+                    StringComparison.Ordinal) ||
+                string.Equals(
+                    operation,
+                    "Mul",
+                    StringComparison.Ordinal))
+            {
+                node.Left = GetSimpleScalarNode(
+                    GetLeft(expression),
+                    visiting,
+                    depth + 1);
+                node.Right = GetSimpleScalarNode(
+                    GetRight(expression),
+                    visiting,
+                    depth + 1);
+                if (node.Left == null ||
+                    node.Right == null)
+                    return node;
+
+                node.Kind = string.Equals(
+                    operation,
+                    "+",
+                    StringComparison.Ordinal)
+                    ? SimpleScalarNodeKind.Add
+                    : SimpleScalarNodeKind.Multiply;
+                node.ContainsOperator = true;
+                return node;
+            }
+
+            if (string.Equals(
+                    operation,
+                    "()",
+                    StringComparison.Ordinal) &&
+                GetNextExpression(expression) == null)
+            {
+                node.Inner = GetSimpleScalarNode(
+                    GetExpression(expression),
+                    visiting,
+                    depth + 1);
+                if (node.Inner != null)
+                {
+                    node.Kind =
+                        SimpleScalarNodeKind.Bracket;
+                    node.ContainsOperator =
+                        node.Inner.ContainsOperator;
+                }
+            }
+
+            return node;
+        }
+
+        private static NumericTypeEnum
+            GetSimpleScalarNumericType(
+            object number)
+        {
+            if (number is int)
+                return NumericTypeEnum.Integer;
+            if (number is double)
+                return NumericTypeEnum.Double;
+            return NumericTypeEnum.Decimal;
+        }
+
+        private static SimpleScalarLessOrEqualPlan
+            CompileSimpleScalarLessOrEqualPlan(
+            IVertex expression)
+        {
+            if (!(expression is EasyVertex easyExpression))
+                return null;
+
+            long sourceVersion =
+                easyExpression
+                    .EnableTrackedLocalMutationVersion();
+            if (!string.Equals(
+                    GetIs(expression)?.Value?.ToString(),
+                    "LessOrEqualThan",
+                    StringComparison.Ordinal))
+                return null;
+
+            SimpleScalarNode left =
+                GetSimpleScalarNode(GetLeft(expression));
+            SimpleScalarNode right =
+                GetSimpleScalarNode(GetRight(expression));
+            if (left == null ||
+                right == null ||
+                easyExpression
+                    .TrackedLocalMutationVersion !=
+                sourceVersion)
+                return null;
+
+            return new SimpleScalarLessOrEqualPlan
+            {
+                Source = easyExpression,
+                SourceVersion = sourceVersion,
+                Left = left,
+                Right = right
+            };
+        }
+
+        private static bool
+            TryEvaluateSimpleScalarNumericOperatorExpression(
+            ZeroCodeExecution exe,
+            IVertex inputStack,
+            IVertex expression,
+            out object result)
+        {
+            result = null;
+            SimpleScalarNode node =
+                GetSimpleScalarNode(expression);
+            bool evaluated =
+                TryEvaluateSimpleScalarNumericOperatorNode(
+                    exe,
+                    inputStack,
+                    node,
+                    out result,
+                    out bool planIsValid);
+            if (!planIsValid)
+                simpleScalarNodeCache.Remove(expression);
+
+            return evaluated && planIsValid;
+        }
+
+        private static bool
+            TryEvaluateSimpleScalarNumericOperatorNode(
+            ZeroCodeExecution exe,
+            IVertex inputStack,
+            SimpleScalarNode node,
+            out object result,
+            out bool planIsValid)
+        {
+            result = null;
+            planIsValid = node?.IsValid == true;
+            if (!planIsValid ||
+                !node.ContainsOperator)
+                return false;
+
+            bool evaluated =
+                TryEvaluateSimpleScalarNode(
+                    exe,
+                    inputStack,
+                    node,
+                    out result,
+                    out _,
+                    out bool hasNumber,
+                    out bool wasComputed,
+                    out planIsValid);
+
+            return evaluated &&
+                planIsValid &&
+                hasNumber &&
+                wasComputed;
+        }
+
+        private static bool
+            TryEvaluateSimpleScalarNumericExpression(
+            ZeroCodeExecution exe,
+            IVertex inputStack,
+            IVertex expression,
+            int depth,
+            out object result,
+            out NumericTypeEnum resultType,
+            out bool hasNumber,
+            out bool wasComputed)
+        {
+            result = null;
+            resultType = NumericTypeEnum.Decimal;
+            hasNumber = false;
+            wasComputed = false;
+            if (depth > 64 || expression == null)
+                return false;
+
+            SimpleScalarNode node =
+                GetSimpleScalarNode(expression);
+            if (node == null)
+                return false;
+
+            bool evaluated =
+                TryEvaluateSimpleScalarNode(
+                    exe,
+                    inputStack,
+                    node,
+                    out result,
+                    out resultType,
+                    out hasNumber,
+                    out wasComputed,
+                    out bool planIsValid);
+            if (!planIsValid)
+                simpleScalarNodeCache.Remove(expression);
+
+            return evaluated && planIsValid;
+        }
+
+        private static bool TryEvaluateSimpleScalarNode(
+            ZeroCodeExecution exe,
+            IVertex inputStack,
+            SimpleScalarNode node,
+            out object result,
+            out NumericTypeEnum resultType,
+            out bool hasNumber,
+            out bool wasComputed,
+            out bool planIsValid)
+        {
+            result = null;
+            resultType = NumericTypeEnum.Decimal;
+            hasNumber = false;
+            wasComputed = false;
+            planIsValid = node?.IsValid == true;
+            if (!planIsValid)
+                return false;
+
+            if (node.Kind ==
+                SimpleScalarNodeKind.Unsupported)
+                return false;
+
+            if (node.Kind ==
+                SimpleScalarNodeKind.Literal)
+            {
+                result = node.LiteralNumber;
+                resultType = node.LiteralType;
+                hasNumber = node.LiteralHasNumber;
+                return true;
+            }
+
+            if (node.Kind ==
+                SimpleScalarNodeKind.Query)
+            {
+                SimpleScalarNumberStatus status =
+                    GetSimpleScalarQueryNumberStatus(
+                        exe,
+                        inputStack,
+                        node.QueryValue,
+                        out result,
+                        out resultType);
+                hasNumber =
+                    status ==
+                    SimpleScalarNumberStatus.Number;
+                return status !=
+                    SimpleScalarNumberStatus.Unsupported;
+            }
+
+            if (node.Kind ==
+                SimpleScalarNodeKind.Bracket)
+                return TryEvaluateSimpleScalarNode(
+                    exe,
+                    inputStack,
+                    node.Inner,
+                    out result,
+                    out resultType,
+                    out hasNumber,
+                    out wasComputed,
+                    out planIsValid);
+
+            if (!TryEvaluateSimpleScalarNode(
+                    exe,
+                    inputStack,
+                    node.Left,
+                    out object leftNumber,
+                    out NumericTypeEnum leftType,
+                    out bool leftHasNumber,
+                    out bool leftWasComputed,
+                    out planIsValid) ||
+                !planIsValid)
+                return false;
+
+            if (!TryEvaluateSimpleScalarNode(
+                    exe,
+                    inputStack,
+                    node.Right,
+                    out object rightNumber,
+                    out NumericTypeEnum rightType,
+                    out bool rightHasNumber,
+                    out bool rightWasComputed,
+                    out planIsValid) ||
+                !planIsValid)
+                return false;
+
+            if (!leftHasNumber)
+            {
+                result = rightNumber;
+                resultType = rightType;
+                hasNumber = rightHasNumber;
+                wasComputed = rightWasComputed;
+                return true;
+            }
+
+            if (!rightHasNumber)
+            {
+                result = leftNumber;
+                resultType = leftType;
+                hasNumber = true;
+                wasComputed = leftWasComputed;
+                return true;
+            }
+
+            hasNumber = true;
+            wasComputed = true;
+            resultType = GetCommonNubmerResultDenominator(
+                leftType,
+                rightType);
+            bool isAdd =
+                node.Kind == SimpleScalarNodeKind.Add;
+            switch (resultType)
+            {
+                case NumericTypeEnum.Integer:
+                    result = isAdd
+                        ? Convert.ToInt32(leftNumber) +
+                            Convert.ToInt32(rightNumber)
+                        : Convert.ToInt32(leftNumber) *
+                            Convert.ToInt32(rightNumber);
+                    return true;
+                case NumericTypeEnum.Double:
+                    result = isAdd
+                        ? Convert.ToDouble(leftNumber) +
+                            Convert.ToDouble(rightNumber)
+                        : Convert.ToDouble(leftNumber) *
+                            Convert.ToDouble(rightNumber);
+                    return true;
+                case NumericTypeEnum.Decimal:
+                    result = isAdd
+                        ? Convert.ToDecimal(leftNumber) +
+                            Convert.ToDecimal(rightNumber)
+                        : Convert.ToDecimal(leftNumber) *
+                            Convert.ToDecimal(rightNumber);
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        private static SimpleScalarNumberStatus
+            GetSimpleScalarQueryNumberStatus(
+            ZeroCodeExecution exe,
+            IVertex inputStack,
+            string queryValue,
+            out object number,
+            out NumericTypeEnum numericType)
+        {
+            number = null;
+            numericType = NumericTypeEnum.Decimal;
+            IEdge matchingEdge;
+            IList<IEdge> matchingEdges;
+            if (exe.MetaMode)
+                inputStack.QueryOutEdges(
+                    queryValue,
+                    null,
+                    out matchingEdge,
+                    out matchingEdges);
+            else
+                inputStack.QueryOutEdges(
+                    null,
+                    queryValue,
+                    out matchingEdge,
+                    out matchingEdges);
+
+            int matchCount =
+                (matchingEdge == null ? 0 : 1) +
+                (matchingEdges?.Count ?? 0);
+            if (matchCount == 0)
+                return SimpleScalarNumberStatus.NoNumber;
+            if (matchCount != 1)
+                return SimpleScalarNumberStatus.Unsupported;
+
+            GraphUtil.GetNumberValue(
+                matchingEdge?.To ??
+                    matchingEdges[0].To,
+                out number);
+            if (number == null)
+                return SimpleScalarNumberStatus.NoNumber;
+
+            numericType =
+                GetSimpleScalarNumericType(number);
+
+            return SimpleScalarNumberStatus.Number;
+        }
+
         // =
         public static INoInEdgeInOutVertexVertex RedirectLeftEdgesToRightVertices(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
@@ -559,55 +1113,127 @@ namespace m0.ZeroUML.Instructions
             IVertex leftExpression = GetLeft(instructionVertex);
             IVertex rightExpression = GetRight(instructionVertex);
 
-            bool leftPropagateToStackExpression = CheckIfIsInherits_WRONG(leftExpression, "PropagateToStackExpression");
-
             if (leftExpression == null || rightExpression == null)
                 return exe.Stack;
 
+            bool leftPropagateToStackExpression = CheckIfIsInherits_WRONG(leftExpression, "PropagateToStackExpression");
+            bool cacheRedirectTarget =
+                exe.TryGetCachedRedirectAssignmentTarget(
+                    instructionVertex,
+                    out IEdge cachedRedirectTarget,
+                    out object cachedScalarPlan);
+            SimpleScalarNode scalarNode =
+                cachedScalarPlan as SimpleScalarNode;
 
             IVertex newVertexCreationSpace_copy = exe.NewVertexCreationSpace;
 
             // left
 
-            INoInEdgeInOutVertexVertex leftStack = CreateStack();
+            INoInEdgeInOutVertexVertex leftStack = null;
             INoInEdgeInOutVertexVertex rightStack = null;
             INoInEdgeInOutVertexVertex leftExecuteResult = null;
             INoInEdgeInOutVertexVertex _rightExecuteResult = null;
 
             try
             {
-                exe.NewVertexCreationSpace = leftStack;
-                leftExecuteResult =
-                    exe.ExecuteInstructionByMontevideoPrinciples(
-                        exe.Stack,
-                        leftExpression);
+                if (cachedRedirectTarget == null)
+                {
+                    leftStack = CreateStack();
+                    exe.NewVertexCreationSpace = leftStack;
+                    leftExecuteResult =
+                        exe.ExecuteInstructionByMontevideoPrinciples(
+                            exe.Stack,
+                            leftExpression);
+                    cacheRedirectTarget =
+                        leftExecuteResult.OutEdges.Count == 1 &&
+                        string.Equals(
+                            GetIs(leftExpression)
+                                ?.Value?.ToString(),
+                            "Query",
+                            StringComparison.Ordinal) &&
+                        GetNextExpression(leftExpression) == null;
+                }
 
                 // right
 
-                rightStack = CreateStack();
-                exe.NewVertexCreationSpace = rightStack;
-                _rightExecuteResult =
-                    exe.ExecuteInstructionByMontevideoPrinciples(
+                bool hasSingleLeftTarget =
+                    cachedRedirectTarget != null ||
+                    leftExecuteResult.OutEdges.Count == 1;
+                object scalarNumericResult = null;
+                if (scalarNode?.IsValid != true)
+                    scalarNode =
+                        GetSimpleScalarNode(
+                            rightExpression);
+                bool scalarPlanIsValid = true;
+                bool hasDirectScalarNumericResult =
+                    hasSingleLeftTarget &&
+                    TryEvaluateSimpleScalarNumericOperatorNode(
+                        exe,
                         exe.Stack,
+                        scalarNode,
+                        out scalarNumericResult,
+                        out scalarPlanIsValid);
+                if (!scalarPlanIsValid)
+                {
+                    scalarNode = null;
+                    simpleScalarNodeCache.Remove(
                         rightExpression);
+                }
+                if (hasDirectScalarNumericResult)
+                    exe.NewVertexCreationSpace =
+                        newVertexCreationSpace_copy;
+                else
+                {
+                    rightStack = CreateStack();
+                    exe.NewVertexCreationSpace =
+                        rightStack;
+                }
+
+                if (!hasDirectScalarNumericResult)
+                    _rightExecuteResult =
+                        exe.ExecuteInstructionByMontevideoPrinciples(
+                            exe.Stack,
+                            rightExpression);
 
                 // NEW
 
-                IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
+                IList<IEdge> rightExecuteResult =
+                    _rightExecuteResult?.OutEdges;
 
-                if (leftExecuteResult.OutEdges.Count == 1)
+                if (hasSingleLeftTarget)
                 {
                     IEdge toAdd =
+                        cachedRedirectTarget ??
                         leftExecuteResult.OutEdges[0];
 
                     toAdd.From.DeleteEdge(toAdd);
 
-                    foreach (IEdge e in rightExecuteResult)
-                        //if (leftPropagateToStackExpression && exe.stack == exe.newVertexCreationSpace) // left expression was separated from exe.stack
-                        if (leftPropagateToStackExpression /*&& exe.stack == exe.newVertexCreationSpace*/) // XXX EXPERIMENTA !!!! for issue 84
-                            exe.Stack.AddEdge(toAdd.Meta, e.To);
-                        else
-                            toAdd.From.AddEdge(toAdd.Meta, e.To);
+                    IVertex redirectTarget =
+                        leftPropagateToStackExpression
+                            ? exe.Stack
+                            : toAdd.From;
+                    IEdge redirectedEdge = null;
+                    if (hasDirectScalarNumericResult)
+                        redirectedEdge =
+                            redirectTarget
+                                .AddVertexAndReturnEdge(
+                                    toAdd.Meta,
+                                    scalarNumericResult);
+                    else
+                        foreach (IEdge e in
+                            rightExecuteResult)
+                            redirectedEdge =
+                                redirectTarget.AddEdge(
+                                    toAdd.Meta,
+                                    e.To);
+
+                    if (cacheRedirectTarget &&
+                        (hasDirectScalarNumericResult ||
+                            rightExecuteResult.Count == 1))
+                        exe.CacheRedirectAssignmentTarget(
+                            instructionVertex,
+                            redirectedEdge,
+                            scalarNode);
                 }
                 else
                 {
@@ -637,7 +1263,8 @@ namespace m0.ZeroUML.Instructions
                 exe.NewVertexCreationSpace =
                     newVertexCreationSpace_copy;
 
-                if (!ReferenceEquals(
+                if (leftExecuteResult != null &&
+                    !ReferenceEquals(
                         leftExecuteResult,
                         leftStack) &&
                     !ReferenceEquals(
@@ -649,7 +1276,8 @@ namespace m0.ZeroUML.Instructions
                         exe.Stack,
                         newVertexCreationSpace_copy);
 
-                if (!ReferenceEquals(
+                if (_rightExecuteResult != null &&
+                    !ReferenceEquals(
                         _rightExecuteResult,
                         leftStack) &&
                     !ReferenceEquals(
@@ -661,7 +1289,8 @@ namespace m0.ZeroUML.Instructions
                         exe.Stack,
                         newVertexCreationSpace_copy);
 
-                if (leftStack.OutEdgesRaw.Count == 0)
+                if (leftStack != null &&
+                    leftStack.OutEdgesRaw.Count == 0)
                     ReleaseTemporaryStack(
                         leftStack,
                         inputStack,
@@ -695,33 +1324,69 @@ namespace m0.ZeroUML.Instructions
                     "Query",
                     StringComparison.Ordinal) &&
                 GetNextExpression(leftExpression) == null;
-            bool previousCollapseQueryResults =
-                exe.CollapseQueryResultsByFromMeta;
             INoInEdgeInOutVertexVertex leftExecuteResult;
 
-            try
+            if (collapseQueryResults &&
+                exe.TryGetCachedAddAssignmentTarget(
+                    instructionVertex,
+                    out IEdge cachedTargetEdge))
             {
-                exe.CollapseQueryResultsByFromMeta =
-                    collapseQueryResults;
-                leftExecuteResult =
-                    exe.ExecuteInstructionByMontevideoPrinciples(
-                        exe.Stack,
-                        leftExpression);
+                leftExecuteResult = CreateStack();
+                leftExecuteResult
+                    .AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(
+                        cachedTargetEdge);
             }
-            finally
+            else
             {
-                exe.CollapseQueryResultsByFromMeta =
-                    previousCollapseQueryResults;
+                bool previousCollapseQueryResults =
+                    exe.CollapseQueryResultsByFromMeta;
+
+                try
+                {
+                    exe.CollapseQueryResultsByFromMeta =
+                        collapseQueryResults;
+                    leftExecuteResult =
+                        exe.ExecuteInstructionByMontevideoPrinciples(
+                            exe.Stack,
+                            leftExpression);
+                }
+                finally
+                {
+                    exe.CollapseQueryResultsByFromMeta =
+                        previousCollapseQueryResults;
+                }
+
+                if (collapseQueryResults &&
+                    leftExecuteResult.OutEdgesRaw.Count == 1)
+                    exe.CacheAddAssignmentTarget(
+                        instructionVertex,
+                        leftExecuteResult.OutEdgesRaw[0]);
             }
 
             //INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
 
             IVertex newVertexCreationSpace_copy = exe.NewVertexCreationSpace;
-            INoInEdgeInOutVertexVertex rightStack = CreateStack();
+            INoInEdgeInOutVertexVertex rightStack = null;
             INoInEdgeInOutVertexVertex _rightExecuteResult = null;
 
             try
             {
+                if (leftExecuteResult.OutEdges.Count == 1 &&
+                    TryEvaluateSimpleScalarNumericOperatorExpression(
+                        exe,
+                        exe.Stack,
+                        rightExpression,
+                        out object scalarNumericResult))
+                {
+                    IEdge toAdd =
+                        leftExecuteResult.OutEdges[0];
+                    toAdd.From.AddVertex(
+                        toAdd.Meta,
+                        scalarNumericResult);
+                    return exe.Stack;
+                }
+
+                rightStack = CreateStack();
                 exe.NewVertexCreationSpace = rightStack;
                 _rightExecuteResult =
                     exe.ExecuteInstructionByMontevideoPrinciples(
@@ -768,7 +1433,8 @@ namespace m0.ZeroUML.Instructions
                     exe.Stack,
                     newVertexCreationSpace_copy);
 
-                if (!ReferenceEquals(
+                if (_rightExecuteResult != null &&
+                    !ReferenceEquals(
                     _rightExecuteResult,
                     rightStack))
                     ReleaseTemporaryStack(
@@ -777,7 +1443,8 @@ namespace m0.ZeroUML.Instructions
                         exe.Stack,
                         newVertexCreationSpace_copy);
 
-                if (rightStack.OutEdgesRaw.Count == 0)
+                if (rightStack != null &&
+                    rightStack.OutEdgesRaw.Count == 0)
                     ReleaseTemporaryStack(
                         rightStack,
                         inputStack,
@@ -1895,6 +2562,139 @@ namespace m0.ZeroUML.Instructions
             }
         }
 
+        private static bool TryEvaluateWhileCondition(
+            ZeroCodeExecution exe,
+            IVertex inputStack,
+            IVertex instructionVertex,
+            SimpleScalarLessOrEqualPlan plan,
+            out bool result)
+        {
+            result = false;
+            IVertex leftExpression = null;
+            IVertex rightExpression = null;
+            SimpleScalarNode leftNode;
+            SimpleScalarNode rightNode;
+            if (plan != null)
+            {
+                if (!plan.IsValid)
+                    return false;
+
+                leftNode = plan.Left;
+                rightNode = plan.Right;
+            }
+            else
+            {
+                if (!string.Equals(
+                        GetIs(instructionVertex)
+                            ?.Value?.ToString(),
+                        "LessOrEqualThan",
+                        StringComparison.Ordinal))
+                    return false;
+
+                leftExpression = GetLeft(instructionVertex);
+                rightExpression = GetRight(instructionVertex);
+                if (leftExpression == null ||
+                    rightExpression == null)
+                    return false;
+
+                leftNode =
+                    GetSimpleScalarNode(leftExpression);
+                rightNode =
+                    GetSimpleScalarNode(rightExpression);
+            }
+
+            if (leftNode != null &&
+                rightNode != null &&
+                TryEvaluateSimpleScalarNode(
+                    exe,
+                    inputStack,
+                    leftNode,
+                    out object leftNumber,
+                    out NumericTypeEnum leftType,
+                    out bool leftHasNumber,
+                    out _,
+                    out bool leftPlanIsValid) &&
+                leftPlanIsValid &&
+                leftHasNumber &&
+                TryEvaluateSimpleScalarNode(
+                    exe,
+                    inputStack,
+                    rightNode,
+                    out object rightNumber,
+                    out NumericTypeEnum rightType,
+                    out bool rightHasNumber,
+                    out _,
+                    out bool rightPlanIsValid) &&
+                rightPlanIsValid &&
+                rightHasNumber)
+            {
+                switch (GetCommonNubmerResultDenominator(
+                    leftType,
+                    rightType))
+                {
+                    case NumericTypeEnum.Integer:
+                        result =
+                            Convert.ToInt32(leftNumber) <=
+                            Convert.ToInt32(rightNumber);
+                        return true;
+                    case NumericTypeEnum.Double:
+                        result =
+                            Convert.ToDouble(leftNumber) <=
+                            Convert.ToDouble(rightNumber);
+                        return true;
+                    case NumericTypeEnum.Decimal:
+                        result =
+                            Convert.ToDecimal(leftNumber) <=
+                            Convert.ToDecimal(rightNumber);
+                        return true;
+                }
+            }
+
+            if (plan != null)
+                return false;
+
+            INoInEdgeInOutVertexVertex leftResult =
+                exe.ExecuteInstructionByMontevideoPrinciples(
+                    inputStack,
+                    leftExpression);
+            INoInEdgeInOutVertexVertex rightResult =
+                exe.ExecuteInstructionByMontevideoPrinciples(
+                    inputStack,
+                    rightExpression);
+
+            try
+            {
+                IList<IEdge> leftEdges = leftResult.OutEdges;
+                IList<IEdge> rightEdges = rightResult.OutEdges;
+                int count = Math.Min(
+                    leftEdges.Count,
+                    rightEdges.Count);
+
+                result = true;
+                for (int index = 0; index < count; index++)
+                    if (!LogicDoubleOperator_VertexLevel(
+                        leftEdges[index].To,
+                        rightEdges[index].To,
+                        LogicDoubleOpertorEnum.LessOrEqualThan))
+                        result = false;
+
+                return true;
+            }
+            finally
+            {
+                ReleaseTemporaryStack(
+                    leftResult,
+                    inputStack,
+                    exe.Stack,
+                    exe.NewVertexCreationSpace);
+                ReleaseTemporaryStack(
+                    rightResult,
+                    inputStack,
+                    exe.Stack,
+                    exe.NewVertexCreationSpace);
+            }
+        }
+
         enum LogicDoubleOpertorEnum { Equal, ExactEqual, VertexEqual, NotEqual, And, Or, MoreThan, LessThan, MoreOrEqualThan, LessOrEqualThan }
 
         private static bool LogicDoubleOperator_VertexLevel(IVertex leftVertex, IVertex rightVertex, LogicDoubleOpertorEnum operationType)
@@ -2436,12 +3236,16 @@ namespace m0.ZeroUML.Instructions
 
                 bool local_isStackFrameReturn = false;
                 INoInEdgeInOutVertexVertex possibleToReturnStack = null;
+                bool hasReusableStackFrame = false;
 
                 foreach (IEdge setEdge in setExecution)
                 {
                     ZeroCodePerformanceCounters
                         .RecordForVertexIteration();
-                    exe.AddStackFrame(); // ENTER NEW STACK
+                    if (!hasReusableStackFrame)
+                        exe.AddStackFrame(); // ENTER NEW STACK
+
+                    hasReusableStackFrame = false;
 
                     IEdge variableEdge = GraphUtil.CreateArtificialEdge(variable, setEdge.To);
 
@@ -2452,9 +3256,45 @@ namespace m0.ZeroUML.Instructions
                     if (local_isStackFrameReturn)
                         break;
 
+                    IList<IEdge> currentFrameEdges =
+                        exe.Stack.OutEdgesRaw;
+                    hasReusableStackFrame =
+                        currentFrameEdges.Count == 2 &&
+                        (ReferenceEquals(
+                            currentFrameEdges[0],
+                            variableEdge) ||
+                            ReferenceEquals(
+                                currentFrameEdges[1],
+                                variableEdge)) &&
+                        (ReferenceEquals(
+                            currentFrameEdges[0].Meta,
+                            MinusZero.Instance
+                                .StackFrameInherits) ||
+                            ReferenceEquals(
+                                currentFrameEdges[1].Meta,
+                                MinusZero.Instance
+                                    .StackFrameInherits));
+
+                    if (hasReusableStackFrame)
+                        exe.Stack.DeleteEdge(variableEdge);
+                    else
+                    {
+                        INoInEdgeInOutVertexVertex completedFrame =
+                            exe.Stack;
+                        exe.RemoveStackFrame();  // LEAVE NEW STACK
+                        ReleaseTemporaryStack(
+                            completedFrame,
+                            inputStack,
+                            exe.Stack,
+                            exe.NewVertexCreationSpace);
+                    }
+                }
+
+                if (hasReusableStackFrame)
+                {
                     INoInEdgeInOutVertexVertex completedFrame =
                         exe.Stack;
-                    exe.RemoveStackFrame();  // LEAVE NEW STACK
+                    exe.RemoveStackFrame(); // LEAVE NEW STACK
                     ReleaseTemporaryStack(
                         completedFrame,
                         inputStack,
@@ -2539,14 +3379,36 @@ namespace m0.ZeroUML.Instructions
 
                 bool local_isStackFrameReturn = false;
                 INoInEdgeInOutVertexVertex possibleToReturnStack = null;
+                bool hasReusableStackFrame = false;
+                SimpleScalarLessOrEqualPlan
+                    directConditionPlan =
+                        CompileSimpleScalarLessOrEqualPlan(
+                            test);
 
-                INoInEdgeInOutVertexVertex testResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.Stack, test);
+                bool directConditionEvaluation =
+                    TryEvaluateWhileCondition(
+                        exe,
+                        exe.Stack,
+                        test,
+                        directConditionPlan,
+                        out bool directConditionResult);
+                INoInEdgeInOutVertexVertex testResult =
+                    directConditionEvaluation
+                        ? null
+                        : exe.ExecuteInstructionByMontevideoPrinciples(
+                            exe.Stack,
+                            test);
 
-                while (IsTrue_Stack(testResult))
+                while (directConditionEvaluation
+                    ? directConditionResult
+                    : IsTrue_Stack(testResult))
                 {
                     ZeroCodePerformanceCounters
                         .RecordWhileIteration();
-                    exe.AddStackFrame(); // ENTER NEW STACK
+                    if (!hasReusableStackFrame)
+                        exe.AddStackFrame(); // ENTER NEW STACK
+
+                    hasReusableStackFrame = false;
 
                     possibleToReturnStack = ZeroCodeExecutonUtil.SequentiallyExecuteInstructions(exe, exe.Stack, instructionVertex, out local_isStackFrameReturn);
 
@@ -2554,26 +3416,55 @@ namespace m0.ZeroUML.Instructions
                         break;
 
 
-                    INoInEdgeInOutVertexVertex previousTestResult =
-                        testResult;
-                    testResult =
-                        exe.ExecuteInstructionByMontevideoPrinciples(
+                    if (directConditionEvaluation)
+                    {
+                        directConditionEvaluation =
+                            TryEvaluateWhileCondition(
+                                exe,
+                                exe.Stack,
+                                test,
+                                directConditionPlan,
+                                out directConditionResult);
+                        if (!directConditionEvaluation)
+                            testResult =
+                                exe.ExecuteInstructionByMontevideoPrinciples(
+                                    exe.Stack,
+                                    test);
+                    }
+                    else
+                    {
+                        INoInEdgeInOutVertexVertex previousTestResult =
+                            testResult;
+                        testResult =
+                            exe.ExecuteInstructionByMontevideoPrinciples(
+                                exe.Stack,
+                                test);
+                        ReleaseTemporaryStack(
+                            previousTestResult,
+                            inputStack,
                             exe.Stack,
-                            test);
-                    ReleaseTemporaryStack(
-                        previousTestResult,
-                        inputStack,
-                        exe.Stack,
-                        exe.NewVertexCreationSpace);
+                            exe.NewVertexCreationSpace);
+                    }
 
-                    INoInEdgeInOutVertexVertex completedFrame =
-                        exe.Stack;
-                    exe.RemoveStackFrame(); // LEAVE NEW STACK
-                    ReleaseTemporaryStack(
-                        completedFrame,
-                        inputStack,
-                        exe.Stack,
-                        exe.NewVertexCreationSpace);
+                    IList<IEdge> currentFrameEdges =
+                        exe.Stack.OutEdgesRaw;
+                    hasReusableStackFrame =
+                        currentFrameEdges.Count == 1 &&
+                        ReferenceEquals(
+                            currentFrameEdges[0].Meta,
+                            MinusZero.Instance.StackFrameInherits);
+
+                    if (!hasReusableStackFrame)
+                    {
+                        INoInEdgeInOutVertexVertex completedFrame =
+                            exe.Stack;
+                        exe.RemoveStackFrame(); // LEAVE NEW STACK
+                        ReleaseTemporaryStack(
+                            completedFrame,
+                            inputStack,
+                            exe.Stack,
+                            exe.NewVertexCreationSpace);
+                    }
                 }
 
                 if (local_isStackFrameReturn)
@@ -2584,6 +3475,18 @@ namespace m0.ZeroUML.Instructions
                         exe.Stack,
                         exe.NewVertexCreationSpace);
                     return possibleToReturnStack;
+                }
+
+                if (hasReusableStackFrame)
+                {
+                    INoInEdgeInOutVertexVertex completedFrame =
+                        exe.Stack;
+                    exe.RemoveStackFrame(); // LEAVE NEW STACK
+                    ReleaseTemporaryStack(
+                        completedFrame,
+                        inputStack,
+                        exe.Stack,
+                        exe.NewVertexCreationSpace);
                 }
 
                 ReleaseTemporaryStack(

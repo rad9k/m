@@ -91,6 +91,13 @@ namespace m0.ZeroTypes.UX
 
         private void UXItem_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            if (OwningVisualiser is UXVisualiser owningUxVisualiser &&
+                owningUxVisualiser.SuspendAutomaticDiagramLineUpdates)
+            {
+                UXPerfLog.Count("UXItem.SizeChanged->UpdateDiagramLines.skipped");
+                return;
+            }
+
             UXPerfLog.Count("UXItem.SizeChanged->UpdateDiagramLines");
             UpdateDiagramLines();
         }
@@ -130,6 +137,15 @@ namespace m0.ZeroTypes.UX
 
         public virtual void VertexSetedUp()
         {
+            // HostItem/Paint call VertexSetedUp repeatedly. Without removing the previous
+            // listener, each Paint leaks another UXItem trigger and Commit slows down.
+            if (graphChangeListenerEdge != null)
+            {
+                GraphChangeTrigger.RemoveListener(graphChangeListenerEdge);
+                graphChangeListenerEdge = null;
+                UXPerfLog.Count("UXItem.VertexSetedUp.listenerReplaced");
+            }
+
             graphChangeListenerEdge = ExecutionFlowHelper.AddTriggerAndListener(Vertex,
                 new List<string> { @"", @"\" },
                 new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
@@ -239,6 +255,13 @@ namespace m0.ZeroTypes.UX
 
             toItem.DiagramToLines.Add(newline);
 
+            if (OwningVisualiser is UXVisualiser owningUxVisualiser &&
+                owningUxVisualiser.SuspendAutomaticDiagramLineUpdates)
+            {
+                UXPerfLog.Count("UXItem.AddDiagramLineObject.UpdateDiagramLines.skipped");
+                return;
+            }
+
             UpdateDiagramLines(toItem);
         }
 
@@ -322,39 +345,65 @@ namespace m0.ZeroTypes.UX
 
         public void MoveItem(double x, double y, bool onlyAnchors)
         {
-            if (Position == null)
-                return;
-
             long tMove = UXPerfLog.Timestamp();
 
+            long tPositionAvailability = UXPerfLog.Timestamp();
+            bool hasPosition = Position != null;
+            long positionAvailabilityTicks = UXPerfLog.Timestamp() - tPositionAvailability;
+
+            if (!hasPosition)
+            {
+                UXPerfLog.Record("UXItem.MoveItem.PositionAvailability", positionAvailabilityTicks);
+                return;
+            }
+
+            long tCoordinateTranslation = UXPerfLog.Timestamp();
+            bool translatedToParentCoordinates = false;
             if (!(ParentItem is IUXVisualiser) && ParentItem != null && !onlyAnchors)
             {
                 Point localCanvasPosition = localCanvasPosition = OwningVisualiser.Canvas.TranslatePoint(new Point(x, y), ((IUXContainer)ParentItem).Canvas);
 
                 x = localCanvasPosition.X;
                 y = localCanvasPosition.Y;
+                translatedToParentCoordinates = true;
             }
+            long coordinateTranslationTicks = UXPerfLog.Timestamp() - tCoordinateTranslation;
 
+            long tPositionRead = UXPerfLog.Timestamp();
             Position position = this.Position;
 
             double deltax = position.X - x;
             double deltay = position.Y - y;
+            long positionReadTicks = UXPerfLog.Timestamp() - tPositionRead;
+
+            long graphInteractionBeginTicks = 0;
+            long graphPositionWriteTicks = 0;
+            long graphInteractionEndTicks = 0;
+            long canvasPositionTicks = 0;
 
             if (!onlyAnchors)
             {
                 ////////////////////////////////////////
+                long tGraphInteractionBegin = UXPerfLog.Timestamp();
                 Interaction.BeginInteractionWithGraph();
+                graphInteractionBeginTicks = UXPerfLog.Timestamp() - tGraphInteractionBegin;
                 //////////////////////////////////////// 
 
+                long tGraphPositionWrite = UXPerfLog.Timestamp();
                 position.X = x;
                 position.Y = y;
+                graphPositionWriteTicks = UXPerfLog.Timestamp() - tGraphPositionWrite;
 
                 ////////////////////////////////////////
+                long tGraphInteractionEnd = UXPerfLog.Timestamp();
                 Interaction.EndInteractionWithGraph();
+                graphInteractionEndTicks = UXPerfLog.Timestamp() - tGraphInteractionEnd;
                 ////////////////////////////////////////             
 
+                long tCanvasPosition = UXPerfLog.Timestamp();
                 Canvas.SetLeft(this, x);
                 Canvas.SetTop(this, y);
+                canvasPositionTicks = UXPerfLog.Timestamp() - tCanvasPosition;
             }
             else
             {
@@ -362,27 +411,66 @@ namespace m0.ZeroTypes.UX
                 deltay = -y;
             }
 
+            long tAnchors = UXPerfLog.Timestamp();
             foreach (UIElement a in Anchors)
             {
                 Canvas.SetLeft(a, Canvas.GetLeft(a) - deltax);
                 Canvas.SetTop(a, Canvas.GetTop(a) - deltay);
             }
+            long anchorsTicks = UXPerfLog.Timestamp() - tAnchors;
 
-            long tLayout = UXPerfLog.Timestamp();
-            UpdateLayout();
-            UXPerfLog.Record("UXItem.MoveItem.UpdateLayout", UXPerfLog.Timestamp() - tLayout);
+            // During single-item drag we keep one open graph transaction and finish
+            // parent reparenting on mouse up — skip forced layout + parent scan per move.
+            bool deferHeavyWorkDuringItemDrag =
+                OwningVisualiser is UXVisualiser owningUxVisualiser &&
+                owningUxVisualiser.IsItemMoveGraphInteractionActive;
+
+            long layoutTicks = 0;
+            if (!deferHeavyWorkDuringItemDrag)
+            {
+                long tLayout = UXPerfLog.Timestamp();
+                UpdateLayout();
+                layoutTicks = UXPerfLog.Timestamp() - tLayout;
+            }
+            else
+                UXPerfLog.Count("UXItem.MoveItem.UpdateLayout.skippedDuringDrag");
 
             long tSub = UXPerfLog.Timestamp();
             UpdateDiagramLinesInSubItems();
-            UXPerfLog.Record("UXItem.MoveItem.UpdateDiagramLinesInSubItems", UXPerfLog.Timestamp() - tSub);
+            long subItemLinesTicks = UXPerfLog.Timestamp() - tSub;
 
             long tLines = UXPerfLog.Timestamp();
             UpdateDiagramLines();
-            UXPerfLog.Record("UXItem.MoveItem.UpdateDiagramLines", UXPerfLog.Timestamp() - tLines);
+            long linesTicks = UXPerfLog.Timestamp() - tLines;
 
-            OwningVisualiser.CheckAndUpdateItemParent(this, true);
+            long parentCheckTicks = 0;
+            if (!deferHeavyWorkDuringItemDrag)
+            {
+                long tParentCheck = UXPerfLog.Timestamp();
+                OwningVisualiser.CheckAndUpdateItemParent(this, true);
+                parentCheckTicks = UXPerfLog.Timestamp() - tParentCheck;
+            }
+            else
+                UXPerfLog.Count("UXItem.MoveItem.CheckAndUpdateItemParent.skippedDuringDrag");
 
-            UXPerfLog.Record("UXItem.MoveItem.total", UXPerfLog.Timestamp() - tMove, onlyAnchors ? 1 : 0, "onlyAnchors");
+            long totalTicks = UXPerfLog.Timestamp() - tMove;
+
+            UXPerfLog.Record("UXItem.MoveItem.PositionAvailability", positionAvailabilityTicks);
+            UXPerfLog.Record("UXItem.MoveItem.CoordinateTranslation", coordinateTranslationTicks,
+                translatedToParentCoordinates ? 1 : 0, "translated");
+            UXPerfLog.Record("UXItem.MoveItem.PositionRead", positionReadTicks);
+            UXPerfLog.Record("UXItem.MoveItem.GraphInteractionBegin", graphInteractionBeginTicks);
+            UXPerfLog.Record("UXItem.MoveItem.GraphPositionWrite", graphPositionWriteTicks);
+            UXPerfLog.Record("UXItem.MoveItem.GraphInteractionEnd", graphInteractionEndTicks);
+            UXPerfLog.Record("UXItem.MoveItem.CanvasPosition", canvasPositionTicks);
+            UXPerfLog.Record("UXItem.MoveItem.Anchors", anchorsTicks, Anchors.Count, "anchors");
+            UXPerfLog.Record("UXItem.MoveItem.UpdateLayout", layoutTicks);
+            UXPerfLog.Record("UXItem.MoveItem.UpdateDiagramLinesInSubItems", subItemLinesTicks);
+            UXPerfLog.Record("UXItem.MoveItem.UpdateDiagramLines", linesTicks);
+            UXPerfLog.Record("UXItem.MoveItem.CheckAndUpdateItemParent", parentCheckTicks);
+            UXPerfLog.Record("UXItem.MoveItem.total", totalTicks, onlyAnchors ? 1 : 0, "onlyAnchors");
+            UXPerfLog.CountWithExtra("UXItem.MoveItem.deferHeavyWorkDuringItemDrag", 1,
+                deferHeavyWorkDuringItemDrag ? 1 : 0, "deferred");
         }
 
         static public IUXItem GetUXItem(IItem parent, ITypedEdge i)

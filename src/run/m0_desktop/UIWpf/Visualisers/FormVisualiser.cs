@@ -218,7 +218,7 @@ namespace m0.UIWpf.Visualisers
 
         public FormVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile)
         {
-            new ListVisualiserHelper(parentVisualiser,
+            ListVisualiserHelper visualiserHelper = new ListVisualiserHelper(parentVisualiser,
                 isVolatile,
                 MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Form"),
                 this, 
@@ -228,7 +228,9 @@ namespace m0.UIWpf.Visualisers
                 new List<string> { @"", @"BaseEdge:\", @"BaseEdge:\To:\" },
                 "AtomVisualiser",
                 baseEdgeVertex,
-                UpdateBaseEdgeCallSchemeEnum.OmmitFirst);            
+                UpdateBaseEdgeCallSchemeEnum.OmmitFirst);
+
+            visualiserHelper.CustomVertexChangeEvent += FormVertexChange;
 
             SetVertexDefaultValues();
 
@@ -236,6 +238,36 @@ namespace m0.UIWpf.Visualisers
             this.BorderThickness = new Thickness(10);
 
             this.Foreground = new SolidColorBrush(Colors.Purple);
+        }
+
+        private INoInEdgeInOutVertexVertex FormVertexChange(IExecution exe)
+        {
+            IVertex baseEdgeTo = Vertex.Get(false, @"BaseEdge:\To:");
+
+            if (baseEdgeTo != null && ContainsOnlyValueChangesOfVertex(exe.Stack, baseEdgeTo))
+                return exe.Stack;
+
+            return ((ListVisualiserHelper)VisualiserHelper).VertexChangeLogic(exe);
+        }
+
+        private static bool ContainsOnlyValueChangesOfVertex(IVertex stack, IVertex vertex)
+        {
+            bool containsEvent = false;
+
+            foreach (IEdge eventEdge in GraphUtil.GetQueryOut(stack, "event", null))
+            {
+                containsEvent = true;
+
+                IVertex eventType = GraphUtil.GetQueryOutFirst(eventEdge.To, "Type", null);
+                IVertex changedVertex = GraphUtil.GetQueryOutFirst(eventEdge.To, "ChangedVertex", null);
+
+                if (eventType == null
+                    || !GraphUtil.GetValueAndCompareStrings(eventType, "ValueChange")
+                    || changedVertex != vertex)
+                    return false;
+            }
+
+            return containsEvent;
         }
         
         public void OnLoad(object sender, RoutedEventArgs e)

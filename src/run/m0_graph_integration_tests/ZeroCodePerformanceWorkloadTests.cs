@@ -92,7 +92,168 @@ public sealed class ZeroCodePerformanceWorkloadTests
         }
     }
 
+    [Fact]
+    public void ScalarRedirectAddPreservesNumericResultAndFallback()
+    {
+        const string source =
+            "\"ScalarRedirectAdd\"\r\n" +
+            "\tvariable \"IntegerValue\" @String\r\n" +
+            "\tvariable \"FallbackValue\" @String\r\n" +
+            "\tvariable \"NumericFallbackValue\" @String\r\n" +
+            "\tIntegerValue = \"1\"\r\n" +
+            "\tFallbackValue = \"not-a-number\"\r\n" +
+            "\tNumericFallbackValue = \"not-a-number\"\r\n" +
+            "\tIntegerValue = IntegerValue + \"2\"\r\n" +
+            "\tIntegerValue = IntegerValue + \"3\"\r\n" +
+            "\tFallbackValue = FallbackValue + \"right\"\r\n" +
+            "\tNumericFallbackValue = " +
+                "NumericFallbackValue + \"2\"";
+        IEdge parsedRootEdge = ParseSource(source);
+
+        IVertex result =
+            MinusZero.Instance.DefaultExecuter.Execute(
+                InstructionHelpers.CreateStack(),
+                parsedRootEdge.To);
+
+        Assert.Equal(
+            6,
+            Convert.ToInt32(
+                GraphUtil.GetQueryOutFirst(
+                    result,
+                    "IntegerValue",
+                    null)?.Value));
+        Assert.Equal(
+            "right",
+            Convert.ToString(
+                GraphUtil.GetQueryOutFirst(
+                    result,
+                    "FallbackValue",
+                    null)?.Value));
+        Assert.IsType<string>(
+            GraphUtil.GetQueryOutFirst(
+                result,
+                "NumericFallbackValue",
+                null)?.Value);
+        Assert.Equal(
+            "2",
+            GraphUtil.GetQueryOutFirst(
+                result,
+                "NumericFallbackValue",
+                null)?.Value);
+    }
+
+    [Fact]
+    public void ScalarExpressionPlanInvalidatesAfterExpressionMutation()
+    {
+        const string source =
+            "\"ScalarPlanInvalidation\"\r\n" +
+            "\tvariable \"Value\" @String\r\n" +
+            "\tValue = \"1\"\r\n" +
+            "\tValue = Value + \"2\"";
+        IEdge parsedRootEdge = ParseSource(source);
+
+        IVertex firstResult =
+            MinusZero.Instance.DefaultExecuter.Execute(
+                InstructionHelpers.CreateStack(),
+                parsedRootEdge.To);
+        Assert.Equal(
+            3,
+            Convert.ToInt32(
+                GraphUtil.GetQueryOutFirst(
+                    firstResult,
+                    "Value",
+                    null)?.Value));
+
+        IVertex literal = Descendants(
+                parsedRootEdge.To)
+            .Single(
+                vertex =>
+                    string.Equals(
+                        vertex.Value?.ToString(),
+                        "2",
+                        StringComparison.Ordinal) &&
+                    InstructionHelpers.GetIs(vertex) == null);
+        literal.Value = "4";
+
+        IVertex secondResult =
+            MinusZero.Instance.DefaultExecuter.Execute(
+                InstructionHelpers.CreateStack(),
+                parsedRootEdge.To);
+        Assert.Equal(
+            5,
+            Convert.ToInt32(
+                GraphUtil.GetQueryOutFirst(
+                    secondResult,
+                    "Value",
+                    null)?.Value));
+
+        IVertex addExpression = Descendants(
+                parsedRootEdge.To)
+            .Single(
+                vertex => string.Equals(
+                    InstructionHelpers.GetIs(vertex)
+                        ?.Value?.ToString(),
+                    "+",
+                    StringComparison.Ordinal));
+        IEdge rightEdge =
+            GraphUtil.GetQueryOutFirstEdge(
+                addExpression,
+                "RightExpression",
+                null);
+        Assert.NotNull(rightEdge);
+        IVertex rightMeta = rightEdge.Meta;
+        addExpression.DeleteEdge(rightEdge);
+        addExpression.AddVertex(
+            rightMeta,
+            "6");
+
+        IVertex thirdResult =
+            MinusZero.Instance.DefaultExecuter.Execute(
+                InstructionHelpers.CreateStack(),
+                parsedRootEdge.To);
+        Assert.Equal(
+            7,
+            Convert.ToInt32(
+                GraphUtil.GetQueryOutFirst(
+                    thirdResult,
+                    "Value",
+                    null)?.Value));
+    }
+
+    private static IEnumerable<IVertex> Descendants(
+        IVertex root)
+    {
+        HashSet<IVertex> visited =
+            new HashSet<IVertex>(
+                ReferenceEqualityComparer.Instance);
+        Stack<IVertex> pending =
+            new Stack<IVertex>();
+        pending.Push(root);
+
+        while (pending.Count > 0)
+        {
+            IVertex current = pending.Pop();
+            if (!visited.Add(current))
+                continue;
+
+            yield return current;
+            foreach (IEdge edge in current.OutEdgesRaw)
+                if (edge.To != null &&
+                    ReferenceEquals(
+                        edge.To.Store,
+                        root.Store))
+                    pending.Push(edge.To);
+        }
+    }
+
     private static IEdge ParseWorkload()
+    {
+        return ParseSource(
+            ZeroCodePerformanceWorkload.Source);
+    }
+
+    private static IEdge ParseSource(
+        string source)
     {
         IVertex parseParent = MinusZero.Instance.TempStore.Root
             .AddVertex(
@@ -104,7 +265,7 @@ public sealed class ZeroCodePerformanceWorkloadTests
         IVertex parseErrors =
             MinusZero.Instance.DefaultFormalTextParser.Parse(
                 sourceEdge,
-                ZeroCodePerformanceWorkload.Source,
+                source,
                 CodeRepresentationEnum.LinearizedManyLines,
                 out IEdge parsedRootEdge);
 

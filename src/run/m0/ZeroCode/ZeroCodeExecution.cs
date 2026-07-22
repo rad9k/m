@@ -15,6 +15,14 @@ namespace m0.ZeroCode
     public class ZeroCodeExecution: IExecution
     {
         private int stackFrameDepth;
+        private readonly
+            Stack<StackFrameInheritanceLink>
+                stackFrameInheritanceLinks =
+                    new Stack<StackFrameInheritanceLink>();
+        private Dictionary<IVertex, IEdge>
+            addAssignmentTargetCache;
+        private Dictionary<IVertex, RedirectAssignmentCacheEntry>
+            redirectAssignmentTargetCache;
 
         public INoInEdgeInOutVertexVertex Stack { get; set; }
 
@@ -87,7 +95,14 @@ namespace m0.ZeroCode
         {
             INoInEdgeInOutVertexVertex newStackFrame = InstructionHelpers.CreateStack();
 
-            newStackFrame.AddEdge(MinusZero.Instance.StackFrameInherits, Stack);
+            IEdge inheritanceEdge =
+                newStackFrame.AddEdge(
+                    MinusZero.Instance.StackFrameInherits,
+                    Stack);
+            stackFrameInheritanceLinks.Push(
+                new StackFrameInheritanceLink(
+                    newStackFrame,
+                    inheritanceEdge));
 
             Stack = newStackFrame;
             stackFrameDepth++;
@@ -99,7 +114,14 @@ namespace m0.ZeroCode
         {            
             INoInEdgeInOutVertexVertex newStackFrameINIEIOV = InstructionHelpers.Create_INoInEdgeInOutVertexVertex_FromEdgesList(newStackFrame);
             
-            newStackFrameINIEIOV.AddEdge(MinusZero.Instance.StackFrameInherits, Stack);
+            IEdge inheritanceEdge =
+                newStackFrameINIEIOV.AddEdge(
+                    MinusZero.Instance.StackFrameInherits,
+                    Stack);
+            stackFrameInheritanceLinks.Push(
+                new StackFrameInheritanceLink(
+                    newStackFrameINIEIOV,
+                    inheritanceEdge));
 
             Stack = newStackFrameINIEIOV;
             stackFrameDepth++;
@@ -109,7 +131,30 @@ namespace m0.ZeroCode
 
         public void RemoveStackFrame()
         {
-            IEdge stackFrameInheritsEdge = GraphUtil.GetQueryOutFirstEdge(Stack, "$StackFrameInherits", null);
+            IEdge stackFrameInheritsEdge = null;
+            if (stackFrameInheritanceLinks.Count > 0)
+            {
+                StackFrameInheritanceLink cachedLink =
+                    stackFrameInheritanceLinks.Peek();
+                if (ReferenceEquals(
+                        cachedLink.Frame,
+                        Stack) &&
+                    cachedLink.Frame.OutEdgesRaw.Contains(
+                        cachedLink.Edge))
+                {
+                    stackFrameInheritanceLinks.Pop();
+                    stackFrameInheritsEdge =
+                        cachedLink.Edge;
+                }
+                else
+                    stackFrameInheritanceLinks.Clear();
+            }
+
+            stackFrameInheritsEdge ??=
+                GraphUtil.GetQueryOutFirstEdge(
+                    Stack,
+                    "$StackFrameInherits",
+                    null);
 
             if (stackFrameInheritsEdge == null)
                 throw new Exception("Can not remove stack frame. No $StackFrameInherits");
@@ -127,6 +172,167 @@ namespace m0.ZeroCode
                     stackFrameDepth--;
                 ZeroCodePerformanceCounters.RecordStackFramePop();
             }
+        }
+
+        private readonly struct StackFrameInheritanceLink
+        {
+            internal StackFrameInheritanceLink(
+                INoInEdgeInOutVertexVertex frame,
+                IEdge edge)
+            {
+                Frame = frame;
+                Edge = edge;
+            }
+
+            internal INoInEdgeInOutVertexVertex Frame
+            {
+                get;
+            }
+
+            internal IEdge Edge
+            {
+                get;
+            }
+        }
+
+        private readonly struct RedirectAssignmentCacheEntry
+        {
+            internal RedirectAssignmentCacheEntry(
+                IEdge targetEdge,
+                object scalarPlan)
+            {
+                TargetEdge = targetEdge;
+                ScalarPlan = scalarPlan;
+            }
+
+            internal IEdge TargetEdge { get; }
+
+            internal object ScalarPlan { get; }
+        }
+
+        internal bool TryGetCachedAddAssignmentTarget(
+            IVertex instructionVertex,
+            out IEdge targetEdge)
+        {
+            return TryGetCachedAssignmentTarget(
+                addAssignmentTargetCache,
+                instructionVertex,
+                out targetEdge);
+        }
+
+        internal bool TryGetCachedRedirectAssignmentTarget(
+            IVertex instructionVertex,
+            out IEdge targetEdge,
+            out object scalarPlan)
+        {
+            targetEdge = null;
+            scalarPlan = null;
+            if (redirectAssignmentTargetCache == null ||
+                !redirectAssignmentTargetCache.TryGetValue(
+                    instructionVertex,
+                    out RedirectAssignmentCacheEntry entry) ||
+                !IsCachedAssignmentTargetValid(
+                    entry.TargetEdge))
+                return false;
+
+            targetEdge = entry.TargetEdge;
+            scalarPlan = entry.ScalarPlan;
+            return true;
+        }
+
+        private bool TryGetCachedAssignmentTarget(
+            Dictionary<IVertex, IEdge> cache,
+            IVertex instructionVertex,
+            out IEdge targetEdge)
+        {
+            targetEdge = null;
+            if (cache == null ||
+                !cache.TryGetValue(
+                    instructionVertex,
+                    out IEdge cachedEdge) ||
+                !IsCachedAssignmentTargetValid(cachedEdge))
+                return false;
+
+            targetEdge = cachedEdge;
+            return true;
+        }
+
+        private bool IsCachedAssignmentTargetValid(
+            IEdge cachedEdge)
+        {
+            return cachedEdge?.From is
+                    INoInEdgeInOutVertexVertex sourceFrame &&
+                IsCurrentStackFrameOrAncestor(sourceFrame) &&
+                sourceFrame.OutEdgesRaw.Contains(cachedEdge);
+        }
+
+        internal void CacheAddAssignmentTarget(
+            IVertex instructionVertex,
+            IEdge targetEdge)
+        {
+            CacheAssignmentTarget(
+                ref addAssignmentTargetCache,
+                instructionVertex,
+                targetEdge);
+        }
+
+        internal void CacheRedirectAssignmentTarget(
+            IVertex instructionVertex,
+            IEdge targetEdge,
+            object scalarPlan)
+        {
+            if (!(targetEdge?.From is
+                INoInEdgeInOutVertexVertex))
+                return;
+
+            redirectAssignmentTargetCache ??=
+                new Dictionary<
+                    IVertex,
+                    RedirectAssignmentCacheEntry>(
+                    ReferenceEqualityComparer.Instance);
+            redirectAssignmentTargetCache[
+                instructionVertex] =
+                    new RedirectAssignmentCacheEntry(
+                        targetEdge,
+                        scalarPlan);
+        }
+
+        private static void CacheAssignmentTarget(
+            ref Dictionary<IVertex, IEdge> cache,
+            IVertex instructionVertex,
+            IEdge targetEdge)
+        {
+            if (!(targetEdge?.From is
+                INoInEdgeInOutVertexVertex))
+                return;
+
+            cache ??=
+                new Dictionary<IVertex, IEdge>(
+                    ReferenceEqualityComparer.Instance);
+            cache[instructionVertex] =
+                targetEdge;
+        }
+
+        private bool IsCurrentStackFrameOrAncestor(
+            IVertex candidate)
+        {
+            IVertex current = Stack;
+
+            while (current is
+                INoInEdgeInOutVertexVertex)
+            {
+                if (ReferenceEquals(current, candidate))
+                    return true;
+
+                IEdge parentEdge =
+                    GraphUtil.GetQueryOutFirstEdge(
+                        current,
+                        "$StackFrameInherits",
+                        null);
+                current = parentEdge?.To;
+            }
+
+            return false;
         }
 
         public INoInEdgeInOutVertexVertex ExecuteInstructionByMontevideoPrinciples(IVertex inputQs, IVertex instructionVertex)

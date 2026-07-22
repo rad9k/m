@@ -32,6 +32,16 @@ namespace m0.ZeroTypes.UX
             VertexUpdated();
             UpdateLabelVisibility();
 
+            // AddToCanvas() calls VertexSetedUp on every Paint/AddLineObjects.
+            // Without removing the previous listener, each Paint leaks another
+            // DiagramLine trigger and Commit grows slower over time.
+            if (graphChangeListenerEdge != null)
+            {
+                GraphChangeTrigger.RemoveListener(graphChangeListenerEdge);
+                graphChangeListenerEdge = null;
+                UXPerfLog.Count("LineDecorator.VertexSetedUp.listenerReplaced");
+            }
+
             graphChangeListenerEdge = ExecutionFlowHelper.AddTriggerAndListener(Vertex,
                  new List<string> { "", @"\" },
                  new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
@@ -572,7 +582,7 @@ namespace m0.ZeroTypes.UX
 
         public override void Unselect()
         {
-            IsSelected = true;
+            IsSelected = false;
 
             Panel.SetZIndex(this, 0);
 
