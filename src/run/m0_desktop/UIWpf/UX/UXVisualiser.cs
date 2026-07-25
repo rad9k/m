@@ -110,6 +110,11 @@ namespace m0.UIWpf.UX
         // During Paint / bulk line sync, skip SizeChanged and per-add geometry updates;
         // one UpdateAllDiagramLineGeometries pass runs after the bulk work.
         int suspendAutomaticDiagramLineUpdatesDepth;
+        readonly HashSet<LineDecorator> deferredLineDecoratorListenerRegistrations =
+            new HashSet<LineDecorator>();
+        int deferNewUXItemListenerRegistrationsDepth;
+        readonly HashSet<UXItem> deferredUXItemListenerRegistrations =
+            new HashSet<UXItem>();
 
         public bool SuspendAutomaticDiagramLineUpdates
         {
@@ -127,6 +132,116 @@ namespace m0.UIWpf.UX
         {
             if (suspendAutomaticDiagramLineUpdatesDepth > 0)
                 suspendAutomaticDiagramLineUpdatesDepth--;
+
+            if (suspendAutomaticDiagramLineUpdatesDepth == 0)
+                RegisterDeferredLineDecoratorListeners();
+        }
+
+        internal bool TryDeferLineDecoratorListenerRegistration(
+            LineDecorator lineDecorator)
+        {
+            if (!SuspendAutomaticDiagramLineUpdates ||
+                lineDecorator == null)
+                return false;
+
+            deferredLineDecoratorListenerRegistrations.Add(
+                lineDecorator);
+            return true;
+        }
+
+        void RegisterDeferredLineDecoratorListeners()
+        {
+            if (deferredLineDecoratorListenerRegistrations.Count == 0)
+                return;
+
+            LineDecorator[] lineDecorators =
+                deferredLineDecoratorListenerRegistrations.ToArray();
+            deferredLineDecoratorListenerRegistrations.Clear();
+
+            long t0 = UXPerfLog.Timestamp();
+            int registeredListeners = 0;
+
+            Interaction.BeginInteractionWithGraph();
+            try
+            {
+                foreach (LineDecorator lineDecorator in lineDecorators)
+                {
+                    if (lineDecorator.IsDisposed)
+                        continue;
+
+                    lineDecorator.RegisterDeferredGraphChangeListener();
+                    registeredListeners++;
+                }
+            }
+            finally
+            {
+                Interaction.EndInteractionWithGraph();
+            }
+
+            UXPerfLog.Record(
+                "UXVisualiser.RegisterDeferredLineDecoratorListeners",
+                UXPerfLog.Timestamp() - t0,
+                registeredListeners,
+                "listeners");
+        }
+
+        void BeginDeferNewUXItemListenerRegistrations()
+        {
+            deferNewUXItemListenerRegistrationsDepth++;
+        }
+
+        void EndDeferNewUXItemListenerRegistrations()
+        {
+            if (deferNewUXItemListenerRegistrationsDepth > 0)
+                deferNewUXItemListenerRegistrationsDepth--;
+
+            if (deferNewUXItemListenerRegistrationsDepth == 0)
+                RegisterDeferredUXItemListeners();
+        }
+
+        internal bool TryDeferUXItemListenerRegistration(UXItem item)
+        {
+            if (deferNewUXItemListenerRegistrationsDepth == 0 ||
+                item == null)
+                return false;
+
+            deferredUXItemListenerRegistrations.Add(item);
+            return true;
+        }
+
+        void RegisterDeferredUXItemListeners()
+        {
+            if (deferredUXItemListenerRegistrations.Count == 0)
+                return;
+
+            UXItem[] items = deferredUXItemListenerRegistrations.ToArray();
+            deferredUXItemListenerRegistrations.Clear();
+
+            long t0 = UXPerfLog.Timestamp();
+            int registeredListeners = 0;
+
+            Interaction.BeginInteractionWithGraph();
+            try
+            {
+                foreach (UXItem item in items)
+                {
+                    if (item.IsDisposed)
+                        continue;
+
+                    item.RegisterDeferredUXItemGraphChangeListener();
+                    registeredListeners++;
+                }
+            }
+            finally
+            {
+                Interaction.EndInteractionWithGraph();
+            }
+
+            UXPerfLog.Record(
+                "UXVisualiser.RegisterDeferredUXItemListeners",
+                UXPerfLog.Timestamp() - t0,
+                registeredListeners,
+                "listeners");
         }
 
         public ILineDecoratorBase prevSelectedLine;
@@ -2490,6 +2605,9 @@ namespace m0.UIWpf.UX
 
                 NewUXItemsList.Clear();
 
+                BeginDeferNewUXItemListenerRegistrations();
+                try
+                {
                 ////////////////////////////////////////
                 Interaction.BeginInteractionWithGraph();
                 //////////////////////////////////////// 
@@ -2521,6 +2639,11 @@ namespace m0.UIWpf.UX
                 CheckAndUpdateDiagramLines();
 
                 UpdateLayout();
+                }
+                finally
+                {
+                    EndDeferNewUXItemListenerRegistrations();
+                }
 
 
                 if (isSet)

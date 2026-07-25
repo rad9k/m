@@ -137,6 +137,27 @@ namespace m0.ZeroTypes.UX
 
         public virtual void VertexSetedUp()
         {
+            if (OwningVisualiser is UXVisualiser uxVisualiser &&
+                uxVisualiser.TryDeferUXItemListenerRegistration(this))
+            {
+                UXPerfLog.Count(
+                    "UXItem.VertexSetedUp.listenerRegistrationDeferred");
+            }
+            else
+                RegisterGraphChangeListener();
+
+            BaseEdgeToUpdated();
+
+            ViewAttributesUpdated();
+        } // to be called after Vertex is setted up
+
+        internal void RegisterDeferredUXItemGraphChangeListener()
+        {
+            RegisterGraphChangeListener();
+        }
+
+        void RegisterGraphChangeListener()
+        {
             // HostItem/Paint call VertexSetedUp repeatedly. Without removing the previous
             // listener, each Paint leaks another UXItem trigger and Commit slows down.
             if (graphChangeListenerEdge != null)
@@ -154,11 +175,7 @@ namespace m0.ZeroTypes.UX
                          GraphChangeFilterEnum.OutputEdgeDisposed},
                 "UXItem",
                 VertexChange);
-
-            BaseEdgeToUpdated();
-
-            ViewAttributesUpdated();
-        } // to be called after Vertex is setted up
+        }
 
         public bool IsDisposed = false;
 

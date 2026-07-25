@@ -3,6 +3,7 @@ using m0.Graph;
 using m0.Graph.ExecutionFlow;
 using m0.UIWpf;
 using m0.UIWpf.Controls;
+using m0.UIWpf.UX;
 using m0.Util;
 using m0.ZeroCode.Helpers;
 using System;
@@ -32,6 +33,24 @@ namespace m0.ZeroTypes.UX
             VertexUpdated();
             UpdateLabelVisibility();
 
+            if (OwningVisualiser is UXVisualiser uxVisualiser &&
+                uxVisualiser.TryDeferLineDecoratorListenerRegistration(this))
+            {
+                UXPerfLog.Count(
+                    "LineDecorator.VertexSetedUp.listenerRegistrationDeferred");
+                return;
+            }
+
+            RegisterGraphChangeListener();
+        }
+
+        internal void RegisterDeferredGraphChangeListener()
+        {
+            RegisterGraphChangeListener();
+        }
+
+        void RegisterGraphChangeListener()
+        {
             // AddToCanvas() calls VertexSetedUp on every Paint/AddLineObjects.
             // Without removing the previous listener, each Paint leaks another
             // DiagramLine trigger and Commit grows slower over time.
