@@ -195,7 +195,7 @@ namespace m0.ZeroCode
             }
         }
 
-        private readonly struct RedirectAssignmentCacheEntry
+        internal sealed class RedirectAssignmentCacheEntry
         {
             internal RedirectAssignmentCacheEntry(
                 IEdge targetEdge,
@@ -205,9 +205,35 @@ namespace m0.ZeroCode
                 ScalarPlan = scalarPlan;
             }
 
-            internal IEdge TargetEdge { get; }
+            internal IEdge TargetEdge { get; set; }
 
-            internal object ScalarPlan { get; }
+            internal object ScalarPlan { get; set; }
+
+            internal object PropagationPlan { get; set; }
+
+            internal NoInEdgeInOutVertexVertex
+                ValidatedCurrentFrame;
+
+            internal NoInEdgeInOutVertexVertex
+                ValidatedParentFrame;
+
+            internal long ValidatedCurrentFrameVersion;
+
+            internal long ValidatedParentFrameVersion;
+
+            internal int ValidatedFrameCount;
+
+            internal bool ValidatedTargetIsExclusive;
+
+            internal void ClearTargetValidation()
+            {
+                ValidatedCurrentFrame = null;
+                ValidatedParentFrame = null;
+                ValidatedCurrentFrameVersion = 0;
+                ValidatedParentFrameVersion = 0;
+                ValidatedFrameCount = 0;
+                ValidatedTargetIsExclusive = false;
+            }
         }
 
         internal bool TryGetCachedAddAssignmentTarget(
@@ -223,20 +249,58 @@ namespace m0.ZeroCode
         internal bool TryGetCachedRedirectAssignmentTarget(
             IVertex instructionVertex,
             out IEdge targetEdge,
-            out object scalarPlan)
+            out object scalarPlan,
+            out RedirectAssignmentCacheEntry cacheEntry,
+            out bool targetIsExclusive)
         {
             targetEdge = null;
             scalarPlan = null;
+            cacheEntry = null;
+            targetIsExclusive = false;
             if (redirectAssignmentTargetCache == null ||
                 !redirectAssignmentTargetCache.TryGetValue(
                     instructionVertex,
-                    out RedirectAssignmentCacheEntry entry) ||
-                !IsCachedAssignmentTargetValid(
-                    entry.TargetEdge))
+                    out RedirectAssignmentCacheEntry entry))
+                return false;
+
+            bool targetIsValid;
+            if (entry.TargetEdge?.To is EasyVertex &&
+                entry.TargetEdge.From is
+                    NoInEdgeInOutVertexVertex &&
+                Stack is
+                    NoInEdgeInOutVertexVertex currentFrame)
+            {
+                if (TryGetCachedActiveStackTargetValidation(
+                        entry.TargetEdge,
+                        entry,
+                        currentFrame,
+                        out targetIsExclusive))
+                {
+                    targetIsValid = true;
+                }
+                else
+                {
+                    targetIsValid =
+                        TryValidateActiveStackTarget(
+                            entry.TargetEdge,
+                            entry,
+                            out _,
+                            out targetIsExclusive);
+                }
+            }
+            else
+            {
+                targetIsValid =
+                    IsCachedAssignmentTargetValid(
+                        entry.TargetEdge);
+            }
+
+            if (!targetIsValid)
                 return false;
 
             targetEdge = entry.TargetEdge;
             scalarPlan = entry.ScalarPlan;
+            cacheEntry = entry;
             return true;
         }
 
@@ -266,6 +330,262 @@ namespace m0.ZeroCode
                 sourceFrame.OutEdgesRaw.Contains(cachedEdge);
         }
 
+        internal bool TryUpdateExclusiveScalarAssignmentTarget(
+            IEdge targetEdge,
+            object value,
+            bool targetIsValidatedExclusive = false)
+        {
+            return TryGetExclusiveScalarAssignmentTarget(
+                    targetEdge,
+                    targetIsValidatedExclusive,
+                    out EasyVertex targetVertex) &&
+                targetVertex
+                    .TryUpdateExclusiveEphemeralValue(
+                        value);
+        }
+
+        internal bool TryUpdateExclusiveScalarAssignmentTarget(
+            IEdge targetEdge,
+            EasyVertex.ScalarNumericValue value,
+            bool targetIsValidatedExclusive = false)
+        {
+            return TryGetExclusiveScalarAssignmentTarget(
+                    targetEdge,
+                    targetIsValidatedExclusive,
+                    out EasyVertex targetVertex) &&
+                targetVertex
+                    .TryUpdateExclusiveEphemeralValue(
+                        value);
+        }
+
+        private bool TryGetExclusiveScalarAssignmentTarget(
+            IEdge targetEdge,
+            bool targetIsValidatedExclusive,
+            out EasyVertex targetVertex)
+        {
+            if (targetIsValidatedExclusive)
+            {
+                targetVertex =
+                    targetEdge?.To as EasyVertex;
+                return targetVertex != null;
+            }
+
+            return TryValidateActiveStackTarget(
+                    targetEdge,
+                    null,
+                    out targetVertex,
+                    out bool targetIsExclusive) &&
+                targetIsExclusive;
+        }
+
+        private bool TryValidateActiveStackTarget(
+            IEdge targetEdge,
+            RedirectAssignmentCacheEntry cacheEntry,
+            out EasyVertex targetVertex,
+            out bool targetIsExclusive)
+        {
+            targetIsExclusive = false;
+            if (!(targetEdge?.From is
+                    NoInEdgeInOutVertexVertex sourceFrame) ||
+                !(targetEdge.To is EasyVertex localTargetVertex) ||
+                !(Stack is
+                    NoInEdgeInOutVertexVertex currentFrame))
+            {
+                targetVertex = null;
+                return false;
+            }
+
+            targetVertex = localTargetVertex;
+            if (TryGetCachedActiveStackTargetValidation(
+                    targetEdge,
+                    cacheEntry,
+                    currentFrame,
+                    out targetIsExclusive))
+            {
+                return true;
+            }
+
+            bool foundTargetEdge = false;
+            int targetReferenceCount = 0;
+            int traversedFrameCount = 0;
+            HashSet<IVertex> visitedFrames = null;
+            NoInEdgeInOutVertexVertex
+                validatedCurrentFrame = null;
+            NoInEdgeInOutVertexVertex
+                validatedParentFrame = null;
+            long validatedCurrentFrameVersion = 0;
+            long validatedParentFrameVersion = 0;
+            int validatedFrameCount = 0;
+            bool canCacheValidation =
+                cacheEntry != null;
+
+            while (currentFrame != null)
+            {
+                if (canCacheValidation)
+                {
+                    long frameVersion =
+                        currentFrame
+                            .EnableTrackedLocalMutationVersion();
+                    if (validatedFrameCount == 0)
+                    {
+                        validatedCurrentFrame =
+                            currentFrame;
+                        validatedCurrentFrameVersion =
+                            frameVersion;
+                    }
+                    else if (validatedFrameCount == 1)
+                    {
+                        validatedParentFrame =
+                            currentFrame;
+                        validatedParentFrameVersion =
+                            frameVersion;
+                    }
+                    else
+                    {
+                        canCacheValidation = false;
+                    }
+
+                    validatedFrameCount++;
+                }
+
+                IList<IEdge> edges =
+                    currentFrame.OutEdgesRaw;
+                for (int index = 0;
+                    index < edges.Count;
+                    index++)
+                {
+                    IEdge edge = edges[index];
+                    if (ReferenceEquals(
+                            edge,
+                            targetEdge))
+                    {
+                        foundTargetEdge = true;
+                    }
+
+                    if (ReferenceEquals(
+                            edge.To,
+                            targetVertex))
+                    {
+                        targetReferenceCount++;
+                    }
+                }
+
+                if (ReferenceEquals(
+                        currentFrame,
+                        sourceFrame))
+                {
+                    sourceFrame = null;
+                }
+
+                IVertex parentFrame =
+                    currentFrame.GetParentStackFrame();
+                currentFrame =
+                    parentFrame as
+                        NoInEdgeInOutVertexVertex;
+                if (currentFrame == null)
+                    break;
+
+                traversedFrameCount++;
+                if (traversedFrameCount < 1024)
+                    continue;
+
+                visitedFrames ??=
+                    new HashSet<IVertex>(
+                        ReferenceEqualityComparer.Instance);
+                if (!visitedFrames.Add(
+                        currentFrame))
+                {
+                    targetIsExclusive = false;
+                    return false;
+                }
+            }
+
+            bool targetIsValid =
+                sourceFrame == null &&
+                foundTargetEdge;
+            targetIsExclusive =
+                targetIsValid &&
+                targetReferenceCount == 1;
+            if (targetIsValid &&
+                canCacheValidation &&
+                validatedFrameCount <= 2)
+            {
+                CacheActiveStackTargetValidation(
+                    cacheEntry,
+                    validatedCurrentFrame,
+                    validatedCurrentFrameVersion,
+                    validatedParentFrame,
+                    validatedParentFrameVersion,
+                    validatedFrameCount,
+                    targetIsExclusive);
+            }
+
+            return targetIsValid;
+        }
+
+        private bool TryGetCachedActiveStackTargetValidation(
+            IEdge targetEdge,
+            RedirectAssignmentCacheEntry cacheEntry,
+            NoInEdgeInOutVertexVertex currentFrame,
+            out bool targetIsExclusive)
+        {
+            targetIsExclusive = false;
+            if (cacheEntry == null ||
+                cacheEntry.ValidatedFrameCount <= 0 ||
+                !ReferenceEquals(
+                    cacheEntry.TargetEdge,
+                    targetEdge) ||
+                !ReferenceEquals(
+                    cacheEntry.ValidatedCurrentFrame,
+                    currentFrame) ||
+                cacheEntry
+                    .ValidatedCurrentFrame
+                    .TrackedLocalMutationVersion !=
+                    cacheEntry
+                        .ValidatedCurrentFrameVersion)
+            {
+                return false;
+            }
+
+            if (cacheEntry.ValidatedFrameCount == 2 &&
+                (cacheEntry.ValidatedParentFrame == null ||
+                    cacheEntry
+                        .ValidatedParentFrame
+                        .TrackedLocalMutationVersion !=
+                        cacheEntry
+                            .ValidatedParentFrameVersion))
+            {
+                return false;
+            }
+
+            targetIsExclusive =
+                cacheEntry.ValidatedTargetIsExclusive;
+            return true;
+        }
+
+        private static void CacheActiveStackTargetValidation(
+            RedirectAssignmentCacheEntry cacheEntry,
+            NoInEdgeInOutVertexVertex currentFrame,
+            long currentFrameVersion,
+            NoInEdgeInOutVertexVertex parentFrame,
+            long parentFrameVersion,
+            int frameCount,
+            bool targetIsExclusive)
+        {
+            cacheEntry.ValidatedCurrentFrame =
+                currentFrame;
+            cacheEntry.ValidatedCurrentFrameVersion =
+                currentFrameVersion;
+            cacheEntry.ValidatedParentFrame =
+                parentFrame;
+            cacheEntry.ValidatedParentFrameVersion =
+                parentFrameVersion;
+            cacheEntry.ValidatedFrameCount =
+                frameCount;
+            cacheEntry.ValidatedTargetIsExclusive =
+                targetIsExclusive;
+        }
+
         internal void CacheAddAssignmentTarget(
             IVertex instructionVertex,
             IEdge targetEdge)
@@ -279,11 +599,29 @@ namespace m0.ZeroCode
         internal void CacheRedirectAssignmentTarget(
             IVertex instructionVertex,
             IEdge targetEdge,
-            object scalarPlan)
+            object scalarPlan,
+            object propagationPlan,
+            RedirectAssignmentCacheEntry cacheEntry)
         {
             if (!(targetEdge?.From is
                 INoInEdgeInOutVertexVertex))
                 return;
+
+            if (cacheEntry != null)
+            {
+                if (!ReferenceEquals(
+                    cacheEntry.TargetEdge,
+                    targetEdge))
+                {
+                    cacheEntry.ClearTargetValidation();
+                }
+
+                cacheEntry.TargetEdge = targetEdge;
+                cacheEntry.ScalarPlan = scalarPlan;
+                cacheEntry.PropagationPlan =
+                    propagationPlan;
+                return;
+            }
 
             redirectAssignmentTargetCache ??=
                 new Dictionary<
@@ -294,7 +632,11 @@ namespace m0.ZeroCode
                 instructionVertex] =
                     new RedirectAssignmentCacheEntry(
                         targetEdge,
-                        scalarPlan);
+                        scalarPlan)
+                    {
+                        PropagationPlan =
+                            propagationPlan
+                    };
         }
 
         private static void CacheAssignmentTarget(

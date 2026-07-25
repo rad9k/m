@@ -2,8 +2,10 @@ using m0;
 using m0.FormalTextLanguage;
 using m0.Foundation;
 using m0.Graph;
+using m0.ZeroCode;
 using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
+using m0.ZeroUML.Instructions;
 using m0_graph_test_support;
 
 namespace m0_graph_integration_tests;
@@ -74,6 +76,20 @@ public sealed class ZeroCodePerformanceWorkloadTests
                             result,
                             "E",
                             null));
+                else if (programName == "Code7b")
+                    Assert.Equal(
+                        new[] { "1", "2", "a", "b" },
+                        GraphUtil.GetQueryOut(
+                                result,
+                                "B",
+                                null)
+                            .Select(
+                                edge => Convert.ToString(
+                                    edge.To.Value))
+                            .OrderBy(
+                                value => value,
+                                StringComparer.Ordinal)
+                            .ToArray());
                 else if (programName == "Code8")
                     Assert.Equal(
                         100001,
@@ -140,6 +156,44 @@ public sealed class ZeroCodePerformanceWorkloadTests
                 result,
                 "NumericFallbackValue",
                 null)?.Value);
+    }
+
+    [Fact]
+    public void ScalarRedirectDoesNotMutateAliasedValue()
+    {
+        const string source =
+            "\"ScalarRedirectAlias\"\r\n" +
+            "\tvariable \"First\" @String\r\n" +
+            "\tvariable \"Second\" @String\r\n" +
+            "\tFirst = \"1\"\r\n" +
+            "\tSecond = First\r\n" +
+            "\tFirst = First + \"1\"";
+        IEdge parsedRootEdge = ParseSource(source);
+
+        IVertex result =
+            MinusZero.Instance.DefaultExecuter.Execute(
+                InstructionHelpers.CreateStack(),
+                parsedRootEdge.To);
+        IVertex first =
+            GraphUtil.GetQueryOutFirst(
+                result,
+                "First",
+                null);
+        IVertex second =
+            GraphUtil.GetQueryOutFirst(
+                result,
+                "Second",
+                null);
+
+        Assert.Equal(
+            2,
+            Convert.ToInt32(first?.Value));
+        Assert.Equal(
+            1,
+            Convert.ToInt32(second?.Value));
+        Assert.NotSame(
+            first,
+            second);
     }
 
     [Fact]
@@ -218,6 +272,96 @@ public sealed class ZeroCodePerformanceWorkloadTests
                     thirdResult,
                     "Value",
                     null)?.Value));
+    }
+
+    [Fact]
+    public void RedirectPropagationPlanInvalidatesAfterTypeHierarchyMutation()
+    {
+        const string source =
+            "\"PropagationPlanInvalidation\"\r\n" +
+            "\tvariable \"Value\" @String\r\n" +
+            "\tValue = \"1\"\r\n" +
+            "\tValue = Value + \"1\"";
+        IEdge parsedRootEdge = ParseSource(source);
+        IVertex redirectInstruction =
+            Descendants(parsedRootEdge.To)
+                .Single(
+                    vertex =>
+                        string.Equals(
+                            InstructionHelpers.GetIs(vertex)
+                                ?.Value?.ToString(),
+                            "RedirectLeftEdgesToRightVertices",
+                            StringComparison.Ordinal) &&
+                        string.Equals(
+                            InstructionHelpers.GetIs(
+                                    InstructionHelpers.GetRight(
+                                        vertex))
+                                ?.Value?.ToString(),
+                            "+",
+                            StringComparison.Ordinal));
+        IVertex leftExpression =
+            InstructionHelpers.GetLeft(
+                redirectInstruction);
+        IVertex customType =
+            MinusZero.Instance.TempStore.Root.AddVertex(
+                MinusZero.Instance.Empty,
+                $"PropagationType-{Guid.NewGuid():N}");
+        leftExpression.AddEdge(
+            MinusZero.Instance.Is,
+            customType);
+
+        var execution =
+            new ZeroCodeExecution();
+        ZeroCodeExecutonUtil.SequentiallyExecuteInstructions(
+            execution,
+            execution.Stack,
+            parsedRootEdge.To,
+            out _);
+        IVertex parentFrame = execution.Stack;
+        Assert.Contains(
+            parentFrame.OutEdgesRaw,
+            edge => string.Equals(
+                edge.Meta?.Value?.ToString(),
+                "Value",
+                StringComparison.Ordinal));
+
+        execution.AddStackFrame();
+        IVertex propagationType =
+            MinusZero.Instance.TempStore.Root.AddVertex(
+                MinusZero.Instance.Empty,
+                "PropagateToStackExpression");
+        IEdge inheritanceEdge =
+            customType.AddEdge(
+                MinusZero.Instance.Inherits,
+                propagationType);
+
+        try
+        {
+            BaseInstructions
+                .RedirectLeftEdgesToRightVertices(
+                    execution,
+                    execution.Stack,
+                    redirectInstruction,
+                    out _);
+
+            Assert.DoesNotContain(
+                parentFrame.OutEdgesRaw,
+                edge => string.Equals(
+                    edge.Meta?.Value?.ToString(),
+                    "Value",
+                    StringComparison.Ordinal));
+            Assert.Contains(
+                execution.Stack.OutEdgesRaw,
+                edge => string.Equals(
+                    edge.Meta?.Value?.ToString(),
+                    "Value",
+                    StringComparison.Ordinal));
+        }
+        finally
+        {
+            customType.DeleteEdge(
+                inheritanceEdge);
+        }
     }
 
     private static IEnumerable<IVertex> Descendants(

@@ -1,6 +1,7 @@
 using m0;
 using m0.Foundation;
 using m0.Graph;
+using m0.Graph.ExecutionFlow;
 using m0.ZeroCode;
 using m0.ZeroCode.Helpers;
 using m0.ZeroUML.Instructions;
@@ -83,6 +84,323 @@ public sealed class ZeroCodeStackIntegrationTests
     }
 
     [Fact]
+    public void StackValueCreationIsNotTransactional()
+    {
+        var meta =
+            CreateTempVertex("Value");
+        var tempStore =
+            (m0.Store.StoreBase)
+                MinusZero.Instance.TempStore;
+        var initialStoreVertexCount =
+            tempStore.VertexIdentifiersDictionary.Count;
+        var ambientTransaction =
+            MinusZero.Instance.GetTopTransaction();
+        ExecutionFlowHelper.StartTransaction();
+
+        try
+        {
+            var stack =
+                InstructionHelpers.CreateStack();
+            var valueEdge =
+                stack.AddVertexAndReturnEdge(
+                    meta,
+                    "Temporary");
+            var transaction =
+                Assert.IsType<Transaction>(
+                    MinusZero.Instance
+                        .GetTopTransaction());
+
+            Assert.False(
+                transaction
+                    .graphChangeTransactionAtoms_OutEdgeValueChange
+                    .ContainsKey(valueEdge.To));
+            Assert.False(
+                tempStore.VertexIdentifiersDictionary
+                    .ContainsKey(valueEdge.To.Identifier));
+            Assert.Equal(
+                initialStoreVertexCount,
+                tempStore.VertexIdentifiersDictionary.Count);
+
+            ExecutionFlowHelper.RollbackTransaction();
+
+            Assert.Equal(
+                "Temporary",
+                valueEdge.To.Value);
+            Assert.Contains(
+                valueEdge,
+                stack.OutEdgesRaw);
+            Assert.Same(
+                ambientTransaction,
+                MinusZero.Instance.GetTopTransaction());
+        }
+        finally
+        {
+            if (!ReferenceEquals(
+                    ambientTransaction,
+                    MinusZero.Instance.GetTopTransaction()))
+            {
+                ExecutionFlowHelper.RollbackTransaction();
+            }
+        }
+    }
+
+    [Fact]
+    public void ExclusiveScalarAssignmentUpdatesTargetInPlace()
+    {
+        var execution =
+            new ZeroCodeExecution();
+        var valueMeta =
+            CreateTempVertex("ExclusiveValue");
+        var valueEdge =
+            execution.Stack.AddVertexAndReturnEdge(
+                valueMeta,
+                1);
+        var originalTarget =
+            valueEdge.To;
+
+        Assert.True(
+            execution
+                .TryUpdateExclusiveScalarAssignmentTarget(
+                    valueEdge,
+                    EasyVertex.ScalarNumericValue
+                        .FromInteger(2)));
+        Assert.Same(
+            originalTarget,
+            valueEdge.To);
+        Assert.Equal(
+            2,
+            valueEdge.To.Value);
+    }
+
+    [Fact]
+    public void ExclusiveScalarAssignmentPreservesNumericTypes()
+    {
+        var execution =
+            new ZeroCodeExecution();
+        var valueMeta =
+            CreateTempVertex("ExclusiveNumericValue");
+        var valueEdge =
+            execution.Stack.AddVertexAndReturnEdge(
+                valueMeta,
+                1);
+
+        Assert.True(
+            execution
+                .TryUpdateExclusiveScalarAssignmentTarget(
+                    valueEdge,
+                    EasyVertex.ScalarNumericValue
+                        .FromDouble(1.5)));
+        Assert.IsType<double>(
+            valueEdge.To.Value);
+        Assert.Equal(
+            1.5,
+            valueEdge.To.Value);
+
+        Assert.True(
+            execution
+                .TryUpdateExclusiveScalarAssignmentTarget(
+                    valueEdge,
+                    EasyVertex.ScalarNumericValue
+                        .FromDecimal(2.25m)));
+        Assert.IsType<decimal>(
+            valueEdge.To.Value);
+        Assert.Equal(
+            2.25m,
+            valueEdge.To.Value);
+    }
+
+    [Fact]
+    public void ExclusiveScalarAssignmentRejectsAliasesAndSubgraphs()
+    {
+        var execution =
+            new ZeroCodeExecution();
+        var valueMeta =
+            CreateTempVertex("ExclusiveValue");
+        var aliasMeta =
+            CreateTempVertex("ExclusiveAlias");
+        var childMeta =
+            CreateTempVertex("ExclusiveChild");
+        var valueEdge =
+            execution.Stack.AddVertexAndReturnEdge(
+                valueMeta,
+                1);
+        var aliasEdge =
+            execution.Stack.AddEdge(
+                aliasMeta,
+                valueEdge.To);
+
+        Assert.False(
+            execution
+                .TryUpdateExclusiveScalarAssignmentTarget(
+                    valueEdge,
+                    2));
+        Assert.Equal(
+            1,
+            valueEdge.To.Value);
+
+        execution.Stack.DeleteEdge(
+            aliasEdge);
+        valueEdge.To.AddVertex(
+            childMeta,
+            "Nested");
+
+        Assert.False(
+            execution
+                .TryUpdateExclusiveScalarAssignmentTarget(
+                    valueEdge,
+                    2));
+        Assert.Equal(
+            1,
+            valueEdge.To.Value);
+    }
+
+    [Fact]
+    public void CachedExclusiveScalarTargetInvalidatesAfterBatchAlias()
+    {
+        var execution =
+            new ZeroCodeExecution();
+        var instruction =
+            CreateTempVertex("CachedRedirect");
+        var valueMeta =
+            CreateTempVertex("CachedExclusiveValue");
+        var aliasMeta =
+            CreateTempVertex("CachedExclusiveAlias");
+        var valueEdge =
+            execution.Stack.AddVertexAndReturnEdge(
+                valueMeta,
+                1);
+        execution.CacheRedirectAssignmentTarget(
+            instruction,
+            valueEdge,
+            null,
+            null,
+            null);
+
+        Assert.True(
+            execution.TryGetCachedRedirectAssignmentTarget(
+                instruction,
+                out _,
+                out _,
+                out _,
+                out bool initiallyExclusive));
+        Assert.True(initiallyExclusive);
+
+        var aliasSource =
+            InstructionHelpers.CreateStack();
+        var aliasEdge =
+            aliasSource.AddEdge(
+                aliasMeta,
+                valueEdge.To);
+        execution.Stack.AddRangeOriginalEdges(
+            new[] { aliasEdge });
+
+        Assert.True(
+            execution.TryGetCachedRedirectAssignmentTarget(
+                instruction,
+                out _,
+                out _,
+                out _,
+                out bool exclusiveAfterAlias));
+        Assert.False(exclusiveAfterAlias);
+    }
+
+    [Fact]
+    public void ExclusiveScalarAssignmentRejectsPromotedTarget()
+    {
+        var execution =
+            new ZeroCodeExecution();
+        var valueMeta =
+            CreateTempVertex("ExclusiveValue");
+        var container =
+            CreateTempVertex("ExclusiveContainer");
+        var valueEdge =
+            execution.Stack.AddVertexAndReturnEdge(
+                valueMeta,
+                1);
+        Assert.True(
+            execution
+                .TryUpdateExclusiveScalarAssignmentTarget(
+                    valueEdge,
+                    EasyVertex.ScalarNumericValue
+                        .FromInteger(2)));
+        var persistentEdge =
+            container.AddEdge(
+                valueMeta,
+                valueEdge.To);
+
+        Assert.False(
+            execution
+                .TryUpdateExclusiveScalarAssignmentTarget(
+                    valueEdge,
+                    EasyVertex.ScalarNumericValue
+                        .FromInteger(3)));
+        Assert.Equal(
+            2,
+            valueEdge.To.Value);
+
+        container.DeleteEdge(
+            persistentEdge);
+    }
+
+    [Fact]
+    public void StackValueSubgraphRegistersWhenAttachedToRegularGraph()
+    {
+        var meta =
+            CreateTempVertex("Value");
+        var childMeta =
+            CreateTempVertex("Child");
+        var container =
+            CreateTempVertex("Container");
+        var tempStore =
+            (m0.Store.StoreBase)
+                MinusZero.Instance.TempStore;
+        var stack =
+            InstructionHelpers.CreateStack();
+        var valueEdge =
+            stack.AddVertexAndReturnEdge(
+                meta,
+                "Temporary");
+        var child =
+            valueEdge.To.AddVertex(
+                childMeta,
+                "Nested");
+
+        Assert.Null(
+            Assert.IsType<EasyVertex>(
+                valueEdge.To)._Identifier);
+        Assert.Null(
+            Assert.IsType<EasyVertex>(
+                child)._Identifier);
+        Assert.DoesNotContain(
+            tempStore.VertexIdentifiersDictionary.Values,
+            vertex => ReferenceEquals(
+                vertex,
+                valueEdge.To));
+        Assert.DoesNotContain(
+            tempStore.VertexIdentifiersDictionary.Values,
+            vertex => ReferenceEquals(
+                vertex,
+                child));
+
+        var persistentEdge =
+            container.AddEdge(
+                meta,
+                valueEdge.To);
+
+        Assert.Same(
+            valueEdge.To,
+            tempStore.GetVertexByIdentifier(
+                valueEdge.To.Identifier));
+        Assert.Same(
+            child,
+            tempStore.GetVertexByIdentifier(
+                child.Identifier));
+
+        container.DeleteEdge(
+            persistentEdge);
+    }
+
+    [Fact]
     public void LinkWithoutTargetCreatesOnlyReturnedStack()
     {
         var execution = new ZeroCodeExecution();
@@ -150,6 +468,97 @@ public sealed class ZeroCodeStackIntegrationTests
             MinusZero.Instance.DefaultFormalTextGenerator.Generate(
                 parsedRootEdge,
                 CodeRepresentationEnum.EdgeAndManyLines));
+    }
+
+    [Fact]
+    public void SequentialExecutionPreservesDirectAndNextAtomOrder()
+    {
+        var nextAtomMeta =
+            MinusZero.Instance.Root.Get(
+                false,
+                @"System\FormalTextLanguage\ZeroCode\NextAtomEdge:");
+        var executionRoot =
+            CreateTempVertex("ExecutionRoot");
+        var ignoredDirectInstruction =
+            CreateTempVertex("Ignored");
+        var directInstruction =
+            CreateTempVertex("Direct");
+        var nextInstruction =
+            CreateTempVertex("Next");
+        executionRoot.AddEdge(
+            CreateTempVertex("$Ignored"),
+            ignoredDirectInstruction);
+        executionRoot.AddEdge(
+            CreateTempVertex("$Empty"),
+            directInstruction);
+        directInstruction.AddEdge(
+            nextAtomMeta,
+            nextInstruction);
+        var execution =
+            new RecordingExecution();
+
+        _ = ZeroCodeExecutonUtil
+            .SequentiallyExecuteInstructions(
+                execution,
+                execution.Stack,
+                executionRoot,
+                out var isStackFrameReturn);
+
+        Assert.False(isStackFrameReturn);
+        Assert.Equal(
+            new object[] { "Direct", "Next" },
+            execution.ExecutedValues);
+    }
+
+    [Fact]
+    public void SequentialExecutionObservesNextAtomAddedByDirectInstruction()
+    {
+        var nextAtomMeta =
+            MinusZero.Instance.Root.Get(
+                false,
+                @"System\FormalTextLanguage\ZeroCode\NextAtomEdge:");
+        var executionRoot =
+            CreateTempVertex("ExecutionRoot");
+        var nextAtomRoot =
+            CreateTempVertex("NextAtomRoot");
+        var directInstruction =
+            CreateTempVertex("Direct");
+        var dynamicallyAddedInstruction =
+            CreateTempVertex("Dynamic");
+        executionRoot.AddEdge(
+            CreateTempVertex("$Ignored"),
+            nextAtomRoot);
+        executionRoot.AddEdge(
+            CreateTempVertex("$Empty"),
+            directInstruction);
+        var execution =
+            new RecordingExecution
+            {
+                OnExecute =
+                    instruction =>
+                    {
+                        if (ReferenceEquals(
+                                instruction,
+                                directInstruction))
+                        {
+                            nextAtomRoot.AddEdge(
+                                nextAtomMeta,
+                                dynamicallyAddedInstruction);
+                        }
+                    }
+            };
+
+        _ = ZeroCodeExecutonUtil
+            .SequentiallyExecuteInstructions(
+                execution,
+                execution.Stack,
+                executionRoot,
+                out var isStackFrameReturn);
+
+        Assert.False(isStackFrameReturn);
+        Assert.Equal(
+            new object[] { "Direct", "Dynamic" },
+            execution.ExecutedValues);
     }
 
     [Fact]
@@ -305,6 +714,8 @@ public sealed class ZeroCodeStackIntegrationTests
 
         public object? ReturnOnValue { get; set; }
 
+        public Action<IVertex>? OnExecute { get; set; }
+
         public INoInEdgeInOutVertexVertex Stack
         {
             get;
@@ -360,6 +771,8 @@ public sealed class ZeroCodeStackIntegrationTests
         {
             ExecutedValues.Add(
                 instructionVertex.Value);
+            OnExecute?.Invoke(
+                instructionVertex);
             isStackFrameReturn =
                 Equals(
                     instructionVertex.Value,

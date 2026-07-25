@@ -39,6 +39,119 @@ namespace m0.Graph
     [Serializable]
     public class EasyVertex: VertexBase, IDisposable, IImplementedVertex, ISecondStageCommitAction
     {
+        internal enum ScalarNumericKind : byte
+        {
+            None,
+            Integer,
+            Double,
+            Decimal
+        }
+
+        [Serializable]
+        [StructLayout(
+            LayoutKind.Explicit,
+            Size = 24)]
+        internal struct ScalarNumericValue
+        {
+            [FieldOffset(0)]
+            internal ScalarNumericKind Kind;
+
+            [FieldOffset(8)]
+            internal int IntegerValue;
+
+            [FieldOffset(8)]
+            internal double DoubleValue;
+
+            [FieldOffset(8)]
+            internal decimal DecimalValue;
+
+            internal static ScalarNumericValue FromInteger(
+                int value)
+            {
+                ScalarNumericValue result = default;
+                result.Kind =
+                    ScalarNumericKind.Integer;
+                result.IntegerValue = value;
+                return result;
+            }
+
+            internal static ScalarNumericValue FromDouble(
+                double value)
+            {
+                ScalarNumericValue result = default;
+                result.Kind =
+                    ScalarNumericKind.Double;
+                result.DoubleValue = value;
+                return result;
+            }
+
+            internal static ScalarNumericValue FromDecimal(
+                decimal value)
+            {
+                ScalarNumericValue result = default;
+                result.Kind =
+                    ScalarNumericKind.Decimal;
+                result.DecimalValue = value;
+                return result;
+            }
+
+            internal static bool TryCreate(
+                object value,
+                out ScalarNumericValue result)
+            {
+                if (value is int integerValue)
+                {
+                    result = FromInteger(
+                        integerValue);
+                    return true;
+                }
+
+                if (value is double doubleValue)
+                {
+                    result = FromDouble(
+                        doubleValue);
+                    return true;
+                }
+
+                if (value is decimal decimalValue)
+                {
+                    result = FromDecimal(
+                        decimalValue);
+                    return true;
+                }
+
+                result = default;
+                return false;
+            }
+
+            internal object ToObject()
+            {
+                switch (Kind)
+                {
+                    case ScalarNumericKind.Integer:
+                        return IntegerValue;
+                    case ScalarNumericKind.Double:
+                        return DoubleValue;
+                    case ScalarNumericKind.Decimal:
+                        return DecimalValue;
+                    default:
+                        return null;
+                }
+            }
+        }
+
+        [Serializable]
+        private sealed class MutableScalarNumericValue
+        {
+            internal MutableScalarNumericValue(
+                ScalarNumericValue value)
+            {
+                Value = value;
+            }
+
+            internal ScalarNumericValue Value;
+        }
+
         private const byte LogicalOutIndexMask = 1;
         private const byte DirectMetaOutIndexMask = 2;
         private const byte QueryMetaOutIndexMask = 4;
@@ -60,17 +173,13 @@ namespace m0.Graph
             {
                 Vertex = vertex;
                 StructureGeneration =
-                    Volatile.Read(
-                        ref vertex.outStructureGeneration);
+                    vertex.ReadOutStructureGeneration();
                 DirectMetaGeneration =
-                    Volatile.Read(
-                        ref vertex.outDirectMetaGeneration);
+                    vertex.ReadOutDirectMetaGeneration();
                 QueryMetaGeneration =
-                    Volatile.Read(
-                        ref vertex.outQueryMetaGeneration);
+                    vertex.ReadOutQueryMetaGeneration();
                 ValueGeneration =
-                    Volatile.Read(
-                        ref vertex.outValueGeneration);
+                    vertex.ReadOutValueGeneration();
             }
 
             public EasyVertex Vertex { get; }
@@ -131,53 +240,99 @@ namespace m0.Graph
 
         private static long inheritanceDependencyEpoch = 1;
 
-        [NonSerialized]
-        private long outStructureGeneration;
+        private sealed class InheritedOutIndexState
+        {
+            public long OutStructureGeneration;
+            public long OutDirectMetaGeneration;
+            public long OutQueryMetaGeneration;
+            public long OutValueGeneration;
+            public InheritedOutDependencyStamp
+                OutEdgesDependencyStamp;
+            public InheritedOutDependencyStamp
+                DirectMetaDependencyStamp;
+            public InheritedOutDependencyStamp
+                QueryMetaDependencyStamp;
+            public InheritedOutDependencyStamp
+                ValueDependencyStamp;
+            public InheritedOutDependencyStamp
+                MetaAndValueDependencyStamp;
+            public long OutEdgesDependencyCheckedEpoch;
+            public long DirectMetaDependencyCheckedEpoch;
+            public long QueryMetaDependencyCheckedEpoch;
+            public long ValueDependencyCheckedEpoch;
+            public long MetaAndValueDependencyCheckedEpoch;
+        }
 
         [NonSerialized]
-        private long outDirectMetaGeneration;
+        private InheritedOutIndexState
+            inheritedOutIndexState;
 
-        [NonSerialized]
-        private long outQueryMetaGeneration;
+        private InheritedOutIndexState GetInheritedOutIndexState()
+        {
+            InheritedOutIndexState state =
+                Volatile.Read(
+                    ref inheritedOutIndexState);
+            if (state != null)
+                return state;
 
-        [NonSerialized]
-        private long outValueGeneration;
+            InheritedOutIndexState newState =
+                new InheritedOutIndexState();
+            return Interlocked.CompareExchange(
+                    ref inheritedOutIndexState,
+                    newState,
+                    null) ??
+                newState;
+        }
+
+        private long ReadOutStructureGeneration()
+        {
+            InheritedOutIndexState state =
+                Volatile.Read(
+                    ref inheritedOutIndexState);
+            return state == null
+                ? 0
+                : Volatile.Read(
+                    ref state.OutStructureGeneration);
+        }
+
+        private long ReadOutDirectMetaGeneration()
+        {
+            InheritedOutIndexState state =
+                Volatile.Read(
+                    ref inheritedOutIndexState);
+            return state == null
+                ? 0
+                : Volatile.Read(
+                    ref state.OutDirectMetaGeneration);
+        }
+
+        private long ReadOutQueryMetaGeneration()
+        {
+            InheritedOutIndexState state =
+                Volatile.Read(
+                    ref inheritedOutIndexState);
+            return state == null
+                ? 0
+                : Volatile.Read(
+                    ref state.OutQueryMetaGeneration);
+        }
+
+        private long ReadOutValueGeneration()
+        {
+            InheritedOutIndexState state =
+                Volatile.Read(
+                    ref inheritedOutIndexState);
+            return state == null
+                ? 0
+                : Volatile.Read(
+                    ref state.OutValueGeneration);
+        }
 
         [NonSerialized]
         private long trackedLocalMutationVersion;
 
         [NonSerialized]
         private volatile bool trackLocalMutations;
-
-        [NonSerialized]
-        private InheritedOutDependencyStamp outEdgesDependencyStamp;
-
-        [NonSerialized]
-        private InheritedOutDependencyStamp directMetaDependencyStamp;
-
-        [NonSerialized]
-        private InheritedOutDependencyStamp queryMetaDependencyStamp;
-
-        [NonSerialized]
-        private InheritedOutDependencyStamp valueDependencyStamp;
-
-        [NonSerialized]
-        private InheritedOutDependencyStamp metaAndValueDependencyStamp;
-
-        [NonSerialized]
-        private long outEdgesDependencyCheckedEpoch;
-
-        [NonSerialized]
-        private long directMetaDependencyCheckedEpoch;
-
-        [NonSerialized]
-        private long queryMetaDependencyCheckedEpoch;
-
-        [NonSerialized]
-        private long valueDependencyCheckedEpoch;
-
-        [NonSerialized]
-        private long metaAndValueDependencyCheckedEpoch;
 
         [NonSerialized]
         private byte currentOutIndexMask;
@@ -217,19 +372,57 @@ namespace m0.Graph
 
         protected EdgeDictionaries edgeDictionaries;
 
+        private bool useSpecializedStackStorage;
+
+        protected EdgeDictionaries EdgeDictionaries
+        {
+            get
+            {
+                return edgeDictionaries ??=
+                    new EdgeDictionaries(
+                        this,
+                        useSpecializedStackStorage);
+            }
+        }
+
+        protected int StoredInEdgeCount =>
+            edgeDictionaries?.InCount ?? 0;
+
+        protected int StoredOutEdgeCount =>
+            edgeDictionaries?.OutCount ?? 0;
+
+        protected int StoredMetaInEdgeCount =>
+            edgeDictionaries?.MetaInCount ?? 0;
+
         public object _Identifier;
+
+        private int identifierRegistrationDeferred;
         
-        public override object Identifier { get { return _Identifier; }}
+        public override object Identifier
+        {
+            get
+            {
+                return EnsureIdentifierAssigned();
+            }
+        }
 
 
         protected object _Value;
 
         public override object Value {
             get{
+                if (_Value is
+                    MutableScalarNumericValue numericValue)
+                {
+                    return numericValue
+                        .Value
+                        .ToObject();
+                }
+
                 return _Value;
             }
             set{
-                object oldValue = _Value;
+                object oldValue = Value;
 
                 if (value == null)
                     return;                
@@ -268,14 +461,16 @@ namespace m0.Graph
 
         protected void ValueChanged()
         {
-            if (InEdgesRaw.Count == 1)
+            int inEdgeCount =
+                StoredInEdgeCount;
+            if (inEdgeCount == 1)
             {
                 IVertex sourceVertex = InEdgesRaw[0].From;
 
                 if (sourceVertex != null)
                     InvalidateOutValueIndexes(sourceVertex);
             }
-            else if (InEdgesRaw.Count > 1)
+            else if (inEdgeCount > 1)
             {
                 HashSet<IVertex> affectedSourceVertices = new HashSet<IVertex>();
 
@@ -287,14 +482,110 @@ namespace m0.Graph
                     InvalidateOutValueIndexes(sourceVertex);
             }
 
-            foreach (IEdge e in OutEdgesRaw)
-                e.To.InEdgesDictionariesNeedsRebuild = true;
+            if (StoredOutEdgeCount > 0)
+                foreach (IEdge e in OutEdgesRaw)
+                    e.To.InEdgesDictionariesNeedsRebuild = true;
 
             metaQueryKeys = null;
 
-            if (MetaInEdgesRaw.Count > 0 ||
+            if (StoredMetaInEdgeCount > 0 ||
                 InheritsInEdgeCount > 0)
                 InvalidateMetaQueryIndexesForThisAndInheritChildren(true);
+        }
+
+        internal void InitializeValueWithoutGraphChange(
+            object value)
+        {
+            if (value == null)
+                return;
+
+            if (StoredInEdgeCount != 0 ||
+                StoredOutEdgeCount != 0 ||
+                StoredMetaInEdgeCount != 0 ||
+                InheritsInEdgeCount != 0 ||
+                InheritsOutEdgeCount != 0)
+            {
+                throw new InvalidOperationException(
+                    "Only a detached new vertex can be initialized without a graph change.");
+            }
+
+            _Value = value;
+            RecordTrackedLocalMutation();
+            GraphUtil.Debug(
+                this,
+                DebugOperationEnum.Value);
+        }
+
+        internal bool TryUpdateExclusiveEphemeralValue(
+            object value)
+        {
+            if (value == null ||
+                !CanUpdateExclusiveEphemeralValue())
+            {
+                return false;
+            }
+
+            _Value = value;
+            RecordTrackedLocalMutation();
+            GraphUtil.Debug(
+                this,
+                DebugOperationEnum.Value);
+            return true;
+        }
+
+        internal bool TryUpdateExclusiveEphemeralValue(
+            ScalarNumericValue value)
+        {
+            if (value.Kind == ScalarNumericKind.None ||
+                !CanUpdateExclusiveEphemeralValue())
+            {
+                return false;
+            }
+
+            if (_Value is
+                MutableScalarNumericValue numericValue)
+            {
+                numericValue.Value = value;
+            }
+            else
+            {
+                _Value =
+                    new MutableScalarNumericValue(
+                        value);
+            }
+
+            RecordTrackedLocalMutation();
+            GraphUtil.Debug(
+                this,
+                DebugOperationEnum.Value);
+            return true;
+        }
+
+        internal bool TryGetScalarNumericValue(
+            out ScalarNumericValue value)
+        {
+            if (_Value is
+                MutableScalarNumericValue numericValue)
+            {
+                value = numericValue.Value;
+                return true;
+            }
+
+            return ScalarNumericValue.TryCreate(
+                _Value,
+                out value);
+        }
+
+        private bool CanUpdateExclusiveEphemeralValue()
+        {
+            return IdentifierRegistrationDeferred &&
+                ExternalReferenceCount == 0 &&
+                StoredInEdgeCount == 0 &&
+                StoredOutEdgeCount == 0 &&
+                StoredMetaInEdgeCount == 0 &&
+                InheritsInEdgeCount == 0 &&
+                InheritsOutEdgeCount == 0 &&
+                !HasInheritance;
         }
 
         private static void InvalidateOutValueIndexes(IVertex sourceVertex)
@@ -319,8 +610,10 @@ namespace m0.Graph
             if (InheritsInEdgeCount == 0)
                 return;
 
+            InheritedOutIndexState state =
+                GetInheritedOutIndexState();
             Interlocked.Increment(
-                ref outValueGeneration);
+                ref state.OutValueGeneration);
             IncrementInheritanceDependencyEpoch();
         }
 
@@ -386,9 +679,9 @@ namespace m0.Graph
         private int InheritsOutEdgeCount =>
             inheritsOutEdges?.Count ?? 0;
 
-        public override IList<IEdge> InEdgesRaw { get { return edgeDictionaries.In; } }
+        public override IList<IEdge> InEdgesRaw { get { return EdgeDictionaries.In; } }
 
-        public override IList<IEdge> OutEdgesRaw { get { return edgeDictionaries.Out; } }
+        public override IList<IEdge> OutEdgesRaw { get { return EdgeDictionaries.Out; } }
 
         protected IList<IEdge> _OutEdges;
 
@@ -400,6 +693,15 @@ namespace m0.Graph
                     ref inheritanceDependencyEpoch);
             }
         }
+
+        internal static long InheritanceDependencyEpoch =>
+            CurrentInheritanceDependencyEpoch;
+
+        internal bool IsQueryMetaOutIndexCurrent =>
+            !OutEdgesDictionariesNeedsRebuild_QueryMeta;
+
+        internal bool IsQueryMetaAndValueOutIndexCurrent =>
+            !OutEdgesDictionariesNeedsRebuild_MetaAndValue;
 
         private static void IncrementInheritanceDependencyEpoch()
         {
@@ -463,21 +765,26 @@ namespace m0.Graph
             if (!HasInheritance || !AllowInheritance)
                 return null;
 
-            if (outEdgesDependencyStamp == null)
+            InheritedOutIndexState state =
+                Volatile.Read(
+                    ref inheritedOutIndexState);
+            InheritedOutDependencyStamp dependencyStamp =
+                state?.OutEdgesDependencyStamp;
+            if (dependencyStamp == null)
                 return CaptureInheritedOutDependencyStamp(
                     VertexHelper.GetInheritParents(this));
 
-            if (outEdgesDependencyStamp.ParentCount == 0)
+            if (dependencyStamp.ParentCount == 0)
                 return new InheritedOutDependencyStamp();
 
             ParentOutDependencyVersion firstParent =
                 new ParentOutDependencyVersion(
-                    outEdgesDependencyStamp
+                    dependencyStamp
                         .FirstParent
                         .Vertex);
             ParentOutDependencyVersion[]
                 previousAdditionalParents =
-                    outEdgesDependencyStamp
+                    dependencyStamp
                         .AdditionalParents;
 
             if (previousAdditionalParents == null)
@@ -507,11 +814,13 @@ namespace m0.Graph
         protected void CompleteLogicalOutEdgesRebuild(
             HashSet<IVertex> parents)
         {
-            outEdgesDependencyStamp =
+            InheritedOutIndexState state =
+                GetInheritedOutIndexState();
+            state.OutEdgesDependencyStamp =
                 CaptureInheritedOutDependencyStamp(
                     parents);
             Volatile.Write(
-                ref outEdgesDependencyCheckedEpoch,
+                ref state.OutEdgesDependencyCheckedEpoch,
                 CurrentInheritanceDependencyEpoch);
             currentOutIndexMask |=
                 LogicalOutIndexMask;
@@ -526,41 +835,43 @@ namespace m0.Graph
                 CaptureCurrentInheritedOutDependencyStamp();
             long currentEpoch =
                 CurrentInheritanceDependencyEpoch;
+            InheritedOutIndexState state =
+                GetInheritedOutIndexState();
 
             switch (kind)
             {
                 case InheritedOutIndexKind.DirectMeta:
-                    directMetaDependencyStamp =
+                    state.DirectMetaDependencyStamp =
                         dependencyStamp;
                     Volatile.Write(
-                        ref directMetaDependencyCheckedEpoch,
+                        ref state.DirectMetaDependencyCheckedEpoch,
                         currentEpoch);
                     currentOutIndexMask |=
                         DirectMetaOutIndexMask;
                     break;
                 case InheritedOutIndexKind.QueryMeta:
-                    queryMetaDependencyStamp =
+                    state.QueryMetaDependencyStamp =
                         dependencyStamp;
                     Volatile.Write(
-                        ref queryMetaDependencyCheckedEpoch,
+                        ref state.QueryMetaDependencyCheckedEpoch,
                         currentEpoch);
                     currentOutIndexMask |=
                         QueryMetaOutIndexMask;
                     break;
                 case InheritedOutIndexKind.Value:
-                    valueDependencyStamp =
+                    state.ValueDependencyStamp =
                         dependencyStamp;
                     Volatile.Write(
-                        ref valueDependencyCheckedEpoch,
+                        ref state.ValueDependencyCheckedEpoch,
                         currentEpoch);
                     currentOutIndexMask |=
                         ValueOutIndexMask;
                     break;
                 case InheritedOutIndexKind.QueryMetaAndValue:
-                    metaAndValueDependencyStamp =
+                    state.MetaAndValueDependencyStamp =
                         dependencyStamp;
                     Volatile.Write(
-                        ref metaAndValueDependencyCheckedEpoch,
+                        ref state.MetaAndValueDependencyCheckedEpoch,
                         currentEpoch);
                     currentOutIndexMask |=
                         MetaAndValueOutIndexMask;
@@ -576,16 +887,27 @@ namespace m0.Graph
 
             long currentEpoch =
                 CurrentInheritanceDependencyEpoch;
+            InheritedOutIndexState state =
+                Volatile.Read(
+                    ref inheritedOutIndexState);
+
+            if (state == null)
+            {
+                if (!HasInheritance || !AllowInheritance)
+                    return;
+
+                state = GetInheritedOutIndexState();
+            }
 
             if (Volatile.Read(
-                    ref outEdgesDependencyCheckedEpoch) ==
+                    ref state.OutEdgesDependencyCheckedEpoch) ==
                 currentEpoch)
                 return;
 
             EnsureInheritedOutIndexCurrentSlow(
                 InheritedOutIndexKind.LogicalEdges,
-                outEdgesDependencyStamp,
-                ref outEdgesDependencyCheckedEpoch,
+                state.OutEdgesDependencyStamp,
+                ref state.OutEdgesDependencyCheckedEpoch,
                 currentEpoch);
         }
 
@@ -652,8 +974,10 @@ namespace m0.Graph
 
             if (indexDependencyChanged)
             {
+                InheritedOutIndexState state =
+                    GetInheritedOutIndexState();
                 Volatile.Write(
-                    ref outEdgesDependencyCheckedEpoch,
+                    ref state.OutEdgesDependencyCheckedEpoch,
                     currentEpoch);
                 MarkInheritedOutIndexNeedRebuild(kind);
                 return;
@@ -674,9 +998,7 @@ namespace m0.Graph
             EasyVertex parentVertex = parent.Vertex;
 
             if (parent.StructureGeneration !=
-                Volatile.Read(
-                    ref parentVertex
-                        .outStructureGeneration))
+                parentVertex.ReadOutStructureGeneration())
             {
                 structureChanged = true;
                 return;
@@ -687,34 +1009,29 @@ namespace m0.Graph
                 case InheritedOutIndexKind.DirectMeta:
                     indexDependencyChanged =
                         parent.DirectMetaGeneration !=
-                        Volatile.Read(
-                            ref parentVertex
-                                .outDirectMetaGeneration);
+                        parentVertex
+                            .ReadOutDirectMetaGeneration();
                     break;
                 case InheritedOutIndexKind.QueryMeta:
                     indexDependencyChanged =
                         parent.QueryMetaGeneration !=
-                        Volatile.Read(
-                            ref parentVertex
-                                .outQueryMetaGeneration);
+                        parentVertex
+                            .ReadOutQueryMetaGeneration();
                     break;
                 case InheritedOutIndexKind.Value:
                     indexDependencyChanged =
                         parent.ValueGeneration !=
-                        Volatile.Read(
-                            ref parentVertex
-                                .outValueGeneration);
+                        parentVertex
+                            .ReadOutValueGeneration();
                     break;
                 case InheritedOutIndexKind.QueryMetaAndValue:
                     indexDependencyChanged =
                         parent.QueryMetaGeneration !=
-                        Volatile.Read(
-                            ref parentVertex
-                                .outQueryMetaGeneration) ||
+                        parentVertex
+                            .ReadOutQueryMetaGeneration() ||
                         parent.ValueGeneration !=
-                        Volatile.Read(
-                            ref parentVertex
-                                .outValueGeneration);
+                        parentVertex
+                            .ReadOutValueGeneration();
                     break;
             }
         }
@@ -756,15 +1073,19 @@ namespace m0.Graph
                 {
                     long currentEpoch =
                         CurrentInheritanceDependencyEpoch;
+                    InheritedOutIndexState state =
+                        GetInheritedOutIndexState();
 
                     if (Volatile.Read(
-                            ref outEdgesDependencyCheckedEpoch) !=
+                            ref state
+                                .OutEdgesDependencyCheckedEpoch) !=
                         currentEpoch)
                     {
                         EnsureInheritedOutIndexCurrentSlow(
                             InheritedOutIndexKind.LogicalEdges,
-                            outEdgesDependencyStamp,
-                            ref outEdgesDependencyCheckedEpoch,
+                            state.OutEdgesDependencyStamp,
+                            ref state
+                                .OutEdgesDependencyCheckedEpoch,
                             currentEpoch);
                     }
                 }
@@ -779,7 +1100,7 @@ namespace m0.Graph
             }
         }
 
-        public override IList<IEdge> MetaInEdgesRaw { get { return edgeDictionaries.MetaIn; } }
+        public override IList<IEdge> MetaInEdgesRaw { get { return EdgeDictionaries.MetaIn; } }
 
         protected virtual void OutEdgesDictionariesRebuild_Edges()
         {
@@ -831,9 +1152,11 @@ namespace m0.Graph
             _OutEdges = fullEdges;
             OutEdgesDictionariesNeedsRebuild_Edges = false;
             CompleteLogicalOutEdgesRebuild(parents);
+            InheritedOutIndexState state =
+                GetInheritedOutIndexState();
             CompleteInheritedOutIndexRebuild(
                 GetInheritedOutIndexKind(indexKind),
-                outEdgesDependencyStamp);
+                state.OutEdgesDependencyStamp);
         }
 
         private static InheritedOutIndexKind
@@ -1625,6 +1948,7 @@ namespace m0.Graph
         internal void
             InvalidateOutIndexesAfterBatchMutation()
         {
+            RecordTrackedLocalMutation();
             consecutiveIncrementalOutIndexMutations = 0;
             outIndexMutationsSinceLastQuery = 0;
             outIndexMutationBudgetFallbackPending = false;
@@ -1978,12 +2302,14 @@ namespace m0.Graph
             if (InheritsInEdgeCount == 0)
                 return;
 
+            InheritedOutIndexState state =
+                GetInheritedOutIndexState();
             Interlocked.Increment(
-                ref outQueryMetaGeneration);
+                ref state.OutQueryMetaGeneration);
 
             if (directMeta)
                 Interlocked.Increment(
-                    ref outDirectMetaGeneration);
+                    ref state.OutDirectMetaGeneration);
 
             IncrementInheritanceDependencyEpoch();
         }
@@ -1994,6 +2320,28 @@ namespace m0.Graph
         //    edge.To.InEdgesRaw.Add(edge);
         // this.AttachEdge(edge)
         // edge.To.AttachInEdge(edge)
+
+        protected override IVertex CreateVertexInstance()
+        {
+            if (IdentifierRegistrationDeferred)
+            {
+                return new EasyVertex(
+                    Store,
+                    VertexIdentifierRegistrationMode.Ephemeral);
+            }
+
+            return base.CreateVertexInstance();
+        }
+
+        protected virtual EdgeBase CreateEdge(
+            IVertex metaVertex,
+            IVertex destVertex)
+        {
+            return new EasyEdge(
+                this,
+                metaVertex,
+                destVertex);
+        }
 
         public override IEdge AddEdge(IVertex metaVertex, IVertex destVertex)
         {
@@ -2016,7 +2364,17 @@ namespace m0.Graph
 
             ValidateInheritanceEdge(metaVertex, destVertex);
 
-            EdgeBase ne = new EasyEdge(this, metaVertex, destVertex);
+            if (!IdentifierRegistrationDeferred)
+            {
+                EnsureIdentifierRegistered(
+                    metaVertex);
+                EnsureIdentifierRegistered(
+                    destVertex);
+            }
+
+            EdgeBase ne = CreateEdge(
+                metaVertex,
+                destVertex);
 
             OutEdgesRaw.Add(ne);
 
@@ -2077,7 +2435,7 @@ namespace m0.Graph
                 GraphChangeTriggerWatcher.AddGraphChangeTrigger(edge);
             }
 
-            if (GeneralUtil.CompareStrings(edge.To.Value, "OnlyNonTransactedRootVertexEvents") ||
+            if (IsOnlyNonTransactedRootVertexEvents(edge.To.Value) ||
                 GeneralUtil.CompareStrings(edge.Meta.Value, "Listener"))
                 OnlyNonTransactedRootVertexEvents_Listener_AddedRemoved();
         }
@@ -2112,10 +2470,41 @@ namespace m0.Graph
                     GraphChangeTriggerWatcher.RemoveGraphChangeTrigger(edge);
                 }
 
-                if (GeneralUtil.CompareStrings(edge.To.Value, "OnlyNonTransactedRootVertexEvents") ||
+                if (IsOnlyNonTransactedRootVertexEvents(edge.To.Value) ||
                     GeneralUtil.CompareStrings(edge.Meta.Value, "Listener"))
                     OnlyNonTransactedRootVertexEvents_Listener_AddedRemoved();
             }
+        }
+
+        private static bool IsOnlyNonTransactedRootVertexEvents(
+            object value)
+        {
+            if (value is string stringValue)
+            {
+                return string.Equals(
+                    stringValue,
+                    "OnlyNonTransactedRootVertexEvents",
+                    StringComparison.Ordinal);
+            }
+
+            if (value is sbyte ||
+                value is byte ||
+                value is short ||
+                value is ushort ||
+                value is int ||
+                value is uint ||
+                value is long ||
+                value is ulong ||
+                value is float ||
+                value is double ||
+                value is decimal ||
+                value is bool ||
+                value is char)
+                return false;
+
+            return GeneralUtil.CompareStrings(
+                value,
+                "OnlyNonTransactedRootVertexEvents");
         }
 
         protected void OnlyNonTransactedRootVertexEvents_Listener_AddedRemoved()
@@ -2148,7 +2537,7 @@ namespace m0.Graph
             if (DisposedState == DisposeStateEnum.Disposed)
                 throw new Exception("Vertex not live");            
 
-            IEdge edge = edgeDictionaries.Out.Get(_edge);
+            IEdge edge = EdgeDictionaries.Out.Get(_edge);
 
             if (edge == null)
                 foreach (IEdge e in OutEdges)
@@ -2283,8 +2672,10 @@ namespace m0.Graph
             if (InheritsInEdgeCount == 0)
                 return;
 
+            InheritedOutIndexState state =
+                GetInheritedOutIndexState();
             Interlocked.Increment(
-                ref outStructureGeneration);
+                ref state.OutStructureGeneration);
             IncrementInheritanceDependencyEpoch();
         }
 
@@ -2359,15 +2750,19 @@ namespace m0.Graph
             {
                 long currentEpoch =
                     CurrentInheritanceDependencyEpoch;
+                InheritedOutIndexState state =
+                    GetInheritedOutIndexState();
 
                 if (Volatile.Read(
-                        ref directMetaDependencyCheckedEpoch) !=
+                        ref state
+                            .DirectMetaDependencyCheckedEpoch) !=
                     currentEpoch)
                 {
                     EnsureInheritedOutIndexCurrentSlow(
                         InheritedOutIndexKind.DirectMeta,
-                        directMetaDependencyStamp,
-                        ref directMetaDependencyCheckedEpoch,
+                        state.DirectMetaDependencyStamp,
+                        ref state
+                            .DirectMetaDependencyCheckedEpoch,
                         currentEpoch);
                 }
             }
@@ -2504,15 +2899,19 @@ namespace m0.Graph
                 {
                     long currentEpoch =
                         CurrentInheritanceDependencyEpoch;
+                    InheritedOutIndexState state =
+                        GetInheritedOutIndexState();
 
                     if (Volatile.Read(
-                            ref queryMetaDependencyCheckedEpoch) !=
+                            ref state
+                                .QueryMetaDependencyCheckedEpoch) !=
                         currentEpoch)
                     {
                         EnsureInheritedOutIndexCurrentSlow(
                             InheritedOutIndexKind.QueryMeta,
-                            queryMetaDependencyStamp,
-                            ref queryMetaDependencyCheckedEpoch,
+                            state.QueryMetaDependencyStamp,
+                            ref state
+                                .QueryMetaDependencyCheckedEpoch,
                             currentEpoch);
                     }
                 }
@@ -2543,15 +2942,19 @@ namespace m0.Graph
                 {
                     long currentEpoch =
                         CurrentInheritanceDependencyEpoch;
+                    InheritedOutIndexState state =
+                        GetInheritedOutIndexState();
 
                     if (Volatile.Read(
-                            ref valueDependencyCheckedEpoch) !=
+                            ref state
+                                .ValueDependencyCheckedEpoch) !=
                         currentEpoch)
                     {
                         EnsureInheritedOutIndexCurrentSlow(
                             InheritedOutIndexKind.Value,
-                            valueDependencyStamp,
-                            ref valueDependencyCheckedEpoch,
+                            state.ValueDependencyStamp,
+                            ref state
+                                .ValueDependencyCheckedEpoch,
                             currentEpoch);
                     }
                 }
@@ -2591,15 +2994,19 @@ namespace m0.Graph
                 {
                     long currentEpoch =
                         CurrentInheritanceDependencyEpoch;
+                    InheritedOutIndexState state =
+                        GetInheritedOutIndexState();
 
                     if (Volatile.Read(
-                            ref metaAndValueDependencyCheckedEpoch) !=
+                            ref state
+                                .MetaAndValueDependencyCheckedEpoch) !=
                         currentEpoch)
                     {
                         EnsureInheritedOutIndexCurrentSlow(
                             InheritedOutIndexKind.QueryMetaAndValue,
-                            metaAndValueDependencyStamp,
-                            ref metaAndValueDependencyCheckedEpoch,
+                            state.MetaAndValueDependencyStamp,
+                            ref state
+                                .MetaAndValueDependencyCheckedEpoch,
                             currentEpoch);
                     }
                 }
@@ -2844,20 +3251,8 @@ namespace m0.Graph
         protected void VertexInit_First(
             bool useSpecializedStackStorage = false)
         {
-            edgeDictionaries = new EdgeDictionaries(
-                this,
-                useSpecializedStackStorage);
-
-            if (useSpecializedStackStorage)
-            {
-                inheritsInEdges = null;
-                inheritsOutEdges = null;
-            }
-            else
-            {
-                InheritsInEdges = new List<IEdge>();
-                InheritsOutEdges = new List<IEdge>();
-            }
+            this.useSpecializedStackStorage =
+                useSpecializedStackStorage;
 
             InEdgesDictionariesNeedsRebuild = true;
             OutEdgesDictionariesNeedsRebuild = true;
@@ -2893,19 +3288,82 @@ namespace m0.Graph
                 VertexInit_First(
                     useSpecializedStackStorage);
 
-                _Identifier = Store.VertexIdentifierCount++;
-
-                //Store.VertexIdentifierCount += RND.Next(10) + 1;
-
-                //_Identifier = Store.VertexIdentifierCount;
-
-                GraphUtil.Debug(this, DebugOperationEnum.Init);
+                identifierRegistrationDeferred =
+                    registrationMode ==
+                        VertexIdentifierRegistrationMode.Ephemeral
+                            ? 1
+                            : 0;
 
                 if (registrationMode ==
                     VertexIdentifierRegistrationMode.Registered)
                 {
+                    EnsureIdentifierAssigned();
                     Store.StoreVertexIdentifier(this);
                 }
+
+                GraphUtil.Debug(this, DebugOperationEnum.Init);
+            }
+        }
+
+        private object EnsureIdentifierAssigned()
+        {
+            object identifier =
+                Volatile.Read(
+                    ref _Identifier);
+            if (identifier != null)
+                return identifier;
+
+            lock (lock_object)
+            {
+                if (_Identifier == null)
+                {
+                    _Identifier =
+                        Store.VertexIdentifierCount++;
+                }
+
+                return _Identifier;
+            }
+        }
+
+        internal bool IdentifierRegistrationDeferred =>
+            Volatile.Read(
+                ref identifierRegistrationDeferred) != 0;
+
+        private static void EnsureIdentifierRegistered(
+            IVertex vertex)
+        {
+            if (vertex is EasyVertex easyVertex)
+                easyVertex.EnsureIdentifierRegistered();
+        }
+
+        private void EnsureIdentifierRegistered()
+        {
+            if (Interlocked.Exchange(
+                    ref identifierRegistrationDeferred,
+                    0) == 0)
+                return;
+
+            try
+            {
+                Store.StoreVertexIdentifier(this);
+            }
+            catch
+            {
+                Volatile.Write(
+                    ref identifierRegistrationDeferred,
+                    1);
+                throw;
+            }
+
+            if (StoredOutEdgeCount == 0)
+                return;
+
+            foreach (IEdge edge in OutEdgesRaw)
+            {
+                EnsureIdentifierRegistered(
+                    edge.Meta);
+                EnsureIdentifierRegistered(
+                    edge.To);
             }
         }
 
@@ -2922,7 +3380,7 @@ namespace m0.Graph
             VertexInit();
         }
 
-        private protected EasyVertex(
+        internal EasyVertex(
             IStore _store,
             VertexIdentifierRegistrationMode registrationMode,
             bool useSpecializedStackStorage = false)
@@ -2959,8 +3417,8 @@ namespace m0.Graph
 
             int cumulativeEdgesCount = 0;
 
-            cumulativeEdgesCount += edgeDictionaries.InCount;
-            cumulativeEdgesCount += edgeDictionaries.MetaInCount;
+            cumulativeEdgesCount += StoredInEdgeCount;
+            cumulativeEdgesCount += StoredMetaInEdgeCount;
 
             if (cumulativeEdgesCount == 0 && ExternalReferenceCount == 0
                 && Store.DetachState == DetachStateEnum.Attached
@@ -2973,7 +3431,7 @@ namespace m0.Graph
         public override void CheckIfShouldDispose()
         {
             if(ShouldDispose())
-                ExecutionFlowHelper.AddSecondStageCommitAction(edgeDictionaries.Vertex);
+                ExecutionFlowHelper.AddSecondStageCommitAction(this);
         }
 
         public void ClearDictionaries()

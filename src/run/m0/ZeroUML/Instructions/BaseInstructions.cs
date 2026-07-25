@@ -577,6 +577,7 @@ namespace m0.ZeroUML.Instructions
             internal string QueryValue;
             internal object LiteralNumber;
             internal NumericTypeEnum LiteralType;
+            internal int LiteralIntegerValue;
             internal bool LiteralHasNumber;
             internal bool ContainsOperator;
             internal SimpleScalarNode Left;
@@ -598,6 +599,167 @@ namespace m0.ZeroUML.Instructions
             internal bool IsValid =>
                 Source.TrackedLocalMutationVersion ==
                 SourceVersion;
+        }
+
+        private sealed class RedirectPropagationPlan
+        {
+            internal EasyVertex Source;
+            internal long SourceVersion;
+            internal bool Result;
+            internal long InheritanceEpoch;
+            internal EasyVertex FirstTypeDependency;
+            internal long FirstTypeDependencyVersion;
+            internal EasyVertex[] AdditionalTypeDependencies;
+            internal long[] AdditionalTypeDependencyVersions;
+
+            internal bool IsValid(IVertex source)
+            {
+                if (!ReferenceEquals(Source, source) ||
+                    InheritanceEpoch !=
+                        EasyVertex
+                            .InheritanceDependencyEpoch ||
+                    !Source.IsQueryMetaOutIndexCurrent ||
+                    Source.TrackedLocalMutationVersion !=
+                        SourceVersion)
+                {
+                    return false;
+                }
+
+                if (FirstTypeDependency != null &&
+                    (!FirstTypeDependency
+                            .IsQueryMetaAndValueOutIndexCurrent ||
+                        FirstTypeDependency
+                            .TrackedLocalMutationVersion !=
+                        FirstTypeDependencyVersion))
+                {
+                    return false;
+                }
+
+                if (AdditionalTypeDependencies == null)
+                    return true;
+
+                for (int index = 0;
+                    index < AdditionalTypeDependencies.Length;
+                    index++)
+                {
+                    if (!AdditionalTypeDependencies[index]
+                            .IsQueryMetaAndValueOutIndexCurrent ||
+                        AdditionalTypeDependencies[index]
+                            .TrackedLocalMutationVersion !=
+                        AdditionalTypeDependencyVersions[index])
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+        }
+
+        private static RedirectPropagationPlan
+            CreateRedirectPropagationPlan(
+            IVertex leftExpression,
+            bool result)
+        {
+            if (!(leftExpression is
+                EasyVertex easyLeftExpression))
+            {
+                return null;
+            }
+
+            EasyVertex firstTypeDependency = null;
+            List<EasyVertex>
+                additionalTypeDependencies = null;
+            foreach (IEdge isEdge in
+                GraphUtil.GetQueryOutResult(
+                    leftExpression,
+                    "$Is",
+                    null))
+            {
+                if (!(isEdge.To is
+                    EasyVertex typeDependency))
+                {
+                    return null;
+                }
+
+                if (ReferenceEquals(
+                        firstTypeDependency,
+                        typeDependency) ||
+                    additionalTypeDependencies
+                        ?.Contains(typeDependency) == true)
+                {
+                    continue;
+                }
+
+                if (firstTypeDependency == null)
+                    firstTypeDependency =
+                        typeDependency;
+                else
+                    (additionalTypeDependencies ??=
+                        new List<EasyVertex>())
+                        .Add(typeDependency);
+            }
+
+            EasyVertex[] additionalTypeDependencyArray =
+                additionalTypeDependencies?.ToArray();
+            long[] additionalTypeDependencyVersions =
+                additionalTypeDependencyArray == null
+                    ? null
+                    : new long[
+                        additionalTypeDependencyArray
+                            .Length];
+            if (additionalTypeDependencyArray != null)
+            {
+                for (int index = 0;
+                    index <
+                        additionalTypeDependencyArray.Length;
+                    index++)
+                {
+                    additionalTypeDependencyVersions[index] =
+                        additionalTypeDependencyArray[index]
+                            .EnableTrackedLocalMutationVersion();
+                }
+            }
+
+            return new RedirectPropagationPlan
+            {
+                Source = easyLeftExpression,
+                SourceVersion =
+                    easyLeftExpression
+                        .EnableTrackedLocalMutationVersion(),
+                Result = result,
+                InheritanceEpoch =
+                    EasyVertex
+                        .InheritanceDependencyEpoch,
+                FirstTypeDependency =
+                    firstTypeDependency,
+                FirstTypeDependencyVersion =
+                    firstTypeDependency
+                        ?.EnableTrackedLocalMutationVersion() ??
+                    0,
+                AdditionalTypeDependencies =
+                    additionalTypeDependencyArray,
+                AdditionalTypeDependencyVersions =
+                    additionalTypeDependencyVersions
+            };
+        }
+
+        private static bool GetLeftPropagateToStackExpression(
+            IVertex leftExpression,
+            ref RedirectPropagationPlan plan)
+        {
+            if (plan?.IsValid(leftExpression) == true)
+                return plan.Result;
+
+            bool result =
+                CheckIfIsInherits_WRONG(
+                    leftExpression,
+                    "PropagateToStackExpression");
+            plan =
+                CreateRedirectPropagationPlan(
+                    leftExpression,
+                    result);
+            return result;
         }
 
         private static readonly
@@ -701,6 +863,13 @@ namespace m0.ZeroUML.Instructions
                 node.LiteralType =
                     GetSimpleScalarNumericType(
                         node.LiteralNumber);
+                if (node.LiteralHasNumber &&
+                    node.LiteralType ==
+                        NumericTypeEnum.Integer)
+                {
+                    node.LiteralIntegerValue =
+                        (int)node.LiteralNumber;
+                }
                 node.Kind = SimpleScalarNodeKind.Literal;
                 return node;
             }
@@ -1059,6 +1228,435 @@ namespace m0.ZeroUML.Instructions
             }
         }
 
+        private static bool
+            TryEvaluateSimpleScalarNumericOperatorNodeUnboxed(
+            ZeroCodeExecution exe,
+            IVertex inputStack,
+            SimpleScalarNode node,
+            IEdge directQueryEdge,
+            out EasyVertex.ScalarNumericValue result,
+            out bool planIsValid)
+        {
+            result = default;
+            planIsValid = node?.IsValid == true;
+            if (!planIsValid ||
+                !node.ContainsOperator)
+                return false;
+
+            if (TryEvaluateSimpleIntegerQueryLiteralOperator(
+                    exe,
+                    inputStack,
+                    node,
+                    directQueryEdge,
+                    out result,
+                    out planIsValid))
+            {
+                return true;
+            }
+
+            if (!planIsValid)
+                return false;
+
+            bool evaluated =
+                TryEvaluateSimpleScalarNodeUnboxed(
+                    exe,
+                    inputStack,
+                    node,
+                    out result,
+                    out _,
+                    out bool hasNumber,
+                    out bool wasComputed,
+                    out planIsValid);
+
+            return evaluated &&
+                planIsValid &&
+                hasNumber &&
+                wasComputed;
+        }
+
+        private static bool
+            TryEvaluateSimpleIntegerQueryLiteralOperator(
+            ZeroCodeExecution exe,
+            IVertex inputStack,
+            SimpleScalarNode node,
+            IEdge directQueryEdge,
+            out EasyVertex.ScalarNumericValue result,
+            out bool planIsValid)
+        {
+            result = default;
+            planIsValid = true;
+            if (node.Kind != SimpleScalarNodeKind.Add &&
+                node.Kind != SimpleScalarNodeKind.Multiply)
+            {
+                return false;
+            }
+
+            SimpleScalarNode queryNode;
+            SimpleScalarNode literalNode;
+            if (node.Left?.Kind ==
+                    SimpleScalarNodeKind.Query &&
+                node.Right?.Kind ==
+                    SimpleScalarNodeKind.Literal)
+            {
+                queryNode = node.Left;
+                literalNode = node.Right;
+            }
+            else if (node.Right?.Kind ==
+                    SimpleScalarNodeKind.Query &&
+                node.Left?.Kind ==
+                    SimpleScalarNodeKind.Literal)
+            {
+                queryNode = node.Right;
+                literalNode = node.Left;
+            }
+            else
+            {
+                return false;
+            }
+
+            planIsValid =
+                queryNode.IsValid &&
+                literalNode.IsValid;
+            if (!planIsValid ||
+                !literalNode.LiteralHasNumber ||
+                literalNode.LiteralType !=
+                    NumericTypeEnum.Integer)
+            {
+                return false;
+            }
+
+            EasyVertex.ScalarNumericValue queryNumber;
+            SimpleScalarNumberStatus status;
+            if (directQueryEdge?.To is
+                    EasyVertex directQueryTarget &&
+                string.Equals(
+                    directQueryEdge.Meta?.Value as string,
+                    queryNode.QueryValue,
+                    StringComparison.Ordinal) &&
+                directQueryTarget.TryGetScalarNumericValue(
+                    out queryNumber))
+            {
+                status =
+                    SimpleScalarNumberStatus.Number;
+            }
+            else
+            {
+                status =
+                    GetSimpleScalarQueryNumberStatusUnboxed(
+                        exe,
+                        inputStack,
+                        queryNode.QueryValue,
+                        out queryNumber,
+                        out _);
+            }
+            if (status !=
+                    SimpleScalarNumberStatus.Number ||
+                queryNumber.Kind !=
+                    EasyVertex.ScalarNumericKind.Integer)
+            {
+                return false;
+            }
+
+            int literalValue =
+                literalNode.LiteralIntegerValue;
+            result =
+                EasyVertex.ScalarNumericValue
+                    .FromInteger(
+                        node.Kind ==
+                            SimpleScalarNodeKind.Add
+                            ? queryNumber.IntegerValue +
+                                literalValue
+                            : queryNumber.IntegerValue *
+                                literalValue);
+            return true;
+        }
+
+        private static bool
+            TryEvaluateSimpleScalarNodeUnboxed(
+            ZeroCodeExecution exe,
+            IVertex inputStack,
+            SimpleScalarNode node,
+            out EasyVertex.ScalarNumericValue result,
+            out NumericTypeEnum resultType,
+            out bool hasNumber,
+            out bool wasComputed,
+            out bool planIsValid)
+        {
+            result = default;
+            resultType = NumericTypeEnum.Decimal;
+            hasNumber = false;
+            wasComputed = false;
+            planIsValid = node?.IsValid == true;
+            if (!planIsValid)
+                return false;
+
+            if (node.Kind ==
+                SimpleScalarNodeKind.Unsupported)
+                return false;
+
+            if (node.Kind ==
+                SimpleScalarNodeKind.Literal)
+            {
+                resultType = node.LiteralType;
+                hasNumber = node.LiteralHasNumber;
+                return !hasNumber ||
+                    EasyVertex.ScalarNumericValue
+                        .TryCreate(
+                            node.LiteralNumber,
+                            out result);
+            }
+
+            if (node.Kind ==
+                SimpleScalarNodeKind.Query)
+            {
+                SimpleScalarNumberStatus status =
+                    GetSimpleScalarQueryNumberStatusUnboxed(
+                        exe,
+                        inputStack,
+                        node.QueryValue,
+                        out result,
+                        out resultType);
+                hasNumber =
+                    status ==
+                    SimpleScalarNumberStatus.Number;
+                return status !=
+                    SimpleScalarNumberStatus.Unsupported;
+            }
+
+            if (node.Kind ==
+                SimpleScalarNodeKind.Bracket)
+            {
+                return TryEvaluateSimpleScalarNodeUnboxed(
+                    exe,
+                    inputStack,
+                    node.Inner,
+                    out result,
+                    out resultType,
+                    out hasNumber,
+                    out wasComputed,
+                    out planIsValid);
+            }
+
+            if (!TryEvaluateSimpleScalarNodeUnboxed(
+                    exe,
+                    inputStack,
+                    node.Left,
+                    out EasyVertex.ScalarNumericValue
+                        leftNumber,
+                    out NumericTypeEnum leftType,
+                    out bool leftHasNumber,
+                    out bool leftWasComputed,
+                    out planIsValid) ||
+                !planIsValid)
+            {
+                return false;
+            }
+
+            if (!TryEvaluateSimpleScalarNodeUnboxed(
+                    exe,
+                    inputStack,
+                    node.Right,
+                    out EasyVertex.ScalarNumericValue
+                        rightNumber,
+                    out NumericTypeEnum rightType,
+                    out bool rightHasNumber,
+                    out bool rightWasComputed,
+                    out planIsValid) ||
+                !planIsValid)
+            {
+                return false;
+            }
+
+            if (!leftHasNumber)
+            {
+                result = rightNumber;
+                resultType = rightType;
+                hasNumber = rightHasNumber;
+                wasComputed = rightWasComputed;
+                return true;
+            }
+
+            if (!rightHasNumber)
+            {
+                result = leftNumber;
+                resultType = leftType;
+                hasNumber = true;
+                wasComputed = leftWasComputed;
+                return true;
+            }
+
+            hasNumber = true;
+            wasComputed = true;
+            resultType =
+                GetCommonNubmerResultDenominator(
+                    leftType,
+                    rightType);
+            bool isAdd =
+                node.Kind == SimpleScalarNodeKind.Add;
+            switch (resultType)
+            {
+                case NumericTypeEnum.Integer:
+                    result =
+                        EasyVertex.ScalarNumericValue
+                            .FromInteger(
+                                isAdd
+                                    ? leftNumber.IntegerValue +
+                                        rightNumber.IntegerValue
+                                    : leftNumber.IntegerValue *
+                                        rightNumber.IntegerValue);
+                    return true;
+                case NumericTypeEnum.Double:
+                    double leftDouble =
+                        GetSimpleScalarDouble(
+                            leftNumber);
+                    double rightDouble =
+                        GetSimpleScalarDouble(
+                            rightNumber);
+                    result =
+                        EasyVertex.ScalarNumericValue
+                            .FromDouble(
+                                isAdd
+                                    ? leftDouble +
+                                        rightDouble
+                                    : leftDouble *
+                                        rightDouble);
+                    return true;
+                case NumericTypeEnum.Decimal:
+                    decimal leftDecimal =
+                        GetSimpleScalarDecimal(
+                            leftNumber);
+                    decimal rightDecimal =
+                        GetSimpleScalarDecimal(
+                            rightNumber);
+                    result =
+                        EasyVertex.ScalarNumericValue
+                            .FromDecimal(
+                                isAdd
+                                    ? leftDecimal +
+                                        rightDecimal
+                                    : leftDecimal *
+                                        rightDecimal);
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        private static double GetSimpleScalarDouble(
+            EasyVertex.ScalarNumericValue value)
+        {
+            switch (value.Kind)
+            {
+                case EasyVertex.ScalarNumericKind.Integer:
+                    return value.IntegerValue;
+                case EasyVertex.ScalarNumericKind.Double:
+                    return value.DoubleValue;
+                case EasyVertex.ScalarNumericKind.Decimal:
+                    return (double)value.DecimalValue;
+                default:
+                    return default;
+            }
+        }
+
+        private static decimal GetSimpleScalarDecimal(
+            EasyVertex.ScalarNumericValue value)
+        {
+            switch (value.Kind)
+            {
+                case EasyVertex.ScalarNumericKind.Integer:
+                    return value.IntegerValue;
+                case EasyVertex.ScalarNumericKind.Double:
+                    return (decimal)value.DoubleValue;
+                case EasyVertex.ScalarNumericKind.Decimal:
+                    return value.DecimalValue;
+                default:
+                    return default;
+            }
+        }
+
+        private static SimpleScalarNumberStatus
+            GetSimpleScalarQueryNumberStatusUnboxed(
+            ZeroCodeExecution exe,
+            IVertex inputStack,
+            string queryValue,
+            out EasyVertex.ScalarNumericValue number,
+            out NumericTypeEnum numericType)
+        {
+            number = default;
+            numericType = NumericTypeEnum.Decimal;
+            IEdge matchingEdge;
+            IList<IEdge> matchingEdges;
+            if (exe.MetaMode)
+            {
+                inputStack.QueryOutEdges(
+                    queryValue,
+                    null,
+                    out matchingEdge,
+                    out matchingEdges);
+            }
+            else
+            {
+                inputStack.QueryOutEdges(
+                    null,
+                    queryValue,
+                    out matchingEdge,
+                    out matchingEdges);
+            }
+
+            int matchCount =
+                (matchingEdge == null ? 0 : 1) +
+                (matchingEdges?.Count ?? 0);
+            if (matchCount == 0)
+                return SimpleScalarNumberStatus.NoNumber;
+            if (matchCount != 1)
+                return SimpleScalarNumberStatus.Unsupported;
+
+            IVertex target =
+                matchingEdge?.To ??
+                matchingEdges[0].To;
+            if (target is EasyVertex easyTarget &&
+                easyTarget.TryGetScalarNumericValue(
+                    out number))
+            {
+                numericType =
+                    GetSimpleScalarNumericType(
+                        number.Kind);
+                return SimpleScalarNumberStatus.Number;
+            }
+
+            GraphUtil.GetNumberValue(
+                target,
+                out object boxedNumber);
+            if (boxedNumber == null)
+                return SimpleScalarNumberStatus.NoNumber;
+            if (!EasyVertex.ScalarNumericValue.TryCreate(
+                    boxedNumber,
+                    out number))
+            {
+                return SimpleScalarNumberStatus.Unsupported;
+            }
+
+            numericType =
+                GetSimpleScalarNumericType(
+                    number.Kind);
+            return SimpleScalarNumberStatus.Number;
+        }
+
+        private static NumericTypeEnum
+            GetSimpleScalarNumericType(
+            EasyVertex.ScalarNumericKind kind)
+        {
+            switch (kind)
+            {
+                case EasyVertex.ScalarNumericKind.Integer:
+                    return NumericTypeEnum.Integer;
+                case EasyVertex.ScalarNumericKind.Double:
+                    return NumericTypeEnum.Double;
+                default:
+                    return NumericTypeEnum.Decimal;
+            }
+        }
+
         private static SimpleScalarNumberStatus
             GetSimpleScalarQueryNumberStatus(
             ZeroCodeExecution exe,
@@ -1116,12 +1714,21 @@ namespace m0.ZeroUML.Instructions
             if (leftExpression == null || rightExpression == null)
                 return exe.Stack;
 
-            bool leftPropagateToStackExpression = CheckIfIsInherits_WRONG(leftExpression, "PropagateToStackExpression");
             bool cacheRedirectTarget =
                 exe.TryGetCachedRedirectAssignmentTarget(
                     instructionVertex,
                     out IEdge cachedRedirectTarget,
-                    out object cachedScalarPlan);
+                    out object cachedScalarPlan,
+                    out ZeroCodeExecution.RedirectAssignmentCacheEntry
+                        redirectCacheEntry,
+                    out bool cachedTargetIsExclusive);
+            RedirectPropagationPlan propagationPlan =
+                redirectCacheEntry?.PropagationPlan as
+                    RedirectPropagationPlan;
+            bool leftPropagateToStackExpression =
+                GetLeftPropagateToStackExpression(
+                    leftExpression,
+                    ref propagationPlan);
             SimpleScalarNode scalarNode =
                 cachedScalarPlan as SimpleScalarNode;
 
@@ -1159,7 +1766,13 @@ namespace m0.ZeroUML.Instructions
                 bool hasSingleLeftTarget =
                     cachedRedirectTarget != null ||
                     leftExecuteResult.OutEdges.Count == 1;
-                object scalarNumericResult = null;
+                IEdge singleLeftTargetEdge =
+                    hasSingleLeftTarget
+                        ? cachedRedirectTarget ??
+                            leftExecuteResult.OutEdges[0]
+                        : null;
+                EasyVertex.ScalarNumericValue
+                    scalarNumericResult = default;
                 if (scalarNode?.IsValid != true)
                     scalarNode =
                         GetSimpleScalarNode(
@@ -1167,10 +1780,20 @@ namespace m0.ZeroUML.Instructions
                 bool scalarPlanIsValid = true;
                 bool hasDirectScalarNumericResult =
                     hasSingleLeftTarget &&
-                    TryEvaluateSimpleScalarNumericOperatorNode(
+                    TryEvaluateSimpleScalarNumericOperatorNodeUnboxed(
                         exe,
                         exe.Stack,
                         scalarNode,
+                        exe.MetaMode &&
+                        (cachedRedirectTarget != null ||
+                            cacheRedirectTarget) &&
+                        string.Equals(
+                            singleLeftTargetEdge
+                                ?.Meta?.Value as string,
+                            leftExpression.Value as string,
+                            StringComparison.Ordinal)
+                            ? singleLeftTargetEdge
+                            : null,
                         out scalarNumericResult,
                         out scalarPlanIsValid);
                 if (!scalarPlanIsValid)
@@ -1203,29 +1826,46 @@ namespace m0.ZeroUML.Instructions
                 if (hasSingleLeftTarget)
                 {
                     IEdge toAdd =
-                        cachedRedirectTarget ??
-                        leftExecuteResult.OutEdges[0];
-
-                    toAdd.From.DeleteEdge(toAdd);
+                        singleLeftTargetEdge;
 
                     IVertex redirectTarget =
                         leftPropagateToStackExpression
                             ? exe.Stack
                             : toAdd.From;
                     IEdge redirectedEdge = null;
-                    if (hasDirectScalarNumericResult)
-                        redirectedEdge =
-                            redirectTarget
-                                .AddVertexAndReturnEdge(
-                                    toAdd.Meta,
-                                    scalarNumericResult);
+                    bool updatedExclusiveScalarTarget =
+                        hasDirectScalarNumericResult &&
+                        !leftPropagateToStackExpression &&
+                        (cachedRedirectTarget == null ||
+                            cachedTargetIsExclusive) &&
+                        exe.TryUpdateExclusiveScalarAssignmentTarget(
+                            toAdd,
+                            scalarNumericResult,
+                            cachedRedirectTarget != null &&
+                                cachedTargetIsExclusive);
+                    if (updatedExclusiveScalarTarget)
+                    {
+                        redirectedEdge = toAdd;
+                    }
                     else
-                        foreach (IEdge e in
-                            rightExecuteResult)
+                    {
+                        toAdd.From.DeleteEdge(toAdd);
+
+                        if (hasDirectScalarNumericResult)
                             redirectedEdge =
-                                redirectTarget.AddEdge(
-                                    toAdd.Meta,
-                                    e.To);
+                                redirectTarget
+                                    .AddVertexAndReturnEdge(
+                                        toAdd.Meta,
+                                        scalarNumericResult
+                                            .ToObject());
+                        else
+                            foreach (IEdge e in
+                                rightExecuteResult)
+                                redirectedEdge =
+                                    redirectTarget.AddEdge(
+                                        toAdd.Meta,
+                                        e.To);
+                    }
 
                     if (cacheRedirectTarget &&
                         (hasDirectScalarNumericResult ||
@@ -1233,7 +1873,9 @@ namespace m0.ZeroUML.Instructions
                         exe.CacheRedirectAssignmentTarget(
                             instructionVertex,
                             redirectedEdge,
-                            scalarNode);
+                            scalarNode,
+                            propagationPlan,
+                            redirectCacheEntry);
                 }
                 else
                 {
@@ -1324,18 +1966,15 @@ namespace m0.ZeroUML.Instructions
                     "Query",
                     StringComparison.Ordinal) &&
                 GetNextExpression(leftExpression) == null;
-            INoInEdgeInOutVertexVertex leftExecuteResult;
+            INoInEdgeInOutVertexVertex leftExecuteResult =
+                null;
+            IEdge directTargetEdge = null;
 
             if (collapseQueryResults &&
                 exe.TryGetCachedAddAssignmentTarget(
                     instructionVertex,
                     out IEdge cachedTargetEdge))
-            {
-                leftExecuteResult = CreateStack();
-                leftExecuteResult
-                    .AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(
-                        cachedTargetEdge);
-            }
+                directTargetEdge = cachedTargetEdge;
             else
             {
                 bool previousCollapseQueryResults =
@@ -1371,7 +2010,10 @@ namespace m0.ZeroUML.Instructions
 
             try
             {
-                if (leftExecuteResult.OutEdges.Count == 1 &&
+                bool hasSingleTarget =
+                    directTargetEdge != null ||
+                    leftExecuteResult.OutEdges.Count == 1;
+                if (hasSingleTarget &&
                     TryEvaluateSimpleScalarNumericOperatorExpression(
                         exe,
                         exe.Stack,
@@ -1379,6 +2021,7 @@ namespace m0.ZeroUML.Instructions
                         out object scalarNumericResult))
                 {
                     IEdge toAdd =
+                        directTargetEdge ??
                         leftExecuteResult.OutEdges[0];
                     toAdd.From.AddVertex(
                         toAdd.Meta,
@@ -1397,9 +2040,10 @@ namespace m0.ZeroUML.Instructions
 
                 IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 
-                if (leftExecuteResult.OutEdges.Count == 1)
+                if (hasSingleTarget)
                 {
                     IEdge toAdd =
+                        directTargetEdge ??
                         leftExecuteResult.OutEdges[0];
 
                     foreach (IEdge e in rightExecuteResult)
@@ -1427,11 +2071,12 @@ namespace m0.ZeroUML.Instructions
                 exe.NewVertexCreationSpace =
                     newVertexCreationSpace_copy;
 
-                ReleaseTemporaryStack(
-                    leftExecuteResult,
-                    inputStack,
-                    exe.Stack,
-                    newVertexCreationSpace_copy);
+                if (leftExecuteResult != null)
+                    ReleaseTemporaryStack(
+                        leftExecuteResult,
+                        inputStack,
+                        exe.Stack,
+                        newVertexCreationSpace_copy);
 
                 if (_rightExecuteResult != null &&
                     !ReferenceEquals(
@@ -2562,6 +3207,76 @@ namespace m0.ZeroUML.Instructions
             }
         }
 
+        private static bool
+            TryEvaluateSimpleIntegerQueryLiteralLessOrEqual(
+            ZeroCodeExecution exe,
+            IVertex inputStack,
+            SimpleScalarNode leftNode,
+            SimpleScalarNode rightNode,
+            out bool result)
+        {
+            result = false;
+            SimpleScalarNode queryNode;
+            SimpleScalarNode literalNode;
+            bool queryIsLeft;
+            if (leftNode?.Kind ==
+                    SimpleScalarNodeKind.Query &&
+                rightNode?.Kind ==
+                    SimpleScalarNodeKind.Literal)
+            {
+                queryNode = leftNode;
+                literalNode = rightNode;
+                queryIsLeft = true;
+            }
+            else if (rightNode?.Kind ==
+                    SimpleScalarNodeKind.Query &&
+                leftNode?.Kind ==
+                    SimpleScalarNodeKind.Literal)
+            {
+                queryNode = rightNode;
+                literalNode = leftNode;
+                queryIsLeft = false;
+            }
+            else
+            {
+                return false;
+            }
+
+            if (!queryNode.IsValid ||
+                !literalNode.IsValid ||
+                !literalNode.LiteralHasNumber ||
+                literalNode.LiteralType !=
+                    NumericTypeEnum.Integer)
+            {
+                return false;
+            }
+
+            SimpleScalarNumberStatus status =
+                GetSimpleScalarQueryNumberStatusUnboxed(
+                    exe,
+                    inputStack,
+                    queryNode.QueryValue,
+                    out EasyVertex.ScalarNumericValue
+                        queryNumber,
+                    out _);
+            if (status !=
+                    SimpleScalarNumberStatus.Number ||
+                queryNumber.Kind !=
+                    EasyVertex.ScalarNumericKind.Integer)
+            {
+                return false;
+            }
+
+            int literalValue =
+                literalNode.LiteralIntegerValue;
+            result = queryIsLeft
+                ? queryNumber.IntegerValue <=
+                    literalValue
+                : literalValue <=
+                    queryNumber.IntegerValue;
+            return true;
+        }
+
         private static bool TryEvaluateWhileCondition(
             ZeroCodeExecution exe,
             IVertex inputStack,
@@ -2603,24 +3318,36 @@ namespace m0.ZeroUML.Instructions
                     GetSimpleScalarNode(rightExpression);
             }
 
-            if (leftNode != null &&
-                rightNode != null &&
-                TryEvaluateSimpleScalarNode(
+            if (TryEvaluateSimpleIntegerQueryLiteralLessOrEqual(
                     exe,
                     inputStack,
                     leftNode,
-                    out object leftNumber,
+                    rightNode,
+                    out result))
+            {
+                return true;
+            }
+
+            if (leftNode != null &&
+                rightNode != null &&
+                TryEvaluateSimpleScalarNodeUnboxed(
+                    exe,
+                    inputStack,
+                    leftNode,
+                    out EasyVertex.ScalarNumericValue
+                        leftNumber,
                     out NumericTypeEnum leftType,
                     out bool leftHasNumber,
                     out _,
                     out bool leftPlanIsValid) &&
                 leftPlanIsValid &&
                 leftHasNumber &&
-                TryEvaluateSimpleScalarNode(
+                TryEvaluateSimpleScalarNodeUnboxed(
                     exe,
                     inputStack,
                     rightNode,
-                    out object rightNumber,
+                    out EasyVertex.ScalarNumericValue
+                        rightNumber,
                     out NumericTypeEnum rightType,
                     out bool rightHasNumber,
                     out _,
@@ -2634,18 +3361,22 @@ namespace m0.ZeroUML.Instructions
                 {
                     case NumericTypeEnum.Integer:
                         result =
-                            Convert.ToInt32(leftNumber) <=
-                            Convert.ToInt32(rightNumber);
+                            leftNumber.IntegerValue <=
+                            rightNumber.IntegerValue;
                         return true;
                     case NumericTypeEnum.Double:
                         result =
-                            Convert.ToDouble(leftNumber) <=
-                            Convert.ToDouble(rightNumber);
+                            GetSimpleScalarDouble(
+                                leftNumber) <=
+                            GetSimpleScalarDouble(
+                                rightNumber);
                         return true;
                     case NumericTypeEnum.Decimal:
                         result =
-                            Convert.ToDecimal(leftNumber) <=
-                            Convert.ToDecimal(rightNumber);
+                            GetSimpleScalarDecimal(
+                                leftNumber) <=
+                            GetSimpleScalarDecimal(
+                                rightNumber);
                         return true;
                 }
             }

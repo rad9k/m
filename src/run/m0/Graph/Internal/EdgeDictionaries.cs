@@ -44,7 +44,20 @@ namespace m0.Graph.Internal
     {
         public bool NoInEdgeInOutVertexVertexMode = false;
 
-        public OutList Out;
+        private OutList outEdges;
+
+        public OutList Out
+        {
+            get
+            {
+                return outEdges ??=
+                    new OutList(this);
+            }
+        }
+
+        internal int OutCount =>
+            outEdges?.Count ?? 0;
+
         private MetaInList metaIn;
         private InList inEdges;
 
@@ -81,14 +94,6 @@ namespace m0.Graph.Internal
             Vertex = _v;
             NoInEdgeInOutVertexVertexMode =
                 noIncomingEdgeStorage;
-
-            Out = new OutList(this);
-
-            if (!noIncomingEdgeStorage)
-            {
-                metaIn = new MetaInList(this);
-                inEdges = new InList(this);
-            }
         }
     }
 }

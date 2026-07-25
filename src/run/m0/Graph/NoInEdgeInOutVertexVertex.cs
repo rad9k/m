@@ -51,7 +51,33 @@ namespace m0.Graph
 
         protected override IVertex CreateVertexInstance()
         {
-            return new EasyVertex(this.Store);                
+            return new EasyVertex(
+                Store,
+                VertexIdentifierRegistrationMode.Ephemeral);
+        }
+
+        protected override EdgeBase CreateEdge(
+            IVertex metaVertex,
+            IVertex destVertex)
+        {
+            return new EdgeBase(
+                this,
+                metaVertex,
+                destVertex);
+        }
+
+        protected override void InitializeNewVertexValue(
+            IVertex vertex,
+            object value)
+        {
+            if (vertex is EasyVertex easyVertex)
+                easyVertex
+                    .InitializeValueWithoutGraphChange(
+                        value);
+            else
+                base.InitializeNewVertexValue(
+                    vertex,
+                    value);
         }
 
         public override IEdge AddEdge(
@@ -131,7 +157,7 @@ namespace m0.Graph
             int addedEdgeCount = 0;
             try
             {
-                addedEdgeCount = edgeDictionaries.Out
+                addedEdgeCount = EdgeDictionaries.Out
                     .AddRangeOriginalStackEdges(edges);
             }
             finally
@@ -213,7 +239,7 @@ namespace m0.Graph
                 out results);
         }
 
-        private IVertex GetParentStackFrame()
+        internal IVertex GetParentStackFrame()
         {
             object cachedParent =
                 cachedParentStackFrame;
@@ -268,12 +294,14 @@ namespace m0.Graph
         {
             if (!canUseTemporaryPool ||
                 isInTemporaryPool ||
+                !IdentifierRegistrationDeferred ||
                 ExternalReferenceCount != 0 ||
-                edgeDictionaries.InCount != 0 ||
-                edgeDictionaries.MetaInCount != 0)
+                StoredInEdgeCount != 0 ||
+                StoredMetaInEdgeCount != 0)
                 return false;
 
-            edgeDictionaries.Out.Clear();
+            if (edgeDictionaries != null)
+                edgeDictionaries.Out.Clear();
             ClearDictionaries();
             cachedParentStackFrame = null;
             Value = "";

@@ -688,7 +688,7 @@ namespace m0.UIWpf.UX
 
         public void AddLineObjects()
         {
-            List<MetaToPair> metatopairs = new List<MetaToPair>();
+            HashSet<IUXItem> hostedItems = new HashSet<IUXItem>(Items_all);
 
             foreach (ITypedEdge _item in Items_all)
             {
@@ -697,52 +697,50 @@ namespace m0.UIWpf.UX
                 if (item == null)
                     continue;
 
-                metatopairs.Clear();
+                List<IUXItem> decorators = item.Decorators.ToList();
+                Dictionary<(IVertex Meta, IVertex To), MetaToPair> metaToPairs =
+                    new Dictionary<(IVertex Meta, IVertex To), MetaToPair>();
+                Dictionary<(IVertex Meta, IVertex To), int> edgeCounts =
+                    GetEdgesForDiagramLineDecorators(item)
+                        .GroupBy(e => (e.Meta, e.To))
+                        .ToDictionary(g => g.Key, g => g.Count());
 
-                foreach (IUXItem decorator in item.Decorators) // calculate LineDecorator number and Edges number for each Meta/To edge pair
+                foreach (IUXItem decorator in decorators) // calculate LineDecorator number and Edges number for each Meta/To edge pair
                                                                //foreach (IEdge l in item.Vertex.GetAll(false, "DiagramLine:")) // calculate DiagramLines number and Edges number for each Meta/To edge pair
                 {
                     if (decorator is ILineDecoratorBase)
                     {
                         ILineDecoratorBase line_decorator = (ILineDecoratorBase)decorator;
 
-                        if (!Items_all.Contains(line_decorator.ToItem))
+                        if (!hostedItems.Contains(line_decorator.ToItem))
                             continue;
                     }
                     else
                         continue;
 
-                    MetaToPair found = null;
-
                     Edge decorator_BaseEdge = decorator.BaseEdge;
+                    var key = (decorator_BaseEdge.Meta, decorator_BaseEdge.To);
 
-                    foreach (MetaToPair pair in metatopairs)
-                        if (pair.Meta == decorator_BaseEdge.Meta && pair.To == decorator_BaseEdge.To)
-                            found = pair;
-
-                    if (found == null)
+                    if (!metaToPairs.TryGetValue(key, out MetaToPair pairForDecorator))
                     {
-                        MetaToPair newpair = new MetaToPair();
-                        newpair.Meta = decorator_BaseEdge.Meta;
-                        newpair.To = decorator_BaseEdge.To;
-                        newpair.NumberOfDecoratorsWithSameMetaTo = 1;
-                        newpair.NumberOfEdgesWithSameMetaTo = 0;
-
-                        foreach (IEdge e in GetEdgesForDiagramLineDecorators(item))
-                            if (newpair.Meta == e.Meta && newpair.To == e.To)
-                                newpair.NumberOfEdgesWithSameMetaTo++;
-
-                        metatopairs.Add(newpair);
-
+                        pairForDecorator = new MetaToPair
+                        {
+                            Meta = decorator_BaseEdge.Meta,
+                            To = decorator_BaseEdge.To,
+                            NumberOfEdgesWithSameMetaTo = edgeCounts.TryGetValue(key, out int edgeCount)
+                                ? edgeCount
+                                : 0
+                        };
+                        metaToPairs.Add(key, pairForDecorator);
                     }
-                    else
-                        found.NumberOfDecoratorsWithSameMetaTo++;
+
+                    pairForDecorator.NumberOfDecoratorsWithSameMetaTo++;
                 }
 
-                foreach (MetaToPair pair in metatopairs)
+                foreach (MetaToPair pair in metaToPairs.Values)
                 { // delete DiagramLines for edges that been deleted
                     if (pair.NumberOfDecoratorsWithSameMetaTo > pair.NumberOfEdgesWithSameMetaTo)
-                        foreach (IUXItem decorator in item.Decorators)
+                        foreach (IUXItem decorator in decorators)
                         {
                             Edge decorator_BaseEdge = decorator.BaseEdge;
 
@@ -756,13 +754,13 @@ namespace m0.UIWpf.UX
                         }
                 }
 
-                foreach (IUXItem decorator in item.Decorators)
+                foreach (IUXItem decorator in decorators)
                     // add diagram line objects
                     if (decorator is LineDecorator)
                     {
                         LineDecorator lineDecorator = (LineDecorator)decorator;
 
-                        if (!Items_all.Contains(lineDecorator.ToItem))
+                        if (!hostedItems.Contains(lineDecorator.ToItem))
                             continue;
 
                         item.AddDiagramLineObject(lineDecorator.ToItem, lineDecorator, false);
@@ -1330,65 +1328,74 @@ namespace m0.UIWpf.UX
 
         protected void MouseUpOrLeave(bool IsUp, MouseEventArgs e)
         {
-            EndItemMoveGraphInteractionIfNeeded();
-
-            if (ClickTarget == ClickTargetEnum.Selection)
+            try
             {
-                SelectItemsBySelectionArea();
-
-                SelectionArea.HideSelectionArea();
-            }
-            if (!(ClickedItem is FrameworkElement))
-                return;
-
-            FrameworkElement ClickedItem_FrameworkElemet = (FrameworkElement)ClickedItem;
-
-            SetFocus();
-
-            if (ClickTarget == ClickTargetEnum.Item)
-                if (IsMultiSelectionMoving)
-                    RemoveMultiSelectionMovingSprites(e.GetPosition(ClickedItem_FrameworkElemet).X - ClickPositionX_ItemCordinates,
-                            e.GetPosition(ClickedItem_FrameworkElemet).Y - ClickPositionY_ItemCordinates);
-                else
-                    CheckAndUpdateItemParent(ClickedItem, false);
-
-
-            if (ClickTarget == ClickTargetEnum.AnchorRightTop_CreateDiagramLine
-                || ClickTarget == ClickTargetEnum.AnchorRightTop_SubItem_CreateDiagramLine)
-            {
-                if (HighlightedItem != null)
+                if (ClickTarget == ClickTargetEnum.Selection)
                 {
-                    HighlightedItem.Unhighlight();
+                    SelectItemsBySelectionArea();
 
-                    if (IsUp)
-                        DoCreateDiagramLine(ClickedItem, HighlightedItem);
+                    SelectionArea.HideSelectionArea();
+                }
+                if (!(ClickedItem is FrameworkElement))
+                    return;
+
+                FrameworkElement ClickedItem_FrameworkElemet = (FrameworkElement)ClickedItem;
+
+                SetFocus();
+
+                if (ClickTarget == ClickTargetEnum.Item)
+                    if (IsMultiSelectionMoving)
+                        RemoveMultiSelectionMovingSprites(e.GetPosition(ClickedItem_FrameworkElemet).X - ClickPositionX_ItemCordinates,
+                                e.GetPosition(ClickedItem_FrameworkElemet).Y - ClickPositionY_ItemCordinates);
+                    else
+                    {
+                        // Keep reparenting and line synchronization in the drag transaction.
+                        CheckAndUpdateItemParent(ClickedItem, false);
+                        PersistDraggedItemPosition(ClickedItem);
+                    }
+
+
+                if (ClickTarget == ClickTargetEnum.AnchorRightTop_CreateDiagramLine
+                    || ClickTarget == ClickTargetEnum.AnchorRightTop_SubItem_CreateDiagramLine)
+                {
+                    if (HighlightedItem != null)
+                    {
+                        HighlightedItem.Unhighlight();
+
+                        if (IsUp)
+                            DoCreateDiagramLine(ClickedItem, HighlightedItem);
+                    }
+
+                    HighlightedItem = null;
+                    Canvas.Children.Remove(CreateOrMoveDiagramLine);
+                    CreateOrMoveDiagramLine = null;
+
+                    IsDrawingOrMovingLine = false;
                 }
 
-                HighlightedItem = null;
-                Canvas.Children.Remove(CreateOrMoveDiagramLine);
-                CreateOrMoveDiagramLine = null;
-
-                IsDrawingOrMovingLine = false;
-            }
-
-            if (ClickTarget == ClickTargetEnum.AnchorRightTop_MoveDiagramLine)
-            {
-                if (HighlightedItem != null)
+                if (ClickTarget == ClickTargetEnum.AnchorRightTop_MoveDiagramLine)
                 {
-                    HighlightedItem.Unhighlight();
+                    if (HighlightedItem != null)
+                    {
+                        HighlightedItem.Unhighlight();
 
-                    if (IsUp)
-                        DoMoveLineProcess(SelectedLine_FromItem, HighlightedItem, SelectedLine);
+                        if (IsUp)
+                            DoMoveLineProcess(SelectedLine_FromItem, HighlightedItem, SelectedLine);
+                    }
+
+                    HighlightedItem = null;
+                    Canvas.Children.Remove(CreateOrMoveDiagramLine);
+                    CreateOrMoveDiagramLine = null;
+
+                    IsDrawingOrMovingLine = false;
                 }
 
-                HighlightedItem = null;
-                Canvas.Children.Remove(CreateOrMoveDiagramLine);
-                CreateOrMoveDiagramLine = null;
-
-                IsDrawingOrMovingLine = false;
+                ClickTarget = ClickTargetEnum.MouseUpOrLeave;
             }
-
-            ClickTarget = ClickTargetEnum.MouseUpOrLeave;
+            finally
+            {
+                EndItemMoveGraphInteractionIfNeeded();
+            }
         }
 
         void BeginItemMoveGraphInteractionIfNeeded()
@@ -1401,6 +1408,26 @@ namespace m0.UIWpf.UX
             UXPerfLog.Count("UXVisualiser.ItemMoveGraphInteraction.Begin");
         }
 
+        void BeginItemResizeGraphInteractionIfNeeded()
+        {
+            if (itemMoveGraphInteractionActive)
+                return;
+
+            BeginItemMoveGraphInteractionIfNeeded();
+            UXPerfLog.Count("UXVisualiser.ItemResizeGraphInteraction.Begin");
+        }
+
+        static bool IsResizeClickTarget(ClickTargetEnum clickTarget)
+        {
+            return clickTarget == ClickTargetEnum.AnchorLeftTop
+                || clickTarget == ClickTargetEnum.AnchorMiddleTop
+                || clickTarget == ClickTargetEnum.AnchorLeftMiddle
+                || clickTarget == ClickTargetEnum.AnchorRightMiddle
+                || clickTarget == ClickTargetEnum.AnchorLeftBottom
+                || clickTarget == ClickTargetEnum.AnchorMiddleBottom
+                || clickTarget == ClickTargetEnum.AnchorRightBottom;
+        }
+
         void EndItemMoveGraphInteractionIfNeeded()
         {
             if (!itemMoveGraphInteractionActive)
@@ -1409,6 +1436,31 @@ namespace m0.UIWpf.UX
             Interaction.EndInteractionWithGraph();
             itemMoveGraphInteractionActive = false;
             UXPerfLog.Count("UXVisualiser.ItemMoveGraphInteraction.End");
+        }
+
+        void PersistDraggedItemPosition(IUXItem item)
+        {
+            if (!(item is UIElement itemElement))
+                return;
+
+            double x = Canvas.GetLeft(itemElement);
+            double y = Canvas.GetTop(itemElement);
+
+            if (double.IsNaN(x) || double.IsNaN(y))
+                return;
+
+            Position position = item.Position;
+
+            if (position == null || (position.X == x && position.Y == y))
+                return;
+
+            long t0 = UXPerfLog.Timestamp();
+
+            position.X = x;
+            position.Y = y;
+
+            UXPerfLog.Record("UXVisualiser.PersistDraggedItemPosition",
+                UXPerfLog.Timestamp() - t0);
         }
 
         //protected void MouseMoveHandler(object sender, MouseEventArgs e)
@@ -1428,6 +1480,9 @@ namespace m0.UIWpf.UX
                     return;
 
                 FrameworkElement ClickedItem_FrameworkElement = (FrameworkElement)ClickedItem;
+
+                if (IsResizeClickTarget(ClickTarget))
+                    BeginItemResizeGraphInteractionIfNeeded();
 
                 //
 
@@ -2034,35 +2089,62 @@ namespace m0.UIWpf.UX
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
 
-            IUXContainer OldParentItem = (IUXContainer)item.ParentItem;
+            try
+            {
+                IUXContainer OldParentItem = (IUXContainer)item.ParentItem;
 
-            if (OldParentItem == null)
-                OldParentItem = this;
+                if (OldParentItem == null)
+                    OldParentItem = this;
 
-            OldParentItem.Canvas.Children.Remove((UIElement)item);
+                UIElement itemElement = (UIElement)item;
+                double itemLeft = Canvas.GetLeft(itemElement);
+                double itemTop = Canvas.GetTop(itemElement);
 
-            NewParentItem.MoveExistingItemAsThisItemsSubItem(item);
+                if (double.IsNaN(itemLeft) || double.IsNaN(itemTop))
+                {
+                    Position itemPosition = item.Position;
+                    itemLeft = itemPosition.X;
+                    itemTop = itemPosition.Y;
+                }
 
-            NewParentItem.Canvas.Children.Add((UIElement)item);
+                OldParentItem.Canvas.Children.Remove(itemElement);
 
-            FindAndOrCreateContainerEdge(item, true);
+                NewParentItem.MoveExistingItemAsThisItemsSubItem(item);
 
-            Point newPosition = OldParentItem.Canvas.TranslatePoint(item.Position.GetPoint(), NewParentItem.Canvas);
+                NewParentItem.Canvas.Children.Add(itemElement);
 
-            Position p = item.Position;
-            p.X = newPosition.X;
-            p.Y = newPosition.Y;
+                FindAndOrCreateContainerEdge(item, true);
 
-            Canvas.SetLeft((UIElement)item, p.X);
-            Canvas.SetTop((UIElement)item, p.Y);
+                Point newPosition = OldParentItem.Canvas.TranslatePoint(
+                    new Point(itemLeft, itemTop),
+                    NewParentItem.Canvas);
 
-            needRebuildItemsDictionary();
+                Position p = item.Position;
+                p.X = newPosition.X;
+                p.Y = newPosition.Y;
 
-            ////////////////////////////////////////
-            Interaction.EndInteractionWithGraph();
-            ////////////////////////////////////////
+                Canvas.SetLeft(itemElement, p.X);
+                Canvas.SetTop(itemElement, p.Y);
 
-            CheckAndUpdateDiagramLinesForItem(OldParentItem); // container edge might need to be shown
+                needRebuildItemsDictionary();
+
+                // The visual has just changed Canvas. Arrange it before creating the
+                // now-visible container line, otherwise TranslatePoint can use its
+                // stale transform and place the aggregation end outside the diagram.
+                long tLayout = UXPerfLog.Timestamp();
+                itemElement.UpdateLayout();
+                UXPerfLog.Record("UXVisualiser.MoveToParentItem.UpdateLayout",
+                    UXPerfLog.Timestamp() - tLayout);
+
+                // Keep line graph changes in the same transaction as reparenting.
+                CheckAndUpdateDiagramLinesForItem(OldParentItem);
+            }
+            finally
+            {
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                ////////////////////////////////////////
+            }
         }
 
         // IHasLocalizableEdges
@@ -2566,13 +2648,17 @@ namespace m0.UIWpf.UX
             long tFilterContainerEdges = UXPerfLog.Timestamp();
             List<IEdge> unmatchedEdges = edges.Where(e => !IsContainerEdge(e)).ToList();
             long filterContainerEdgesTicks = UXPerfLog.Timestamp() - tFilterContainerEdges;
+            Dictionary<(IVertex Meta, IVertex To), int> unmatchedEdgeCounts =
+                unmatchedEdges
+                    .GroupBy(e => (e.Meta, e.To))
+                    .ToDictionary(g => g.Key, g => g.Count());
 
             int decoratorsChecked = 0;
             int linesRemoved = 0;
             long matchingTicks = 0;
             long removeLinesTicks = 0;
 
-            foreach (IUXItem decorator in item.Decorators)
+            foreach (IUXItem decorator in item.Decorators.ToList())
             {
                 if (!(decorator is ILineDecoratorBase))
                     continue;
@@ -2586,12 +2672,18 @@ namespace m0.UIWpf.UX
                     continue;
 
                 long tMatching = UXPerfLog.Timestamp();
-                IEdge matchingEdge = unmatchedEdges.FirstOrDefault(e =>
-                    e.Meta == decoratorBaseEdge.Meta && e.To == decoratorBaseEdge.To);
+                var key = (decoratorBaseEdge.Meta, decoratorBaseEdge.To);
+                bool hasMatchingEdge = unmatchedEdgeCounts.TryGetValue(key, out int matchingEdgeCount)
+                    && matchingEdgeCount > 0;
                 matchingTicks += UXPerfLog.Timestamp() - tMatching;
 
-                if (matchingEdge != null)
-                    unmatchedEdges.Remove(matchingEdge);
+                if (hasMatchingEdge)
+                {
+                    if (matchingEdgeCount == 1)
+                        unmatchedEdgeCounts.Remove(key);
+                    else
+                        unmatchedEdgeCounts[key] = matchingEdgeCount - 1;
+                }
                 else
                 {
                     long tRemoveLine = UXPerfLog.Timestamp();
@@ -2604,7 +2696,7 @@ namespace m0.UIWpf.UX
             long totalTicks = UXPerfLog.Timestamp() - t0;
 
             UXPerfLog.Record("UXVisualiser.RemoveUnmatched.FilterContainerEdges", filterContainerEdgesTicks,
-                unmatchedEdges.Count, "remainingEdges");
+                unmatchedEdgeCounts.Values.Sum(), "remainingEdges");
             UXPerfLog.Record("UXVisualiser.RemoveUnmatched.MatchDecorators", matchingTicks,
                 decoratorsChecked, "decorators");
             UXPerfLog.Record("UXVisualiser.RemoveUnmatched.RemoveLines", removeLinesTicks,
@@ -2658,8 +2750,10 @@ namespace m0.UIWpf.UX
                 bool needAdding = true;
 
                 long tExistingLineLookup = UXPerfLog.Timestamp();
-                if (item.GetDiagramLinesBaseEdgeToDictionary().ContainsKey(e.To))
-                    foreach (ILineDecoratorBase l in item.GetDiagramLinesBaseEdgeToDictionary()[e.To])
+                Dictionary<IVertex, List<ILineDecoratorBase>> diagramLinesByBaseEdgeTo =
+                    item.GetDiagramLinesBaseEdgeToDictionary();
+                if (diagramLinesByBaseEdgeTo.TryGetValue(e.To, out List<ILineDecoratorBase> existingLines))
+                    foreach (ILineDecoratorBase l in existingLines)
                     {
                         IVertex l_BaseEdge = GraphUtil.GetQueryOutFirst(l.Vertex, "BaseEdge", null);
 

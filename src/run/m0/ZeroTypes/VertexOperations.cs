@@ -1138,6 +1138,35 @@ namespace m0.ZeroTypes
                     if (e.Meta == metaVertex)
                         cnt++;
 
+                int rawMetaCount = baseVertex.OutEdgesRaw.Count(
+                    e => e.Meta == metaVertex);
+                int inheritedMetaCount = cnt - rawMetaCount;
+
+                MinusZero.Instance.Log(
+                    1,
+                    "VertexOperations.Cardinality",
+                    "rule=MaxSourceCardinality" +
+                    " source=" + baseVertex +
+                    " sourceValue=" + baseVertex.Value +
+                    " meta=" + metaVertex +
+                    " metaValue=" + metaVertex.Value +
+                    " max=" + MaxCardinality +
+                    " logicalMetaCount=" + cnt +
+                    " rawMetaCount=" + rawMetaCount +
+                    " inheritedMetaCount=" + inheritedMetaCount +
+                    " logicalTotal=" + baseVertex.OutEdges.Count +
+                    " rawTotal=" + baseVertex.OutEdgesRaw.Count +
+                    " logicalMatches=[" +
+                    string.Join(
+                        ";",
+                        baseVertex
+                            .Where(e => e.Meta == metaVertex)
+                            .Take(20)
+                            .Select(e =>
+                                "from=" + e.From?.Value +
+                                ",to=" + e.To?.Value)) +
+                    "]");
+
                 if ((cnt + 1) > MaxCardinality)
                 {
                     IVertex v = MinusZero.Instance.CreateTempVertex();

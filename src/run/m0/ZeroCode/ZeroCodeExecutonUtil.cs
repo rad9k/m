@@ -3,6 +3,7 @@ using m0.Graph;
 using m0.Util;
 using m0.ZeroCode.Helpers;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,6 +20,74 @@ namespace m0.ZeroCode
 
         static IVertex this_meta = r.Get(false, @"System\Meta\ZeroUML\this");
         static IVertex NextAtom_meta = r.Get(false, @"System\FormalTextLanguage\ZeroCode\NextAtomEdge:");
+
+        private readonly struct ExecutionEdgeSnapshot
+            : IDisposable
+        {
+            private readonly IEdge[] edges;
+
+            internal ExecutionEdgeSnapshot(
+                IEdge[] edges,
+                int count)
+            {
+                this.edges = edges;
+                Count = count;
+            }
+
+            internal int Count { get; }
+
+            internal IEdge this[int index] =>
+                edges[index];
+
+            public void Dispose()
+            {
+                Array.Clear(
+                    edges,
+                    0,
+                    Count);
+                ArrayPool<IEdge>.Shared.Return(
+                    edges);
+            }
+        }
+
+        private static ExecutionEdgeSnapshot
+            CaptureExecutionEdges(
+                IList<IEdge> edges)
+        {
+            int count = edges.Count;
+            IEdge[] snapshot =
+                ArrayPool<IEdge>.Shared.Rent(
+                    count);
+            for (int index = 0;
+                index < count;
+                index++)
+            {
+                snapshot[index] =
+                    edges[index];
+            }
+
+            return new ExecutionEdgeSnapshot(
+                snapshot,
+                count);
+        }
+
+        private static bool HasExecutableNextAtomEdge(
+            IVertex vertex)
+        {
+            IList<IEdge> edges =
+                vertex.OutEdgesRaw;
+            for (int index = 0;
+                index < edges.Count;
+                index++)
+            {
+                IEdge edge = edges[index];
+                if (edge.Meta == NextAtom_meta &&
+                    !ZeroCodeUtil.ShouldNotExecute(edge))
+                    return true;
+            }
+
+            return false;
+        }
 
 
         public static void CreateExecutionAndVertexMethodExecute(IVertex endPoint, IVertex theObject)
@@ -77,23 +146,19 @@ namespace m0.ZeroCode
 
                 INoInEdgeInOutVertexVertex possibleToReturnStack;
 
-                foreach (IEdge e in baseVertex.OutEdgesRaw.ToList()) // ToList needed as code vertexes can be modified during execution
-                    if (e.Meta != NextAtom_meta && !ZeroCodeUtil.ShouldNotExecute(e)) // EXECUTE BLOCK BEG
+                IList<IEdge> directEdges =
+                    baseVertex.OutEdgesRaw;
+                if (directEdges.Count == 1)
+                {
+                    IEdge edge = directEdges[0];
+                    if (edge.Meta != NextAtom_meta &&
+                        !ZeroCodeUtil.ShouldNotExecute(edge))
                     {
-                        possibleToReturnStack = exe.ExecuteInstruction(inStack, e.To, out local_isStackFrameReturn);
-
-                        if (local_isStackFrameReturn)
-                        {
-                            isStackFrameReturn = true;
-
-                            return possibleToReturnStack;
-                        }
-                    } // EXECUTE BLOCK END
-
-                foreach (IEdge e in baseVertex.OutEdgesRaw.ToList()) // ToList needed as code vertexes can be modified during execution
-                    if (e.Meta != NextAtom_meta)
-                    {
-                        possibleToReturnStack = SequentiallyExecuteInstructions_NextEdges(exe, inStack, e.To, out local_isStackFrameReturn);
+                        possibleToReturnStack =
+                            exe.ExecuteInstruction(
+                                inStack,
+                                edge.To,
+                                out local_isStackFrameReturn);
 
                         if (local_isStackFrameReturn)
                         {
@@ -102,6 +167,136 @@ namespace m0.ZeroCode
                             return possibleToReturnStack;
                         }
                     }
+                }
+                else if (directEdges.Count > 1)
+                {
+                    IEdge singleExecutableEdge = null;
+                    bool hasMultipleExecutableEdges = false;
+                    for (int index = 0;
+                        index < directEdges.Count;
+                        index++)
+                    {
+                        IEdge edge = directEdges[index];
+                        if (edge.Meta == NextAtom_meta ||
+                            ZeroCodeUtil.ShouldNotExecute(edge))
+                            continue;
+
+                        if (singleExecutableEdge == null)
+                        {
+                            singleExecutableEdge = edge;
+                            continue;
+                        }
+
+                        hasMultipleExecutableEdges = true;
+                        break;
+                    }
+
+                    if (!hasMultipleExecutableEdges)
+                    {
+                        if (singleExecutableEdge != null)
+                        {
+                            possibleToReturnStack =
+                                exe.ExecuteInstruction(
+                                    inStack,
+                                    singleExecutableEdge.To,
+                                    out local_isStackFrameReturn);
+
+                            if (local_isStackFrameReturn)
+                            {
+                                isStackFrameReturn = true;
+                                return possibleToReturnStack;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // A snapshot is required because code can
+                        // modify its own vertex while an instruction
+                        // executes.
+                        using ExecutionEdgeSnapshot snapshot =
+                            CaptureExecutionEdges(
+                                directEdges);
+                        for (int index = 0;
+                            index < snapshot.Count;
+                            index++)
+                        {
+                            IEdge edge =
+                                snapshot[index];
+                            if (edge.Meta == NextAtom_meta ||
+                                ZeroCodeUtil.ShouldNotExecute(edge))
+                                continue;
+
+                            possibleToReturnStack =
+                                exe.ExecuteInstruction(
+                                    inStack,
+                                    edge.To,
+                                    out local_isStackFrameReturn);
+
+                            if (local_isStackFrameReturn)
+                            {
+                                isStackFrameReturn = true;
+                                return possibleToReturnStack;
+                            }
+                        }
+                    }
+                }
+
+                directEdges = baseVertex.OutEdgesRaw;
+                if (directEdges.Count == 1)
+                {
+                    IEdge edge = directEdges[0];
+                    if (edge.Meta != NextAtom_meta &&
+                        HasExecutableNextAtomEdge(
+                            edge.To))
+                    {
+                        possibleToReturnStack =
+                            SequentiallyExecuteInstructions_NextEdges(
+                                exe,
+                                inStack,
+                                edge.To,
+                                out local_isStackFrameReturn);
+
+                        if (local_isStackFrameReturn)
+                        {
+                            isStackFrameReturn = true;
+
+                            return possibleToReturnStack;
+                        }
+                    }
+                }
+                else if (directEdges.Count > 1)
+                {
+                    // Take a new snapshot so mutations made in the
+                    // direct-execution pass remain visible here.
+                    using ExecutionEdgeSnapshot snapshot =
+                        CaptureExecutionEdges(
+                            directEdges);
+                    for (int index = 0;
+                        index < snapshot.Count;
+                        index++)
+                    {
+                        IEdge edge =
+                            snapshot[index];
+                        if (edge.Meta == NextAtom_meta ||
+                            !HasExecutableNextAtomEdge(
+                                edge.To))
+                            continue;
+
+                        possibleToReturnStack =
+                            SequentiallyExecuteInstructions_NextEdges(
+                                exe,
+                                inStack,
+                                edge.To,
+                                out local_isStackFrameReturn);
+
+                        if (local_isStackFrameReturn)
+                        {
+                            isStackFrameReturn = true;
+
+                            return possibleToReturnStack;
+                        }
+                    }
+                }
 
                 return inStack;
             } catch (Exception ex)

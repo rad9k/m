@@ -42,7 +42,14 @@ namespace m0.Graph.ExecutionFlow
             new Dictionary<IVertex, List<GraphChangeTransactionAtom>>(
                 ReferenceEqualityComparer.Instance);
 
-        IList<ISecondStageCommitAction> secondStageCommitActionList = new List<ISecondStageCommitAction>();
+        List<ISecondStageCommitAction> secondStageCommitActionList =
+            new List<ISecondStageCommitAction>();
+        readonly HashSet<ISecondStageCommitAction> queuedSecondStageCommitActions =
+            new HashSet<ISecondStageCommitAction>(
+                ReferenceEqualityComparer.Instance);
+        int secondStageCommitActionsQueued;
+        int duplicateSecondStageCommitActionsSuppressed;
+        int secondStageCommitActionPeakQueueCount;
 
         ITransaction previous;
         public ITransaction Previous { get => previous; }
@@ -484,25 +491,79 @@ namespace m0.Graph.ExecutionFlow
         {
             long t0 = TxPerfLog.Timestamp();
             int actionsExecuted = 0;
+            int processingRounds = 0;
+            Dictionary<Type, (long TotalTicks, int ActionCount)> actionTypeStatistics =
+                new Dictionary<Type, (long TotalTicks, int ActionCount)>();
 
-            IList<ISecondStageCommitAction> secondStageCommitActionList_copy;
-
-            while(secondStageCommitActionList.Count() > 0)
+            while (secondStageCommitActionList.Count > 0)
             {
-                secondStageCommitActionList_copy = secondStageCommitActionList.ToList();
+                processingRounds++;
+                List<ISecondStageCommitAction> actionsToExecute =
+                    secondStageCommitActionList;
+                secondStageCommitActionList =
+                    new List<ISecondStageCommitAction>();
 
-                secondStageCommitActionList.Clear();
-
-                foreach (ISecondStageCommitAction a in secondStageCommitActionList_copy)
+                foreach (ISecondStageCommitAction action in actionsToExecute)
                 {
+                    // Remove immediately before execution. This suppresses duplicate
+                    // requests while an action is pending, but still permits an action
+                    // to schedule itself again when its execution changes graph state.
+                    queuedSecondStageCommitActions.Remove(action);
+
                     long tAction = TxPerfLog.Timestamp();
-                    a.ExecuteSecondStageCommitAction();
-                    TxPerfLog.Record("Transaction.SecondStage." + a.GetType().Name,
-                        TxPerfLog.Timestamp() - tAction);
+                    action.ExecuteSecondStageCommitAction();
+                    long actionTicks = TxPerfLog.Timestamp() - tAction;
+
+                    Type actionType = action.GetType();
+                    if (actionTypeStatistics.TryGetValue(
+                        actionType,
+                        out (long TotalTicks, int ActionCount) statistics))
+                    {
+                        actionTypeStatistics[actionType] =
+                            (statistics.TotalTicks + actionTicks,
+                             statistics.ActionCount + 1);
+                    }
+                    else
+                    {
+                        actionTypeStatistics.Add(
+                            actionType,
+                            (actionTicks, 1));
+                    }
+
                     actionsExecuted++;
                 }
             }
 
+            foreach (KeyValuePair<Type, (long TotalTicks, int ActionCount)> statistics
+                in actionTypeStatistics)
+            {
+                TxPerfLog.Record(
+                    "Transaction.SecondStage." + statistics.Key.Name + ".ExecuteBatch",
+                    statistics.Value.TotalTicks,
+                    statistics.Value.ActionCount,
+                    "actions");
+            }
+
+            TxPerfLog.CountWithExtra(
+                "Transaction.SecondStage.Queue",
+                1,
+                secondStageCommitActionsQueued,
+                "queued");
+            TxPerfLog.CountWithExtra(
+                "Transaction.SecondStage.DuplicatesSuppressed",
+                1,
+                duplicateSecondStageCommitActionsSuppressed,
+                "duplicates");
+            TxPerfLog.CountWithExtra(
+                "Transaction.SecondStage.PeakQueue",
+                1,
+                secondStageCommitActionPeakQueueCount,
+                "actions");
+            TxPerfLog.CountWithExtra(
+                "Transaction.SecondStage.ProcessingRounds",
+                1,
+                processingRounds,
+                "rounds");
             TxPerfLog.Record("Transaction.Commit_SecondStage", TxPerfLog.Timestamp() - t0,
                 actionsExecuted, "actions");
         }
@@ -583,6 +644,7 @@ namespace m0.Graph.ExecutionFlow
             graphChangeTransactionAtoms_InEdge.Clear();
             graphChangeTransactionAtoms_MetaEdge.Clear();
             secondStageCommitActionList.Clear();
+            queuedSecondStageCommitActions.Clear();
         }
 
         public void Rollback(IExecution exe)
@@ -890,7 +952,21 @@ namespace m0.Graph.ExecutionFlow
 
         public void AddSecondStageCommitAction(ISecondStageCommitAction commitAction)
         {
+            if (!queuedSecondStageCommitActions.Add(commitAction))
+            {
+                duplicateSecondStageCommitActionsSuppressed++;
+                return;
+            }
+
             secondStageCommitActionList.Add(commitAction);
+            secondStageCommitActionsQueued++;
+
+            if (secondStageCommitActionList.Count >
+                secondStageCommitActionPeakQueueCount)
+            {
+                secondStageCommitActionPeakQueueCount =
+                    secondStageCommitActionList.Count;
+            }
         }
     }
 }

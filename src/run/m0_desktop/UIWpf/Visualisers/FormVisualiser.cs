@@ -62,6 +62,7 @@ namespace m0.UIWpf.Visualisers
         private const bool KeyboardNavLogEnabled = true;
         private const string KeyboardNavLogWhere = "FormVisualiser.KeyboardNav";
         private const string DisposeNestingLogWhere = "FormVisualiser.DisposeNesting";
+        private const string VertexChangeLogWhere = "FormVisualiser.VertexChange";
 
         public event Notify SelectedEdgesChange;
 
@@ -242,12 +243,58 @@ namespace m0.UIWpf.Visualisers
 
         private INoInEdgeInOutVertexVertex FormVertexChange(IExecution exe)
         {
+            IVertex baseEdge = Vertex.Get(false, @"BaseEdge:");
             IVertex baseEdgeTo = Vertex.Get(false, @"BaseEdge:\To:");
 
             if (baseEdgeTo != null && ContainsOnlyValueChangesOfVertex(exe.Stack, baseEdgeTo))
                 return exe.Stack;
 
-            return ((ListVisualiserHelper)VisualiserHelper).VertexChangeLogic(exe);
+            ListVisualiserHelper helper = (ListVisualiserHelper)VisualiserHelper;
+            bool baseEdgeMatch = ExecutionFlowHelper.IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, baseEdge);
+            bool baseEdgeToMatch = ExecutionFlowHelper.IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, baseEdgeTo);
+            List<string> triggeringMetas = GetTriggeringUpdateMetas(exe.Stack);
+            bool suppressTypedBaseEdgeToRebuild = helper.BaseEdgeToEventTriggeringUpdateVertex
+                && !baseEdgeMatch
+                && baseEdgeToMatch
+                && BaseVertexEdge != null;
+            bool willRebuild = triggeringMetas.Count > 0
+                || (helper.BaseEdgeToEventTriggeringUpdateVertex
+                    && (baseEdgeMatch || (baseEdgeToMatch && !suppressTypedBaseEdgeToRebuild)));
+
+            MinusZero.Instance.Log(1, VertexChangeLogWhere,
+                "decision=" + (willRebuild ? "rebuild" : "noRebuild")
+                + " formVertex=" + DescribeVertex(Vertex)
+                + " baseEdgeMatch=" + baseEdgeMatch
+                + " baseEdgeToMatch=" + baseEdgeToMatch
+                + " typedBaseEdgeToSuppressed=" + suppressTypedBaseEdgeToRebuild
+                + " triggeringMetas=[" + string.Join(",", triggeringMetas) + "]"
+                + " " + DescribeGraphChangeEvents(exe.Stack, baseEdge, baseEdgeTo));
+
+            if (!suppressTypedBaseEdgeToRebuild)
+                return helper.VertexChangeLogic(exe);
+
+            bool originalBaseEdgeToEventTriggeringUpdateVertex = helper.BaseEdgeToEventTriggeringUpdateVertex;
+
+            try
+            {
+                helper.BaseEdgeToEventTriggeringUpdateVertex = false;
+                return helper.VertexChangeLogic(exe);
+            }
+            finally
+            {
+                helper.BaseEdgeToEventTriggeringUpdateVertex = originalBaseEdgeToEventTriggeringUpdateVertex;
+            }
+        }
+
+        private List<string> GetTriggeringUpdateMetas(IVertex stack)
+        {
+            List<string> result = new List<string>();
+
+            foreach (string meta in MetaTriggeringUpdateVertex)
+                if (ExecutionFlowHelper.IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(stack, Vertex, meta))
+                    result.Add(meta);
+
+            return result;
         }
 
         private static bool ContainsOnlyValueChangesOfVertex(IVertex stack, IVertex vertex)
@@ -2485,6 +2532,63 @@ namespace m0.UIWpf.Visualisers
             string to = edge.To?.Value?.ToString() ?? "";
 
             return "Meta=" + meta + " To=" + to;
+        }
+
+        private static string DescribeGraphChangeEvents(IVertex stack, IVertex baseEdge, IVertex baseEdgeTo)
+        {
+            int eventCount = 0;
+            int relevantEventCount = 0;
+            Dictionary<string, int> typeCounts = new Dictionary<string, int>();
+            List<string> relevantEvents = new List<string>();
+
+            foreach (IEdge eventEdge in GraphUtil.GetQueryOut(stack, "event", null))
+            {
+                eventCount++;
+
+                IVertex eventVertex = eventEdge.To;
+                IVertex type = GraphUtil.GetQueryOutFirst(eventVertex, "Type", null);
+                IVertex changedVertex = GraphUtil.GetQueryOutFirst(eventVertex, "ChangedVertex", null);
+                IVertex edgeVertex = GraphUtil.GetQueryOutFirst(eventVertex, "Edge", null);
+                IVertex from = edgeVertex == null ? null : GraphUtil.GetQueryOutFirst(edgeVertex, "From", null);
+                IVertex meta = edgeVertex == null ? null : GraphUtil.GetQueryOutFirst(edgeVertex, "Meta", null);
+                IVertex to = edgeVertex == null ? null : GraphUtil.GetQueryOutFirst(edgeVertex, "To", null);
+                string typeName = type?.Value?.ToString() ?? "null";
+
+                if (!typeCounts.ContainsKey(typeName))
+                    typeCounts[typeName] = 0;
+
+                typeCounts[typeName]++;
+
+                bool isRelevant = changedVertex == baseEdge
+                    || changedVertex == baseEdgeTo
+                    || from == baseEdge
+                    || from == baseEdgeTo
+                    || to == baseEdge
+                    || to == baseEdgeTo;
+
+                if (!isRelevant)
+                    continue;
+
+                relevantEventCount++;
+
+                if (relevantEvents.Count >= 12)
+                    continue;
+
+                relevantEvents.Add(
+                    typeName
+                    + "{changed=" + DescribeVertex(changedVertex)
+                    + ",from=" + DescribeVertex(from)
+                    + ",meta=" + DescribeVertex(meta)
+                    + ",to=" + DescribeVertex(to) + "}");
+            }
+
+            string typeSummary = string.Join(",",
+                typeCounts.OrderBy(pair => pair.Key).Select(pair => pair.Key + "=" + pair.Value));
+
+            return "events=" + eventCount
+                + " relevant=" + relevantEventCount
+                + " types=[" + typeSummary + "]"
+                + " relevantSample=[" + string.Join(";", relevantEvents) + "]";
         }
     }
 }

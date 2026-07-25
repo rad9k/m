@@ -30,6 +30,7 @@
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="m0_graph_benchmarks" />
+    <InternalsVisibleTo Include="m0_graph_integration_tests" />
     <InternalsVisibleTo Include="m0_graph_tests" />
   </ItemGroup>
   <ItemGroup>

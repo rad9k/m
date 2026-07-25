@@ -21,22 +21,171 @@ namespace m0.Graph
 
         public bool IsRoot { get; set; }
 
-        protected IDictionary<object, object> _OutEdgesByMeta;
+        [Serializable]
+        private sealed class VertexIndexDictionaries
+        {
+            public IDictionary<object, object> OutEdgesByMeta;
+            public Dictionary<string, object> OutEdgesByValue;
+            public Dictionary<GraphUtil.MetaAndValueKey, object>
+                OutEdgesByMetaAndValue;
+            public Dictionary<string, object> InEdgesByMeta;
+            public Dictionary<string, object> InEdgesByValue;
+            public Dictionary<GraphUtil.MetaAndValueKey, object>
+                InEdgesByMetaAndValue;
+        }
+
+        private VertexIndexDictionaries vertexIndexDictionaries;
+
+        private VertexIndexDictionaries GetVertexIndexDictionaries()
+        {
+            return vertexIndexDictionaries ??=
+                new VertexIndexDictionaries();
+        }
+
+        protected IDictionary<object, object> _OutEdgesByMeta
+        {
+            get
+            {
+                return vertexIndexDictionaries
+                    ?.OutEdgesByMeta;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    if (vertexIndexDictionaries != null)
+                        vertexIndexDictionaries.OutEdgesByMeta =
+                            null;
+                    return;
+                }
+
+                GetVertexIndexDictionaries()
+                    .OutEdgesByMeta = value;
+            }
+        }
+
         public IDictionary<object, object> OutEdgesByMeta { get { return _OutEdgesByMeta; } }
 
-        protected Dictionary<string, object> _OutEdgesByValue;
+        protected Dictionary<string, object> _OutEdgesByValue
+        {
+            get
+            {
+                return vertexIndexDictionaries
+                    ?.OutEdgesByValue;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    if (vertexIndexDictionaries != null)
+                        vertexIndexDictionaries.OutEdgesByValue =
+                            null;
+                    return;
+                }
+
+                GetVertexIndexDictionaries()
+                    .OutEdgesByValue = value;
+            }
+        }
+
         public Dictionary<string, object> OutEdgesByValue { get { return _OutEdgesByValue; } }
 
-        protected Dictionary<GraphUtil.MetaAndValueKey, object> _OutEdgesByMetaAndValue;
+        protected Dictionary<GraphUtil.MetaAndValueKey, object>
+            _OutEdgesByMetaAndValue
+        {
+            get
+            {
+                return vertexIndexDictionaries
+                    ?.OutEdgesByMetaAndValue;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    if (vertexIndexDictionaries != null)
+                        vertexIndexDictionaries
+                            .OutEdgesByMetaAndValue = null;
+                    return;
+                }
+
+                GetVertexIndexDictionaries()
+                    .OutEdgesByMetaAndValue = value;
+            }
+        }
+
         public Dictionary<GraphUtil.MetaAndValueKey, object> OutEdgesByMetaAndValue { get { return _OutEdgesByMetaAndValue; } }
 
-        protected Dictionary<string, object> _InEdgesByMeta;
+        protected Dictionary<string, object> _InEdgesByMeta
+        {
+            get
+            {
+                return vertexIndexDictionaries
+                    ?.InEdgesByMeta;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    if (vertexIndexDictionaries != null)
+                        vertexIndexDictionaries.InEdgesByMeta =
+                            null;
+                    return;
+                }
+
+                GetVertexIndexDictionaries()
+                    .InEdgesByMeta = value;
+            }
+        }
+
         public Dictionary<string, object> InEdgesByMeta { get { return _InEdgesByMeta; } }
 
-        protected Dictionary<string, object> _InEdgesByValue;
+        protected Dictionary<string, object> _InEdgesByValue
+        {
+            get
+            {
+                return vertexIndexDictionaries
+                    ?.InEdgesByValue;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    if (vertexIndexDictionaries != null)
+                        vertexIndexDictionaries.InEdgesByValue =
+                            null;
+                    return;
+                }
+
+                GetVertexIndexDictionaries()
+                    .InEdgesByValue = value;
+            }
+        }
+
         public Dictionary<string, object> InEdgesByValue { get { return _InEdgesByValue; } }
 
-        protected Dictionary<GraphUtil.MetaAndValueKey, object> _InEdgesByMetaAndValue;
+        protected Dictionary<GraphUtil.MetaAndValueKey, object>
+            _InEdgesByMetaAndValue
+        {
+            get
+            {
+                return vertexIndexDictionaries
+                    ?.InEdgesByMetaAndValue;
+            }
+            set
+            {
+                if (value == null)
+                {
+                    if (vertexIndexDictionaries != null)
+                        vertexIndexDictionaries
+                            .InEdgesByMetaAndValue = null;
+                    return;
+                }
+
+                GetVertexIndexDictionaries()
+                    .InEdgesByMetaAndValue = value;
+            }
+        }
+
         public Dictionary<GraphUtil.MetaAndValueKey, object> InEdgesByMetaAndValue { get { return _InEdgesByMetaAndValue; } }
 
         private bool _InEdgesDictionariesNeedsRebuild;
@@ -71,7 +220,6 @@ namespace m0.Graph
         protected bool InEdgesDictionariesNeedsRebuild_MetaAndValue { get; set; }
 
         private bool _OutEdgesDictionariesNeedsRebuild;
-
         public bool OutEdgesDictionariesNeedsRebuild
         {
             get
@@ -216,12 +364,21 @@ namespace m0.Graph
             return (IVertex)Activator.CreateInstance(this.GetType(), new object[] { this.Store });
         }
 
+        protected virtual void InitializeNewVertexValue(
+            IVertex vertex,
+            object value)
+        {
+            vertex.Value = value;
+        }
+
         internal IVertex CreateVertexInstanceForCopy(object value)
         {
             IVertex vertex = CreateVertexInstance();
 
             if (value != null)
-                vertex.Value = value;
+                InitializeNewVertexValue(
+                    vertex,
+                    value);
 
             return vertex;
         }
@@ -245,7 +402,9 @@ namespace m0.Graph
             IVertex nv = CreateVertexInstance();
 
             if (val != null)
-                nv.Value = val;
+                InitializeNewVertexValue(
+                    nv,
+                    val);
 
             return AddEdge(metaVertex, nv);
         }
@@ -318,17 +477,9 @@ namespace m0.Graph
             get { return _Store; }
         }
 
-        IList<AccessLevelEnum> _AccessLevel;
-        
-        public virtual IList<AccessLevelEnum> AccessLevel
-        {
-            get { return _AccessLevel; }
-        }
-
         public VertexBase(IStore _Store)
         {            
             this._Store = _Store;
-            _AccessLevel = GeneralUtil.CreateAndCopyList<AccessLevelEnum>(this._Store.AccessLevel);            
         }        
 
         public override string ToString()

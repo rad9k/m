@@ -143,9 +143,10 @@ namespace m0.ZeroCode.Helpers
         // $Inherits target can have $Inherits also. This is not checked here, so basically IS WRONG
         // BUT as this seems to be working IN SOME PLACES, I leave it for now XXX
         {
-            IList<IEdge> allIs = InstructionHelpers.GetAllIs(baseVertex);            
-
-            foreach (IEdge e in allIs)                
+            foreach (IEdge e in GraphUtil.GetQueryOutResult(
+                baseVertex,
+                "$Is",
+                null))
                 if(GraphUtil.GetQueryOutCount(e.To, "$Inherits", value) > 0)                
                     return true;
 

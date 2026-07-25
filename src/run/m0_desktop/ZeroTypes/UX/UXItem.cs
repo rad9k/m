@@ -372,8 +372,22 @@ namespace m0.ZeroTypes.UX
             long tPositionRead = UXPerfLog.Timestamp();
             Position position = this.Position;
 
-            double deltax = position.X - x;
-            double deltay = position.Y - y;
+            bool deferGraphPositionPersistence =
+                !onlyAnchors &&
+                OwningVisualiser is UXVisualiser owningUxVisualiserForPositionPersistence &&
+                owningUxVisualiserForPositionPersistence.IsItemMoveGraphInteractionActive;
+
+            double currentX = deferGraphPositionPersistence ? Canvas.GetLeft(this) : position.X;
+            double currentY = deferGraphPositionPersistence ? Canvas.GetTop(this) : position.Y;
+
+            if (double.IsNaN(currentX))
+                currentX = position.X;
+
+            if (double.IsNaN(currentY))
+                currentY = position.Y;
+
+            double deltax = currentX - x;
+            double deltay = currentY - y;
             long positionReadTicks = UXPerfLog.Timestamp() - tPositionRead;
 
             long graphInteractionBeginTicks = 0;
@@ -383,22 +397,27 @@ namespace m0.ZeroTypes.UX
 
             if (!onlyAnchors)
             {
-                ////////////////////////////////////////
-                long tGraphInteractionBegin = UXPerfLog.Timestamp();
-                Interaction.BeginInteractionWithGraph();
-                graphInteractionBeginTicks = UXPerfLog.Timestamp() - tGraphInteractionBegin;
-                //////////////////////////////////////// 
+                if (!deferGraphPositionPersistence)
+                {
+                    ////////////////////////////////////////
+                    long tGraphInteractionBegin = UXPerfLog.Timestamp();
+                    Interaction.BeginInteractionWithGraph();
+                    graphInteractionBeginTicks = UXPerfLog.Timestamp() - tGraphInteractionBegin;
+                    ////////////////////////////////////////
 
-                long tGraphPositionWrite = UXPerfLog.Timestamp();
-                position.X = x;
-                position.Y = y;
-                graphPositionWriteTicks = UXPerfLog.Timestamp() - tGraphPositionWrite;
+                    long tGraphPositionWrite = UXPerfLog.Timestamp();
+                    position.X = x;
+                    position.Y = y;
+                    graphPositionWriteTicks = UXPerfLog.Timestamp() - tGraphPositionWrite;
 
-                ////////////////////////////////////////
-                long tGraphInteractionEnd = UXPerfLog.Timestamp();
-                Interaction.EndInteractionWithGraph();
-                graphInteractionEndTicks = UXPerfLog.Timestamp() - tGraphInteractionEnd;
-                ////////////////////////////////////////             
+                    ////////////////////////////////////////
+                    long tGraphInteractionEnd = UXPerfLog.Timestamp();
+                    Interaction.EndInteractionWithGraph();
+                    graphInteractionEndTicks = UXPerfLog.Timestamp() - tGraphInteractionEnd;
+                    ////////////////////////////////////////
+                }
+                else
+                    UXPerfLog.Count("UXItem.MoveItem.GraphPositionWrite.deferredUntilDragEnd");
 
                 long tCanvasPosition = UXPerfLog.Timestamp();
                 Canvas.SetLeft(this, x);
@@ -421,9 +440,7 @@ namespace m0.ZeroTypes.UX
 
             // During single-item drag we keep one open graph transaction and finish
             // parent reparenting on mouse up — skip forced layout + parent scan per move.
-            bool deferHeavyWorkDuringItemDrag =
-                OwningVisualiser is UXVisualiser owningUxVisualiser &&
-                owningUxVisualiser.IsItemMoveGraphInteractionActive;
+            bool deferHeavyWorkDuringItemDrag = deferGraphPositionPersistence;
 
             long layoutTicks = 0;
             if (!deferHeavyWorkDuringItemDrag)
@@ -443,15 +460,16 @@ namespace m0.ZeroTypes.UX
             UpdateDiagramLines();
             long linesTicks = UXPerfLog.Timestamp() - tLines;
 
-            long parentCheckTicks = 0;
-            if (!deferHeavyWorkDuringItemDrag)
-            {
-                long tParentCheck = UXPerfLog.Timestamp();
-                OwningVisualiser.CheckAndUpdateItemParent(this, true);
-                parentCheckTicks = UXPerfLog.Timestamp() - tParentCheck;
-            }
-            else
-                UXPerfLog.Count("UXItem.MoveItem.CheckAndUpdateItemParent.skippedDuringDrag");
+            // Parent detection must also run during drag. Otherwise a nested item remains
+            // in the container's clipped Canvas until mouse-up, while only its anchors
+            // (hosted by the visualiser Canvas) remain visible. The visualiser keeps one
+            // graph interaction open for the whole drag, so this does not commit per move.
+            long tParentCheck = UXPerfLog.Timestamp();
+            OwningVisualiser.CheckAndUpdateItemParent(this, deferHeavyWorkDuringItemDrag);
+            long parentCheckTicks = UXPerfLog.Timestamp() - tParentCheck;
+
+            if (deferHeavyWorkDuringItemDrag)
+                UXPerfLog.Count("UXItem.MoveItem.CheckAndUpdateItemParent.duringDrag");
 
             long totalTicks = UXPerfLog.Timestamp() - tMove;
 
@@ -510,6 +528,8 @@ namespace m0.ZeroTypes.UX
             if (width < 0 || height < 0)
                 return;
 
+            long tMoveAndResize = UXPerfLog.Timestamp();
+
             double x = x_orginal;
             double y = y_orginal;
 
@@ -527,23 +547,28 @@ namespace m0.ZeroTypes.UX
             Interaction.BeginInteractionWithGraph();
             //////////////////////////////////////// 
 
-            position.X = x;
-            position.Y = y;
+            try
+            {
+                position.X = x;
+                position.Y = y;
 
-            Canvas.SetLeft(this, x);
-            Canvas.SetTop(this, y);
+                Canvas.SetLeft(this, x);
+                Canvas.SetTop(this, y);
 
-            Size size = Size;
+                Size size = Size;
 
-            if (size == null)
-                size = SizeCreate();
+                if (size == null)
+                    size = SizeCreate();
 
-            size.Width = width;
-            size.Height = height;
-
-            ////////////////////////////////////////
-            Interaction.EndInteractionWithGraph();
-            //////////////////////////////////////// 
+                size.Width = width;
+                size.Height = height;
+            }
+            finally
+            {
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                ////////////////////////////////////////
+            }
 
             Width = width;
             Height = height;
@@ -552,7 +577,12 @@ namespace m0.ZeroTypes.UX
 
             //UpdateDiagramLines(); //On SizeChanged
 
+            long tParentCheck = UXPerfLog.Timestamp();
             OwningVisualiser.CheckAndUpdateItemParent(this, true);
+            long parentCheckTicks = UXPerfLog.Timestamp() - tParentCheck;
+
+            UXPerfLog.Record("UXItem.MoveAndResizeItem.CheckAndUpdateItemParent", parentCheckTicks);
+            UXPerfLog.Record("UXItem.MoveAndResizeItem.total", UXPerfLog.Timestamp() - tMoveAndResize);
         }
 
         public void AddToSelectedEdges()

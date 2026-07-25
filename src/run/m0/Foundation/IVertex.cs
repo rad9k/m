@@ -113,7 +113,5 @@ namespace m0.Foundation
         IEdge this[string meta] { get; } // for databinding
                         
         IStore Store { get; }
-
-        IList<AccessLevelEnum> AccessLevel { get; }
     }
 }
