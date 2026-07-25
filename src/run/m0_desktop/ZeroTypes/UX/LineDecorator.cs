@@ -62,7 +62,23 @@ namespace m0.ZeroTypes.UX
             }
 
             graphChangeListenerEdge = ExecutionFlowHelper.AddTriggerAndListener(Vertex,
-                 new List<string> { "", @"\" },
+                 new List<string>
+                 {
+                     @"BaseEdge:",
+                     @"BaseEdge:\From:",
+                     @"BaseEdge:\Meta:",
+                     @"BaseEdge:\To:",
+                     @"StartAnchor:",
+                     @"EndAnchor:",
+                     @"IsDashed:",
+                     @"LineWidth:",
+                     @"HideLabel:",
+                     @"ConstantLabel:",
+                     @"BackgroundColor:",
+                     @"BackgroundColor:\",
+                     @"ForegroundColor:",
+                     @"ForegroundColor:\"
+                 },
                  new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
                          GraphChangeFilterEnum.OutputEdgeAdded,
                          GraphChangeFilterEnum.OutputEdgeRemoved,

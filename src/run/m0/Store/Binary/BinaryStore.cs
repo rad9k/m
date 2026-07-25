@@ -63,7 +63,7 @@ namespace m0.Store.Binary
         public string ValueDecimalString { get; set; }
 
         [ProtoMember(9)]
-        public List<ProtoEdge> Edges { get; set; } = new();
+        public List<ProtoEdge> Edges { get; set; }
     }
 
     [ProtoContract]
@@ -102,9 +102,11 @@ namespace m0.Store.Binary
 
         private StoreId RootStore;
 
+        private const int FileStreamBufferSize = 64 * 1024;
+
         string GetIdentifierToUse()
         {
-            if (Identifier.Contains(System.IO.Path.DirectorySeparatorChar.ToString()))
+            if (Identifier.Contains(System.IO.Path.DirectorySeparatorChar))
                 return Identifier;
             else
                 return MinusZero.Instance.ApplicationPath + System.IO.Path.DirectorySeparatorChar + Identifier;
@@ -118,7 +120,8 @@ namespace m0.Store.Binary
             {
                 try
                 {
-                    using FileStream readStream = new FileStream(identifierToUse, FileMode.Open);
+                    using FileStream readStream = new FileStream(identifierToUse, FileMode.Open, FileAccess.Read,
+                        FileShare.Read, FileStreamBufferSize);
 
                     if (readStream.Length == 0)
                     {
@@ -159,10 +162,13 @@ namespace m0.Store.Binary
 
         private void ReconstructVerticesFromSerializationData(ProtoSerializationData data)
         {
-            Dictionary<int, StoreId> storeIdDict = new Dictionary<int, StoreId>();
+            Dictionary<int, StoreId> storeIdDict = new Dictionary<int, StoreId>(data.StoreIdEntries.Count);
 
             foreach (ProtoStoreIdEntry entry in data.StoreIdEntries)
                 storeIdDict[entry.Key] = new StoreId(entry.TypeName, entry.Identifier);
+
+            // Reused for all edges pointing inside this store, instead of allocating one StoreId per edge
+            StoreId thisStoreId = new StoreId(this.TypeName, this.Identifier);
 
             long maxVertexIdentifierCount = 0;
 
@@ -192,6 +198,7 @@ namespace m0.Store.Binary
 
                 v._Store = this;
 
+                if (pv.Edges != null)
                 foreach (ProtoEdge pe in pv.Edges)
                 {
                     object MetaId = pe.MetaIdType switch
@@ -206,40 +213,32 @@ namespace m0.Store.Binary
                     StoreId MetaStoreId;
 
                     if (pe.MetaStoreId == 0)
-                        MetaStoreId = new StoreId(this.TypeName, this.Identifier);
+                        MetaStoreId = thisStoreId;
                     else
+                    if (!storeIdDict.TryGetValue(pe.MetaStoreId, out MetaStoreId))
                     {
-                        if (!storeIdDict.ContainsKey(pe.MetaStoreId))
-                        {
-                            UserInteractionUtil.ShowException("Binary Deserialization from " + Identifier,
-                                "MetaStoreId " + pe.MetaStoreId + " not found in StoreIdDictionary",
-                                ZeroTypes.ExceptionLevelEnum.Error);
-                            return;
-                        }
-
-                        MetaStoreId = storeIdDict[pe.MetaStoreId];
+                        UserInteractionUtil.ShowException("Binary Deserialization from " + Identifier,
+                            "MetaStoreId " + pe.MetaStoreId + " not found in StoreIdDictionary",
+                            ZeroTypes.ExceptionLevelEnum.Error);
+                        return;
                     }
 
                     StoreId ToStoreId;
 
                     if (pe.ToStoreId == 0)
-                        ToStoreId = new StoreId(this.TypeName, this.Identifier);
+                        ToStoreId = thisStoreId;
                     else if (pe.ToStoreId == -1)
                     {
                         ToStoreId = RootStore;
                         ToId = MinusZero.Instance.root.Identifier;
                     }
                     else
+                    if (!storeIdDict.TryGetValue(pe.ToStoreId, out ToStoreId))
                     {
-                        if (!storeIdDict.ContainsKey(pe.ToStoreId))
-                        {
-                            UserInteractionUtil.ShowException("Binary Deserialization from " + Identifier,
-                                "ToStoreId " + pe.ToStoreId + " not found in StoreIdDictionary",
-                                ZeroTypes.ExceptionLevelEnum.Error);
-                            return;
-                        }
-
-                        ToStoreId = storeIdDict[pe.ToStoreId];
+                        UserInteractionUtil.ShowException("Binary Deserialization from " + Identifier,
+                            "ToStoreId " + pe.ToStoreId + " not found in StoreIdDictionary",
+                            ZeroTypes.ExceptionLevelEnum.Error);
+                        return;
                     }
 
                     EasyEdge e = new EasyEdge(MetaStoreId.TypeName, MetaStoreId.Identifier, MetaId,
@@ -293,7 +292,8 @@ namespace m0.Store.Binary
 
             ProtoSerializationData data = GetProtoSerializationData();
 
-            using FileStream writeStream = new FileStream(fileName, FileMode.Create);
+            using FileStream writeStream = new FileStream(fileName, FileMode.Create, FileAccess.Write,
+                FileShare.None, FileStreamBufferSize);
             Serializer.Serialize(writeStream, data);
 
             base.CommitTransaction();
@@ -302,10 +302,13 @@ namespace m0.Store.Binary
         private ProtoSerializationData GetProtoSerializationData()
         {
             ProtoSerializationData data = new ProtoSerializationData();
-            data.Vertices = new List<ProtoVertex>();
+            data.Vertices = new List<ProtoVertex>(VertexIdentifiersDictionary.Count);
             data.StoreIdEntries = new List<ProtoStoreIdEntry>();
 
             Dictionary<int, StoreId> storeIdDict = new Dictionary<int, StoreId>();
+
+            Dictionary<(string StoreTypeName, string StoreIdentifier), int> storeIdLookup =
+                new Dictionary<(string StoreTypeName, string StoreIdentifier), int>();
 
             foreach (IVertex v in VertexIdentifiersDictionary.Values)
             {
@@ -338,14 +341,12 @@ namespace m0.Store.Binary
 
                 data.Vertices.Add(pv);
 
-                pv.Edges = new List<ProtoEdge>();
-
                 foreach (IEdge e in v.OutEdgesRaw)
                     if (e is IDetachableEdge de)
                     {
                         ProtoEdge pe = new ProtoEdge();
 
-                        pe.MetaStoreId = GetStoreId(storeIdDict, de.MetaStoreTypeName, de.MetaStoreIdentifier, de.MetaIdentifier);
+                        pe.MetaStoreId = GetStoreId(storeIdDict, storeIdLookup, de.MetaStoreTypeName, de.MetaStoreIdentifier, de.MetaIdentifier);
 
                         if (de.MetaIdentifier == null)
                             pe.MetaIdType = 0;
@@ -354,12 +355,15 @@ namespace m0.Store.Binary
                         else
                         { pe.MetaIdType = 1; pe.MetaIdLong = (long)de.MetaIdentifier; }
 
-                        pe.ToStoreId = GetStoreId(storeIdDict, de.ToStoreTypeName, de.ToStoreIdentifier, de.ToIdentifier);
+                        pe.ToStoreId = GetStoreId(storeIdDict, storeIdLookup, de.ToStoreTypeName, de.ToStoreIdentifier, de.ToIdentifier);
 
                         if (de.ToIdentifier is string ts)
                         { pe.ToIdType = 1; pe.ToIdString = ts; }
                         else
                         { pe.ToIdType = 0; pe.ToIdLong = (long)de.ToIdentifier; }
+
+                        if (pv.Edges == null)
+                            pv.Edges = new List<ProtoEdge>();
 
                         pv.Edges.Add(pe);
                     }
@@ -376,20 +380,22 @@ namespace m0.Store.Binary
             return data;
         }
 
-        private int GetStoreId(Dictionary<int, StoreId> storeIdDict, string StoreTypeName, string StoreIdentifier, object vertexIdentifier)
+        private int GetStoreId(Dictionary<int, StoreId> storeIdDict,
+            Dictionary<(string StoreTypeName, string StoreIdentifier), int> storeIdLookup,
+            string storeTypeName, string storeIdentifier, object vertexIdentifier)
         {
-            if (StoreTypeName == this.TypeName && StoreIdentifier == this.Identifier)
+            if (storeTypeName == this.TypeName && storeIdentifier == this.Identifier)
                 return 0;
 
-            if (StoreIdentifier == "$-0$ROOT$STORE$" && vertexIdentifier is long && (long)vertexIdentifier == 0)
+            if (storeIdentifier == "$-0$ROOT$STORE$" && vertexIdentifier is long && (long)vertexIdentifier == 0)
                 return -1;
 
-            foreach (KeyValuePair<int, StoreId> sid in storeIdDict)
-                if (sid.Value.TypeName == StoreTypeName && sid.Value.Identifier == StoreIdentifier)
-                    return sid.Key;
+            if (storeIdLookup.TryGetValue((storeTypeName, storeIdentifier), out int existingKey))
+                return existingKey;
 
             int key = storeIdDict.Count + 1;
-            storeIdDict.Add(key, new StoreId(StoreTypeName, StoreIdentifier));
+            storeIdDict.Add(key, new StoreId(storeTypeName, storeIdentifier));
+            storeIdLookup.Add((storeTypeName, storeIdentifier), key);
             return key;
         }
 

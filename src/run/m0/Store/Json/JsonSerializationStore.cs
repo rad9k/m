@@ -37,7 +37,7 @@ namespace m0.Store.Json
         GenerationMode = JsonSourceGenerationMode.Default,
         PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-        WriteIndented = true)]
+        WriteIndented = false)]
     public partial class JsonSerializationContext : JsonSerializerContext
     {
     }
@@ -171,7 +171,7 @@ namespace m0.Store.Json
         public object Value { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public List<JsonEdge> Edges { get; set; } = new();
+        public List<JsonEdge> Edges { get; set; }
     }
 
     public class JsonEdge
@@ -200,8 +200,10 @@ namespace m0.Store.Json
         // Use source-generated context for maximum performance
         private static readonly JsonSerializationContext JsonContext = new();
 
+        private const int FileStreamBufferSize = 64 * 1024;
+
         string GetIdentifierToUse(){
-            if (Identifier.Contains(System.IO.Path.DirectorySeparatorChar.ToString()))
+            if (Identifier.Contains(System.IO.Path.DirectorySeparatorChar))
                 return Identifier;
             else
                 return MinusZero.Instance.ApplicationPath + System.IO.Path.DirectorySeparatorChar + Identifier;
@@ -215,9 +217,11 @@ namespace m0.Store.Json
             {
                 try
                 {
-                    ReadOnlySpan<byte> jsonBytes = File.ReadAllBytes(IdentifierToUse);
+                    // Read through a buffered stream, so the whole document is not allocated at once
+                    using FileStream readStream = new FileStream(IdentifierToUse, FileMode.Open, FileAccess.Read,
+                        FileShare.Read, FileStreamBufferSize);
 
-                    if (jsonBytes.Length == 0)
+                    if (readStream.Length == 0)
                     { // create new sub graph
                         EasyVertex __root = new EasyVertex(this);
                         root = __root;
@@ -225,7 +229,7 @@ namespace m0.Store.Json
                     }
                     else
                     { // load graph from store
-                        JsonSerializationData data = JsonSerializer.Deserialize(jsonBytes, JsonContext.JsonSerializationData);
+                        JsonSerializationData data = JsonSerializer.Deserialize(readStream, JsonContext.JsonSerializationData);
 
                         ReconstructVerticesFromSerialisationData(data);
 
@@ -282,19 +286,17 @@ namespace m0.Store.Json
         {
             long maxVertexIdentifierCount = 0;
 
+            // Reused for all edges pointing inside this store, instead of allocating one StoreId per edge
+            StoreId thisStoreId = new StoreId(this.TypeName, this.Identifier);
+
+            Dictionary<int, StoreId> storeIdDictionary = data.StoreIdDictionary;
+
             foreach (JsonVertex jv in data.Vertices)
             {
-                object toBeIdentifier;
+                object toBeIdentifier = jv.Id;
 
-                if (jv.Id is string)
-                    toBeIdentifier = jv.Id;
-                else
-                {
-                    toBeIdentifier = jv.Id;
-
-                    if (toBeIdentifier is long longId && longId > maxVertexIdentifierCount)
-                        maxVertexIdentifierCount = longId;
-                }
+                if (toBeIdentifier is long longId && longId > maxVertexIdentifierCount)
+                    maxVertexIdentifierCount = longId;
 
                 EasyVertex v = new EasyVertex(this, toBeIdentifier);
 
@@ -308,26 +310,22 @@ namespace m0.Store.Json
                     object MetaId = je.MetaId;
                     object ToId = je.ToId;
 
-                    StoreId MetaStoreId = null;
+                    StoreId MetaStoreId;
 
                     if (je.MetaStoreId == 0)
-                        MetaStoreId = new StoreId(this.TypeName, this.Identifier);
+                        MetaStoreId = thisStoreId;
                     else
+                    if (!storeIdDictionary.TryGetValue(je.MetaStoreId, out MetaStoreId))
                     {
-                        if (!data.StoreIdDictionary.ContainsKey(je.MetaStoreId))
-                        {
-                            UserInteractionUtil.ShowException("Json Deserialisation from " + Identifier, "MetaStoreId " + je.MetaStoreId 
-                                + " not found in StoreIdDictionary", ZeroTypes.ExceptionLevelEnum.Error);
-                            return;
-                        }
-                        else
-                            MetaStoreId = data.StoreIdDictionary[je.MetaStoreId];
+                        UserInteractionUtil.ShowException("Json Deserialisation from " + Identifier, "MetaStoreId " + je.MetaStoreId 
+                            + " not found in StoreIdDictionary", ZeroTypes.ExceptionLevelEnum.Error);
+                        return;
                     }
 
                     StoreId ToStoreId;
 
                     if (je.ToStoreId == 0)
-                        ToStoreId = new StoreId(this.TypeName, this.Identifier);
+                        ToStoreId = thisStoreId;
                     else
                     if (je.ToStoreId == -1)
                     {
@@ -335,15 +333,11 @@ namespace m0.Store.Json
                         ToId = MinusZero.Instance.root.Identifier;
                     }
                     else
+                    if (!storeIdDictionary.TryGetValue(je.ToStoreId, out ToStoreId))
                     {
-                        if (!data.StoreIdDictionary.ContainsKey(je.ToStoreId))
-                        {
-                            UserInteractionUtil.ShowException("Json Deserialisation from " + Identifier, "ToStoreId " + je.ToStoreId 
-                                + " not found in StoreIdDictionary", ZeroTypes.ExceptionLevelEnum.Error);
-                            return;
-                        }
-                        else
-                            ToStoreId = data.StoreIdDictionary[je.ToStoreId];
+                        UserInteractionUtil.ShowException("Json Deserialisation from " + Identifier, "ToStoreId " + je.ToStoreId 
+                            + " not found in StoreIdDictionary", ZeroTypes.ExceptionLevelEnum.Error);
+                        return;
                     }
 
                     EasyEdge e = new EasyEdge(MetaStoreId.TypeName, MetaStoreId.Identifier, MetaId,
@@ -413,26 +407,76 @@ namespace m0.Store.Json
                             storeId.TypeName = kvp.Value.TypeName;
                         }
 
-            // Use source generation for maximum performance
-            byte[] jsonBytes = JsonSerializer.SerializeToUtf8Bytes(data, JsonContext.JsonSerializationData);
-            File.WriteAllBytes(fileName, jsonBytes);
+            // Use source generation and write through a buffered stream, so the whole document
+            // is not allocated as an intermediate byte array
+            using (FileStream writeStream = new FileStream(fileName, FileMode.Create, FileAccess.Write,
+                FileShare.None, FileStreamBufferSize))
+            {
+                JsonSerializer.Serialize(writeStream, data, JsonContext.JsonSerializationData);
+            }
 
             base.CommitTransaction();
         }
 
+        // Holds the graph change trigger meta coordinates, so they are resolved once per serialization
+        // instead of walking the vertex property chain for every edge
+        private readonly struct GraphChangeTriggerMetaIdentity
+        {
+            public GraphChangeTriggerMetaIdentity(IVertex graphChangeTriggerMeta)
+            {
+                IsPresent = graphChangeTriggerMeta != null;
+
+                if (!IsPresent)
+                {
+                    StoreTypeName = null;
+                    StoreIdentifier = null;
+                    Identifier = null;
+                    return;
+                }
+
+                StoreTypeName = graphChangeTriggerMeta.Store.TypeName;
+                StoreIdentifier = graphChangeTriggerMeta.Store.Identifier;
+                Identifier = graphChangeTriggerMeta.Identifier;
+            }
+
+            public bool IsPresent { get; }
+
+            public string StoreTypeName { get; }
+
+            public string StoreIdentifier { get; }
+
+            public object Identifier { get; }
+
+            public bool MatchesEdgeMeta(IDetachableEdge edge)
+            {
+                return IsPresent
+                    && edge.MetaStoreTypeName == StoreTypeName
+                    && edge.MetaStoreIdentifier == StoreIdentifier
+                    && Equals(edge.MetaIdentifier, Identifier);
+            }
+        }
+
         private JsonSerializationData GetJsonSerializationData()
         {
-            JsonSerializationData data = new JsonSerializationData();
-            HashSet<object> excludedVertexIdentifiers = GetExcludedVerticesForJsonSerialization();
-            IVertex graphChangeTriggerMeta = MinusZero.Instance.root.Get(false, @"System\Meta\Base\Vertex\$GraphChangeTrigger");
+            GraphChangeTriggerMetaIdentity graphChangeTriggerMetaIdentity = new GraphChangeTriggerMetaIdentity(
+                MinusZero.Instance.root.Get(false, @"System\Meta\Base\Vertex\$GraphChangeTrigger"));
 
-            data.Vertices = new List<JsonVertex>();
+            HashSet<object> excludedVertexIdentifiers = GetExcludedVerticesForJsonSerialization(graphChangeTriggerMetaIdentity);
+
+            bool hasExcludedVertexIdentifiers = excludedVertexIdentifiers.Count > 0;
+
+            JsonSerializationData data = new JsonSerializationData();
+
+            data.Vertices = new List<JsonVertex>(VertexIdentifiersDictionary.Count);
 
             data.StoreIdDictionary = new Dictionary<int, StoreId>();
 
+            Dictionary<(string StoreTypeName, string StoreIdentifier), int> storeIdLookup =
+                new Dictionary<(string StoreTypeName, string StoreIdentifier), int>();
+
             foreach (IVertex v in VertexIdentifiersDictionary.Values)
             {
-                if (excludedVertexIdentifiers.Contains(v.Identifier))
+                if (hasExcludedVertexIdentifiers && excludedVertexIdentifiers.Contains(v.Identifier))
                     continue;
 
                 JsonVertex jv = new JsonVertex();
@@ -443,47 +487,51 @@ namespace m0.Store.Json
 
                 data.Vertices.Add(jv);
 
-                List<JsonEdge> edges = new List<JsonEdge>();
+                List<JsonEdge> edges = null;
 
                 foreach (IEdge e in v.OutEdgesRaw)
-                    if (e is IDetachableEdge)
+                    if (e is IDetachableEdge de)
                     {
-                        IDetachableEdge de = (IDetachableEdge)e;
-
-                        if (IsGraphChangeTriggerEdge(de, graphChangeTriggerMeta))
+                        if (graphChangeTriggerMetaIdentity.MatchesEdgeMeta(de))
                             continue;
 
-                        if (excludedVertexIdentifiers.Contains(de.ToIdentifier))
+                        if (hasExcludedVertexIdentifiers && excludedVertexIdentifiers.Contains(de.ToIdentifier))
                             continue;
 
                         JsonEdge je = new JsonEdge();
 
-                        je.MetaStoreId = GetStoreId(data, de.MetaStoreTypeName, de.MetaStoreIdentifier, de.MetaIdentifier);
+                        je.MetaStoreId = GetStoreId(data, storeIdLookup, de.MetaStoreTypeName, de.MetaStoreIdentifier, de.MetaIdentifier);
 
                         je.MetaId = de.MetaIdentifier;
 
-                        je.ToStoreId = GetStoreId(data, de.ToStoreTypeName, de.ToStoreIdentifier, de.ToIdentifier);
+                        je.ToStoreId = GetStoreId(data, storeIdLookup, de.ToStoreTypeName, de.ToStoreIdentifier, de.ToIdentifier);
 
                         je.ToId = de.ToIdentifier;
+
+                        if (edges == null)
+                            edges = new List<JsonEdge>();
 
                         edges.Add(je);
                     }
 
-                jv.Edges = edges.Count > 0 ? edges : null;
+                jv.Edges = edges;
             }
 
             return data;
         }
 
-        private HashSet<object> GetExcludedVerticesForJsonSerialization()
+        private HashSet<object> GetExcludedVerticesForJsonSerialization(GraphChangeTriggerMetaIdentity graphChangeTriggerMetaIdentity)
         {
             HashSet<object> excludedVertexIdentifiers = new HashSet<object>();
+
+            if (!graphChangeTriggerMetaIdentity.IsPresent)
+                return excludedVertexIdentifiers;
+
             Stack<object> toProcess = new Stack<object>();
-            IVertex graphChangeTriggerMeta = MinusZero.Instance.root.Get(false, @"System\Meta\Base\Vertex\$GraphChangeTrigger");
 
             foreach (IVertex vertex in VertexIdentifiersDictionary.Values)
                 foreach (IEdge edge in vertex.OutEdgesRaw)
-                    if (edge is IDetachableEdge detachableEdge && IsGraphChangeTriggerEdge(detachableEdge, graphChangeTriggerMeta))
+                    if (edge is IDetachableEdge detachableEdge && graphChangeTriggerMetaIdentity.MatchesEdgeMeta(detachableEdge))
                         if (excludedVertexIdentifiers.Add(detachableEdge.ToIdentifier))
                             toProcess.Push(detachableEdge.ToIdentifier);
 
@@ -491,10 +539,10 @@ namespace m0.Store.Json
             {
                 object vertexIdentifier = toProcess.Pop();
 
-                if (!VertexIdentifiersDictionary.ContainsKey(vertexIdentifier))
+                if (!VertexIdentifiersDictionary.TryGetValue(vertexIdentifier, out IVertex vertexToProcess))
                     continue;
 
-                foreach (IEdge edge in VertexIdentifiersDictionary[vertexIdentifier].OutEdgesRaw)
+                foreach (IEdge edge in vertexToProcess.OutEdgesRaw)
                     if (edge is IDetachableEdge detachableEdge)
                         if (excludedVertexIdentifiers.Add(detachableEdge.ToIdentifier))
                             toProcess.Push(detachableEdge.ToIdentifier);
@@ -503,31 +551,24 @@ namespace m0.Store.Json
             return excludedVertexIdentifiers;
         }
 
-        private bool IsGraphChangeTriggerEdge(IDetachableEdge edge, IVertex graphChangeTriggerMeta)
+        private int GetStoreId(JsonSerializationData data,
+            Dictionary<(string StoreTypeName, string StoreIdentifier), int> storeIdLookup,
+            string storeTypeName, string storeIdentifier, object vertexIdentifier)
         {
-            if (graphChangeTriggerMeta == null)
-                return false;
-
-            return edge.MetaStoreTypeName == graphChangeTriggerMeta.Store.TypeName
-                && edge.MetaStoreIdentifier == graphChangeTriggerMeta.Store.Identifier
-                && Equals(edge.MetaIdentifier, graphChangeTriggerMeta.Identifier);
-        }
-
-        private int GetStoreId(JsonSerializationData data, string StoreTypeName, string StoreIdentifier, object vertexIdentifier)
-        {
-            if (StoreTypeName == this.TypeName && StoreIdentifier == this.Identifier)
+            if (storeTypeName == this.TypeName && storeIdentifier == this.Identifier)
                 return 0;
 
-            if (StoreIdentifier == "$-0$ROOT$STORE$" && vertexIdentifier is long && (long)vertexIdentifier == 0)
+            if (storeIdentifier == "$-0$ROOT$STORE$" && vertexIdentifier is long && (long)vertexIdentifier == 0)
                 return -1;
 
-            foreach (KeyValuePair<int, StoreId> sid in data.StoreIdDictionary)
-                if (sid.Value.TypeName == StoreTypeName && sid.Value.Identifier == StoreIdentifier)
-                    return sid.Key;
+            if (storeIdLookup.TryGetValue((storeTypeName, storeIdentifier), out int existingKey))
+                return existingKey;
 
             int key = data.StoreIdDictionary.Count + 1;
 
-            data.StoreIdDictionary.Add(key, new StoreId(StoreTypeName, StoreIdentifier));
+            data.StoreIdDictionary.Add(key, new StoreId(storeTypeName, storeIdentifier));
+
+            storeIdLookup.Add((storeTypeName, storeIdentifier), key);
 
             return key;
         }

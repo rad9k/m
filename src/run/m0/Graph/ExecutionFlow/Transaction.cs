@@ -313,6 +313,8 @@ namespace m0.Graph.ExecutionFlow
             long t0 = TxPerfLog.Timestamp();
             int listenersCalled = 0;
             int eventsDelivered = 0;
+            int triggerVertices = triggerEventDictionary.Count;
+            int listenersFound = 0;
 
             foreach (KeyValuePair<IVertex, List<IVertex>> kvp in triggerEventDictionary)
             {
@@ -322,6 +324,7 @@ namespace m0.Graph.ExecutionFlow
 
                 foreach (IEdge e in triggerVertex.GetAll(false, @"Listener:"))
                 {
+                    listenersFound++;
                     IVertex parameters = InstructionHelpers.CreateStack();
 
                     foreach (IVertex eventVertex in kvp.Value)
@@ -340,6 +343,10 @@ namespace m0.Graph.ExecutionFlow
                 listenersCalled, "listeners");
             TxPerfLog.CountWithExtra("Transaction.SendGrahChangeEvents.events", 1,
                 eventsDelivered, "events");
+            TxPerfLog.CountWithExtra("Transaction.SendGrahChangeEvents.triggers", 1,
+                triggerVertices, "triggers");
+            TxPerfLog.CountWithExtra("Transaction.SendGrahChangeEvents.listenersFound", 1,
+                listenersFound, "listeners");
         }
 
         public static string GetListenerPerfKey(IVertex listenerVertex)
@@ -407,6 +414,8 @@ namespace m0.Graph.ExecutionFlow
                 TxPerfLog.CountWithExtra("Transaction.ChangeKeys.Out", 1, outKeys, "keys");
                 TxPerfLog.CountWithExtra("Transaction.ChangeKeys.In", 1, inKeys, "keys");
                 TxPerfLog.CountWithExtra("Transaction.ChangeKeys.Meta", 1, metaKeys, "keys");
+                TxPerfLog.CountWithExtra("Transaction.PrepareAndSendLoop.pendingKeys", 1,
+                    outKeys + inKeys + metaKeys, "keys");
 
                 PrepareAndSendGrahChangeEvents(exe, 
                     watchedVertexDictionary,

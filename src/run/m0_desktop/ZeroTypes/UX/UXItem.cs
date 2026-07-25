@@ -98,6 +98,14 @@ namespace m0.ZeroTypes.UX
                 return;
             }
 
+            if (OwningVisualiser is UXVisualiser draggingUxVisualiser &&
+                draggingUxVisualiser.IsItemMoveGraphInteractionActive)
+            {
+                draggingUxVisualiser.RequestDraggedItemRenderUpdate(this);
+                UXPerfLog.Count("UXItem.SizeChanged->UpdateDiagramLines.renderDeferred");
+                return;
+            }
+
             UXPerfLog.Count("UXItem.SizeChanged->UpdateDiagramLines");
             UpdateDiagramLines();
         }
@@ -168,13 +176,50 @@ namespace m0.ZeroTypes.UX
             }
 
             graphChangeListenerEdge = ExecutionFlowHelper.AddTriggerAndListener(Vertex,
-                new List<string> { @"", @"\" },
+                GetGraphChangeScopeQueries(),
                 new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
                          GraphChangeFilterEnum.OutputEdgeAdded,
                          GraphChangeFilterEnum.OutputEdgeRemoved,
                          GraphChangeFilterEnum.OutputEdgeDisposed},
                 "UXItem",
                 VertexChange);
+        }
+
+        IList<string> GetGraphChangeScopeQueries()
+        {
+            HashSet<string> scopeQueries = new HashSet<string>
+            {
+                @"BaseEdge:",
+                @"BaseEdge:\To:",
+                @"Scale:",
+                @"DesignMode:",
+                @"Size:",
+                @"Size:\",
+                @"Position:",
+                @"Position:\",
+                @"Layout:",
+                @"BackgroundColor:",
+                @"BackgroundColor:\",
+                @"ForegroundColor:",
+                @"ForegroundColor:\",
+                @"BorderColor:",
+                @"BorderColor:\",
+                @"BorderSize:",
+                @"Gap:",
+                @"UXTemplate:"
+            };
+
+            if (SubVertexesTriggeringItemVisualUpdate != null)
+                foreach (string propertyName in SubVertexesTriggeringItemVisualUpdate)
+                {
+                    if (string.IsNullOrEmpty(propertyName))
+                        continue;
+
+                    scopeQueries.Add(propertyName + ":");
+                    scopeQueries.Add(propertyName + @":\");
+                }
+
+            return scopeQueries.ToList();
         }
 
         public bool IsDisposed = false;
@@ -469,24 +514,29 @@ namespace m0.ZeroTypes.UX
             else
                 UXPerfLog.Count("UXItem.MoveItem.UpdateLayout.skippedDuringDrag");
 
-            long tSub = UXPerfLog.Timestamp();
-            UpdateDiagramLinesInSubItems();
-            long subItemLinesTicks = UXPerfLog.Timestamp() - tSub;
+            long subItemLinesTicks = 0;
+            long linesTicks = 0;
+            long parentCheckTicks = 0;
 
-            long tLines = UXPerfLog.Timestamp();
-            UpdateDiagramLines();
-            long linesTicks = UXPerfLog.Timestamp() - tLines;
+            if (deferHeavyWorkDuringItemDrag &&
+                OwningVisualiser is UXVisualiser draggingUxVisualiser)
+            {
+                // Parent hit-testing and all connected line geometry are coalesced
+                // to one update per render frame. UpdateDiagramLines already visits
+                // sub-items, so the old separate sub-item pass was duplicate work.
+                draggingUxVisualiser.RequestDraggedItemRenderUpdate(this);
+                UXPerfLog.Count("UXItem.MoveItem.RenderUpdate.deferred");
+            }
+            else
+            {
+                long tLines = UXPerfLog.Timestamp();
+                UpdateDiagramLines();
+                linesTicks = UXPerfLog.Timestamp() - tLines;
 
-            // Parent detection must also run during drag. Otherwise a nested item remains
-            // in the container's clipped Canvas until mouse-up, while only its anchors
-            // (hosted by the visualiser Canvas) remain visible. The visualiser keeps one
-            // graph interaction open for the whole drag, so this does not commit per move.
-            long tParentCheck = UXPerfLog.Timestamp();
-            OwningVisualiser.CheckAndUpdateItemParent(this, deferHeavyWorkDuringItemDrag);
-            long parentCheckTicks = UXPerfLog.Timestamp() - tParentCheck;
-
-            if (deferHeavyWorkDuringItemDrag)
-                UXPerfLog.Count("UXItem.MoveItem.CheckAndUpdateItemParent.duringDrag");
+                long tParentCheck = UXPerfLog.Timestamp();
+                OwningVisualiser.CheckAndUpdateItemParent(this, false);
+                parentCheckTicks = UXPerfLog.Timestamp() - tParentCheck;
+            }
 
             long totalTicks = UXPerfLog.Timestamp() - tMove;
 
@@ -595,7 +645,15 @@ namespace m0.ZeroTypes.UX
             //UpdateDiagramLines(); //On SizeChanged
 
             long tParentCheck = UXPerfLog.Timestamp();
-            OwningVisualiser.CheckAndUpdateItemParent(this, true);
+
+            if (OwningVisualiser is UXVisualiser draggingUxVisualiser &&
+                draggingUxVisualiser.IsItemMoveGraphInteractionActive)
+            {
+                draggingUxVisualiser.RequestDraggedItemRenderUpdate(this);
+            }
+            else
+                OwningVisualiser.CheckAndUpdateItemParent(this, true);
+
             long parentCheckTicks = UXPerfLog.Timestamp() - tParentCheck;
 
             UXPerfLog.Record("UXItem.MoveAndResizeItem.CheckAndUpdateItemParent", parentCheckTicks);
@@ -837,21 +895,19 @@ namespace m0.ZeroTypes.UX
             if (toItem.OwningVisualiser == null)
                 return;
 
-            List<ILineDecoratorBase> sameToItemLines = new List<ILineDecoratorBase>();
-
             Dictionary<IUXItem, List<ILineDecoratorBase>> DiagramLinesToDiagramItemDictionary = GetDiagramLinesToDiagramItemDictionary();
-
-            if (DiagramLinesToDiagramItemDictionary.ContainsKey(toItem))
-                foreach (ILineDecoratorBase l in DiagramLinesToDiagramItemDictionary[toItem])
-                    sameToItemLines.Add(l);
-
-            List<ILineDecoratorBase> sameFromItemLinesTo = new List<ILineDecoratorBase>();
+            List<ILineDecoratorBase> sameToItemLines;
+            if (!DiagramLinesToDiagramItemDictionary.TryGetValue(
+                toItem,
+                out sameToItemLines))
+                sameToItemLines = new List<ILineDecoratorBase>();
 
             Dictionary<IUXItem, List<ILineDecoratorBase>> toItemDiagramLinesToDiagramItemDictionary = toItem.GetDiagramLinesToDiagramItemDictionary();
-
-            if (toItemDiagramLinesToDiagramItemDictionary.ContainsKey(this))
-                foreach (ILineDecoratorBase l in toItemDiagramLinesToDiagramItemDictionary[this])
-                    sameFromItemLinesTo.Add(l);
+            List<ILineDecoratorBase> sameFromItemLinesTo;
+            if (!toItemDiagramLinesToDiagramItemDictionary.TryGetValue(
+                this,
+                out sameFromItemLinesTo))
+                sameFromItemLinesTo = new List<ILineDecoratorBase>();
 
             int allCnt = sameToItemLines.Count() + sameFromItemLinesTo.Count();
 
@@ -894,7 +950,7 @@ namespace m0.ZeroTypes.UX
             foreach (ILineDecoratorBase m in DiagramToAsMetaLines)
                 m.UpdateMetaPosition();
 
-            List<IUXItem> updatedItems = new List<IUXItem>();
+            HashSet<IUXItem> updatedItems = new HashSet<IUXItem>();
 
             int decoratorLineTouches = 0;
             int incomingLineTouches = 0;
