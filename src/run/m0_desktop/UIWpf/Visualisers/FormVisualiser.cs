@@ -57,14 +57,6 @@ namespace m0.UIWpf.Visualisers
 
     public class FormVisualiser : ContentControl, IListVisualiser, ITypedEdge, IKeyboardHighlight
     {
-        private const bool SelectionLogEnabled = true;
-        private const string SelectionLogWhere = "FormVisualiser.Selection";
-        private const bool KeyboardNavLogEnabled = true;
-        private const string KeyboardNavLogWhere = "FormVisualiser.KeyboardNav";
-        private const string DisposeNestingLogWhere = "FormVisualiser.DisposeNesting";
-        private const string VertexChangeLogWhere = "FormVisualiser.VertexChange";
-        private static readonly bool DetailedRebuildDiagnosticsEnabled = false;
-
         public event Notify SelectedEdgesChange;
 
         public AtomVisualiserHelper VisualiserHelper { get; set; }        
@@ -292,20 +284,6 @@ namespace m0.UIWpf.Visualisers
                         || (baseEdgeToMatch
                             && !suppressTypedBaseEdgeToRebuild)));
 
-            if (DetailedRebuildDiagnosticsEnabled)
-            {
-                MinusZero.Instance.Log(1, VertexChangeLogWhere,
-                    "decision=" + (willRebuild ? "rebuild" : "noRebuild")
-                    + " formVertex=" + DescribeVertex(Vertex)
-                    + " baseEdgeMatch=" + baseEdgeMatch
-                    + " baseEdgeDefinitionChanged=" + baseEdgeDefinitionChanged
-                    + " baseEdgeToMatch=" + baseEdgeToMatch
-                    + " typedBaseEdgeToSuppressed=" + suppressTypedBaseEdgeToRebuild
-                    + " configurationChanged=" + layoutConfigurationChanged
-                    + " triggeringMetas=[" + string.Join(",", triggeringMetas) + "]"
-                    + " " + DescribeGraphChangeEvents(exe.Stack, baseEdge, baseEdgeTo));
-            }
-
             if (willRebuild)
                 return helper.VertexChangeLogic(exe);
 
@@ -464,10 +442,6 @@ namespace m0.UIWpf.Visualisers
 
         public void ClearKeyboardHighlight()
         {
-            LogKeyboardNav(
-                "ClearKeyboardHighlight had=" + DescribeControlInfo(keyboardHighlightedControlInfo)
-                + " vcMode=" + IsVertexCommanderMode());
-
             if (keyboardHighlightedControlInfo != null)
             {
                 IKeyboardHighlight nestedKeyboardHighlight = GetNestedKeyboardHighlight(keyboardHighlightedControlInfo);
@@ -632,13 +606,6 @@ namespace m0.UIWpf.Visualisers
             if (!IsVertexCommanderKeyboardHighlightEnabled)
                 return;
 
-            LogKeyboardNav(
-                "SetKeyboardHighlightControlInfo control=" + DescribeControlInfo(controlInfo)
-                + " nestedFirst=" + nestedFirstPosition
-                + " nestedHighlight=" + (GetNestedKeyboardHighlight(controlInfo)?.GetType().Name ?? "null")
-                + " vcMode=" + IsVertexCommanderMode()
-                + " kbActivatedSubscribers=" + (KeyboardHighlightActivated != null));
-
             ClearKeyboardHighlight();
 
             keyboardHighlightedControlInfo = controlInfo;
@@ -657,13 +624,7 @@ namespace m0.UIWpf.Visualisers
                     nestedKeyboardHighlight.IsLastPosition = true;
             }
             else
-            {
-                LogKeyboardNav(
-                    "SetKeyboardHighlightControlInfo -> form row highlight (0HighlightBrush)"
-                    + " control=" + DescribeControlInfo(controlInfo));
-
                 SetControlInfoKeyboardHighlight(controlInfo, true);
-            }
 
             if (controlInfo.DataControl != null)
                 controlInfo.DataControl.BringIntoView();
@@ -899,14 +860,6 @@ namespace m0.UIWpf.Visualisers
             if (isHighlighted && !IsVertexCommanderKeyboardHighlightEnabled)
                 isHighlighted = false;
 
-            if (isHighlighted)
-            {
-                LogKeyboardNav(
-                    "SetControlInfoKeyboardHighlight ON control=" + DescribeControlInfo(controlInfo)
-                    + " isSelected=" + IsOwnSelectedControlInfo(controlInfo)
-                    + " vcMode=" + IsVertexCommanderMode());
-            }
-
             bool isSelected = IsOwnSelectedControlInfo(controlInfo);
             Brush dataBackground;
             Brush dataForeground;
@@ -1026,11 +979,6 @@ namespace m0.UIWpf.Visualisers
 
             bool isCtrl = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
 
-            LogSelection(
-                "NestedSelectedEdgesChange source=" + (sourceVisualiser?.GetType().Name ?? "null")
-                + " ctrl=" + isCtrl
-                + " snapshot(before)=" + DescribeSelectedEdgesSnapshot());
-
             suppressNestedSelectedEdgesChange = true;
 
             try
@@ -1050,8 +998,6 @@ namespace m0.UIWpf.Visualisers
             }
 
             NotifySelectedEdgesChanged();
-
-            LogSelection("NestedSelectedEdgesChange done snapshot=" + DescribeSelectedEdgesSnapshot());
         }
 
         private void FormControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -1098,16 +1044,6 @@ namespace m0.UIWpf.Visualisers
             pendingMouseDownStartedOnSelfDraggingControl = IsWithinSelfDraggingControl(e.OriginalSource as DependencyObject);
             suppressNextMouseUpSelection = false;
             MinusZero.Instance.IsGUIDragging = false;
-
-            LogSelection(
-                "MouseDown control=" + DescribeControlInfo(controlInfo)
-                + " clickCount=" + e.ClickCount
-                + " ctrl=" + pendingMouseDownIsCtrl
-                + " wasInSelection=" + pendingWasInSelectionAtMouseDown
-                + " nestedKb=" + pendingMouseDownHasNestedKeyboardHighlight
-                + " selfDragControl=" + pendingMouseDownStartedOnSelfDraggingControl
-                + " vcMode=" + IsVertexCommanderMode()
-                + " snapshot=" + DescribeSelectedEdgesSnapshot());
         }
 
         // Some nested controls (e.g. the NumberVisualiser slider) handle their own drag gesture.
@@ -1153,12 +1089,6 @@ namespace m0.UIWpf.Visualisers
 
             if (pendingMouseDownClickCount == 1)
             {
-                LogSelection(
-                    "MouseUp click control=" + DescribeControlInfo(controlInfo)
-                    + " nestedKb=" + pendingMouseDownHasNestedKeyboardHighlight
-                    + " willSetKeyboardHighlight=" + (!pendingMouseDownHasNestedKeyboardHighlight && IsVertexCommanderMode())
-                    + " vcMode=" + IsVertexCommanderMode());
-
                 if (!pendingMouseDownHasNestedKeyboardHighlight)
                 {
                     if (IsVertexCommanderMode())
@@ -1218,10 +1148,6 @@ namespace m0.UIWpf.Visualisers
             if (SelectedEdgesInteractionHelper.WasEdgeInSelectedEdges(Vertex, controlInfo.BaseEdge))
                 return;
 
-            LogSelection(
-                "RMB down control=" + DescribeControlInfo(controlInfo)
-                + " wasInSelection=false snapshot(before)=" + DescribeSelectedEdgesSnapshot());
-
             suppressNestedSelectedEdgesChange = true;
 
             try
@@ -1238,8 +1164,6 @@ namespace m0.UIWpf.Visualisers
 
             RefreshSelectedControlsVisualState();
             NotifySelectedEdgesChanged();
-
-            LogSelection("RMB down done snapshot=" + DescribeSelectedEdgesSnapshot());
         }
 
         private void TryApplyPendingMouseClick()
@@ -1321,14 +1245,6 @@ namespace m0.UIWpf.Visualisers
 
             bool clearNestedBeforeApply = !isCtrl && (!wasInSelectionAtMouseDown || !isDrag);
 
-            LogSelection(
-                (isDrag ? "ApplyForDrag" : "ApplyForClick")
-                + " edge=" + DescribeEdge(edge)
-                + " ctrl=" + isCtrl
-                + " wasInSelection=" + wasInSelectionAtMouseDown
-                + " clearNestedBeforeApply=" + clearNestedBeforeApply
-                + " snapshot(before)=" + DescribeSelectedEdgesSnapshot());
-
             suppressNestedSelectedEdgesChange = true;
 
             try
@@ -1352,9 +1268,6 @@ namespace m0.UIWpf.Visualisers
 
             RefreshSelectedControlsVisualState();
             NotifySelectedEdgesChanged();
-
-            LogSelection(
-                (isDrag ? "ApplyForDrag" : "ApplyForClick") + " done snapshot=" + DescribeSelectedEdgesSnapshot());
         }
 
         private void ReloadOwnSelectedEdgesFromVertex()
@@ -1373,8 +1286,6 @@ namespace m0.UIWpf.Visualisers
                     if (SelectedEdgesInteractionHelper.WasEdgeInSelectedEdges(Vertex, controlInfo.BaseEdge))
                         ownSelectedEdges.Add(controlInfo.BaseEdge);
                 }
-
-            LogSelection("ReloadOwnSelectedEdgesFromVertex ownCount=" + ownSelectedEdges.Count);
         }
 
         private void ClearPendingMouseSelection()
@@ -1652,64 +1563,92 @@ namespace m0.UIWpf.Visualisers
 
         }
 
-        private void PreFillForm(IVertex metaForForm)
+        private IList<(IVertex Meta, bool IsSet)> BuildFormFieldDescriptors(
+            bool isTypedForm,
+            IVertex baseEdgeTo,
+            IList<IEdge> childEdges,
+            IList<IEdge> expertEdges,
+            IList<IEdge> executableEdges)
         {
-            TabList = new Dictionary<string, TabInfo>();
+            IList<(IVertex Meta, bool IsSet)> result =
+                new List<(IVertex Meta, bool IsSet)>();
 
-            IVertex basTo = Vertex.Get(false, @"BaseEdge:\To:");
-
-            List<IEdge> childs = new List<IEdge>();            
-
-            if (metaForForm == null || metaForForm.Count() == 0) // if Form is not typed
+            if (!isTypedForm) // if Form is not typed
             {
                 IList<IVertex> visited = new List<IVertex>();
+                Dictionary<IVertex, int> edgeCountByMeta =
+                    new Dictionary<IVertex, int>();
 
-                foreach (IEdge e in basTo)
+                foreach (IEdge e in childEdges)
                 {
-                    childs.Add(e);
                     if (!visited.Contains(e.Meta) && e.Meta.Get(false, "$Hide:") == null)
-                        if (basTo.GetAll(false, e.Meta + ":").Count() > 1)
+                    {
+                        if (!edgeCountByMeta.TryGetValue(
+                            e.Meta,
+                            out int edgeCount))
                         {
-                            PreFillFormAnalyseEdge(e.Meta, true);
-                            visited.Add(e.Meta);
+                            edgeCount =
+                                baseEdgeTo.GetAll(
+                                    false,
+                                    e.Meta + ":").Count();
+                            edgeCountByMeta.Add(e.Meta, edgeCount);
                         }
-                        else
-                            PreFillFormAnalyseEdge(e.Meta, false);
+
+                        bool isSet = edgeCount > 1;
+                        result.Add((e.Meta, isSet));
+
+                        if (isSet)
+                            visited.Add(e.Meta);
+                    }
                 }
             }
             else // Form is typed
             {
-                foreach (IEdge e in VertexOperations.GetChildEdges(metaForForm))
+                foreach (IEdge e in childEdges)
                 {
-                    childs.Add(e);
-
                     if (e.To.Get(false, "$Hide:") == null)
-                        if (GraphUtil.GetIntegerValue(e.To.Get(false, "$MaxCardinality:")) > 1 || GraphUtil.GetIntegerValue(e.To.Get(false, "$MaxCardinality:")) == -1)
-                            PreFillFormAnalyseEdge(e.To, true);
-                        else
-                            PreFillFormAnalyseEdge(e.To, false);
+                    {
+                        int? maxCardinality = GraphUtil.GetIntegerValue(
+                            e.To.Get(false, "$MaxCardinality:"));
+                        result.Add(
+                            (e.To,
+                             maxCardinality > 1
+                                || maxCardinality == -1));
+                    }
                 }
             }
 
-            if (ExpertMode)
+            foreach (IEdge e in expertEdges)
             {
-                foreach (IEdge e in MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex"))
-                {
-                    bool contains = false;
+                bool contains = false;
 
-                    foreach (IEdge ee in childs)
-                        if (GeneralUtil.CompareStrings(ee.To, e.To))
-                            contains = true;
+                foreach (IEdge ee in childEdges)
+                    if (GeneralUtil.CompareStrings(ee.To, e.To))
+                        contains = true;
 
-                    if (contains == false)
-                        PreFillFormAnalyseEdge(e.To, false);
-                }
+                if (contains == false)
+                    result.Add((e.To, false));
             }
 
-            if (ExecutableVisualiserFactory.IsOfExecutableMeta(metaForForm))
-                foreach(IEdge e in ExecutableVisualiserFactory.GetExecutableEdges(metaForForm))
-                    if (e.To.Get(false, "$Hide:") == null)
-                        PreFillFormAnalyseEdge(e.To, false);
+            foreach (IEdge e in executableEdges)
+                if (e.To.Get(false, "$Hide:") == null)
+                    result.Add((e.To, false));
+
+            return result;
+        }
+
+        private void PreFillForm(
+            IEnumerable<(IVertex Meta, bool IsSet)> fieldDescriptors)
+        {
+            TabList = new Dictionary<string, TabInfo>();
+
+            foreach ((IVertex Meta, bool IsSet) descriptor
+                in fieldDescriptors)
+            {
+                PreFillFormAnalyseEdge(
+                    descriptor.Meta,
+                    descriptor.IsSet);
+            }
         }
 
         bool isDisposed = false;
@@ -1721,23 +1660,11 @@ namespace m0.UIWpf.Visualisers
 
                 this.SizeChanged -= FormVisualiser_SizeChanged;
 
-                if (DetailedRebuildDiagnosticsEnabled)
-                    MinusZero.Instance.Log(1, DisposeNestingLogWhere,
-                        "Dispose begin formVertex=" + DescribeVertex(Vertex)
-                        + " itemEdges=" + DescribeItemEdges(Vertex)
-                        + " tabDataControls=" + DescribeTabListDataControls());
-
                 // Nested UX (and other edit visualisers) are hosted in TabList via VisualiserEditWrapper
                 // with AddVertex=false, so they are not reachable through Item: edges.
                 DisposeTabListDataControls();
 
                 VisualiserHelper.Dispose();
-
-                if (DetailedRebuildDiagnosticsEnabled)
-                    MinusZero.Instance.Log(1, DisposeNestingLogWhere,
-                        "Dispose end formVertex=" + DescribeVertex(Vertex)
-                        + " itemEdgesAfterHelper=" + DescribeItemEdges(Vertex)
-                        + " tabDataControlsStillHeld=" + DescribeTabListDataControls());
             }
         }
 
@@ -1749,8 +1676,6 @@ namespace m0.UIWpf.Visualisers
             if (isBaseEdgeToUpdateInProgress)
                 return;
 
-            long baseEdgeUpdateStartTicks =
-                m0.ZeroTypes.UX.UXPerfLog.Timestamp();
             bool originalForceVertexChangeOff =
                 VisualiserHelper.ForceVertexChangeOff;
 
@@ -1767,23 +1692,11 @@ namespace m0.UIWpf.Visualisers
             ClearPendingMouseSelection();
             UnselectAllSelectedEdges();
 
-            if (DetailedRebuildDiagnosticsEnabled)
-                MinusZero.Instance.Log(1, DisposeNestingLogWhere,
-                    "BaseEdgeToUpdated before DisposeTabListAndChildVisualisers formVertex=" + DescribeVertex(Vertex)
-                    + " itemEdges=" + DescribeItemEdges(Vertex)
-                    + " tabDataControls=" + DescribeTabListDataControls());
-
             // Dispose TabList hosts first so nested UX (AddVertex=false) leaves VisualisersList
             // before Item:-based cleanup and UI rebuild.
             DisposeTabListDataControls();
 
             VisualiserHelper.DisposeAllChildVisualisersExceptWrap();
-
-            if (DetailedRebuildDiagnosticsEnabled)
-                MinusZero.Instance.Log(1, DisposeNestingLogWhere,
-                    "BaseEdgeToUpdated after DisposeTabListAndChildVisualisers formVertex=" + DescribeVertex(Vertex)
-                    + " itemEdges=" + DescribeItemEdges(Vertex)
-                    + " tabDataControlsStillHeld=" + DescribeTabListDataControls());
 
             BaseVertexEdgeAdded_PreFill = false;
             BaseVertexEdgeAdded = false;
@@ -1812,66 +1725,41 @@ namespace m0.UIWpf.Visualisers
                     ColumnNumber = (int)_columnNumber;
 
                 IVertex metaForForm = getMetaForForm();
+                bool isTypedForm =
+                    metaForForm != null && metaForForm.Count() != 0;
+                IList<IEdge> childEdges = isTypedForm
+                    ? VertexOperations.GetChildEdges(metaForForm).ToList()
+                    : basTo.ToList();
+                IList<IEdge> expertEdges = ExpertMode
+                    ? MinusZero.Instance.Root
+                        .Get(false, @"System\Meta\Base\Vertex")
+                        .ToList()
+                    : new List<IEdge>();
+                IList<IEdge> executableEdges =
+                    ExecutableVisualiserFactory.IsOfExecutableMeta(metaForForm)
+                        ? ExecutableVisualiserFactory
+                            .GetExecutableEdges(metaForForm)
+                            .ToList()
+                        : new List<IEdge>();
 
-                PreFillForm(metaForForm);
+                IList<(IVertex Meta, bool IsSet)> fieldDescriptors =
+                    BuildFormFieldDescriptors(
+                    isTypedForm,
+                    basTo,
+                    childEdges,
+                    expertEdges,
+                    executableEdges);
+                PreFillForm(fieldDescriptors);
 
                 InitializeControlContent();
 
-
-                List<IEdge> childs = new List<IEdge>();
-
-                if (metaForForm==null||metaForForm.Count()==0) // if Form is not typed
+                foreach ((IVertex Meta, bool IsSet) descriptor
+                    in fieldDescriptors)
                 {
-                    IList<IVertex> visited = new List<IVertex>();
-
-                    foreach (IEdge e in basTo)
-                    {
-                        childs.Add(e);
-                       
-                        if (!visited.Contains(e.Meta)&&e.Meta.Get(false, "$Hide:") == null)
-                            if (basTo.GetAll(false, e.Meta + ":").Count() > 1)
-                            {
-                                AddEdge(e.Meta, true); 
-                                visited.Add(e.Meta);
-                            }
-                            else
-                                AddEdge(e.Meta, false);
-                    }
+                    AddEdge(
+                        descriptor.Meta,
+                        descriptor.IsSet);
                 }
-                else // Form is typed
-                {
-                    foreach (IEdge e in VertexOperations.GetChildEdges(metaForForm))
-                    {
-                        childs.Add(e);
-                        
-                        if (e.To.Get(false, "$Hide:") == null)
-                            if (GraphUtil.GetIntegerValue(e.To.Get(false, "$MaxCardinality:")) > 1 || GraphUtil.GetIntegerValue(e.To.Get(false, "$MaxCardinality:")) == -1)
-                                AddEdge(e.To, true);
-                            else
-                                AddEdge(e.To, false);
-
-                    }
-                }
-                
-                if (ExpertMode)
-                {
-                    foreach (IEdge e in MinusZero.Instance.Root.Get(false, @"System\Meta\Base\Vertex"))
-                    {
-                        bool contains = false;
-
-                        foreach (IEdge ee in childs)
-                            if (GeneralUtil.CompareStrings(ee.To, e.To))
-                                contains = true;
-
-                        if (contains == false)
-                            AddEdge(e.To, false);
-                    }
-                }
-                
-                if (ExecutableVisualiserFactory.IsOfExecutableMeta(metaForForm))
-                    foreach (IEdge e in ExecutableVisualiserFactory.GetExecutableEdges(metaForForm))
-                        if (e.To.Get(false, "$Hide:") == null)
-                            AddEdge(e.To, false);
                 
                 if (MetaOnLeft)
                     ScheduleWidthCorrection(true);
@@ -1886,13 +1774,6 @@ namespace m0.UIWpf.Visualisers
                 VisualiserHelper.ForceVertexChangeOff =
                     originalForceVertexChangeOff;
                 isBaseEdgeToUpdateInProgress = false;
-
-                m0.ZeroTypes.UX.UXPerfLog.Record(
-                    "FormVisualiser.BaseEdgeToUpdated.total",
-                    m0.ZeroTypes.UX.UXPerfLog.Timestamp() -
-                        baseEdgeUpdateStartTicks,
-                    TabList == null ? 0 : TabList.Count,
-                    "tabs");
             }
         }
 
@@ -2287,13 +2168,6 @@ namespace m0.UIWpf.Visualisers
                 // no need for this
 
                 dataControl = tableVisualiser;
-
-                if (DetailedRebuildDiagnosticsEnabled)
-                    MinusZero.Instance.Log(1, DisposeNestingLogWhere,
-                        "AddEdge child kind=TableVisualiser meta=" + DescribeVertex(meta)
-                        + " childVertex=" + DescribeVertex(tableVisualiser.Vertex)
-                        + " parentFormVertex=" + DescribeVertex(Vertex)
-                        + " itemEdgesNow=" + DescribeItemEdges(Vertex));
             }
             else
             {
@@ -2308,25 +2182,11 @@ namespace m0.UIWpf.Visualisers
                     baseEdgeVertex.AddExternalReference();
 
                     dataControl = sv;
-
-                    if (DetailedRebuildDiagnosticsEnabled)
-                        MinusZero.Instance.Log(1, DisposeNestingLogWhere,
-                            "AddEdge child kind=StringVisualiser meta=" + DescribeVertex(meta)
-                            + " childVertex=" + DescribeVertex(sv.Vertex)
-                            + " parentFormVertex=" + DescribeVertex(Vertex)
-                            + " itemEdgesNow=" + DescribeItemEdges(Vertex));
                 }
                 else
                 if (ExecutableVisualiserFactory.IsExecutableVertex(meta))
                 {
                     dataControl = ExecutableVisualiserFactory.CreateExecutableVisualiser(Vertex.GetAll(false, @"BaseEdge:\To:").FirstOrDefault(), meta);
-
-                    if (DetailedRebuildDiagnosticsEnabled)
-                        MinusZero.Instance.Log(1, DisposeNestingLogWhere,
-                            "AddEdge child kind=ExecutableVisualiser meta=" + DescribeVertex(meta)
-                            + " dataControlType=" + (dataControl == null ? "null" : dataControl.GetType().Name)
-                            + " parentFormVertex=" + DescribeVertex(Vertex)
-                            + " itemEdgesNow=" + DescribeItemEdges(Vertex));
                 }
                 else
                 {
@@ -2344,14 +2204,6 @@ namespace m0.UIWpf.Visualisers
                         w.BaseEdge = e;
 
                     dataControl = w;
-
-                    if (DetailedRebuildDiagnosticsEnabled)
-                        MinusZero.Instance.Log(1, DisposeNestingLogWhere,
-                            "AddEdge child kind=VisualiserEditWrapper meta=" + DescribeVertex(meta)
-                            + " contentType=" + (w.Content == null ? "null" : w.Content.GetType().Name)
-                            + " contentAsIVisualiserVertex=" + DescribeIVisualiserVertex(w.Content)
-                            + " parentFormVertex=" + DescribeVertex(Vertex)
-                            + " itemEdgesNow=" + DescribeItemEdges(Vertex));
                 }
                 
            
@@ -2440,10 +2292,22 @@ namespace m0.UIWpf.Visualisers
 
         protected virtual void SetVertexDefaultValues()
         {
-            Vertex.Get(false, "Scale:").Value = 100;
-            Vertex.Get(false, "ColumnNumber:").Value = 1;
-            Vertex.Get(false, "SectionsAsTabs:").Value = "False";
-            Vertex.Get(false, "MetaOnLeft:").Value = "True";            
+            IVertex scale = Vertex.Get(false, "Scale:");
+            if (!object.Equals(scale.Value, 100))
+                scale.Value = 100;
+
+            IVertex columnNumber = Vertex.Get(false, "ColumnNumber:");
+            if (!object.Equals(columnNumber.Value, 1))
+                columnNumber.Value = 1;
+
+            IVertex sectionsAsTabs =
+                Vertex.Get(false, "SectionsAsTabs:");
+            if (!object.Equals(sectionsAsTabs.Value, "False"))
+                sectionsAsTabs.Value = "False";
+
+            IVertex metaOnLeft = Vertex.Get(false, "MetaOnLeft:");
+            if (!object.Equals(metaOnLeft.Value, "True"))
+                metaOnLeft.Value = "True";
         }        
 
         public void ScaleChange()
@@ -2500,34 +2364,10 @@ namespace m0.UIWpf.Visualisers
                 nestedKeyboardHighlight.IsVertexCommanderKeyboardHighlightEnabled = true;
         }
 
-        private static void LogSelection(string message)
-        {
-            if (!SelectionLogEnabled)
-                return;
-
-            MinusZero.Instance.Log(1, SelectionLogWhere, message);
-        }
-
-        private static void LogKeyboardNav(string message)
-        {
-            if (!KeyboardNavLogEnabled)
-                return;
-
-            MinusZero.Instance.Log(1, KeyboardNavLogWhere, message);
-        }
-
         private void DisposeTabListDataControls()
         {
             if (TabList == null)
-            {
-                if (DetailedRebuildDiagnosticsEnabled)
-                    MinusZero.Instance.Log(1, DisposeNestingLogWhere, "DisposeTabListDataControls skipped tabList=null");
                 return;
-            }
-
-            if (DetailedRebuildDiagnosticsEnabled)
-                MinusZero.Instance.Log(1, DisposeNestingLogWhere,
-                    "DisposeTabListDataControls begin " + DescribeTabListDataControls());
 
             foreach (TabInfo tabInfo in TabList.Values)
             {
@@ -2537,13 +2377,6 @@ namespace m0.UIWpf.Visualisers
 
                     if (dataControl == null)
                         continue;
-
-                    if (DetailedRebuildDiagnosticsEnabled)
-                        MinusZero.Instance.Log(1, DisposeNestingLogWhere,
-                            "DisposeTabListDataControls disposing type=" + dataControl.GetType().Name
-                            + " contentType=" + DescribeDataControlContentType(dataControl)
-                            + " contentVertex=" + DescribeIVisualiserVertex(
-                                dataControl is VisualiserEditWrapper wrapper ? wrapper.Content : dataControl));
 
                     if (dataControl is IDisposable disposableDataControl)
                         disposableDataControl.Dispose();
@@ -2556,185 +2389,6 @@ namespace m0.UIWpf.Visualisers
 
             TabList.Clear();
             TabList = null;
-
-            if (DetailedRebuildDiagnosticsEnabled)
-                MinusZero.Instance.Log(1, DisposeNestingLogWhere, "DisposeTabListDataControls end");
-        }
-
-        private static string DescribeDataControlContentType(FrameworkElement dataControl)
-        {
-            VisualiserEditWrapper wrapper = dataControl as VisualiserEditWrapper;
-
-            if (wrapper == null)
-                return "n/a";
-
-            return wrapper.Content == null ? "null" : wrapper.Content.GetType().Name;
-        }
-
-        private static string DescribeVertex(IVertex vertex)
-        {
-            if (vertex == null)
-                return "null";
-
-            return "val=" + (vertex.Value == null ? "null" : vertex.Value.ToString())
-                + " hash=" + vertex.GetHashCode();
-        }
-
-        private static string DescribeIVisualiserVertex(object content)
-        {
-            IVisualiser visualiser = content as IVisualiser;
-
-            if (visualiser == null)
-                return "n/a";
-
-            return DescribeVertex(visualiser.Vertex);
-        }
-
-        private string DescribeTabListDataControls()
-        {
-            if (TabList == null)
-                return "tabList=null";
-
-            List<string> parts = new List<string>();
-
-            foreach (TabInfo tabInfo in TabList.Values)
-            {
-                foreach (ControlInfo controlInfo in tabInfo.ControlInfos.Values)
-                {
-                    FrameworkElement dataControl = controlInfo.DataControl;
-
-                    if (dataControl == null)
-                    {
-                        parts.Add("null");
-                        continue;
-                    }
-
-                    string part = dataControl.GetType().Name;
-
-                    VisualiserEditWrapper wrapper = dataControl as VisualiserEditWrapper;
-
-                    if (wrapper != null)
-                        part += "{content=" + (wrapper.Content == null ? "null" : wrapper.Content.GetType().Name)
-                            + " contentVertex=" + DescribeIVisualiserVertex(wrapper.Content) + "}";
-                    else if (dataControl is IVisualiser nestedVisualiser)
-                        part += "{vertex=" + DescribeVertex(nestedVisualiser.Vertex) + "}";
-
-                    parts.Add(part);
-                }
-            }
-
-            return "count=" + parts.Count + " [" + string.Join("; ", parts) + "]";
-        }
-
-        private static string DescribeItemEdges(IVertex formVertex)
-        {
-            if (formVertex == null)
-                return "formVertex=null";
-
-            List<string> parts = new List<string>();
-
-            foreach (IEdge itemEdge in formVertex.GetAll(false, "Item:"))
-            {
-                IVisualiser childVisualiser = VisualisersList.GetVisualiser(itemEdge.To);
-
-                parts.Add("to=" + DescribeVertex(itemEdge.To)
-                    + " listedAs=" + (childVisualiser == null ? "null" : childVisualiser.GetType().Name));
-            }
-
-            return "count=" + parts.Count + " [" + string.Join("; ", parts) + "]";
-        }
-
-        private string DescribeSelectedEdgesSnapshot()
-        {
-            int vertexCount = Vertex?.GetAll(false, @"SelectedEdges:\{$Is:Edge}")?.Count() ?? 0;
-
-            return "vertexCount=" + vertexCount
-                + " ownCount=" + ownSelectedEdges.Count
-                + " own=[" + DescribeOwnSelectedEdges() + "]";
-        }
-
-        private string DescribeOwnSelectedEdges()
-        {
-            if (ownSelectedEdges.Count == 0)
-                return "";
-
-            return string.Join(", ", ownSelectedEdges.Select(DescribeEdge));
-        }
-
-        private static string DescribeControlInfo(ControlInfo controlInfo)
-        {
-            if (controlInfo == null)
-                return "null";
-
-            return DescribeEdge(controlInfo.BaseEdge);
-        }
-
-        private static string DescribeEdge(IEdge edge)
-        {
-            if (edge == null)
-                return "null";
-
-            string meta = edge.Meta?.Value?.ToString() ?? "";
-            string to = edge.To?.Value?.ToString() ?? "";
-
-            return "Meta=" + meta + " To=" + to;
-        }
-
-        private static string DescribeGraphChangeEvents(IVertex stack, IVertex baseEdge, IVertex baseEdgeTo)
-        {
-            int eventCount = 0;
-            int relevantEventCount = 0;
-            Dictionary<string, int> typeCounts = new Dictionary<string, int>();
-            List<string> relevantEvents = new List<string>();
-
-            foreach (IEdge eventEdge in GraphUtil.GetQueryOut(stack, "event", null))
-            {
-                eventCount++;
-
-                IVertex eventVertex = eventEdge.To;
-                IVertex type = GraphUtil.GetQueryOutFirst(eventVertex, "Type", null);
-                IVertex changedVertex = GraphUtil.GetQueryOutFirst(eventVertex, "ChangedVertex", null);
-                IVertex edgeVertex = GraphUtil.GetQueryOutFirst(eventVertex, "Edge", null);
-                IVertex from = edgeVertex == null ? null : GraphUtil.GetQueryOutFirst(edgeVertex, "From", null);
-                IVertex meta = edgeVertex == null ? null : GraphUtil.GetQueryOutFirst(edgeVertex, "Meta", null);
-                IVertex to = edgeVertex == null ? null : GraphUtil.GetQueryOutFirst(edgeVertex, "To", null);
-                string typeName = type?.Value?.ToString() ?? "null";
-
-                if (!typeCounts.ContainsKey(typeName))
-                    typeCounts[typeName] = 0;
-
-                typeCounts[typeName]++;
-
-                bool isRelevant = changedVertex == baseEdge
-                    || changedVertex == baseEdgeTo
-                    || from == baseEdge
-                    || from == baseEdgeTo
-                    || to == baseEdge
-                    || to == baseEdgeTo;
-
-                if (!isRelevant)
-                    continue;
-
-                relevantEventCount++;
-
-                if (relevantEvents.Count >= 12)
-                    continue;
-
-                relevantEvents.Add(
-                    typeName
-                    + "{changed=" + DescribeVertex(changedVertex)
-                    + ",from=" + DescribeVertex(from)
-                    + ",meta=" + DescribeVertex(meta)
-                    + ",to=" + DescribeVertex(to) + "}");
-            }
-
-            string typeSummary = string.Join(",",
-                typeCounts.OrderBy(pair => pair.Key).Select(pair => pair.Key + "=" + pair.Value));
-
-            return "events=" + eventCount
-                + " relevant=" + relevantEventCount
-                + " types=[" + typeSummary + "]"
-                + " relevantSample=[" + string.Join(";", relevantEvents) + "]";
         }
     }
 }

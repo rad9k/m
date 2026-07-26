@@ -13,8 +13,6 @@ namespace m0.Graph.ExecutionFlow
     {
         static void FireTrigger(GraphChangeTransactionAtom gcta, IVertex triggerVertex, EdgeDirectionEnum edgeDirection)
         {
-            long t0 = TxPerfLog.Timestamp();
-
             IExecution exe = new ZeroCodeExecution();
 
             ExecutionFlowHelper.GraphChangeWatchOff();
@@ -33,24 +31,14 @@ namespace m0.Graph.ExecutionFlow
                 ExecutionFlowHelper.GraphChangeWatchOn();
             }
 
-            int listenersCalled = 0;
-
             foreach (IEdge e in triggerVertex.GetAll(false, @"Listener:"))
             {
                 IVertex parameters = InstructionHelpers.CreateStack();
                 
                 parameters.AddEdge(Transaction.GenericEventHandler_event_meta, eventVertex);
 
-                string listenerKey = Transaction.GetListenerPerfKey(e.To);
-                long tListener = TxPerfLog.Timestamp();
                 ZeroCodeExecutonUtil.FuncionCall(exe, e.To, parameters);
-                TxPerfLog.Record("NonTransacted.Listener." + listenerKey,
-                    TxPerfLog.Timestamp() - tListener);
-                listenersCalled++;
             }
-
-            TxPerfLog.Record("NonTransacted.FireTrigger", TxPerfLog.Timestamp() - t0,
-                listenersCalled, "listeners");
         }
 
         public static void HandleOutEdgeValueChange(GraphChangeTransactionAtom gcta)

@@ -33,11 +33,12 @@ namespace m0.ZeroTypes.UX
             VertexUpdated();
             UpdateLabelVisibility();
 
-            if (OwningVisualiser is UXVisualiser uxVisualiser &&
-                uxVisualiser.TryDeferLineDecoratorListenerRegistration(this))
+            if (graphChangeListenerEdge != null)
+                return;
+
+            if (OwningVisualiser is UXVisualiser uxVisualiser
+                && uxVisualiser.TryDeferLineDecoratorListenerRegistration(this))
             {
-                UXPerfLog.Count(
-                    "LineDecorator.VertexSetedUp.listenerRegistrationDeferred");
                 return;
             }
 
@@ -51,15 +52,8 @@ namespace m0.ZeroTypes.UX
 
         void RegisterGraphChangeListener()
         {
-            // AddToCanvas() calls VertexSetedUp on every Paint/AddLineObjects.
-            // Without removing the previous listener, each Paint leaks another
-            // DiagramLine trigger and Commit grows slower over time.
             if (graphChangeListenerEdge != null)
-            {
-                GraphChangeTrigger.RemoveListener(graphChangeListenerEdge);
-                graphChangeListenerEdge = null;
-                UXPerfLog.Count("LineDecorator.VertexSetedUp.listenerReplaced");
-            }
+                return;
 
             graphChangeListenerEdge = ExecutionFlowHelper.AddTriggerAndListener(Vertex,
                  new List<string>
@@ -367,8 +361,6 @@ namespace m0.ZeroTypes.UX
 
         public override void SetPosition(double _FromX, double _FromY, double _ToX, double _ToY, bool _isSelfRelation, double selfRelationX, double selfRelationY)
         {
-            long t0 = UXPerfLog.Timestamp();
-
             FromX = _FromX;
             FromY = _FromY;
             ToX = _ToX;
@@ -400,11 +392,7 @@ namespace m0.ZeroTypes.UX
             LineEndings.Points = pc;
             Line.Points = pc;
 
-            long tCrow = UXPerfLog.Timestamp();
             ComputeCrowFootSideTips();
-            UXPerfLog.Record("LineDecorator.SetPosition.ComputeCrowFootSideTips", UXPerfLog.Timestamp() - tCrow);
-
-            UXPerfLog.Record("LineDecorator.SetPosition", UXPerfLog.Timestamp() - t0, isSelfRelation ? 1 : 0, "self");
         }
 
         // Computes the two side prong tips of CrowFoot at each end (only for
@@ -420,6 +408,12 @@ namespace m0.ZeroTypes.UX
             LineEndings.StartCrowFootSide2Tip = null;
             LineEndings.EndCrowFootSide1Tip = null;
             LineEndings.EndCrowFootSide2Tip = null;
+
+            if (StartAnchor != LineEndEnum.CrowFoot
+                && EndAnchor != LineEndEnum.CrowFoot)
+            {
+                return;
+            }
 
             PointCollection pc = LineEndings.Points;
             if (pc == null || pc.Count < 2)
@@ -483,13 +477,8 @@ namespace m0.ZeroTypes.UX
 
         public override double GetMouseDistance(Point p)
         {
-            long t0 = UXPerfLog.Timestamp();
-
             if (OwningVisualiser == null)
-            {
-                UXPerfLog.Record("LineDecorator.GetMouseDistance", UXPerfLog.Timestamp() - t0);
                 return double.MaxValue;
-            }
 
             double result;
 
@@ -515,7 +504,6 @@ namespace m0.ZeroTypes.UX
                 result = min;
             }
 
-            UXPerfLog.Record("LineDecorator.GetMouseDistance", UXPerfLog.Timestamp() - t0);
             return result;
         }
 

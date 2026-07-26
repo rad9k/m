@@ -47,9 +47,6 @@ namespace m0.Graph.ExecutionFlow
         readonly HashSet<ISecondStageCommitAction> queuedSecondStageCommitActions =
             new HashSet<ISecondStageCommitAction>(
                 ReferenceEqualityComparer.Instance);
-        int secondStageCommitActionsQueued;
-        int duplicateSecondStageCommitActionsSuppressed;
-        int secondStageCommitActionPeakQueueCount;
 
         ITransaction previous;
         public ITransaction Previous { get => previous; }
@@ -66,21 +63,16 @@ namespace m0.Graph.ExecutionFlow
 
         private void CommitAtoms()
         {
-            long t0 = TxPerfLog.Timestamp();
-
             foreach (ITransactionAtom a in atoms)
                 a.Commit();
 
             foreach (GraphChangeTransactionAtom atom in rollbackJournal)
                 atom.Commit();
-
-            TxPerfLog.Record("Transaction.CommitAtoms", TxPerfLog.Timestamp() - t0,
-                atoms.Count + rollbackJournal.Count, "atoms");
         }
 
         bool IsFilterMatch_OutEdgeValueChange(WatcherEntry we, GraphChangeTransactionAtom ga)
         {
-            if (we.graphChangeFilter == null || we.graphChangeFilter.Count() == 0)
+            if (we.graphChangeFilter == null || we.graphChangeFilter.Count == 0)
                 return true;
 
             switch (ga.Type)
@@ -111,7 +103,7 @@ namespace m0.Graph.ExecutionFlow
 
         bool IsFilterMatch_InEdge(WatcherEntry we, GraphChangeTransactionAtom ga)
         {
-            if (we.graphChangeFilter == null || we.graphChangeFilter.Count() == 0)
+            if (we.graphChangeFilter == null || we.graphChangeFilter.Count == 0)
                 return true;
 
             switch (ga.Type)
@@ -132,7 +124,7 @@ namespace m0.Graph.ExecutionFlow
 
         bool IsFilterMatch_MetaEdge(WatcherEntry we, GraphChangeTransactionAtom ga)
         {
-            if (we.graphChangeFilter == null || we.graphChangeFilter.Count() == 0)
+            if (we.graphChangeFilter == null || we.graphChangeFilter.Count == 0)
                 return true;
 
             switch (ga.Type)
@@ -310,112 +302,52 @@ namespace m0.Graph.ExecutionFlow
         {
             //SendGrahChangeEvents_log(triggerEventDictionary, true);
 
-            long t0 = TxPerfLog.Timestamp();
-            int listenersCalled = 0;
-            int eventsDelivered = 0;
-            int triggerVertices = triggerEventDictionary.Count;
-            int listenersFound = 0;
-
             foreach (KeyValuePair<IVertex, List<IVertex>> kvp in triggerEventDictionary)
             {
                 IVertex triggerVertex = kvp.Key;
-                int eventCount = kvp.Value.Count;
-                eventsDelivered += eventCount;
 
                 foreach (IEdge e in triggerVertex.GetAll(false, @"Listener:"))
                 {
-                    listenersFound++;
                     IVertex parameters = InstructionHelpers.CreateStack();
 
                     foreach (IVertex eventVertex in kvp.Value)
                         parameters.AddEdge(GenericEventHandler_event_meta, eventVertex);
 
-                    string listenerKey = GetListenerPerfKey(e.To);
-                    long tListener = TxPerfLog.Timestamp();
                     ZeroCodeExecutonUtil.FuncionCall(exe, e.To, parameters);
-                    TxPerfLog.Record("Transaction.Listener." + listenerKey,
-                        TxPerfLog.Timestamp() - tListener, eventCount, "events");
-                    listenersCalled++;
                 }
             }
-
-            TxPerfLog.Record("Transaction.SendGrahChangeEvents", TxPerfLog.Timestamp() - t0,
-                listenersCalled, "listeners");
-            TxPerfLog.CountWithExtra("Transaction.SendGrahChangeEvents.events", 1,
-                eventsDelivered, "events");
-            TxPerfLog.CountWithExtra("Transaction.SendGrahChangeEvents.triggers", 1,
-                triggerVertices, "triggers");
-            TxPerfLog.CountWithExtra("Transaction.SendGrahChangeEvents.listenersFound", 1,
-                listenersFound, "listeners");
-        }
-
-        public static string GetListenerPerfKey(IVertex listenerVertex)
-        {
-            if (listenerVertex == null)
-                return "null";
-
-            IVertex typeNameVertex = GraphUtil.GetQueryOutFirst(listenerVertex, "DotNetTypeName", null);
-            IVertex methodNameVertex = GraphUtil.GetQueryOutFirst(listenerVertex, "DotNetMethodName", null);
-
-            string typeName = GraphUtil.GetStringValueOrNull(typeNameVertex);
-            string methodName = GraphUtil.GetStringValueOrNull(methodNameVertex);
-
-            if (!string.IsNullOrEmpty(typeName) && !string.IsNullOrEmpty(methodName))
-            {
-                int lastDot = typeName.LastIndexOf('.');
-                string shortType = lastDot >= 0 ? typeName.Substring(lastDot + 1) : typeName;
-                return shortType + "." + methodName;
-            }
-
-            string listenerName = listenerVertex.Value == null ? null : listenerVertex.Value.ToString();
-            if (!string.IsNullOrEmpty(listenerName))
-                return "Named." + listenerName;
-
-            return "Id." + GraphUtil.GetVertexIdString(listenerVertex);
         }
 
         private void PrepareAndSendGrahChangeEvents_Loop(IExecution exe)
         {
-            long t0 = TxPerfLog.Timestamp();
-            int loopIterations = 0;
-
             Dictionary<IVertex, List<WatcherEntry>> watchedVertexDictionary;
 
             Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_OutEdgeValueChange_copy;
             Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_InEdge_copy;
             Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_MetaEdge_copy;
 
-            while (graphChangeTransactionAtoms_OutEdgeValueChange.Count() > 0 ||
-                graphChangeTransactionAtoms_InEdge.Count() > 0 ||
-                graphChangeTransactionAtoms_MetaEdge.Count() > 0)
+            while (graphChangeTransactionAtoms_OutEdgeValueChange.Count > 0 ||
+                graphChangeTransactionAtoms_InEdge.Count > 0 ||
+                graphChangeTransactionAtoms_MetaEdge.Count > 0)
             {
-                loopIterations++;
-
-                long tWatch = TxPerfLog.Timestamp();
                 watchedVertexDictionary = GraphChangeTriggerWatcher.GetWatchedVertexDictionary();
-                TxPerfLog.Record("Transaction.GetWatchedVertexDictionary", TxPerfLog.Timestamp() - tWatch,
-                    watchedVertexDictionary.Count, "watched");
-
-                int outKeys = graphChangeTransactionAtoms_OutEdgeValueChange.Count;
-                int inKeys = graphChangeTransactionAtoms_InEdge.Count;
-                int metaKeys = graphChangeTransactionAtoms_MetaEdge.Count;
 
                 graphChangeTransactionAtoms_OutEdgeValueChange_copy =
-                    new Dictionary<IVertex, List<GraphChangeTransactionAtom>>(graphChangeTransactionAtoms_OutEdgeValueChange);
+                    graphChangeTransactionAtoms_OutEdgeValueChange;
                 graphChangeTransactionAtoms_InEdge_copy =
-                    new Dictionary<IVertex, List<GraphChangeTransactionAtom>>(graphChangeTransactionAtoms_InEdge);
+                    graphChangeTransactionAtoms_InEdge;
                 graphChangeTransactionAtoms_MetaEdge_copy =
-                    new Dictionary<IVertex, List<GraphChangeTransactionAtom>>(graphChangeTransactionAtoms_MetaEdge);
+                    graphChangeTransactionAtoms_MetaEdge;
 
-                graphChangeTransactionAtoms_OutEdgeValueChange.Clear();
-                graphChangeTransactionAtoms_InEdge.Clear();
-                graphChangeTransactionAtoms_MetaEdge.Clear();
-
-                TxPerfLog.CountWithExtra("Transaction.ChangeKeys.Out", 1, outKeys, "keys");
-                TxPerfLog.CountWithExtra("Transaction.ChangeKeys.In", 1, inKeys, "keys");
-                TxPerfLog.CountWithExtra("Transaction.ChangeKeys.Meta", 1, metaKeys, "keys");
-                TxPerfLog.CountWithExtra("Transaction.PrepareAndSendLoop.pendingKeys", 1,
-                    outKeys + inKeys + metaKeys, "keys");
+                graphChangeTransactionAtoms_OutEdgeValueChange =
+                    new Dictionary<IVertex, List<GraphChangeTransactionAtom>>(
+                        ReferenceEqualityComparer.Instance);
+                graphChangeTransactionAtoms_InEdge =
+                    new Dictionary<IVertex, List<GraphChangeTransactionAtom>>(
+                        ReferenceEqualityComparer.Instance);
+                graphChangeTransactionAtoms_MetaEdge =
+                    new Dictionary<IVertex, List<GraphChangeTransactionAtom>>(
+                        ReferenceEqualityComparer.Instance);
 
                 PrepareAndSendGrahChangeEvents(exe, 
                     watchedVertexDictionary,
@@ -423,9 +355,6 @@ namespace m0.Graph.ExecutionFlow
                     graphChangeTransactionAtoms_InEdge_copy,
                     graphChangeTransactionAtoms_MetaEdge_copy);
             }
-
-            TxPerfLog.Record("Transaction.PrepareAndSendLoop", TxPerfLog.Timestamp() - t0,
-                loopIterations, "iterations");
         }
 
         private void PrepareAndSendGrahChangeEvents(IExecution exe, 
@@ -437,39 +366,28 @@ namespace m0.Graph.ExecutionFlow
             ExecutionFlowHelper.GraphChangeWatchOff();
 
             Dictionary<IVertex, List<IVertex>> triggerEventDictionary = null;
-            long buildTicks = 0;
-            bool usedWatchedPath = false;
             try
             {
                 int graphChangeTransactionAtoms_TotalCount =
-                    graphChangeTransactionAtoms_OutEdgeValueChange_copy.Keys.Count +
-                    graphChangeTransactionAtoms_InEdge_copy.Keys.Count;
+                    graphChangeTransactionAtoms_OutEdgeValueChange_copy.Count +
+                    graphChangeTransactionAtoms_InEdge_copy.Count +
+                    graphChangeTransactionAtoms_MetaEdge_copy.Count;
 
-                long tBuild = TxPerfLog.Timestamp();
                 if (graphChangeTransactionAtoms_TotalCount > watchedVertexDictionary.Count)
-                {
-                    usedWatchedPath = true;
                     triggerEventDictionary = getTriggerEventDictionary_byWatchedVertexDictionary(watchedVertexDictionary,
                         graphChangeTransactionAtoms_OutEdgeValueChange_copy,
                         graphChangeTransactionAtoms_InEdge_copy,
                         graphChangeTransactionAtoms_MetaEdge_copy);
-                }
                 else
                     triggerEventDictionary = getTriggerEventDictionary_byGraphChangeTransactionAtoms(watchedVertexDictionary,
                         graphChangeTransactionAtoms_OutEdgeValueChange_copy,
                         graphChangeTransactionAtoms_InEdge_copy,
                         graphChangeTransactionAtoms_MetaEdge_copy);
-                buildTicks = TxPerfLog.Timestamp() - tBuild;
             }
             finally
             {
                 ExecutionFlowHelper.GraphChangeWatchOn();
             }
-
-            TxPerfLog.Record("Transaction.BuildTriggerEventDictionary", buildTicks,
-                triggerEventDictionary == null ? 0 : triggerEventDictionary.Count, "triggers");
-            TxPerfLog.CountWithExtra("Transaction.BuildTriggerEventDictionary.path", 1,
-                usedWatchedPath ? 1 : 0, "byWatched");
 
             if (triggerEventDictionary == null)
                 return;
@@ -482,10 +400,8 @@ namespace m0.Graph.ExecutionFlow
             }
             finally
             {
-                long tCleanup = TxPerfLog.Timestamp();
                 RemoveExternalReferences(
                     triggerEventDictionary);
-                TxPerfLog.Record("Transaction.RemoveExternalReferences", TxPerfLog.Timestamp() - tCleanup);
             }
         }
 
@@ -498,15 +414,8 @@ namespace m0.Graph.ExecutionFlow
 
         public void Commit_SecondStage()
         {
-            long t0 = TxPerfLog.Timestamp();
-            int actionsExecuted = 0;
-            int processingRounds = 0;
-            Dictionary<Type, (long TotalTicks, int ActionCount)> actionTypeStatistics =
-                new Dictionary<Type, (long TotalTicks, int ActionCount)>();
-
             while (secondStageCommitActionList.Count > 0)
             {
-                processingRounds++;
                 List<ISecondStageCommitAction> actionsToExecute =
                     secondStageCommitActionList;
                 secondStageCommitActionList =
@@ -519,62 +428,9 @@ namespace m0.Graph.ExecutionFlow
                     // to schedule itself again when its execution changes graph state.
                     queuedSecondStageCommitActions.Remove(action);
 
-                    long tAction = TxPerfLog.Timestamp();
                     action.ExecuteSecondStageCommitAction();
-                    long actionTicks = TxPerfLog.Timestamp() - tAction;
-
-                    Type actionType = action.GetType();
-                    if (actionTypeStatistics.TryGetValue(
-                        actionType,
-                        out (long TotalTicks, int ActionCount) statistics))
-                    {
-                        actionTypeStatistics[actionType] =
-                            (statistics.TotalTicks + actionTicks,
-                             statistics.ActionCount + 1);
-                    }
-                    else
-                    {
-                        actionTypeStatistics.Add(
-                            actionType,
-                            (actionTicks, 1));
-                    }
-
-                    actionsExecuted++;
                 }
             }
-
-            foreach (KeyValuePair<Type, (long TotalTicks, int ActionCount)> statistics
-                in actionTypeStatistics)
-            {
-                TxPerfLog.Record(
-                    "Transaction.SecondStage." + statistics.Key.Name + ".ExecuteBatch",
-                    statistics.Value.TotalTicks,
-                    statistics.Value.ActionCount,
-                    "actions");
-            }
-
-            TxPerfLog.CountWithExtra(
-                "Transaction.SecondStage.Queue",
-                1,
-                secondStageCommitActionsQueued,
-                "queued");
-            TxPerfLog.CountWithExtra(
-                "Transaction.SecondStage.DuplicatesSuppressed",
-                1,
-                duplicateSecondStageCommitActionsSuppressed,
-                "duplicates");
-            TxPerfLog.CountWithExtra(
-                "Transaction.SecondStage.PeakQueue",
-                1,
-                secondStageCommitActionPeakQueueCount,
-                "actions");
-            TxPerfLog.CountWithExtra(
-                "Transaction.SecondStage.ProcessingRounds",
-                1,
-                processingRounds,
-                "rounds");
-            TxPerfLog.Record("Transaction.Commit_SecondStage", TxPerfLog.Timestamp() - t0,
-                actionsExecuted, "actions");
         }
 
         //static object lockObject = new object();
@@ -583,17 +439,10 @@ namespace m0.Graph.ExecutionFlow
         {
             //lock (lockObject)
             {
-                long t0 = TxPerfLog.Timestamp();
-
                 if (state != TransactionStateEnum.Started)
                     throw new Exception("Transaction Commit while transaction not started.");
 
                 state = TransactionStateEnum.Commiting;
-
-                int pendingOut = graphChangeTransactionAtoms_OutEdgeValueChange.Count;
-                int pendingIn = graphChangeTransactionAtoms_InEdge.Count;
-                int pendingMeta = graphChangeTransactionAtoms_MetaEdge.Count;
-                int pendingAtoms = atoms.Count + rollbackJournal.Count;
 
                 CommitAtoms();
 
@@ -606,20 +455,11 @@ namespace m0.Graph.ExecutionFlow
                     atoms.Clear();
                     rollbackJournal.Clear();
                     state = TransactionStateEnum.Commited;
-
-                    TxPerfLog.Record("Transaction.Commit.total", TxPerfLog.Timestamp() - t0,
-                        pendingOut + pendingIn + pendingMeta, "pendingChangeKeys");
-                    TxPerfLog.CountWithExtra("Transaction.Commit.pendingAtoms", 1,
-                        pendingAtoms, "atoms");
                     return;
                 }
 
                 if (state == TransactionStateEnum.Rolledback)
-                {
-                    TxPerfLog.Record("Transaction.Commit.total", TxPerfLog.Timestamp() - t0,
-                        pendingOut + pendingIn + pendingMeta, "pendingChangeKeys");
                     return;
-                }
             }
         }
 
@@ -962,20 +802,9 @@ namespace m0.Graph.ExecutionFlow
         public void AddSecondStageCommitAction(ISecondStageCommitAction commitAction)
         {
             if (!queuedSecondStageCommitActions.Add(commitAction))
-            {
-                duplicateSecondStageCommitActionsSuppressed++;
                 return;
-            }
 
             secondStageCommitActionList.Add(commitAction);
-            secondStageCommitActionsQueued++;
-
-            if (secondStageCommitActionList.Count >
-                secondStageCommitActionPeakQueueCount)
-            {
-                secondStageCommitActionPeakQueueCount =
-                    secondStageCommitActionList.Count;
-            }
         }
     }
 }

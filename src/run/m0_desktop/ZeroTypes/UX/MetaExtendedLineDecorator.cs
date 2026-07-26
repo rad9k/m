@@ -67,14 +67,28 @@ namespace m0.ZeroTypes.UX
         public override void AddToCanvas()
         {
             IEdge baseEdge = BaseEdge;
+            IUXItem previousMetaDiagramItem = MetaDiagramItem;
+            MetaDiagramItem = null;
 
             OwningVisualiser.Canvas.Children.Add(LineEndings);
             OwningVisualiser.Canvas.Children.Add(Line);
 
             if (baseEdge.Meta != MinusZero.Instance.Empty)
-            {             
-                if (OwningVisualiser.GetItemsDictionaryByBaseEdgeTo().ContainsKey(baseEdge.Meta))
-                    MetaDiagramItem = OwningVisualiser.GetItemsDictionaryByBaseEdgeTo()[baseEdge.Meta].FirstOrDefault();
+            {
+                Dictionary<IVertex, List<IUXItem>> itemsByBaseEdgeTo =
+                    OwningVisualiser.GetItemsDictionaryByBaseEdgeTo();
+                if (itemsByBaseEdgeTo.TryGetValue(
+                    baseEdge.Meta,
+                    out List<IUXItem> matchingItems))
+                {
+                    MetaDiagramItem = matchingItems.FirstOrDefault();
+                }
+            }
+
+            if (previousMetaDiagramItem != MetaDiagramItem
+                && previousMetaDiagramItem is UXItem previousMetaItem)
+            {
+                previousMetaItem.RemoveAsToMetaLine(this);
             }
 
             if (MetaDiagramItem != null)
@@ -89,6 +103,15 @@ namespace m0.ZeroTypes.UX
             }
             
             VertexSetedUp();
+        }
+
+        public override void Dispose()
+        {
+            if (!IsDisposed && MetaDiagramItem is UXItem metaItem)
+                metaItem.RemoveAsToMetaLine(this);
+
+            MetaDiagramItem = null;
+            base.Dispose();
         }
         
         public override void RemoveFromCanvas()
