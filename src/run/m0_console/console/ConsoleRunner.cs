@@ -1,12 +1,7 @@
 using m0;
 using m0.Bootstrap;
-using m0.Network.Server;
 using m0_console.console;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace m0.console
 {
@@ -21,6 +16,12 @@ namespace m0.console
             MinusZero.Instance.Initialize();
 
             MinusZero.Instance.Initialize_AfterPossibleUXInitialized();
+
+            // Keep the process alive for the HTTP server AFTER Autostart transaction
+            // has been committed. Sleeping inside Autostart (webserver.m0t) left a
+            // nested transaction open, so OnlyNonTransacted CreateView (e.g. VertexToJson)
+            // was dropped and tree.json stayed empty.
+            MinusZero.Instance.GracefullExitToken.Token.WaitHandle.WaitOne();
 
             MinusZero.Instance.Dispose();
         }
