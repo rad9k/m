@@ -281,8 +281,7 @@ namespace m0
 
         private void DisposeLog()
         {
-
-        Log(0, "DisposeLog", "STOP");
+            Log(0, "DisposeLog", "STOP");
             logFile.Close();
         }
 
@@ -603,10 +602,12 @@ namespace m0
                 GracefullExitToken.Cancel();        
             };
 
+            // Cancel wakes SleepUntilGracefullExit (console). No Thread.Sleep:
+            // desktop/console already run full Dispose before Environment.Exit;
+            // a fixed sleep only delayed process teardown.
             AppDomain.CurrentDomain.ProcessExit += (s, e) =>
             {
-                GracefullExitToken.Cancel();        
-                Thread.Sleep(5000);  
+                GracefullExitToken.Cancel();
             };
         }
 
