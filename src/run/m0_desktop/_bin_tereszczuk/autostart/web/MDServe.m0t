@@ -2,16 +2,31 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 "MDServe"
 	import @System\Lib\Std direct meta
 	import @System\Lib\Net direct meta
+	import @System\Lib\StdUI direct meta
 	function "MDServeHandler" (@VertexType "startDir", @String "url")
+		variable "logMsg" @String
+		
+		logMsg = "MDServe.MDServeHandler startDir=["
+		logMsg += startDir\FullFilename
+		logMsg += "] url=["
+		logMsg += url
+		logMsg += "] urlLength="
+		logMsg += url<>
+		@@InteractionOutput[@@Concatenate[logMsg]]
+		
 		if url == ""
+			@@InteractionOutput["MDServe.MDServeHandler branch=getIndex (empty url)"]
 			return @@getIndex[]
 			
 		if url == "script.js"
+			@@InteractionOutput["MDServe.MDServeHandler branch=getScript"]
 			return @@getScript[]
 			
 		if url == "tree.json"
+			@@InteractionOutput["MDServe.MDServeHandler branch=getCache/TreeJson"]
 			return @@getCache[startDir]\TreeJson
 			
+		@@InteractionOutput["MDServe.MDServeHandler branch=getFile"]
 		return @@getFile[startDir, url]
 		
 	function "getIndex" @String()
@@ -101,25 +116,60 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 		variable "splitCounter" @Integer
 		variable "splitIterator" @VertexType
 		variable "fileName" @String
+		variable "decodedUrl" @String
+		variable "logMsg" @String
 		
 		cache = @@getCache[startDir]
 		
 		if cache\Id:'(url)'<> != "0"
+			logMsg = "MDServe.getFile cacheHit url=["
+			logMsg += url
+			logMsg += "] htmlLength="
+			logMsg += cache\Id:'(url)'\Html:<>
+			@@InteractionOutput[@@Concatenate[logMsg]]
 			return cache\Id:'(url)'\Html:
 			
-		splittedUrl = @@Split[@@UrlDecode[url],"/"]
+		decodedUrl = @@UrlDecode[url]
+		logMsg = "MDServe.getFile cacheMiss url=["
+		logMsg += url
+		logMsg += "] decodedUrl=["
+		logMsg += decodedUrl
+		logMsg += "]"
+		@@InteractionOutput[@@Concatenate[logMsg]]
+		
+		splittedUrl = @@Split[decodedUrl,"/"]
+		
+		logMsg = "MDServe.getFile splitCount="
+		logMsg += splittedUrl<>
+		@@InteractionOutput[@@Concatenate[logMsg]]
 		
 		splitCounter = "1"
 		splitIterator = startDir
 		
 		while splitCounter < splittedUrl<>			
 			split = splittedUrl<<splitCounter>>
+			logMsg = "MDServe.getFile navigate segment["
+			logMsg += splitCounter
+			logMsg += "]=["
+			logMsg += split
+			logMsg += "] found="
+			logMsg += splitIterator\:'(split)'<>
+			@@InteractionOutput[@@Concatenate[logMsg]]
 			splitIterator = splitIterator\:'(split)'			
 			splitCounter = splitCounter + "1"
 
 		split = splittedUrl<<splitCounter>>
 		split += ".md"
 		fileName = @@Concatenate[split]
+		
+		logMsg = "MDServe.getFile resolve fileName=["
+		logMsg += fileName
+		logMsg += "] parentFound="
+		logMsg += splitIterator<>
+		logMsg += " fileFound="
+		logMsg += splitIterator\:'(fileName)'<>
+		@@InteractionOutput[@@Concatenate[logMsg]]
+		
 		splitIterator = splitIterator\:'(fileName)'
 
 		splitIterator\Content +< :System\:Lib\:StdView\:MdStringToMdTokenVertexes :: ""
@@ -130,6 +180,13 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 		html += Start\:web\:'_doc_page_bottom.html'\Content
 		
 		concatenatedHtml = @@Concatenate[html]
+		
+		logMsg = "MDServe.getFile builtHtml length="
+		logMsg += concatenatedHtml<>
+		logMsg += " preview=["
+		logMsg += @@Substring[concatenatedHtml, "1", "120"]
+		logMsg += "]"
+		@@InteractionOutput[@@Concatenate[logMsg]]
 		
 		@@Meta\MDServeCache\Id :: url
 		

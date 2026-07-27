@@ -74,6 +74,14 @@ function BuildHashForDocAndAnchor(docId, anchorId) {
 
 function UpdateUrlForDocAndAnchor(docId, anchorId, replaceCurrentEntry) {
     const newHash = BuildHashForDocAndAnchor(docId, anchorId);
+    console.log('[MDServe UI] UpdateUrlForDocAndAnchor', {
+        docId: docId,
+        anchorId: anchorId,
+        replaceCurrentEntry: replaceCurrentEntry,
+        currentHash: window.location.hash,
+        newHash: newHash,
+        skippedBecauseSame: window.location.hash === newHash
+    });
     if (window.location.hash === newHash) {
         return;
     }
@@ -267,8 +275,19 @@ class TreeView {
             // have been previously present in the URL - the user asked for
             // the document itself, not a specific section of it.
             const itemId = treeItem.dataset.id;
+            console.log('[MDServe UI] tree click', {
+                itemId: itemId,
+                itemIdType: typeof itemId,
+                itemIdLength: itemId == null ? null : String(itemId).length,
+                hasChildren: !!treeItem.querySelector('.tree-children'),
+                datasetIdAttr: treeItem.getAttribute('data-id'),
+                title: treeContent.querySelector('span')
+                    ? treeContent.querySelector('span').textContent
+                    : null
+            });
             loadDocument(itemId, null);
             UpdateUrlForDocAndAnchor(itemId, null, false);
+            console.log('[MDServe UI] after click hash=', window.location.hash);
 
             if (!treeItem.querySelector('.tree-children') && isMobileViewport()) {
                 closeHamburgerMenu();
@@ -744,21 +763,35 @@ function loadDocument_index() {
     
     currentLoadedDocId = null;
 
+    console.log('[MDServe UI] loadDocument_index fetch', { docPath: docPath });
+
     fetch(docPath)
         .then(response => {
+            console.log('[MDServe UI] loadDocument_index response', {
+                ok: response.ok,
+                status: response.status,
+                url: response.url
+            });
             if (response.ok) {
-				console.log("Cześć!");
                 return response.text();
             } else {
                 mainContent.innerHTML = '<div class="document-placeholder">Select an item from the left panel to load the document</div>';
             }
         })
         .then(content => {
+            if (content === undefined) {
+                return;
+            }
+            console.log('[MDServe UI] loadDocument_index content', {
+                length: content.length,
+                preview: content.substring(0, 120),
+                looksLikeIndexHtml: content.indexOf('id="mainContent"') !== -1
+            });
             mainContent.innerHTML = content;
             refreshIOSPdfEmbeds();
         })
         .catch(error => {
-            console.error('Error loading document:', error);
+            console.error('[MDServe UI] loadDocument_index error:', error);
             mainContent.innerHTML = '<div class="document-placeholder">Select an item from the left panel to load the document</div>';
         });		
 } 
@@ -771,9 +804,24 @@ function loadDocument(docId, anchorId) {
     
     // Load document from HTML file
     const docPath = `${docId}`;
+
+    console.log('[MDServe UI] loadDocument start', {
+        docId: docId,
+        docIdType: typeof docId,
+        docIdLength: docId == null ? null : String(docId).length,
+        anchorId: anchorId,
+        docPath: docPath,
+        currentHash: window.location.hash
+    });
     
     fetch(docPath)
         .then(response => {
+            console.log('[MDServe UI] loadDocument response', {
+                ok: response.ok,
+                status: response.status,
+                url: response.url,
+                requestedDocPath: docPath
+            });
             if (response.ok) {
                 return response.text();
             } else {
@@ -781,6 +829,12 @@ function loadDocument(docId, anchorId) {
             }
         })
         .then(content => {
+            console.log('[MDServe UI] loadDocument content', {
+                length: content.length,
+                preview: content.substring(0, 160),
+                looksLikeIndexHtml: content.indexOf('id="mainContent"') !== -1,
+                looksLikeSidebarHeader: content.indexOf('sidebar-header') !== -1
+            });
             mainContent.innerHTML = content;
             refreshIOSPdfEmbeds();
             currentLoadedDocId = docId;
@@ -796,7 +850,7 @@ function loadDocument(docId, anchorId) {
             }
         })
         .catch(error => {
-            console.error('Error loading document:', error);
+            console.error('[MDServe UI] loadDocument error:', error);
             mainContent.innerHTML = '<div class="document-placeholder">Document not found</div>';
             currentLoadedDocId = null;
         });
