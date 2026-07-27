@@ -101,17 +101,6 @@ namespace m0.Network.Server {
 
         private readonly object _lockObject = new object();
 
-        private static string TruncateForLog(string value, int maxLength)
-        {
-            if (value == null)
-                return "<null>";
-
-            if (value.Length <= maxLength)
-                return value;
-
-            return value.Substring(0, maxLength) + "...(truncated, totalLen=" + value.Length + ")";
-        }
-
         // New method handling every HTTP request
         private IResult HandleRequest(HttpContext context)
         {            
@@ -135,25 +124,13 @@ namespace m0.Network.Server {
             // Log the HTTP request
             LogHttpRequest(context, method, url);
 
-            MinusZero.Instance.Log(1, "HttpServer.HandleRequest",
-                "method=" + method + " url=" + url);
-
 
             IResult result;
 
             string response = DoHttpMapping(context, url, HttpActionEnumHelper.GetVertex(action), out result);
 
-            if (result != null)
-            {
-                MinusZero.Instance.Log(1, "HttpServer.HandleRequest",
-                    "url=" + url + " returning IResult type=" + result.GetType().Name);
+            if (result != null) 
                 return result;
-            }
-
-            string responsePreview = TruncateForLog(response, 500);
-            int responseLength = response == null ? -1 : response.Length;
-            MinusZero.Instance.Log(1, "HttpServer.HandleRequest",
-                "url=" + url + " responseLength=" + responseLength + " preview=" + responsePreview);
 
             // Check if response looks like HTML and set appropriate content type
             if (response != null && response.TrimStart().StartsWith("<"))            
@@ -208,16 +185,9 @@ namespace m0.Network.Server {
             IVertex mappingVertex = GraphUtil.GetQueryOutFirst(thisVertex, "Mapping", null);
 
             if (mappingVertex == null)
-            {
-                MinusZero.Instance.Log(1, "HttpServer.DoHttpMapping",
-                    "url=" + url + " Mapping vertex is null");
                 return null;
-            }
 
             IList<IEdge> mappings = GraphUtil.GetQueryOut(mappingVertex, "HttpMappingEntry", null);
-
-            MinusZero.Instance.Log(1, "HttpServer.DoHttpMapping",
-                "url=" + url + " mappingEntryCount=" + mappings.Count);
 
             foreach (IEdge e in mappings)
             {
@@ -245,8 +215,6 @@ namespace m0.Network.Server {
                     if (pathMatch != -1 && !GraphUtil.GetValueAndCompareStrings(actionVertex, "REST"))
                     {
                         // Path matches with trailing slash - redirect to URL with trailing slash
-                        MinusZero.Instance.Log(1, "HttpServer.DoHttpMapping",
-                            "url=" + url + " redirect to " + url_to_process + " pathMask=" + pathMask);
                         result = RedirectResult(url_to_process);
                         return null;
                     }
@@ -260,17 +228,7 @@ namespace m0.Network.Server {
                 IVertex handlerVertex = GraphUtil.GetQueryOutFirst(e.To, "Handler", null);
 
                 if (handlerVertex == null)
-                {
-                    MinusZero.Instance.Log(1, "HttpServer.DoHttpMapping",
-                        "url=" + url + " pathMask=" + pathMask + " matched but Handler is null");
                     continue;
-                }
-
-                MinusZero.Instance.Log(1, "HttpServer.DoHttpMapping",
-                    "url=" + url + " matched pathMask=" + pathMask
-                    + " url_path=" + url_path + " url_rest=" + url_rest
-                    + " handler=" + GraphUtil.GetVertexIdString(handlerVertex)
-                    + " action=" + GraphUtil.GetStringValue(actionVertex));
 
                 if (GraphUtil.GetValueAndCompareStrings(actionVertex, "REST"))
                 {
@@ -284,8 +242,6 @@ namespace m0.Network.Server {
                 if (GraphUtil.ExistQueryOut(handlerVertex, "$Is", "Directory"))
                 {
                     // Handle as file request
-                    MinusZero.Instance.Log(1, "HttpServer.DoHttpMapping",
-                        "url=" + url + " handling as Directory file request url_rest=" + url_rest);
                     result = HandleFileRequest(context, url_rest, handlerVertex);
                     return null;
                 }
@@ -293,8 +249,6 @@ namespace m0.Network.Server {
                 return CallHandler(handlerVertex, url_rest);
             }
 
-            MinusZero.Instance.Log(1, "HttpServer.DoHttpMapping",
-                "url=" + url + " no mapping matched, returning [404]");
             return "[404]";
         }
 
@@ -335,57 +289,16 @@ namespace m0.Network.Server {
         {
             lock (_lockObject)
             {            
-                MinusZero.Instance.Log(1, "HttpServer.CallHandler",
-                    "BEGIN handler=" + GraphUtil.GetVertexIdString(handlerVertex)
-                    + " url_rest=" + url);
-
                 IVertex parameters = InstructionHelpers.CreateStack();
 
                 parameters.AddVertex(url_meta, url);
 
-                INoInEdgeInOutVertexVertex ret = null;
+                INoInEdgeInOutVertexVertex ret = ZeroCodeExecutonUtil.FuncionCall(handlerVertex, parameters);
 
-                try
-                {
-                    ret = ZeroCodeExecutonUtil.FuncionCall(handlerVertex, parameters);
-                }
-                catch (Exception ex)
-                {
-                    MinusZero.Instance.Log(1, "HttpServer.CallHandler",
-                        "EXCEPTION url_rest=" + url + " message=" + ex.Message
-                        + " type=" + ex.GetType().FullName);
-                    throw;
-                }
-
-                if (ret == null)
-                {
-                    MinusZero.Instance.Log(1, "HttpServer.CallHandler",
-                        "END url_rest=" + url + " ret is null, returning [null]");
-                    return "[null]";
-                }
-
-                int outEdgeCount = ret.OutEdges.Count;
-                MinusZero.Instance.Log(1, "HttpServer.CallHandler",
-                    "END url_rest=" + url + " ret.OutEdges.Count=" + outEdgeCount);
-
-                if (outEdgeCount > 0)
-                {
-                    IVertex returnVertex = ret.OutEdges[0].To;
-                    string returnValue = returnVertex == null ? null : returnVertex.ToString();
-                    string returnVertexId = returnVertex == null ? "<null>" : GraphUtil.GetVertexIdString(returnVertex);
-                    MinusZero.Instance.Log(1, "HttpServer.CallHandler",
-                        "END url_rest=" + url
-                        + " returnVertexId=" + returnVertexId
-                        + " returnValueLength=" + (returnValue == null ? -1 : returnValue.Length)
-                        + " returnValuePreview=" + TruncateForLog(returnValue, 500));
-                    return returnValue;
-                }
+                if (ret.OutEdges.Count > 0)
+                    return ret.OutEdges[0].To.ToString();
                 else
-                {
-                    MinusZero.Instance.Log(1, "HttpServer.CallHandler",
-                        "END url_rest=" + url + " no out edges, returning [null]");
                     return "[null]";
-                }
             }
         }
 

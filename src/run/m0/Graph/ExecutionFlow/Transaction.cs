@@ -13,13 +13,9 @@ namespace m0.Graph.ExecutionFlow
     // This ITransaction implementation supports GraphChangeTransactionAtom support
     public class Transaction : ITransaction
     {
-        bool graphChangeWatch = true;
+        static bool _GraphChangeWatch = true;
 
-        public bool GraphChangeWatchActive
-        {
-            get { return graphChangeWatch; }
-            set { graphChangeWatch = value; }
-        }
+        public bool GraphChangeWatchActive { get { return _GraphChangeWatch; } set { _GraphChangeWatch = value; } }
 
         static IVertex r = m0.MinusZero.Instance.root;
 
@@ -29,24 +25,12 @@ namespace m0.Graph.ExecutionFlow
         public TransactionStateEnum State { get => state; }
 
         IList<ITransactionAtom> atoms = new List<ITransactionAtom>();
-        IList<GraphChangeTransactionAtom> rollbackJournal =
-            new List<GraphChangeTransactionAtom>();
 
-        public Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_OutEdgeValueChange =
-            new Dictionary<IVertex, List<GraphChangeTransactionAtom>>(
-                ReferenceEqualityComparer.Instance);
-        public Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_InEdge =
-            new Dictionary<IVertex, List<GraphChangeTransactionAtom>>(
-                ReferenceEqualityComparer.Instance);
-        public Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_MetaEdge =
-            new Dictionary<IVertex, List<GraphChangeTransactionAtom>>(
-                ReferenceEqualityComparer.Instance);
+        public Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_OutEdgeValueChange = new Dictionary<IVertex, List<GraphChangeTransactionAtom>>();
+        public Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_InEdge = new Dictionary<IVertex, List<GraphChangeTransactionAtom>>();
+        public Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_MetaEdge = new Dictionary<IVertex, List<GraphChangeTransactionAtom>>();
 
-        List<ISecondStageCommitAction> secondStageCommitActionList =
-            new List<ISecondStageCommitAction>();
-        readonly HashSet<ISecondStageCommitAction> queuedSecondStageCommitActions =
-            new HashSet<ISecondStageCommitAction>(
-                ReferenceEqualityComparer.Instance);
+        IList<ISecondStageCommitAction> secondStageCommitActionList = new List<ISecondStageCommitAction>();
 
         ITransaction previous;
         public ITransaction Previous { get => previous; }
@@ -66,13 +50,14 @@ namespace m0.Graph.ExecutionFlow
             foreach (ITransactionAtom a in atoms)
                 a.Commit();
 
-            foreach (GraphChangeTransactionAtom atom in rollbackJournal)
-                atom.Commit();
+            foreach (List<GraphChangeTransactionAtom> al in graphChangeTransactionAtoms_OutEdgeValueChange.Values)
+                foreach (GraphChangeTransactionAtom a in al)
+                    a.Commit();
         }
 
         bool IsFilterMatch_OutEdgeValueChange(WatcherEntry we, GraphChangeTransactionAtom ga)
         {
-            if (we.graphChangeFilter == null || we.graphChangeFilter.Count == 0)
+            if (we.graphChangeFilter == null || we.graphChangeFilter.Count() == 0)
                 return true;
 
             switch (ga.Type)
@@ -103,7 +88,7 @@ namespace m0.Graph.ExecutionFlow
 
         bool IsFilterMatch_InEdge(WatcherEntry we, GraphChangeTransactionAtom ga)
         {
-            if (we.graphChangeFilter == null || we.graphChangeFilter.Count == 0)
+            if (we.graphChangeFilter == null || we.graphChangeFilter.Count() == 0)
                 return true;
 
             switch (ga.Type)
@@ -124,7 +109,7 @@ namespace m0.Graph.ExecutionFlow
 
         bool IsFilterMatch_MetaEdge(WatcherEntry we, GraphChangeTransactionAtom ga)
         {
-            if (we.graphChangeFilter == null || we.graphChangeFilter.Count == 0)
+            if (we.graphChangeFilter == null || we.graphChangeFilter.Count() == 0)
                 return true;
 
             switch (ga.Type)
@@ -157,14 +142,14 @@ namespace m0.Graph.ExecutionFlow
                     foreach (GraphChangeTransactionAtom a in graphChangeTransactionAtoms_OutEdgeValueChange_copy[kvp.Key])
                         foreach (WatcherEntry we in kvp.Value)
                             if(IsFilterMatch_OutEdgeValueChange(we, a))
-                            {                            
+                                {                            
                                     IVertex eventVertex = a.CreateEventVertex_GraphChange(we.triggerVertex, we.sourceVertex, EdgeDirectionEnum.Out);
                                     if (eventVertex != null)
                                     {
                                         GeneralUtil.DictionaryAdd<IVertex, IVertex>(triggerEventDictionary, we.triggerVertex, eventVertex);
                                         eventVertex.AddExternalReference();
                                     }
-                            }                          
+                                }                            
 
                 if (graphChangeTransactionAtoms_InEdge_copy.ContainsKey(kvp.Key))
                     foreach (GraphChangeTransactionAtom a in graphChangeTransactionAtoms_InEdge_copy[kvp.Key])
@@ -209,14 +194,14 @@ namespace m0.Graph.ExecutionFlow
                     foreach (WatcherEntry we in watchedVertexDictionary[kvp.Key])
                         foreach (GraphChangeTransactionAtom a in kvp.Value)
                             if (IsFilterMatch_OutEdgeValueChange(we, a))
-                            {
+                                {
                                     IVertex eventVertex = a.CreateEventVertex_GraphChange(we.triggerVertex, we.sourceVertex, EdgeDirectionEnum.Out);
                                     if (eventVertex != null)
                                     {
                                         GeneralUtil.DictionaryAdd<IVertex, IVertex>(triggerEventDictionary, we.triggerVertex, eventVertex);
                                         eventVertex.AddExternalReference();
                                     }
-                            }
+                                }                            
 
             foreach (KeyValuePair<IVertex, List<GraphChangeTransactionAtom>> kvp in graphChangeTransactionAtoms_InEdge_copy)
                 if (watchedVertexDictionary.ContainsKey(kvp.Key))
@@ -307,7 +292,7 @@ namespace m0.Graph.ExecutionFlow
                 IVertex triggerVertex = kvp.Key;
 
                 foreach (IEdge e in triggerVertex.GetAll(false, @"Listener:"))
-                {
+                {             
                     IVertex parameters = InstructionHelpers.CreateStack();
 
                     foreach (IVertex eventVertex in kvp.Value)
@@ -326,28 +311,22 @@ namespace m0.Graph.ExecutionFlow
             Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_InEdge_copy;
             Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_MetaEdge_copy;
 
-            while (graphChangeTransactionAtoms_OutEdgeValueChange.Count > 0 ||
-                graphChangeTransactionAtoms_InEdge.Count > 0 ||
-                graphChangeTransactionAtoms_MetaEdge.Count > 0)
+            while (graphChangeTransactionAtoms_OutEdgeValueChange.Count() > 0 ||
+                graphChangeTransactionAtoms_InEdge.Count() > 0 ||
+                graphChangeTransactionAtoms_MetaEdge.Count() > 0)
             {
                 watchedVertexDictionary = GraphChangeTriggerWatcher.GetWatchedVertexDictionary();
 
                 graphChangeTransactionAtoms_OutEdgeValueChange_copy =
-                    graphChangeTransactionAtoms_OutEdgeValueChange;
+                    new Dictionary<IVertex, List<GraphChangeTransactionAtom>>(graphChangeTransactionAtoms_OutEdgeValueChange);
                 graphChangeTransactionAtoms_InEdge_copy =
-                    graphChangeTransactionAtoms_InEdge;
+                    new Dictionary<IVertex, List<GraphChangeTransactionAtom>>(graphChangeTransactionAtoms_InEdge);
                 graphChangeTransactionAtoms_MetaEdge_copy =
-                    graphChangeTransactionAtoms_MetaEdge;
+                    new Dictionary<IVertex, List<GraphChangeTransactionAtom>>(graphChangeTransactionAtoms_MetaEdge);
 
-                graphChangeTransactionAtoms_OutEdgeValueChange =
-                    new Dictionary<IVertex, List<GraphChangeTransactionAtom>>(
-                        ReferenceEqualityComparer.Instance);
-                graphChangeTransactionAtoms_InEdge =
-                    new Dictionary<IVertex, List<GraphChangeTransactionAtom>>(
-                        ReferenceEqualityComparer.Instance);
-                graphChangeTransactionAtoms_MetaEdge =
-                    new Dictionary<IVertex, List<GraphChangeTransactionAtom>>(
-                        ReferenceEqualityComparer.Instance);
+                graphChangeTransactionAtoms_OutEdgeValueChange.Clear();
+                graphChangeTransactionAtoms_InEdge.Clear();
+                graphChangeTransactionAtoms_MetaEdge.Clear();
 
                 PrepareAndSendGrahChangeEvents(exe, 
                     watchedVertexDictionary,
@@ -363,46 +342,32 @@ namespace m0.Graph.ExecutionFlow
             Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_InEdge_copy,
             Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_MetaEdge_copy)
         {
-            ExecutionFlowHelper.GraphChangeWatchOff();
+            GraphChangeWatchActive = false;
 
-            Dictionary<IVertex, List<IVertex>> triggerEventDictionary = null;
-            try
-            {
-                int graphChangeTransactionAtoms_TotalCount =
-                    graphChangeTransactionAtoms_OutEdgeValueChange_copy.Count +
-                    graphChangeTransactionAtoms_InEdge_copy.Count +
-                    graphChangeTransactionAtoms_MetaEdge_copy.Count;
+            Dictionary<IVertex, List<IVertex>> triggerEventDictionary;            
 
-                if (graphChangeTransactionAtoms_TotalCount > watchedVertexDictionary.Count)
-                    triggerEventDictionary = getTriggerEventDictionary_byWatchedVertexDictionary(watchedVertexDictionary,
-                        graphChangeTransactionAtoms_OutEdgeValueChange_copy,
-                        graphChangeTransactionAtoms_InEdge_copy,
-                        graphChangeTransactionAtoms_MetaEdge_copy);
-                else
-                    triggerEventDictionary = getTriggerEventDictionary_byGraphChangeTransactionAtoms(watchedVertexDictionary,
-                        graphChangeTransactionAtoms_OutEdgeValueChange_copy,
-                        graphChangeTransactionAtoms_InEdge_copy,
-                        graphChangeTransactionAtoms_MetaEdge_copy);
-            }
-            finally
-            {
-                ExecutionFlowHelper.GraphChangeWatchOn();
-            }
+            int graphChangeTransactionAtoms_TotalCount =
+                graphChangeTransactionAtoms_OutEdgeValueChange_copy.Keys.Count +
+                graphChangeTransactionAtoms_InEdge_copy.Keys.Count;
 
-            if (triggerEventDictionary == null)
-                return;
+            if (graphChangeTransactionAtoms_TotalCount > watchedVertexDictionary.Count)
+                triggerEventDictionary = getTriggerEventDictionary_byWatchedVertexDictionary(watchedVertexDictionary,
+                    graphChangeTransactionAtoms_OutEdgeValueChange_copy,
+                    graphChangeTransactionAtoms_InEdge_copy,
+                    graphChangeTransactionAtoms_MetaEdge_copy);
+            else
+                triggerEventDictionary = getTriggerEventDictionary_byGraphChangeTransactionAtoms(watchedVertexDictionary,
+                    graphChangeTransactionAtoms_OutEdgeValueChange_copy,
+                    graphChangeTransactionAtoms_InEdge_copy,
+                    graphChangeTransactionAtoms_MetaEdge_copy);
 
-            try
-            {
-                SendGrahChangeEvents(
-                    exe,
-                    triggerEventDictionary);
-            }
-            finally
-            {
-                RemoveExternalReferences(
-                    triggerEventDictionary);
-            }
+            GraphChangeWatchActive = true;
+
+            SendGrahChangeEvents(exe, triggerEventDictionary);
+
+            //
+
+            RemoveExternalReferences(triggerEventDictionary);
         }
 
         void RemoveExternalReferences(Dictionary<IVertex, List<IVertex>> triggerEventDictionary)
@@ -414,22 +379,16 @@ namespace m0.Graph.ExecutionFlow
 
         public void Commit_SecondStage()
         {
-            while (secondStageCommitActionList.Count > 0)
+            IList<ISecondStageCommitAction> secondStageCommitActionList_copy;
+
+            while(secondStageCommitActionList.Count() > 0)
             {
-                List<ISecondStageCommitAction> actionsToExecute =
-                    secondStageCommitActionList;
-                secondStageCommitActionList =
-                    new List<ISecondStageCommitAction>();
+                secondStageCommitActionList_copy = secondStageCommitActionList.ToList();
 
-                foreach (ISecondStageCommitAction action in actionsToExecute)
-                {
-                    // Remove immediately before execution. This suppresses duplicate
-                    // requests while an action is pending, but still permits an action
-                    // to schedule itself again when its execution changes graph state.
-                    queuedSecondStageCommitActions.Remove(action);
+                secondStageCommitActionList.Clear();
 
-                    action.ExecuteSecondStageCommitAction();
-                }
+                foreach (ISecondStageCommitAction a in secondStageCommitActionList_copy)
+                    a.ExecuteSecondStageCommitAction();
             }
         }
 
@@ -452,48 +411,32 @@ namespace m0.Graph.ExecutionFlow
                 {
                     Commit_SecondStage();
 
-                    atoms.Clear();
-                    rollbackJournal.Clear();
                     state = TransactionStateEnum.Commited;
+
                     return;
                 }
 
                 if (state == TransactionStateEnum.Rolledback)
+                {
                     return;
+                }
             }
         }
 
         private void RollbackAtoms()
         {
-            ExecutionFlowHelper.GraphChangeWatchOff();
-            try
-            {
-                for (int index = atoms.Count - 1;
-                     index >= 0;
-                     index--)
-                {
-                    atoms[index].Rollback();
-                }
+            GraphChangeWatchActive = false;
 
-                for (int index = rollbackJournal.Count - 1;
-                     index >= 0;
-                     index--)
-                {
-                    rollbackJournal[index].Rollback();
-                }
-            }
-            finally
-            {
-                ExecutionFlowHelper.GraphChangeWatchOn();
-            }
+            foreach (ITransactionAtom a in atoms)
+                a.Rollback();
 
-            atoms.Clear();
-            rollbackJournal.Clear();
-            graphChangeTransactionAtoms_OutEdgeValueChange.Clear();
-            graphChangeTransactionAtoms_InEdge.Clear();
-            graphChangeTransactionAtoms_MetaEdge.Clear();
-            secondStageCommitActionList.Clear();
-            queuedSecondStageCommitActions.Clear();
+            foreach (List<GraphChangeTransactionAtom> al in graphChangeTransactionAtoms_OutEdgeValueChange.Values)
+                foreach (GraphChangeTransactionAtom a in al)
+                    a.Rollback();
+
+            // no need to rollback graphChangeTransactionAtoms_InEdge
+
+            GraphChangeWatchActive = true;
         }
 
         public void Rollback(IExecution exe)
@@ -515,407 +458,67 @@ namespace m0.Graph.ExecutionFlow
         {
             previous = prevTransaction;
 
-            if (previous != null)
-                graphChangeWatch =
-                    previous.GraphChangeWatchActive;
-
             state = TransactionStateEnum.NotStarted;
         }
 
         public void AddAtom(ITransactionAtom atom)
         {
-            if (!(atom is GraphChangeTransactionAtom gcta))
+            if (GraphChangeWatchActive)
             {
-                atoms.Add(atom);
-                return;
-            }
+                GraphChangeTransactionAtom gcta = (GraphChangeTransactionAtom)atom;
 
-            bool isVertexToJsonMetaEdge =
-                (gcta.Type == AtomGraphChangeTypeEnum.EdgeAdded ||
-                 gcta.Type == AtomGraphChangeTypeEnum.EdgeRemoved)
-                && gcta.Edge != null
-                && gcta.Edge.Meta != null
-                && GeneralUtil.CompareStrings(gcta.Edge.Meta, "VertexToJson");
-
-            if (!GraphChangeWatchActive ||
-                ShouldIgnoreGraphChangeAtom(gcta))
-            {
-                if (isVertexToJsonMetaEdge)
+                if (gcta.Type == AtomGraphChangeTypeEnum.EdgeAdded || gcta.Type == AtomGraphChangeTypeEnum.EdgeRemoved)
                 {
-                    MinusZero.Instance.Log(1, "Transaction.AddAtom",
-                        "SKIP VertexToJson edge"
-                        + " GraphChangeWatchActive=" + GraphChangeWatchActive
-                        + " ShouldIgnore=" + ShouldIgnoreGraphChangeAtom(gcta)
-                        + " type=" + gcta.Type
-                        + " previousNull=" + (previous == null)
-                        + " fromId=" + SafeVertexId(gcta.Edge.From)
-                        + " toId=" + SafeVertexId(gcta.Edge.To));
-                }
-                return;
-            }
-
-            if (ShouldRecordRollbackJournalAtom(gcta))
-            {
-                rollbackJournal.Add(gcta);
-            }
-
-            AddOutListenerChange(gcta);
-
-            if (gcta.Type == AtomGraphChangeTypeEnum.EdgeAdded ||
-                gcta.Type == AtomGraphChangeTypeEnum.EdgeRemoved)
-            {
-                if (gcta.Edge.To != null)
-                {
-                    var inEdgeAtom =
-                        new GraphChangeTransactionAtom(gcta);
-                    inEdgeAtom.ChangedVertex = gcta.Edge.To;
-                    AddInListenerChange(inEdgeAtom);
-                }
-
-                if (gcta.Edge.Meta != null)
-                {
-                    var metaEdgeAtom =
-                        new GraphChangeTransactionAtom(gcta);
-                    AddMetaListenerChange(
-                        gcta.Edge.Meta,
-                        metaEdgeAtom);
-                }
-            }
-        }
-
-        private static string SafeVertexId(IVertex vertex)
-        {
-            if (vertex == null)
-                return "<null>";
-
-            try
-            {
-                return GraphUtil.GetVertexIdString(vertex);
-            }
-            catch (Exception ex)
-            {
-                return "<id-error:" + ex.Message + ">";
-            }
-        }
-
-        private static string SafeVertexValue(IVertex vertex)
-        {
-            if (vertex == null)
-                return "<null>";
-
-            try
-            {
-                string value = GraphUtil.GetStringValue(vertex);
-                if (value == null)
-                    return "<null>";
-                if (value.Length <= 120)
-                    return value;
-                return value.Substring(0, 120) + "...(truncated, totalLen=" + value.Length + ")";
-            }
-            catch (Exception ex)
-            {
-                return "<value-error:" + ex.Message + ">";
-            }
-        }
-
-        private bool ShouldRecordRollbackJournalAtom(
-            GraphChangeTransactionAtom atom)
-        {
-            if (previous != null)
-                return true;
-
-            if (!atom.ChangedVertex
-                .HasOnlyNonTransactedRootVertexEventsEdge)
-            {
-                return true;
-            }
-
-            if (atom.Type != AtomGraphChangeTypeEnum.EdgeAdded &&
-                atom.Type != AtomGraphChangeTypeEnum.EdgeRemoved)
-            {
-                return false;
-            }
-
-            if (atom.Edge.To != null &&
-                !atom.Edge.To
-                    .HasOnlyNonTransactedRootVertexEventsEdge)
-            {
-                return true;
-            }
-
-            return atom.Edge.Meta != null &&
-                !atom.Edge.Meta
-                    .HasOnlyNonTransactedRootVertexEventsEdge;
-        }
-
-        private bool ShouldIgnoreGraphChangeAtom(
-            GraphChangeTransactionAtom atom)
-        {
-            if (atom.Type == AtomGraphChangeTypeEnum.EdgeAdded ||
-                atom.Type == AtomGraphChangeTypeEnum.EdgeRemoved)
-            {
-                if (atom.Edge.Meta != null &&
-                    GeneralUtil.CompareStrings(
-                        atom.Edge.Meta,
-                        "$GraphChangeTrigger"))
-                {
-                    return true;
-                }
-
-                if (atom.Edge.From != null &&
-                    GraphUtil.ExistQueryIn(
-                        atom.Edge.From,
-                        "$GraphChangeTrigger",
-                        null))
-                {
-                    return true;
-                }
-            }
-
-            if (atom.Type == AtomGraphChangeTypeEnum.ValueChange &&
-                GraphUtil.ExistQueryIn(
-                    atom.ChangedVertex,
-                    "$GraphChangeTrigger",
-                    null))
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        private void AddOutListenerChange(
-            GraphChangeTransactionAtom atom)
-        {
-            if (atom.ChangedVertex
-                .HasOnlyNonTransactedRootVertexEventsEdge)
-            {
-                if (previous == null)
-                    NonTransactedEvent
-                        .HandleOutEdgeValueChange(atom);
-
-                return;
-            }
-
-            AddCoalescedListenerChange(
-                graphChangeTransactionAtoms_OutEdgeValueChange,
-                atom.ChangedVertex,
-                atom);
-        }
-
-        private void AddInListenerChange(
-            GraphChangeTransactionAtom atom)
-        {
-            if (atom.ChangedVertex
-                .HasOnlyNonTransactedRootVertexEventsEdge)
-            {
-                if (previous == null)
-                    NonTransactedEvent.HandleInEdge(atom);
-
-                return;
-            }
-
-            AddCoalescedListenerChange(
-                graphChangeTransactionAtoms_InEdge,
-                atom.ChangedVertex,
-                atom);
-        }
-
-        private void AddMetaListenerChange(
-            IVertex metaVertex,
-            GraphChangeTransactionAtom atom)
-        {
-            bool isVertexToJson = GeneralUtil.CompareStrings(metaVertex, "VertexToJson");
-            bool hasOnlyNonTransacted =
-                metaVertex.HasOnlyNonTransactedRootVertexEventsEdge;
-            bool previousIsNull = previous == null;
-
-            if (isVertexToJson)
-            {
-                bool hasCreateViewTrigger = GraphUtil.ExistQueryOut(
-                    metaVertex, "$GraphChangeTrigger", "CreateView");
-                bool hasListenerOnCreateView = false;
-                bool hasOnlyNonTransactedFilter = false;
-
-                foreach (IEdge triggerEdge in GraphUtil.GetQueryOut(
-                    metaVertex, "$GraphChangeTrigger", null))
-                {
-                    if (GraphUtil.ExistQueryOut(
-                        triggerEdge.To, "ChangeTypeFilter", "OnlyNonTransactedRootVertexEvents"))
-                        hasOnlyNonTransactedFilter = true;
-
-                    if (GraphUtil.ExistQueryOut(triggerEdge.To, "Listener", null))
-                        hasListenerOnCreateView = true;
-                }
-
-                MinusZero.Instance.Log(1, "Transaction.AddMetaListenerChange",
-                    "VertexToJson BEGIN"
-                    + " type=" + atom.Type
-                    + " metaId=" + SafeVertexId(metaVertex)
-                    + " metaValue=" + SafeVertexValue(metaVertex)
-                    + " HasOnlyNonTransactedRootVertexEventsEdge=" + hasOnlyNonTransacted
-                    + " previousNull=" + previousIsNull
-                    + " hasCreateViewTrigger=" + hasCreateViewTrigger
-                    + " hasOnlyNonTransactedFilter=" + hasOnlyNonTransactedFilter
-                    + " hasListener=" + hasListenerOnCreateView
-                    + " fromId=" + SafeVertexId(atom.Edge != null ? atom.Edge.From : null)
-                    + " toId=" + SafeVertexId(atom.Edge != null ? atom.Edge.To : null)
-                    + " toValue=" + SafeVertexValue(atom.Edge != null ? atom.Edge.To : null));
-            }
-
-            if (hasOnlyNonTransacted)
-            {
-                if (previousIsNull)
-                {
-                    if (isVertexToJson)
-                        MinusZero.Instance.Log(1, "Transaction.AddMetaListenerChange",
-                            "VertexToJson calling NonTransactedEvent.HandleMetaEdge");
-
-                    NonTransactedEvent.HandleMetaEdge(atom);
-
-                    if (isVertexToJson)
-                        MinusZero.Instance.Log(1, "Transaction.AddMetaListenerChange",
-                            "VertexToJson AFTER HandleMetaEdge toValue="
-                            + SafeVertexValue(atom.Edge != null ? atom.Edge.To : null));
-                }
-                else if (isVertexToJson)
-                {
-                    MinusZero.Instance.Log(1, "Transaction.AddMetaListenerChange",
-                        "VertexToJson DROPPED - HasOnlyNonTransacted=true but previous!=null, event neither fired nor queued"
-                        + " " + m0.Lib.Sys.DescribeTransactionStack()
-                        + " InteractionDepth=" + m0.User.Process.UX.Interaction.InteractionDepth);
-                }
-
-                return;
-            }
-
-            if (isVertexToJson)
-                MinusZero.Instance.Log(1, "Transaction.AddMetaListenerChange",
-                    "VertexToJson coalesced into transaction queue (HasOnlyNonTransacted=false) - will wait for Commit");
-
-            AddCoalescedListenerChange(
-                graphChangeTransactionAtoms_MetaEdge,
-                metaVertex,
-                atom);
-        }
-
-        private static void AddCoalescedListenerChange(
-            Dictionary<IVertex,
-                List<GraphChangeTransactionAtom>> changeSet,
-            IVertex changedVertex,
-            GraphChangeTransactionAtom atom)
-        {
-            if (!changeSet.TryGetValue(
-                changedVertex,
-                out List<GraphChangeTransactionAtom> changes))
-            {
-                changes =
-                    new List<GraphChangeTransactionAtom>();
-                changeSet.Add(changedVertex, changes);
-            }
-
-            if (atom.Type == AtomGraphChangeTypeEnum.ValueChange)
-            {
-                for (int index = 0;
-                     index < changes.Count;
-                     index++)
-                {
-                    GraphChangeTransactionAtom existing =
-                        changes[index];
-
-                    if (existing.Type !=
-                        AtomGraphChangeTypeEnum.ValueChange)
-                    {
-                        continue;
-                    }
-
-                    existing.NewValue = atom.NewValue;
-
-                    if (object.Equals(
-                        existing.OldValue,
-                        existing.NewValue))
-                    {
-                        changes.RemoveAt(index);
-                        RemoveEmptyChangeSetBucket(
-                            changeSet,
-                            changedVertex,
-                            changes);
-                    }
-
-                    return;
-                }
-
-                if (object.Equals(
-                    atom.OldValue,
-                    atom.NewValue))
-                {
-                    RemoveEmptyChangeSetBucket(
-                        changeSet,
-                        changedVertex,
-                        changes);
-                    return;
-                }
-            }
-
-            if (atom.Type == AtomGraphChangeTypeEnum.EdgeAdded ||
-                atom.Type == AtomGraphChangeTypeEnum.EdgeRemoved)
-            {
-                for (int index = 0;
-                     index < changes.Count;
-                     index++)
-                {
-                    GraphChangeTransactionAtom existing =
-                        changes[index];
-
-                    if (!ReferenceEquals(
-                        existing.Edge,
-                        atom.Edge))
-                    {
-                        continue;
-                    }
-
-
-                    if (existing.Type == atom.Type)
+                    if (GeneralUtil.CompareStrings(gcta.Edge.Meta, "$GraphChangeTrigger"))
                         return;
 
-                    if ((existing.Type ==
-                         AtomGraphChangeTypeEnum.EdgeAdded &&
-                         atom.Type ==
-                         AtomGraphChangeTypeEnum.EdgeRemoved) ||
-                        (existing.Type ==
-                         AtomGraphChangeTypeEnum.EdgeRemoved &&
-                         atom.Type ==
-                         AtomGraphChangeTypeEnum.EdgeAdded))
-                    {
-                        changes.RemoveAt(index);
-                        RemoveEmptyChangeSetBucket(
-                            changeSet,
-                            changedVertex,
-                            changes);
+                    if (GraphUtil.ExistQueryIn(gcta.Edge.From, "$GraphChangeTrigger", null))
                         return;
-                    }
+                }
+
+                if (gcta.Type == AtomGraphChangeTypeEnum.ValueChange)
+                    if (GraphUtil.ExistQueryIn(gcta.ChangedVertex, "$GraphChangeTrigger", null))
+                        return;
+
+                if (gcta.ChangedVertex.HasOnlyNonTransactedRootVertexEventsEdge)
+                    NonTransactedEvent.HandleOutEdgeValueChange(gcta);
+                else
+                    GeneralUtil.DictionaryAdd<IVertex, GraphChangeTransactionAtom>(
+                        graphChangeTransactionAtoms_OutEdgeValueChange,
+                        gcta.ChangedVertex,
+                        gcta);
+
+                if (gcta.Type == AtomGraphChangeTypeEnum.EdgeAdded || gcta.Type == AtomGraphChangeTypeEnum.EdgeRemoved)
+                {                    
+                    GraphChangeTransactionAtom gcta_inEdge = new GraphChangeTransactionAtom(gcta);
+                    gcta_inEdge.ChangedVertex = gcta.Edge.To;
+
+                    if (gcta_inEdge.ChangedVertex.HasOnlyNonTransactedRootVertexEventsEdge)
+                        NonTransactedEvent.HandleInEdge(gcta_inEdge);
+                    else
+                        GeneralUtil.DictionaryAdd<IVertex, GraphChangeTransactionAtom>(
+                            graphChangeTransactionAtoms_InEdge,
+                            gcta_inEdge.ChangedVertex,
+                            gcta_inEdge);
+
+                    //
+
+                    GraphChangeTransactionAtom gcta_metaEdge = new GraphChangeTransactionAtom(gcta);
+                    //gcta_inEdge.ChangedVertex = gcta.Edge.To;
+
+                    if (gcta.Edge.Meta.HasOnlyNonTransactedRootVertexEventsEdge)
+                        NonTransactedEvent.HandleMetaEdge(gcta);
+                    else
+                        GeneralUtil.DictionaryAdd<IVertex, GraphChangeTransactionAtom>(
+                            graphChangeTransactionAtoms_MetaEdge,
+                            gcta.Edge.Meta, // is this ok???
+                            gcta_metaEdge);
                 }
             }
-
-            changes.Add(
-                new GraphChangeTransactionAtom(atom));
-        }
-
-        private static void RemoveEmptyChangeSetBucket(
-            Dictionary<IVertex,
-                List<GraphChangeTransactionAtom>> changeSet,
-            IVertex changedVertex,
-            List<GraphChangeTransactionAtom> changes)
-        {
-            if (changes.Count == 0)
-                changeSet.Remove(changedVertex);
         }
 
         public void AddSecondStageCommitAction(ISecondStageCommitAction commitAction)
         {
-            if (!queuedSecondStageCommitActions.Add(commitAction))
-                return;
-
             secondStageCommitActionList.Add(commitAction);
         }
     }

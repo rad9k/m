@@ -98,67 +98,16 @@ namespace m0.Graph.ExecutionFlow
 
     class View
     {
-        private static string TruncateForLog(string value, int maxLength)
-        {
-            if (value == null)
-                return "<null>";
-
-            if (value.Length <= maxLength)
-                return value;
-
-            return value.Substring(0, maxLength) + "...(truncated, totalLen=" + value.Length + ")";
-        }
-
-        private static string SafeVertexId(IVertex vertex)
-        {
-            if (vertex == null)
-                return "<null>";
-
-            try
-            {
-                return GraphUtil.GetVertexIdString(vertex);
-            }
-            catch (Exception ex)
-            {
-                return "<id-error:" + ex.Message + ">";
-            }
-        }
-
-        private static string SafeVertexValue(IVertex vertex)
-        {
-            if (vertex == null)
-                return "<null>";
-
-            try
-            {
-                return TruncateForLog(GraphUtil.GetStringValue(vertex), 120);
-            }
-            catch (Exception ex)
-            {
-                return "<value-error:" + ex.Message + ">";
-            }
-        }
-
         public static INoInEdgeInOutVertexVertex CreateView_MetaEdgeAdded(IExecution exe)
         {
-            IList<IEdge> events = GraphUtil.GetQueryOut(exe.Stack, "event", null);
-            MinusZero.Instance.Log(1, "View.CreateView_MetaEdgeAdded",
-                "BEGIN eventCount=" + events.Count);
-
-            foreach (IEdge e in events)
+            foreach (IEdge e in GraphUtil.GetQueryOut(exe.Stack, "event", null))
             {
                 IVertex triggerVertex = GraphUtil.GetQueryOutFirst(e.To, "Trigger", null);
-                string triggerValue = GraphUtil.GetStringValueOrNull(triggerVertex);
 
-                MinusZero.Instance.Log(1, "View.CreateView_MetaEdgeAdded",
-                    "event trigger=" + (triggerValue ?? "<null>")
-                    + " triggerId=" + SafeVertexId(triggerVertex));
-
-                if (triggerValue == "CreateView")
+                if (GraphUtil.GetStringValueOrNull(triggerVertex) == "CreateView")
                     ProcessCreateViewEvent(exe, e);
             }
 
-            MinusZero.Instance.Log(1, "View.CreateView_MetaEdgeAdded", "END");
             return exe.Stack;
         }
 
@@ -182,8 +131,6 @@ namespace m0.Graph.ExecutionFlow
 
         public static INoInEdgeInOutVertexVertex CreateView_FromToListener(IExecution exe)
         {
-            MinusZero.Instance.Log(1, "View.CreateView_FromToListener", "BEGIN");
-
             IList<IEdge> viewEvents;
             IVertex viewEdge;
 
@@ -193,11 +140,6 @@ namespace m0.Graph.ExecutionFlow
 
             IVertex createView = GraphUtil.GetQueryOutFirst(metaVertex, "CreateView", null);
 
-            MinusZero.Instance.Log(1, "View.CreateView_FromToListener",
-                "metaValue=" + SafeVertexValue(metaVertex)
-                + " createViewNull=" + (createView == null)
-                + " viewEventsCount=" + viewEvents.Count);
-
             ViewHolder vh = new ViewHolder(createView);
 
             vh.ExecuteFromToTransformFunction(exe,
@@ -206,14 +148,11 @@ namespace m0.Graph.ExecutionFlow
                 metaVertex,
                 GraphUtil.GetQueryOutFirst(viewEdge, "To", null));
 
-            MinusZero.Instance.Log(1, "View.CreateView_FromToListener", "END");
             return exe.Stack;
         }
 
         public static INoInEdgeInOutVertexVertex CreateView_ToFromListener(IExecution exe)
         {
-            MinusZero.Instance.Log(1, "View.CreateView_ToFromListener", "BEGIN");
-
             IList<IEdge> viewEvents;
             IVertex viewEdge;
 
@@ -231,7 +170,6 @@ namespace m0.Graph.ExecutionFlow
                 metaVertex,
                 GraphUtil.GetQueryOutFirst(viewEdge, "To", null));
 
-            MinusZero.Instance.Log(1, "View.CreateView_ToFromListener", "END");
             return exe.Stack;
         }
 
@@ -252,86 +190,20 @@ namespace m0.Graph.ExecutionFlow
             trigger = GraphUtil.GetQueryOutFirst(eventVertex, "Trigger", null);
 
             view = GraphUtil.GetQueryOutFirst(edgeMeta, "View", null);
-            IVertex createViewChild = edgeMeta == null
-                ? null
-                : GraphUtil.GetQueryOutFirst(edgeMeta, "CreateView", null);
 
-            MinusZero.Instance.Log(1, "View.ProcessCreateViewEvent",
-                "BEGIN edgeMetaValue=" + SafeVertexValue(edgeMeta)
-                + " edgeMetaId=" + SafeVertexId(edgeMeta)
-                + " edgeFromId=" + SafeVertexId(edgeFrom)
-                + " edgeToId=" + SafeVertexId(edgeTo)
-                + " edgeToValue=" + SafeVertexValue(edgeTo)
-                + " viewNull=" + (view == null)
-                + " viewId=" + SafeVertexId(view)
-                + " createViewChildNull=" + (createViewChild == null)
-                + " createViewChildId=" + SafeVertexId(createViewChild)
-                + " triggerValue=" + SafeVertexValue(trigger));
-
-            if (edgeMeta != null)
-            {
-                System.Text.StringBuilder metaChildren = new System.Text.StringBuilder();
-                foreach (IEdge metaEdge in edgeMeta.OutEdges)
-                {
-                    if (metaChildren.Length > 0)
-                        metaChildren.Append(" | ");
-                    metaChildren.Append(SafeVertexValue(metaEdge.Meta));
-                    metaChildren.Append("=>");
-                    metaChildren.Append(SafeVertexValue(metaEdge.To));
-                }
-                MinusZero.Instance.Log(1, "View.ProcessCreateViewEvent",
-                    "edgeMetaOutEdges=" + TruncateForLog(metaChildren.ToString(), 800));
-            }
-
-            if (view == null)
-            {
-                MinusZero.Instance.Log(1, "View.ProcessCreateViewEvent",
-                    "View child is null on edgeMeta - CreateView transform will not run. createViewChildNull="
-                    + (createViewChild == null)
-                    + " END early");
-                return;
-            }
+            //
 
             ViewHolder vh = new ViewHolder(view);
 
-            MinusZero.Instance.Log(1, "View.ProcessCreateViewEvent",
-                "ViewHolder FromToTransformFunctions=" + vh.FromToTransformFunctions.Count
-                + " ToFromTransformFunctions=" + vh.ToFromTransformFunctions.Count
-                + " FromTriggerFilters=" + vh.FromTriggerFilters.Count
-                + " ToTriggerFilters=" + vh.ToTriggerFilters.Count);
-
             if (vh.ToFromTransformFunctions.Count > 0 && vh.FromToTransformFunctions.Count > 0)
-            {
-                MinusZero.Instance.Log(1, "View.ProcessCreateViewEvent",
-                    "calling ExecuteFromToTransformFunction (both directions present)");
                 vh.ExecuteFromToTransformFunction(exe, null, edgeFrom, edgeMeta, edgeTo);
-            }
             else {
                 if (vh.FromToTransformFunctions.Count > 0)
-                {
-                    MinusZero.Instance.Log(1, "View.ProcessCreateViewEvent",
-                        "calling ExecuteFromToTransformFunction");
                     vh.ExecuteFromToTransformFunction(exe, new List<IEdge>(), edgeFrom, edgeMeta, edgeTo);
-                }
-                else
-                {
-                    MinusZero.Instance.Log(1, "View.ProcessCreateViewEvent",
-                        "SKIP ExecuteFromToTransformFunction - no FromToTransformFunctions");
-                }
 
                 if (vh.ToFromTransformFunctions.Count > 0)
-                {
-                    MinusZero.Instance.Log(1, "View.ProcessCreateViewEvent",
-                        "calling ExecuteToFromTransformFunction");
                     vh.ExecuteToFromTransformFunction(exe, new List<IEdge>(), edgeFrom, edgeMeta, edgeTo);
-                }
             }
-
-            MinusZero.Instance.Log(1, "View.ProcessCreateViewEvent",
-                "AFTER transform edgeToValue=" + SafeVertexValue(edgeTo)
-                + " edgeToValueLength=" + (edgeTo == null || edgeTo.Value == null
-                    ? -1
-                    : edgeTo.Value.ToString().Length));
 
             if (vh.FromToTransformFunctions.Count > 0 && vh.FromTriggerFilters.Count > 0)
             {
@@ -364,8 +236,6 @@ namespace m0.Graph.ExecutionFlow
 
                 EdgeHelper.AddEdgeVertex(createViewTriggerVertex, edgeFrom, edgeMeta, edgeTo, "ViewEdge");
             }
-
-            MinusZero.Instance.Log(1, "View.ProcessCreateViewEvent", "END");
         }
     }
 }

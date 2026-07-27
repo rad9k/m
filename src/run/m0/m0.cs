@@ -18,7 +18,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using m0.Lib.REST;
-using m0.User;
 
 
 
@@ -281,7 +280,8 @@ namespace m0
 
         private void DisposeLog()
         {
-            Log(0, "DisposeLog", "STOP");
+
+        Log(0, "DisposeLog", "STOP");
             logFile.Close();
         }
 
@@ -309,8 +309,7 @@ namespace m0
         void Finalize()
         {
             UserInteraction.UserInteractionFinalize();
-
-            Clipboard.ClearClipboard();
+            
 
             GraphChangeTriggerWatcher.RemoveAllGraphChangeTriggers();
 
@@ -365,7 +364,7 @@ namespace m0
 
         public void CommitTransaction()
         {
-            foreach (IStore s in Stores.ToList())
+            foreach (IStore s in Stores)
                 if (s is ICommitBeforeGlobalDetachStore)
                     s.CommitTransaction();
 
@@ -382,21 +381,7 @@ namespace m0
 
         public IStore GetStore(string StoreTypeName, string StoreIdentifier)
         {
-            IStore store = null;
-
-            for (var index = 0;
-                 index < stores.Count;
-                 index++)
-            {
-                IStore candidate = stores[index];
-
-                if (candidate.TypeName == StoreTypeName &&
-                    candidate.Identifier == StoreIdentifier)
-                {
-                    store = candidate;
-                    break;
-                }
-            }
+            IStore store = Stores.Where(s => s.TypeName == StoreTypeName & s.Identifier == StoreIdentifier).FirstOrDefault();
 
             if (store != null)
                 return store;
@@ -411,20 +396,7 @@ namespace m0
 
         public IStore GetStore(string StoreIdentifier)
         {
-            IStore store = null;
-
-            for (var index = 0;
-                 index < stores.Count;
-                 index++)
-            {
-                IStore candidate = stores[index];
-
-                if (candidate.Identifier == StoreIdentifier)
-                {
-                    store = candidate;
-                    break;
-                }
-            }
+            IStore store = Stores.Where(s => s.Identifier == StoreIdentifier).FirstOrDefault();
 
             if (store != null)
                 return store;
@@ -523,8 +495,6 @@ namespace m0
             if (IsInitialized)
                 return;
 
-            EasyVertex.ResetQueryParseCaches();
-
             LogLevel = CommandLineParameters.GetM0LogLevel();
 
             ApplicationPath = AppContext.BaseDirectory;
@@ -595,20 +565,20 @@ namespace m0
         }
 
         private void InitializeGracefullExit()
-        {            
+        {
+            // gdy przyjdzie SIGTERM lub Ctrl+C — anuluj
             Console.CancelKeyPress += (s, e) =>
             {
                 e.Cancel = true;
-                GracefullExitToken.Cancel();        
+                GracefullExitToken.Cancel();        // "naciśnij przycisk"
             };
 
-            // Cancel wakes SleepUntilGracefullExit (console). No Thread.Sleep:
-            // desktop/console already run full Dispose before Environment.Exit;
-            // a fixed sleep only delayed process teardown.
             AppDomain.CurrentDomain.ProcessExit += (s, e) =>
             {
-                GracefullExitToken.Cancel();
+                GracefullExitToken.Cancel();        // "naciśnij przycisk"
+                Thread.Sleep(5000);  // poczekaj na cleanup
             };
+
         }
 
         public void BuildVariantsInitialize()
@@ -619,23 +589,11 @@ namespace m0
 
         public void Initialize_AfterPossibleUXInitialized()
         {
-            MinusZero.Instance.Log(1, "MinusZero.Initialize_AfterPossibleUXInitialized",
-                "BEFORE Autostart transaction " + m0.Lib.Sys.DescribeTransactionStack());
-
-            ExecutionFlowHelper.StartTransaction();
-
-            MinusZero.Instance.Log(1, "MinusZero.Initialize_AfterPossibleUXInitialized",
-                "AFTER StartTransaction, BEFORE Autostart " + m0.Lib.Sys.DescribeTransactionStack());
+            ExecutionFlowHelper.StartTransaction();            
 
             Autostart();
 
-            MinusZero.Instance.Log(1, "MinusZero.Initialize_AfterPossibleUXInitialized",
-                "AFTER Autostart returned, BEFORE Commit " + m0.Lib.Sys.DescribeTransactionStack());
-
-            ExecutionFlowHelper.CommitTransaction();
-
-            MinusZero.Instance.Log(1, "MinusZero.Initialize_AfterPossibleUXInitialized",
-                "AFTER Commit " + m0.Lib.Sys.DescribeTransactionStack());
+            ExecutionFlowHelper.CommitTransaction();            
         }
     }
 }
