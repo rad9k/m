@@ -530,9 +530,27 @@ namespace m0.Graph.ExecutionFlow
                 return;
             }
 
+            bool isVertexToJsonMetaEdge =
+                (gcta.Type == AtomGraphChangeTypeEnum.EdgeAdded ||
+                 gcta.Type == AtomGraphChangeTypeEnum.EdgeRemoved)
+                && gcta.Edge != null
+                && gcta.Edge.Meta != null
+                && GeneralUtil.CompareStrings(gcta.Edge.Meta, "VertexToJson");
+
             if (!GraphChangeWatchActive ||
                 ShouldIgnoreGraphChangeAtom(gcta))
             {
+                if (isVertexToJsonMetaEdge)
+                {
+                    MinusZero.Instance.Log(1, "Transaction.AddAtom",
+                        "SKIP VertexToJson edge"
+                        + " GraphChangeWatchActive=" + GraphChangeWatchActive
+                        + " ShouldIgnore=" + ShouldIgnoreGraphChangeAtom(gcta)
+                        + " type=" + gcta.Type
+                        + " previousNull=" + (previous == null)
+                        + " fromId=" + SafeVertexId(gcta.Edge.From)
+                        + " toId=" + SafeVertexId(gcta.Edge.To));
+                }
                 return;
             }
 
@@ -562,6 +580,41 @@ namespace m0.Graph.ExecutionFlow
                         gcta.Edge.Meta,
                         metaEdgeAtom);
                 }
+            }
+        }
+
+        private static string SafeVertexId(IVertex vertex)
+        {
+            if (vertex == null)
+                return "<null>";
+
+            try
+            {
+                return GraphUtil.GetVertexIdString(vertex);
+            }
+            catch (Exception ex)
+            {
+                return "<id-error:" + ex.Message + ">";
+            }
+        }
+
+        private static string SafeVertexValue(IVertex vertex)
+        {
+            if (vertex == null)
+                return "<null>";
+
+            try
+            {
+                string value = GraphUtil.GetStringValue(vertex);
+                if (value == null)
+                    return "<null>";
+                if (value.Length <= 120)
+                    return value;
+                return value.Substring(0, 120) + "...(truncated, totalLen=" + value.Length + ")";
+            }
+            catch (Exception ex)
+            {
+                return "<value-error:" + ex.Message + ">";
             }
         }
 
@@ -672,14 +725,73 @@ namespace m0.Graph.ExecutionFlow
             IVertex metaVertex,
             GraphChangeTransactionAtom atom)
         {
-            if (metaVertex
-                .HasOnlyNonTransactedRootVertexEventsEdge)
+            bool isVertexToJson = GeneralUtil.CompareStrings(metaVertex, "VertexToJson");
+            bool hasOnlyNonTransacted =
+                metaVertex.HasOnlyNonTransactedRootVertexEventsEdge;
+            bool previousIsNull = previous == null;
+
+            if (isVertexToJson)
             {
-                if (previous == null)
+                bool hasCreateViewTrigger = GraphUtil.ExistQueryOut(
+                    metaVertex, "$GraphChangeTrigger", "CreateView");
+                bool hasListenerOnCreateView = false;
+                bool hasOnlyNonTransactedFilter = false;
+
+                foreach (IEdge triggerEdge in GraphUtil.GetQueryOut(
+                    metaVertex, "$GraphChangeTrigger", null))
+                {
+                    if (GraphUtil.ExistQueryOut(
+                        triggerEdge.To, "ChangeTypeFilter", "OnlyNonTransactedRootVertexEvents"))
+                        hasOnlyNonTransactedFilter = true;
+
+                    if (GraphUtil.ExistQueryOut(triggerEdge.To, "Listener", null))
+                        hasListenerOnCreateView = true;
+                }
+
+                MinusZero.Instance.Log(1, "Transaction.AddMetaListenerChange",
+                    "VertexToJson BEGIN"
+                    + " type=" + atom.Type
+                    + " metaId=" + SafeVertexId(metaVertex)
+                    + " metaValue=" + SafeVertexValue(metaVertex)
+                    + " HasOnlyNonTransactedRootVertexEventsEdge=" + hasOnlyNonTransacted
+                    + " previousNull=" + previousIsNull
+                    + " hasCreateViewTrigger=" + hasCreateViewTrigger
+                    + " hasOnlyNonTransactedFilter=" + hasOnlyNonTransactedFilter
+                    + " hasListener=" + hasListenerOnCreateView
+                    + " fromId=" + SafeVertexId(atom.Edge != null ? atom.Edge.From : null)
+                    + " toId=" + SafeVertexId(atom.Edge != null ? atom.Edge.To : null)
+                    + " toValue=" + SafeVertexValue(atom.Edge != null ? atom.Edge.To : null));
+            }
+
+            if (hasOnlyNonTransacted)
+            {
+                if (previousIsNull)
+                {
+                    if (isVertexToJson)
+                        MinusZero.Instance.Log(1, "Transaction.AddMetaListenerChange",
+                            "VertexToJson calling NonTransactedEvent.HandleMetaEdge");
+
                     NonTransactedEvent.HandleMetaEdge(atom);
+
+                    if (isVertexToJson)
+                        MinusZero.Instance.Log(1, "Transaction.AddMetaListenerChange",
+                            "VertexToJson AFTER HandleMetaEdge toValue="
+                            + SafeVertexValue(atom.Edge != null ? atom.Edge.To : null));
+                }
+                else if (isVertexToJson)
+                {
+                    MinusZero.Instance.Log(1, "Transaction.AddMetaListenerChange",
+                        "VertexToJson DROPPED - HasOnlyNonTransacted=true but previous!=null, event neither fired nor queued"
+                        + " " + m0.Lib.Sys.DescribeTransactionStack()
+                        + " InteractionDepth=" + m0.User.Process.UX.Interaction.InteractionDepth);
+                }
 
                 return;
             }
+
+            if (isVertexToJson)
+                MinusZero.Instance.Log(1, "Transaction.AddMetaListenerChange",
+                    "VertexToJson coalesced into transaction queue (HasOnlyNonTransacted=false) - will wait for Commit");
 
             AddCoalescedListenerChange(
                 graphChangeTransactionAtoms_MetaEdge,

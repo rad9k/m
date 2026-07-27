@@ -619,11 +619,23 @@ namespace m0
 
         public void Initialize_AfterPossibleUXInitialized()
         {
-            ExecutionFlowHelper.StartTransaction();            
+            MinusZero.Instance.Log(1, "MinusZero.Initialize_AfterPossibleUXInitialized",
+                "BEFORE Autostart transaction " + m0.Lib.Sys.DescribeTransactionStack());
+
+            ExecutionFlowHelper.StartTransaction();
+
+            MinusZero.Instance.Log(1, "MinusZero.Initialize_AfterPossibleUXInitialized",
+                "AFTER StartTransaction, BEFORE Autostart " + m0.Lib.Sys.DescribeTransactionStack());
 
             Autostart();
 
-            ExecutionFlowHelper.CommitTransaction();            
+            MinusZero.Instance.Log(1, "MinusZero.Initialize_AfterPossibleUXInitialized",
+                "AFTER Autostart returned, BEFORE Commit " + m0.Lib.Sys.DescribeTransactionStack());
+
+            ExecutionFlowHelper.CommitTransaction();
+
+            MinusZero.Instance.Log(1, "MinusZero.Initialize_AfterPossibleUXInitialized",
+                "AFTER Commit " + m0.Lib.Sys.DescribeTransactionStack());
         }
     }
 }

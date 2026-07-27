@@ -23,15 +23,63 @@ namespace m0.Lib.StdView
             IVertex to = GraphUtil.GetQueryOutFirst(stack, "to", null);
 
             if (from == null || to == null)
+            {
+                MinusZero.Instance.Log(1, "VertexToJson.Transform",
+                    "from or to is null. fromNull=" + (from == null)
+                    + " toNull=" + (to == null));
                 return exe.Stack;
+            }
 
-            string json = VertexToJson_Process(from);
+            int fromOutEdgeCount = 0;
+            try
+            {
+                fromOutEdgeCount = from.OutEdgesRaw.Count;
+            }
+            catch (Exception ex)
+            {
+                MinusZero.Instance.Log(1, "VertexToJson.Transform",
+                    "failed to read from.OutEdgesRaw: " + ex.Message);
+            }
+
+            MinusZero.Instance.Log(1, "VertexToJson.Transform",
+                "BEGIN fromId=" + GraphUtil.GetVertexIdString(from)
+                + " toId=" + GraphUtil.GetVertexIdString(to)
+                + " fromValue=" + TruncateForLog(GraphUtil.GetStringValue(from), 80)
+                + " fromOutEdgeCount=" + fromOutEdgeCount);
+
+            string json = null;
+            try
+            {
+                json = VertexToJson_Process(from);
+            }
+            catch (Exception ex)
+            {
+                MinusZero.Instance.Log(1, "VertexToJson.Transform",
+                    "EXCEPTION in VertexToJson_Process: " + ex.GetType().FullName
+                    + " message=" + ex.Message);
+                throw;
+            }
 
             to.Value = json;
 
-            //m0.MinusZero.Instance.UserInteraction.InteractionOutput(GraphUtil.GetStringValue(to));
+            string toValueAfter = GraphUtil.GetStringValue(to);
+            MinusZero.Instance.Log(1, "VertexToJson.Transform",
+                "END jsonLength=" + (json == null ? -1 : json.Length)
+                + " toValueLength=" + (toValueAfter == null ? -1 : toValueAfter.Length)
+                + " preview=" + TruncateForLog(json, 500));
 
             return exe.Stack;
+        }
+
+        private static string TruncateForLog(string value, int maxLength)
+        {
+            if (value == null)
+                return "<null>";
+
+            if (value.Length <= maxLength)
+                return value;
+
+            return value.Substring(0, maxLength) + "...(truncated, totalLen=" + value.Length + ")";
         }
 
         public static string VertexToJson_Process(IVertex baseVertex)
@@ -71,7 +119,13 @@ namespace m0.Lib.StdView
 
         static void ProcessVertexInternal(IVertex baseVertex, Utf8JsonWriter writer, IList<IVertex> visited, bool inArrayContext) {
             if (!VertexOperations.CanCopy_ByVertex(baseVertex))
+            {
+                MinusZero.Instance.Log(1, "VertexToJson.Process",
+                    "CanCopy_ByVertex=false, skipping vertexId="
+                    + GraphUtil.GetVertexIdString(baseVertex)
+                    + " inArrayContext=" + inArrayContext);
                 return;
+            }
 
             if (visited.Contains(baseVertex))
             {
@@ -95,6 +149,14 @@ namespace m0.Lib.StdView
                     && !VertexOperations.DoOutEdgesDictionaryValueContainViewVertex(kvp.Value))
                     IsHomogenicAndMultipleAndOnlyEmptyMeta = false;
 
+            }
+
+            if (!inArrayContext && visited.Count == 1)
+            {
+                MinusZero.Instance.Log(1, "VertexToJson.Process",
+                    "root metaKeys=" + string.Join(",", baseVertex_OutEdgesDictionary.Keys)
+                    + " IsHomogenicAndMultipleAndOnlyEmptyMeta=" + IsHomogenicAndMultipleAndOnlyEmptyMeta
+                    + " inArrayContext=" + inArrayContext);
             }
                         
             if (IsHomogenicAndMultipleAndOnlyEmptyMeta && inArrayContext)
