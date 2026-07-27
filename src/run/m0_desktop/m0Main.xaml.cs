@@ -1,7 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
 using m0.Store;
-using m0.Store.FileSystem;
 using m0.Store.Json;
 using m0.UIWpf;
 using m0.UIWpf.Commands;
@@ -13,7 +12,6 @@ using m0.ZeroTypes;
 using m0.ZeroTypes.UX;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -305,31 +303,13 @@ namespace m0
             layoutContent.Close();
         }
 
-        // TEMPORARY: write InteractionOutput to a log file instead of showing InfoWindow.
-        // Revert after MDServe diagnostics. Log path: {ApplicationPath}/log/interaction_output.log
-        private static readonly object InteractionOutputLogLock = new object();
-
         public void InteractionOutput(string info)
         {
-            try
-            {
-                lock (InteractionOutputLogLock)
-                {
-                    FileSystemUtil.CreateDirectoryIfNotExist(MinusZero.Instance.ApplicationPath, "log");
+            m0.UIWpf.Dialog.InfoWindow i = new UIWpf.Dialog.InfoWindow();
 
-                    string logFilePath = System.IO.Path.Combine(
-                        MinusZero.Instance.ApplicationPath,
-                        "log",
-                        "interaction_output.log");
+            i.Text = info;
 
-                    string timestamp = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
-                    File.AppendAllText(logFilePath, "[" + timestamp + "] " + info + Environment.NewLine);
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine("InteractionOutput log error: " + ex.Message);
-            }
+            i.ShowDialog();
         }
 
         public void InteractionOutputException(IVertex exception)

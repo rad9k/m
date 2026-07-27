@@ -275,6 +275,55 @@ public sealed class ZeroCodePerformanceWorkloadTests
     }
 
     [Fact]
+    public void WhileReassignsDynamicPathAccumulator()
+    {
+        const string source =
+            "\"DynamicPathWhile\"\r\n" +
+            "\tvariable \"accumulator\" @VertexType\r\n" +
+            "\tvariable \"segment\" @String\r\n" +
+            "\tvariable \"counter\" @Integer\r\n" +
+            "\taccumulator = root\r\n" +
+            "\tcounter = \"1\"\r\n" +
+            "\twhile counter < \"3\"\r\n" +
+            "\t\tsegment = segments<<counter>>\r\n" +
+            "\t\taccumulator = accumulator\\:'(segment)'\r\n" +
+            "\t\tcounter = counter + \"1\"";
+        IEdge parsedRootEdge = ParseSource(source);
+
+        IVertex CreateVertex(string value)
+        {
+            return MinusZero.Instance.TempStore.Root.AddVertex(
+                MinusZero.Instance.Empty,
+                value);
+        }
+
+        IVertex root = CreateVertex("Root");
+        IVertex first = CreateVertex("First");
+        IVertex second = CreateVertex("Second");
+        root.AddEdge(MinusZero.Instance.Empty, first);
+        first.AddEdge(MinusZero.Instance.Empty, second);
+
+        IVertex segments = CreateVertex("Segments");
+        segments.AddVertex(MinusZero.Instance.Empty, "First");
+        segments.AddVertex(MinusZero.Instance.Empty, "Second");
+
+        IVertex inputStack = InstructionHelpers.CreateStack();
+        inputStack.AddEdge(CreateVertex("root"), root);
+        inputStack.AddEdge(CreateVertex("segments"), segments);
+
+        IVertex result = MinusZero.Instance.DefaultExecuter.Execute(
+            inputStack,
+            parsedRootEdge.To);
+
+        Assert.Same(
+            second,
+            GraphUtil.GetQueryOutFirst(
+                result,
+                "accumulator",
+                null));
+    }
+
+    [Fact]
     public void RedirectPropagationPlanInvalidatesAfterTypeHierarchyMutation()
     {
         const string source =
