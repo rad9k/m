@@ -3919,16 +3919,12 @@ namespace m0.ZeroUML.Instructions
 
                 bool local_isStackFrameReturn = false;
                 INoInEdgeInOutVertexVertex possibleToReturnStack = null;
-                bool hasReusableStackFrame = false;
 
                 foreach (IEdge setEdge in setExecution)
                 {
                     ZeroCodePerformanceCounters
                         .RecordForVertexIteration();
-                    if (!hasReusableStackFrame)
-                        exe.AddStackFrame(); // ENTER NEW STACK
-
-                    hasReusableStackFrame = false;
+                    exe.AddStackFrame(); // ENTER NEW STACK
 
                     IEdge variableEdge = GraphUtil.CreateArtificialEdge(variable, setEdge.To);
 
@@ -3939,42 +3935,6 @@ namespace m0.ZeroUML.Instructions
                     if (local_isStackFrameReturn)
                         break;
 
-                    IList<IEdge> currentFrameEdges =
-                        exe.Stack.OutEdgesRaw;
-                    hasReusableStackFrame =
-                        currentFrameEdges.Count == 2 &&
-                        (ReferenceEquals(
-                            currentFrameEdges[0],
-                            variableEdge) ||
-                            ReferenceEquals(
-                                currentFrameEdges[1],
-                                variableEdge)) &&
-                        (ReferenceEquals(
-                            currentFrameEdges[0].Meta,
-                            MinusZero.Instance
-                                .StackFrameInherits) ||
-                            ReferenceEquals(
-                                currentFrameEdges[1].Meta,
-                                MinusZero.Instance
-                                    .StackFrameInherits));
-
-                    if (hasReusableStackFrame)
-                        exe.Stack.DeleteEdge(variableEdge);
-                    else
-                    {
-                        INoInEdgeInOutVertexVertex completedFrame =
-                            exe.Stack;
-                        exe.RemoveStackFrame();  // LEAVE NEW STACK
-                        ReleaseTemporaryStack(
-                            completedFrame,
-                            inputStack,
-                            exe.Stack,
-                            exe.NewVertexCreationSpace);
-                    }
-                }
-
-                if (hasReusableStackFrame)
-                {
                     INoInEdgeInOutVertexVertex completedFrame =
                         exe.Stack;
                     exe.RemoveStackFrame(); // LEAVE NEW STACK

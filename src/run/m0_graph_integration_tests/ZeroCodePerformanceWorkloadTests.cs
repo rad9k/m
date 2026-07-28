@@ -2,6 +2,7 @@ using m0;
 using m0.FormalTextLanguage;
 using m0.Foundation;
 using m0.Graph;
+using m0.Store.FileSystem;
 using m0.ZeroCode;
 using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
@@ -278,49 +279,169 @@ public sealed class ZeroCodePerformanceWorkloadTests
     public void WhileReassignsDynamicPathAccumulator()
     {
         const string source =
-            "\"DynamicPathWhile\"\r\n" +
-            "\tvariable \"accumulator\" @VertexType\r\n" +
+            "function \"DynamicPath\" (@String \"startDir\")\r\n" +
             "\tvariable \"segment\" @String\r\n" +
             "\tvariable \"counter\" @Integer\r\n" +
-            "\taccumulator = root\r\n" +
+            "\tvariable \"current\" @VertexType\r\n" +
+            "\tcurrent = startDir\r\n" +
             "\tcounter = \"1\"\r\n" +
             "\twhile counter < \"3\"\r\n" +
-            "\t\tsegment = segments<<counter>>\r\n" +
-            "\t\taccumulator = accumulator\\:'(segment)'\r\n" +
-            "\t\tcounter = counter + \"1\"";
-        IEdge parsedRootEdge = ParseSource(source);
+            "\t\tif counter == \"1\"\r\n" +
+            "\t\t\tsegment = \"First\"\r\n" +
+            "\t\tif counter == \"2\"\r\n" +
+            "\t\t\tsegment = \"Second\"\r\n" +
+            "\t\tcurrent = current\\:'(segment)'\r\n" +
+            "\t\tcounter = counter + \"1\"\r\n" +
+            "\tsegment = \"Document.md\"\r\n" +
+            "\tcurrent = current\\:'(segment)'\r\n" +
+            "\treturn current";
 
-        IVertex CreateVertex(string value)
-        {
-            return MinusZero.Instance.TempStore.Root.AddVertex(
-                MinusZero.Instance.Empty,
-                value);
-        }
+        string directoryName = Path.Combine(
+            Path.GetTempPath(),
+            $"m0-dynamic-path-{Guid.NewGuid():N}");
+        string firstDirectoryName = Path.Combine(
+            directoryName,
+            "First");
+        string secondDirectoryName = Path.Combine(
+            firstDirectoryName,
+            "Second");
+        string documentName = Path.Combine(
+            secondDirectoryName,
+            "Document.md");
+        Directory.CreateDirectory(secondDirectoryName);
+        File.WriteAllText(documentName, "# Nested document");
 
-        IVertex root = CreateVertex("Root");
-        IVertex first = CreateVertex("First");
-        IVertex second = CreateVertex("Second");
-        root.AddEdge(MinusZero.Instance.Empty, first);
-        first.AddEdge(MinusZero.Instance.Empty, second);
-
-        IVertex segments = CreateVertex("Segments");
-        segments.AddVertex(MinusZero.Instance.Empty, "First");
-        segments.AddVertex(MinusZero.Instance.Empty, "Second");
-
-        IVertex inputStack = InstructionHelpers.CreateStack();
-        inputStack.AddEdge(CreateVertex("root"), root);
-        inputStack.AddEdge(CreateVertex("segments"), segments);
-
-        IVertex result = MinusZero.Instance.DefaultExecuter.Execute(
-            inputStack,
-            parsedRootEdge.To);
-
-        Assert.Same(
+        FileSystemStore store = new FileSystemStore(
+            directoryName,
+            MinusZero.Instance,
+            new[] { AccessLevelEnum.NoRestrictions });
+        IVertex root = store.Root;
+        IVertex first = GraphUtil.GetQueryOutFirst(
+            root,
+            "Directory",
+            "First");
+        IVertex second = GraphUtil.GetQueryOutFirst(
+            first,
+            "Directory",
+            "Second");
+        IVertex document = GraphUtil.GetQueryOutFirst(
             second,
-            GraphUtil.GetQueryOutFirst(
-                result,
-                "accumulator",
-                null));
+            "File",
+            "Document.md");
+
+        try
+        {
+            IVertex inputStack = InstructionHelpers.CreateStack();
+            IEdge parsedRootEdge = ParseSource(source);
+            inputStack.AddEdge(
+                MinusZero.Instance.TempStore.Root.AddVertex(
+                    MinusZero.Instance.Empty,
+                    "startDir"),
+                root);
+            IVertex result = ZeroCodeExecutonUtil.FuncionCall(
+                parsedRootEdge.To,
+                inputStack);
+
+            Assert.Same(
+                document,
+                Assert.Single(result.OutEdgesRaw).To);
+        }
+        finally
+        {
+            store.RemoveVertexIdentifier(document);
+            store.RemoveVertexIdentifier(second);
+            store.RemoveVertexIdentifier(first);
+            store.RemoveVertexIdentifier(root);
+            MinusZero.Instance.RemoveStore(store);
+            Directory.Delete(directoryName, true);
+        }
+    }
+
+    [Fact]
+    public void ForVertexReassignsDynamicPathAccumulator()
+    {
+        const string source =
+            "function \"DynamicForPath\" (@String \"startDir\", @String \"segments\")\r\n" +
+            "\tvariable \"current\" @VertexType\r\n" +
+            "\tcurrent = startDir\r\n" +
+            "\tfor vertex \"segment\" in segments\\\r\n" +
+            "\t\tcurrent = current\\:'(segment)'\r\n" +
+            "\treturn current";
+
+        string directoryName = Path.Combine(
+            Path.GetTempPath(),
+            $"m0-dynamic-for-path-{Guid.NewGuid():N}");
+        string firstDirectoryName = Path.Combine(
+            directoryName,
+            "First");
+        string secondDirectoryName = Path.Combine(
+            firstDirectoryName,
+            "Second");
+        string documentName = Path.Combine(
+            secondDirectoryName,
+            "Document.md");
+        Directory.CreateDirectory(secondDirectoryName);
+        File.WriteAllText(documentName, "# Nested document");
+
+        FileSystemStore store = new FileSystemStore(
+            directoryName,
+            MinusZero.Instance,
+            new[] { AccessLevelEnum.NoRestrictions });
+        IVertex root = store.Root;
+        IVertex first = GraphUtil.GetQueryOutFirst(
+            root,
+            "Directory",
+            "First");
+        IVertex second = GraphUtil.GetQueryOutFirst(
+            first,
+            "Directory",
+            "Second");
+        IVertex document = GraphUtil.GetQueryOutFirst(
+            second,
+            "File",
+            "Document.md");
+
+        try
+        {
+            IVertex segments = MinusZero.Instance.TempStore.Root
+                .AddVertex(
+                    MinusZero.Instance.Empty,
+                    "Segments");
+            segments.AddVertex(MinusZero.Instance.Empty, "First");
+            segments.AddVertex(MinusZero.Instance.Empty, "Second");
+            segments.AddVertex(
+                MinusZero.Instance.Empty,
+                "Document.md");
+
+            IVertex inputStack = InstructionHelpers.CreateStack();
+            IEdge parsedRootEdge = ParseSource(source);
+            inputStack.AddEdge(
+                MinusZero.Instance.TempStore.Root.AddVertex(
+                    MinusZero.Instance.Empty,
+                    "startDir"),
+                root);
+            inputStack.AddEdge(
+                MinusZero.Instance.TempStore.Root.AddVertex(
+                    MinusZero.Instance.Empty,
+                    "segments"),
+                segments);
+            IVertex result = ZeroCodeExecutonUtil.FuncionCall(
+                parsedRootEdge.To,
+                inputStack);
+
+            Assert.Same(
+                document,
+                Assert.Single(result.OutEdgesRaw).To);
+        }
+        finally
+        {
+            store.RemoveVertexIdentifier(document);
+            store.RemoveVertexIdentifier(second);
+            store.RemoveVertexIdentifier(first);
+            store.RemoveVertexIdentifier(root);
+            MinusZero.Instance.RemoveStore(store);
+            Directory.Delete(directoryName, true);
+        }
     }
 
     [Fact]
