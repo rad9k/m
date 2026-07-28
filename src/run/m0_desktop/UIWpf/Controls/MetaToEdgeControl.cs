@@ -15,6 +15,8 @@ namespace m0.UIWpf.Controls
         private readonly Image iconImage;
         private readonly Label metaLabel;
         private readonly Label toLabel;
+        private int visualUpdateBatchDepth;
+        private bool visualUpdatePending;
 
         public IEdge BaseEdge
         {
@@ -83,7 +85,7 @@ namespace m0.UIWpf.Controls
         {
             MetaToEdgeControl control = (MetaToEdgeControl)dependencyObject;
 
-            control.UpdateVisuals((IEdge)args.NewValue);
+            control.RequestVisualUpdate((IEdge)args.NewValue);
         }
 
         public static void IsSelectedChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
@@ -111,7 +113,7 @@ namespace m0.UIWpf.Controls
         {
             MetaToEdgeControl control = (MetaToEdgeControl)dependencyObject;
 
-            control.UpdateVisuals(control.BaseEdge);
+            control.RequestVisualUpdate(control.BaseEdge);
         }
 
         public static void ExternalBackgroundModeChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
@@ -186,9 +188,57 @@ namespace m0.UIWpf.Controls
             UpdateVisuals(BaseEdge);
         }
 
+        public void UpdateEdgeAndIcon(IEdge edge, bool showIcon)
+        {
+            BeginVisualUpdateBatch();
+
+            try
+            {
+                ShowIcon = showIcon;
+                BaseEdge = edge;
+            }
+            finally
+            {
+                EndVisualUpdateBatch(true);
+            }
+        }
+
         public void RefreshSelectionState()
         {
             UpdateSelectionState();
+        }
+
+        private void BeginVisualUpdateBatch()
+        {
+            visualUpdateBatchDepth++;
+        }
+
+        private void EndVisualUpdateBatch(bool forceVisualUpdate)
+        {
+            if (visualUpdateBatchDepth == 0)
+                return;
+
+            visualUpdateBatchDepth--;
+
+            if (visualUpdateBatchDepth != 0)
+                return;
+
+            if (visualUpdatePending || forceVisualUpdate)
+            {
+                visualUpdatePending = false;
+                UpdateVisuals(BaseEdge);
+            }
+        }
+
+        private void RequestVisualUpdate(IEdge edge)
+        {
+            if (visualUpdateBatchDepth != 0)
+            {
+                visualUpdatePending = true;
+                return;
+            }
+
+            UpdateVisuals(edge);
         }
 
         private void UpdateVisuals(IEdge edge)
