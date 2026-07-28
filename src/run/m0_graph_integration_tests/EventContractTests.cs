@@ -161,7 +161,7 @@ public sealed class EventContractTests
     }
 
     [Fact]
-    public void NonTransactedListenerDoesNotRunInsideNestedTransaction()
+    public void NonTransactedListenerRunsImmediatelyInsideTransaction()
     {
         var vertex = CreateTestVertex("Before");
         var eventCount = 0;
@@ -180,11 +180,11 @@ public sealed class EventContractTests
         try
         {
             vertex.Value = "After";
-            Assert.Equal(0, eventCount);
+            Assert.Equal(1, eventCount);
 
             ExecutionFlowHelper.CommitTransaction();
 
-            Assert.Equal(0, eventCount);
+            Assert.Equal(1, eventCount);
         }
         finally
         {

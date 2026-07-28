@@ -372,24 +372,30 @@ namespace m0.Network.Server {
 
             string[] urlSplit = decodedUrl.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
-            IVertex directoryIterator = handler;
+            string filePath;
 
-            for (int pos = 0; pos < urlSplit.Length - 1; pos++)
+            // Graph / filesystem vertex access is not thread-safe (Refresh/DeleteAllEdges).
+            // Hold the lock only for path resolution so file streaming stays concurrent.
+            lock (_lockObject)
             {
-                directoryIterator = GraphUtil.GetQueryOutFirst(directoryIterator, "Directory", urlSplit[pos]);
+                IVertex directoryIterator = handler;
 
-                if (directoryIterator == null)
+                for (int pos = 0; pos < urlSplit.Length - 1; pos++)
+                {
+                    directoryIterator = GraphUtil.GetQueryOutFirst(directoryIterator, "Directory", urlSplit[pos]);
+
+                    if (directoryIterator == null)
+                        return Results.StatusCode(404); // Not Found
+                }
+
+                IVertex fileVertex = GraphUtil.GetQueryOutFirst(directoryIterator, "File", urlSplit[^1]);
+
+                if (fileVertex == null)
                     return Results.StatusCode(404); // Not Found
+
+                IVertex fullFilepathVertex = GraphUtil.GetQueryOutFirst(fileVertex, "FullFilename", null);
+                filePath = GraphUtil.GetStringValue(fullFilepathVertex);
             }
-
-            IVertex fileVertex = GraphUtil.GetQueryOutFirst(directoryIterator, "File", urlSplit[^1]);
-
-            if (fileVertex == null)
-                return Results.StatusCode(404); // Not Found
-
-            
-            IVertex fullFilepathVertex = GraphUtil.GetQueryOutFirst(fileVertex, "FullFilename", null);
-            string filePath = GraphUtil.GetStringValue(fullFilepathVertex);
 
             if (!File.Exists(filePath))
                 return Results.StatusCode(404); // Not Found
