@@ -2,22 +2,15 @@ using m0;
 using m0.Foundation;
 using m0.Graph;
 using m0.ZeroTypes;
-using System.Diagnostics;
-using Xunit.Abstractions;
 
 namespace m0_graph_integration_tests;
 
 [Collection(BootstrappedGraphCollection.Name)]
 public sealed class Graph2TextProcessingWorkloadTests
 {
-    private readonly ITestOutputHelper output;
-
-    public Graph2TextProcessingWorkloadTests(
-        BootstrapFixture fixture,
-        ITestOutputHelper output)
+    public Graph2TextProcessingWorkloadTests(BootstrapFixture fixture)
     {
         _ = fixture;
-        this.output = output;
     }
 
     [Fact]
@@ -42,60 +35,6 @@ public sealed class Graph2TextProcessingWorkloadTests
                 CodeRepresentationEnum.VertexAndManyLines);
 
         Assert.Equal(firstGeneratedText, secondGeneratedText);
-    }
-
-    [Fact]
-    public void ProvidedWorkloadReportsVertexAndManyLinesGenerationTiming()
-    {
-        const int warmupIterations = 3;
-        const int measuredIterations = 9;
-        IEdge parsedRootEdge = ParseSource(
-            Source,
-            CodeRepresentationEnum.LinearizedManyLines);
-        string expectedOutput = "";
-        bool expectedOutputWasCaptured = false;
-
-        for (int iteration = 0; iteration < warmupIterations; iteration++)
-        {
-            string generatedText =
-                MinusZero.Instance.DefaultFormalTextGenerator.Generate(
-                    parsedRootEdge,
-                    CodeRepresentationEnum.VertexAndManyLines);
-            if (!expectedOutputWasCaptured)
-            {
-                expectedOutput = generatedText;
-                expectedOutputWasCaptured = true;
-            }
-            else
-                Assert.Equal(expectedOutput, generatedText);
-        }
-
-        List<long> elapsedMilliseconds = new List<long>();
-        for (int iteration = 0; iteration < measuredIterations; iteration++)
-        {
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            string generatedText =
-                MinusZero.Instance.DefaultFormalTextGenerator.Generate(
-                    parsedRootEdge,
-                    CodeRepresentationEnum.VertexAndManyLines);
-            stopwatch.Stop();
-
-            Assert.Equal(expectedOutput, generatedText);
-            elapsedMilliseconds.Add(stopwatch.ElapsedMilliseconds);
-        }
-
-        long[] orderedElapsedMilliseconds =
-            elapsedMilliseconds.OrderBy(milliseconds => milliseconds).ToArray();
-        long medianMilliseconds =
-            orderedElapsedMilliseconds[orderedElapsedMilliseconds.Length / 2];
-
-        output.WriteLine(
-            "Graph2Text VertexAndManyLines workload timing: "
-            + "iterations=" + measuredIterations
-            + ", minMs=" + orderedElapsedMilliseconds[0]
-            + ", medianMs=" + medianMilliseconds
-            + ", maxMs=" + orderedElapsedMilliseconds[orderedElapsedMilliseconds.Length - 1]
-            + ", outputLength=" + expectedOutput.Length);
     }
 
     private static IEdge ParseSource(

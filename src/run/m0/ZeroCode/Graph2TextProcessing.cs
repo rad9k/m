@@ -5,7 +5,6 @@ using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -31,12 +30,9 @@ namespace m0.ZeroCode
 
         public string Process(FormalTextLanguageDictinaries _dict, Graph2TextProcessing _zcg2sp, IVertex v, IEdge _parent)
         {
-            long startedAt = Stopwatch.GetTimestamp();
-
             dict = _dict;
 
             zcg2sp = _zcg2sp;
-            zcg2sp.RecordLinkResolutionCall();
 
             parent = _parent;
 
@@ -49,29 +45,19 @@ namespace m0.ZeroCode
 
                 //if (Is != null && Is.Get(false, ZeroCodeCommon.stringToPossiblyEscapedString(dict, v.Value.ToString()) ) == v)
                 if (Is != null && GraphUtil.GetQueryOutFirst(Is, null, v.Value.ToString()) == v)
-                {
-                    zcg2sp.RecordLinkResolutionElapsed(Stopwatch.GetTimestamp() - startedAt);
                     return (v.Value.ToString());
-                }
             }
 
             if (_parent != null)
             {
                 foreach (IEdge e in VertexOperations.GetChildEdges(_parent.Meta))
                     if (v == e.To)
-                    {
-                        zcg2sp.RecordLinkResolutionElapsed(Stopwatch.GetTimestamp() - startedAt);
                         return (v.Value.ToString());
-                    }
             }
 
 
             if (zcg2sp.VerticesDictionary.ContainsKey(v))
-            {
-                zcg2sp.RecordLinkResolutionCacheHit();
-                zcg2sp.RecordLinkResolutionElapsed(Stopwatch.GetTimestamp() - startedAt);
                 return zcg2sp.VerticesDictionary[v].LinkString;
-            }
 
             linkBeenList = new HashSet<IVertex>();
             shortestPathToVertex = new Dictionary<IVertex, int>();
@@ -92,12 +78,8 @@ namespace m0.ZeroCode
             }
 
             if (shortestLinkLength == 99999 && zcg2sp.SubGraphVerticesDictionary.ContainsKey(v))
-            {
-                zcg2sp.RecordLinkResolutionElapsed(Stopwatch.GetTimestamp() - startedAt);
                 return zcg2sp.SubGraphVerticesDictionary[v].LinkString;
-            }
 
-            zcg2sp.RecordLinkResolutionElapsed(Stopwatch.GetTimestamp() - startedAt);
             return shortestLink;
         }
 
@@ -114,7 +96,6 @@ namespace m0.ZeroCode
 
         public static string GetStringFromEdgesList(FormalTextLanguageDictinaries dict, Graph2TextProcessing processing, List<IEdge> edgesList, bool isImportMeta, bool isRelativeToImport = false)
         {
-            processing.RecordLinkStringBuild(edgesList.Count);
             StringBuilder s = new StringBuilder();
 
             bool wasPrevious = false;
@@ -182,7 +163,6 @@ namespace m0.ZeroCode
                         s.Append(possibleMetaSeparator + toAppend.ToString());
                     else
                     {
-                        processing.RecordLinkStringIndexResolution();
                         int pos = 0;
 
                         IEdge result;
@@ -221,21 +201,13 @@ namespace m0.ZeroCode
 
         void GetLinkString_Recurrect(IVertex v, List<IEdge> edgesList, ref bool isMetaDirect)
         {
-            zcg2sp.RecordLinkResolutionNodeVisited();
-
             int currentPathLength = edgesList.Count();
 
             if (currentPathLength >= shortestLinkLength)
-            {
-                zcg2sp.RecordLinkResolutionPathLengthPrune();
                 return;
-            }
 
             if (shortestPathToVertex.ContainsKey(v) && shortestPathToVertex[v] < currentPathLength)
-            {
-                zcg2sp.RecordLinkResolutionKnownPathPrune();
                 return;
-            }
 
             shortestPathToVertex[v] = currentPathLength;
 
@@ -359,7 +331,6 @@ namespace m0.ZeroCode
 
                 //if (r.Length < shortestLinkLength)
                 bool isBestCandidate = candidateLength < shortestLinkLength && canUse;
-                zcg2sp.RecordLinkResolutionCandidate(isBestCandidate);
 
                 if (isBestCandidate)
                 {
@@ -542,63 +513,6 @@ namespace m0.ZeroCode
         FormalTextLanguageDictinaries dict;
         bool shouldUseCurrentPathForFirstVertexAppend;
 
-        Stopwatch performanceStopwatch;
-        long performancePhaseStartedAt;
-        string performancePhaseName;
-        string performanceOperationName;
-
-        long performanceSubGraphTraversalCalls;
-        long performanceSubGraphEdgesScanned;
-        long performanceSubGraphVerticesAdded;
-        long performanceSubGraphVerticesReentered;
-        long performanceKeywordTraversalCalls;
-        long performanceKeywordEdgesChecked;
-        long performanceKeywordCandidateChecks;
-        long performanceKeywordMatches;
-        long performanceGraphMatchCalls;
-        long performanceGraphMatchQueries;
-        long performanceGraphMatchResults;
-        long performanceKeywordSentenceRegexes;
-        long performanceKeywordManyRootCalls;
-        long performanceKeywordManyRootCacheHits;
-        long performanceKeywordPathCalls;
-        long performanceKeywordPathInEdgesScanned;
-        long performanceKeywordDefinitionSearchCalls;
-        long performanceKeywordDefinitionEdgesScanned;
-        long performanceGraphSerializationCalls;
-        long performanceGraphSerializationBeenSkips;
-        long performanceGraphSerializationFilterSkips;
-        long performanceGraphSerializationShallProcessSkips;
-        long performanceAppendEdgeCalls;
-        long performanceAppendEdgeFilterSkips;
-        long performanceAppendEdgeKeywordDelegations;
-        long performanceAppendVertexCalls;
-        long performanceAppendVertexNewVertices;
-        long performanceAppendVertexLinks;
-        long performanceAppendSubVerticesCalls;
-        long performanceAppendSubVerticesEdgesScanned;
-        long performanceAppendSubVerticesSkipped;
-        long performanceRelativeLinkConversionCalls;
-        long performanceRelativeLinkConversionDictionaryEntriesScanned;
-        long performanceRelativeLinkConversionHits;
-        long performanceRelativeLinkConversionTicks;
-        long performanceSourceAppendCalls;
-        long performanceSourceAppendCharacters;
-        long performanceSourceAppendMultilineCalls;
-        long performanceImportsProcessed;
-        long performanceImportsAdded;
-        long performanceLinkResolutionCalls;
-        long performanceLinkResolutionCacheHits;
-        long performanceLinkResolutionNodesVisited;
-        long performanceLinkResolutionPathLengthPrunes;
-        long performanceLinkResolutionKnownPathPrunes;
-        long performanceLinkResolutionCandidates;
-        long performanceLinkResolutionBestCandidates;
-        long performanceLinkResolutionTicks;
-        long performanceLinkStringBuildCalls;
-        long performanceLinkStringBuildEdges;
-        long performanceLinkStringIndexResolutions;
-
         public Graph2TextProcessing(IVertex formalTextLanguage)
         {
             FormalTextLanguage = formalTextLanguage;
@@ -613,244 +527,16 @@ namespace m0.ZeroCode
 
         string NewLine = "\r\n";
 
-        void BeginPerformanceLogging(string operationName, IEdge graphBaseEdge)
-        {
-            performanceOperationName = operationName;
-            performanceStopwatch = Stopwatch.StartNew();
-            performancePhaseStartedAt = Stopwatch.GetTimestamp();
-            performancePhaseName = null;
-
-            performanceSubGraphTraversalCalls = 0;
-            performanceSubGraphEdgesScanned = 0;
-            performanceSubGraphVerticesAdded = 0;
-            performanceSubGraphVerticesReentered = 0;
-            performanceKeywordTraversalCalls = 0;
-            performanceKeywordEdgesChecked = 0;
-            performanceKeywordCandidateChecks = 0;
-            performanceKeywordMatches = 0;
-            performanceGraphMatchCalls = 0;
-            performanceGraphMatchQueries = 0;
-            performanceGraphMatchResults = 0;
-            performanceKeywordSentenceRegexes = 0;
-            performanceKeywordManyRootCalls = 0;
-            performanceKeywordManyRootCacheHits = 0;
-            performanceKeywordPathCalls = 0;
-            performanceKeywordPathInEdgesScanned = 0;
-            performanceKeywordDefinitionSearchCalls = 0;
-            performanceKeywordDefinitionEdgesScanned = 0;
-            performanceGraphSerializationCalls = 0;
-            performanceGraphSerializationBeenSkips = 0;
-            performanceGraphSerializationFilterSkips = 0;
-            performanceGraphSerializationShallProcessSkips = 0;
-            performanceAppendEdgeCalls = 0;
-            performanceAppendEdgeFilterSkips = 0;
-            performanceAppendEdgeKeywordDelegations = 0;
-            performanceAppendVertexCalls = 0;
-            performanceAppendVertexNewVertices = 0;
-            performanceAppendVertexLinks = 0;
-            performanceAppendSubVerticesCalls = 0;
-            performanceAppendSubVerticesEdgesScanned = 0;
-            performanceAppendSubVerticesSkipped = 0;
-            performanceRelativeLinkConversionCalls = 0;
-            performanceRelativeLinkConversionDictionaryEntriesScanned = 0;
-            performanceRelativeLinkConversionHits = 0;
-            performanceRelativeLinkConversionTicks = 0;
-            performanceSourceAppendCalls = 0;
-            performanceSourceAppendCharacters = 0;
-            performanceSourceAppendMultilineCalls = 0;
-            performanceImportsProcessed = 0;
-            performanceImportsAdded = 0;
-            performanceLinkResolutionCalls = 0;
-            performanceLinkResolutionCacheHits = 0;
-            performanceLinkResolutionNodesVisited = 0;
-            performanceLinkResolutionPathLengthPrunes = 0;
-            performanceLinkResolutionKnownPathPrunes = 0;
-            performanceLinkResolutionCandidates = 0;
-            performanceLinkResolutionBestCandidates = 0;
-            performanceLinkResolutionTicks = 0;
-            performanceLinkStringBuildCalls = 0;
-            performanceLinkStringBuildEdges = 0;
-            performanceLinkStringIndexResolutions = 0;
-
-            LogPerformance("Start",
-                "operation=" + performanceOperationName
-                + ", baseEdge=" + EdgeToDebugString(graphBaseEdge));
-        }
-
-        void BeginPerformancePhase(string phaseName)
-        {
-            EndPerformancePhase();
-            performancePhaseName = phaseName;
-            performancePhaseStartedAt = Stopwatch.GetTimestamp();
-        }
-
-        void EndPerformancePhase()
-        {
-            if (performanceStopwatch == null || performancePhaseName == null)
-                return;
-
-            LogPerformance("Phase",
-                "operation=" + performanceOperationName
-                + ", phase=" + performancePhaseName
-                + ", elapsedMs=" + StopwatchTicksToMilliseconds(Stopwatch.GetTimestamp() - performancePhaseStartedAt));
-            performancePhaseName = null;
-        }
-
-        void FinishPerformanceLogging(string result)
-        {
-            EndPerformancePhase();
-
-            if (performanceStopwatch == null)
-                return;
-
-            performanceStopwatch.Stop();
-
-            LogPerformance("Summary",
-                "operation=" + performanceOperationName
-                + ", elapsedMs=" + performanceStopwatch.ElapsedMilliseconds
-                + ", outputLength=" + (result == null ? -1 : result.Length)
-                + ", serializationCalls=" + performanceGraphSerializationCalls
-                + ", serializationBeenSkips=" + performanceGraphSerializationBeenSkips
-                + ", serializationFilterSkips=" + performanceGraphSerializationFilterSkips
-                + ", serializationShallProcessSkips=" + performanceGraphSerializationShallProcessSkips
-                + ", appendEdgeCalls=" + performanceAppendEdgeCalls
-                + ", appendEdgeFilterSkips=" + performanceAppendEdgeFilterSkips
-                + ", appendEdgeKeywordDelegations=" + performanceAppendEdgeKeywordDelegations
-                + ", appendVertexCalls=" + performanceAppendVertexCalls
-                + ", appendedNewVertices=" + performanceAppendVertexNewVertices
-                + ", appendedLinks=" + performanceAppendVertexLinks
-                + ", sourceAppendCalls=" + performanceSourceAppendCalls
-                + ", sourceAppendCharacters=" + performanceSourceAppendCharacters
-                + ", sourceAppendMultilineCalls=" + performanceSourceAppendMultilineCalls
-                + ", importsProcessed=" + performanceImportsProcessed
-                + ", importsAdded=" + performanceImportsAdded);
-            LogPerformance("SubGraph",
-                "operation=" + performanceOperationName
-                + ", traversalCalls=" + performanceSubGraphTraversalCalls
-                + ", edgesScanned=" + performanceSubGraphEdgesScanned
-                + ", verticesAdded=" + performanceSubGraphVerticesAdded
-                + ", verticesReentered=" + performanceSubGraphVerticesReentered
-                + ", appendSubVerticesCalls=" + performanceAppendSubVerticesCalls
-                + ", appendSubVerticesEdgesScanned=" + performanceAppendSubVerticesEdgesScanned
-                + ", appendSubVerticesSkipped=" + performanceAppendSubVerticesSkipped);
-            LogPerformance("Keywords",
-                "operation=" + performanceOperationName
-                + ", traversalCalls=" + performanceKeywordTraversalCalls
-                + ", edgesChecked=" + performanceKeywordEdgesChecked
-                + ", candidateChecks=" + performanceKeywordCandidateChecks
-                + ", matches=" + performanceKeywordMatches
-                + ", graphMatchCalls=" + performanceGraphMatchCalls
-                + ", graphMatchQueries=" + performanceGraphMatchQueries
-                + ", graphMatchResults=" + performanceGraphMatchResults
-                + ", sentenceRegexes=" + performanceKeywordSentenceRegexes
-                + ", manyRootCalls=" + performanceKeywordManyRootCalls
-                + ", manyRootCacheHits=" + performanceKeywordManyRootCacheHits
-                + ", pathCalls=" + performanceKeywordPathCalls
-                + ", pathInEdgesScanned=" + performanceKeywordPathInEdgesScanned
-                + ", definitionSearchCalls=" + performanceKeywordDefinitionSearchCalls
-                + ", definitionSearchEdgesScanned=" + performanceKeywordDefinitionEdgesScanned);
-            LogPerformance("Links",
-                "operation=" + performanceOperationName
-                + ", resolutions=" + performanceLinkResolutionCalls
-                + ", cacheHits=" + performanceLinkResolutionCacheHits
-                + ", nodesVisited=" + performanceLinkResolutionNodesVisited
-                + ", pathLengthPrunes=" + performanceLinkResolutionPathLengthPrunes
-                + ", knownPathPrunes=" + performanceLinkResolutionKnownPathPrunes
-                + ", candidates=" + performanceLinkResolutionCandidates
-                + ", bestCandidates=" + performanceLinkResolutionBestCandidates
-                + ", resolutionElapsedMs=" + StopwatchTicksToMilliseconds(performanceLinkResolutionTicks)
-                + ", linkStringBuildCalls=" + performanceLinkStringBuildCalls
-                + ", linkStringBuildEdges=" + performanceLinkStringBuildEdges
-                + ", linkStringIndexResolutions=" + performanceLinkStringIndexResolutions
-                + ", relativeConversions=" + performanceRelativeLinkConversionCalls
-                + ", relativeDictionaryEntriesScanned=" + performanceRelativeLinkConversionDictionaryEntriesScanned
-                + ", relativeConversionHits=" + performanceRelativeLinkConversionHits
-                + ", relativeConversionElapsedMs=" + StopwatchTicksToMilliseconds(performanceRelativeLinkConversionTicks));
-        }
-
-        void LogPerformance(string area, string message)
-        {
-            MinusZero.Instance.Log(1, "Graph2TextProcessing.Performance." + area, message);
-        }
-
-        static long StopwatchTicksToMilliseconds(long stopwatchTicks)
-        {
-            return stopwatchTicks * 1000 / Stopwatch.Frequency;
-        }
-
-        internal void RecordLinkResolutionCall()
-        {
-            performanceLinkResolutionCalls++;
-        }
-
-        internal void RecordLinkResolutionCacheHit()
-        {
-            performanceLinkResolutionCacheHits++;
-        }
-
-        internal void RecordLinkResolutionNodeVisited()
-        {
-            performanceLinkResolutionNodesVisited++;
-        }
-
-        internal void RecordLinkResolutionPathLengthPrune()
-        {
-            performanceLinkResolutionPathLengthPrunes++;
-        }
-
-        internal void RecordLinkResolutionKnownPathPrune()
-        {
-            performanceLinkResolutionKnownPathPrunes++;
-        }
-
-        internal void RecordLinkResolutionCandidate(bool isBestCandidate)
-        {
-            performanceLinkResolutionCandidates++;
-
-            if (isBestCandidate)
-                performanceLinkResolutionBestCandidates++;
-        }
-
-        internal void RecordLinkResolutionElapsed(long stopwatchTicks)
-        {
-            performanceLinkResolutionTicks += stopwatchTicks;
-        }
-
-        internal void RecordLinkStringBuild(int edgeCount)
-        {
-            performanceLinkStringBuildCalls++;
-            performanceLinkStringBuildEdges += edgeCount;
-        }
-
-        internal void RecordLinkStringIndexResolution()
-        {
-            performanceLinkStringIndexResolutions++;
-        }
-
         internal string TryConvertToCurrentBaseRelativeLink(string linkToConvert, IVertex linkedVertex)
         {
-            long startedAt = Stopwatch.GetTimestamp();
-            performanceRelativeLinkConversionCalls++;
-
             if (!shouldUseCurrentPathForFirstVertexAppend)
-            {
-                performanceRelativeLinkConversionTicks += Stopwatch.GetTimestamp() - startedAt;
                 return linkToConvert;
-            }
 
             if (string.IsNullOrEmpty(linkToConvert))
-            {
-                performanceRelativeLinkConversionTicks += Stopwatch.GetTimestamp() - startedAt;
                 return linkToConvert;
-            }
 
             if (linkedVertex == null || linkedVertex.Value == null || SubGraphVerticesDictionary == null)
-            {
-                performanceRelativeLinkConversionTicks += Stopwatch.GetTimestamp() - startedAt;
                 return linkToConvert;
-            }
-
-            performanceRelativeLinkConversionDictionaryEntriesScanned += SubGraphVerticesDictionary.Count;
 
             string matchingLocalAlias = SubGraphVerticesDictionary
                 .Where(kvp => kvp.Key != null
@@ -865,24 +551,15 @@ namespace m0.ZeroCode
                 .FirstOrDefault();
 
             if (matchingLocalAlias != null)
-            {
-                performanceRelativeLinkConversionHits++;
-                performanceRelativeLinkConversionTicks += Stopwatch.GetTimestamp() - startedAt;
                 return matchingLocalAlias;
-            }
 
-            performanceRelativeLinkConversionTicks += Stopwatch.GetTimestamp() - startedAt;
             return linkToConvert;
         }
 
         void SourceAppend(string s)
         {
-            performanceSourceAppendCalls++;
-            performanceSourceAppendCharacters += s.Length;
-
             if (s.Contains("\r\n"))
             {
-                performanceSourceAppendMultilineCalls++;
                 string NewLineStringPlusNewLine = getNewLineAndTabsString();
 
                 s = s.Replace("\r\n", NewLineStringPlusNewLine);
@@ -905,17 +582,12 @@ namespace m0.ZeroCode
 
         private void ImportImports_internal(IEdge e)
         {
-            performanceImportsProcessed++;
-
             if (Imports.ContainsKey(e.Meta))
             {
                 IList<IVertex> list = Imports[e.Meta];
 
                 if (!list.Contains(e.To))
-                {
                     list.Add(e.To);
-                    performanceImportsAdded++;
-                }
             }
             else
             {
@@ -924,7 +596,6 @@ namespace m0.ZeroCode
                 l.Add(e.To);
 
                 Imports.Add(e.Meta, l);
-                performanceImportsAdded++;
             }
         }
 
@@ -1033,7 +704,6 @@ namespace m0.ZeroCode
 
         string FindKeywordEdge(string pre, IVertex baseVertex, string toFind, ref IVertex keywordSubVertex)
         {
-            performanceKeywordDefinitionSearchCalls++;
             string toAdd = "";
 
             if (pre != "")
@@ -1047,7 +717,6 @@ namespace m0.ZeroCode
 
             foreach (IEdge e in baseVertex.OutEdgesRaw)
             {
-                performanceKeywordDefinitionEdgesScanned++;
                 if (GraphUtil.GetValueAndCompareStrings(e.To, toFind))
                 {
                     keywordSubVertex = e.To;
@@ -1124,7 +793,6 @@ namespace m0.ZeroCode
             {
                 keywordManyRootQueryString = cached.QueryString;
                 getKeywordManyRootBaseCount = cached.BaseCount;
-                performanceKeywordManyRootCacheHits++;
                 return cached.RootEdge;
             }
 
@@ -1180,7 +848,6 @@ namespace m0.ZeroCode
 
         IEdge GetKeywordManyRoot_reccurent(string path, IEdge baseEdge, out string keywordManyRootQueryString)
         {
-            performanceKeywordManyRootCalls++;
             keywordManyRootQueryString = "";
 
             if (GraphUtil.ExistQueryOut(baseEdge.To, "$$KeywordManyRoot", null))
@@ -1434,7 +1101,6 @@ namespace m0.ZeroCode
 
         string GetPathFromKeywordMatchAndKeywordEdge(KeywordMatch km, IEdge e, string path)
         {
-            performanceKeywordPathCalls++;
             string suffix = "";
 
             if (path != null)
@@ -1445,7 +1111,6 @@ namespace m0.ZeroCode
 
             foreach (IEdge ee in e.From.InEdgesRaw)
             {
-                performanceKeywordPathInEdgesScanned++;
                 string ret = null;
 
                 if (!VertexOperations.IsLink_OldVersion(ee))
@@ -1497,7 +1162,6 @@ namespace m0.ZeroCode
             zeroMatch = false;
 
             // find matches
-            performanceKeywordSentenceRegexes++;
             Regex rgx = KeywordSentencePlaceholderRegex;
 
             int prevPos = 0;
@@ -1580,7 +1244,6 @@ namespace m0.ZeroCode
                         else
                             sentence = sentenceSecond;
 
-                        performanceKeywordSentenceRegexes++;
                         Regex rgx = KeywordSentencePlaceholderRegex;
 
                         int prevPos = 0;
@@ -1662,21 +1325,18 @@ namespace m0.ZeroCode
 
         private bool AppendSubVertices(KeywordMatch km, IEdge baseEdge, string basePath)
         {
-            performanceAppendSubVerticesCalls++;
             bool wasThereNewLine = false;
 
             bool wasFirstNewLine = false;
 
             foreach (IEdge e in baseEdge.To.OutEdgesRaw)
             {
-                performanceAppendSubVerticesEdgesScanned++;
                 if (km.BaseEdge != baseEdge && !km.MatchedEdges.Contains(e))
                 {
                     bool shouldSkip = ShouldSkipOutboundUnderLinearizedUxBaseEdge(baseEdge, e);
 
                     if (shouldSkip)
                     {
-                        performanceAppendSubVerticesSkipped++;
                         continue;
                     }
 
@@ -1703,7 +1363,6 @@ namespace m0.ZeroCode
 
                     if (shouldSkip)
                     {
-                        performanceAppendSubVerticesSkipped++;
                         continue;
                     }
 
@@ -1738,88 +1397,17 @@ namespace m0.ZeroCode
 
         bool ommitOnce_AppendEdge_Meta = false;
 
-        bool IsMinCardinalityEdge(IEdge e)
-        {
-            if (e == null || e.Meta == null || e.Meta.Value == null)
-                return false;
-
-            return GeneralUtil.CompareStrings(e.Meta.Value, "$MinCardinality");
-        }
-
-        string VertexToDebugString(IVertex v)
-        {
-            if (v == null)
-                return "<null>";
-
-            string value = v.Value == null ? "<null>" : v.Value.ToString();
-            string identifier = v.Identifier == null ? "<null>" : v.Identifier.ToString();
-
-            return value + " [" + identifier + "]";
-        }
-
-        string EdgeToDebugString(IEdge e)
-        {
-            if (e == null)
-                return "<null>";
-
-            return "From=" + VertexToDebugString(e.From)
-                + ", Meta=" + VertexToDebugString(e.Meta)
-                + ", To=" + VertexToDebugString(e.To);
-        }
-
-        string VertexDataToDebugString(VertexData vertexData)
-        {
-            if (vertexData == null)
-                return "<null>";
-
-            return "LinkString=" + vertexData.LinkString
-                + ", NestedLevel=" + vertexData.NestedLevel
-                + ", VertexHasBeenAppendedAsNew=" + vertexData.VertexHasBeenAppendedAsNew;
-        }
-
-        void LogMinCardinality(string area, string message)
-        {
-            MinusZero.Instance.Log(1, "Graph2TextProcessing.$MinCardinality." + area, message);
-        }
-
         bool AppendEdge(IEdge e, IEdge parent, string path, bool ParentKmHasTabAddingOmmit)
         {
-            performanceAppendEdgeCalls++;
-
             if (!ZeroCodeUtil.FilterEdgeForGraph2TextProcessing(e))
-            {
-                performanceAppendEdgeFilterSkips++;
                 return false;
-            }
-
-            if (IsMinCardinalityEdge(e))
-                LogMinCardinality("AppendEdge",
-                    "enter path=" + path
-                    + ", parent=" + EdgeToDebugString(parent)
-                    + ", edge=" + EdgeToDebugString(e)
-                    + ", keywordMatched=" + KeywordMatchedSubGraphEdges.ContainsKey(e)
-                    + ", been=" + BeenList.Contains(e));
 
             if (KeywordMatchedSubGraphEdges.ContainsKey(e))
                 if (ShouldAppendKeywordHere(e, path) || e.Meta.Value.ToString() == "NextExpression")
-                {
-                    performanceAppendEdgeKeywordDelegations++;
-                    if (IsMinCardinalityEdge(e))
-                        LogMinCardinality("AppendEdge",
-                            "delegating to AppendKeyword path=" + path
-                            + ", edge=" + EdgeToDebugString(e));
-
                     return AppendKeyword(e, false, ParentKmHasTabAddingOmmit);
-                }
                 else
                     if (KeywordMatchedSubGraphEdges[e].BaseEdge.To != e.To) // :O)
                     {
-                        if (IsMinCardinalityEdge(e))
-                            LogMinCardinality("AppendEdge",
-                                "skipping edge because keyword match base edge points to another vertex. path=" + path
-                                + ", baseEdge=" + EdgeToDebugString(KeywordMatchedSubGraphEdges[e].BaseEdge)
-                                + ", edge=" + EdgeToDebugString(e));
-
                         return true; // ?????????????????????? or true?
                     }
 
@@ -1856,33 +1444,13 @@ namespace m0.ZeroCode
 
         private bool AppendVertex(IEdge e, string path, bool prefixAppended, bool appendSuffix, bool hideLinkPrefix, IVertex keywordSubVertex)
         {
-            performanceAppendVertexCalls++;
             bool forceNewVertex = false;
 
             if (keywordSubVertex != null && GraphUtil.ExistQueryOut(keywordSubVertex, "$$ForceNewVertex", null))
                 forceNewVertex = true;
 
-            bool isMinCardinalityEdge = IsMinCardinalityEdge(e);
-
-            if (isMinCardinalityEdge)
-                LogMinCardinality("AppendVertex",
-                    "enter path=" + path
-                    + ", prefixAppended=" + prefixAppended
-                    + ", appendSuffix=" + appendSuffix
-                    + ", hideLinkPrefix=" + hideLinkPrefix
-                    + ", forceNewVertex=" + forceNewVertex
-                    + ", isOldLink=" + VertexOperations.IsLink_OldVersion(e)
-                    + ", keywordSubVertex=" + VertexToDebugString(keywordSubVertex)
-                    + ", edge=" + EdgeToDebugString(e));
-
             if (VertexOperations.IsLink_OldVersion(e) && !forceNewVertex)
             {
-                performanceAppendVertexLinks++;
-                if (isMinCardinalityEdge)
-                    LogMinCardinality("AppendVertex",
-                        "appending target as link because edge is old link and forceNewVertex is false. path=" + path
-                        + ", target=" + VertexToDebugString(e.To));
-
                 AppendAsLink(e.To, null, hideLinkPrefix);
 
                 if (appendSuffix)
@@ -1894,23 +1462,8 @@ namespace m0.ZeroCode
             {
                 bool vertexIsNew = isVertexNew(e, path);
 
-                if (isMinCardinalityEdge)
-                    LogMinCardinality("AppendVertex",
-                        "isVertexNew result=" + vertexIsNew
-                        + ", forceNewVertex=" + forceNewVertex
-                        + ", path=" + path
-                        + ", subGraphContainsTo=" + SubGraphVerticesDictionary.ContainsKey(e.To)
-                        + ", toVertexData=" + (SubGraphVerticesDictionary.ContainsKey(e.To) ? VertexDataToDebugString(SubGraphVerticesDictionary[e.To]) : "<missing>")
-                        + ", target=" + VertexToDebugString(e.To));
-
                 if (vertexIsNew || forceNewVertex)
                 {
-                    performanceAppendVertexNewVertices++;
-                    if (isMinCardinalityEdge)
-                        LogMinCardinality("AppendVertex",
-                            "appending target as new value. path=" + path
-                            + ", target=" + VertexToDebugString(e.To));
-
                     AppendAsNew(e.To);
 
                     if (appendSuffix && prefixAppended)
@@ -1920,14 +1473,8 @@ namespace m0.ZeroCode
                 }
                 else
                 {
-                    performanceAppendVertexLinks++;
                     if (!prefixAppended && appendSuffix)
                         AppendPrefix();
-
-                    if (isMinCardinalityEdge)
-                        LogMinCardinality("AppendVertex",
-                            "appending target as link because target vertex is already known in subgraph. path=" + path
-                            + ", target=" + VertexToDebugString(e.To));
 
                     AppendAsLink(e.To, null, hideLinkPrefix);
 
@@ -1943,28 +1490,15 @@ namespace m0.ZeroCode
 
         private bool isVertexNew(IEdge e, string path)
         {
-            bool isMinCardinalityEdge = IsMinCardinalityEdge(e);
-
             if (ommitOnce_checkIfSubGraphVerticesDictionaryContainsVertex)
             {
                 ommitOnce_checkIfSubGraphVerticesDictionaryContainsVertex = false;
-
-                if (isMinCardinalityEdge)
-                    LogMinCardinality("isVertexNew",
-                        "returning true because ommitOnce_checkIfSubGraphVerticesDictionaryContainsVertex was set. path=" + path
-                        + ", edge=" + EdgeToDebugString(e));
 
                 return true;
             }
             else
                 if (!SubGraphVerticesDictionary.ContainsKey(e.To))
                 {
-                    if (isMinCardinalityEdge)
-                        LogMinCardinality("isVertexNew",
-                            "returning false because target is not in SubGraphVerticesDictionary. path=" + path
-                            + ", target=" + VertexToDebugString(e.To)
-                            + ", edge=" + EdgeToDebugString(e));
-
                     return false; // is it possible? YES
                 }
 
@@ -1972,12 +1506,6 @@ namespace m0.ZeroCode
 
             if (eVertexData.LinkString == "") // root
             {
-                if (isMinCardinalityEdge)
-                    LogMinCardinality("isVertexNew",
-                        "returning true because target is subgraph root. path=" + path
-                        + ", vertexData=" + VertexDataToDebugString(eVertexData)
-                        + ", edge=" + EdgeToDebugString(e));
-
                 return true;
             }
 
@@ -1996,12 +1524,6 @@ namespace m0.ZeroCode
 
                 eVertexData.VertexHasBeenAppendedAsNew = true;
 
-                if (isMinCardinalityEdge)
-                    LogMinCardinality("isVertexNew",
-                        "returning true because this is first append and current path is used. path=" + path
-                        + ", vertexData=" + VertexDataToDebugString(eVertexData)
-                        + ", edge=" + EdgeToDebugString(e));
-
                 return true;
             }
 
@@ -2009,20 +1531,8 @@ namespace m0.ZeroCode
             {
                 eVertexData.VertexHasBeenAppendedAsNew = true;
 
-                if (isMinCardinalityEdge)
-                    LogMinCardinality("isVertexNew",
-                        "returning true because path matches stored link and target was not appended yet. path=" + path
-                        + ", vertexData=" + VertexDataToDebugString(eVertexData)
-                        + ", edge=" + EdgeToDebugString(e));
-
                 return true;
             }
-
-            if (isMinCardinalityEdge)
-                LogMinCardinality("isVertexNew",
-                    "returning false because target was already appended or path does not match. path=" + path
-                    + ", vertexData=" + VertexDataToDebugString(eVertexData)
-                    + ", edge=" + EdgeToDebugString(e));
 
             return false;
         }
@@ -2085,8 +1595,6 @@ namespace m0.ZeroCode
 
         public bool GetGraphMatch(IVertex parentToCheck, IEdge keywordEdge)
         {
-            performanceGraphMatchCalls++;
-
             if (ZeroCodeUtil.IsDoubleDolarMeta(keywordEdge))
                 return true;
 
@@ -2098,9 +1606,7 @@ namespace m0.ZeroCode
 
             bool toReturn = false;
 
-            performanceGraphMatchQueries++;
             IList<IEdge> searchResults = GraphUtil.GetQueryOut(parentToCheck, searchString_firstPart, searchString_secondPart);
-            performanceGraphMatchResults += searchResults.Count;
 
             foreach (IEdge searchResult in searchResults)
                 if (!currentMatchGraphEdgeList.Contains(searchResult))
@@ -2151,16 +1657,13 @@ namespace m0.ZeroCode
 
         public IList<IEdge> MatchGraphs(IEdge edgeToCheck, IVertex keywordToCompare, out string newValueString)
         {
-            performanceGraphMatchCalls++;
             newValueString = null;
 
             currentMatchGraphEdgeList = new List<IEdge>();
 
             IList<IEdge> firstMatchingEdgesInGraphToCompare;
 
-            performanceGraphMatchQueries++;
             firstMatchingEdgesInGraphToCompare = GraphUtil.GetQueryOut(keywordToCompare, edgeToCheck.Meta.ToString(), null);
-            performanceGraphMatchResults += firstMatchingEdgesInGraphToCompare.Count;
 
             IEdge firstMatchEdgeInGraphToCompare = null;
 
@@ -2176,9 +1679,7 @@ namespace m0.ZeroCode
 
             if (firstMatchEdgeInGraphToCompare == null) // lets try with (?<ANY>) @ meta
             {
-                performanceGraphMatchQueries++;
                 firstMatchingEdgesInGraphToCompare = GraphUtil.GetQueryOut(keywordToCompare, "(?<ANY>)", null);
-                performanceGraphMatchResults += firstMatchingEdgesInGraphToCompare.Count;
 
                 if (firstMatchingEdgesInGraphToCompare.Count() > 0)
                 {
@@ -2242,7 +1743,6 @@ namespace m0.ZeroCode
 
         public void CheckVertexIfItMachesAnyKeywordGraphs(IEdge edgeToCheck, string path, IEdge edgeToCheck_parent)
         {
-            performanceKeywordEdgesChecked++;
             string edgeToCheckMetaValue = edgeToCheck.Meta.Value.ToString();
 
             bool found = false;
@@ -2251,7 +1751,6 @@ namespace m0.ZeroCode
             {
                 foreach (IVertex keywordTo in dict.firstEdge2KeywordVertex[edgeToCheckMetaValue])
                 {
-                    performanceKeywordCandidateChecks++;
                     if (CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch(edgeToCheck, path, edgeToCheck_parent, keywordTo))
                         found = true;
                 }
@@ -2270,7 +1769,6 @@ namespace m0.ZeroCode
                     {
                         foreach (IVertex keywordTo in dict.firstEdgeANYIs2KeywordVertex[isEdgeToValue])
                         {
-                            performanceKeywordCandidateChecks++;
                             CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch(edgeToCheck, path, edgeToCheck_parent, keywordTo);
                         }
                         //if (CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch(edgeToCheck, path, edgeToCheck_parent, keywordTo))
@@ -2298,7 +1796,6 @@ namespace m0.ZeroCode
             if (matchedEdges != null && matchedEdges.Count > 0)
             {
                 thereWasMatch = true;
-                performanceKeywordMatches++;
 
                 KeywordMatch match = new KeywordMatch(keywordVertex, this);
 
@@ -2356,7 +1853,6 @@ namespace m0.ZeroCode
 
         public void GetLinksForSubGraphVertices_subVertexes(IEdge e, string path, int nestedLevel)
         {
-            performanceSubGraphTraversalCalls++;
             BeenList.Add(e);
 
             string suffix = "";
@@ -2367,7 +1863,6 @@ namespace m0.ZeroCode
             foreach (IEdge ee in e.To.OutEdgesRaw)
                 if (!VertexOperations.IsLink_OldVersion(ee))
                 {
-                    performanceSubGraphEdgesScanned++;
                     string LinkString = path + suffix + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(dict, ee);
 
                     bool beenThereButNeedToReEnter = false;
@@ -2384,13 +1879,11 @@ namespace m0.ZeroCode
                             vd.NestedLevel = nestedLevel;
 
                             beenThereButNeedToReEnter = true;
-                            performanceSubGraphVerticesReentered++;
                         }
                     }
                     else
                     {
                         SubGraphVerticesDictionary.Add(ee.To, new VertexData(LinkString, nestedLevel));
-                        performanceSubGraphVerticesAdded++;
                     }
 
                     if (beenThereButNeedToReEnter || !BeenList.Contains(ee))
@@ -2400,7 +1893,6 @@ namespace m0.ZeroCode
 
         public void MatchKeywords(IEdge e, string path, bool executeOnRootEdge)
         {
-            performanceKeywordTraversalCalls++;
             BeenList.Add(e);
 
             string suffix = "";
@@ -2443,31 +1935,21 @@ namespace m0.ZeroCode
 
         void ZeroCodeGraph2String_Reccurent(IEdge baseEdge, int level, IEdge parent, string path)
         {
-            performanceGraphSerializationCalls++;
             //if (log)
             //  m0.MinusZero.Instance.Log(1, level, "ZeroCodeGraph2String_Reccurent", baseEdge.Meta.ToString() + "::" + baseEdge.To.ToString());
 
             if (BeenList.Contains(baseEdge) /*&& baseEdge.Meta.Value.ToString() != "NextExpression"*/)
-            {
-                performanceGraphSerializationBeenSkips++;
                 return;
-            }
 
             if (!ZeroCodeUtil.FilterEdgeForGraph2TextProcessing(baseEdge))
-            {
-                performanceGraphSerializationFilterSkips++;
                 return;
-            }
 
             tabTimes = level;
 
             AppendNewLines(baseEdge);
 
             if (!ShallProcess(baseEdge))
-            {
-                performanceGraphSerializationShallProcessSkips++;
                 return;
-            }
 
             if (ommitOnce_baseEdgePath)
             {
@@ -2588,17 +2070,14 @@ namespace m0.ZeroCode
 
         public string Process_EdgeAndManyLines_Inner(IEdge _graphBaseEdge)
         {
-            BeginPerformanceLogging("EdgeAndManyLines", _graphBaseEdge);
             shouldUseCurrentPathForFirstVertexAppend = false;
             ommitOnce_AppendNewLineAndTabs = true;
             ommitOnce_baseEdgePath = true;
 
             //
 
-            BeginPerformancePhase("PrepareBaseEdge");
             prepareBaseEdge_EdgeAndManyLines(_graphBaseEdge);
 
-            BeginPerformancePhase("InitializeState");
             BeenList = new HashSet<IEdge>();
             BeenList_Keyword = new HashSet<IEdge>();
             newLinesBeenList = new HashSet<IEdge>();
@@ -2615,31 +2094,25 @@ namespace m0.ZeroCode
 
             //             
 
-            BeginPerformancePhase("BuildSubGraphLinks");
             GetLinksForSubGraphVertices_BaseEdge();
             GetLinksForSubGraphVertices_subVertexes(BaseEdge, null, 0);
 
             BeenList.Clear();
 
-            BeginPerformancePhase("MatchKeywords");
             MatchKeywords(BaseEdge, null, true);
 
             BeenList.Clear();
 
             //
 
-            BeginPerformancePhase("CollectImports");
             ImportImports(GraphUtil.GetQueryOutFirst(FormalTextLanguage, "DefaultImports", null));
             ImportImports(BaseEdge.To);
 
-            BeginPerformancePhase("SerializeGraph");
             ZeroCodeGraph2String_Reccurent(BaseEdge, 0, new EasyEdge(null, null, BaseEdge.From), null);
 
             //ZeroCodeGraph2String_Reccurent(BaseEdge, 0, BaseEdge, null);
 
-            string result = Source.Replace("@START\\", "@").ToString();
-            FinishPerformanceLogging(result);
-            return result;
+            return Source.Replace("@START\\", "@").ToString();
             //return Source.ToString();
         }
 
@@ -2688,16 +2161,13 @@ namespace m0.ZeroCode
 
         public string Process_LinearizedManyLines_Inner(IEdge _graphBaseEdge)
         {
-            BeginPerformanceLogging("LinearizedManyLines", _graphBaseEdge);
             shouldUseCurrentPathForFirstVertexAppend = false;
             ommitOnce_AppendNewLineAndTabs = true;
 
             //
 
-            BeginPerformancePhase("PrepareBaseEdge");
             prepareBaseEdge_LinearizedManyLines(_graphBaseEdge);
 
-            BeginPerformancePhase("InitializeState");
             BeenList = new HashSet<IEdge>();
             BeenList_Keyword = new HashSet<IEdge>();
             newLinesBeenList = new HashSet<IEdge>();
@@ -2714,12 +2184,10 @@ namespace m0.ZeroCode
 
             //             
 
-            BeginPerformancePhase("BuildSubGraphLinks");
             GetLinksForSubGraphVertices_subVertexes(BaseEdge, null, 0);
 
             BeenList.Clear();
 
-            BeginPerformancePhase("MatchKeywords");
             MatchKeywords(BaseEdge, null, false);
 
             BeenList.Clear();
@@ -2730,29 +2198,22 @@ namespace m0.ZeroCode
 
             //
 
-            BeginPerformancePhase("CollectImports");
             ImportImports(GraphUtil.GetQueryOutFirst(FormalTextLanguage, "DefaultImports", null));
             ImportImports(BaseEdge.To);
 
-            BeginPerformancePhase("SerializeGraph");
             foreach (IEdge e in BaseEdge.To.OutEdgesRaw)
                 ZeroCodeGraph2String_Reccurent(e, 0, BaseEdge, null);
 
-            string result = Source.Replace("@START\\", "@\\").ToString();
-            FinishPerformanceLogging(result);
-            return result; // NEED TO BE SURE THIS IS ENOUGH. having problems with [] calls
+            return Source.Replace("@START\\", "@\\").ToString(); // NEED TO BE SURE THIS IS ENOUGH. having problems with [] calls
             //return Source.ToString();
         }
 
         public string Process_VertexAndManyLines(IEdge _graphBaseEdge)
         {
-            BeginPerformanceLogging("VertexAndManyLines", _graphBaseEdge);
             shouldUseCurrentPathForFirstVertexAppend = true;
 
-            BeginPerformancePhase("PrepareBaseEdge");
             prepareBaseEdge(_graphBaseEdge);
 
-            BeginPerformancePhase("InitializeState");
             BeenList = new HashSet<IEdge>();
             BeenList_Keyword = new HashSet<IEdge>();
             newLinesBeenList = new HashSet<IEdge>();
@@ -2769,13 +2230,11 @@ namespace m0.ZeroCode
 
             //
 
-            BeginPerformancePhase("BuildSubGraphLinks");
             GetLinksForSubGraphVertices_BaseEdge();
             GetLinksForSubGraphVertices_subVertexes(BaseEdge, null, 0);
 
             BeenList.Clear();
 
-            BeginPerformancePhase("MatchKeywords");
             MatchKeywords(BaseEdge, null, false);
 
             BeenList.Clear();
@@ -2786,19 +2245,15 @@ namespace m0.ZeroCode
 
             //
 
-            BeginPerformancePhase("CollectImports");
             ImportImports(GraphUtil.GetQueryOutFirst(FormalTextLanguage, "DefaultImports", null));
             ImportImports(BaseEdge.To);
 
-            BeginPerformancePhase("SerializeGraph");
             AppendAsNew(BaseEdge.To);
 
             foreach (IEdge e in BaseEdge.To.OutEdgesRaw)
                 ZeroCodeGraph2String_Reccurent(e, 1, BaseEdge, null);
 
-            string result = Source.ToString();
-            FinishPerformanceLogging(result);
-            return result;
+            return Source.ToString();
         }
 
         public string Process_ManyLinesExcludingParent(IEdge _graphBaseEdge)
