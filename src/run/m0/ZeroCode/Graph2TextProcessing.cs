@@ -504,8 +504,18 @@ namespace m0.ZeroCode
         }
     }
 
+    class KeywordManyRootData
+    {
+        public IEdge RootEdge;
+        public string QueryString;
+        public int BaseCount;
+    }
+
     class Graph2TextProcessing
     {
+        static readonly Regex KeywordSentencePlaceholderRegex =
+            new Regex(@"\(\?(A)?(V)?<[a-zA-Z0-9_]+>\)");
+
         public IEdge BaseEdge;
 
         public HashSet<IEdge> BeenList;
@@ -523,6 +533,7 @@ namespace m0.ZeroCode
 
         public IDictionary<IVertex, bool> DoKeywordDefinitionContainLocalRoot_Dictionary;
         public IDictionary<IVertex, bool> DoKeywordDefinitionContainStartInLocalRoot_Dictionary;
+        IDictionary<IVertex, KeywordManyRootData> keywordManyRootDictionary;
 
         IVertex FormalTextLanguage;
         IList<IVertex> newVertexKeywordVertexList;
@@ -549,6 +560,7 @@ namespace m0.ZeroCode
         long performanceGraphMatchResults;
         long performanceKeywordSentenceRegexes;
         long performanceKeywordManyRootCalls;
+        long performanceKeywordManyRootCacheHits;
         long performanceKeywordPathCalls;
         long performanceKeywordPathInEdgesScanned;
         long performanceKeywordDefinitionSearchCalls;
@@ -621,6 +633,7 @@ namespace m0.ZeroCode
             performanceGraphMatchResults = 0;
             performanceKeywordSentenceRegexes = 0;
             performanceKeywordManyRootCalls = 0;
+            performanceKeywordManyRootCacheHits = 0;
             performanceKeywordPathCalls = 0;
             performanceKeywordPathInEdgesScanned = 0;
             performanceKeywordDefinitionSearchCalls = 0;
@@ -731,6 +744,7 @@ namespace m0.ZeroCode
                 + ", graphMatchResults=" + performanceGraphMatchResults
                 + ", sentenceRegexes=" + performanceKeywordSentenceRegexes
                 + ", manyRootCalls=" + performanceKeywordManyRootCalls
+                + ", manyRootCacheHits=" + performanceKeywordManyRootCacheHits
                 + ", pathCalls=" + performanceKeywordPathCalls
                 + ", pathInEdgesScanned=" + performanceKeywordPathInEdgesScanned
                 + ", definitionSearchCalls=" + performanceKeywordDefinitionSearchCalls
@@ -1105,6 +1119,15 @@ namespace m0.ZeroCode
 
         IEdge GetKeywordManyRoot(IVertex def, out string keywordManyRootQueryString, out int getKeywordManyRootBaseCount)
         {
+            KeywordManyRootData cached;
+            if (keywordManyRootDictionary.TryGetValue(def, out cached))
+            {
+                keywordManyRootQueryString = cached.QueryString;
+                getKeywordManyRootBaseCount = cached.BaseCount;
+                performanceKeywordManyRootCacheHits++;
+                return cached.RootEdge;
+            }
+
             string queryString;
 
             getKeywordManyRootBaseCount = 0;
@@ -1116,7 +1139,15 @@ namespace m0.ZeroCode
             keywordManyRootQueryString = queryString;
 
             if (kmrEdge == null)
+            {
+                keywordManyRootDictionary.Add(def, new KeywordManyRootData
+                {
+                    RootEdge = null,
+                    QueryString = keywordManyRootQueryString,
+                    BaseCount = getKeywordManyRootBaseCount
+                });
                 return null;
+            }
 
             int count = 1;
 
@@ -1125,6 +1156,12 @@ namespace m0.ZeroCode
                 if (e == kmrEdge)
                 {
                     getKeywordManyRootBaseCount = count;
+                    keywordManyRootDictionary.Add(def, new KeywordManyRootData
+                    {
+                        RootEdge = kmrEdge,
+                        QueryString = keywordManyRootQueryString,
+                        BaseCount = getKeywordManyRootBaseCount
+                    });
                     return kmrEdge;
                 }
 
@@ -1132,6 +1169,12 @@ namespace m0.ZeroCode
                     count++;
             }
 
+            keywordManyRootDictionary.Add(def, new KeywordManyRootData
+            {
+                RootEdge = null,
+                QueryString = keywordManyRootQueryString,
+                BaseCount = getKeywordManyRootBaseCount
+            });
             return null;
         }
 
@@ -1455,7 +1498,7 @@ namespace m0.ZeroCode
 
             // find matches
             performanceKeywordSentenceRegexes++;
-            Regex rgx = new Regex(@"\(\?(A)?(V)?<[a-zA-Z0-9_]+>\)");
+            Regex rgx = KeywordSentencePlaceholderRegex;
 
             int prevPos = 0;
 
@@ -1538,7 +1581,7 @@ namespace m0.ZeroCode
                             sentence = sentenceSecond;
 
                         performanceKeywordSentenceRegexes++;
-                        Regex rgx = new Regex(@"\(\?(A)?(V)?<[a-zA-Z0-9_]+>\)");
+                        Regex rgx = KeywordSentencePlaceholderRegex;
 
                         int prevPos = 0;
 
@@ -2568,6 +2611,7 @@ namespace m0.ZeroCode
 
             DoKeywordDefinitionContainLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
             DoKeywordDefinitionContainStartInLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
+            keywordManyRootDictionary = new Dictionary<IVertex, KeywordManyRootData>();
 
             //             
 
@@ -2666,6 +2710,7 @@ namespace m0.ZeroCode
 
             DoKeywordDefinitionContainLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
             DoKeywordDefinitionContainStartInLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
+            keywordManyRootDictionary = new Dictionary<IVertex, KeywordManyRootData>();
 
             //             
 
@@ -2720,6 +2765,7 @@ namespace m0.ZeroCode
 
             DoKeywordDefinitionContainLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
             DoKeywordDefinitionContainStartInLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
+            keywordManyRootDictionary = new Dictionary<IVertex, KeywordManyRootData>();
 
             //
 
