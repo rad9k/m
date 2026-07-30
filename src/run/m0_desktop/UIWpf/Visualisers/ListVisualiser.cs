@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Windows.Controls;
@@ -23,10 +24,11 @@ using m0.Graph.ExecutionFlow;
 using m0.User.Process.UX;
 using System.Windows.Forms;
 using System.Globalization;
+using System.Windows.Threading;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class ListVisualiser : StackPanel,  IListVisualiser, ITypedEdge, IKeyboardHighlight
+    public class ListVisualiser : Grid,  IListVisualiser, ITypedEdge, IKeyboardHighlight, IOwnScrolling
     {
         private static readonly IValueConverter EdgeIconSourceConverter = new ListVisualiserEdgeIconSourceConverter();
         private static readonly IValueConverter EdgeIconVisibilityConverter = new ListVisualiserEdgeIconVisibilityConverter();
@@ -54,6 +56,12 @@ namespace m0.UIWpf.Visualisers
         private bool pendingWasInSelectionAtMouseDown;
         private bool suppressNextMouseUpSelection;
         private bool isSyncingSelectedItemsFromGraph;
+        private readonly Stopwatch dataGridItemsSourceStopwatch = new Stopwatch();
+        private int dataGridItemsSourceGeneration;
+        private int dataGridRowsLoadedSinceItemsSource;
+        private long firstDataGridRowLoadElapsedMilliseconds = -1;
+        private long lastDataGridRowLoadElapsedMilliseconds;
+        private bool isDataGridItemsSourceDiagnosticScheduled;
 
         private int currentHighlightPosition = -1;
         private bool isBeforeFirstPosition;
@@ -70,6 +78,12 @@ namespace m0.UIWpf.Visualisers
         public virtual string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
         public virtual void ViewAttributesUpdated() { ResetView(); }
+
+        protected virtual bool IsDataGridRowVirtualizationEnabled { get { return true; } }
+
+        protected virtual VirtualizationMode DataGridVirtualizationMode { get { return VirtualizationMode.Standard; } }
+
+        protected virtual bool IsDataGridColumnVirtualizationEnabled { get { return false; } }
 
         protected IVertex parentVisualiser;
 
@@ -93,11 +107,26 @@ namespace m0.UIWpf.Visualisers
 
             isVolatile = _isVolatile;
 
+            RowDefinitions.Add(new RowDefinition
+            {
+                Height = new GridLength(1, GridUnitType.Star)
+            });
+
             ThisDataGrid = new System.Windows.Controls.DataGrid();
+            Children.Add(ThisDataGrid);
+            Grid.SetRow(ThisDataGrid, 0);
 
-            this.Children.Add(ThisDataGrid);
+            FrameworkElement footer = CreateFooter();
 
-            AddFooter();
+            if (footer != null)
+            {
+                RowDefinitions.Add(new RowDefinition
+                {
+                    Height = GridLength.Auto
+                });
+                Children.Add(footer);
+                Grid.SetRow(footer, 1);
+            }
 
             ThisDataGrid.AllowDrop = true;
 
@@ -113,7 +142,7 @@ namespace m0.UIWpf.Visualisers
             ThisDataGrid.RowStyle = CreateHighlightedRowStyle();
 
             ThisDataGrid.SelectedValuePath = "To";
-            VirtualizingStackPanel.SetIsVirtualizing(ThisDataGrid, false);
+            ConfigureDataGridVirtualization();
             MinusZero mz = MinusZero.Instance;
 
             if (mz != null && mz.IsInitialized)
@@ -134,6 +163,8 @@ namespace m0.UIWpf.Visualisers
                 ThisDataGrid.LoadingRow += OnDataGridLoadingRow;
                 ThisDataGrid.BeginningEdit += OnDataGridBeginningEdit;
                 ThisDataGrid.CellEditEnding += OnDataGridCellEditEnding;
+
+                LogDataGridVirtualizationConfiguration("constructor");
             }
         }
 
@@ -753,10 +784,37 @@ namespace m0.UIWpf.Visualisers
 
         private void OnDataGridLoadingRow(object sender, DataGridRowEventArgs e)
         {
+            dataGridRowsLoadedSinceItemsSource++;
+            lastDataGridRowLoadElapsedMilliseconds = dataGridItemsSourceStopwatch.ElapsedMilliseconds;
+
+            if (firstDataGridRowLoadElapsedMilliseconds < 0)
+                firstDataGridRowLoadElapsedMilliseconds = lastDataGridRowLoadElapsedMilliseconds;
+
+            if (ShouldLogDataGridRowLoadMilestone(dataGridRowsLoadedSinceItemsSource))
+            {
+                LogDataGridDiagnostic(
+                    "LoadingRow",
+                    "generation=" + dataGridItemsSourceGeneration
+                    + " loadedRows=" + dataGridRowsLoadedSinceItemsSource
+                    + " firstRowElapsed_ms=" + firstDataGridRowLoadElapsedMilliseconds
+                    + " currentRowElapsed_ms=" + lastDataGridRowLoadElapsedMilliseconds);
+            }
+
+            e.Row.MouseEnter -= OnDataGridRowMouseEnter;
+            e.Row.MouseLeave -= OnDataGridRowMouseLeave;
             e.Row.MouseEnter += OnDataGridRowMouseEnter;
             e.Row.MouseLeave += OnDataGridRowMouseLeave;
 
             SyncRowVisualStateOnLoad(e.Row);
+        }
+
+        private static bool ShouldLogDataGridRowLoadMilestone(int loadedRows)
+        {
+            return loadedRows == 1
+                || loadedRows == 10
+                || loadedRows == 100
+                || loadedRows == 1000
+                || (loadedRows > 1000 && loadedRows % 1000 == 0);
         }
 
         private void SyncRowVisualStateOnLoad(DataGridRow row)
@@ -1264,6 +1322,8 @@ namespace m0.UIWpf.Visualisers
 
         protected void ResetView()
         {
+            Stopwatch resetViewStopwatch = Stopwatch.StartNew();
+
             CreateView();
 
             ThisDataGrid.HorizontalGridLinesBrush = (Brush)FindResource("0ForegroundBrush");
@@ -1312,6 +1372,14 @@ namespace m0.UIWpf.Visualisers
 
             ThisDataGrid.ColumnHeaderStyle = CreateColumnHeaderStyle(drawHorizontalHeaderLine, drawVerticalHeaderLine);
             RefreshVisualStatesAfterItemsChanged();
+
+            resetViewStopwatch.Stop();
+            LogDataGridDiagnostic(
+                "ResetView",
+                "elapsed_ms=" + resetViewStopwatch.ElapsedMilliseconds
+                + " columns=" + ThisDataGrid.Columns.Count
+                + " items=" + ThisDataGrid.Items.Count
+                + " gridLines=" + ThisDataGrid.GridLinesVisibility);
         }
 
         public void ScaleChange()
@@ -1384,9 +1452,10 @@ namespace m0.UIWpf.Visualisers
             GraphUtil.ReplaceEdge(Vertex, "GridStyle", MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\GridStyleEnum\None"));
         }
 
-        protected virtual void AddFooter() { }       
+        protected virtual FrameworkElement CreateFooter() { return null; }
 
         public virtual void BaseEdgeToUpdated(){            
+            Stopwatch baseEdgeUpdateStopwatch = Stopwatch.StartNew();
             UnselectAllSelectedEdges();
             ClearPendingMouseGesture();
 
@@ -1397,6 +1466,8 @@ namespace m0.UIWpf.Visualisers
             if (_bas != null)
             {
                 ResetView();
+
+                Stopwatch itemSourcePreparationStopwatch = Stopwatch.StartNew();
 
                 if (Vertex.Get(false, @"FilterQuery:") != null && Vertex.Get(false, @"FilterQuery:").Value != null)
                 {
@@ -1415,9 +1486,140 @@ namespace m0.UIWpf.Visualisers
                     if (GraphUtil.GetQueryOutCount(e.Meta, "$Hide", null) == 0)
                         ItemsSourceValueNoHide.Add(e);
 
-                ThisDataGrid.ItemsSource = ItemsSourceValueNoHide;             
+                itemSourcePreparationStopwatch.Stop();
+                SetDataGridItemsSourceWithDiagnostics(ItemsSourceValueNoHide, "ListVisualiser.BaseEdgeToUpdated");
                 RefreshVisualStatesAfterItemsChanged();
+
+                baseEdgeUpdateStopwatch.Stop();
+                LogDataGridDiagnostic(
+                    "BaseEdgeToUpdated",
+                    "baseVertexPresent=true"
+                    + " visibleItems=" + ItemsSourceValueNoHide.Count
+                    + " preparationElapsed_ms=" + itemSourcePreparationStopwatch.ElapsedMilliseconds
+                    + " totalElapsed_ms=" + baseEdgeUpdateStopwatch.ElapsedMilliseconds);
+            }
+            else
+            {
+                baseEdgeUpdateStopwatch.Stop();
+                LogDataGridDiagnostic(
+                    "BaseEdgeToUpdated",
+                    "baseVertexPresent=false totalElapsed_ms=" + baseEdgeUpdateStopwatch.ElapsedMilliseconds);
             }           
+        }
+
+        protected void SetDataGridItemsSourceWithDiagnostics(IEnumerable itemsSource, string reason)
+        {
+            dataGridItemsSourceGeneration++;
+            dataGridRowsLoadedSinceItemsSource = 0;
+            firstDataGridRowLoadElapsedMilliseconds = -1;
+            lastDataGridRowLoadElapsedMilliseconds = 0;
+            dataGridItemsSourceStopwatch.Restart();
+
+            ThisDataGrid.ItemsSource = itemsSource;
+
+            LogDataGridDiagnostic(
+                "ItemsSourceAssigned",
+                "generation=" + dataGridItemsSourceGeneration
+                + " reason=" + reason
+                + " items=" + ThisDataGrid.Items.Count);
+            LogDataGridVirtualizationConfiguration("ItemsSourceAssigned");
+            ScheduleDataGridItemsSourceDiagnostic();
+        }
+
+        private void ScheduleDataGridItemsSourceDiagnostic()
+        {
+            if (isDataGridItemsSourceDiagnosticScheduled)
+                return;
+
+            isDataGridItemsSourceDiagnosticScheduled = true;
+            int scheduledGeneration = dataGridItemsSourceGeneration;
+
+            ThisDataGrid.Dispatcher.BeginInvoke(
+                DispatcherPriority.ContextIdle,
+                new Action(() =>
+                {
+                    isDataGridItemsSourceDiagnosticScheduled = false;
+
+                    if (scheduledGeneration != dataGridItemsSourceGeneration)
+                        return;
+
+                    LogDataGridDiagnostic(
+                        "ItemsSourceLayoutCompleted",
+                        "generation=" + scheduledGeneration
+                        + " items=" + ThisDataGrid.Items.Count
+                        + " realizedRows=" + GetRealizedDataGridRowCount()
+                        + " loadedRows=" + dataGridRowsLoadedSinceItemsSource
+                        + " firstRowElapsed_ms=" + firstDataGridRowLoadElapsedMilliseconds
+                        + " lastRowElapsed_ms=" + lastDataGridRowLoadElapsedMilliseconds
+                        + " elapsed_ms=" + dataGridItemsSourceStopwatch.ElapsedMilliseconds);
+                    LogDataGridViewportMetrics(scheduledGeneration);
+                }));
+        }
+
+        private int GetRealizedDataGridRowCount()
+        {
+            int realizedRows = 0;
+
+            foreach (object item in ThisDataGrid.Items)
+                if (TryGetDataGridRow(item) != null)
+                    realizedRows++;
+
+            return realizedRows;
+        }
+
+        private void LogDataGridViewportMetrics(int generation)
+        {
+            ScrollViewer scrollViewer = FindVisualChildren<ScrollViewer>(ThisDataGrid).FirstOrDefault();
+
+            if (scrollViewer == null)
+            {
+                LogDataGridDiagnostic(
+                    "ViewportMetrics",
+                    "generation=" + generation
+                    + " dataGridActualHeight=" + FormatDataGridLayoutMetric(ThisDataGrid.ActualHeight)
+                    + " scrollViewerFound=false");
+                return;
+            }
+
+            LogDataGridDiagnostic(
+                "ViewportMetrics",
+                "generation=" + generation
+                + " dataGridActualHeight=" + FormatDataGridLayoutMetric(ThisDataGrid.ActualHeight)
+                + " viewportHeight=" + FormatDataGridLayoutMetric(scrollViewer.ViewportHeight)
+                + " extentHeight=" + FormatDataGridLayoutMetric(scrollViewer.ExtentHeight)
+                + " scrollableHeight=" + FormatDataGridLayoutMetric(scrollViewer.ScrollableHeight)
+                + " canContentScroll=" + ScrollViewer.GetCanContentScroll(scrollViewer));
+        }
+
+        private static string FormatDataGridLayoutMetric(double value)
+        {
+            return value.ToString("0.##", CultureInfo.InvariantCulture);
+        }
+
+        private void LogDataGridVirtualizationConfiguration(string reason)
+        {
+            LogDataGridDiagnostic(
+                "VirtualizationConfiguration",
+                "reason=" + reason
+                + " isVirtualizing=" + VirtualizingStackPanel.GetIsVirtualizing(ThisDataGrid)
+                + " mode=" + VirtualizingStackPanel.GetVirtualizationMode(ThisDataGrid)
+                + " canContentScroll=" + ScrollViewer.GetCanContentScroll(ThisDataGrid)
+                + " enableRowVirtualization=" + ThisDataGrid.EnableRowVirtualization
+                + " enableColumnVirtualization=" + ThisDataGrid.EnableColumnVirtualization);
+        }
+
+        private void ConfigureDataGridVirtualization()
+        {
+            VirtualizingStackPanel.SetIsVirtualizing(ThisDataGrid, IsDataGridRowVirtualizationEnabled);
+            VirtualizingStackPanel.SetVirtualizationMode(ThisDataGrid, DataGridVirtualizationMode);
+            ScrollViewer.SetCanContentScroll(ThisDataGrid, IsDataGridRowVirtualizationEnabled);
+            ThisDataGrid.EnableRowVirtualization = IsDataGridRowVirtualizationEnabled;
+            ThisDataGrid.EnableColumnVirtualization = IsDataGridColumnVirtualizationEnabled;
+        }
+
+        private void LogDataGridDiagnostic(string eventName, string details)
+        {
+            MinusZero.Instance.Log(1, GetType().Name + ".DataGrid." + eventName, details);
         }
 
         private void RefreshVisualStatesAfterItemsChanged()

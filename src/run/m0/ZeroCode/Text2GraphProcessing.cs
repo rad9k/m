@@ -347,6 +347,9 @@ namespace m0.ZeroCode
 
         public List<LineInfo> lineInfoList;
 
+            return depth;
+        }
+
         //
 
         IVertex r = m0.MinusZero.Instance.Root;    
@@ -655,10 +658,14 @@ namespace m0.ZeroCode
                 link = mock.mockData.ToString();
 
             if (link.Length == 0)
+            {
                 return MinusZero.Instance.Root;
+            }
 
             if (GeneralUtil.CompareStrings(link, "$CodeRoot"))
+            {
                 return processBaseEdgeTo;
+            }
 
             // $Is
 
@@ -669,7 +676,9 @@ namespace m0.ZeroCode
                     IVertex value = SearchForParentLink_Is(link, inEdge);
 
                     if (value != null)
+                    {
                         return value;
+                    }
                 }
 
                 foreach (IEdge inEdge in mock.parentVertex.InEdgesRaw)
@@ -677,7 +686,9 @@ namespace m0.ZeroCode
                     IVertex value = SearchForParentLink(link, inEdge);
 
                     if (value != null)
+                    {
                         return value;
+                    }
                 }
             }
 
@@ -703,7 +714,9 @@ namespace m0.ZeroCode
                     tryIf = query(importLink, secondPart);
 
                     if (tryIf != null)
+                    {
                         return tryIf;
+                    }
                 }
 
                 // dict importList
@@ -714,7 +727,9 @@ namespace m0.ZeroCode
                     tryIf = query(importLink, secondPart);
 
                     if (tryIf != null)
+                    {
                         return tryIf;
+                    }
                 }
 
                 // normal importMetaList
@@ -725,7 +740,9 @@ namespace m0.ZeroCode
                     tryIf = queryMetaImport(importMetaLink, secondPart);
 
                     if (tryIf != null)
+                    {
                         return tryIf;
+                    }
                 }
 
                 // dict importMetaList
@@ -736,45 +753,54 @@ namespace m0.ZeroCode
                     tryIf = queryMetaImport(importMetaLink, secondPart);
 
                     if (tryIf != null)
+                    {
                         return tryIf;
+                    }
                 }
             }            
 
             // normal direct link
-
             tryIf = query(importDirectList, @"\" + link);
 
             if (tryIf != null)
+            {
                 return tryIf;
+            }
 
             // dict direct link
 
             tryIf = query(dict.importDirectList, @"\" + link);
 
             if (tryIf != null)
+            {
                 return tryIf;
+            }
 
             // normal direct link meta
 
             tryIf = queryMetaImport(importDirectMetaList, @"\" + link);
 
             if (tryIf != null)
+            {
                 return tryIf;
+            }
 
             // dict direct link meta
 
             tryIf = queryMetaImport(dict.importDirectMetaList, @"\" + link);
             
             if (tryIf != null)
+            {
                 return tryIf;
+            }
 
             // try from local root
-
             tryIf = queryMetaImport(baseVertex, @"$ParseRoot" + dict.MetaSeparator + @"\\" + link);
 
             if (tryIf != null && !(tryIf is ToVertexMock))
+            {
                 return tryIf;
-
+            }
             return MinusZero.Instance.Empty;
         }
 
@@ -1217,6 +1243,9 @@ namespace m0.ZeroCode
 
         void copyExaminedKeywords(List<keywordTryingData> source, List<keywordTryingData> target)
         {
+            if (source.Count > 0)
+                target.Capacity = target.Count + source.Count;
+
             foreach(keywordTryingData ktd in source)
             {
                 keywordTryingData _ktd = new keywordTryingData(ktd, this);
@@ -1445,6 +1474,8 @@ namespace m0.ZeroCode
             string keywordsFilter, 
             bool isSpaceNext)
         {
+            int keywordTryDepth = GetKeywordTryDepth(parentParams);
+
             //ZeroCodeCommon.testIfIsKeywordSubstring(0, "<<", dict.allKeywordsSubstringsPositiveDictionary_witchoutLinkKeywordParts, dict.allKeywordsSubstringsNegativeDictionary_witchoutLinkKeywordParts);
             tryIsKeyword_Parameters_IN parameters_IN = new tryIsKeyword_Parameters_IN(
                 s,
@@ -1467,13 +1498,13 @@ namespace m0.ZeroCode
                 isSpaceNext);
 
             tryIsKeyword_Parameters_OUT parameters_OUT;
+            int parametersHashCode = parameters_IN.GetHashCode();
 
             //MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "RUN "+callParams.ToString());
 
             // PARAMS OPTIMISATION 
-            if (params_IN_OUT_dictionary.ContainsKey(parameters_IN.GetHashCode()))
+            if (params_IN_OUT_dictionary.TryGetValue(parametersHashCode, out parameters_OUT))
             {
-                parameters_OUT = params_IN_OUT_dictionary[parameters_IN.GetHashCode()];
 
                 examinedKeywords = parameters_OUT.examinedKeywords;
                 link = parameters_OUT.link;
@@ -1497,7 +1528,7 @@ namespace m0.ZeroCode
 
                 parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
 
-                params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
+                params_IN_OUT_dictionary.Add(parametersHashCode, parameters_OUT);
 
                 return;
             }
@@ -1506,7 +1537,7 @@ namespace m0.ZeroCode
             {
                 parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
 
-                params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
+                params_IN_OUT_dictionary.Add(parametersHashCode, parameters_OUT);
 
                 return;
             }
@@ -1561,7 +1592,7 @@ namespace m0.ZeroCode
             {
                 parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
 
-                params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
+                params_IN_OUT_dictionary.Add(parametersHashCode, parameters_OUT);
 
                 return;
             }
@@ -1708,14 +1739,14 @@ namespace m0.ZeroCode
                 // !!!!!!!!!!!!!!!!!!!!!!! A or B ! YOU DECIDE. I do not know :)
 
 
-                if (dict.emptyKeywordByGroups.ContainsKey(keywordsFilter))
-                    possible_emptyKeyworsByKeywordsFilter = dict.emptyKeywordByGroups[keywordsFilter];                
+                if (dict.emptyKeywordByGroups.TryGetValue(keywordsFilter, out IList<IVertex> emptyKeywordsByKeywordsFilter))
+                    possible_emptyKeyworsByKeywordsFilter = emptyKeywordsByKeywordsFilter;                
 
-                if (dict.newVertexKeywordByGroups.ContainsKey(keywordsFilter))
-                    possible_newVertexKeywordsByKeywordsFilter = dict.newVertexKeywordByGroups[keywordsFilter];
+                if (dict.newVertexKeywordByGroups.TryGetValue(keywordsFilter, out IList<IVertex> newVertexKeywordsByKeywordsFilter))
+                    possible_newVertexKeywordsByKeywordsFilter = newVertexKeywordsByKeywordsFilter;
 
-                if (dict.linkKeywordByGroupsDictionary.ContainsKey(keywordsFilter))
-                    possible_linkKeywordsByKeywordsFilter = dict.linkKeywordByGroupsDictionary[keywordsFilter];
+                if (dict.linkKeywordByGroupsDictionary.TryGetValue(keywordsFilter, out IList<IVertex> linkKeywordsByKeywordsFilter))
+                    possible_linkKeywordsByKeywordsFilter = linkKeywordsByKeywordsFilter;
 
                 if (c1089 && ((possible_emptyKeyworsByKeywordsFilter!=null || possible_newVertexKeywordsByKeywordsFilter!=null) && keywordsFilter!="")
                     //_specialKeywordGroups_empty.Contains(keywordsFilter) // A
@@ -1759,7 +1790,7 @@ namespace m0.ZeroCode
 
                     parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
 
-                    params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
+                    params_IN_OUT_dictionary.Add(parametersHashCode, parameters_OUT);
 
                     return;
                 }
@@ -1814,7 +1845,7 @@ namespace m0.ZeroCode
 
                 parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
 
-                params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
+                params_IN_OUT_dictionary.Add(parametersHashCode, parameters_OUT);
 
                 return;
             }
@@ -1828,24 +1859,28 @@ namespace m0.ZeroCode
             }
 
             // keyword
-
             if (lookForLocalRootOnly)
             {
-                if (dict.examinedKeywords_StartInLocalRootOnly.ContainsKey(keywordsFilter))
-                    copyExaminedKeywords(dict.examinedKeywords_StartInLocalRootOnly[keywordsFilter], examinedKeywords);
+                if (dict.examinedKeywords_StartInLocalRootOnly.TryGetValue(keywordsFilter, out List<keywordTryingData> localRootKeywords))
+                {
+                    examinedKeywords.Capacity = localRootKeywords.Count;
+                    copyExaminedKeywords(localRootKeywords, examinedKeywords);
+                }
             }
             else
             {
-                if (dict.examinedKeywords_All.ContainsKey(keywordsFilter))
-                    copyExaminedKeywords(dict.examinedKeywords_All[keywordsFilter], examinedKeywords);
+                if (dict.examinedKeywords_All.TryGetValue(keywordsFilter, out List<keywordTryingData> allKeywords))
+                {
+                    examinedKeywords.Capacity = allKeywords.Count;
+                    copyExaminedKeywords(allKeywords, examinedKeywords);
+                }
             }
-
             shallProceed = true;
 
             while (shallProceed)
             {
-                List<keywordTryingData> newExaminedKeywords = new List<keywordTryingData>();
-
+                List<keywordTryingData> newExaminedKeywords =
+                    new List<keywordTryingData>(examinedKeywords.Count);
                 foreach (keywordTryingData ktd in examinedKeywords)
                 {
                     //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"*** "+ktd.keyword+" sPos:" + sPos + " waitingUntilPositionInText:" + ktd.waitingUntilPositionInText + " currentPositionInKeyword:" + ktd.currentPositionInKeyword + " state:"+ktd.state);
@@ -1930,7 +1965,7 @@ namespace m0.ZeroCode
                     }
                 }
 
-                Dictionary<string, ParameterChache> ParameterChache = new Dictionary<string, ParameterChache>();
+                Dictionary<string, ParameterChache> parameterCache = null;
 
                 // check if anything fits info keyword parameters
                 foreach (keywordTryingData ktd in examinedKeywords)
@@ -1946,13 +1981,18 @@ namespace m0.ZeroCode
                         object foundParameter = null;
 
                         string paramFilterName = getKewordFilterFromParamName(ktd.currentlyProcessedParameterName);
+                            GetKeywordParameterDiagnostics(
+                                paramFilterName,
+                                ktd.currentlyProcessedParameterName,
+                                ktd.keyword);
 
-                        if (ParameterChache.ContainsKey(paramFilterName))
+                        ParameterChache cachedParameter;
+                        if (parameterCache != null && parameterCache.TryGetValue(paramFilterName, out cachedParameter))
                         {
                             chacheHit = true;
 
-                            foundParameter = ParameterChache[paramFilterName].Parameter;
-                            ktd.waitingUntilPositionInText = ParameterChache[paramFilterName].waitingUntilPositionInText;
+                            foundParameter = cachedParameter.Parameter;
+                            ktd.waitingUntilPositionInText = cachedParameter.waitingUntilPositionInText;
                         }
 
                         if (!chacheHit) 
@@ -2018,8 +2058,11 @@ namespace m0.ZeroCode
                                 bool _canStopByForAtomParts = false;
                                 if (dict.keywordInfoDict[ktd.keywordVertex].NonSelfRecursiveParameters)
                                     _canStopByForAtomParts = true;
-
                                 _tryIsKeyword(s, LOGPREFIX + "    ", sPos, startPos, isPrevStartPosSameAsStartPosThisCount, endPos, isTryKeyword_endPos, _canStopByForAtomParts, _afterKeywordPartExist, out foundKeywords, out foundLink, false, ref _newPos, false, ktd.keywordVertex, parameters_IN, paramFilterName, _isSpaceNext);
+                                RecordAssignmentLeftParameterResult(
+                                    ktd,
+                                    foundKeywords,
+                                    foundLink,
 
                                 // BACK TO OLD STACK
 
@@ -2062,7 +2105,10 @@ namespace m0.ZeroCode
                                 p.Parameter = foundParameter;
                                 p.waitingUntilPositionInText = ktd.waitingUntilPositionInText;
 
-                                ParameterChache.Add(paramFilterName, p);
+                                if (parameterCache == null)
+                                    parameterCache = new Dictionary<string, ParameterChache>();
+
+                                parameterCache.Add(paramFilterName, p);
                             }
 
                             ktd.AddParameter(ktd.currentlyProcessedParameterName, foundParameter);
@@ -2234,7 +2280,6 @@ namespace m0.ZeroCode
                     examinedKeywords.Add(maxKtd);
                 }
                 //
-
             }
 
             // if no keywords found, we can use tryNewVertex/tryLink, that are:
@@ -2289,8 +2334,8 @@ namespace m0.ZeroCode
 
             parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
 
-            if (!params_IN_OUT_dictionary.ContainsKey(parameters_IN.GetHashCode()))
-                params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
+            if (!params_IN_OUT_dictionary.ContainsKey(parametersHashCode))
+                params_IN_OUT_dictionary.Add(parametersHashCode, parameters_OUT);
 
             //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"END link:"+link+" keywordsCount:"+examinedKeywords.Count);
 
@@ -3067,36 +3112,48 @@ namespace m0.ZeroCode
             return Process(new EdgeBase(null, null, _baseVertex), _text, CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new);
         }
 
-        private bool ProcessToVertexMocksToLinks_Delegate(IEdge edge)
+        private void ProcessToVertexMocksToLinks()
         {
-            if(edge.Meta is ToVertexMock || edge.To is ToVertexMock)
+            List<IEdge> mockEdges = new List<IEdge>();
+            GraphUtil.DeepIterator_OldVersion(
+                parseRoot,
+                edge =>
+                {
+                    if (edge.Meta is ToVertexMock || edge.To is ToVertexMock)
+                        mockEdges.Add(edge);
+
+                    return false;
+                },
+                false,
+                false,
+                false);
+
+            if (mockEdges.Count == 0)
+                return;
+            HashSet<IVertex> parentsWithChangedEdges = new HashSet<IVertex>();
+
+            foreach (IEdge edge in mockEdges)
             {
                 IVertex metaVertex = edge.Meta;
-
                 IVertex toVertex = edge.To;
-
-                if(metaVertex is ToVertexMock)
+                if (metaVertex is ToVertexMock)
+                {
                     metaVertex = ToVertexMock2VertexByLinkString((ToVertexMock)metaVertex);
+                }
 
                 if (toVertex is ToVertexMock)
+                {
                     toVertex = ToVertexMock2VertexByLinkString((ToVertexMock)toVertex);
+                }
                 IEdge newEdge = edge.From.AddEdge(metaVertex, toVertex);
                 ReplaceRememberedTextualChildEdge(edge.From, edge, newEdge);
                 edge.From.DeleteEdge(edge);
-                RestoreOutgoingEdgesToTextualOrder(edge.From);
-
-                return true;
+                parentsWithChangedEdges.Add(edge.From);
             }
 
-            return false;
-        }
-
-        private void ProcessToVertexMocksToLinks()
-        {
-            while (GraphUtil.DeepIterator_OldVersion(parseRoot, this.ProcessToVertexMocksToLinks_Delegate, true, true, false).FirstOrDefault() != null)
+            foreach (IVertex parent in parentsWithChangedEdges)
             {
-                // Restart traversal after each repin because restoring sibling order recreates
-                // the parent's edges and invalidates the iterator snapshot for remaining siblings.
+                RestoreOutgoingEdgesToTextualOrder(parent);
             }
         }
 
@@ -3121,30 +3178,30 @@ namespace m0.ZeroCode
             NoCodeViewProcessReEnter = false;
         }
 
-        IEnumerable<IVertex> SubGraphPreProcessing;
+        HashSet<IVertex> subGraphPreProcessing;
 
         IVertex parseRoot;
 
         void GestSubGraphPreProcessing()
         {
-            SubGraphPreProcessing = GraphUtil.GetSubGraphWithoutLinksAsList(baseVertex);
+            subGraphPreProcessing = new HashSet<IVertex>(
+                GraphUtil.GetSubGraphWithoutLinksAsList(baseVertex));
         }
 
         void MoveInEdgesComingFromOutsideOfSubGraphToParseRoot()
         {
-            List<IVertex> visited = new List<IVertex>();
+            HashSet<IVertex> visited = new HashSet<IVertex>();
 
             MoveInEdgesComingFromOutsideOfSubGraphToParseRoot_Reccurent(baseVertex, parseRoot.FirstOrDefault().To, visited);
         }
 
-        void MoveInEdgesComingFromOutsideOfSubGraphToParseRoot_Reccurent(IVertex iterationRoot, IVertex parsedVertex, List<IVertex> visited)
+        void MoveInEdgesComingFromOutsideOfSubGraphToParseRoot_Reccurent(IVertex iterationRoot, IVertex parsedVertex, HashSet<IVertex> visited)
         {
             IList<IEdge> OutEdgesRaw = iterationRoot.OutEdgesRaw.ToList();
 
             foreach (IEdge e in OutEdgesRaw)
-                if (e.To != parseRoot && !visited.Contains(e.To) && !VertexOperations.IsLink(e))
+                if (e.To != parseRoot && !VertexOperations.IsLink(e) && visited.Add(e.To))
                 {
-                    visited.Add(e.To);
 
                     IEdge foundInParsed = FindSimilarEdge(parsedVertex, e);
 
@@ -3192,7 +3249,7 @@ namespace m0.ZeroCode
             IList<IEdge> InEdgesRaw = existing.InEdgesRaw.ToList();
 
             foreach (IEdge e in InEdgesRaw)
-                if (!SubGraphPreProcessing.Contains(e.From))
+                if (!subGraphPreProcessing.Contains(e.From))
                 {
                     e.From.AddEdge(e.Meta, parsedVertex);
                     e.From.DeleteEdge(e);
@@ -3201,7 +3258,7 @@ namespace m0.ZeroCode
             IList<IEdge> MetaInEdgesRaw = existing.MetaInEdgesRaw.ToList();
 
             foreach (IEdge e in MetaInEdgesRaw)
-                if (!SubGraphPreProcessing.Contains(e.From))
+                if (!subGraphPreProcessing.Contains(e.From))
                 {
                     foreach (IEdge ee in e.From.ToList())
                         if (ee.Meta == e.Meta && ee.To == e.To) // no to create non exising edge XXX
@@ -3263,7 +3320,9 @@ namespace m0.ZeroCode
             
             foreach(List<IEdge> edgesList in toDelete)
                 foreach(IEdge e in edgesList)                    
+                {
                     e.From.DeleteEdge(e);
+                }
         }
 
         void MoveAllParseRootEdgesToBaseVertex()
@@ -3275,11 +3334,14 @@ namespace m0.ZeroCode
 
             foreach(IEdge e in parseRoot.FirstOrDefault().To.ToList())
             {
+                long addEdgeStartTimestamp = Stopwatch.GetTimestamp();
                 baseVertex.AddEdge(e.Meta, e.To);
 
+                long deleteEdgeStartTimestamp = Stopwatch.GetTimestamp();
                 e.From.DeleteEdge(e);
             }
 
+            long finalizationStartTimestamp = Stopwatch.GetTimestamp();
             GraphUtil.DeleteEdgeByMeta(baseVertex, "$ParseRoot");
 
             baseVertex.Value = firstValue;
@@ -3401,7 +3463,7 @@ namespace m0.ZeroCode
         }
 
         public IVertex Process_VertexAndManyLines(IEdge _baseEdge, string _text)
-        {
+        {\r\n
             if (processBaseEdgeTo == null)
                 processBaseEdgeTo = _baseEdge.To;
 
@@ -3410,49 +3472,19 @@ namespace m0.ZeroCode
             baseVertex = _baseEdge.To;
 
             errorList = MinusZero.Instance.CreateTempVertex();
-            ResetTextualChildrenOrder();
-
-            GestSubGraphPreProcessing();
-
-            text = _text + "\r\n"; // for regexpes
-            ztext = new zstring(text);
-
-            prepareLineInfoList();
-
-            prepareImportList();
-
-            GraphUtil.DeleteEdgeByMeta(baseVertex, "$ParseRoot");
-            GraphUtil.DeleteEdgeByMeta(baseVertex, "$ParseArtefacts");
-
-            //parseRoot = baseVertex.AddVertex(MinusZero.Instance.Root.Get(false, @"System\Meta\Base\$ParseRoot"),"");
-
-            IVertex System = GraphUtil.GetQueryOutFirst(MinusZero.Instance.Root, null, "System");
-            IVertex Meta = GraphUtil.GetQueryOutFirst(System, null, "Meta");
-            IVertex Base = GraphUtil.GetQueryOutFirst(Meta, null, "Base");
-
-            IVertex _parseRoot = GraphUtil.GetQueryOutFirst(Base, null, "$ParseRoot");
-
-            parseRoot = baseVertex.AddVertex(_parseRoot, "");
-
-            ParsingStack stack;
-
-            ProcessTextPart(parseRoot, 0, lineInfoList.Count - 1, out stack);
+            ResetTextualChildrenOrder();\r\n            ProcessTextPart(parseRoot, 0, lineInfoList.Count - 1, out stack);\r\n            LogPerformanceStage("text-parsing", stageStartTimestamp);
 
             if (errorList.Count() == 0)
             {
                 if (stack.lineNo > 0)
+                {
                     CodeViewProcess();
-
+                }
                 RestoreOutgoingEdgesToTextualOrder();
-
                 ProcessToVertexMocksToLinks();
-
                 MoveInEdgesComingFromOutsideOfSubGraphToParseRoot();
-
                 MoveTriggersToParseRoot();                
-
                 DeleteAllEdgesFromBaseVertex();
-
                 MoveAllParseRootEdgesToBaseVertex();                
             }
             else
@@ -3460,9 +3492,7 @@ namespace m0.ZeroCode
                 //baseVertex.AddEdge(MinusZero.Instance.Root.Get(false, @"System\Meta\Base\$ParseArtefacts"), errorList);
 
                 IVertex ParseArtefacts = GraphUtil.GetQueryOutFirst(Base, null, "$ParseArtefacts");
-                baseVertex.AddEdge(ParseArtefacts, errorList);
-            }
-
+                baseVertex.AddEdge(ParseArtefacts, errorList);\r\n            }
             DisposeImportList();
 
             return errorList;

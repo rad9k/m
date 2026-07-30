@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Windows.Controls;
@@ -70,18 +71,22 @@ namespace m0.UIWpf.Visualisers
                 Vertex.AddVertex(ToShowEdgesMeta_meta, null);
         }
 
-        protected override void AddFooter()
+        protected override FrameworkElement CreateFooter()
         {
             m0.UIWpf.Visualisers.Controls.NewButton button = new m0.UIWpf.Visualisers.Controls.NewButton();
 
             button.HorizontalAlignment = HorizontalAlignment.Left;
 
-            this.Children.Add(button);
+            return button;
         }
 
         bool ExpertMode;
 
         protected override void CreateView(){
+            Stopwatch createViewStopwatch = Stopwatch.StartNew();
+            int configuredChildColumnCount = 0;
+            int expertColumnCount = 0;
+
             if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, "AlternatingRows:"), "True"))
                 this.ThisDataGrid.AlternatingRowBackground = (Brush)FindResource("0AlternatingBackgroundBrush");
             else
@@ -103,7 +108,10 @@ namespace m0.UIWpf.Visualisers
                
                 foreach (IEdge e in childs)
                     if (e.To.Get(false, "$Hide:") == null) // need refactor to VisualiserUtil.Filter
+                    {
                         AddColumn((string)e.To.Value, "To[" + (string)e.To.Value + "]");
+                        configuredChildColumnCount++;
+                    }
 
                 if (ExpertMode)
                 {
@@ -116,10 +124,23 @@ namespace m0.UIWpf.Visualisers
                                 contains = true;
 
                         if (contains==false && e.To.Get(false, "$Hide:") == null)
+                        {
                             AddColumn((string)e.To.Value, "To[" + (string)e.To.Value + "]");
+                            expertColumnCount++;
+                        }
                     }
                 }
             }
+
+            createViewStopwatch.Stop();
+            MinusZero.Instance.Log(
+                1,
+                "TableVisualiser.CreateView",
+                "elapsed_ms=" + createViewStopwatch.ElapsedMilliseconds
+                + " columns=" + ThisDataGrid.Columns.Count
+                + " configuredChildColumns=" + configuredChildColumnCount
+                + " expertColumns=" + expertColumnCount
+                + " expertMode=" + ExpertMode);
         }
 
         protected virtual void AddDeleteTemplateButton()
@@ -206,6 +227,7 @@ namespace m0.UIWpf.Visualisers
         IVertex ToShowEdgesMeta;
 
         public override void BaseEdgeToUpdated(){
+            Stopwatch baseEdgeUpdateStopwatch = Stopwatch.StartNew();
             UnselectAllSelectedEdges();
             ClearPendingMouseGesture();
 
@@ -213,10 +235,18 @@ namespace m0.UIWpf.Visualisers
 
             if (Vertex.Get(false, @"ToShowEdgesMeta:\Meta:") == null) // check if we are in the middle of ToShowEdgesMeta sub Vertices switching
                 if (Vertex.Get(false, @"ToShowEdgesMeta:\To:") != null)
+                {
+                    baseEdgeUpdateStopwatch.Stop();
+                    MinusZero.Instance.Log(
+                        1,
+                        "TableVisualiser.BaseEdgeToUpdated",
+                        "skipped=ToShowEdgesMetaSwitchInProgress totalElapsed_ms=" + baseEdgeUpdateStopwatch.ElapsedMilliseconds);
                     return;
+                }
 
             if (bas != null)
             {                
+                Stopwatch toShowEdgesMetaResolutionStopwatch = Stopwatch.StartNew();
                 ToShowEdgesMeta = null;
 
                 if (Vertex.Get(false, @"ToShowEdgesMeta:\Meta:") != null)
@@ -250,18 +280,40 @@ namespace m0.UIWpf.Visualisers
                     ExecutionFlowHelper.GraphChangeWatchOn();
                 }
 
+                toShowEdgesMetaResolutionStopwatch.Stop();
+                MinusZero.Instance.Log(
+                    1,
+                    "TableVisualiser.ToShowEdgesMetaResolution",
+                    "toShowEdgesMetaPresent=" + (ToShowEdgesMeta != null)
+                    + " elapsed_ms=" + toShowEdgesMetaResolutionStopwatch.ElapsedMilliseconds);
+
 
                 if (Vertex.Get(false, @"FilterQuery:") != null && Vertex.Get(false, @"FilterQuery:").Value != null) // do the filtering
                 {
+                    Stopwatch itemSourcePreparationStopwatch = Stopwatch.StartNew();
                     IVertex data = VertexOperations.DoFilter(bas, Vertex.Get(false, @"FilterQuery:"));
 
                     if (data != null)
-                        ThisDataGrid.ItemsSource = data.ToList();
+                        SetDataGridItemsSourceWithDiagnostics(data.ToList(), "TableVisualiser.BaseEdgeToUpdated.Filtered");
                     else
-                        ThisDataGrid.ItemsSource = null;
+                        SetDataGridItemsSourceWithDiagnostics(null, "TableVisualiser.BaseEdgeToUpdated.FilteredEmpty");
+
+                    itemSourcePreparationStopwatch.Stop();
+                    MinusZero.Instance.Log(
+                        1,
+                        "TableVisualiser.ItemsSourcePreparation",
+                        "filtered=true elapsed_ms=" + itemSourcePreparationStopwatch.ElapsedMilliseconds);
                 }
                 else
-                    ThisDataGrid.ItemsSource = bas.ToList(); // if there is no .ToList DataGrid can not edit
+                {
+                    Stopwatch itemSourcePreparationStopwatch = Stopwatch.StartNew();
+                    SetDataGridItemsSourceWithDiagnostics(bas.ToList(), "TableVisualiser.BaseEdgeToUpdated.Unfiltered"); // if there is no .ToList DataGrid can not edit
+                    itemSourcePreparationStopwatch.Stop();
+                    MinusZero.Instance.Log(
+                        1,
+                        "TableVisualiser.ItemsSourcePreparation",
+                        "filtered=false elapsed_ms=" + itemSourcePreparationStopwatch.ElapsedMilliseconds);
+                }
 
                 if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, "ExpertMode:"), "True"))
                     ExpertMode = true;
@@ -269,6 +321,24 @@ namespace m0.UIWpf.Visualisers
                     ExpertMode = false;
 
                 ResetView();
+
+                baseEdgeUpdateStopwatch.Stop();
+                MinusZero.Instance.Log(
+                    1,
+                    "TableVisualiser.BaseEdgeToUpdated",
+                    "baseVertexPresent=true"
+                    + " toShowEdgesMetaPresent=" + (ToShowEdgesMeta != null)
+                    + " expertMode=" + ExpertMode
+                    + " columns=" + ThisDataGrid.Columns.Count
+                    + " totalElapsed_ms=" + baseEdgeUpdateStopwatch.ElapsedMilliseconds);
+            }
+            else
+            {
+                baseEdgeUpdateStopwatch.Stop();
+                MinusZero.Instance.Log(
+                    1,
+                    "TableVisualiser.BaseEdgeToUpdated",
+                    "baseVertexPresent=false totalElapsed_ms=" + baseEdgeUpdateStopwatch.ElapsedMilliseconds);
             }           
         }
     }
