@@ -129,32 +129,60 @@ namespace m0.UIWpf.Visualisers.Helper
         protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
             if (ForceVertexChangeOff)
+            {
+                if (Visualiser is TreeVisualiser)
+                    MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.ListHelper.VertexChange",
+                        "skip=ForceVertexChangeOff " + TreeVisualiser.FormatEventStackForLog(exe));
                 return exe.Stack;
+            }
 
             if (!firstVertexChangeExecuted && updateBaseEdgeCallSchema == UpdateBaseEdgeCallSchemeEnum.OmmitSecond)
             {
                 firstVertexChangeExecuted = true;
+                if (Visualiser is TreeVisualiser)
+                    MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.ListHelper.VertexChange",
+                        "skip=OmmitSecondFirstCall " + TreeVisualiser.FormatEventStackForLog(exe));
                 return exe.Stack;
             }
 
             if (CustomVertexChangeEvent != null)
+            {
+                if (Visualiser is TreeVisualiser)
+                    MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.ListHelper.VertexChange",
+                        "dispatch=CustomVertexChangeEvent " + TreeVisualiser.FormatEventStackForLog(exe));
                 return CustomVertexChangeEvent(exe);
+            }
 
             return VertexChangeLogic(exe);
         }
 
         public INoInEdgeInOutVertexVertex VertexChangeLogic(IExecution exe)
-        {            
-            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Visualiser.Vertex, "Scale"))
+        {
+            bool isTreeVisualiser = Visualiser is TreeVisualiser;
+
+            bool scaleChanged = IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Visualiser.Vertex, "Scale");
+            bool selectedEdgesChanged =
+                IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Visualiser.Vertex, "SelectedEdges")
+                || IsEdgeAddedRemovedDiscardedFrom(exe.Stack, Vertex.Get(false, @"SelectedEdges:"));
+            bool baseEdgeOrToChanged = BaseEdgeToEventTriggeringUpdateVertex && (
+                IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:"))
+                || IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:\To:")));
+
+            if (isTreeVisualiser)
+                MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.ListHelper.VertexChangeLogic",
+                    "scaleChanged=" + scaleChanged
+                    + " selectedEdgesChanged=" + selectedEdgesChanged
+                    + " baseEdgeOrToChanged=" + baseEdgeOrToChanged
+                    + " BaseEdgeToEventTriggeringUpdateVertex=" + BaseEdgeToEventTriggeringUpdateVertex
+                    + " " + TreeVisualiser.FormatEventStackForLog(exe));
+
+            if (scaleChanged)
                 listVisualiser.ScaleChange();
 
-            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Visualiser.Vertex, "SelectedEdges")
-                || IsEdgeAddedRemovedDiscardedFrom(exe.Stack, Vertex.Get(false, @"SelectedEdges:")))
+            if (selectedEdgesChanged)
                 listVisualiser.SelectedVerticesUpdated();
 
-            if (BaseEdgeToEventTriggeringUpdateVertex && (
-                IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:"))
-                || IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:\To:"))))
+            if (baseEdgeOrToChanged)
                 listVisualiser.BaseEdgeToUpdated();
             else
             {
@@ -165,7 +193,12 @@ namespace m0.UIWpf.Visualisers.Helper
                         needToUpdateBaseEdge = true;
 
                 if (needToUpdateBaseEdge)
+                {
+                    if (isTreeVisualiser)
+                        MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.ListHelper.VertexChangeLogic",
+                            "needToUpdateBaseEdge=true via MetaTriggeringUpdateVertex");
                     listVisualiser.BaseEdgeToUpdated();
+                }
 
                 bool needToUpdateView = false;
 
@@ -216,6 +249,12 @@ namespace m0.UIWpf.Visualisers.Helper
 
                 if (dndVertex != null && dndVertex.Count() > 0)
                 {
+                    if (treeVisualiser != null)
+                        MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.ListHelper.dndPreviewMouseMove",
+                            "DoDragDrop payloadCount=" + dndVertex.Count()
+                            + " rootBase=" + TreeVisualiser.FormatVertexForLog(
+                                Vertex == null ? null : Vertex.Get(false, @"BaseEdge:\To:")));
+
                     dndVertex.AddExternalReference();
 
                     DataObject dragData = new DataObject("Vertex", dndVertex);
@@ -263,8 +302,22 @@ namespace m0.UIWpf.Visualisers.Helper
             if (v == null && GeneralUtil.CompareStrings(MinusZero.Instance.Root.Get(false, @"Home:\CurrentUser:\Settings:\AllowBlankAreaDragAndDrop:").Value, "OnlyEnd"))
                 v = Vertex.Get(false, "BaseEdge:");
 
+            bool isTreeVisualiser = Visualiser is TreeVisualiser;
+            IVertex dropTargetTo = v == null ? null : v.Get(false, "To:");
+
+            if (isTreeVisualiser)
+                MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.ListHelper.dndDrop",
+                    "dropPoint=" + dropPoint
+                    + " edgeByPointNull=" + (v == null)
+                    + " dropTargetTo=" + TreeVisualiser.FormatVertexForLog(dropTargetTo)
+                    + " rootBase=" + TreeVisualiser.FormatVertexForLog(
+                        Vertex == null ? null : Vertex.Get(false, @"BaseEdge:\To:"))
+                    + " dropOntoRootBase=" + (dropTargetTo != null
+                        && Vertex != null
+                        && dropTargetTo == Vertex.Get(false, @"BaseEdge:\To:")));
+
             if (v != null)
-                Dnd.DoDrop(null, v.Get(false, "To:"), e);
+                Dnd.DoDrop(null, dropTargetTo, e);
 
             e.Handled = true;
         }
