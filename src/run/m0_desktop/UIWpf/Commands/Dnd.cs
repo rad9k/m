@@ -168,11 +168,7 @@ namespace m0.UIWpf.Commands
             object sender = e.Data.GetData("DragSource");
 
             if (sender == null /*|| orgin == sender*/)
-            {
-                MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.Dnd.DoDrop",
-                    "skip=nullSender baseVertex=" + FormatVertexForLog(baseVertex));
                 return;
-            }
 
             bool doCopy = false;
 
@@ -185,12 +181,6 @@ namespace m0.UIWpf.Commands
             {
                 IVertex dndVertex = e.Data.GetData("Vertex") as IVertex;
 
-                MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.Dnd.DoDrop",
-                    "enter doCopy=" + doCopy
-                    + " senderType=" + sender.GetType().Name
-                    + " payloadCount=" + (dndVertex == null ? -1 : dndVertex.Count())
-                    + " dropBaseVertex=" + FormatVertexForLog(baseVertex));
-
                 ////////////////////////////////////////
                 Interaction.BeginInteractionWithGraph();
                 ////////////////////////////////////////
@@ -202,14 +192,6 @@ namespace m0.UIWpf.Commands
                     IVertex eeTo   = ee.To.Get(false, "To:");
 
                     bool selfDrop = (eeTo == baseVertex);
-
-                    MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.Dnd.DoDrop",
-                        "edge doCopy=" + doCopy
-                        + " selfDrop=" + selfDrop
-                        + " From=" + FormatVertexForLog(eeFrom)
-                        + " Meta=" + FormatVertexForLog(eeMeta)
-                        + " To=" + FormatVertexForLog(eeTo)
-                        + " dropBaseVertex=" + FormatVertexForLog(baseVertex));
 
                     if (doCopy)
                     {
@@ -235,34 +217,9 @@ namespace m0.UIWpf.Commands
                 ////////////////////////////////////////
                 Interaction.EndInteractionWithGraph();
                 ////////////////////////////////////////
-
-                MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.Dnd.DoDrop",
-                    "done Interaction.EndInteractionWithGraph"
-                    + " dropBaseVertex=" + FormatVertexForLog(baseVertex));
             }
 
             MinusZero.Instance.IsGUIDragging = false;
-        }
-
-        private static string FormatVertexForLog(IVertex vertex)
-        {
-            if (vertex == null)
-                return "null";
-
-            if (vertex.DisposedState != DisposeStateEnum.Live)
-                return "<disposed:" + vertex.DisposedState + ">";
-
-            object value = vertex.Value;
-
-            if (value == null)
-                return "<nullValue@" + vertex.GetHashCode() + ">";
-
-            string text = value.ToString();
-
-            if (text.Length > 48)
-                text = text.Substring(0, 48) + "...";
-
-            return text + "@" + vertex.GetHashCode();
         }        
     }
 }

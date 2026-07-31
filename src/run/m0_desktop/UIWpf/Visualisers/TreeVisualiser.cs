@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using m0.Foundation;
@@ -271,7 +270,7 @@ namespace m0.UIWpf.Visualisers
             ParentVisualiser.RegisterPendingMouseDownFromItem(this);
         }
 
-        internal IEdge GetEdge()
+        IEdge GetEdge()
         {
             if (Node != null)
                 return Node.Edge;
@@ -532,47 +531,16 @@ namespace m0.UIWpf.Visualisers
            // ExecutionFlowHelper.DebugStackStraceAsEvents(exe.Stack);
 
             if (ParentVisualiser.VisualiserHelper.IsDisposed)
-            {
-                MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.ItemVertexChange",
-                    "skip=helperDisposed"
-                    + " " + TreeVisualiser.FormatTreeItemForLog(this)
-                    + " " + TreeVisualiser.FormatEventStackForLog(exe));
                 return exe.Stack;
-            }
 
             if (GetEdge().To.DisposedState != DisposeStateEnum.Live)
-            {
-                MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.ItemVertexChange",
-                    "skip=edgeToNotLive"
-                    + " " + TreeVisualiser.FormatTreeItemForLog(this)
-                    + " " + TreeVisualiser.FormatEventStackForLog(exe));
                 return exe.Stack;
-            }
 
-            bool isVirtualizedItem = Node != null && ParentVisualiser.UseDataVirtualization;
-            bool isRootLevelItem = Node != null
-                ? Node.Parent == null
-                : !(ItemsControl.ItemsControlFromItemContainer(this) is TreeVisualiserViewItem);
-
-            MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.ItemVertexChange",
-                "enter"
-                + " isRootLevelItem=" + isRootLevelItem
-                + " isVirtualizedItem=" + isVirtualizedItem
-                + " useDataVirtualization=" + ParentVisualiser.UseDataVirtualization
-                + " " + TreeVisualiser.FormatTreeItemForLog(this)
-                + " " + TreeVisualiser.FormatEventStackForLog(exe));
-
-            if (isVirtualizedItem)
+            if (Node != null && ParentVisualiser.UseDataVirtualization)
                 return ParentVisualiser.VirtualItemVertexChange(this, exe);
 
             UpdateHeader();
             Fill();
-
-            MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.ItemVertexChange",
-                "nonVirtualFillDone"
-                + " isRootLevelItem=" + isRootLevelItem
-                + " childCount=" + Items.Count
-                + " " + TreeVisualiser.FormatTreeItemForLog(this));
 
             return exe.Stack;
 
@@ -943,21 +911,6 @@ namespace m0.UIWpf.Visualisers
                     },
                     "VirtualTreeViewItem",
                     treeItem.VertexChange);
-
-                MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.PrepareVirtualItem",
-                    "listenerRegistered"
-                    + " isRootLevelItem=" + (node.Parent == null)
-                    + " childrenLoaded=" + node.ChildrenLoaded
-                    + " hasChildren=" + node.HasChildren
-                    + " " + FormatTreeItemForLog(treeItem)
-                    + " listenedVertex=" + FormatVertexForLog(node.Edge.To));
-            }
-            else
-            {
-                MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.PrepareVirtualItem",
-                    "listenerSkipped=doNotTrackGraphChanges"
-                    + " isRootLevelItem=" + (node.Parent == null)
-                    + " " + FormatTreeItemForLog(treeItem));
             }
         }
 
@@ -1003,46 +956,14 @@ namespace m0.UIWpf.Visualisers
             IExecution exe)
         {
             if (treeItem == null || treeItem.Node == null)
-            {
-                MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.VirtualItemVertexChange",
-                    "skip=nullItemOrNode"
-                    + " " + FormatEventStackForLog(exe));
                 return exe.Stack;
-            }
-
-            bool isRootLevelItem = treeItem.Node.Parent == null;
-            bool childrenLoadedBefore = treeItem.Node.ChildrenLoaded;
-            int childrenBefore = treeItem.Node.Children != null ? treeItem.Node.Children.Count : -1;
 
             treeItem.UpdateHeader();
 
             if (treeItem.Node.ChildrenLoaded)
-            {
-                int childrenAfter = LoadVirtualChildren(treeItem.Node, true);
-
-                MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.VirtualItemVertexChange",
-                    "reloadedChildren"
-                    + " isRootLevelItem=" + isRootLevelItem
-                    + " childrenLoadedBefore=" + childrenLoadedBefore
-                    + " childrenBefore=" + childrenBefore
-                    + " childrenAfter=" + childrenAfter
-                    + " " + FormatTreeItemForLog(treeItem)
-                    + " " + FormatEventStackForLog(exe));
-            }
+                LoadVirtualChildren(treeItem.Node, true);
             else
-            {
-                bool hasChildrenBefore = treeItem.Node.HasChildren;
                 SyncUnloadedVirtualItemHasChildren(treeItem);
-
-                MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.VirtualItemVertexChange",
-                    "syncedUnloadedHasChildren"
-                    + " isRootLevelItem=" + isRootLevelItem
-                    + " hasChildrenBefore=" + hasChildrenBefore
-                    + " hasChildrenAfter=" + treeItem.Node.HasChildren
-                    + " placeholderItemCount=" + treeItem.Items.Count
-                    + " " + FormatTreeItemForLog(treeItem)
-                    + " " + FormatEventStackForLog(exe));
-            }
 
             return exe.Stack;
         }
@@ -1094,13 +1015,6 @@ namespace m0.UIWpf.Visualisers
 
             node.ChildrenLoaded = true;
             node.UpdateHasChildren(node.Children.Count > 0);
-
-            MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.LoadVirtualChildren",
-                "isRootLevelNode=" + (node.Parent == null)
-                + " reload=" + reload
-                + " childCount=" + node.Children.Count
-                + " hasChildren=" + node.HasChildren
-                + " edge=" + FormatEdgeForLog(node.Edge));
 
             return node.Children.Count;
         }
@@ -1199,10 +1113,6 @@ namespace m0.UIWpf.Visualisers
 
         public void BaseEdgeToUpdated()
         {
-            MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.BaseEdgeToUpdated",
-                "enter useDataVirtualization=" + UseDataVirtualization
-                + " rootBase=" + FormatVertexForLog(Vertex == null ? null : Vertex.Get(false, @"BaseEdge:\To:")));
-
             if (UseDataVirtualization)
             {
                 BaseEdgeToUpdatedVirtualized();
@@ -1230,10 +1140,6 @@ namespace m0.UIWpf.Visualisers
             // root vertex.
             RegisterRootTreeBaseListener();
             ScheduleFullWidthVisualRefresh();
-
-            MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.BaseEdgeToUpdated",
-                "nonVirtualDone itemCount=" + Items.Count
-                + " rootBase=" + FormatVertexForLog(bas));
         }
 
         private void BaseEdgeToUpdatedVirtualized()
@@ -1254,11 +1160,6 @@ namespace m0.UIWpf.Visualisers
             RegisterRootTreeBaseListener();
 
             ScheduleFullWidthVisualRefresh();
-
-            MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.BaseEdgeToUpdatedVirtualized",
-                "done rootNodeCount=" + virtualRootNodes.Count
-                + " virtualContainerCount=" + virtualContainers.Count
-                + " rootBase=" + FormatVertexForLog(baseVertex));
         }
 
         private void ClearVirtualTreeModel()
@@ -1346,31 +1247,16 @@ namespace m0.UIWpf.Visualisers
 
         protected INoInEdgeInOutVertexVertex CustomVertexChange(IExecution exe)
         {
-            bool scaleChanged = IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "Scale");
-            bool showIconsChanged = IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "ShowIcons");
-            bool selectedEdgesChanged = IsEdgeAddedRemovedDiscardedFrom(exe.Stack, Vertex.Get(false, @"SelectedEdges:"));
-            bool baseEdgeChanged = IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:"));
-            bool baseEdgeToChanged = IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:\To:"));
-
-            MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.CustomVertexChange",
-                "scaleChanged=" + scaleChanged
-                + " showIconsChanged=" + showIconsChanged
-                + " selectedEdgesChanged=" + selectedEdgesChanged
-                + " baseEdgeChanged=" + baseEdgeChanged
-                + " baseEdgeToChanged=" + baseEdgeToChanged
-                + " useDataVirtualization=" + UseDataVirtualization
-                + " " + FormatEventStackForLog(exe));
-
-            if (scaleChanged)
+            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "Scale"))
                 ScaleChange();
 
-            if (showIconsChanged)
+            if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "ShowIcons"))
                 UpdateShowIconOnAllItems();
 
-            if (selectedEdgesChanged)
+            if (IsEdgeAddedRemovedDiscardedFrom(exe.Stack, Vertex.Get(false, @"SelectedEdges:")))
                 SelectedVerticesUpdated();
 
-            if (baseEdgeChanged)
+            if (IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:")))
             {
                 BaseEdgeToUpdated();
                 return exe.Stack;
@@ -1379,13 +1265,6 @@ namespace m0.UIWpf.Visualisers
             // Incremental add/remove/dispose of children of root_tree_base is handled by the
             // dedicated direct trigger (RootTreeBaseVertexChange), so it is intentionally not
             // dispatched from here anymore.
-            if (baseEdgeToChanged)
-            {
-                MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.CustomVertexChange",
-                    "note=baseEdgeToChanged_but_incremental_left_to_RootTreeBaseVertexChange"
-                    + " rootListenerVertex=" + FormatVertexForLog(rootTreeBaseListenerVertex)
-                    + " rootListenerActive=" + (rootTreeBaseListenerEdge != null));
-            }
 
             return exe.Stack;
         }
@@ -1403,20 +1282,12 @@ namespace m0.UIWpf.Visualisers
             IVertex newRootTreeBase = Vertex == null ? null : Vertex.Get(false, @"BaseEdge:\To:");
 
             if (rootTreeBaseListenerEdge != null && rootTreeBaseListenerVertex == newRootTreeBase)
-            {
-                MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.RegisterRootTreeBaseListener",
-                    "skip=alreadyRegistered rootBase=" + FormatVertexForLog(newRootTreeBase));
                 return;
-            }
 
             UnregisterRootTreeBaseListener();
 
             if (newRootTreeBase == null || newRootTreeBase.DisposedState != DisposeStateEnum.Live)
-            {
-                MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.RegisterRootTreeBaseListener",
-                    "skip=nullOrNotLive rootBase=" + FormatVertexForLog(newRootTreeBase));
                 return;
-            }
 
             rootTreeBaseListenerVertex = newRootTreeBase;
 
@@ -1429,20 +1300,12 @@ namespace m0.UIWpf.Visualisers
                 },
                 "TreeVisualiserRootTreeBase",
                 RootTreeBaseVertexChange);
-
-            MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.RegisterRootTreeBaseListener",
-                "registered rootBase=" + FormatVertexForLog(newRootTreeBase)
-                + " filters=OutputEdgeAdded|OutputEdgeRemoved|OutputEdgeDisposed"
-                + " note=ValueChange_NOT_included");
         }
 
         private void UnregisterRootTreeBaseListener()
         {
             if (rootTreeBaseListenerEdge != null)
             {
-                MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.UnregisterRootTreeBaseListener",
-                    "unregister previousRootBase=" + FormatVertexForLog(rootTreeBaseListenerVertex));
-
                 ExecutionFlowHelper.RemoveGraphChangeListener(rootTreeBaseListenerEdge);
                 rootTreeBaseListenerEdge = null;
             }
@@ -1453,19 +1316,7 @@ namespace m0.UIWpf.Visualisers
         private INoInEdgeInOutVertexVertex RootTreeBaseVertexChange(IExecution exe)
         {
             if (VisualiserHelper.IsDisposed)
-            {
-                MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.RootTreeBaseVertexChange",
-                    "skip=helperDisposed " + FormatEventStackForLog(exe));
                 return exe.Stack;
-            }
-
-            MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.RootTreeBaseVertexChange",
-                "enter useDataVirtualization=" + UseDataVirtualization
-                + " rootNodeCount=" + virtualRootNodes.Count
-                + " listenedRootBase=" + FormatVertexForLog(rootTreeBaseListenerVertex)
-                + " " + FormatEventStackForLog(exe));
-
-            int handledEventCount = 0;
 
             foreach (IEdge eventEdge in exe.Stack.GetAll(false, @"event:"))
             {
@@ -1473,50 +1324,25 @@ namespace m0.UIWpf.Visualisers
                 IVertex edgeVertex = GraphUtil.GetQueryOutFirst(eventEdge.To, "Edge", null);
 
                 if (eventType == null || edgeVertex == null || eventType.Value == null)
-                {
-                    MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.RootTreeBaseVertexChange",
-                        "skipEvent=missingTypeOrEdge"
-                        + " eventTypeNull=" + (eventType == null)
-                        + " edgeVertexNull=" + (edgeVertex == null));
                     continue;
-                }
 
                 IEdge edge = EdgeHelper.CreateIEdgeFromEdgeVertex(edgeVertex);
-                string eventTypeName = eventType.Value.ToString();
 
-                MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.RootTreeBaseVertexChange",
-                    "handle eventType=" + eventTypeName
-                    + " edge=" + FormatEdgeForLog(edge));
-
-                switch (eventTypeName)
+                switch (eventType.Value.ToString())
                 {
                     case "OutputEdgeAdded":
                         EdgeAdded(edge);
-                        handledEventCount++;
                         break;
 
                     case "OutputEdgeRemoved":
                         EdgeRemoved(edge);
-                        handledEventCount++;
                         break;
 
                     case "OutputEdgeDisposed":
                         EdgeDisposed(edge);
-                        handledEventCount++;
-                        break;
-
-                    default:
-                        MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.RootTreeBaseVertexChange",
-                            "unhandledEventType=" + eventTypeName
-                            + " edge=" + FormatEdgeForLog(edge));
                         break;
                 }
             }
-
-            MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.RootTreeBaseVertexChange",
-                "done handledEventCount=" + handledEventCount
-                + " rootNodeCount=" + virtualRootNodes.Count
-                + " virtualContainerCount=" + virtualContainers.Count);
 
             return exe.Stack;
         }
@@ -1529,39 +1355,16 @@ namespace m0.UIWpf.Visualisers
                     currentNode => EdgeHelper.CompareIEdges(currentNode.Edge, edge));
 
                 if (node != null)
-                {
                     virtualRootNodes.Remove(node);
-
-                    MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.RootEdgeRemoved",
-                        "removed=true rootNodeCount=" + virtualRootNodes.Count
-                        + " edge=" + FormatEdgeForLog(edge));
-                }
-                else
-                {
-                    MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.RootEdgeRemoved",
-                        "removed=false reason=noMatchingRootNode"
-                        + " rootNodeCount=" + virtualRootNodes.Count
-                        + " edge=" + FormatEdgeForLog(edge)
-                        + " rootEdges=" + FormatRootNodesForLog());
-                }
 
                 return;
             }
 
             IList l = GeneralUtil.CreateAndCopyList(Items);
-            bool removed = false;
 
             foreach (TreeVisualiserViewItem i in l)
                 if (EdgeHelper.CompareIEdges((IEdge)i.Tag, edge))
-                {
                     Items.Remove(i);
-                    removed = true;
-                }
-
-            MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.RootEdgeRemoved",
-                "nonVirtual removed=" + removed
-                + " itemCount=" + Items.Count
-                + " edge=" + FormatEdgeForLog(edge));
         }
 
         private void EdgeAdded(IEdge edge)
@@ -1569,24 +1372,14 @@ namespace m0.UIWpf.Visualisers
             if (UseDataVirtualization)
             {
                 virtualRootNodes.Add(CreateVirtualNode(edge, null));
-
-                MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.RootEdgeAdded",
-                    "virtualized rootNodeCount=" + virtualRootNodes.Count
-                    + " edge=" + FormatEdgeForLog(edge));
                 return;
             }
 
             Items.Add(CreateTreeViewItem(edge, true, null));
-
-            MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.RootEdgeAdded",
-                "nonVirtual itemCount=" + Items.Count
-                + " edge=" + FormatEdgeForLog(edge));
         }
 
         private void EdgeDisposed(IEdge edge)
         {
-            MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.RootEdgeDisposed",
-                "fallback=BaseEdgeToUpdated edge=" + FormatEdgeForLog(edge));
             BaseEdgeToUpdated();
         }
 
@@ -1825,13 +1618,6 @@ namespace m0.UIWpf.Visualisers
             IVertex dndVertex = SelectedEdgesInteractionHelper.BuildDndVertexFromSelectedEdges(
                 Vertex,
                 fallbackEdgeVertex);
-
-            MinusZero.Instance.Log(1, "TreeVisualiser.RootRefresh.TryPrepareDragAndBuildDndVertex",
-                "isCtrl=" + isCtrl
-                + " wasInSelectionAtMouseDown=" + wasInSelectionAtMouseDown
-                + " clickedEdge=" + FormatEdgeForLog(clickedEdge)
-                + " dndPayloadCount=" + (dndVertex == null ? -1 : dndVertex.Count())
-                + " rootBase=" + FormatVertexForLog(Vertex == null ? null : Vertex.Get(false, @"BaseEdge:\To:")));
 
             ClearPendingMouseDown();
 
@@ -2402,117 +2188,6 @@ namespace m0.UIWpf.Visualisers
         public FrameworkElement GetVisualElementByEdge(IVertex vertex)
         {
             throw new NotImplementedException();
-        }
-
-        internal static string FormatTreeItemForLog(TreeVisualiserViewItem treeItem)
-        {
-            if (treeItem == null)
-                return "treeItem=null";
-
-            bool isRootLevelItem = treeItem.Node != null
-                ? treeItem.Node.Parent == null
-                : !(ItemsControl.ItemsControlFromItemContainer(treeItem) is TreeVisualiserViewItem);
-
-            return "isRootLevelItem=" + isRootLevelItem
-                + " isFilled=" + treeItem.IsFilled
-                + " hasListener=" + (treeItem.vertexChangeListenerEdge != null)
-                + " doNotTrackGraphChanges=" + treeItem.doNotTrackGraphChanges
-                + " edge=" + FormatEdgeForLog(treeItem.GetEdge());
-        }
-
-        internal static string FormatEdgeForLog(IEdge edge)
-        {
-            if (edge == null)
-                return "null";
-
-            return "From=" + FormatVertexForLog(edge.From)
-                + " Meta=" + FormatVertexForLog(edge.Meta)
-                + " To=" + FormatVertexForLog(edge.To);
-        }
-
-        internal static string FormatVertexForLog(IVertex vertex)
-        {
-            if (vertex == null)
-                return "null";
-
-            if (vertex.DisposedState != DisposeStateEnum.Live)
-                return "<disposed:" + vertex.DisposedState + ">";
-
-            object value = vertex.Value;
-
-            if (value == null)
-                return "<nullValue@" + vertex.GetHashCode() + ">";
-
-            string text = value.ToString();
-
-            if (text.Length > 48)
-                text = text.Substring(0, 48) + "...";
-
-            return text + "@" + vertex.GetHashCode();
-        }
-
-        internal static string FormatEventStackForLog(IExecution exe)
-        {
-            if (exe == null || exe.Stack == null)
-                return "events=none";
-
-            StringBuilder eventSummary = new StringBuilder("events=");
-            bool first = true;
-
-            foreach (IEdge eventEdge in exe.Stack.GetAll(false, @"event:"))
-            {
-                if (!first)
-                    eventSummary.Append("|");
-
-                first = false;
-
-                IVertex eventType = eventEdge.To == null ? null : eventEdge.To.Get(false, @"Type:");
-                IVertex edgeVertex = eventEdge.To == null
-                    ? null
-                    : GraphUtil.GetQueryOutFirst(eventEdge.To, "Edge", null);
-
-                string typeName = eventType != null && eventType.Value != null
-                    ? eventType.Value.ToString()
-                    : "?";
-
-                IEdge edge = edgeVertex == null ? null : EdgeHelper.CreateIEdgeFromEdgeVertex(edgeVertex);
-
-                eventSummary.Append(typeName);
-                eventSummary.Append("{");
-                eventSummary.Append(FormatEdgeForLog(edge));
-                eventSummary.Append("}");
-            }
-
-            if (first)
-                eventSummary.Append("none");
-
-            return eventSummary.ToString();
-        }
-
-        private string FormatRootNodesForLog()
-        {
-            StringBuilder summary = new StringBuilder();
-            int index = 0;
-
-            foreach (TreeEdgeNode node in virtualRootNodes)
-            {
-                if (index > 0)
-                    summary.Append(" ; ");
-
-                summary.Append("#");
-                summary.Append(index);
-                summary.Append("=");
-                summary.Append(FormatEdgeForLog(node.Edge));
-                index++;
-
-                if (index >= 8)
-                {
-                    summary.Append(" ; ...");
-                    break;
-                }
-            }
-
-            return summary.Length == 0 ? "<empty>" : summary.ToString();
         }
     }
 }
