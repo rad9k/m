@@ -1958,8 +1958,11 @@ namespace m0.UIWpf.VertexCommander
                 if (IsUsableLayoutMetric(viewportWidth))
                     frameworkElement.MaxWidth = System.Math.Max(100, viewportWidth - 4);
 
-                if (IsUsableLayoutMetric(viewportHeight))
-                    frameworkElement.MaxHeight = System.Math.Max(100, viewportHeight - 4);
+                double nonVisualiserHeight = GetNonVisualiserHeight(frameworkElement, sectionScrollViewer);
+                double availableVisualiserHeight = viewportHeight - nonVisualiserHeight;
+
+                if (IsUsableLayoutMetric(availableVisualiserHeight))
+                    frameworkElement.MaxHeight = System.Math.Max(1, availableVisualiserHeight);
 
                 frameworkElement.Width = double.NaN;
                 frameworkElement.Height = double.NaN;
@@ -1971,6 +1974,16 @@ namespace m0.UIWpf.VertexCommander
 
             frameworkElement.Width = System.Math.Max(100, viewportWidth - 4);
             frameworkElement.Height = System.Math.Max(100, viewportHeight - 40);
+        }
+
+        private static double GetNonVisualiserHeight(
+            FrameworkElement visualiser,
+            ScrollViewer sectionScrollViewer)
+        {
+            if (!IsUsableLayoutMetric(sectionScrollViewer.ExtentHeight))
+                return 0;
+
+            return System.Math.Max(0, sectionScrollViewer.ExtentHeight - visualiser.ActualHeight);
         }
 
         private static void RegisterVisualiserLoadedViewportRefresh(object visualiser, ScrollViewer sectionScrollViewer)
