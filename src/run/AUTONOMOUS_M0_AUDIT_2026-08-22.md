@@ -249,3 +249,49 @@ This avoids identifying transient graph structures by fragile meta names and pre
 - The original manual-refresh contract remains green.
 - The formerly failing automatic commit-refresh contract now matches physical edge count, exact edge membership, and live source state.
 
+## Accepted change group 3 — enable compiler optimization for Release/x86
+
+### Evidence before implementation
+
+MSBuild property evaluation showed:
+
+- Default Release (`AnyCPU`): `Optimize=true`.
+- Explicit Release/x64: `Optimize=true`.
+- Desktop default Release: `Optimize=true`.
+- Explicit m0 Release/x86: `Optimize=false`.
+
+The x86 override was introduced in 2020 without a project comment or a related correctness constraint. BenchmarkDotNet independently rejected the x86 dependency with: `assembly ... references non-optimized m0`.
+
+Before changing the setting, the complete x86 Release contract suites passed:
+
+- Isolated graph: 117/117.
+- Integration: 82/82.
+
+Direct x86 diagnostics with the same executable harness:
+
+- `Code7`: 1,402.710 ms, 4,203,296 B.
+- `Code8`: 5,771.181 ms, 24,008,364 B.
+
+### Implementation
+
+`m0/m0.csproj` now sets `Optimize=true` for `Release|x86`, matching every other Release configuration. No runtime code, API, data format, architecture target, or package reference changed.
+
+### Verification
+
+Optimized x86 Release:
+
+- Isolated graph contracts: **117 passed**.
+- Integration contracts: **82 passed**.
+- Desktop contracts: **2 passed**.
+- All suites have zero failures and zero skips.
+- Full `run.sln` Release/x86 build: 0 errors (159 pre-existing warnings).
+
+Direct same-harness x86 diagnostics:
+
+- `Code7`: 1,343.816 ms, 4,180,068 B — 4.2% faster in this diagnostic run.
+- `Code8`: 984.611 ms, 24,008,392 B — 82.9% faster (5.86x).
+- Both results retained their expected graph result sizes and reported zero execution errors.
+- The isolated graph test execution phase decreased from 814 ms to 415 ms; this is corroborating harness data rather than a standalone benchmark.
+
+BenchmarkDotNet's normal out-of-process x86 child could not be launched by the installed x64 `dotnet` host, so no fabricated BenchmarkDotNet result is reported. The direct before/after runner used the same x86 process, workload, diagnostics, SDK, and machine.
+
