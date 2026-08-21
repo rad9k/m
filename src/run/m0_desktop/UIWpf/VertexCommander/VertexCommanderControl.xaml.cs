@@ -52,6 +52,7 @@ namespace m0.UIWpf.VertexCommander
         private System.DateTime leftQueryHistoryPopupClosed;
         private System.DateTime rightQueryHistoryPopupClosed;
         private bool initialKeyboardHighlightSet;
+        private bool viewportSizedVisualiserLayoutRefreshScheduled;
 
         private KeyboardHighlightPane? liveSyncMasterPane;
         private bool isLiveSyncing;
@@ -125,6 +126,7 @@ namespace m0.UIWpf.VertexCommander
             Focusable = true;
             PreviewKeyDown += VertexCommanderControl_PreviewKeyDown;
             SizeChanged += VertexCommanderControl_SizeChanged;
+            SetupViewportSizedVisualiserLayoutEventHandlers();
 
             LeftQueryStringCodeControl = CreateQueryStringCodeControl();
             RightQueryStringCodeControl = CreateQueryStringCodeControl();
@@ -147,21 +149,65 @@ namespace m0.UIWpf.VertexCommander
         private void VertexCommanderControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             UpdateBottomCommandButtonsFontSize();
-            RefreshIconVisualiserLayouts();
+            ScheduleViewportSizedVisualiserLayoutsRefresh();
         }
 
-        private void RefreshIconVisualiserLayouts()
+        private void SetupViewportSizedVisualiserLayoutEventHandlers()
         {
-            RefreshIconVisualiserLayout(LeftInEdgesVisualiserHost, LeftInEdgesSectionScrollViewer);
-            RefreshIconVisualiserLayout(RightInEdgesVisualiserHost, RightInEdgesSectionScrollViewer);
-            RefreshIconVisualiserLayout(LeftOutEdgesVisualiserHost, LeftOutEdgesSectionScrollViewer);
-            RefreshIconVisualiserLayout(RightOutEdgesVisualiserHost, RightOutEdgesSectionScrollViewer);
+            RegisterSectionViewportSizedVisualiserLayoutEventHandlers(LeftInEdgesSectionScrollViewer);
+            RegisterSectionViewportSizedVisualiserLayoutEventHandlers(RightInEdgesSectionScrollViewer);
+            RegisterSectionViewportSizedVisualiserLayoutEventHandlers(LeftOutEdgesSectionScrollViewer);
+            RegisterSectionViewportSizedVisualiserLayoutEventHandlers(RightOutEdgesSectionScrollViewer);
         }
 
-        private static void RefreshIconVisualiserLayout(ContentControl visualiserHost, ScrollViewer sectionScrollViewer)
+        private void RegisterSectionViewportSizedVisualiserLayoutEventHandlers(ScrollViewer sectionScrollViewer)
         {
-            if (visualiserHost?.Content is IconVisualiser)
-                SetViewportSizeIfNeeded(visualiserHost.Content, sectionScrollViewer);
+            sectionScrollViewer.SizeChanged += delegate
+            {
+                ScheduleViewportSizedVisualiserLayoutsRefresh();
+            };
+
+            sectionScrollViewer.ScrollChanged += delegate(object sender, ScrollChangedEventArgs e)
+            {
+                if (e.ViewportWidthChange != 0 || e.ViewportHeightChange != 0)
+                    ScheduleViewportSizedVisualiserLayoutsRefresh();
+            };
+        }
+
+        private void ScheduleViewportSizedVisualiserLayoutsRefresh()
+        {
+            if (viewportSizedVisualiserLayoutRefreshScheduled)
+                return;
+
+            viewportSizedVisualiserLayoutRefreshScheduled = true;
+
+            Dispatcher.BeginInvoke(
+                new Action(() =>
+                {
+                    viewportSizedVisualiserLayoutRefreshScheduled = false;
+                    RefreshViewportSizedVisualiserLayouts();
+                }),
+                System.Windows.Threading.DispatcherPriority.ContextIdle);
+        }
+
+        private void RefreshViewportSizedVisualiserLayouts()
+        {
+            RefreshViewportSizedVisualiserLayout(LeftInEdgesVisualiserHost, LeftInEdgesSectionScrollViewer);
+            RefreshViewportSizedVisualiserLayout(RightInEdgesVisualiserHost, RightInEdgesSectionScrollViewer);
+            RefreshViewportSizedVisualiserLayout(LeftOutEdgesVisualiserHost, LeftOutEdgesSectionScrollViewer);
+            RefreshViewportSizedVisualiserLayout(RightOutEdgesVisualiserHost, RightOutEdgesSectionScrollViewer);
+        }
+
+        private static void RefreshViewportSizedVisualiserLayout(ContentControl visualiserHost, ScrollViewer sectionScrollViewer)
+        {
+            object visualiser = visualiserHost?.Content;
+
+            if (!(visualiser is IconVisualiser)
+                && !(visualiser is ListVisualiser)
+                && !(visualiser is InEdgesListVisualiser))
+                return;
+
+            SetViewportSizeIfNeeded(visualiser, sectionScrollViewer);
         }
 
         private void UpdateBottomCommandButtonsFontSize()
@@ -1759,6 +1805,7 @@ namespace m0.UIWpf.VertexCommander
                 visualiserInstance = visualiser.Vertex;
                 SetClipToBoundsIfPossible(visualiser);
                 SetViewportSizeIfNeeded(visualiser, sectionScrollViewer);
+                RegisterVisualiserLoadedViewportRefresh(visualiser, sectionScrollViewer);
                 visualiserHost.Content = visualiser;
                 SetWrapVisualiser(wrapVisualiserHost, visualiserInstance);
                 SetKeyboardHighlight(
@@ -1908,8 +1955,12 @@ namespace m0.UIWpf.VertexCommander
 
             if (visualiser is ListVisualiser || visualiser is InEdgesListVisualiser)
             {
-                frameworkElement.MaxWidth = System.Math.Max(100, viewportWidth - 4);
-                frameworkElement.MaxHeight = System.Math.Max(100, viewportHeight - 4);
+                if (IsUsableLayoutMetric(viewportWidth))
+                    frameworkElement.MaxWidth = System.Math.Max(100, viewportWidth - 4);
+
+                if (IsUsableLayoutMetric(viewportHeight))
+                    frameworkElement.MaxHeight = System.Math.Max(100, viewportHeight - 4);
+
                 frameworkElement.Width = double.NaN;
                 frameworkElement.Height = double.NaN;
                 return;
@@ -1920,6 +1971,38 @@ namespace m0.UIWpf.VertexCommander
 
             frameworkElement.Width = System.Math.Max(100, viewportWidth - 4);
             frameworkElement.Height = System.Math.Max(100, viewportHeight - 40);
+        }
+
+        private static void RegisterVisualiserLoadedViewportRefresh(object visualiser, ScrollViewer sectionScrollViewer)
+        {
+            FrameworkElement frameworkElement = visualiser as FrameworkElement;
+
+            if (frameworkElement == null)
+                return;
+
+            if (frameworkElement.IsLoaded)
+            {
+                RefreshVisualiserViewportAfterLoaded(visualiser, sectionScrollViewer);
+                return;
+            }
+
+            RoutedEventHandler loadedHandler = null;
+            loadedHandler = delegate
+            {
+                frameworkElement.Loaded -= loadedHandler;
+                RefreshVisualiserViewportAfterLoaded(visualiser, sectionScrollViewer);
+            };
+            frameworkElement.Loaded += loadedHandler;
+        }
+
+        private static void RefreshVisualiserViewportAfterLoaded(object visualiser, ScrollViewer sectionScrollViewer)
+        {
+            SetViewportSizeIfNeeded(visualiser, sectionScrollViewer);
+        }
+
+        private static bool IsUsableLayoutMetric(double value)
+        {
+            return !double.IsNaN(value) && !double.IsInfinity(value) && value > 0;
         }
     }
 }
