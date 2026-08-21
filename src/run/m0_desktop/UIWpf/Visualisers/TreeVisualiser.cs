@@ -32,6 +32,8 @@ namespace m0.UIWpf.Visualisers
 
         public IEdge vertexChangeListenerEdge;
 
+        public TreeEdgeNode Node { get; set; }
+
         public static bool HideMetaNameIfEmpty = true;
 
         public bool IsFilled;        
@@ -270,6 +272,9 @@ namespace m0.UIWpf.Visualisers
 
         IEdge GetEdge()
         {
+            if (Node != null)
+                return Node.Edge;
+
             return (IEdge)Tag;
         }
 
@@ -317,6 +322,12 @@ namespace m0.UIWpf.Visualisers
 
         void Fill()
         {
+            if (Node != null && ParentVisualiser.UseDataVirtualization)
+            {
+                ParentVisualiser.FillVirtualNode(this);
+                return;
+            }
+
             TreeVisualiser.ClearAllItems_Reccurent(this);
 
             IEnumerable<IEdge> filteredList = VisualiserUtil.FilterEdges(GetEdge().To, ParentVisualiser.Vertex);
@@ -332,6 +343,9 @@ namespace m0.UIWpf.Visualisers
 
             IsFilled = true;
 
+            if (ParentVisualiser.UseDataVirtualization)
+                return;
+
             if (isExpandCollapseAnimationInProgress == false)
                 BeginExpandAnimation();
         }
@@ -345,6 +359,12 @@ namespace m0.UIWpf.Visualisers
         {
             if (HasItems == false || isExpandCollapseAnimationInProgress)
                 return;
+
+            if (ParentVisualiser.UseDataVirtualization)
+            {
+                IsExpanded = !IsExpanded;
+                return;
+            }
 
             isExpandCollapseAnimationInProgress = true;
 
@@ -487,9 +507,7 @@ namespace m0.UIWpf.Visualisers
                 Header = headerControl;
             }
 
-            headerControl.ShowIcon = ParentVisualiser.ShowIcons;
-            headerControl.BaseEdge = GetEdge();
-            headerControl.RefreshVisuals();
+            headerControl.UpdateEdgeAndIcon(GetEdge(), ParentVisualiser.ShowIcons);
             ApplyEdgeVisualState();
         }
 
@@ -518,7 +536,8 @@ namespace m0.UIWpf.Visualisers
             if (GetEdge().To.DisposedState != DisposeStateEnum.Live)
                 return exe.Stack;
 
-            // will do this
+            if (Node != null && ParentVisualiser.UseDataVirtualization)
+                return ParentVisualiser.VirtualItemVertexChange(this, exe);
 
             UpdateHeader();
             Fill();
@@ -568,6 +587,37 @@ namespace m0.UIWpf.Visualisers
             return exe.Stack;*/
         }
 
+        protected override DependencyObject GetContainerForItemOverride()
+        {
+            return new TreeVisualiserViewItem();
+        }
+
+        protected override bool IsItemItsOwnContainerOverride(object item)
+        {
+            return item is TreeVisualiserViewItem;
+        }
+
+        protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
+        {
+            base.PrepareContainerForItemOverride(element, item);
+
+            TreeVisualiserViewItem childItem = element as TreeVisualiserViewItem;
+            TreeEdgeNode childNode = item as TreeEdgeNode;
+
+            if (childItem != null && childNode != null && ParentVisualiser != null)
+                ParentVisualiser.PrepareVirtualTreeViewItem(childNode, childItem);
+        }
+
+        protected override void ClearContainerForItemOverride(DependencyObject element, object item)
+        {
+            TreeVisualiserViewItem childItem = element as TreeVisualiserViewItem;
+
+            if (childItem != null && ParentVisualiser != null)
+                ParentVisualiser.ClearVirtualTreeViewItem(childItem);
+
+            base.ClearContainerForItemOverride(element, item);
+        }
+
         private void EdgeRemoved(IEdge edge)
         {
             if (IsFilled)
@@ -611,6 +661,36 @@ namespace m0.UIWpf.Visualisers
         public bool SelectionProhibited { get; set; }
 
         private bool fullWidthSelectionHighlight = true;
+        private readonly ObservableCollection<TreeEdgeNode> virtualRootNodes =
+            new ObservableCollection<TreeEdgeNode>();
+        private readonly Dictionary<TreeEdgeNode, TreeVisualiserViewItem> virtualContainers =
+            new Dictionary<TreeEdgeNode, TreeVisualiserViewItem>();
+        private bool useDataVirtualization = true;
+
+        public bool UseDataVirtualization
+        {
+            get { return useDataVirtualization; }
+            set
+            {
+                if (useDataVirtualization == value)
+                    return;
+
+                useDataVirtualization = value;
+
+                ApplyDataVirtualizationSettings();
+            }
+        }
+
+        private void ApplyDataVirtualizationSettings()
+        {
+            if (useDataVirtualization)
+                ItemsPanel = new ItemsPanelTemplate(
+                    new FrameworkElementFactory(typeof(VirtualizingStackPanel)));
+
+            VirtualizingStackPanel.SetIsVirtualizing(this, useDataVirtualization);
+            VirtualizingStackPanel.SetVirtualizationMode(this, VirtualizationMode.Recycling);
+            ScrollViewer.SetCanContentScroll(this, useDataVirtualization);
+        }
 
         public bool FullWidthSelectionHighlight
         {
@@ -721,6 +801,8 @@ namespace m0.UIWpf.Visualisers
 
         public TreeVisualiser(IEdge _edge)
         {
+            ApplyDataVirtualizationSettings();
+
             Edge = _edge;
 
             TypedEdge.vertexDictionary.Add(Edge.To, this);
@@ -740,10 +822,7 @@ namespace m0.UIWpf.Visualisers
             this.Padding = new Thickness(0);
             this.AllowDrop = true;
             this.SizeChanged += TreeVisualiser_SizeChanged;
-
-            // THIS REDUCES PERFORMANCE ON LARGE TREES SO commented out
-            //VirtualizingStackPanel.SetIsVirtualizing(this, true); 
-            //VirtualizingStackPanel.SetVirtualizationMode(this, VirtualizationMode.Recycling);
+            ApplyDataVirtualizationSettings();
 
             if (mz != null && mz.IsInitialized)
             {
@@ -763,6 +842,204 @@ namespace m0.UIWpf.Visualisers
 
                 SetVertexDefaultValues();
             }
+        }
+
+        protected override DependencyObject GetContainerForItemOverride()
+        {
+            return new TreeVisualiserViewItem();
+        }
+
+        protected override bool IsItemItsOwnContainerOverride(object item)
+        {
+            return item is TreeVisualiserViewItem;
+        }
+
+        protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
+        {
+            base.PrepareContainerForItemOverride(element, item);
+
+            TreeEdgeNode node = item as TreeEdgeNode;
+            TreeVisualiserViewItem treeItem = element as TreeVisualiserViewItem;
+
+            if (UseDataVirtualization && node != null && treeItem != null)
+                PrepareVirtualTreeViewItem(node, treeItem);
+        }
+
+        protected override void ClearContainerForItemOverride(DependencyObject element, object item)
+        {
+            TreeVisualiserViewItem treeItem = element as TreeVisualiserViewItem;
+
+            if (UseDataVirtualization && treeItem != null)
+                ClearVirtualTreeViewItem(treeItem);
+
+            base.ClearContainerForItemOverride(element, item);
+        }
+
+        internal void PrepareVirtualTreeViewItem(TreeEdgeNode node, TreeVisualiserViewItem treeItem)
+        {
+            ClearVirtualTreeViewItem(treeItem);
+
+            treeItem.Node = node;
+            treeItem.Tag = node.Edge;
+            treeItem.ParentVisualiser = this;
+            treeItem.doNotTrackGraphChanges = node.DoNotTrackGraphChanges;
+            treeItem.IsFilled = node.ChildrenLoaded;
+            treeItem.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+            treeItem.IsSelected = IsEdgeSelected(node.Edge);
+            treeItem.UpdateHeader();
+
+            virtualContainers[node] = treeItem;
+
+            if (node.ChildrenLoaded)
+            {
+                treeItem.ItemsSource = node.Children;
+            }
+            else if (node.HasChildren)
+            {
+                treeItem.Items.Add(new TreeViewItem());
+            }
+
+            if (!treeItem.doNotTrackGraphChanges)
+            {
+                treeItem.vertexChangeListenerEdge = ExecutionFlowHelper.AddTriggerAndListener(node.Edge.To,
+                    new List<string> { },
+                    new List<GraphChangeFilterEnum> {
+                        GraphChangeFilterEnum.ValueChange,
+                        GraphChangeFilterEnum.OutputEdgeAdded,
+                        GraphChangeFilterEnum.OutputEdgeRemoved,
+                        GraphChangeFilterEnum.OutputEdgeDisposed
+                    },
+                    "VirtualTreeViewItem",
+                    treeItem.VertexChange);
+            }
+        }
+
+        internal void ClearVirtualTreeViewItem(TreeVisualiserViewItem treeItem)
+        {
+            if (treeItem == null)
+                return;
+
+            if (treeItem.vertexChangeListenerEdge != null)
+            {
+                ExecutionFlowHelper.RemoveGraphChangeListener(treeItem.vertexChangeListenerEdge);
+                treeItem.vertexChangeListenerEdge = null;
+            }
+
+            if (treeItem.Node != null)
+                virtualContainers.Remove(treeItem.Node);
+
+            treeItem.ItemsSource = null;
+            treeItem.Items.Clear();
+            treeItem.Node = null;
+            treeItem.Tag = null;
+            treeItem.IsFilled = false;
+            treeItem.IsSelected = false;
+            treeItem.IsKeyboardHighlighted = false;
+        }
+
+        internal void FillVirtualNode(TreeVisualiserViewItem treeItem)
+        {
+            if (treeItem == null || treeItem.Node == null)
+                return;
+
+            TreeEdgeNode node = treeItem.Node;
+            LoadVirtualChildren(node, true);
+
+            treeItem.ItemsSource = null;
+            treeItem.Items.Clear();
+            treeItem.ItemsSource = node.Children;
+            treeItem.IsFilled = true;
+        }
+
+        internal INoInEdgeInOutVertexVertex VirtualItemVertexChange(
+            TreeVisualiserViewItem treeItem,
+            IExecution exe)
+        {
+            if (treeItem == null || treeItem.Node == null)
+                return exe.Stack;
+
+            treeItem.UpdateHeader();
+
+            if (treeItem.Node.ChildrenLoaded)
+                LoadVirtualChildren(treeItem.Node, true);
+            else
+                SyncUnloadedVirtualItemHasChildren(treeItem);
+
+            return exe.Stack;
+        }
+
+        // Collapsed virtual nodes keep only a dummy child as expander placeholder.
+        // When edges are added/removed on Edge.To before the node is expanded, HasChildren
+        // and that placeholder must be updated — otherwise the row stays visually leaf-like.
+        private void SyncUnloadedVirtualItemHasChildren(TreeVisualiserViewItem treeItem)
+        {
+            TreeEdgeNode node = treeItem.Node;
+
+            if (node == null || node.Edge == null || node.Edge.To == null)
+                return;
+
+            bool hasChildren = VisualiserUtil.FilterEdges(node.Edge.To, Vertex).Any();
+
+            node.UpdateHasChildren(hasChildren);
+
+            treeItem.ItemsSource = null;
+
+            if (hasChildren)
+            {
+                if (treeItem.Items.Count == 0)
+                    treeItem.Items.Add(new TreeViewItem());
+            }
+            else
+            {
+                treeItem.Items.Clear();
+
+                if (treeItem.IsExpanded)
+                    treeItem.IsExpanded = false;
+            }
+        }
+
+        private int LoadVirtualChildren(TreeEdgeNode node, bool reload)
+        {
+            if (node == null || node.Edge == null || node.Edge.To == null)
+                return 0;
+
+            if (node.ChildrenLoaded && !reload)
+                return node.Children.Count;
+
+            IEnumerable<IEdge> filteredEdges = VisualiserUtil.FilterEdges(node.Edge.To, Vertex);
+
+            node.Children.Clear();
+
+            foreach (IEdge edge in filteredEdges)
+                node.Children.Add(CreateVirtualNode(edge, node));
+
+            node.ChildrenLoaded = true;
+            node.UpdateHasChildren(node.Children.Count > 0);
+
+            return node.Children.Count;
+        }
+
+        private TreeEdgeNode CreateVirtualNode(IEdge edge, TreeEdgeNode parent)
+        {
+            bool doNotTrackGraphChanges = parent != null && parent.DoNotTrackGraphChanges;
+
+            if (edge.Meta != null && GeneralUtil.CompareStrings(edge.Meta.Value, "$GraphChangeTrigger"))
+                doNotTrackGraphChanges = true;
+
+            if (edge.Meta != null && GeneralUtil.CompareStrings(edge.Meta.Value, "FormalTextLanguage"))
+                doNotTrackGraphChanges = true;
+
+            bool hasChildren = edge.To != null && edge.To.Count() > 0;
+
+            return new TreeEdgeNode(edge, parent, hasChildren, doNotTrackGraphChanges);
+        }
+
+        private bool IsEdgeSelected(IEdge edge)
+        {
+            IVertex selectedEdges = Vertex.Get(false, @"SelectedEdges:");
+
+            return selectedEdges != null
+                && EdgeHelper.FindIEdgeVertexByIEdge(selectedEdges, edge) != null;
         }
 
         public static ControlTemplate CreateFilledExpandCollapseToggleTemplate()
@@ -836,6 +1113,12 @@ namespace m0.UIWpf.Visualisers
 
         public void BaseEdgeToUpdated()
         {
+            if (UseDataVirtualization)
+            {
+                BaseEdgeToUpdatedVirtualized();
+                return;
+            }
+
             UnselectAllSelectedEdges();
 
             ClearAllItems();
@@ -857,6 +1140,36 @@ namespace m0.UIWpf.Visualisers
             // root vertex.
             RegisterRootTreeBaseListener();
             ScheduleFullWidthVisualRefresh();
+        }
+
+        private void BaseEdgeToUpdatedVirtualized()
+        {
+            UnselectAllSelectedEdges();
+            ClearVirtualTreeModel();
+
+            IVertex baseVertex = Vertex.Get(false, @"BaseEdge:\To:");
+
+            if (baseVertex != null)
+            {
+                foreach (IEdge edge in VisualiserUtil.FilterEdges(baseVertex, Vertex))
+                    virtualRootNodes.Add(CreateVirtualNode(edge, null));
+            }
+
+            ItemsSource = virtualRootNodes;
+
+            RegisterRootTreeBaseListener();
+
+            ScheduleFullWidthVisualRefresh();
+        }
+
+        private void ClearVirtualTreeModel()
+        {
+            foreach (TreeVisualiserViewItem treeItem in virtualContainers.Values.ToList())
+                ClearVirtualTreeViewItem(treeItem);
+
+            virtualContainers.Clear();
+            ItemsSource = null;
+            virtualRootNodes.Clear();
         }
 
         internal double GetFullWidthBackgroundWidth()
@@ -897,6 +1210,14 @@ namespace m0.UIWpf.Visualisers
 
         private void InvalidateFullWidthItemVisuals()
         {
+            if (UseDataVirtualization)
+            {
+                foreach (TreeVisualiserViewItem treeItem in virtualContainers.Values)
+                    treeItem.InvalidateVisual();
+
+                return;
+            }
+
             InvalidateFullWidthItemVisuals(Items);
         }
 
@@ -1028,6 +1349,17 @@ namespace m0.UIWpf.Visualisers
 
         private void EdgeRemoved(IEdge edge)
         {
+            if (UseDataVirtualization)
+            {
+                TreeEdgeNode node = virtualRootNodes.FirstOrDefault(
+                    currentNode => EdgeHelper.CompareIEdges(currentNode.Edge, edge));
+
+                if (node != null)
+                    virtualRootNodes.Remove(node);
+
+                return;
+            }
+
             IList l = GeneralUtil.CreateAndCopyList(Items);
 
             foreach (TreeVisualiserViewItem i in l)
@@ -1037,6 +1369,12 @@ namespace m0.UIWpf.Visualisers
 
         private void EdgeAdded(IEdge edge)
         {
+            if (UseDataVirtualization)
+            {
+                virtualRootNodes.Add(CreateVirtualNode(edge, null));
+                return;
+            }
+
             Items.Add(CreateTreeViewItem(edge, true, null));
         }
 
@@ -1047,6 +1385,14 @@ namespace m0.UIWpf.Visualisers
 
         private void UpdateShowIconOnAllItems()
         {
+            if (UseDataVirtualization)
+            {
+                foreach (TreeVisualiserViewItem item in virtualContainers.Values.ToList())
+                    item.UpdateHeader();
+
+                return;
+            }
+
             UpdateShowIconOnItems(Items, ShowIcons);
         }
 
@@ -1074,6 +1420,16 @@ namespace m0.UIWpf.Visualisers
             TurnOffSelectedVerticesUpdate = true;
 
             IVertex selectedEdges = Vertex.Get(false, @"SelectedEdges:");
+
+            if (UseDataVirtualization)
+            {
+                foreach (TreeVisualiserViewItem item in virtualContainers.Values.ToList())
+                    item.IsSelected = selectedEdges != null
+                        && EdgeHelper.FindIEdgeVertexByIEdge(selectedEdges, (IEdge)item.Tag) != null;
+
+                TurnOffSelectedVerticesUpdate = false;
+                return;
+            }
 
             if (selectedEdges == null)
             {
@@ -1162,6 +1518,14 @@ namespace m0.UIWpf.Visualisers
 
         public void ClearAllSelectedItems()
         {            
+            if (UseDataVirtualization)
+            {
+                foreach (TreeVisualiserViewItem item in virtualContainers.Values.ToList())
+                    item.IsSelected = false;
+
+                return;
+            }
+
             foreach (TreeViewItem i in Items)
                 ClearAllSelectedItems_Reccurent(i);            
         }
@@ -1270,6 +1634,17 @@ namespace m0.UIWpf.Visualisers
 
         private void ApplyFullWidthSelectionHighlightToAllItems()
         {
+            if (UseDataVirtualization)
+            {
+                foreach (TreeVisualiserViewItem treeItem in virtualContainers.Values.ToList())
+                {
+                    treeItem.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+                    treeItem.InvalidateVisual();
+                }
+
+                return;
+            }
+
             ApplyFullWidthSelectionHighlightToItems(Items);
         }
 
@@ -1422,9 +1797,31 @@ namespace m0.UIWpf.Visualisers
         {
             List<TreeVisualiserViewItem> result = new List<TreeVisualiserViewItem>();
 
+            if (UseDataVirtualization)
+            {
+                AddVirtualKeyboardHighlightItems(virtualRootNodes, result);
+                return result;
+            }
+
             AddKeyboardHighlightItems(Items, result);
 
             return result;
+        }
+
+        private void AddVirtualKeyboardHighlightItems(
+            IEnumerable<TreeEdgeNode> nodes,
+            IList<TreeVisualiserViewItem> result)
+        {
+            foreach (TreeEdgeNode node in nodes)
+            {
+                if (!virtualContainers.TryGetValue(node, out TreeVisualiserViewItem treeItem))
+                    continue;
+
+                result.Add(treeItem);
+
+                if (treeItem.IsExpanded && node.ChildrenLoaded)
+                    AddVirtualKeyboardHighlightItems(node.Children, result);
+            }
         }
 
         private void AddKeyboardHighlightItems(ItemCollection items, IList<TreeVisualiserViewItem> result)
@@ -1491,7 +1888,6 @@ namespace m0.UIWpf.Visualisers
             i.Tag = e;
 
             i.UpdateHeader();
-
             
 
             TurnOffSelectedVerticesUpdate = true;
@@ -1566,6 +1962,14 @@ namespace m0.UIWpf.Visualisers
 
             TurnOffSelectedItemsUpdate = false;
 
+            if (UseDataVirtualization)
+            {
+                foreach (TreeVisualiserViewItem item in virtualContainers.Values.ToList())
+                    item.IsSelected = true;
+
+                return;
+            }
+
             foreach (TreeViewItem i in Items)            
                 if (i is TreeVisualiserViewItem)
                 {
@@ -1603,7 +2007,10 @@ namespace m0.UIWpf.Visualisers
 
                 VisualiserHelper.Dispose();
 
-                DisposeTreeViewItems(this.Items);
+                if (UseDataVirtualization)
+                    ClearVirtualTreeModel();
+                else
+                    DisposeTreeViewItems(this.Items);
             }
         }
 
@@ -1613,7 +2020,10 @@ namespace m0.UIWpf.Visualisers
         {
             vertexByLocationToReturn = null;
 
-            GetVertexByLocation_Reccurent(this.Items, p);
+            if (UseDataVirtualization)
+                GetVirtualVertexByLocation(p);
+            else
+                GetVertexByLocation_Reccurent(this.Items, p);
 
             // Fallback to the root (BaseEdge:) is only allowed when the point is below the
             // last visible tree item header, not when it merely falls into the empty space
@@ -1631,13 +2041,57 @@ namespace m0.UIWpf.Visualisers
 
         private bool IsPointBelowLastVisibleHeader(Point p)
         {
-            double bottomY = GetMaxBottomYOfVisibleHeaders(this.Items);
+            double bottomY = UseDataVirtualization
+                ? GetMaxBottomYOfVirtualHeaders()
+                : GetMaxBottomYOfVisibleHeaders(this.Items);
 
             // No visible header at all -> the whole tree area counts as "below the last header".
             if (bottomY <= 0)
                 return true;
 
             return p.Y >= bottomY;
+        }
+
+        private double GetMaxBottomYOfVirtualHeaders()
+        {
+            double max = 0;
+
+            foreach (TreeVisualiserViewItem item in virtualContainers.Values)
+            {
+                FrameworkElement headerElement = item.Header as FrameworkElement;
+
+                if (headerElement == null || !headerElement.IsVisible || headerElement.ActualHeight <= 0)
+                    continue;
+
+                try
+                {
+                    Point bottomLeftInTree = headerElement.TranslatePoint(
+                        new Point(0, headerElement.ActualHeight), this);
+
+                    if (bottomLeftInTree.Y > max)
+                        max = bottomLeftInTree.Y;
+                }
+                catch (InvalidOperationException)
+                {
+                    // Header is not connected to this visual tree (yet), skip it.
+                }
+            }
+
+            return max;
+        }
+
+        private void GetVirtualVertexByLocation(Point point)
+        {
+            foreach (TreeVisualiserViewItem item in virtualContainers.Values)
+            {
+                if (!IsPointOverTreeViewItemHeaderText(item, point))
+                    continue;
+
+                IVertex edgeVertex = MinusZero.Instance.CreateTempVertex();
+                EdgeHelper.AddEdgeVertexEdges(edgeVertex, (IEdge)item.Tag);
+                vertexByLocationToReturn = edgeVertex;
+                return;
+            }
         }
 
         private double GetMaxBottomYOfVisibleHeaders(ItemCollection items)

@@ -91,7 +91,7 @@ namespace m0.UIWpf
 
                 return bitmap;
             }
-            catch (Exception iconLoadException)
+            catch (Exception)
             {
                 return null;
             }

@@ -2167,6 +2167,7 @@ namespace m0.UIWpf.Visualisers
 
                 // no need for this
 
+                ConfigureNestedTableVisualiserViewport(tableVisualiser);
                 dataControl = tableVisualiser;
             }
             else
@@ -2288,6 +2289,45 @@ namespace m0.UIWpf.Visualisers
             b.BorderThickness = new System.Windows.Thickness(0, controlLineVsControlLineSeparator, 0, 0);
 
             place.Children.Add(b);
+        }
+
+        private void ConfigureNestedTableVisualiserViewport(TableVisualiser tableVisualiser)
+        {
+            tableVisualiser.Loaded += delegate
+            {
+                UpdateNestedTableVisualiserViewport(tableVisualiser);
+            };
+
+            SizeChanged += delegate
+            {
+                UpdateNestedTableVisualiserViewport(tableVisualiser);
+            };
+        }
+
+        private void UpdateNestedTableVisualiserViewport(TableVisualiser tableVisualiser)
+        {
+            ScrollViewer scrollViewer = FindVisualParent<ScrollViewer>(tableVisualiser);
+            double viewportHeight = scrollViewer == null
+                ? ActualHeight
+                : scrollViewer.ViewportHeight;
+
+            if (double.IsNaN(viewportHeight) || double.IsInfinity(viewportHeight) || viewportHeight <= 0)
+                return;
+
+            tableVisualiser.MaxHeight = Math.Max(100, viewportHeight - controlLineVsControlLineSeparator);
+        }
+
+        private static T FindVisualParent<T>(DependencyObject dependencyObject) where T : DependencyObject
+        {
+            while (dependencyObject != null)
+            {
+                dependencyObject = VisualTreeHelper.GetParent(dependencyObject);
+
+                if (dependencyObject is T)
+                    return (T)dependencyObject;
+            }
+
+            return null;
         }
 
         protected virtual void SetVertexDefaultValues()

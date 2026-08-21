@@ -1906,6 +1906,15 @@ namespace m0.UIWpf.VertexCommander
                 return;
             }
 
+            if (visualiser is ListVisualiser || visualiser is InEdgesListVisualiser)
+            {
+                frameworkElement.MaxWidth = System.Math.Max(100, viewportWidth - 4);
+                frameworkElement.MaxHeight = System.Math.Max(100, viewportHeight - 4);
+                frameworkElement.Width = double.NaN;
+                frameworkElement.Height = double.NaN;
+                return;
+            }
+
             if (!(visualiser is GraphVisualiser) && !(visualiser is GraphVisualiser3D))
                 return;
 

@@ -1,0 +1,7 @@
+11:39:19 AM:355[0]: InitializeLog: START
+11:39:23:837[1]: VisualisersList: AddVisualiser type=TreeVisualiser vertex=val=TreeVisualiser543446 hash=7064805 parent=null AddVertex=True isVolatile=False parentItemEdgeCreated=True
+11:44:51 AM:546[1]: VertexOperations.CopyVertex: roots=1 scopeVertices=1
+12:48:43:569[1]: AtomVisualiserHelper.DisposeNesting: Dispose begin visualiser=TreeVisualiser vertex=val=TreeVisualiser543446 hash=7064805 isUX=False itemEdges=count=0 []
+12:48:43:569[1]: VisualisersList: RemoveVisualiser type=TreeVisualiser vertex=val=TreeVisualiser543446 hash=7064805 hadParentItemEdge=True
+12:48:43:570[1]: AtomVisualiserHelper.DisposeNesting: DisposeAllChildVisualisers begin visualiser=TreeVisualiser vertex=val=TreeVisualiser543446 hash=7064805 isUX=False itemEdges=count=0 []
+12:48:43:571[1]: AtomVisualiserHelper.DisposeNesting: Dispose end visualiser=TreeVisualiser vertex=val=TreeVisualiser543446 hash=7064805

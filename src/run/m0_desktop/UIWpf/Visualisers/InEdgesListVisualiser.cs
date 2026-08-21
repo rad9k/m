@@ -9,6 +9,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 using m0.Foundation;
 using m0.Graph;
@@ -23,7 +24,7 @@ using static m0.Graph.ExecutionFlow.ExecutionFlowHelper;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class InEdgesListVisualiser : StackPanel, IListVisualiser, ITypedEdge, IKeyboardHighlight
+    public class InEdgesListVisualiser : Grid, IListVisualiser, ITypedEdge, IKeyboardHighlight, IOwnScrolling
     {
         private const double ColumnResizeCursorHotZone = 6.0;
 
@@ -40,6 +41,8 @@ namespace m0.UIWpf.Visualisers
         protected DataGrid ThisDataGrid;
 
         private bool suppressSelectionClear;
+        private int dataGridItemsSourceGeneration;
+        private bool isDataGridItemsSourceDiagnosticScheduled;
 
         private int currentHighlightPosition = -1;
         private bool isBeforeFirstPosition;
@@ -72,9 +75,14 @@ namespace m0.UIWpf.Visualisers
             this.parentVisualiser = parentVisualiser;
             this.isVolatile = isVolatile;
 
-            ThisDataGrid = new DataGrid();
+            RowDefinitions.Add(new RowDefinition
+            {
+                Height = new GridLength(1, GridUnitType.Star)
+            });
 
+            ThisDataGrid = new DataGrid();
             Children.Add(ThisDataGrid);
+            Grid.SetRow(ThisDataGrid, 0);
 
             ThisDataGrid.AllowDrop = false;
             ThisDataGrid.AutoGenerateColumns = false;
@@ -92,7 +100,10 @@ namespace m0.UIWpf.Visualisers
             ThisDataGrid.HeadersVisibility = DataGridHeadersVisibility.Column;
             ThisDataGrid.ColumnHeaderStyle = CreateResizableColumnHeaderStyle(false, false);
             ThisDataGrid.RowStyle = CreateHighlightedRowStyle();
-            VirtualizingStackPanel.SetIsVirtualizing(ThisDataGrid, false);
+            VirtualizingStackPanel.SetIsVirtualizing(ThisDataGrid, true);
+            VirtualizingStackPanel.SetVirtualizationMode(ThisDataGrid, VirtualizationMode.Standard);
+            ScrollViewer.SetCanContentScroll(ThisDataGrid, true);
+            ThisDataGrid.EnableRowVirtualization = true;
 
             MinusZero mz = MinusZero.Instance;
 
@@ -108,6 +119,8 @@ namespace m0.UIWpf.Visualisers
                 ThisDataGrid.PreviewMouseRightButtonDown += OnDataGridPreviewMouseRightButtonDown;
                 ThisDataGrid.PreviewKeyDown += OnKeyboardHighlightPreviewKeyDown;
                 ThisDataGrid.MouseDoubleClick += OnKeyboardHighlightMouseDoubleClick;
+
+                LogDataGridVirtualizationConfiguration("constructor");
             }
         }
 
@@ -892,7 +905,10 @@ namespace m0.UIWpf.Visualisers
 
                 visibleInEdges = ApplyShowesInEdgesInEdgeFilter(visibleInEdges);
 
+                dataGridItemsSourceGeneration++;
                 ThisDataGrid.ItemsSource = visibleInEdges;
+                LogDataGridVirtualizationConfiguration("ItemsSourceAssigned");
+                ScheduleDataGridItemsSourceDiagnostic();
                 RefreshVisualStatesAfterItemsChanged();
             }
         }
@@ -908,6 +924,68 @@ namespace m0.UIWpf.Visualisers
         private void RefreshVisualStatesAfterItemsChanged()
         {
             RefreshKeyboardHighlightAfterItemsChanged();
+        }
+
+        private void ScheduleDataGridItemsSourceDiagnostic()
+        {
+            if (isDataGridItemsSourceDiagnosticScheduled)
+                return;
+
+            isDataGridItemsSourceDiagnosticScheduled = true;
+            int scheduledGeneration = dataGridItemsSourceGeneration;
+
+            ThisDataGrid.Dispatcher.BeginInvoke(
+                DispatcherPriority.ContextIdle,
+                new Action(() =>
+                {
+                    isDataGridItemsSourceDiagnosticScheduled = false;
+
+                    if (scheduledGeneration != dataGridItemsSourceGeneration)
+                        return;
+
+                    ScrollViewer scrollViewer = FindVisualChildren<ScrollViewer>(ThisDataGrid).FirstOrDefault();
+
+                    MinusZero.Instance.Log(
+                        1,
+                        GetType().Name + ".DataGrid.ViewportMetrics",
+                        "generation=" + scheduledGeneration
+                        + " items=" + ThisDataGrid.Items.Count
+                        + " realizedRows=" + GetRealizedDataGridRowCount()
+                        + " dataGridActualHeight=" + FormatDataGridLayoutMetric(ThisDataGrid.ActualHeight)
+                        + " viewportHeight=" + FormatDataGridLayoutMetric(scrollViewer == null ? 0 : scrollViewer.ViewportHeight)
+                        + " extentHeight=" + FormatDataGridLayoutMetric(scrollViewer == null ? 0 : scrollViewer.ExtentHeight)
+                        + " scrollableHeight=" + FormatDataGridLayoutMetric(scrollViewer == null ? 0 : scrollViewer.ScrollableHeight)
+                        + " canContentScroll=" + (scrollViewer != null && ScrollViewer.GetCanContentScroll(scrollViewer)));
+                }));
+        }
+
+        private int GetRealizedDataGridRowCount()
+        {
+            int realizedRows = 0;
+
+            foreach (object item in ThisDataGrid.Items)
+                if (ThisDataGrid.ItemContainerGenerator.ContainerFromItem(item) is DataGridRow)
+                    realizedRows++;
+
+            return realizedRows;
+        }
+
+        private void LogDataGridVirtualizationConfiguration(string reason)
+        {
+            MinusZero.Instance.Log(
+                1,
+                GetType().Name + ".DataGrid.VirtualizationConfiguration",
+                "reason=" + reason
+                + " isVirtualizing=" + VirtualizingStackPanel.GetIsVirtualizing(ThisDataGrid)
+                + " mode=" + VirtualizingStackPanel.GetVirtualizationMode(ThisDataGrid)
+                + " canContentScroll=" + ScrollViewer.GetCanContentScroll(ThisDataGrid)
+                + " enableRowVirtualization=" + ThisDataGrid.EnableRowVirtualization
+                + " enableColumnVirtualization=" + ThisDataGrid.EnableColumnVirtualization);
+        }
+
+        private static string FormatDataGridLayoutMetric(double value)
+        {
+            return value.ToString("0.##", CultureInfo.InvariantCulture);
         }
 
         private void RefreshKeyboardHighlightAfterItemsChanged()

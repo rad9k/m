@@ -80,6 +80,7 @@ namespace m0.UIWpf.Dialog
                     InputStackContentControl_Border.Child = InputStackContentControl;
 
                     OutputStackContentControl = new TreeVisualiser(null, null, false);
+                    OutputStackContentControl.UseDataVirtualization = true;
                     OutputStackContentControl_Border.Child = OutputStackContentControl;
 
                     ////////////////////////////////////////
@@ -119,7 +120,6 @@ namespace m0.UIWpf.Dialog
                     this.OutputStackContentControl.IsEnabled = true;                    
                     
                     EdgeHelper.AddOrReplaceEdgeVertexEdges(OutputStackEdgeControl.Vertex.Get(false, @"BaseEdge:"), outputStackEdge);
-
                     EdgeHelper.AddOrReplaceEdgeVertexEdges(OutputStackContentControl.Vertex.Get(false, @"BaseEdge:"), outputStackEdge);
 
                     break;

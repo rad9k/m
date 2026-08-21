@@ -21,7 +21,8 @@ namespace m0.console
             // has been committed. Sleeping inside Autostart (webserver.m0t) left a
             // nested transaction open, so OnlyNonTransacted CreateView (e.g. VertexToJson)
             // was dropped and tree.json stayed empty.
-            MinusZero.Instance.GracefullExitToken.Token.WaitHandle.WaitOne();
+            //MinusZero.Instance.GracefullExitToken.Token.WaitHandle.WaitOne(); 
+            // if uncommented, the process will stay alive until the user presses Ctrl+C or closes the console window.
 
             MinusZero.Instance.Dispose();
         }

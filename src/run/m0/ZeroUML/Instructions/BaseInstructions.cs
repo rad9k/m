@@ -1714,23 +1714,12 @@ namespace m0.ZeroUML.Instructions
             if (leftExpression == null || rightExpression == null)
                 return exe.Stack;
 
-            bool cacheRedirectTarget =
-                exe.TryGetCachedRedirectAssignmentTarget(
-                    instructionVertex,
-                    out IEdge cachedRedirectTarget,
-                    out object cachedScalarPlan,
-                    out ZeroCodeExecution.RedirectAssignmentCacheEntry
-                        redirectCacheEntry,
-                    out bool cachedTargetIsExclusive);
-            RedirectPropagationPlan propagationPlan =
-                redirectCacheEntry?.PropagationPlan as
-                    RedirectPropagationPlan;
+            RedirectPropagationPlan propagationPlan = null;
             bool leftPropagateToStackExpression =
                 GetLeftPropagateToStackExpression(
                     leftExpression,
                     ref propagationPlan);
-            SimpleScalarNode scalarNode =
-                cachedScalarPlan as SimpleScalarNode;
+            SimpleScalarNode scalarNode = null;
 
             IVertex newVertexCreationSpace_copy = exe.NewVertexCreationSpace;
 
@@ -1740,36 +1729,32 @@ namespace m0.ZeroUML.Instructions
             INoInEdgeInOutVertexVertex rightStack = null;
             INoInEdgeInOutVertexVertex leftExecuteResult = null;
             INoInEdgeInOutVertexVertex _rightExecuteResult = null;
+            bool leftIsSingleQueryTarget = false;
 
             try
             {
-                if (cachedRedirectTarget == null)
-                {
-                    leftStack = CreateStack();
-                    exe.NewVertexCreationSpace = leftStack;
-                    leftExecuteResult =
-                        exe.ExecuteInstructionByMontevideoPrinciples(
-                            exe.Stack,
-                            leftExpression);
-                    cacheRedirectTarget =
-                        leftExecuteResult.OutEdges.Count == 1 &&
-                        string.Equals(
-                            GetIs(leftExpression)
-                                ?.Value?.ToString(),
-                            "Query",
-                            StringComparison.Ordinal) &&
-                        GetNextExpression(leftExpression) == null;
-                }
+                leftStack = CreateStack();
+                exe.NewVertexCreationSpace = leftStack;
+                leftExecuteResult =
+                    exe.ExecuteInstructionByMontevideoPrinciples(
+                        exe.Stack,
+                        leftExpression);
+                leftIsSingleQueryTarget =
+                    leftExecuteResult.OutEdges.Count == 1 &&
+                    string.Equals(
+                        GetIs(leftExpression)
+                            ?.Value?.ToString(),
+                        "Query",
+                        StringComparison.Ordinal) &&
+                    GetNextExpression(leftExpression) == null;
 
                 // right
 
                 bool hasSingleLeftTarget =
-                    cachedRedirectTarget != null ||
                     leftExecuteResult.OutEdges.Count == 1;
                 IEdge singleLeftTargetEdge =
                     hasSingleLeftTarget
-                        ? cachedRedirectTarget ??
-                            leftExecuteResult.OutEdges[0]
+                        ? leftExecuteResult.OutEdges[0]
                         : null;
                 EasyVertex.ScalarNumericValue
                     scalarNumericResult = default;
@@ -1785,8 +1770,7 @@ namespace m0.ZeroUML.Instructions
                         exe.Stack,
                         scalarNode,
                         exe.MetaMode &&
-                        (cachedRedirectTarget != null ||
-                            cacheRedirectTarget) &&
+                        leftIsSingleQueryTarget &&
                         string.Equals(
                             singleLeftTargetEdge
                                 ?.Meta?.Value as string,
@@ -1836,13 +1820,9 @@ namespace m0.ZeroUML.Instructions
                     bool updatedExclusiveScalarTarget =
                         hasDirectScalarNumericResult &&
                         !leftPropagateToStackExpression &&
-                        (cachedRedirectTarget == null ||
-                            cachedTargetIsExclusive) &&
                         exe.TryUpdateExclusiveScalarAssignmentTarget(
                             toAdd,
-                            scalarNumericResult,
-                            cachedRedirectTarget != null &&
-                                cachedTargetIsExclusive);
+                            scalarNumericResult);
                     if (updatedExclusiveScalarTarget)
                     {
                         redirectedEdge = toAdd;
@@ -1867,15 +1847,6 @@ namespace m0.ZeroUML.Instructions
                                         e.To);
                     }
 
-                    if (cacheRedirectTarget &&
-                        (hasDirectScalarNumericResult ||
-                            rightExecuteResult.Count == 1))
-                        exe.CacheRedirectAssignmentTarget(
-                            instructionVertex,
-                            redirectedEdge,
-                            scalarNode,
-                            propagationPlan,
-                            redirectCacheEntry);
                 }
                 else
                 {
@@ -1968,38 +1939,22 @@ namespace m0.ZeroUML.Instructions
                 GetNextExpression(leftExpression) == null;
             INoInEdgeInOutVertexVertex leftExecuteResult =
                 null;
-            IEdge directTargetEdge = null;
+            bool previousCollapseQueryResults =
+                exe.CollapseQueryResultsByFromMeta;
 
-            if (collapseQueryResults &&
-                exe.TryGetCachedAddAssignmentTarget(
-                    instructionVertex,
-                    out IEdge cachedTargetEdge))
-                directTargetEdge = cachedTargetEdge;
-            else
+            try
             {
-                bool previousCollapseQueryResults =
-                    exe.CollapseQueryResultsByFromMeta;
-
-                try
-                {
-                    exe.CollapseQueryResultsByFromMeta =
-                        collapseQueryResults;
-                    leftExecuteResult =
-                        exe.ExecuteInstructionByMontevideoPrinciples(
-                            exe.Stack,
-                            leftExpression);
-                }
-                finally
-                {
-                    exe.CollapseQueryResultsByFromMeta =
-                        previousCollapseQueryResults;
-                }
-
-                if (collapseQueryResults &&
-                    leftExecuteResult.OutEdgesRaw.Count == 1)
-                    exe.CacheAddAssignmentTarget(
-                        instructionVertex,
-                        leftExecuteResult.OutEdgesRaw[0]);
+                exe.CollapseQueryResultsByFromMeta =
+                    collapseQueryResults;
+                leftExecuteResult =
+                    exe.ExecuteInstructionByMontevideoPrinciples(
+                        exe.Stack,
+                        leftExpression);
+            }
+            finally
+            {
+                exe.CollapseQueryResultsByFromMeta =
+                    previousCollapseQueryResults;
             }
 
             //INoInEdgeInOutVertexVertex _rightExecuteResult = exe.ExecuteInstructionByMontevideoPrinciples(exe.stack, rightExpression);
@@ -2011,7 +1966,6 @@ namespace m0.ZeroUML.Instructions
             try
             {
                 bool hasSingleTarget =
-                    directTargetEdge != null ||
                     leftExecuteResult.OutEdges.Count == 1;
                 if (hasSingleTarget &&
                     TryEvaluateSimpleScalarNumericOperatorExpression(
@@ -2021,7 +1975,6 @@ namespace m0.ZeroUML.Instructions
                         out object scalarNumericResult))
                 {
                     IEdge toAdd =
-                        directTargetEdge ??
                         leftExecuteResult.OutEdges[0];
                     toAdd.From.AddVertex(
                         toAdd.Meta,
@@ -2043,7 +1996,6 @@ namespace m0.ZeroUML.Instructions
                 if (hasSingleTarget)
                 {
                     IEdge toAdd =
-                        directTargetEdge ??
                         leftExecuteResult.OutEdges[0];
 
                     foreach (IEdge e in rightExecuteResult)
@@ -3967,16 +3919,12 @@ namespace m0.ZeroUML.Instructions
 
                 bool local_isStackFrameReturn = false;
                 INoInEdgeInOutVertexVertex possibleToReturnStack = null;
-                bool hasReusableStackFrame = false;
 
                 foreach (IEdge setEdge in setExecution)
                 {
                     ZeroCodePerformanceCounters
                         .RecordForVertexIteration();
-                    if (!hasReusableStackFrame)
-                        exe.AddStackFrame(); // ENTER NEW STACK
-
-                    hasReusableStackFrame = false;
+                    exe.AddStackFrame(); // ENTER NEW STACK
 
                     IEdge variableEdge = GraphUtil.CreateArtificialEdge(variable, setEdge.To);
 
@@ -3987,42 +3935,6 @@ namespace m0.ZeroUML.Instructions
                     if (local_isStackFrameReturn)
                         break;
 
-                    IList<IEdge> currentFrameEdges =
-                        exe.Stack.OutEdgesRaw;
-                    hasReusableStackFrame =
-                        currentFrameEdges.Count == 2 &&
-                        (ReferenceEquals(
-                            currentFrameEdges[0],
-                            variableEdge) ||
-                            ReferenceEquals(
-                                currentFrameEdges[1],
-                                variableEdge)) &&
-                        (ReferenceEquals(
-                            currentFrameEdges[0].Meta,
-                            MinusZero.Instance
-                                .StackFrameInherits) ||
-                            ReferenceEquals(
-                                currentFrameEdges[1].Meta,
-                                MinusZero.Instance
-                                    .StackFrameInherits));
-
-                    if (hasReusableStackFrame)
-                        exe.Stack.DeleteEdge(variableEdge);
-                    else
-                    {
-                        INoInEdgeInOutVertexVertex completedFrame =
-                            exe.Stack;
-                        exe.RemoveStackFrame();  // LEAVE NEW STACK
-                        ReleaseTemporaryStack(
-                            completedFrame,
-                            inputStack,
-                            exe.Stack,
-                            exe.NewVertexCreationSpace);
-                    }
-                }
-
-                if (hasReusableStackFrame)
-                {
                     INoInEdgeInOutVertexVertex completedFrame =
                         exe.Stack;
                     exe.RemoveStackFrame(); // LEAVE NEW STACK
@@ -4110,7 +4022,6 @@ namespace m0.ZeroUML.Instructions
 
                 bool local_isStackFrameReturn = false;
                 INoInEdgeInOutVertexVertex possibleToReturnStack = null;
-                bool hasReusableStackFrame = false;
                 SimpleScalarLessOrEqualPlan
                     directConditionPlan =
                         CompileSimpleScalarLessOrEqualPlan(
@@ -4136,10 +4047,7 @@ namespace m0.ZeroUML.Instructions
                 {
                     ZeroCodePerformanceCounters
                         .RecordWhileIteration();
-                    if (!hasReusableStackFrame)
-                        exe.AddStackFrame(); // ENTER NEW STACK
-
-                    hasReusableStackFrame = false;
+                    exe.AddStackFrame(); // ENTER NEW STACK
 
                     possibleToReturnStack = ZeroCodeExecutonUtil.SequentiallyExecuteInstructions(exe, exe.Stack, instructionVertex, out local_isStackFrameReturn);
 
@@ -4177,25 +4085,14 @@ namespace m0.ZeroUML.Instructions
                             exe.NewVertexCreationSpace);
                     }
 
-                    IList<IEdge> currentFrameEdges =
-                        exe.Stack.OutEdgesRaw;
-                    hasReusableStackFrame =
-                        currentFrameEdges.Count == 1 &&
-                        ReferenceEquals(
-                            currentFrameEdges[0].Meta,
-                            MinusZero.Instance.StackFrameInherits);
-
-                    if (!hasReusableStackFrame)
-                    {
-                        INoInEdgeInOutVertexVertex completedFrame =
-                            exe.Stack;
-                        exe.RemoveStackFrame(); // LEAVE NEW STACK
-                        ReleaseTemporaryStack(
-                            completedFrame,
-                            inputStack,
-                            exe.Stack,
-                            exe.NewVertexCreationSpace);
-                    }
+                    INoInEdgeInOutVertexVertex completedFrame =
+                        exe.Stack;
+                    exe.RemoveStackFrame(); // LEAVE NEW STACK
+                    ReleaseTemporaryStack(
+                        completedFrame,
+                        inputStack,
+                        exe.Stack,
+                        exe.NewVertexCreationSpace);
                 }
 
                 if (local_isStackFrameReturn)
@@ -4206,18 +4103,6 @@ namespace m0.ZeroUML.Instructions
                         exe.Stack,
                         exe.NewVertexCreationSpace);
                     return possibleToReturnStack;
-                }
-
-                if (hasReusableStackFrame)
-                {
-                    INoInEdgeInOutVertexVertex completedFrame =
-                        exe.Stack;
-                    exe.RemoveStackFrame(); // LEAVE NEW STACK
-                    ReleaseTemporaryStack(
-                        completedFrame,
-                        inputStack,
-                        exe.Stack,
-                        exe.NewVertexCreationSpace);
                 }
 
                 ReleaseTemporaryStack(

@@ -120,6 +120,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 		split = splittedUrl<<splitCounter>>
 		split += ".md"
 		fileName = @@Concatenate[split]
+		
 		splitIterator = splitIterator\:'(fileName)'
 
 		splitIterator\Content +< :System\:Lib\:StdView\:MdStringToMdTokenVertexes :: ""

@@ -330,7 +330,9 @@ namespace m0.ZeroCode
                 }
 
                 //if (r.Length < shortestLinkLength)
-                if (candidateLength < shortestLinkLength && canUse)
+                bool isBestCandidate = candidateLength < shortestLinkLength && canUse;
+
+                if (isBestCandidate)
                 {
                     shortestLink = returnedLink;
                     //shortestLinkLength = shortestLink.Length;
@@ -473,8 +475,18 @@ namespace m0.ZeroCode
         }
     }
 
+    class KeywordManyRootData
+    {
+        public IEdge RootEdge;
+        public string QueryString;
+        public int BaseCount;
+    }
+
     class Graph2TextProcessing
     {
+        static readonly Regex KeywordSentencePlaceholderRegex =
+            new Regex(@"\(\?(A)?(V)?<[a-zA-Z0-9_]+>\)");
+
         public IEdge BaseEdge;
 
         public HashSet<IEdge> BeenList;
@@ -492,6 +504,7 @@ namespace m0.ZeroCode
 
         public IDictionary<IVertex, bool> DoKeywordDefinitionContainLocalRoot_Dictionary;
         public IDictionary<IVertex, bool> DoKeywordDefinitionContainStartInLocalRoot_Dictionary;
+        IDictionary<IVertex, KeywordManyRootData> keywordManyRootDictionary;
 
         IVertex FormalTextLanguage;
         IList<IVertex> newVertexKeywordVertexList;
@@ -775,6 +788,14 @@ namespace m0.ZeroCode
 
         IEdge GetKeywordManyRoot(IVertex def, out string keywordManyRootQueryString, out int getKeywordManyRootBaseCount)
         {
+            KeywordManyRootData cached;
+            if (keywordManyRootDictionary.TryGetValue(def, out cached))
+            {
+                keywordManyRootQueryString = cached.QueryString;
+                getKeywordManyRootBaseCount = cached.BaseCount;
+                return cached.RootEdge;
+            }
+
             string queryString;
 
             getKeywordManyRootBaseCount = 0;
@@ -786,7 +807,15 @@ namespace m0.ZeroCode
             keywordManyRootQueryString = queryString;
 
             if (kmrEdge == null)
+            {
+                keywordManyRootDictionary.Add(def, new KeywordManyRootData
+                {
+                    RootEdge = null,
+                    QueryString = keywordManyRootQueryString,
+                    BaseCount = getKeywordManyRootBaseCount
+                });
                 return null;
+            }
 
             int count = 1;
 
@@ -795,6 +824,12 @@ namespace m0.ZeroCode
                 if (e == kmrEdge)
                 {
                     getKeywordManyRootBaseCount = count;
+                    keywordManyRootDictionary.Add(def, new KeywordManyRootData
+                    {
+                        RootEdge = kmrEdge,
+                        QueryString = keywordManyRootQueryString,
+                        BaseCount = getKeywordManyRootBaseCount
+                    });
                     return kmrEdge;
                 }
 
@@ -802,6 +837,12 @@ namespace m0.ZeroCode
                     count++;
             }
 
+            keywordManyRootDictionary.Add(def, new KeywordManyRootData
+            {
+                RootEdge = null,
+                QueryString = keywordManyRootQueryString,
+                BaseCount = getKeywordManyRootBaseCount
+            });
             return null;
         }
 
@@ -1121,7 +1162,7 @@ namespace m0.ZeroCode
             zeroMatch = false;
 
             // find matches
-            Regex rgx = new Regex(@"\(\?(A)?(V)?<[a-zA-Z0-9_]+>\)");
+            Regex rgx = KeywordSentencePlaceholderRegex;
 
             int prevPos = 0;
 
@@ -1203,7 +1244,7 @@ namespace m0.ZeroCode
                         else
                             sentence = sentenceSecond;
 
-                        Regex rgx = new Regex(@"\(\?(A)?(V)?<[a-zA-Z0-9_]+>\)");
+                        Regex rgx = KeywordSentencePlaceholderRegex;
 
                         int prevPos = 0;
 
@@ -1295,7 +1336,9 @@ namespace m0.ZeroCode
                     bool shouldSkip = ShouldSkipOutboundUnderLinearizedUxBaseEdge(baseEdge, e);
 
                     if (shouldSkip)
+                    {
                         continue;
+                    }
 
                     if (KeywordMatchedSubGraphEdges.ContainsKey(e))
                     { // XXX do not quite know what I'm doing, but this is for this below to work :/
@@ -1319,7 +1362,9 @@ namespace m0.ZeroCode
                     bool shouldSkip = ShouldSkipOutboundUnderLinearizedUxBaseEdge(baseEdge, e);
 
                     if (shouldSkip)
+                    {
                         continue;
+                    }
 
                     AppendEdge(e, null, basePath + "\\" + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(dict, e), km.WasHereTabAddingOmmit);
                 }
@@ -1352,82 +1397,17 @@ namespace m0.ZeroCode
 
         bool ommitOnce_AppendEdge_Meta = false;
 
-        bool IsMinCardinalityEdge(IEdge e)
-        {
-            if (e == null || e.Meta == null || e.Meta.Value == null)
-                return false;
-
-            return GeneralUtil.CompareStrings(e.Meta.Value, "$MinCardinality");
-        }
-
-        string VertexToDebugString(IVertex v)
-        {
-            if (v == null)
-                return "<null>";
-
-            string value = v.Value == null ? "<null>" : v.Value.ToString();
-            string identifier = v.Identifier == null ? "<null>" : v.Identifier.ToString();
-
-            return value + " [" + identifier + "]";
-        }
-
-        string EdgeToDebugString(IEdge e)
-        {
-            if (e == null)
-                return "<null>";
-
-            return "From=" + VertexToDebugString(e.From)
-                + ", Meta=" + VertexToDebugString(e.Meta)
-                + ", To=" + VertexToDebugString(e.To);
-        }
-
-        string VertexDataToDebugString(VertexData vertexData)
-        {
-            if (vertexData == null)
-                return "<null>";
-
-            return "LinkString=" + vertexData.LinkString
-                + ", NestedLevel=" + vertexData.NestedLevel
-                + ", VertexHasBeenAppendedAsNew=" + vertexData.VertexHasBeenAppendedAsNew;
-        }
-
-        void LogMinCardinality(string area, string message)
-        {
-            MinusZero.Instance.Log(1, "Graph2TextProcessing.$MinCardinality." + area, message);
-        }
-
         bool AppendEdge(IEdge e, IEdge parent, string path, bool ParentKmHasTabAddingOmmit)
         {
             if (!ZeroCodeUtil.FilterEdgeForGraph2TextProcessing(e))
                 return false;
 
-            if (IsMinCardinalityEdge(e))
-                LogMinCardinality("AppendEdge",
-                    "enter path=" + path
-                    + ", parent=" + EdgeToDebugString(parent)
-                    + ", edge=" + EdgeToDebugString(e)
-                    + ", keywordMatched=" + KeywordMatchedSubGraphEdges.ContainsKey(e)
-                    + ", been=" + BeenList.Contains(e));
-
             if (KeywordMatchedSubGraphEdges.ContainsKey(e))
                 if (ShouldAppendKeywordHere(e, path) || e.Meta.Value.ToString() == "NextExpression")
-                {
-                    if (IsMinCardinalityEdge(e))
-                        LogMinCardinality("AppendEdge",
-                            "delegating to AppendKeyword path=" + path
-                            + ", edge=" + EdgeToDebugString(e));
-
                     return AppendKeyword(e, false, ParentKmHasTabAddingOmmit);
-                }
                 else
                     if (KeywordMatchedSubGraphEdges[e].BaseEdge.To != e.To) // :O)
                     {
-                        if (IsMinCardinalityEdge(e))
-                            LogMinCardinality("AppendEdge",
-                                "skipping edge because keyword match base edge points to another vertex. path=" + path
-                                + ", baseEdge=" + EdgeToDebugString(KeywordMatchedSubGraphEdges[e].BaseEdge)
-                                + ", edge=" + EdgeToDebugString(e));
-
                         return true; // ?????????????????????? or true?
                     }
 
@@ -1469,26 +1449,8 @@ namespace m0.ZeroCode
             if (keywordSubVertex != null && GraphUtil.ExistQueryOut(keywordSubVertex, "$$ForceNewVertex", null))
                 forceNewVertex = true;
 
-            bool isMinCardinalityEdge = IsMinCardinalityEdge(e);
-
-            if (isMinCardinalityEdge)
-                LogMinCardinality("AppendVertex",
-                    "enter path=" + path
-                    + ", prefixAppended=" + prefixAppended
-                    + ", appendSuffix=" + appendSuffix
-                    + ", hideLinkPrefix=" + hideLinkPrefix
-                    + ", forceNewVertex=" + forceNewVertex
-                    + ", isOldLink=" + VertexOperations.IsLink_OldVersion(e)
-                    + ", keywordSubVertex=" + VertexToDebugString(keywordSubVertex)
-                    + ", edge=" + EdgeToDebugString(e));
-
             if (VertexOperations.IsLink_OldVersion(e) && !forceNewVertex)
             {
-                if (isMinCardinalityEdge)
-                    LogMinCardinality("AppendVertex",
-                        "appending target as link because edge is old link and forceNewVertex is false. path=" + path
-                        + ", target=" + VertexToDebugString(e.To));
-
                 AppendAsLink(e.To, null, hideLinkPrefix);
 
                 if (appendSuffix)
@@ -1500,22 +1462,8 @@ namespace m0.ZeroCode
             {
                 bool vertexIsNew = isVertexNew(e, path);
 
-                if (isMinCardinalityEdge)
-                    LogMinCardinality("AppendVertex",
-                        "isVertexNew result=" + vertexIsNew
-                        + ", forceNewVertex=" + forceNewVertex
-                        + ", path=" + path
-                        + ", subGraphContainsTo=" + SubGraphVerticesDictionary.ContainsKey(e.To)
-                        + ", toVertexData=" + (SubGraphVerticesDictionary.ContainsKey(e.To) ? VertexDataToDebugString(SubGraphVerticesDictionary[e.To]) : "<missing>")
-                        + ", target=" + VertexToDebugString(e.To));
-
                 if (vertexIsNew || forceNewVertex)
                 {
-                    if (isMinCardinalityEdge)
-                        LogMinCardinality("AppendVertex",
-                            "appending target as new value. path=" + path
-                            + ", target=" + VertexToDebugString(e.To));
-
                     AppendAsNew(e.To);
 
                     if (appendSuffix && prefixAppended)
@@ -1527,11 +1475,6 @@ namespace m0.ZeroCode
                 {
                     if (!prefixAppended && appendSuffix)
                         AppendPrefix();
-
-                    if (isMinCardinalityEdge)
-                        LogMinCardinality("AppendVertex",
-                            "appending target as link because target vertex is already known in subgraph. path=" + path
-                            + ", target=" + VertexToDebugString(e.To));
 
                     AppendAsLink(e.To, null, hideLinkPrefix);
 
@@ -1547,28 +1490,15 @@ namespace m0.ZeroCode
 
         private bool isVertexNew(IEdge e, string path)
         {
-            bool isMinCardinalityEdge = IsMinCardinalityEdge(e);
-
             if (ommitOnce_checkIfSubGraphVerticesDictionaryContainsVertex)
             {
                 ommitOnce_checkIfSubGraphVerticesDictionaryContainsVertex = false;
-
-                if (isMinCardinalityEdge)
-                    LogMinCardinality("isVertexNew",
-                        "returning true because ommitOnce_checkIfSubGraphVerticesDictionaryContainsVertex was set. path=" + path
-                        + ", edge=" + EdgeToDebugString(e));
 
                 return true;
             }
             else
                 if (!SubGraphVerticesDictionary.ContainsKey(e.To))
                 {
-                    if (isMinCardinalityEdge)
-                        LogMinCardinality("isVertexNew",
-                            "returning false because target is not in SubGraphVerticesDictionary. path=" + path
-                            + ", target=" + VertexToDebugString(e.To)
-                            + ", edge=" + EdgeToDebugString(e));
-
                     return false; // is it possible? YES
                 }
 
@@ -1576,12 +1506,6 @@ namespace m0.ZeroCode
 
             if (eVertexData.LinkString == "") // root
             {
-                if (isMinCardinalityEdge)
-                    LogMinCardinality("isVertexNew",
-                        "returning true because target is subgraph root. path=" + path
-                        + ", vertexData=" + VertexDataToDebugString(eVertexData)
-                        + ", edge=" + EdgeToDebugString(e));
-
                 return true;
             }
 
@@ -1600,12 +1524,6 @@ namespace m0.ZeroCode
 
                 eVertexData.VertexHasBeenAppendedAsNew = true;
 
-                if (isMinCardinalityEdge)
-                    LogMinCardinality("isVertexNew",
-                        "returning true because this is first append and current path is used. path=" + path
-                        + ", vertexData=" + VertexDataToDebugString(eVertexData)
-                        + ", edge=" + EdgeToDebugString(e));
-
                 return true;
             }
 
@@ -1613,20 +1531,8 @@ namespace m0.ZeroCode
             {
                 eVertexData.VertexHasBeenAppendedAsNew = true;
 
-                if (isMinCardinalityEdge)
-                    LogMinCardinality("isVertexNew",
-                        "returning true because path matches stored link and target was not appended yet. path=" + path
-                        + ", vertexData=" + VertexDataToDebugString(eVertexData)
-                        + ", edge=" + EdgeToDebugString(e));
-
                 return true;
             }
-
-            if (isMinCardinalityEdge)
-                LogMinCardinality("isVertexNew",
-                    "returning false because target was already appended or path does not match. path=" + path
-                    + ", vertexData=" + VertexDataToDebugString(eVertexData)
-                    + ", edge=" + EdgeToDebugString(e));
 
             return false;
         }
@@ -1700,7 +1606,9 @@ namespace m0.ZeroCode
 
             bool toReturn = false;
 
-            foreach (IEdge searchResult in GraphUtil.GetQueryOut(parentToCheck, searchString_firstPart, searchString_secondPart))
+            IList<IEdge> searchResults = GraphUtil.GetQueryOut(parentToCheck, searchString_firstPart, searchString_secondPart);
+
+            foreach (IEdge searchResult in searchResults)
                 if (!currentMatchGraphEdgeList.Contains(searchResult))
                 {
                     if (!VertexOperations.IsLink_OldVersion(keywordEdge))
@@ -1842,8 +1750,10 @@ namespace m0.ZeroCode
             if (dict.firstEdge2KeywordVertex.ContainsKey(edgeToCheckMetaValue))
             {
                 foreach (IVertex keywordTo in dict.firstEdge2KeywordVertex[edgeToCheckMetaValue])
+                {
                     if (CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch(edgeToCheck, path, edgeToCheck_parent, keywordTo))
                         found = true;
+                }
                 //break; // future possible optimisation
             }
 
@@ -1858,7 +1768,9 @@ namespace m0.ZeroCode
                     if (dict.firstEdgeANYIs2KeywordVertex.ContainsKey(isEdgeToValue))
                     {
                         foreach (IVertex keywordTo in dict.firstEdgeANYIs2KeywordVertex[isEdgeToValue])
+                        {
                             CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch(edgeToCheck, path, edgeToCheck_parent, keywordTo);
+                        }
                         //if (CheckMatchForKeywordAndAddKeywordMatchIfThereIsMatch(edgeToCheck, path, edgeToCheck_parent, keywordTo))
                         //break; // future possible optimisation
                     }
@@ -2178,6 +2090,7 @@ namespace m0.ZeroCode
 
             DoKeywordDefinitionContainLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
             DoKeywordDefinitionContainStartInLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
+            keywordManyRootDictionary = new Dictionary<IVertex, KeywordManyRootData>();
 
             //             
 
@@ -2267,6 +2180,7 @@ namespace m0.ZeroCode
 
             DoKeywordDefinitionContainLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
             DoKeywordDefinitionContainStartInLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
+            keywordManyRootDictionary = new Dictionary<IVertex, KeywordManyRootData>();
 
             //             
 
@@ -2297,6 +2211,7 @@ namespace m0.ZeroCode
         public string Process_VertexAndManyLines(IEdge _graphBaseEdge)
         {
             shouldUseCurrentPathForFirstVertexAppend = true;
+
             prepareBaseEdge(_graphBaseEdge);
 
             BeenList = new HashSet<IEdge>();
@@ -2311,6 +2226,7 @@ namespace m0.ZeroCode
 
             DoKeywordDefinitionContainLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
             DoKeywordDefinitionContainStartInLocalRoot_Dictionary = new Dictionary<IVertex, bool>();
+            keywordManyRootDictionary = new Dictionary<IVertex, KeywordManyRootData>();
 
             //
 
