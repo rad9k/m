@@ -200,6 +200,27 @@ public sealed class TransactionContractTests
         }
     }
 
+    [Fact]
+    public void GraphChangeSuppressionBelongsToTransactionInstance()
+    {
+        var firstTransaction = new Transaction(null);
+        var secondTransaction = new Transaction(firstTransaction);
+
+        try
+        {
+            firstTransaction.GraphChangeWatchActive = false;
+
+            Assert.False(
+                firstTransaction.GraphChangeWatchActive);
+            Assert.True(
+                secondTransaction.GraphChangeWatchActive);
+        }
+        finally
+        {
+            firstTransaction.GraphChangeWatchActive = true;
+        }
+    }
+
     private static Transaction StartTransaction()
     {
         var previousTransaction = MinusZero.Instance.GetTopTransaction();

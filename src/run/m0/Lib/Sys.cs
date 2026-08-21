@@ -40,6 +40,9 @@ namespace m0.Lib
             newTransaction.Start();
 
             MinusZero.Instance.SetTopTransaction(newTransaction);
+            ExecutionFlowHelper
+                .TransferPendingSecondStageCommitActions(
+                    newTransaction);
 
             return exe.Stack;
         }
@@ -63,6 +66,9 @@ namespace m0.Lib
 
             MinusZero.Instance.SetTopTransaction(
                 newTransaction);
+            ExecutionFlowHelper
+                .TransferPendingSecondStageCommitActions(
+                    newTransaction);
 
             return exe.Stack;
         }
@@ -73,9 +79,15 @@ namespace m0.Lib
 
             ITransaction prevTransaction = currentTransaction.Previous;
 
-            currentTransaction.Commit(exe);
-
-            MinusZero.Instance.SetTopTransaction(prevTransaction);
+            try
+            {
+                currentTransaction.Commit(exe);
+            }
+            finally
+            {
+                MinusZero.Instance.SetTopTransaction(
+                    prevTransaction);
+            }
 
             if (prevTransaction is Transaction ambientTransaction &&
                 ambientTransaction.IsAmbient)

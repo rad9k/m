@@ -59,9 +59,7 @@ public sealed class TransactionGarbageCollectionFailureModeTests
         }
     }
 
-    [Fact(
-        Skip =
-            "Known failure: an exception during listener dispatch leaves the child transaction current and the event externally pinned.")]
+    [Fact]
     public void ListenerExceptionDoesNotPinEventOrLeaveChildTransactionCurrent()
     {
         var ambientTransaction =

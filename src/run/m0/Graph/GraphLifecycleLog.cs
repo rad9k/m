@@ -74,14 +74,14 @@ namespace m0.Graph
                 " transaction=" + DescribeTransaction(transaction));
         }
 
-        internal static void SecondStageDropped(
+        internal static void SecondStageDeferred(
             ISecondStageCommitAction action)
         {
             if (!IsEnabled)
                 return;
 
             Write(
-                "SecondStageDropped",
+                "SecondStageDeferred",
                 "action=" + DescribeAction(action) +
                 " reason=no-current-transaction");
         }

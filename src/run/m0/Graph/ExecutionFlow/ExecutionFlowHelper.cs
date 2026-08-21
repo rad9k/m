@@ -81,6 +81,15 @@ namespace m0.Graph.ExecutionFlow
             graphChangeWatchState = new
                 AsyncLocal<GraphChangeWatchState>();
 
+        private static readonly object
+            pendingSecondStageCommitActionsLock =
+                new object();
+
+        private static readonly
+            List<ISecondStageCommitAction>
+            pendingSecondStageCommitActions =
+                new List<ISecondStageCommitAction>();
+
         static IVertex _is_meta;
 
         static IVertex dotNetStaticMethod_meta;
@@ -200,8 +209,33 @@ namespace m0.Graph.ExecutionFlow
             }
             else
             {
-                GraphLifecycleLog.SecondStageDropped(
+                lock (pendingSecondStageCommitActionsLock)
+                {
+                    pendingSecondStageCommitActions.Add(
+                        commitAction);
+                }
+
+                GraphLifecycleLog.SecondStageDeferred(
                     commitAction);
+            }
+        }
+
+        internal static void TransferPendingSecondStageCommitActions(
+            ITransaction transaction)
+        {
+            lock (pendingSecondStageCommitActionsLock)
+            {
+                foreach (ISecondStageCommitAction commitAction in
+                    pendingSecondStageCommitActions)
+                {
+                    GraphLifecycleLog.SecondStageQueued(
+                        commitAction,
+                        transaction);
+                    transaction.AddSecondStageCommitAction(
+                        commitAction);
+                }
+
+                pendingSecondStageCommitActions.Clear();
             }
         }
 
