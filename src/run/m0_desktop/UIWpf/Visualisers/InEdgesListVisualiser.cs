@@ -23,7 +23,7 @@ using static m0.Graph.ExecutionFlow.ExecutionFlowHelper;
 
 namespace m0.UIWpf.Visualisers
 {
-    public class InEdgesListVisualiser : Grid, IListVisualiser, ITypedEdge, IKeyboardHighlight, IOwnScrolling
+    public class InEdgesListVisualiser : Grid, IListVisualiser, ITypedEdge, IKeyboardHighlight, IOwnScrolling, ISecondStageCommitAction
     {
         private const double ColumnResizeCursorHotZone = 6.0;
 
@@ -40,6 +40,9 @@ namespace m0.UIWpf.Visualisers
         protected DataGrid ThisDataGrid;
 
         private bool suppressSelectionClear;
+
+        private bool postCommitRefreshPending;
+        private bool postCleanupRefreshQueued;
 
         private int currentHighlightPosition = -1;
         private bool isBeforeFirstPosition;
@@ -880,6 +883,12 @@ namespace m0.UIWpf.Visualisers
 
         public virtual void BaseEdgeToUpdated()
         {
+            RefreshBaseEdgeItems();
+            SchedulePostCommitRefresh();
+        }
+
+        private void RefreshBaseEdgeItems()
+        {
             UnselectAllSelectedEdges();
 
             IVertex baseVertex = Vertex.Get(false, @"BaseEdge:\To:");
@@ -903,6 +912,42 @@ namespace m0.UIWpf.Visualisers
                 ThisDataGrid.ItemsSource = visibleInEdges;
                 RefreshVisualStatesAfterItemsChanged();
             }
+        }
+
+        private void SchedulePostCommitRefresh()
+        {
+            ITransaction currentTransaction =
+                MinusZero.Instance.GetTopTransaction();
+
+            if (postCommitRefreshPending ||
+                currentTransaction == null ||
+                currentTransaction.State !=
+                    TransactionStateEnum.Commiting)
+            {
+                return;
+            }
+
+            postCommitRefreshPending = true;
+            postCleanupRefreshQueued = false;
+            ExecutionFlowHelper.AddSecondStageCommitAction(
+                this);
+        }
+
+        public void ExecuteSecondStageCommitAction()
+        {
+            if (!postCleanupRefreshQueued)
+            {
+                postCleanupRefreshQueued = true;
+                ExecutionFlowHelper.AddSecondStageCommitAction(
+                    this);
+                return;
+            }
+
+            postCommitRefreshPending = false;
+            postCleanupRefreshQueued = false;
+
+            if (!isDisposed)
+                RefreshBaseEdgeItems();
         }
 
         private IList<IEdge> ApplyShowesInEdgesInEdgeFilter(IList<IEdge> inEdges)

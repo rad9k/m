@@ -219,3 +219,33 @@ Final same-harness BenchmarkDotNet measurements:
 
 The short in-process job is noisy for single-change latency and shows a small absolute correctness cost from retaining a full rollback journal. The repeated-write watcher path improves from 516.49 us to 117.14 us (**77.3% faster**) and from 55.39 KB to 14.75 KB (**73.4% less allocation**). The change is accepted because it repairs six active contract failures, enables one previously skipped failure-mode contract, and removes the measured repeated-event amplification.
 
+## Accepted change group 2 — stable incoming-edge visualizer snapshots
+
+### Evidence before implementation
+
+`InEdgesListVisualiserContractTests.ItemsSourceMatchesPhysicalIncomingEdgesAfterCommit` failed on the clean baseline and remained red after transaction repair:
+
+- Physical incoming-edge count after commit: 3.
+- DataGrid snapshot count: 6.
+- A manual refresh after commit already made the second contract pass.
+
+The synchronous graph-change listener refreshed `ItemsSource` while temporary graph-change event and edge-payload vertices were still externally retained. The DataGrid therefore held a stale snapshot containing transient edges even though second-stage cleanup correctly removed those edges before `CommitTransaction` returned.
+
+### Implementation
+
+`InEdgesListVisualiser` now participates in second-stage commit cleanup:
+
+- The existing immediate refresh remains unchanged for compatibility with synchronous listener behavior.
+- A post-commit refresh is deduplicated per commit.
+- The refresh is deliberately requeued to the second cleanup wave, after event/payload orphan actions from the first wave have run.
+- The post-cleanup refresh calls the non-scheduling core directly, preventing an infinite reschedule loop.
+- A visualizer disposed before the cleanup wave does not refresh.
+
+This avoids identifying transient graph structures by fragile meta names and preserves the documented contract that the visualizer represents physical `InEdgesRaw`.
+
+### Verification
+
+- Desktop contracts: **2 passed, 0 failed, 0 skipped**.
+- The original manual-refresh contract remains green.
+- The formerly failing automatic commit-refresh contract now matches physical edge count, exact edge membership, and live source state.
+
