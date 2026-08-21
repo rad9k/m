@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace m0.Graph.ExecutionFlow
@@ -13,6 +14,12 @@ namespace m0.Graph.ExecutionFlow
     // This ITransaction implementation supports GraphChangeTransactionAtom support
     public class Transaction : ITransaction
     {
+        private static long nextDiagnosticId;
+
+        internal long DiagnosticId { get; }
+
+        internal bool IsAmbient { get; }
+
         static bool _GraphChangeWatch = true;
 
         public bool GraphChangeWatchActive { get { return _GraphChangeWatch; } set { _GraphChangeWatch = value; } }
@@ -43,6 +50,9 @@ namespace m0.Graph.ExecutionFlow
         public void Start()
         {
             state = TransactionStateEnum.Started;
+            GraphLifecycleLog.TransactionState(
+                this,
+                "started");
         }
 
         private void CommitAtoms()
@@ -374,21 +384,43 @@ namespace m0.Graph.ExecutionFlow
         {
             foreach (List<IVertex> eventList in triggerEventDictionary.Values)
                 foreach (IVertex v in eventList)
+                {
+                    GraphLifecycleLog.EventExternalReference(
+                        v,
+                        "remove-begin");
                     v.RemoveExternalReference();
+                    GraphLifecycleLog.EventExternalReference(
+                        v,
+                        "remove-end");
+                }
         }
 
         public void Commit_SecondStage()
         {
             IList<ISecondStageCommitAction> secondStageCommitActionList_copy;
+            int wave = 0;
 
             while(secondStageCommitActionList.Count() > 0)
             {
+                wave++;
                 secondStageCommitActionList_copy = secondStageCommitActionList.ToList();
 
                 secondStageCommitActionList.Clear();
 
+                GraphLifecycleLog.SecondStageWave(
+                    this,
+                    "begin",
+                    wave,
+                    secondStageCommitActionList_copy.Count);
+
                 foreach (ISecondStageCommitAction a in secondStageCommitActionList_copy)
                     a.ExecuteSecondStageCommitAction();
+
+                GraphLifecycleLog.SecondStageWave(
+                    this,
+                    "end",
+                    wave,
+                    secondStageCommitActionList_copy.Count);
             }
         }
 
@@ -401,6 +433,9 @@ namespace m0.Graph.ExecutionFlow
                 if (state != TransactionStateEnum.Started)
                     throw new Exception("Transaction Commit while transaction not started.");
 
+                GraphLifecycleLog.TransactionState(
+                    this,
+                    "commit-begin");
                 state = TransactionStateEnum.Commiting;
 
                 CommitAtoms();
@@ -412,6 +447,9 @@ namespace m0.Graph.ExecutionFlow
                     Commit_SecondStage();
 
                     state = TransactionStateEnum.Commited;
+                    GraphLifecycleLog.TransactionState(
+                        this,
+                        "commit-end");
 
                     return;
                 }
@@ -444,6 +482,10 @@ namespace m0.Graph.ExecutionFlow
             if (state != TransactionStateEnum.Started && state != TransactionStateEnum.Commiting)
                 throw new Exception("Transaction Rollingback while not transaction started or not commiting");
 
+            GraphLifecycleLog.TransactionState(
+                this,
+                "rollback-begin");
+
             if(state == TransactionStateEnum.Commiting)
                 state = TransactionStateEnum.RollingbackWhileCommiting;
             else
@@ -452,13 +494,25 @@ namespace m0.Graph.ExecutionFlow
             RollbackAtoms();
 
             state = TransactionStateEnum.Rolledback;
+            GraphLifecycleLog.TransactionState(
+                this,
+                "rollback-end");
         }
 
-        public Transaction(ITransaction prevTransaction)
+        public Transaction(
+            ITransaction prevTransaction,
+            bool isAmbient = false)
         {
+            DiagnosticId =
+                Interlocked.Increment(
+                    ref nextDiagnosticId);
+            IsAmbient = isAmbient;
             previous = prevTransaction;
 
             state = TransactionStateEnum.NotStarted;
+            GraphLifecycleLog.TransactionState(
+                this,
+                "created");
         }
 
         public void AddAtom(ITransactionAtom atom)

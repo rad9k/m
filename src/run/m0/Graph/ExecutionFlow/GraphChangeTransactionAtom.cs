@@ -211,6 +211,10 @@ namespace m0.Graph.ExecutionFlow
                     break;
             }
 
+            GraphLifecycleLog.EventVertex(
+                eventVertex,
+                this,
+                "created");
             return eventVertex;
         }
     }

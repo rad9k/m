@@ -44,6 +44,29 @@ namespace m0.Lib
             return exe.Stack;
         }
 
+        public static INoInEdgeInOutVertexVertex StartAmbientTransaction(
+            IExecution exe)
+        {
+            ITransaction prevTransaction =
+                MinusZero.Instance.GetTopTransaction();
+
+            if (prevTransaction != null)
+                throw new InvalidOperationException(
+                    "An ambient transaction can only be started without a parent transaction.");
+
+            ITransaction newTransaction =
+                new Transaction(
+                    null,
+                    true);
+
+            newTransaction.Start();
+
+            MinusZero.Instance.SetTopTransaction(
+                newTransaction);
+
+            return exe.Stack;
+        }
+
         public static INoInEdgeInOutVertexVertex CommitTransaction(IExecution exe)
         {
             ITransaction currentTransaction = MinusZero.Instance.GetTopTransaction();
@@ -53,6 +76,12 @@ namespace m0.Lib
             currentTransaction.Commit(exe);
 
             MinusZero.Instance.SetTopTransaction(prevTransaction);
+
+            if (prevTransaction is Transaction ambientTransaction &&
+                ambientTransaction.IsAmbient)
+            {
+                ambientTransaction.Commit_SecondStage();
+            }
 
             return exe.Stack;
         }

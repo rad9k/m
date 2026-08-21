@@ -77,7 +77,13 @@ namespace m0.Graph.Internal
                 && shouldCascadeRemoval
                 && edgeDictionaries.Vertex.Store.DetachState == DetachStateEnum.Attached
                 && !edgeDictionaries.Vertex.IsRoot)
+            {
+                GraphLifecycleLog.EdgeRemovalCandidate(
+                    "MetaInEdgesRaw",
+                    edgeDictionaries.Vertex,
+                    item);
                 ExecutionFlowHelper.AddSecondStageCommitAction(edgeDictionaries.Vertex);
+            }
         }
     }
 }

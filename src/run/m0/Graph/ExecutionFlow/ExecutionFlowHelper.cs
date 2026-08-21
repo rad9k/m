@@ -123,6 +123,13 @@ namespace m0.Graph.ExecutionFlow
             Lib.Sys.StartTransaction(exe);
         }
 
+        public static void StartAmbientTransaction()
+        {
+            IExecution exe = new ZeroCodeExecution();
+
+            Lib.Sys.StartAmbientTransaction(exe);
+        }
+
         public static void RollbackTransaction()
         {
             IExecution exe = new ZeroCodeExecution();
@@ -185,7 +192,17 @@ namespace m0.Graph.ExecutionFlow
             ITransaction currentTransaction = MinusZero.Instance.GetTopTransaction();
 
             if (currentTransaction != null)
+            {
+                GraphLifecycleLog.SecondStageQueued(
+                    commitAction,
+                    currentTransaction);
                 currentTransaction.AddSecondStageCommitAction(commitAction);
+            }
+            else
+            {
+                GraphLifecycleLog.SecondStageDropped(
+                    commitAction);
+            }
         }
 
         public static IEdge AddTriggerAndListener(IVertex baseVertex,

@@ -75,7 +75,13 @@ namespace m0.Graph.Internal
             //
 
             if (shouldCascadeRemoval)
+            {
+                GraphLifecycleLog.EdgeRemovalCandidate(
+                    "InEdgesRaw",
+                    edgeDictionaries.Vertex,
+                    item);
                 edgeDictionaries.Vertex.CheckIfShouldDispose();
+            }
 
             /*int cumulativeEdgesCount = 0;
 

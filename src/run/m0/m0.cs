@@ -561,7 +561,7 @@ namespace m0
 
             IsInitialized = true;
 
-            ExecutionFlowHelper.StartTransaction();
+            ExecutionFlowHelper.StartAmbientTransaction();
         }
 
         private void InitializeGracefullExit()

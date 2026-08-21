@@ -2614,6 +2614,13 @@ namespace m0.Graph
             if (DisposedState != DisposeStateEnum.Live)
                 return;
 
+            GraphLifecycleLog.DisposeVertex(
+                this,
+                "begin",
+                StoredInEdgeCount,
+                StoredMetaInEdgeCount,
+                StoredOutEdgeCount);
+
             DisposedState = DisposeStateEnum.Disposing;
 
             GraphUtil.Debug(this, DebugOperationEnum.Dispose);
@@ -2625,6 +2632,13 @@ namespace m0.Graph
             Store.RemoveVertexIdentifier(this);
 
             DisposedState = DisposeStateEnum.Disposed;
+
+            GraphLifecycleLog.DisposeVertex(
+                this,
+                "end",
+                StoredInEdgeCount,
+                StoredMetaInEdgeCount,
+                StoredOutEdgeCount);
         }
 
         public void DeleteAllInEdges()
@@ -3301,6 +3315,9 @@ namespace m0.Graph
                     Store.StoreVertexIdentifier(this);
                 }
 
+                GraphLifecycleLog.VertexCreated(
+                    this,
+                    registrationMode);
                 GraphUtil.Debug(this, DebugOperationEnum.Init);
             }
         }
@@ -3369,7 +3386,20 @@ namespace m0.Graph
 
         public override void ExecuteSecondStageCommitAction()
         {
-            if (ShouldDispose())
+            bool shouldDispose = ShouldDispose();
+
+            GraphLifecycleLog.OrphanCheck(
+                this,
+                "second-stage-execute",
+                StoredInEdgeCount,
+                StoredMetaInEdgeCount,
+                ExternalReferenceCount,
+                shouldDispose);
+            GraphLifecycleLog.SecondStageExecute(
+                this,
+                shouldDispose);
+
+            if (shouldDispose)
             {
                 Dispose();
             }
@@ -3408,6 +3438,9 @@ namespace m0.Graph
             }
 
             Store.StoreVertexIdentifier(this);
+            GraphLifecycleLog.VertexCreated(
+                this,
+                VertexIdentifierRegistrationMode.Registered);
         }
 
         bool ShouldDispose()
@@ -3430,7 +3463,17 @@ namespace m0.Graph
 
         public override void CheckIfShouldDispose()
         {
-            if(ShouldDispose())
+            bool shouldDispose = ShouldDispose();
+
+            GraphLifecycleLog.OrphanCheck(
+                this,
+                "candidate-check",
+                StoredInEdgeCount,
+                StoredMetaInEdgeCount,
+                ExternalReferenceCount,
+                shouldDispose);
+
+            if(shouldDispose)
                 ExecutionFlowHelper.AddSecondStageCommitAction(this);
         }
 
