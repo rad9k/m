@@ -24,8 +24,6 @@ namespace m0.UIWpf.Visualisers.Helper
 
         public static void AddVisualiser(IVisualiser visualiser, IVertex parentVisualiserVertex, bool AddVertex, bool isVolatile)
         {
-            MinusZero mz = MinusZero.Instance;
-
             IEdge visualiserVertexEdge = null;
 
             if (AddVertex)
@@ -49,31 +47,15 @@ namespace m0.UIWpf.Visualisers.Helper
             vd.ParentVisualiserVertexEdge = visualiserVertexEdge;
 
             Visualisers.Add(visualiser.Vertex, vd);
-
-            MinusZero.Instance.Log(1, "VisualisersList",
-                "AddVisualiser type=" + (visualiser == null ? "null" : visualiser.GetType().Name)
-                + " vertex=" + DescribeVertex(visualiser == null ? null : visualiser.Vertex)
-                + " parent=" + DescribeVertex(parentVisualiserVertex)
-                + " AddVertex=" + AddVertex
-                + " isVolatile=" + isVolatile
-                + " parentItemEdgeCreated=" + (visualiserVertexEdge != null));
         }
 
         public static void RemoveVisualiser(IVisualiser visualiser)
         {
             if (visualiser == null || visualiser.Vertex == null)
-            {
-                MinusZero.Instance.Log(1, "VisualisersList", "RemoveVisualiser skipped null visualiser/vertex");
                 return;
-            }
 
             if (!Visualisers.ContainsKey(visualiser.Vertex))
-            {
-                MinusZero.Instance.Log(1, "VisualisersList",
-                    "RemoveVisualiser notFound type=" + visualiser.GetType().Name
-                    + " vertex=" + DescribeVertex(visualiser.Vertex));
                 return;
-            }
 
             IEdge visualiserVertexEdge = Visualisers[visualiser.Vertex].ParentVisualiserVertexEdge;
 
@@ -81,20 +63,6 @@ namespace m0.UIWpf.Visualisers.Helper
                 visualiserVertexEdge.From.DeleteEdge(visualiserVertexEdge);
 
             Visualisers.Remove(visualiser.Vertex);
-
-            MinusZero.Instance.Log(1, "VisualisersList",
-                "RemoveVisualiser type=" + visualiser.GetType().Name
-                + " vertex=" + DescribeVertex(visualiser.Vertex)
-                + " hadParentItemEdge=" + (visualiserVertexEdge != null));
-        }
-
-        private static string DescribeVertex(IVertex vertex)
-        {
-            if (vertex == null)
-                return "null";
-
-            return "val=" + (vertex.Value == null ? "null" : vertex.Value.ToString())
-                + " hash=" + vertex.GetHashCode();
         }
 
         public static void RemoveAllVisualisers()

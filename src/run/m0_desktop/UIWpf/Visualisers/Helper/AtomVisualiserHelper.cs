@@ -259,19 +259,9 @@ namespace m0.UIWpf.Visualisers.Helper
 
         public void DisposeAllChildVisualisers()
         {
-            MinusZero.Instance.Log(1, "AtomVisualiserHelper.DisposeNesting",
-                "DisposeAllChildVisualisers begin visualiser=" + (Visualiser == null ? "null" : Visualiser.GetType().Name)
-                + " vertex=" + DescribeVertexForLog(Visualiser == null ? null : Visualiser.Vertex)
-                + " isUX=" + IsUX
-                + " itemEdges=" + DescribeItemEdgesForLog(Visualiser == null ? null : Visualiser.Vertex));
-
             foreach (IEdge e in Visualiser.Vertex.GetAll(false, "Item:"))
             {
                 IVisualiser childVisualiser = VisualisersList.GetVisualiser(e.To);
-
-                MinusZero.Instance.Log(1, "AtomVisualiserHelper.DisposeNesting",
-                    "DisposeAllChildVisualisers child to=" + DescribeVertexForLog(e.To)
-                    + " listedAs=" + (childVisualiser == null ? "null" : childVisualiser.GetType().Name));
 
                 if (childVisualiser != null)
                     childVisualiser.Dispose();
@@ -280,28 +270,14 @@ namespace m0.UIWpf.Visualisers.Helper
 
         public void DisposeAllChildVisualisersExceptWrap()
         {
-            MinusZero.Instance.Log(1, "AtomVisualiserHelper.DisposeNesting",
-                "DisposeAllChildVisualisersExceptWrap begin visualiser=" + (Visualiser == null ? "null" : Visualiser.GetType().Name)
-                + " vertex=" + DescribeVertexForLog(Visualiser == null ? null : Visualiser.Vertex)
-                + " isUX=" + IsUX
-                + " itemEdges=" + DescribeItemEdgesForLog(Visualiser == null ? null : Visualiser.Vertex));
-
             foreach (IEdge e in Visualiser.Vertex.GetAll(false, "Item:"))
             {
                 bool isWrap = GraphUtil.ExistQueryOut(e.To, "$Is", "Wrap");
 
                 if (isWrap)
-                {
-                    MinusZero.Instance.Log(1, "AtomVisualiserHelper.DisposeNesting",
-                        "DisposeAllChildVisualisersExceptWrap skip Wrap to=" + DescribeVertexForLog(e.To));
                     continue;
-                }
 
                 IVisualiser childVisualiser = VisualisersList.GetVisualiser(e.To);
-
-                MinusZero.Instance.Log(1, "AtomVisualiserHelper.DisposeNesting",
-                    "DisposeAllChildVisualisersExceptWrap child to=" + DescribeVertexForLog(e.To)
-                    + " listedAs=" + (childVisualiser == null ? "null" : childVisualiser.GetType().Name));
 
                 if (childVisualiser != null)
                     childVisualiser.Dispose();
@@ -314,12 +290,6 @@ namespace m0.UIWpf.Visualisers.Helper
             {
                 IsDisposed = true;
 
-                MinusZero.Instance.Log(1, "AtomVisualiserHelper.DisposeNesting",
-                    "Dispose begin visualiser=" + (Visualiser == null ? "null" : Visualiser.GetType().Name)
-                    + " vertex=" + DescribeVertexForLog(Visualiser == null ? null : Visualiser.Vertex)
-                    + " isUX=" + IsUX
-                    + " itemEdges=" + DescribeItemEdgesForLog(Visualiser == null ? null : Visualiser.Vertex));
-
                 VisualisersList.RemoveVisualiser(Visualiser);
 
                 GraphChangeTrigger.RemoveListener(graphChangeListenerEdge);
@@ -328,38 +298,7 @@ namespace m0.UIWpf.Visualisers.Helper
 
                 if (Vertex is IDisposable)
                     ((IDisposable)Vertex).Dispose();
-
-                MinusZero.Instance.Log(1, "AtomVisualiserHelper.DisposeNesting",
-                    "Dispose end visualiser=" + (Visualiser == null ? "null" : Visualiser.GetType().Name)
-                    + " vertex=" + DescribeVertexForLog(Visualiser == null ? null : Visualiser.Vertex));
             }
-        }
-
-        private static string DescribeVertexForLog(IVertex vertex)
-        {
-            if (vertex == null)
-                return "null";
-
-            return "val=" + (vertex.Value == null ? "null" : vertex.Value.ToString())
-                + " hash=" + vertex.GetHashCode();
-        }
-
-        private static string DescribeItemEdgesForLog(IVertex visualiserVertex)
-        {
-            if (visualiserVertex == null)
-                return "visualiserVertex=null";
-
-            List<string> parts = new List<string>();
-
-            foreach (IEdge itemEdge in visualiserVertex.GetAll(false, "Item:"))
-            {
-                IVisualiser childVisualiser = VisualisersList.GetVisualiser(itemEdge.To);
-
-                parts.Add("to=" + DescribeVertexForLog(itemEdge.To)
-                    + " listedAs=" + (childVisualiser == null ? "null" : childVisualiser.GetType().Name));
-            }
-
-            return "count=" + parts.Count + " [" + string.Join("; ", parts) + "]";
         }
 
         public void Dispose_UX() // dispose variant for UX visualisers

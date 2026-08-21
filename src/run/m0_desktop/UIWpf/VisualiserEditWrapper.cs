@@ -86,16 +86,6 @@ namespace m0.UIWpf
                 pc = new StringVisualiser(EdgeHelper.CreateTempEdgeVertex(e), parentVisualiser, false);                
 
             _this.Content = pc;
-
-            IVisualiser createdVisualiser = pc as IVisualiser;
-
-            MinusZero.Instance.Log(1, "VisualiserEditWrapper.DisposeNesting",
-                "BaseEdgeChanged contentType=" + (pc == null ? "null" : pc.GetType().Name)
-                + " defvis=" + (defvis == null ? "null" : (defvis.Value == null ? "null" : defvis.Value.ToString()))
-                + " parentVisualiser=" + DescribeVertex(parentVisualiser)
-                + " contentVertex=" + DescribeVertex(createdVisualiser == null ? null : createdVisualiser.Vertex)
-                + " meta=" + (e == null || e.Meta == null || e.Meta.Value == null ? "null" : e.Meta.Value.ToString())
-                + " to=" + (e == null || e.To == null || e.To.Value == null ? "null" : e.To.Value.ToString()));
         }
 
         bool IsDisposed = false;
@@ -106,41 +96,9 @@ namespace m0.UIWpf
             {
                 IsDisposed = true;
 
-                MinusZero.Instance.Log(1, "VisualiserEditWrapper.DisposeNesting",
-                    "Dispose begin contentType=" + (Content == null ? "null" : Content.GetType().Name)
-                    + " parentVisualiser=" + DescribeVertex(parentVisualiser)
-                    + " contentVertex=" + DescribeIVisualiserVertex(Content));
-
                 if (this.Content != null && this.Content is IDisposable)
                     ((IDisposable)this.Content).Dispose();
-
-                MinusZero.Instance.Log(1, "VisualiserEditWrapper.DisposeNesting",
-                    "Dispose end contentWasDisposed=" + (Content is IDisposable));
             }
-            else
-            {
-                MinusZero.Instance.Log(1, "VisualiserEditWrapper.DisposeNesting",
-                    "Dispose skipped alreadyDisposed contentType=" + (Content == null ? "null" : Content.GetType().Name));
-            }
-        }
-
-        private static string DescribeVertex(IVertex vertex)
-        {
-            if (vertex == null)
-                return "null";
-
-            return "val=" + (vertex.Value == null ? "null" : vertex.Value.ToString())
-                + " hash=" + vertex.GetHashCode();
-        }
-
-        private static string DescribeIVisualiserVertex(object content)
-        {
-            IVisualiser visualiser = content as IVisualiser;
-
-            if (visualiser == null)
-                return "n/a";
-
-            return DescribeVertex(visualiser.Vertex);
         }
 
         public void MouseWheelAction(MouseWheelEventArgs e)
