@@ -436,23 +436,21 @@ Final broad ZeroCode diagnostics:
 3. **Bootstrap and drive enumeration**
    - `m0/Bootstrap/LoadFromBootstrap.cs`, `m0.cs Initialize`, `AddDrives`, `CreateAutostart`.
    - Required first step: phase timing through `MinusZero.Instance.Log`, including slow/network drives.
-4. **GraphVisualiser per-node layout**
+4. **Completed — GraphVisualiser per-node layout**
    - `m0_desktop/UIWpf/Visualisers/GraphVisualiser.cs`, `Add` and `AddCircle`.
-   - `UpdateLayout` occurs while each node is added.
-   - Required gate: synthetic 50/200-node STA paint harness validating line endpoints and final dimensions.
-5. **List/Form/UX complete rebuilds**
+   - Local measure/arrange now supplies geometry; one global layout remains per paint.
+5. **Completed — List/Form/UX complete rebuilds**
    - `ListVisualiser.BaseEdgeToUpdated`, `FormVisualiser.BaseEdgeToUpdated`, `UXVisualiser.Paint`.
-   - Required gate: control identity and interaction-state contracts before incremental update work.
-6. **Code7 collapsed assignment query amplification**
+   - List schemas persist across row refreshes; hosted UX value changes bypass parent repaint; existing Form guards were retained.
+6. **Completed — Code7 collapsed assignment query amplification**
    - `BaseInstructions.AddDistinctFromMetaQueryMatch` and `AddLeftEdgesToRightVertices`.
-   - Final diagnostics still traverse 9,574,510 collapsed assignment-query edges.
-   - A new algorithm must preserve first-edge order and exact `(From, Meta)` reference identity on x64 and x86.
-7. **Text2Graph hash-only memoization**
-   - `m0/ZeroCode/Text2GraphProcessing.cs`, `_tryIsKeyword` and `ParsingStack.GetHashCode`.
-   - Required gate: deliberately colliding parameter states and golden parser output.
-8. **Graph2Text link traversal**
+   - A specialized stack cache now preserves first-edge identity/order without rescanning accumulated values.
+7. **Completed — Text2Graph hash-only memoization**
+   - `m0/ZeroCode/Text2GraphProcessing.cs`, `_tryIsKeyword`.
+   - Structural equality now distinguishes deliberately colliding parser states.
+8. **Completed — Graph2Text link traversal**
    - `m0/ZeroCode/Graph2TextProcessing.cs`, `GetLinkString_Recurrect`, `AppendAsLink`, `MatchKeywords`.
-   - Required gate: cycles, diamonds, imports and round-trip generation benchmarks.
+   - Reverse imports, allocation reductions and processor reuse are guarded by an exact output hash and benchmark.
 9. **VertexToJson visited and repeated dictionary work**
    - `m0/Lib/StdView/VertexToJson.cs`.
    - Required gate: golden outputs from `.ai/01 Json.md` before changing traversal structures.
@@ -482,6 +480,12 @@ Functional commits created by this audit:
 3. `fb3ca4f9` — enable compiler optimization for explicit Release/x86.
 4. `24aef31b` — TextStore, decimal, OPTIONS and graph-hover corrections.
 5. `63af24e4` — synchronized visualizer listener cleanup.
+6. `f2e57328` — simple ZeroCode assignment-target fast path.
+7. `0c770435` — GraphVisualiser layout batching.
+8. `c4bf8bfa` — List and UX rebuild suppression.
+9. `ef8212d9` — collapsed Code7 assignment-query cache.
+10. `eed07bdf` — collision-safe Text2Graph memoization.
+11. `3a1330fd` — Graph2Text traversal and golden-output benchmark.
 
 Rollback notes:
 
@@ -496,12 +500,14 @@ The assignment fast path was initially rejected under the original x86 gate. It 
 ## Final outcome
 
 - Starting state: clean build, but 7 active test failures and 1 skipped known failure across the three suites.
-- Final state: 210 tests green, zero skipped, x64/x86 builds green.
+- Final state after follow-ups: 215 tests green, zero skipped, Release/x64 build green.
 - Accepted changes: five initial functional commits plus the follow-up optimization commits.
 - Performance evidence:
   - repeated watcher transaction: 516.49 us to 117.14 us, with allocation 55.39 KB to 14.75 KB;
   - explicit Release/x86 `Code8` diagnostic: 5,771.181 ms to 984.611 ms after enabling optimization;
-  - graph hover lookup complexity: `O(V * D)` to `O(D)`.
+  - graph hover lookup complexity: `O(V * D)` to `O(D)`;
+  - Graph2Text generation: 71.586 ms to 56.815 ms;
+  - Code7 query self time: 548.634 ms to about 11 ms in counter-enabled diagnostics.
 - The simple assignment fast path is accepted for supported x64 builds; x86 is explicitly outside the product acceptance gate.
 
 ## Follow-up — accepted simple assignment fast path for x64
@@ -691,4 +697,19 @@ Verification:
 - full integration suite: 83/83;
 - full Release/x64 solution build: 0 errors;
 - no new IDE diagnostics.
+
+## Final follow-up validation
+
+After completing requested candidates 4–8:
+
+- isolated graph contracts: **124 passed**;
+- bootstrapped integration contracts: **83 passed**;
+- desktop STA contracts: **8 passed**;
+- total: **215 passed, 0 failed, 0 skipped**;
+- full Release/x64 solution build: 0 errors;
+- IDE diagnostics for every changed file: no new errors.
+
+The final `Code0`–`Code14` diagnostic matrix parsed and executed every program with zero reported execution errors. `Code7` retained 4,669 result edges; `Code8` retained its expected scalar result shape.
+
+True x86 is no longer an acceptance target by explicit product decision. Published x64 and ARM64 semantics are covered by the same managed tests; performance measurements in this follow-up were collected on x64, while an ARM64 performance run remains recommended.
 
