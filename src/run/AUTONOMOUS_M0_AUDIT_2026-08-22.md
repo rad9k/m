@@ -486,6 +486,7 @@ Functional commits created by this audit:
 9. `ef8212d9` — collapsed Code7 assignment-query cache.
 10. `eed07bdf` — collision-safe Text2Graph memoization.
 11. `3a1330fd` — Graph2Text traversal and golden-output benchmark.
+12. `e8fb7b65` — VertexToJson traversal, exact-output contract and benchmark.
 
 Rollback notes:
 
@@ -500,13 +501,14 @@ The assignment fast path was initially rejected under the original x86 gate. It 
 ## Final outcome
 
 - Starting state: clean build, but 7 active test failures and 1 skipped known failure across the three suites.
-- Final state after follow-ups: 215 tests green, zero skipped, Release/x64 build green.
+- Final state after follow-ups: 216 tests green, zero skipped, Release/x64 build green.
 - Accepted changes: five initial functional commits plus the follow-up optimization commits.
 - Performance evidence:
   - repeated watcher transaction: 516.49 us to 117.14 us, with allocation 55.39 KB to 14.75 KB;
   - explicit Release/x86 `Code8` diagnostic: 5,771.181 ms to 984.611 ms after enabling optimization;
   - graph hover lookup complexity: `O(V * D)` to `O(D)`;
   - Graph2Text generation: 71.586 ms to 56.815 ms;
+  - VertexToJson generation at 1000 complex items: 9.109 ms to 5.784 ms;
   - Code7 query self time: 548.634 ms to about 11 ms in counter-enabled diagnostics.
 - The simple assignment fast path is accepted for supported x64 builds; x86 is explicitly outside the product acceptance gate.
 
