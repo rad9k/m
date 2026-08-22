@@ -109,39 +109,49 @@ namespace m0.ZeroUML.Instructions
         {
             IEdge edge;
             IList<IEdge> edges;
+            object queryMeta = null;
+            object queryTo = null;
 
             if (queryByVariable)
             {
                 if (processedValue.Length > 0 &&
                     processedValue[0] == ':')
-                    inputQs.QueryOutEdges(
-                        null,
-                        processedValue.Substring(1),
-                        out edge,
-                        out edges);
+                    queryTo =
+                        processedValue.Substring(1);
                 else
-                    inputQs.QueryOutEdges(
-                        processedValue,
-                        null,
-                        out edge,
-                        out edges);
+                    queryMeta = processedValue;
             }
             else if (exe.MetaMode)
-                inputQs.QueryOutEdges(
-                    processedValue,
-                    null,
-                    out edge,
-                    out edges);
+                queryMeta = processedValue;
             else
+                queryTo = processedValue;
+
+            long preCollapsedEdgeCount = 0;
+            if (exe.CollapseQueryResultsByFromMeta &&
+                queryMeta != null &&
+                queryTo == null &&
+                inputQs is
+                    NoInEdgeInOutVertexVertex stack)
+            {
+                stack.QueryOutEdgesDistinctByFromMeta(
+                    queryMeta,
+                    out edge,
+                    out edges,
+                    out preCollapsedEdgeCount);
+            }
+            else
+            {
                 inputQs.QueryOutEdges(
-                    null,
-                    processedValue,
+                    queryMeta,
+                    queryTo,
                     out edge,
                     out edges);
+            }
 
             if (exe.CollapseQueryResultsByFromMeta)
             {
-                long collapsedEdgeCount = 0;
+                long collapsedEdgeCount =
+                    preCollapsedEdgeCount;
 
                 if (edge != null &&
                     !AddDistinctFromMetaQueryMatch(

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using m0.Foundation;
+using m0.Graph.Internal;
 using m0.Util;
 using m0.ZeroCode;
 
@@ -22,7 +23,83 @@ namespace m0.Graph
         [NonSerialized]
         private bool isInTemporaryPool;
 
+        [NonSerialized]
+        private Dictionary<string,
+            DistinctFromMetaCacheEntry>
+            distinctFromMetaQueryCache;
+
         private readonly bool canUseTemporaryPool;
+
+        private sealed class DistinctFromMetaCacheEntry
+        {
+            private IEdge singleRepresentative;
+            private List<IEdge> multipleRepresentatives;
+
+            internal long DependencyEpoch;
+            internal long MatchCount;
+
+            internal int RepresentativeCount =>
+                multipleRepresentatives?.Count ??
+                (singleRepresentative == null ? 0 : 1);
+
+            internal void AddMatch(IEdge edge)
+            {
+                MatchCount++;
+
+                if (singleRepresentative == null &&
+                    multipleRepresentatives == null)
+                {
+                    singleRepresentative = edge;
+                    return;
+                }
+
+                if (multipleRepresentatives == null)
+                {
+                    if (HasSameFromMeta(
+                        singleRepresentative,
+                        edge))
+                        return;
+
+                    multipleRepresentatives =
+                        new List<IEdge>
+                        {
+                            singleRepresentative,
+                            edge
+                        };
+                    singleRepresentative = null;
+                    return;
+                }
+
+                foreach (IEdge representative in
+                    multipleRepresentatives)
+                    if (HasSameFromMeta(
+                        representative,
+                        edge))
+                        return;
+
+                multipleRepresentatives.Add(edge);
+            }
+
+            internal void GetResult(
+                out IEdge result,
+                out IList<IEdge> results)
+            {
+                result = singleRepresentative;
+                results = multipleRepresentatives;
+            }
+
+            private static bool HasSameFromMeta(
+                IEdge left,
+                IEdge right)
+            {
+                return ReferenceEquals(
+                        left?.From,
+                        right?.From) &&
+                    ReferenceEquals(
+                        left?.Meta,
+                        right?.Meta);
+            }
+        }
 
         public NoInEdgeInOutVertexVertex(IStore store)
             : this(
@@ -86,14 +163,20 @@ namespace m0.Graph
         {
             bool changesParentStackFrame =
                 IsParentStackFrameMeta(metaVertex);
+            IEdge addedEdge = null;
             try
             {
-                return base.AddEdge(
+                addedEdge = base.AddEdge(
                     metaVertex,
                     destVertex);
+                return addedEdge;
             }
             finally
             {
+                if (addedEdge != null)
+                    UpdateDistinctFromMetaCacheForAdd(
+                        addedEdge);
+
                 if (changesParentStackFrame)
                     InvalidateParentStackFrameCache();
             }
@@ -109,6 +192,8 @@ namespace m0.Graph
             }
             finally
             {
+                distinctFromMetaQueryCache?.Clear();
+
                 if (changesParentStackFrame)
                     InvalidateParentStackFrameCache();
             }
@@ -123,6 +208,7 @@ namespace m0.Graph
             try
             {
                 OutEdgesRaw.Add(e);
+                UpdateDistinctFromMetaCacheForAdd(e);
             }
             finally
             {
@@ -143,6 +229,7 @@ namespace m0.Graph
             try
             {
                 OutEdgesRaw.Add(ne); //eat this!
+                UpdateDistinctFromMetaCacheForAdd(ne);
             }
             finally
             {
@@ -162,6 +249,7 @@ namespace m0.Graph
             }
             finally
             {
+                distinctFromMetaQueryCache?.Clear();
                 InvalidateParentStackFrameCache();
             }
 
@@ -239,6 +327,212 @@ namespace m0.Graph
                 out results);
         }
 
+        internal void QueryOutEdgesDistinctByFromMeta(
+            object meta,
+            out IEdge result,
+            out IList<IEdge> results,
+            out long collapsedEdgeCount)
+        {
+            result = null;
+            results = null;
+            collapsedEdgeCount = 0;
+            NoInEdgeInOutVertexVertex current = this;
+            HashSet<IVertex> visitedFrames = null;
+            int traversedFrameCount = 0;
+
+            while (true)
+            {
+                current.QueryLocalOutEdgesDistinctByFromMeta(
+                    meta,
+                    out result,
+                    out results,
+                    out collapsedEdgeCount);
+
+                if (result != null ||
+                    results != null)
+                    return;
+
+                IVertex parentStackFrame =
+                    current.GetParentStackFrame();
+                if (parentStackFrame == null)
+                    return;
+
+                if (!(parentStackFrame is
+                    NoInEdgeInOutVertexVertex parentStack))
+                {
+                    parentStackFrame.QueryOutEdges(
+                        meta,
+                        null,
+                        out IEdge parentResult,
+                        out IList<IEdge> parentResults);
+                    CollapseQueryResultByFromMeta(
+                        parentResult,
+                        parentResults,
+                        out result,
+                        out results,
+                        out collapsedEdgeCount);
+                    return;
+                }
+
+                traversedFrameCount++;
+                if (traversedFrameCount >=
+                    ParentCycleTrackingThreshold)
+                {
+                    visitedFrames ??=
+                        new HashSet<IVertex>();
+                    if (!visitedFrames.Add(parentStack))
+                        return;
+                }
+
+                current = parentStack;
+            }
+        }
+
+        private void QueryLocalOutEdgesDistinctByFromMeta(
+            object meta,
+            out IEdge result,
+            out IList<IEdge> results,
+            out long collapsedEdgeCount)
+        {
+            string queryKey =
+                meta as string ??
+                meta?.ToString() ??
+                "";
+            long dependencyEpoch =
+                InheritanceDependencyEpoch;
+            DistinctFromMetaCacheEntry entry = null;
+            bool hasValidEntry =
+                distinctFromMetaQueryCache != null &&
+                distinctFromMetaQueryCache.TryGetValue(
+                    queryKey,
+                    out entry) &&
+                IsQueryMetaOutIndexCurrent &&
+                entry.DependencyEpoch ==
+                    dependencyEpoch;
+
+            if (!hasValidEntry)
+            {
+                base.QueryOutEdges(
+                    meta,
+                    null,
+                    out IEdge matchingEdge,
+                    out IList<IEdge> matchingEdges);
+
+                if (matchingEdge == null &&
+                    matchingEdges == null)
+                {
+                    distinctFromMetaQueryCache?.Remove(
+                        queryKey);
+                    result = null;
+                    results = null;
+                    collapsedEdgeCount = 0;
+                    return;
+                }
+
+                entry = new DistinctFromMetaCacheEntry
+                {
+                    DependencyEpoch =
+                        InheritanceDependencyEpoch
+                };
+
+                if (matchingEdge != null)
+                    entry.AddMatch(matchingEdge);
+
+                if (matchingEdges != null)
+                    foreach (IEdge edge in matchingEdges)
+                        entry.AddMatch(edge);
+
+                distinctFromMetaQueryCache ??=
+                    new Dictionary<string,
+                        DistinctFromMetaCacheEntry>(
+                            StringComparer.Ordinal);
+                distinctFromMetaQueryCache[queryKey] =
+                    entry;
+            }
+
+            entry.GetResult(
+                out result,
+                out results);
+            collapsedEdgeCount =
+                entry.MatchCount -
+                entry.RepresentativeCount;
+        }
+
+        private static void CollapseQueryResultByFromMeta(
+            IEdge matchingEdge,
+            IList<IEdge> matchingEdges,
+            out IEdge result,
+            out IList<IEdge> results,
+            out long collapsedEdgeCount)
+        {
+            var entry =
+                new DistinctFromMetaCacheEntry();
+
+            if (matchingEdge != null)
+                entry.AddMatch(matchingEdge);
+
+            if (matchingEdges != null)
+                foreach (IEdge edge in matchingEdges)
+                    entry.AddMatch(edge);
+
+            entry.GetResult(
+                out result,
+                out results);
+            collapsedEdgeCount =
+                entry.MatchCount -
+                entry.RepresentativeCount;
+        }
+
+        private void UpdateDistinctFromMetaCacheForAdd(
+            IEdge edge)
+        {
+            if (distinctFromMetaQueryCache == null ||
+                edge?.Meta == null)
+                return;
+
+            foreach (KeyValuePair<string,
+                DistinctFromMetaCacheEntry> pair in
+                distinctFromMetaQueryCache)
+            {
+                if (!DoesMetaMatchQuery(
+                    edge.Meta,
+                    pair.Key))
+                    continue;
+
+                pair.Value.AddMatch(edge);
+                pair.Value.DependencyEpoch =
+                    InheritanceDependencyEpoch;
+            }
+        }
+
+        private static bool DoesMetaMatchQuery(
+            IVertex meta,
+            string queryKey)
+        {
+            if (StringComparer.Ordinal.Equals(
+                meta?.Value?.ToString() ?? "",
+                queryKey))
+                return true;
+
+            if (meta == null)
+                return false;
+
+            if (GraphUtil.GetQueryOutCount(
+                meta,
+                "$Inherits",
+                null) == 0)
+                return false;
+
+            foreach (IVertex parent in
+                VertexHelper.GetInheritParents(meta))
+                if (StringComparer.Ordinal.Equals(
+                    parent?.Value?.ToString() ?? "",
+                    queryKey))
+                    return true;
+
+            return false;
+        }
+
         internal IVertex GetParentStackFrame()
         {
             object cachedParent =
@@ -303,6 +597,7 @@ namespace m0.Graph
             if (edgeDictionaries != null)
                 edgeDictionaries.Out.Clear();
             ClearDictionaries();
+            distinctFromMetaQueryCache?.Clear();
             cachedParentStackFrame = null;
             Value = "";
             isInTemporaryPool = true;

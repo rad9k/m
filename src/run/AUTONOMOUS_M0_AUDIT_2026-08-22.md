@@ -555,6 +555,44 @@ Verification:
 - full Release/x64 solution build: 0 errors;
 - no new IDE diagnostics.
 
+## Follow-up — Code7 collapsed assignment query cache
+
+`Code7` repeatedly executes `+=` against variables whose stack buckets contain every previously appended value. QueryOperator must return one representative per exact `(From, Meta)` assignment target, but the old collapse path enumerated the entire growing bucket on every iteration. Diagnostics counted 9,574,510 discarded duplicate edges.
+
+The specialized ZeroCode stack now maintains a lazy collapsed-meta cache:
+
+- cache entries retain the first exact edge for every reference-identical `(From, Meta)` group and preserve insertion order;
+- successful local adds incrementally update warm entries;
+- removals, batches and pool resets invalidate entries conservatively;
+- meta-inheritance generations force rebuilds when query aliases may have changed;
+- misses in temporary child frames are not cached, avoiding per-frame dictionaries;
+- ordinary `EasyVertex`, value queries, dynamic queries and non-collapse paths are unchanged.
+
+QueryOperator uses this path only when collapse mode requests a meta-only query from `NoInEdgeInOutVertexVertex`. Representatives are still passed through the existing final deduplication, preserving overlap semantics across expanded query values.
+
+Tests cover:
+
+- duplicate values under one `(From, Meta)`;
+- multiple sources and two different meta vertices with the same value;
+- first-representative order;
+- incremental duplicate and new-group additions;
+- representative removal and rebuild.
+
+Measured effects:
+
+- counter-enabled `Code7` diagnostic: 600.979 ms -> 93.962 ms;
+- Query self time: 548.634 ms -> 11.038 ms;
+- BenchmarkDotNet measured allocation: 3.81 MB -> 3.63 MB;
+- 10-iteration x64 run before the cache: 94.951 ms; first 10-iteration cache run: 82.493 ms (timing variance is high, so diagnostics provide the stronger causal evidence);
+- `Code7` retained 4,669 result edges and zero execution errors.
+
+Verification:
+
+- isolated contracts: 123/123;
+- integration contracts: 83/83;
+- full Release/x64 solution build: 0 errors;
+- no new IDE diagnostics.
+
 The structural layout-pass reduction is from per-node global updates to one global update per paint. Local subtree measure/arrange remains per wrapper because geometry requires each wrapper's desired size.
 
 ## Follow-up — suppress unnecessary List and UX rebuilds

@@ -714,6 +714,116 @@ public sealed class StackContractTests
         Assert.Same(stack, converted);
     }
 
+    [Fact]
+    public void DistinctMetaQueryPreservesFirstRepresentativesAndTracksAdds()
+    {
+        var fixture = new GraphFixture();
+        var firstSource = fixture.CreateVertex(
+            "FirstSource");
+        var secondSource = fixture.CreateVertex(
+            "SecondSource");
+        var thirdSource = fixture.CreateVertex(
+            "ThirdSource");
+        var firstMeta = fixture.CreateVertex(
+            "Variable");
+        var secondMeta = fixture.CreateVertex(
+            "Variable");
+        var first = firstSource.AddEdge(
+            firstMeta,
+            fixture.CreateVertex("First"));
+        var duplicate = firstSource.AddEdge(
+            firstMeta,
+            fixture.CreateVertex("Duplicate"));
+        var secondGroup = secondSource.AddEdge(
+            firstMeta,
+            fixture.CreateVertex("SecondGroup"));
+        var thirdGroup = firstSource.AddEdge(
+            secondMeta,
+            fixture.CreateVertex("ThirdGroup"));
+        var stack =
+            new NoInEdgeInOutVertexVertex(
+                fixture.Store);
+        stack.AddRangeOriginalEdges(
+            new[]
+            {
+                first,
+                duplicate,
+                secondGroup,
+                thirdGroup
+            });
+
+        Assert.Equal(
+            new[]
+            {
+                first,
+                secondGroup,
+                thirdGroup
+            },
+            QueryDistinct(
+                stack,
+                out long initialCollapsed));
+        Assert.Equal(1, initialCollapsed);
+
+        var anotherDuplicate = firstSource.AddEdge(
+            firstMeta,
+            fixture.CreateVertex("AnotherDuplicate"));
+        stack
+            .AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(
+                anotherDuplicate);
+        var fourthGroup = thirdSource.AddEdge(
+            firstMeta,
+            fixture.CreateVertex("FourthGroup"));
+        stack
+            .AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(
+                fourthGroup);
+
+        Assert.Equal(
+            new[]
+            {
+                first,
+                secondGroup,
+                thirdGroup,
+                fourthGroup
+            },
+            QueryDistinct(
+                stack,
+                out long addedCollapsed));
+        Assert.Equal(2, addedCollapsed);
+
+        stack.DeleteEdge(first);
+
+        Assert.Equal(
+            new[]
+            {
+                duplicate,
+                secondGroup,
+                thirdGroup,
+                fourthGroup
+            },
+            QueryDistinct(
+                stack,
+                out long removedCollapsed));
+        Assert.Equal(1, removedCollapsed);
+    }
+
+    private static IReadOnlyList<IEdge> QueryDistinct(
+        NoInEdgeInOutVertexVertex stack,
+        out long collapsedEdgeCount)
+    {
+        stack.QueryOutEdgesDistinctByFromMeta(
+            "Variable",
+            out IEdge result,
+            out IList<IEdge> results,
+            out collapsedEdgeCount);
+
+        if (results != null)
+            return results.ToArray();
+
+        return result == null
+            ? Array.Empty<IEdge>()
+            : new[] { result };
+    }
+
     private static IEnumerable<IEdge>
         YieldEdgeThenThrow(IEdge edge)
     {
