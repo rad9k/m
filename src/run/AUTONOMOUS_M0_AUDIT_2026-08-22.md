@@ -534,3 +534,26 @@ Verification:
 
 ARM64 performance remains unmeasured on the current x64 machine; semantic coverage is architecture-independent, but an ARM64 performance run remains recommended.
 
+## Follow-up — GraphVisualiser layout batching
+
+`GraphVisualiser.Add` previously called `UpdateLayout()` after every wrapper was appended, and the root wrapper was updated a second time. Painting `N` vertices could therefore request approximately `N + 1` synchronous global layout updates while the canvas was still being constructed.
+
+The new path:
+
+- locally measures and arranges each new wrapper so `ActualWidth` and `ActualHeight` are immediately available for centering and line geometry;
+- removes the duplicate root `UpdateLayout`;
+- performs one final canvas `UpdateLayout` after all circles, wrappers and lines are constructed.
+
+This preserves immediate node dimensions without repeatedly laying out all previously added siblings.
+
+Test-first STA coverage verifies that an added wrapper has non-zero dimensions and is centered from those exact dimensions before line creation. The isolated old implementation could not satisfy this contract without a connected global layout root; local measure/arrange now does.
+
+Verification:
+
+- GraphVisualiser focused contracts: 2/2;
+- full desktop suite: 6/6;
+- full Release/x64 solution build: 0 errors;
+- no new IDE diagnostics.
+
+The structural layout-pass reduction is from per-node global updates to one global update per paint. Local subtree measure/arrange remains per wrapper because geometry requires each wrapper's desired size.
+

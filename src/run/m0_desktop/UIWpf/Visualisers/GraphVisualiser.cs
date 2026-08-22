@@ -465,7 +465,14 @@ namespace m0.UIWpf.Visualisers
             SimpleVisualiserWrapper e = new SimpleVisualiserWrapper(_e, baseVertex, this);
             Children.Add(e);
 
-            e.UpdateLayout();
+            e.Measure(
+                new System.Windows.Size(
+                    double.PositiveInfinity,
+                    double.PositiveInfinity));
+            e.Arrange(
+                new Rect(
+                    new Point(0, 0),
+                    e.DesiredSize));
 
             Panel.SetZIndex(e, 1);
             Canvas.SetLeft(e, x-e.ActualWidth/2);
@@ -701,6 +708,7 @@ namespace m0.UIWpf.Visualisers
                 Height = Width;                
                              
                 AddCircle(0,null);
+                UpdateLayout();
 
                 SelectWrappersForSelectedVertices();
 
@@ -791,7 +799,7 @@ namespace m0.UIWpf.Visualisers
                 double x = this.Width / 2;
                 double y = this.Height / 2;
 
-                Add(x, y, (FrameworkElement)GetVisualiser(b),b).UpdateLayout();                
+                Add(x, y, (FrameworkElement)GetVisualiser(b),b);
 
                 CircleVertices.Add(b);
 

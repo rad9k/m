@@ -1,7 +1,10 @@
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Controls;
 using m0;
 using m0.Foundation;
+using m0.Graph;
 using m0.UIWpf.Visualisers;
 
 namespace m0_desktop_tests;
@@ -62,6 +65,55 @@ public sealed class GraphVisualiserContractTests
             });
     }
 
+    [Fact]
+    public void AddedWrapperIsSizedAndCenteredBeforeLinesUseIt()
+    {
+        StaTestHost.Run(
+            () =>
+            {
+                const double centerX = 200;
+                const double centerY = 150;
+                IVertex vertex =
+                    CreateRetainedVertex("LayoutVertex");
+                var visualiser =
+                    TestableGraphVisualiser.CreateForLayout(
+                        new EasyEdge(
+                            null,
+                            null,
+                            vertex));
+                var child = new Border
+                {
+                    Width = 80,
+                    Height = 40
+                };
+                SimpleVisualiserWrapper wrapper =
+                    visualiser.AddWrapper(
+                        centerX,
+                        centerY,
+                        child,
+                        vertex);
+
+                try
+                {
+                    Assert.True(wrapper.ActualWidth > 0);
+                    Assert.True(wrapper.ActualHeight > 0);
+                    Assert.Equal(
+                        centerX - wrapper.ActualWidth / 2,
+                        Canvas.GetLeft(wrapper),
+                        6);
+                    Assert.Equal(
+                        centerY - wrapper.ActualHeight / 2,
+                        Canvas.GetTop(wrapper),
+                        6);
+                }
+                finally
+                {
+                    wrapper.Dispose();
+                    visualiser.Children.Clear();
+                }
+            });
+    }
+
     private static IVertex CreateRetainedVertex(
         string value)
     {
@@ -78,11 +130,48 @@ public sealed class GraphVisualiserContractTests
         {
         }
 
+        private TestableGraphVisualiser(
+            IEdge edge)
+            : base(edge)
+        {
+        }
+
         internal static TestableGraphVisualiser Create()
         {
             return (TestableGraphVisualiser)
                 RuntimeHelpers.GetUninitializedObject(
                     typeof(TestableGraphVisualiser));
+        }
+
+        internal static TestableGraphVisualiser
+            CreateForLayout(IEdge edge)
+        {
+            var visualiser =
+                new TestableGraphVisualiser(edge);
+            FieldInfo displayedVerticesField =
+                typeof(GraphVisualiser).GetField(
+                    "DisplayedVerticesUIElements",
+                    BindingFlags.Instance |
+                    BindingFlags.NonPublic)!;
+            displayedVerticesField.SetValue(
+                visualiser,
+                new Dictionary<
+                    IVertex,
+                    SimpleVisualiserWrapper>());
+            return visualiser;
+        }
+
+        internal SimpleVisualiserWrapper AddWrapper(
+            double x,
+            double y,
+            FrameworkElement child,
+            IVertex vertex)
+        {
+            return Add(
+                x,
+                y,
+                child,
+                vertex);
         }
 
         internal KeyValuePair<
