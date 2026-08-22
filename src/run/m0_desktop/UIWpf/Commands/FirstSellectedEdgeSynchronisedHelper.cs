@@ -74,6 +74,7 @@ namespace m0.UIWpf.Commands
         protected INoInEdgeInOutVertexVertex detailVisualiser_Dispose(IExecution exe)
         {
             ExecutionFlowHelper.RemoveGraphChangeListener(selectedEdgesVertex_Listener);
+            ExecutionFlowHelper.RemoveGraphChangeListener(detailVisuliserVertex_Listener);
 
             return exe.Stack;
         }

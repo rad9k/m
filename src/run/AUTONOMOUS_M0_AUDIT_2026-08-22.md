@@ -379,3 +379,22 @@ High-value candidates intentionally left unchanged because their required oracle
 
 These remain in the final candidate ledger with file/member references and required tests. They were not modified merely because static inspection made them look expensive.
 
+## Accepted change group 5 — synchronized visualizer listener lifecycle
+
+Both `FirstSelectedEdgeSynchronisedHelper` and `SellectedSelectedSynchronisedHelper` registered:
+
+- a listener on the master's `SelectedEdges` vertex;
+- a disposal listener on the detail visualizer's host.
+
+When the detail visualizer was removed, each callback deleted only the selected-edge listener. The disposal listener remained attached to the long-lived host, retaining the helper and allowing stale callbacks to accumulate across repeated open/close cycles.
+
+Test-first STA coverage creates both helper variants, verifies both listeners exist, removes the detail edge in a transaction, and requires both `$GraphChangeTrigger` edges to disappear. The baseline left one host trigger for both variants.
+
+Each disposal callback now removes both listener edges. Verification:
+
+- focused lifecycle contracts: 2/2 passed;
+- full desktop suite: **5 passed, 0 failed, 0 skipped**;
+- no new IDE diagnostics.
+
+This is a long-session memory and responsiveness correction: disposed detail panes no longer leave event infrastructure or callbacks behind.
+
