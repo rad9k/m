@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using m0;
 using m0.Foundation;
 using m0.Graph;
@@ -25,6 +27,12 @@ public sealed class Graph2TextProcessingWorkloadTests
                 parsedRootEdge,
                 CodeRepresentationEnum.VertexAndManyLines);
         Assert.False(string.IsNullOrWhiteSpace(firstGeneratedText));
+        Assert.Equal(
+            "DCCBA90691D50C4D800F47F5B75C24681259082C0035EFA83D915EAA9C70B5BF",
+            Convert.ToHexString(
+                SHA256.HashData(
+                    Encoding.UTF8.GetBytes(
+                        firstGeneratedText))));
 
         IEdge reparsedRootEdge = ParseSource(
             firstGeneratedText,

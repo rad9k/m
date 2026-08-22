@@ -658,3 +658,37 @@ Verification:
 
 This is primarily a parser-correctness fix. It also removes duplicate dictionary probing, but no broad performance percentage is claimed without a dedicated Text2Graph parse benchmark.
 
+## Follow-up — Graph2Text link traversal
+
+Graph2Text generation repeatedly searched every import list while walking incoming edges, copied each incoming-edge collection, allocated a replacement `EdgeBase` per traversed path edge, and allocated a temporary one-element list when resolving indexed links.
+
+The optimized traversal:
+
+- builds a lazy reverse `imported vertex -> ordered import metas` dictionary once per generation input;
+- preserves original import and meta insertion order, including multiple import metas for one vertex;
+- iterates stable `InEdgesRaw` directly and keeps exact original edge references in the temporary path;
+- reuses one link-string processor for the generation operation;
+- handles singleton query results without allocating a temporary list;
+- uses `TryGetValue` and `List.Count` on repeated dictionary/list paths.
+
+### Golden output gate
+
+Before changing production code, the exact generated workload output was hashed with SHA-256:
+
+`DCCBA90691D50C4D800F47F5B75C24681259082C0035EFA83D915EAA9C70B5BF`
+
+The integration test now asserts this hash before reparsing and also retains the existing generate -> parse -> generate equality assertion. This is the “golden output” gate: the optimized generator must emit byte-for-byte identical text, not merely output that can parse successfully.
+
+BenchmarkDotNet (`5` iterations, `3` warmups):
+
+- generation mean: 71.586 ms -> 56.815 ms (**20.6% faster**);
+- allocation: 9.31 MB -> 9.23 MB;
+- output hash remained exact.
+
+Verification:
+
+- golden round-trip contract: passed;
+- full integration suite: 83/83;
+- full Release/x64 solution build: 0 errors;
+- no new IDE diagnostics.
+

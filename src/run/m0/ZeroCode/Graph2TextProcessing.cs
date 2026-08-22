@@ -56,8 +56,10 @@ namespace m0.ZeroCode
             }
 
 
-            if (zcg2sp.VerticesDictionary.ContainsKey(v))
-                return zcg2sp.VerticesDictionary[v].LinkString;
+            if (zcg2sp.VerticesDictionary.TryGetValue(
+                v,
+                out VertexData cachedVertex))
+                return cachedVertex.LinkString;
 
             linkBeenList = new HashSet<IVertex>();
             shortestPathToVertex = new Dictionary<IVertex, int>();
@@ -77,8 +79,11 @@ namespace m0.ZeroCode
                 zcg2sp.VerticesDictionary.Add(v, new VertexData(shortestLink, shortestLinkLength));
             }
 
-            if (shortestLinkLength == 99999 && zcg2sp.SubGraphVerticesDictionary.ContainsKey(v))
-                return zcg2sp.SubGraphVerticesDictionary[v].LinkString;
+            if (shortestLinkLength == 99999 &&
+                zcg2sp.SubGraphVerticesDictionary.TryGetValue(
+                    v,
+                    out VertexData subGraphVertex))
+                return subGraphVertex.LinkString;
 
             return shortestLink;
         }
@@ -171,23 +176,21 @@ namespace m0.ZeroCode
                         e.From.QueryOutEdges(e.Meta.Value, e.To.Value, out result, out results);
 
 
-                        IList<IEdge> listToUse;
-
                         if (results != null)
-                            listToUse = results;
-                        else
                         {
-                            listToUse = new List<IEdge>();
-                            if (result != null)
-                                listToUse.Add(result);
+                            while (pos < results.Count)
+                            {
+                                IVertex target =
+                                    results[pos].To;
+                                pos++;
+                                if (target == e.To)
+                                    break;
+                            }
                         }
-
-                        IVertex tv;
-                        do
+                        else if (result != null)
                         {
-                            tv = listToUse.ElementAt(pos).To;
-                            pos++;
-                        } while (tv != e.To);
+                            pos = 1;
+                        }
 
                         s.Append(possibleMetaSeparator + toAppend.ToString() + dict.SetIndexPrefix + "\"" + pos + "\"" + dict.SetIndexPostfix);
                     }
@@ -201,12 +204,15 @@ namespace m0.ZeroCode
 
         void GetLinkString_Recurrect(IVertex v, List<IEdge> edgesList, ref bool isMetaDirect)
         {
-            int currentPathLength = edgesList.Count();
+            int currentPathLength = edgesList.Count;
 
             if (currentPathLength >= shortestLinkLength)
                 return;
 
-            if (shortestPathToVertex.ContainsKey(v) && shortestPathToVertex[v] < currentPathLength)
+            if (shortestPathToVertex.TryGetValue(
+                    v,
+                    out int previousPathLength) &&
+                previousPathLength < currentPathLength)
                 return;
 
             shortestPathToVertex[v] = currentPathLength;
@@ -216,39 +222,40 @@ namespace m0.ZeroCode
                 isMetaDirect = false;
 
                 string s = "";
-                if (edgesList.Count() > 0)
+                if (edgesList.Count > 0)
                     s = GetStringFromEdgesList(dict, zcg2sp, edgesList, false, false);
 
-                checkIfNewBest(edgesList.Count(), false, s);
+                checkIfNewBest(edgesList.Count, false, s);
 
                 return;
             }
 
-            foreach (IVertex ikv in zcg2sp.Imports.Keys)
-                foreach (IVertex iv in zcg2sp.Imports[ikv])
-                    if (v == iv)
+            if (zcg2sp.TryGetImportMetas(
+                v,
+                out IList<IVertex> importMetas))
+                foreach (IVertex ikv in importMetas)
                         if (GeneralUtil.CompareStrings(ikv.Value, "$ImportDirect"))
                         {
-                            if (edgesList.Count() > 0)
+                            if (edgesList.Count > 0)
                             {
                                 isMetaDirect = false;
 
                                 string s = GetStringFromEdgesList(dict, zcg2sp, edgesList, false, true);
 
-                                checkIfNewBest(edgesList.Count(), false, s);
+                                checkIfNewBest(edgesList.Count, false, s);
 
                                 return;
                             }
                         }
                         else if (GeneralUtil.CompareStrings(ikv.Value, "$ImportDirectMeta"))
                         {
-                            if (edgesList.Count() > 0)
+                            if (edgesList.Count > 0)
                             {
                                 isMetaDirect = true;
 
                                 string s = GetStringFromEdgesList(dict, zcg2sp, edgesList, true, true);
 
-                                checkIfNewBest(edgesList.Count(), true, s);
+                                checkIfNewBest(edgesList.Count, true, s);
 
                                 return;
                             }
@@ -264,7 +271,7 @@ namespace m0.ZeroCode
                             IEdge ee = new EdgeBase(null, ikv, null);
                             edgesList.Add(ee);
                             string s = GetStringFromEdgesList(dict, zcg2sp, edgesList, isMeta, true);
-                            int candidateLength = edgesList.Count();
+                            int candidateLength = edgesList.Count;
                             edgesList.RemoveAt(edgesList.Count - 1);
 
                             isMetaDirect = isMeta;
@@ -277,9 +284,7 @@ namespace m0.ZeroCode
 
             linkBeenList.Add(v);
 
-            List<IEdge> inEdges = v.InEdgesRaw.ToList(); // XXX toList added
-
-            foreach (IEdge e in inEdges)
+            foreach (IEdge e in v.InEdgesRaw)
             {
                 if (VertexOperations.IsLink_OldVersion(e))
                     continue;
@@ -288,9 +293,7 @@ namespace m0.ZeroCode
 
                 if (!alreadyVisited)
                 {
-                    IEdge ee = new EdgeBase(e.From, e.Meta, e.To);
-
-                    edgesList.Add(ee);
+                    edgesList.Add(e);
 
                     bool _isMetaDirect = false;
 
@@ -497,6 +500,10 @@ namespace m0.ZeroCode
         public StringBuilder Source;
 
         public IDictionary<IVertex, IList<IVertex>> Imports;
+        private IDictionary<IVertex, IList<IVertex>>
+            reverseImportSource;
+        private Dictionary<IVertex, IList<IVertex>>
+            importMetasByVertex;
 
         public IDictionary<IVertex, VertexData> VerticesDictionary;
         public IDictionary<IVertex, VertexData> SubGraphVerticesDictionary;
@@ -512,6 +519,9 @@ namespace m0.ZeroCode
 
         FormalTextLanguageDictinaries dict;
         bool shouldUseCurrentPathForFirstVertexAppend;
+        private readonly getLinkStringProcessing
+            linkStringProcessor =
+                new getLinkStringProcessing();
 
         public Graph2TextProcessing(IVertex formalTextLanguage)
         {
@@ -521,6 +531,55 @@ namespace m0.ZeroCode
             emptyKeywordVertexList = ZeroCodeUtil.GetFilteredKeywordList(FormalTextLanguage, "$$EmptyKeyword");
 
             dict = DictionariesForFormalTextLanguageFactory.Get(formalTextLanguage);
+        }
+
+        internal bool TryGetImportMetas(
+            IVertex vertex,
+            out IList<IVertex> importMetas)
+        {
+            importMetas = null;
+
+            if (!ReferenceEquals(
+                    reverseImportSource,
+                    Imports))
+            {
+                BuildReverseImportDictionary();
+            }
+
+            return importMetasByVertex != null &&
+                importMetasByVertex.TryGetValue(
+                    vertex,
+                    out importMetas);
+        }
+
+        private void BuildReverseImportDictionary()
+        {
+            reverseImportSource = Imports;
+            importMetasByVertex =
+                new Dictionary<IVertex,
+                    IList<IVertex>>(
+                        ReferenceEqualityComparer.Instance);
+
+            if (Imports == null)
+                return;
+
+            foreach (KeyValuePair<IVertex,
+                IList<IVertex>> import in Imports)
+                foreach (IVertex importedVertex in
+                    import.Value)
+                {
+                    if (!importMetasByVertex.TryGetValue(
+                        importedVertex,
+                        out IList<IVertex> metas))
+                    {
+                        metas = new List<IVertex>();
+                        importMetasByVertex.Add(
+                            importedVertex,
+                            metas);
+                    }
+
+                    metas.Add(import.Key);
+                }
         }
 
         string Tab = "\t";
@@ -582,6 +641,8 @@ namespace m0.ZeroCode
 
         private void ImportImports_internal(IEdge e)
         {
+            reverseImportSource = null;
+
             if (Imports.ContainsKey(e.Meta))
             {
                 IList<IVertex> list = Imports[e.Meta];
@@ -671,8 +732,11 @@ namespace m0.ZeroCode
                 toAppend = "$CodeRoot";
             else
             {
-                getLinkStringProcessing glsp = new getLinkStringProcessing();
-                toAppend = glsp.Process(dict, this, v, parent);
+                toAppend = linkStringProcessor.Process(
+                    dict,
+                    this,
+                    v,
+                    parent);
             }
 
             toAppend = TryConvertToCurrentBaseRelativeLink(toAppend, v);
