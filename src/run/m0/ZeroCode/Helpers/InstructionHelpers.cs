@@ -472,7 +472,9 @@ namespace m0.ZeroCode.Helpers
                 switch (numericType)
                 {
                     case NumericTypeEnum.Decimal:
-                        if (Comparer<double>.Default.Compare(0, (double)val) < 0)
+                        if (Comparer<decimal>.Default.Compare(
+                            (decimal)val,
+                            0) > 0)
                             return BooleanEnum.True;
                         else
                             return BooleanEnum.False;

@@ -46,7 +46,8 @@ namespace m0.Store.Text
                         formalTextLanguageProcessing_Query = readStream.ReadLine();
                         body = readStream.ReadToEnd();
 
-                        if (formalTextLanguageProcessing_Query == null || formalTextLanguageProcessing_Query != "")
+                        if (string.IsNullOrEmpty(
+                            formalTextLanguageProcessing_Query))
                             formalTextLanguageProcessing_Query = defaultFormalTextLanguageProcessing_Query;
 
                         formalTextLanguageProcessing_Vertex = MinusZero.Instance.Root.Get(false, formalTextLanguageProcessing_Query);

@@ -107,19 +107,8 @@ namespace m0.Network.Server {
             // Get URL and HTTP action
             string url = context.Request.Path.ToString();
             var method = context.Request.Method;
-            m0.Lib.Net.HttpActionEnum action = m0.Lib.Net.HttpActionEnum.GET;
-            switch (method.ToUpperInvariant())
-            {
-                case "GET": action = HttpActionEnum.GET; break;
-                case "POST": action = HttpActionEnum.POST; break;
-                case "PUT": action = HttpActionEnum.PUT; break;
-                case "DELETE": action = HttpActionEnum.DELETE; break;
-                case "PATCH": action = HttpActionEnum.PATCH; break;
-                case "HEAD": action = HttpActionEnum.HEAD; break;
-                case "OPTIONS": action = HttpActionEnum.HEAD; break;
-                case "TRACE": action = HttpActionEnum.TRACE; break;
-                default: action = HttpActionEnum.GET; break;
-            }
+            HttpActionEnum action =
+                GetHttpAction(method);
 
             // Log the HTTP request
             LogHttpRequest(context, method, url);
@@ -137,6 +126,23 @@ namespace m0.Network.Server {
                 return Results.Content(response, "text/html; charset=utf-8");            
             else            
                 return Results.Text(response);                        
+        }
+
+        internal static HttpActionEnum GetHttpAction(
+            string method)
+        {
+            switch (method.ToUpperInvariant())
+            {
+                case "GET": return HttpActionEnum.GET;
+                case "POST": return HttpActionEnum.POST;
+                case "PUT": return HttpActionEnum.PUT;
+                case "DELETE": return HttpActionEnum.DELETE;
+                case "PATCH": return HttpActionEnum.PATCH;
+                case "HEAD": return HttpActionEnum.HEAD;
+                case "OPTIONS": return HttpActionEnum.OPTIONS;
+                case "TRACE": return HttpActionEnum.TRACE;
+                default: return HttpActionEnum.GET;
+            }
         }
 
         private void LogHttpRequest(HttpContext context, string method, string url)

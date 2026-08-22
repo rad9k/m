@@ -295,3 +295,87 @@ Direct same-harness x86 diagnostics:
 
 BenchmarkDotNet's normal out-of-process x86 child could not be launched by the installed x64 `dotnet` host, so no fabricated BenchmarkDotNet result is reported. The direct before/after runner used the same x86 process, workload, diagnostics, SDK, and machine.
 
+## Rejected experiment — bypass QueryOperator for simple assignment targets
+
+### Hypothesis
+
+`Code8` executes a simple `A = A + 1` assignment 100,001 times. A trial fast path queried a single left-hand stack edge directly instead of constructing and executing the normal `QueryOperator` result stack.
+
+### Verification
+
+- Isolated graph contracts: 117/117.
+- Integration contracts: 82/82.
+- Desktop contracts: 2/2.
+- x64 BenchmarkDotNet indicated a possible improvement for `Code8` from the stable 82.549 ms baseline to 70.445 ms, and diagnostics reduced executed Query instructions from 100,002 to 91.
+
+The cross-architecture acceptance gate rejected the change:
+
+- Optimized Release/x86 `Code8` diagnostic baseline: 984.611 ms.
+- Trial fast path: 5,619.574 ms.
+- This is a 5.71x x86 regression despite correct output.
+
+The complete trial was manually reverted before any commit. No production code from this experiment remains. The result demonstrates why optimizations are checked across supported configurations rather than accepted from one x64 workload.
+
+## Accepted change group 4 — parser, numeric, HTTP, and graph-hover contracts
+
+### Test-first defects
+
+Three independent production bugs received focused red tests before correction:
+
+1. Decimal boolean conversion:
+   - `GetBolleanValue` selected `NumericTypeEnum.Decimal` and then cast the boxed decimal to `double`.
+   - Positive, zero, and negative decimal tests all failed with `InvalidCastException`.
+2. TextStore parser selection:
+   - A valid non-empty parser query from the first `.m0t` line was always replaced by the default query.
+   - The contract expected the alias query to remain; the baseline loaded the default instead.
+3. HTTP OPTIONS dispatch:
+   - Upper- and lower-case OPTIONS contracts expected `HttpActionEnum.OPTIONS`.
+   - The baseline returned `HEAD`.
+
+Corrections:
+
+- Decimal truth conversion now compares the original decimal value, matching `IsTrue_Vertex`.
+- TextStore defaults its parser query only when the stored line is null or empty.
+- HTTP method mapping is isolated in a tested helper and preserves OPTIONS.
+
+### Graph hover performance
+
+`GraphVisualiser.GetVertexWrapperByEventSource` previously performed two full `DisplayedVerticesUIElements.FirstOrDefault` scans at every visual-tree level for every mouse move. With `V` displayed vertices and hierarchy depth `D`, hover lookup cost was `O(V * D)`.
+
+`SimpleVisualiserWrapper` now verifies its owning `GraphVisualiser` directly. Lookup walks only the visual/logical parent hierarchy and returns the owning wrapper in `O(D)`, without scanning the displayed-vertex dictionary. The ownership check deliberately skips wrappers belonging to nested graph visualizers, preserving the old outer-wrapper behavior.
+
+A new STA contract builds nested inner/outer wrappers and confirms that an event originating in the inner child resolves to the correct wrapper owned by the outer visualizer. The old scan-based implementation failed the isolated oracle; the new hierarchy lookup passes.
+
+### Verification
+
+- Isolated graph/contracts: **122 passed, 0 failed, 0 skipped**.
+- Bootstrapped integration: **83 passed, 0 failed, 0 skipped**.
+- Desktop STA contracts: **3 passed, 0 failed, 0 skipped**.
+- Full Release/x64 solution build: 0 errors.
+- IDE diagnostics: no new linter errors.
+
+## Production audit coverage and deferred findings
+
+The compiled production manifests and subsystem audits covered:
+
+- m0 graph/query/execution infrastructure;
+- ZeroCode, ZeroUML, parser and generator;
+- JSON, Binary, Text, memory and filesystem stores;
+- bootstrap, network/REST and standard views;
+- all m0_console code and shared startup paths;
+- all m0_desktop C# and XAML, including visualizers, UX, controls, commands and startup.
+
+High-value candidates intentionally left unchanged because their required oracle or redesign exceeds a safe autonomous patch:
+
+- lazy loading of nested `.m0j/.m0t/.m0x` stores during filesystem refresh;
+- global detach/attach of all stores during commit;
+- incremental `UXVisualiser.Paint` and `FormVisualiser` rebuilds;
+- separating ListVisualiser row refresh from column/template recreation;
+- batching GraphVisualiser layout instead of calling `UpdateLayout` per node;
+- wiring the existing redirect-assignment cache into `=`/`+=`;
+- Text2Graph keyword memoization keyed only by a weak hash;
+- Graph2Text recursive link resolution and repeated dictionaries;
+- asynchronous icon-directory preload and console/bootstrap phase redesign.
+
+These remain in the final candidate ledger with file/member references and required tests. They were not modified merely because static inspection made them look expensive.
+

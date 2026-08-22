@@ -285,6 +285,14 @@ namespace m0.UIWpf.Visualisers
                     VertexChange);                           
         }
 
+        internal bool IsOwnedBy(
+            GraphVisualiser visualiser)
+        {
+            return ReferenceEquals(
+                ParentVisualiser,
+                visualiser);
+        }
+
         protected INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
             if (baseVertex.DisposedState == DisposeStateEnum.Live)
@@ -953,20 +961,16 @@ namespace m0.UIWpf.Visualisers
 
             while (current != null)
             {
-                if (current is SimpleVisualiserWrapper)
+                if (current is
+                        SimpleVisualiserWrapper wrapper &&
+                    wrapper.IsOwnedBy(this))
                 {
-                    KeyValuePair<IVertex, SimpleVisualiserWrapper> wrapperMatch =
-                        DisplayedVerticesUIElements.FirstOrDefault(x => x.Value == current);
-
-                    if (wrapperMatch.Value != null)
-                        return wrapperMatch;
+                    return new KeyValuePair<
+                        IVertex,
+                        SimpleVisualiserWrapper>(
+                            wrapper.baseVertex,
+                            wrapper);
                 }
-
-                KeyValuePair<IVertex, SimpleVisualiserWrapper> childMatch =
-                    DisplayedVerticesUIElements.FirstOrDefault(x => x.Value.Child == current);
-
-                if (childMatch.Value != null)
-                    return childMatch;
 
                 DependencyObject parent = null;
 
