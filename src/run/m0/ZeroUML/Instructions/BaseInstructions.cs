@@ -1703,6 +1703,61 @@ namespace m0.ZeroUML.Instructions
             return SimpleScalarNumberStatus.Number;
         }
 
+        private static bool TryGetSimpleSingleLeftQueryTarget(
+            ZeroCodeExecution exe,
+            IVertex inputStack,
+            IVertex leftExpression,
+            out IEdge targetEdge)
+        {
+            targetEdge = null;
+
+            if (!exe.MetaMode ||
+                leftExpression?.Value == null ||
+                !string.Equals(
+                    GetIs(leftExpression)
+                        ?.Value?.ToString(),
+                    "Query",
+                    StringComparison.Ordinal) ||
+                GetNextExpression(leftExpression) != null)
+            {
+                return false;
+            }
+
+            string queryValue =
+                leftExpression.Value.ToString();
+            if (queryValue.Length == 0 ||
+                queryValue == "\r" ||
+                (queryValue.Length > 2 &&
+                    queryValue[0] == '(' &&
+                    queryValue[
+                        queryValue.Length - 1] == ')'))
+            {
+                return false;
+            }
+
+            inputStack.QueryOutEdges(
+                queryValue,
+                null,
+                out IEdge matchingEdge,
+                out IList<IEdge> matchingEdges);
+
+            if (matchingEdge != null &&
+                matchingEdges == null)
+            {
+                targetEdge = matchingEdge;
+                return true;
+            }
+
+            if (matchingEdge == null &&
+                matchingEdges?.Count == 1)
+            {
+                targetEdge = matchingEdges[0];
+                return true;
+            }
+
+            return false;
+        }
+
         // =
         public static INoInEdgeInOutVertexVertex RedirectLeftEdgesToRightVertices(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
@@ -1730,32 +1785,45 @@ namespace m0.ZeroUML.Instructions
             INoInEdgeInOutVertexVertex leftExecuteResult = null;
             INoInEdgeInOutVertexVertex _rightExecuteResult = null;
             bool leftIsSingleQueryTarget = false;
+            IEdge directLeftQueryTarget = null;
 
             try
             {
-                leftStack = CreateStack();
-                exe.NewVertexCreationSpace = leftStack;
-                leftExecuteResult =
-                    exe.ExecuteInstructionByMontevideoPrinciples(
-                        exe.Stack,
-                        leftExpression);
                 leftIsSingleQueryTarget =
-                    leftExecuteResult.OutEdges.Count == 1 &&
-                    string.Equals(
-                        GetIs(leftExpression)
-                            ?.Value?.ToString(),
-                        "Query",
-                        StringComparison.Ordinal) &&
-                    GetNextExpression(leftExpression) == null;
+                    TryGetSimpleSingleLeftQueryTarget(
+                        exe,
+                        exe.Stack,
+                        leftExpression,
+                        out directLeftQueryTarget);
+
+                if (!leftIsSingleQueryTarget)
+                {
+                    leftStack = CreateStack();
+                    exe.NewVertexCreationSpace = leftStack;
+                    leftExecuteResult =
+                        exe.ExecuteInstructionByMontevideoPrinciples(
+                            exe.Stack,
+                            leftExpression);
+                    leftIsSingleQueryTarget =
+                        leftExecuteResult.OutEdges.Count == 1 &&
+                        string.Equals(
+                            GetIs(leftExpression)
+                                ?.Value?.ToString(),
+                            "Query",
+                            StringComparison.Ordinal) &&
+                        GetNextExpression(leftExpression) == null;
+                }
 
                 // right
 
                 bool hasSingleLeftTarget =
+                    directLeftQueryTarget != null ||
                     leftExecuteResult.OutEdges.Count == 1;
                 IEdge singleLeftTargetEdge =
-                    hasSingleLeftTarget
+                    directLeftQueryTarget ??
+                    (hasSingleLeftTarget
                         ? leftExecuteResult.OutEdges[0]
-                        : null;
+                        : null);
                 EasyVertex.ScalarNumericValue
                     scalarNumericResult = default;
                 if (scalarNode?.IsValid != true)

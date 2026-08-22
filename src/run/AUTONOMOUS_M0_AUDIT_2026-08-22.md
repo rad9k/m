@@ -491,16 +491,46 @@ Rollback notes:
 - Use normal `git revert <commit>` rather than rewriting history.
 - No commit was pushed.
 
-The rejected assignment fast path has no commit and requires no rollback.
+The assignment fast path was initially rejected under the original x86 gate. It was later accepted in a follow-up after the product decision that x86 is not supported; see the follow-up section below.
 
 ## Final outcome
 
 - Starting state: clean build, but 7 active test failures and 1 skipped known failure across the three suites.
 - Final state: 210 tests green, zero skipped, x64/x86 builds green.
-- Accepted changes: five independently revertible functional commits.
+- Accepted changes: five initial functional commits plus the follow-up optimization commits.
 - Performance evidence:
   - repeated watcher transaction: 516.49 us to 117.14 us, with allocation 55.39 KB to 14.75 KB;
   - explicit Release/x86 `Code8` diagnostic: 5,771.181 ms to 984.611 ms after enabling optimization;
   - graph hover lookup complexity: `O(V * D)` to `O(D)`.
-- One superficially promising x64 optimization was rejected and fully removed after a 5.71x x86 regression.
+- The simple assignment fast path is accepted for supported x64 builds; x86 is explicitly outside the product acceptance gate.
+
+## Follow-up — accepted simple assignment fast path for x64
+
+The product decision established that x86 is not supported:
+
+- published desktop and console packages target x64 and ARM64;
+- solution `Release|x86` maps m0, m0_console and m0_desktop to `Any CPU`;
+- true x86 requires an explicit project-level `-p:Platform=x86` build.
+
+The earlier x86 veto was therefore removed. The fast path was reintroduced unchanged:
+
+- only a simple left `Query` with no next expression and exactly one target is eligible;
+- dynamic/parenthesized, missing, multiple-target and non-meta-mode cases retain the full QueryOperator path;
+- scalar evaluation and target replacement semantics are unchanged;
+- the optimization skips left QueryOperator dispatch and its temporary result stack.
+
+Same-session x64 BenchmarkDotNet (`10` iterations, `3` warmups):
+
+- `Code7`: 127.083 ms -> 94.951 ms (**25.3% faster**);
+- `Code8`: 181.450 ms -> 122.577 ms (**32.4% faster**);
+- measured allocation remained 3.81 MB and 38.92 MB respectively.
+
+Verification:
+
+- isolated graph contracts: 122/122;
+- integration contracts, including every persisted `Code0`–`Code14` workload: 83/83;
+- desktop STA contracts: 5/5;
+- no new IDE diagnostics.
+
+ARM64 performance remains unmeasured on the current x64 machine; semantic coverage is architecture-independent, but an ARM64 performance run remains recommended.
 
