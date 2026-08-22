@@ -15,6 +15,10 @@ namespace m0.Lib.StdView
 {
     public class VertexToJson
     {
+        [ThreadStatic]
+        private static Stack<HashSet<IVertex>>
+            visitedSetPool;
+
         public static INoInEdgeInOutVertexVertex VertexToJson_Transform(IExecution exe)
         {
             INoInEdgeInOutVertexVertex stack = exe.Stack;
@@ -45,20 +49,64 @@ namespace m0.Lib.StdView
 
             Utf8JsonWriter writer = new Utf8JsonWriter(buffer, options);
 
-            IList<IVertex> visited = new List<IVertex>();
+            HashSet<IVertex> visited =
+                RentVisitedSet();
 
-            ProcessVertex(baseVertex, writer, visited);
-
-            writer.Flush();
-            return Encoding.UTF8.GetString(buffer.WrittenSpan);            
+            try
+            {
+                ProcessVertex(baseVertex, writer, visited);
+                writer.Flush();
+                return Encoding.UTF8.GetString(
+                    buffer.WrittenSpan);
+            }
+            finally
+            {
+                ReturnVisitedSet(visited);
+            }
         }
 
-        static void ProcessVertex(IVertex baseVertex, Utf8JsonWriter writer, IList<IVertex> visited) {
-            ProcessVertexInternal(baseVertex, writer, visited, inArrayContext: false);
+        private static HashSet<IVertex>
+            RentVisitedSet()
+        {
+            Stack<HashSet<IVertex>> pool =
+                visitedSetPool;
+            if (pool != null && pool.Count > 0)
+                return pool.Pop();
+
+            return new HashSet<IVertex>();
         }
 
-        static void ProcessVertexInArrayContext(IVertex baseVertex, Utf8JsonWriter writer, IList<IVertex> visited) {
-            ProcessVertexInternal(baseVertex, writer, visited, inArrayContext: true);
+        private static void ReturnVisitedSet(
+            HashSet<IVertex> visited)
+        {
+            int visitedCount = visited.Count;
+            visited.Clear();
+
+            if (visitedCount > 65_536)
+                return;
+
+            visitedSetPool ??=
+                new Stack<HashSet<IVertex>>();
+            if (visitedSetPool.Count < 4)
+                visitedSetPool.Push(visited);
+        }
+
+        static void ProcessVertex(IVertex baseVertex, Utf8JsonWriter writer, HashSet<IVertex> visited) {
+            ProcessVertexInternal(baseVertex, writer, visited, inArrayContext: false, null);
+        }
+
+        static void ProcessVertexInArrayContext(
+            IVertex baseVertex,
+            Utf8JsonWriter writer,
+            HashSet<IVertex> visited,
+            IDictionary<object, object>
+                precomputedOutEdgesDictionary) {
+            ProcessVertexInternal(
+                baseVertex,
+                writer,
+                visited,
+                inArrayContext: true,
+                precomputedOutEdgesDictionary);
         }
 
         static bool IsEmptyValueComplexVertex(IVertex v)
@@ -69,19 +117,26 @@ namespace m0.Lib.StdView
             return v != null && v.Value is string s && s == "";
         }
 
-        static void ProcessVertexInternal(IVertex baseVertex, Utf8JsonWriter writer, IList<IVertex> visited, bool inArrayContext) {
+        static void ProcessVertexInternal(
+            IVertex baseVertex,
+            Utf8JsonWriter writer,
+            HashSet<IVertex> visited,
+            bool inArrayContext,
+            IDictionary<object, object>
+                precomputedOutEdgesDictionary) {
             if (!VertexOperations.CanCopy_ByVertex(baseVertex))
                 return;
 
-            if (visited.Contains(baseVertex))
+            if (!visited.Add(baseVertex))
             {
                 WriteAtomVertex(baseVertex, writer);
                 return;
             }
 
-            visited.Add(baseVertex);
-
-            IDictionary<object, object> baseVertex_OutEdgesDictionary = baseVertex.GetOutOdgesByMeta();
+            IDictionary<object, object>
+                baseVertex_OutEdgesDictionary =
+                    precomputedOutEdgesDictionary ??
+                    baseVertex.GetOutOdgesByMeta();
 
             
             bool IsHomogenicAndMultipleAndOnlyEmptyMeta = true;
@@ -100,7 +155,7 @@ namespace m0.Lib.StdView
             if (IsHomogenicAndMultipleAndOnlyEmptyMeta && inArrayContext)
             {
                 // In array context, unwrap homogenic vertices directly - write their children to current array
-                foreach (KeyValuePair<object, object> kvp in baseVertex.GetOutOdgesByMeta())
+                foreach (KeyValuePair<object, object> kvp in baseVertex_OutEdgesDictionary)
                 {
                     string meta = kvp.Key.ToString();
                     if (meta != "$Empty") continue;
@@ -115,8 +170,17 @@ namespace m0.Lib.StdView
                                     WriteAtomVertex(edge.To, writer);
                                 else if (VertexOperations.IsAtomicVertex(edge.To) && !IsEmptyValueComplexVertex(edge.To))
                                     WriteAtomVertex(edge.To, writer);
-                                else if (!TryWriteUnwrappedEmpty(edge.To, writer, inArrayContext: true))
-                                    ProcessVertexInArrayContext(edge.To, writer, visited);
+                                else if (!TryWriteUnwrappedEmpty(
+                                    edge.To,
+                                    writer,
+                                    out IDictionary<object, object>
+                                        childOutEdgesDictionary,
+                                    inArrayContext: true))
+                                    ProcessVertexInArrayContext(
+                                        edge.To,
+                                        writer,
+                                        visited,
+                                        childOutEdgesDictionary);
                             }
                         }
                     }
@@ -129,22 +193,40 @@ namespace m0.Lib.StdView
                                 WriteAtomVertex(edge.To, writer);
                             else if (VertexOperations.IsAtomicVertex(edge.To) && !IsEmptyValueComplexVertex(edge.To))
                                 WriteAtomVertex(edge.To, writer);
-                            else if (!TryWriteUnwrappedEmpty(edge.To, writer, inArrayContext: true))
-                                ProcessVertexInArrayContext(edge.To, writer, visited);
+                            else if (!TryWriteUnwrappedEmpty(
+                                edge.To,
+                                writer,
+                                out IDictionary<object, object>
+                                    childOutEdgesDictionary,
+                                inArrayContext: true))
+                                ProcessVertexInArrayContext(
+                                    edge.To,
+                                    writer,
+                                    visited,
+                                    childOutEdgesDictionary);
                         }
                     }
                 }
             }
             else if (IsHomogenicAndMultipleAndOnlyEmptyMeta)
-                ProcessVertex_HomogenicAndMultipleAndOnlyEmptyMetaChildren(baseVertex, writer, visited);
+                ProcessVertex_HomogenicAndMultipleAndOnlyEmptyMetaChildren(
+                    baseVertex_OutEdgesDictionary,
+                    writer,
+                    visited);
             else
-                ProcessVertex_HeterogenicChildren(baseVertex, writer, visited);
+                ProcessVertex_HeterogenicChildren(
+                    baseVertex_OutEdgesDictionary,
+                    writer,
+                    visited);
 
         }
 
-        static void ProcessVertex_HomogenicAndMultipleAndOnlyEmptyMetaChildren(IVertex baseVertex, Utf8JsonWriter writer, IList<IVertex> visited)
+        static void ProcessVertex_HomogenicAndMultipleAndOnlyEmptyMetaChildren(
+            IDictionary<object, object> outEdgesDictionary,
+            Utf8JsonWriter writer,
+            HashSet<IVertex> visited)
         {            
-            foreach (KeyValuePair<object, object> kvp in baseVertex.GetOutOdgesByMeta())
+            foreach (KeyValuePair<object, object> kvp in outEdgesDictionary)
             {
                 string meta = kvp.Key.ToString();
                 if (meta != "$Empty") continue;
@@ -156,11 +238,14 @@ namespace m0.Lib.StdView
             }
         }
 
-        static void ProcessVertex_HeterogenicChildren(IVertex baseVertex, Utf8JsonWriter writer, IList<IVertex> visited)
+        static void ProcessVertex_HeterogenicChildren(
+            IDictionary<object, object> outEdgesDictionary,
+            Utf8JsonWriter writer,
+            HashSet<IVertex> visited)
         {
             writer.WriteStartObject();
 
-            foreach (KeyValuePair<object, object> kvp in baseVertex.GetOutOdgesByMeta())
+            foreach (KeyValuePair<object, object> kvp in outEdgesDictionary)
             {
                 bool isArray = kvp.Value is List_VertexBase;
 
@@ -209,7 +294,7 @@ namespace m0.Lib.StdView
             writer.WriteEndObject();
         }
 
-        private static void ProcessVertex_Array(Utf8JsonWriter writer, IList<IVertex> visited, KeyValuePair<object, object> kvp)
+        private static void ProcessVertex_Array(Utf8JsonWriter writer, HashSet<IVertex> visited, KeyValuePair<object, object> kvp)
         {
             writer.WriteStartArray();
 
@@ -221,16 +306,33 @@ namespace m0.Lib.StdView
                     else if (VertexOperations.IsAtomicVertex(e.To) && !IsEmptyValueComplexVertex(e.To))
                         // If To is atomic (and not an empty-value complex object), write it directly
                         WriteAtomVertex(e.To, writer);
-                    else if (!TryWriteUnwrappedEmpty(e.To, writer, inArrayContext: true))
-                        ProcessVertexInArrayContext(e.To, writer, visited);
+                    else if (!TryWriteUnwrappedEmpty(
+                        e.To,
+                        writer,
+                        out IDictionary<object, object>
+                            childOutEdgesDictionary,
+                        inArrayContext: true))
+                        ProcessVertexInArrayContext(
+                            e.To,
+                            writer,
+                            visited,
+                            childOutEdgesDictionary);
                 }
 
             writer.WriteEndArray();
         }
 
-        private static bool TryWriteUnwrappedEmpty(IVertex v, Utf8JsonWriter writer, bool inArrayContext = false)
+        private static bool TryWriteUnwrappedEmpty(
+            IVertex v,
+            Utf8JsonWriter writer,
+            out IDictionary<object, object>
+                outEdgesDictionary,
+            bool inArrayContext = false)
         {
-            var dict = v.GetOutOdgesByMeta();
+            outEdgesDictionary =
+                v.GetOutOdgesByMeta();
+            IDictionary<object, object> dict =
+                outEdgesDictionary;
 
             // Never unwrap or atomize complex object instances represented as Value == "".
             // Those should be serialized as JSON objects.
@@ -340,7 +442,7 @@ namespace m0.Lib.StdView
             return true;
         }
 
-        private static void ProcessVertex_SingleArray(Utf8JsonWriter writer, IList<IVertex> visited, IEdge e)
+        private static void ProcessVertex_SingleArray(Utf8JsonWriter writer, HashSet<IVertex> visited, IEdge e)
         {
             writer.WriteStartArray();
             
@@ -351,14 +453,23 @@ namespace m0.Lib.StdView
                 else if (VertexOperations.IsAtomicVertex(e.To) && !IsEmptyValueComplexVertex(e.To))
                     // If To is atomic (and not an empty-value complex object), write it directly
                     WriteAtomVertex(e.To, writer);
-                else if (!TryWriteUnwrappedEmpty(e.To, writer, inArrayContext: true))
-                    ProcessVertexInArrayContext(e.To, writer, visited);
+                else if (!TryWriteUnwrappedEmpty(
+                    e.To,
+                    writer,
+                    out IDictionary<object, object>
+                        childOutEdgesDictionary,
+                    inArrayContext: true))
+                    ProcessVertexInArrayContext(
+                        e.To,
+                        writer,
+                        visited,
+                        childOutEdgesDictionary);
             }
 
             writer.WriteEndArray();
         }
 
-        private static void ProcessVertex_NoArray(Utf8JsonWriter writer, IList<IVertex> visited, IEdge e)
+        private static void ProcessVertex_NoArray(Utf8JsonWriter writer, HashSet<IVertex> visited, IEdge e)
         {
             if (VertexOperations.CanCopy_ByEdge(e) && !VertexOperations.IsViewVertex(e.Meta) && !VertexOperations.IsSpecialVertex(e.Meta)) 
             {

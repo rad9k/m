@@ -451,9 +451,9 @@ Final broad ZeroCode diagnostics:
 8. **Completed — Graph2Text link traversal**
    - `m0/ZeroCode/Graph2TextProcessing.cs`, `GetLinkString_Recurrect`, `AppendAsLink`, `MatchKeywords`.
    - Reverse imports, allocation reductions and processor reuse are guarded by an exact output hash and benchmark.
-9. **VertexToJson visited and repeated dictionary work**
+9. **Completed — VertexToJson visited and repeated dictionary work**
    - `m0/Lib/StdView/VertexToJson.cs`.
-   - Required gate: golden outputs from `.ai/01 Json.md` before changing traversal structures.
+   - Hash-based visited tracking and shared per-vertex dictionaries are guarded by an exact representative JSON hash.
 10. **HTTP concurrency and synchronous I/O**
     - `m0/Network/Server/Server.cs`, `CallHandler` lock and request-body `.Result`.
     - Required gate: random-port integration server with concurrent GET/POST load.
@@ -698,14 +698,48 @@ Verification:
 - full Release/x64 solution build: 0 errors;
 - no new IDE diagnostics.
 
+## Follow-up — VertexToJson traversal
+
+VertexToJson previously used a linear `List.Contains` check for every visited vertex and called `GetOutOdgesByMeta()` repeatedly for the same complex vertex. On wide or deep graphs this made cycle/duplicate detection quadratic.
+
+The optimized serializer:
+
+- uses a `HashSet<IVertex>` with the same default equality semantics;
+- rents and returns visited sets from a thread-local, reentrancy-safe pool;
+- drops exceptionally large sets instead of retaining unbounded thread-local memory;
+- builds each vertex's direct-meta dictionary once and passes it through child-processing paths;
+- reuses the dictionary already inspected by empty-wrapper detection rather than rebuilding it during recursion.
+
+Before the production change, a representative graph containing repeated meta edges, an empty-valued complex object, numeric/string properties and a cycle was serialized. Its exact SHA-256 golden output is:
+
+`0A5789E31433680BE4FF7B4989DAAA40CF115750222CC6340AFD9FDBA5F52E0B`
+
+The optimized serializer retains that exact byte output.
+
+BenchmarkDotNet (`5` iterations, `3` warmups):
+
+- 100 complex items: 691.050 us -> 648.525 us (**6.2% faster**);
+- 1000 complex items: 9.109 ms -> 5.784 ms (**36.5% faster**);
+- allocation at 100 items: 40.41 KB -> 38.27 KB;
+- allocation at 1000 items: 534.57 KB -> 518.36 KB.
+
+Verification:
+
+- exact JSON golden contract: passed;
+- isolated contracts: 124/124;
+- integration contracts: 84/84;
+- desktop contracts: 8/8;
+- full Release/x64 solution build: 0 errors;
+- no new IDE diagnostics.
+
 ## Final follow-up validation
 
-After completing requested candidates 4–8:
+After completing requested candidates 4–9:
 
 - isolated graph contracts: **124 passed**;
-- bootstrapped integration contracts: **83 passed**;
+- bootstrapped integration contracts: **84 passed**;
 - desktop STA contracts: **8 passed**;
-- total: **215 passed, 0 failed, 0 skipped**;
+- total: **216 passed, 0 failed, 0 skipped**;
 - full Release/x64 solution build: 0 errors;
 - IDE diagnostics for every changed file: no new errors.
 
