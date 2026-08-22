@@ -143,7 +143,7 @@ namespace m0.UIWpf.Visualisers
 
                 SetVertexDefaultValues();
 
-                CreateView();               
+                ResetView();
 
                 ThisDataGrid.SelectionChanged += _OnSelectionChanged;
                 ThisDataGrid.PreviewMouseLeftButtonDown += OnDataGridPreviewMouseLeftButtonDown;
@@ -546,6 +546,7 @@ namespace m0.UIWpf.Visualisers
 
         bool ShowMeta;
         bool ShowIcons;
+        private bool isViewInitialized;
 
         protected virtual void CreateView(){
             ThisDataGrid.Columns.Clear();
@@ -1334,6 +1335,7 @@ namespace m0.UIWpf.Visualisers
             }
 
             ThisDataGrid.ColumnHeaderStyle = CreateColumnHeaderStyle(drawHorizontalHeaderLine, drawVerticalHeaderLine);
+            isViewInitialized = true;
             RefreshVisualStatesAfterItemsChanged();
         }
 
@@ -1419,7 +1421,8 @@ namespace m0.UIWpf.Visualisers
 
             if (_bas != null)
             {
-                ResetView();
+                if (!isViewInitialized)
+                    ResetView();
 
                 if (Vertex.Get(false, @"FilterQuery:") != null && Vertex.Get(false, @"FilterQuery:").Value != null)
                 {

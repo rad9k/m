@@ -557,3 +557,41 @@ Verification:
 
 The structural layout-pass reduction is from per-node global updates to one global update per paint. Local subtree measure/arrange remains per wrapper because geometry requires each wrapper's desired size.
 
+## Follow-up — suppress unnecessary List and UX rebuilds
+
+### ListVisualiser
+
+`BaseEdgeToUpdated` previously called `ResetView` for every data refresh. `ResetView` clears and recreates every DataGrid column and both view/edit templates, even when only row data changed.
+
+The view/schema lifecycle is now separate from row refresh:
+
+- the constructor initializes columns and view styling once;
+- explicit view-attribute changes still call `ResetView`;
+- the first refresh of an uninitialized visualizer still builds the view;
+- subsequent BaseEdge data refreshes preserve existing column and template instances and only replace row data.
+
+A red STA contract captured column references across two data refreshes; the old path returned new columns, while the new path preserves every reference.
+
+### UXVisualiser
+
+Each hosted `UXItem` already owns a graph-change listener that updates its value and visual attributes. The parent UXVisualiser nevertheless repainted the entire canvas for the same value-only events.
+
+The parent helper now classifies event batches:
+
+- if every event is a `ValueChange` for a currently hosted item's data vertex or view vertex, the parent full `Paint` is skipped;
+- empty, unknown, edge, add/remove/dispose, or mixed batches retain the complete existing rebuild path;
+- individual UXItem listeners remain responsible for the local update.
+
+Focused tests verify hosted value batches are suppressible and unknown vertices are not.
+
+### FormVisualiser
+
+The current production code already contained the intended optimization: `FormVertexChange` ignores value-only changes of the BaseEdge target and compares cached BaseEdge definitions and layout options before allowing a rebuild. No second competing fast path was added. This existing guard was retained and covered by the full desktop suite.
+
+Verification:
+
+- focused List/UX contracts: 4/4;
+- full desktop suite: 8/8;
+- full Release/x64 solution build: 0 errors;
+- no new IDE diagnostics.
+

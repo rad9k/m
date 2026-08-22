@@ -291,6 +291,66 @@ namespace m0.UIWpf.UX
 
         public virtual void BaseEdgeToUpdated() { Paint(); }
 
+        private INoInEdgeInOutVertexVertex
+            UXVisualiserVertexChange(IExecution exe)
+        {
+            if (ContainsOnlyValueChangesForHostedItems(
+                exe.Stack,
+                GetItemsDictionaryByBaseEdgeTo(),
+                GetItemsDictionaryByVertex()))
+            {
+                return exe.Stack;
+            }
+
+            return ((ListVisualiserHelper)VisualiserHelper)
+                .VertexChangeLogic(exe);
+        }
+
+        internal static bool
+            ContainsOnlyValueChangesForHostedItems(
+            IVertex stack,
+            IDictionary<IVertex, List<IUXItem>>
+                itemsByBaseEdgeTo,
+            IDictionary<IVertex, IUXItem>
+                itemsByVertex)
+        {
+            bool containsEvent = false;
+
+            foreach (IEdge eventEdge in
+                GraphUtil.GetQueryOut(
+                    stack,
+                    "event",
+                    null))
+            {
+                containsEvent = true;
+                IVertex eventType =
+                    GraphUtil.GetQueryOutFirst(
+                        eventEdge.To,
+                        "Type",
+                        null);
+                IVertex changedVertex =
+                    GraphUtil.GetQueryOutFirst(
+                        eventEdge.To,
+                        "ChangedVertex",
+                        null);
+
+                if (eventType == null ||
+                    !GraphUtil.GetValueAndCompareStrings(
+                        eventType,
+                        "ValueChange") ||
+                    changedVertex == null ||
+                    (!itemsByBaseEdgeTo.ContainsKey(
+                            changedVertex) &&
+                        !itemsByVertex.ContainsKey(
+                            changedVertex)))
+                {
+                    return false;
+                }
+            }
+
+            return containsEvent;
+        }
+
         //
 
         public UXVisualiser(IEdge _edge)
@@ -356,7 +416,8 @@ namespace m0.UIWpf.UX
 
             this.BorderBrush = (Brush)FindResource("0LightGrayBrush");
 
-            new ListVisualiserHelper(parentVisualiser,
+            var visualiserHelper =
+                new ListVisualiserHelper(parentVisualiser,
                 isVolatile,
                 MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\UX"),
                 this,
@@ -368,6 +429,8 @@ namespace m0.UIWpf.UX
                 baseEdgeVertex,
                 UpdateBaseEdgeCallSchemeEnum.OmmitFirst,
                 true);
+            visualiserHelper.CustomVertexChangeEvent +=
+                UXVisualiserVertexChange;
 
             MinusZero.Instance.Log(1, "UXVisualiser.DisposeNesting",
                 "ctor created baseEdgeTo=" + DescribeVertexForDisposeNestingLog(baseEdgeTo)
