@@ -398,3 +398,109 @@ Each disposal callback now removes both listener edges. Verification:
 
 This is a long-session memory and responsiveness correction: disposed detail panes no longer leave event infrastructure or callbacks behind.
 
+## Final validation
+
+Final Release test gate, run sequentially to avoid concurrent MSBuild output locking:
+
+- `m0_graph_tests`: **122 passed, 0 failed, 0 skipped**.
+- `m0_graph_integration_tests`: **83 passed, 0 failed, 0 skipped**.
+- `m0_desktop_tests`: **5 passed, 0 failed, 0 skipped**.
+- Total: **210 passed, 0 failed, 0 skipped**.
+
+Final solution builds:
+
+- Release/x64: 0 errors, 125 pre-existing warnings in the incremental build.
+- Release/x86: 0 errors, 65 pre-existing warnings in the incremental build.
+- The initial clean full build reported 167 warnings; no warning-cleanup campaign was mixed into this work.
+
+Final broad ZeroCode diagnostics:
+
+- `Code0` through `Code14`, including `Code7b`, all parsed and executed.
+- Every program reported zero execution errors and retained its expected result shape.
+- Final diagnostic `Code7`: 600.979 ms, 4,013,848 B, 4,669 result edges.
+- Final diagnostic `Code8`: 550.266 ms, 40,814,160 B, 4 result edges.
+- These counter-enabled values are diagnostic, not a claim that unrelated workloads improve by the same percentage.
+
+## Prioritized remaining candidate ledger
+
+### Performance candidates requiring a dedicated follow-up
+
+1. **Filesystem nested-store loading**
+   - `m0/Store/FileSystem/FileVertex.cs`, `Refresh`.
+   - Accessing filesystem overlays can construct and load complete nested `.m0j`, `.m0t`, or `.m0x` stores.
+   - Required gate: lazy-open contract plus directory matrices with 0/100/1000 store files.
+2. **Global store detach/attach on commit**
+   - `m0/m0.cs`, global `CommitTransaction`.
+   - Potentially touches every store for an unrelated mutation.
+   - Very high risk: requires JSON/Binary/filesystem/cross-store differential tests.
+3. **Bootstrap and drive enumeration**
+   - `m0/Bootstrap/LoadFromBootstrap.cs`, `m0.cs Initialize`, `AddDrives`, `CreateAutostart`.
+   - Required first step: phase timing through `MinusZero.Instance.Log`, including slow/network drives.
+4. **GraphVisualiser per-node layout**
+   - `m0_desktop/UIWpf/Visualisers/GraphVisualiser.cs`, `Add` and `AddCircle`.
+   - `UpdateLayout` occurs while each node is added.
+   - Required gate: synthetic 50/200-node STA paint harness validating line endpoints and final dimensions.
+5. **List/Form/UX complete rebuilds**
+   - `ListVisualiser.BaseEdgeToUpdated`, `FormVisualiser.BaseEdgeToUpdated`, `UXVisualiser.Paint`.
+   - Required gate: control identity and interaction-state contracts before incremental update work.
+6. **Code7 collapsed assignment query amplification**
+   - `BaseInstructions.AddDistinctFromMetaQueryMatch` and `AddLeftEdgesToRightVertices`.
+   - Final diagnostics still traverse 9,574,510 collapsed assignment-query edges.
+   - A new algorithm must preserve first-edge order and exact `(From, Meta)` reference identity on x64 and x86.
+7. **Text2Graph hash-only memoization**
+   - `m0/ZeroCode/Text2GraphProcessing.cs`, `_tryIsKeyword` and `ParsingStack.GetHashCode`.
+   - Required gate: deliberately colliding parameter states and golden parser output.
+8. **Graph2Text link traversal**
+   - `m0/ZeroCode/Graph2TextProcessing.cs`, `GetLinkString_Recurrect`, `AppendAsLink`, `MatchKeywords`.
+   - Required gate: cycles, diamonds, imports and round-trip generation benchmarks.
+9. **VertexToJson visited and repeated dictionary work**
+   - `m0/Lib/StdView/VertexToJson.cs`.
+   - Required gate: golden outputs from `.ai/01 Json.md` before changing traversal structures.
+10. **HTTP concurrency and synchronous I/O**
+    - `m0/Network/Server/Server.cs`, `CallHandler` lock and request-body `.Result`.
+    - Required gate: random-port integration server with concurrent GET/POST load.
+
+### High-confidence concerns not changed without a complete oracle
+
+- `m0/m0.cs`: graceful `Dispose/Finalize` reaches `Environment.Exit(-1)`.
+- `m0_console/console/ConsoleRunner.cs`: process lifetime depends on blocking autostart code; non-blocking/no-autostart paths may exit immediately.
+- `m0.cs Initialize_AfterPossibleUXInitialized`: autostart can block while its transaction is still open.
+- `m0_desktop/UIWpf/Visualisers/GraphVisualiser3D.cs`: a mid-animation dispose may leave a `CompositionTarget.Rendering` handler.
+- `m0_desktop/UIWpf/PlatformClassSimpleWrapper.xaml.cs`: `SelectedEdgesChange` subscription has no proven symmetric unsubscribe path.
+- `m0/Store/Json` primitive converter: unsupported CLR values are serialized as an empty string, risking silent data loss.
+- Binary persistence does not visibly mirror JSON's `$GraphChangeTrigger` exclusion.
+- `StoreBase.GetRootIdentifier` falls back to the first dictionary key, which is not a semantic root contract.
+
+These are deliberately reported rather than patched. Several could be intentional compatibility behavior; each needs an executable product-level oracle.
+
+## Local commits and rollback map
+
+Functional commits created by this audit:
+
+1. `490966e6` — transaction rollback, listener coalescing, exception cleanup and deferred orphan collection.
+2. `dab7c52f` — incoming-edge visualizer post-event snapshot correction.
+3. `fb3ca4f9` — enable compiler optimization for explicit Release/x86.
+4. `24aef31b` — TextStore, decimal, OPTIONS and graph-hover corrections.
+5. `63af24e4` — synchronized visualizer listener cleanup.
+
+Rollback notes:
+
+- `fb3ca4f9` is independent and can be reverted alone.
+- `dab7c52f` relies on the corrected second-stage lifecycle in `490966e6`; revert `dab7c52f` before reverting `490966e6`.
+- `63af24e4` is behaviorally independent but was verified against the transaction event lifecycle from `490966e6`.
+- Use normal `git revert <commit>` rather than rewriting history.
+- No commit was pushed.
+
+The rejected assignment fast path has no commit and requires no rollback.
+
+## Final outcome
+
+- Starting state: clean build, but 7 active test failures and 1 skipped known failure across the three suites.
+- Final state: 210 tests green, zero skipped, x64/x86 builds green.
+- Accepted changes: five independently revertible functional commits.
+- Performance evidence:
+  - repeated watcher transaction: 516.49 us to 117.14 us, with allocation 55.39 KB to 14.75 KB;
+  - explicit Release/x86 `Code8` diagnostic: 5,771.181 ms to 984.611 ms after enabling optimization;
+  - graph hover lookup complexity: `O(V * D)` to `O(D)`.
+- One superficially promising x64 optimization was rejected and fully removed after a 5.71x x86 regression.
+
