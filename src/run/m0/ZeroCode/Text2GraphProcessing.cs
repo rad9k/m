@@ -1357,52 +1357,125 @@ namespace m0.ZeroCode
                 isSpaceNext = _isSpaceNext;
             }
 
+        }
+
+        internal readonly struct TryIsKeywordMemoKey :
+            IEquatable<TryIsKeywordMemoKey>
+        {
+            private readonly int startPos;
+            private readonly int previousStartPos;
+            private readonly int sameStartParentCount;
+            private readonly int endPos;
+            private readonly int atomPartsEndPos;
+            private readonly bool canStopByAtomParts;
+            private readonly bool hasPartAfterKeyword;
+            private readonly bool isTopLevelCall;
+            private readonly bool localRootOnly;
+            private readonly IVertex parentKeyword;
+            private readonly string keywordsFilter;
+            private readonly bool isSpaceNext;
+
+            internal TryIsKeywordMemoKey(
+                int startPos,
+                int previousStartPos,
+                int sameStartParentCount,
+                int endPos,
+                int atomPartsEndPos,
+                bool canStopByAtomParts,
+                bool hasPartAfterKeyword,
+                bool isTopLevelCall,
+                bool localRootOnly,
+                IVertex parentKeyword,
+                string keywordsFilter,
+                bool isSpaceNext)
+            {
+                this.startPos = startPos;
+                this.previousStartPos =
+                    previousStartPos;
+                this.sameStartParentCount =
+                    sameStartParentCount;
+                this.endPos = endPos;
+                this.atomPartsEndPos = atomPartsEndPos;
+                this.canStopByAtomParts =
+                    canStopByAtomParts;
+                this.hasPartAfterKeyword =
+                    hasPartAfterKeyword;
+                this.isTopLevelCall = isTopLevelCall;
+                this.localRootOnly = localRootOnly;
+                this.parentKeyword = parentKeyword;
+                this.keywordsFilter =
+                    keywordsFilter ?? "";
+                this.isSpaceNext = isSpaceNext;
+            }
+
+            public bool Equals(
+                TryIsKeywordMemoKey other)
+            {
+                return startPos == other.startPos &&
+                    previousStartPos ==
+                        other.previousStartPos &&
+                    sameStartParentCount ==
+                        other.sameStartParentCount &&
+                    endPos == other.endPos &&
+                    atomPartsEndPos ==
+                        other.atomPartsEndPos &&
+                    canStopByAtomParts ==
+                        other.canStopByAtomParts &&
+                    hasPartAfterKeyword ==
+                        other.hasPartAfterKeyword &&
+                    isTopLevelCall ==
+                        other.isTopLevelCall &&
+                    localRootOnly ==
+                        other.localRootOnly &&
+                    ReferenceEquals(
+                        parentKeyword,
+                        other.parentKeyword) &&
+                    string.Equals(
+                        keywordsFilter,
+                        other.keywordsFilter,
+                        StringComparison.Ordinal) &&
+                    isSpaceNext == other.isSpaceNext;
+            }
+
+            public override bool Equals(object obj)
+            {
+                return obj is
+                    TryIsKeywordMemoKey other &&
+                    Equals(other);
+            }
+
             public override int GetHashCode()
             {
-                int result = 37;
-
-                result *= 397;
-                result += startPos;
-
-                result *= 397;
-                result += prev_startPos;
-
-                result *= 397;
-                result += isPrevStartPosSameAsStartPosParentCount;
-
-                result *= 397;
-                result += endPos;
-
-                result *= 397;
-                result += endPos_forAtomParts;
-
-                result *= 397;
-                result += canStopByForAtomParts.GetHashCode();
-
-                result *= 397;
-                result += afterKeywordPartExist.GetHashCode();
-
-                result *= 397;
-                result += isTopLevelCall.GetHashCode();
-
-                result *= 397;
-                result += lookForLocalRootOnly.GetHashCode();
-
-                result *= 397;
-                result += GeneralUtil.GetHashCode(parentKeyword);
-
-               // result *= 397;
-               // result += GeneralUtil.GetHashCode(parentParams);
-
-                result *= 397;
-                result += keywordsFilter.GetHashCode();
-
-                result *= 397;
-                result += isSpaceNext.GetHashCode();
-
-                return result;
-                
-            }    
+                unchecked
+                {
+                    int result = 37;
+                    result = result * 397 + startPos;
+                    result = result * 397 +
+                        previousStartPos;
+                    result = result * 397 +
+                        sameStartParentCount;
+                    result = result * 397 + endPos;
+                    result = result * 397 +
+                        atomPartsEndPos;
+                    result = result * 397 +
+                        canStopByAtomParts.GetHashCode();
+                    result = result * 397 +
+                        hasPartAfterKeyword.GetHashCode();
+                    result = result * 397 +
+                        isTopLevelCall.GetHashCode();
+                    result = result * 397 +
+                        localRootOnly.GetHashCode();
+                    result = result * 397 +
+                        GeneralUtil.GetHashCode(
+                            parentKeyword);
+                    result = result * 397 +
+                        StringComparer.Ordinal.GetHashCode(
+                            keywordsFilter);
+                    result = result * 397 +
+                        isSpaceNext.GetHashCode();
+                    return result;
+                }
+            }
         }
 
         class tryIsKeyword_Parameters_OUT
@@ -1423,7 +1496,11 @@ namespace m0.ZeroCode
             }
         }
 
-        Dictionary<int, tryIsKeyword_Parameters_OUT> params_IN_OUT_dictionary = new Dictionary<int, tryIsKeyword_Parameters_OUT> ();
+        Dictionary<TryIsKeywordMemoKey,
+            tryIsKeyword_Parameters_OUT>
+            params_IN_OUT_dictionary =
+                new Dictionary<TryIsKeywordMemoKey,
+                    tryIsKeyword_Parameters_OUT>();
 
 
         void _tryIsKeyword(ParsingStack s, 
@@ -1465,16 +1542,30 @@ namespace m0.ZeroCode
                 parentParams,
                 keywordsFilter,
                 isSpaceNext);
+            var memoKey =
+                new TryIsKeywordMemoKey(
+                    startPos,
+                    prev_startPos,
+                    isPrevStartPosSameAsStartPosParentCount,
+                    endPos,
+                    endPos_forAtomParts,
+                    canStopByForAtomParts,
+                    afterKeywordPartExist,
+                    isTopLevelCall,
+                    lookForLocalRootOnly,
+                    parentKeyword,
+                    keywordsFilter,
+                    isSpaceNext);
 
             tryIsKeyword_Parameters_OUT parameters_OUT;
 
             //MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "RUN "+callParams.ToString());
 
             // PARAMS OPTIMISATION 
-            if (params_IN_OUT_dictionary.ContainsKey(parameters_IN.GetHashCode()))
+            if (params_IN_OUT_dictionary.TryGetValue(
+                memoKey,
+                out parameters_OUT))
             {
-                parameters_OUT = params_IN_OUT_dictionary[parameters_IN.GetHashCode()];
-
                 examinedKeywords = parameters_OUT.examinedKeywords;
                 link = parameters_OUT.link;
                 newPos = parameters_OUT.newPos;
@@ -1497,7 +1588,9 @@ namespace m0.ZeroCode
 
                 parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
 
-                params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
+                params_IN_OUT_dictionary.Add(
+                    memoKey,
+                    parameters_OUT);
 
                 return;
             }
@@ -1506,7 +1599,9 @@ namespace m0.ZeroCode
             {
                 parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
 
-                params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
+                params_IN_OUT_dictionary.Add(
+                    memoKey,
+                    parameters_OUT);
 
                 return;
             }
@@ -1561,7 +1656,9 @@ namespace m0.ZeroCode
             {
                 parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
 
-                params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
+                params_IN_OUT_dictionary.Add(
+                    memoKey,
+                    parameters_OUT);
 
                 return;
             }
@@ -1759,7 +1856,9 @@ namespace m0.ZeroCode
 
                     parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
 
-                    params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
+                    params_IN_OUT_dictionary.Add(
+                        memoKey,
+                        parameters_OUT);
 
                     return;
                 }
@@ -1814,7 +1913,9 @@ namespace m0.ZeroCode
 
                 parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
 
-                params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
+                params_IN_OUT_dictionary.Add(
+                    memoKey,
+                    parameters_OUT);
 
                 return;
             }
@@ -2289,8 +2390,11 @@ namespace m0.ZeroCode
 
             parameters_OUT = new tryIsKeyword_Parameters_OUT(examinedKeywords, link, newPos);
 
-            if (!params_IN_OUT_dictionary.ContainsKey(parameters_IN.GetHashCode()))
-                params_IN_OUT_dictionary.Add(parameters_IN.GetHashCode(), parameters_OUT);
+            if (!params_IN_OUT_dictionary.ContainsKey(
+                memoKey))
+                params_IN_OUT_dictionary.Add(
+                    memoKey,
+                    parameters_OUT);
 
             //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"END link:"+link+" keywordsCount:"+examinedKeywords.Count);
 

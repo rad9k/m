@@ -633,3 +633,28 @@ Verification:
 - full Release/x64 solution build: 0 errors;
 - no new IDE diagnostics.
 
+## Follow-up — collision-safe Text2Graph keyword memoization
+
+`Text2GraphProcessing._tryIsKeyword` previously stored memoized parser results in `Dictionary<int, ...>` using only a hand-computed hash. Two distinct parser states with the same 32-bit hash therefore shared one result, potentially selecting the wrong keyword branch.
+
+The memo now uses an immutable structural key:
+
+- equality covers exactly the fields that the old memo hash treated as semantic inputs;
+- `parentKeyword` uses reference identity;
+- `keywordsFilter` uses ordinal string equality;
+- hash collisions are resolved by normal dictionary equality;
+- lookup uses one `TryGetValue` rather than `ContainsKey` followed by a second lookup;
+- the old hash-only parameter override was removed to prevent accidental reuse.
+
+A deterministic contract constructs two distinct parser states whose legacy polynomial hashes are equal (`start/previous = 0/397` and `1/0`). Both now coexist in the dictionary and return their own values.
+
+Verification:
+
+- collision contract: passed;
+- isolated contracts: 124/124;
+- all `Code0`–`Code14` parser/execution integration contracts: 83/83;
+- full Release/x64 solution build: 0 errors;
+- no new IDE diagnostics.
+
+This is primarily a parser-correctness fix. It also removes duplicate dictionary probing, but no broad performance percentage is claimed without a dedicated Text2Graph parse benchmark.
+
