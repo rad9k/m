@@ -32,9 +32,13 @@ namespace m0.UIWpf.Dialog
         TreeVisualiser OutputStackContentControl;
 
         IVertex baseVertex;
+        IVertex expressionVertex;
 
         IEdge inputStackEdge;
         IEdge outputStackEdge;
+        readonly OutputVertexReferenceSet
+            outputVertexReferences =
+                new OutputVertexReferenceSet();
 
         enum StateEnum { NotStarted, Executing, AfterExecution};
 
@@ -46,6 +50,7 @@ namespace m0.UIWpf.Dialog
         }
 
         IVertex localInputStackEdgeVertex = null;
+        bool isDisposed = false;
 
         void SetState(StateEnum toBeState)
         {
@@ -144,6 +149,15 @@ namespace m0.UIWpf.Dialog
         {
             baseVertex = _baseVertex;
 
+            // GetEdgeByPoint often returns a temp Edge vertex with no incoming edges.
+            // Pin it before any Interaction commit so graph GC cannot dispose To.
+            if (baseVertex != null)
+                baseVertex.AddExternalReference();
+
+            expressionVertex = baseVertex == null
+                ? null
+                : GraphUtil.GetQueryOutFirst(baseVertex, "To", null);
+
             InitializeComponent();
 
             SetState(StateEnum.NotStarted);
@@ -184,8 +198,10 @@ namespace m0.UIWpf.Dialog
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
 
-            IVertex outputStackVertex = m0.MinusZero.Instance.DefaultExecuter.Execute(inputStackEdge.To, baseVertex.Get(false, "To:"));
+            IVertex outputStackVertex = m0.MinusZero.Instance.DefaultExecuter.Execute(inputStackEdge.To, expressionVertex);
 
+            outputVertexReferences.Replace(
+                outputStackVertex);
             outputStackEdge = GraphUtil.CreateArtificialEdge(null, outputStackVertex);
 
             SetState(StateEnum.AfterExecution);
@@ -206,7 +222,77 @@ namespace m0.UIWpf.Dialog
         
         void Dispose()
         {
-            localInputStackEdgeVertex.RemoveExternalReference();
+            if (isDisposed)
+                return;
+
+            isDisposed = true;
+
+            outputVertexReferences.Dispose();
+
+            if (localInputStackEdgeVertex != null)
+                localInputStackEdgeVertex.RemoveExternalReference();
+
+            if (baseVertex != null)
+                baseVertex.RemoveExternalReference();
+        }
+
+        private sealed class OutputVertexReferenceSet :
+            IDisposable
+        {
+            private readonly HashSet<IVertex>
+                vertices =
+                    new HashSet<IVertex>();
+            private bool isDisposed;
+
+            public void Replace(IVertex outputStack)
+            {
+                if (isDisposed)
+                    throw new ObjectDisposedException(
+                        nameof(OutputVertexReferenceSet));
+
+                Release();
+
+                if (outputStack == null)
+                    return;
+
+                foreach (IEdge edge in
+                    outputStack.OutEdgesRaw)
+                {
+                    IVertex vertex = edge?.To;
+                    if (vertex == null ||
+                        vertex.DisposedState !=
+                            DisposeStateEnum.Live ||
+                        !vertices.Add(vertex))
+                        continue;
+
+                    try
+                    {
+                        vertex.AddExternalReference();
+                    }
+                    catch
+                    {
+                        vertices.Remove(vertex);
+                        throw;
+                    }
+                }
+            }
+
+            public void Dispose()
+            {
+                if (isDisposed)
+                    return;
+
+                isDisposed = true;
+                Release();
+            }
+
+            private void Release()
+            {
+                foreach (IVertex vertex in vertices)
+                    vertex.RemoveExternalReference();
+
+                vertices.Clear();
+            }
         }
     }
 }

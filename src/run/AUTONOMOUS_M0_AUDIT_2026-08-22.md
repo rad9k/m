@@ -749,3 +749,26 @@ The final `Code0`–`Code14` diagnostic matrix parsed and executed every program
 
 True x86 is no longer an acceptance target by explicit product decision. Published x64 and ARM64 semantics are covered by the same managed tests; performance measurements in this follow-up were collected on x64, while an ARM64 performance run remains recommended.
 
+## Post-audit fix — ExecuteDialog output lifetime
+
+Executing `Code10` from the WPF Execute dialog exposed a stale-result lifecycle bug. `BaseInstructions.Parse` returned an original edge through a `NoInEdgeInOutVertexVertex` stack. The logical `C -> parsed result` stack edge did not count as a physical incoming graph reference, so transaction cleanup disposed the parsed root before the virtualized output tree created its listener.
+
+The fix is intentionally scoped to the UI ownership boundary:
+
+- `ExecuteDialog` takes one external reference for each distinct direct output vertex before `Interaction.EndInteractionWithGraph()` commits cleanup;
+- replacing the output releases the previous result set before retaining the new set;
+- disposing the dialog releases all retained output references;
+- duplicate result edges retain their target only once;
+- virtual and non-virtual tree items skip listener creation when their target is null or no longer live.
+
+`ExecuteDialogOutputLifetimeContractTests` reproduces the no-incoming-edge result shape, verifies survival through lifecycle commit, verifies duplicate-edge coalescing and verifies balanced release.
+
+Verification:
+
+- isolated graph contracts: 124/124;
+- integration contracts: 84/84;
+- desktop contracts: 9/9;
+- total: **217 passed, 0 failed, 0 skipped**;
+- full Release/x64 solution build: 0 errors;
+- no new IDE diagnostics.
+

@@ -901,7 +901,14 @@ namespace m0.UIWpf.Visualisers
 
             if (!treeItem.doNotTrackGraphChanges)
             {
-                treeItem.vertexChangeListenerEdge = ExecutionFlowHelper.AddTriggerAndListener(node.Edge.To,
+                IVertex virtualTreeViewItemTriggerTarget = node.Edge == null ? null : node.Edge.To;
+
+                if (virtualTreeViewItemTriggerTarget == null ||
+                    virtualTreeViewItemTriggerTarget.DisposedState !=
+                        DisposeStateEnum.Live)
+                    return;
+
+                treeItem.vertexChangeListenerEdge = ExecutionFlowHelper.AddTriggerAndListener(virtualTreeViewItemTriggerTarget,
                     new List<string> { },
                     new List<GraphChangeFilterEnum> {
                         GraphChangeFilterEnum.ValueChange,
@@ -1906,7 +1913,11 @@ namespace m0.UIWpf.Visualisers
                     i.Items.Add(tvi);
                 }
 
-            if (!i.doNotTrackGraphChanges)
+            if (!i.doNotTrackGraphChanges &&
+                e.To != null &&
+                e.To.DisposedState ==
+                    DisposeStateEnum.Live)
+            {
                 i.vertexChangeListenerEdge = ExecutionFlowHelper.AddTriggerAndListener(e.To,
                     new List<string> { },
                     new List<GraphChangeFilterEnum> {GraphChangeFilterEnum.ValueChange,
@@ -1915,6 +1926,7 @@ namespace m0.UIWpf.Visualisers
                      GraphChangeFilterEnum.OutputEdgeDisposed},
                      "TreeViewItem",
                      i.VertexChange);
+            }
 
             return i;
         }
