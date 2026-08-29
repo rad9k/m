@@ -40,6 +40,8 @@ namespace m0.UIWpf.Visualisers
 
         private bool ignoreNextMouseLeftButtonUp;
         private bool isExpandCollapseAnimationInProgress;
+        private int expandAnimationRequestId;
+        private EventHandler childContainersReadyHandler;
         private ToggleButton expanderToggleButton;
         private bool isKeyboardHighlighted;
         private bool isMouseHoverHighlighted;
@@ -338,15 +340,17 @@ namespace m0.UIWpf.Visualisers
 
         protected override void OnExpanded(RoutedEventArgs ea)
         {
+            bool shouldStartExpandAnimation = isExpandCollapseAnimationInProgress == false;
+
+            if (shouldStartExpandAnimation)
+                isExpandCollapseAnimationInProgress = true;
+
             if (IsFilled == false)
                 Fill();
 
             IsFilled = true;
 
-            if (ParentVisualiser.UseDataVirtualization)
-                return;
-
-            if (isExpandCollapseAnimationInProgress == false)
+            if (shouldStartExpandAnimation)
                 BeginExpandAnimation();
         }
 
@@ -359,12 +363,6 @@ namespace m0.UIWpf.Visualisers
         {
             if (HasItems == false || isExpandCollapseAnimationInProgress)
                 return;
-
-            if (ParentVisualiser.UseDataVirtualization)
-            {
-                IsExpanded = !IsExpanded;
-                return;
-            }
 
             isExpandCollapseAnimationInProgress = true;
 
@@ -386,20 +384,107 @@ namespace m0.UIWpf.Visualisers
 
         private void BeginExpandAnimation()
         {
+            int requestId = ++expandAnimationRequestId;
+
             Dispatcher.BeginInvoke(new Action(delegate
             {
-                AnimateChildItems(true, delegate
+                if (requestId != expandAnimationRequestId)
+                    return;
+
+                RunWhenChildContainersReady(delegate
                 {
-                    isExpandCollapseAnimationInProgress = false;
+                    if (requestId != expandAnimationRequestId)
+                        return;
+
+                    AnimateChildItems(true, delegate
+                    {
+                        if (requestId == expandAnimationRequestId)
+                            isExpandCollapseAnimationInProgress = false;
+                    });
                 });
-            }), DispatcherPriority.Render);
+            }), DispatcherPriority.Loaded);
+        }
+
+        private void RunWhenChildContainersReady(Action action)
+        {
+            DetachChildContainersReadyHandler();
+
+            bool executed = false;
+
+            Action runOnce = delegate
+            {
+                if (executed)
+                    return;
+
+                executed = true;
+                DetachChildContainersReadyHandler();
+                action();
+            };
+
+            if (AreChildContainersReadyForAnimation())
+            {
+                runOnce();
+                return;
+            }
+
+            childContainersReadyHandler = delegate
+            {
+                if (ItemContainerGenerator.Status != GeneratorStatus.ContainersGenerated)
+                    return;
+
+                runOnce();
+            };
+
+            ItemContainerGenerator.StatusChanged += childContainersReadyHandler;
+
+            Dispatcher.BeginInvoke(new Action(delegate
+            {
+                runOnce();
+            }), DispatcherPriority.ContextIdle);
+        }
+
+        private void DetachChildContainersReadyHandler()
+        {
+            if (childContainersReadyHandler == null)
+                return;
+
+            ItemContainerGenerator.StatusChanged -= childContainersReadyHandler;
+            childContainersReadyHandler = null;
+        }
+
+        private bool AreChildContainersReadyForAnimation()
+        {
+            if (Items.Count == 0)
+                return true;
+
+            return GetChildItemElements().Count > 0;
+        }
+
+        // Virtualized Items hold TreeEdgeNode data objects. Animate generated containers.
+        private List<FrameworkElement> GetChildItemElements()
+        {
+            List<FrameworkElement> childElements = new List<FrameworkElement>();
+            ItemContainerGenerator generator = ItemContainerGenerator;
+
+            for (int index = 0; index < Items.Count; index++)
+            {
+                DependencyObject container = generator.ContainerFromIndex(index);
+
+                if (container == null)
+                    container = Items[index] as DependencyObject;
+
+                FrameworkElement childElement = container as FrameworkElement;
+
+                if (childElement != null)
+                    childElements.Add(childElement);
+            }
+
+            return childElements;
         }
 
         private void AnimateChildItems(bool expand, EventHandler completed)
         {
-            List<FrameworkElement> childElements = Items
-                .OfType<FrameworkElement>()
-                .ToList();
+            List<FrameworkElement> childElements = GetChildItemElements();
 
             if (childElements.Count == 0)
             {
@@ -417,13 +502,7 @@ namespace m0.UIWpf.Visualisers
             for (int index = 0; index < childElements.Count; index++)
             {
                 FrameworkElement childElement = childElements[index];
-                TranslateTransform translateTransform = childElement.RenderTransform as TranslateTransform;
-
-                if (translateTransform == null)
-                {
-                    translateTransform = new TranslateTransform();
-                    childElement.RenderTransform = translateTransform;
-                }
+                TranslateTransform translateTransform = EnsureTranslateTransform(childElement);
 
                 childElement.BeginAnimation(OpacityProperty, null);
                 translateTransform.BeginAnimation(TranslateTransform.YProperty, null);
@@ -454,6 +533,9 @@ namespace m0.UIWpf.Visualisers
                     {
                         CompleteChildItemAnimations(childElements, endOpacity, endTranslateY);
                         completed?.Invoke(this, EventArgs.Empty);
+
+                        if (expand == false)
+                            CompleteChildItemAnimations(childElements, 1, 0);
                     };
 
                 childElement.BeginAnimation(OpacityProperty, opacityAnimation);
@@ -461,38 +543,55 @@ namespace m0.UIWpf.Visualisers
             }
         }
 
+        private static TranslateTransform EnsureTranslateTransform(FrameworkElement childElement)
+        {
+            TranslateTransform translateTransform = childElement.RenderTransform as TranslateTransform;
+
+            if (translateTransform == null)
+            {
+                translateTransform = new TranslateTransform();
+                childElement.RenderTransform = translateTransform;
+            }
+
+            return translateTransform;
+        }
+
         private void CompleteChildItemAnimations(List<FrameworkElement> childElements, double opacity, double translateY)
         {
             foreach (FrameworkElement childElement in childElements)
-            {
-                childElement.BeginAnimation(OpacityProperty, null);
-                childElement.Opacity = opacity;
-
-                TranslateTransform translateTransform = childElement.RenderTransform as TranslateTransform;
-
-                if (translateTransform != null)
-                {
-                    translateTransform.BeginAnimation(TranslateTransform.YProperty, null);
-                    translateTransform.Y = translateY;
-                }
-            }
+                SetChildItemAnimationState(childElement, opacity, translateY);
         }
 
         private void ResetChildItemAnimations()
         {
-            foreach (FrameworkElement childElement in Items.OfType<FrameworkElement>())
-            {
-                childElement.BeginAnimation(OpacityProperty, null);
-                childElement.Opacity = 1;
+            foreach (FrameworkElement childElement in GetChildItemElements())
+                SetChildItemAnimationState(childElement, 1, 0);
+        }
 
-                TranslateTransform translateTransform = childElement.RenderTransform as TranslateTransform;
+        internal void ResetAnimationVisualState()
+        {
+            expandAnimationRequestId++;
+            DetachChildContainersReadyHandler();
+            isExpandCollapseAnimationInProgress = false;
+            SetChildItemAnimationState(this, 1, 0);
+        }
 
-                if (translateTransform != null)
-                {
-                    translateTransform.BeginAnimation(TranslateTransform.YProperty, null);
-                    translateTransform.Y = 0;
-                }
-            }
+        private void ApplyChildItemExpandStartState(FrameworkElement childElement)
+        {
+            SetChildItemAnimationState(childElement, 0.65, -5);
+        }
+
+        private static void SetChildItemAnimationState(FrameworkElement childElement, double opacity, double translateY)
+        {
+            if (childElement == null)
+                return;
+
+            childElement.BeginAnimation(OpacityProperty, null);
+            childElement.Opacity = opacity;
+
+            TranslateTransform translateTransform = EnsureTranslateTransform(childElement);
+            translateTransform.BeginAnimation(TranslateTransform.YProperty, null);
+            translateTransform.Y = translateY;
         }
 
         public void UpdateHeader()
@@ -606,6 +705,11 @@ namespace m0.UIWpf.Visualisers
 
             if (childItem != null && childNode != null && ParentVisualiser != null)
                 ParentVisualiser.PrepareVirtualTreeViewItem(childNode, childItem);
+
+            FrameworkElement childElement = element as FrameworkElement;
+
+            if (childElement != null && isExpandCollapseAnimationInProgress && IsExpanded)
+                ApplyChildItemExpandStartState(childElement);
         }
 
         protected override void ClearContainerForItemOverride(DependencyObject element, object item)
@@ -647,6 +751,7 @@ namespace m0.UIWpf.Visualisers
                 if(vertexChangeListenerEdge != null)
                     ExecutionFlowHelper.RemoveGraphChangeListener(vertexChangeListenerEdge);
 
+                ResetAnimationVisualState();
                 IsDisposed = true;
             }
         }
@@ -942,6 +1047,7 @@ namespace m0.UIWpf.Visualisers
             treeItem.IsFilled = false;
             treeItem.IsSelected = false;
             treeItem.IsKeyboardHighlighted = false;
+            treeItem.ResetAnimationVisualState();
         }
 
         internal void FillVirtualNode(TreeVisualiserViewItem treeItem)
