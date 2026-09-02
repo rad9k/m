@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace m0.ZeroCode
@@ -3531,6 +3532,7 @@ namespace m0.ZeroCode
             //parseRoot = baseVertex.AddVertex(MinusZero.Instance.Root.Get(false, @"System\Meta\Base\$ParseRoot"),"");
 
             IVertex System = GraphUtil.GetQueryOutFirst(MinusZero.Instance.Root, null, "System");
+
             IVertex Meta = GraphUtil.GetQueryOutFirst(System, null, "Meta");
             IVertex Base = GraphUtil.GetQueryOutFirst(Meta, null, "Base");
 

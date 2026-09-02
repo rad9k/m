@@ -53,7 +53,10 @@ namespace m0.UIWpf.UX
             IsSet = isSet;
 
             if (IsSet)
+            {
                 Remember.Content = "Remember choice, for current set";
+                Remember.IsChecked = true;
+            }
             else
                 Remember.Content = "Remember choice, for current session";
 
@@ -65,12 +68,16 @@ namespace m0.UIWpf.UX
 
             ItemName.Content = baseedge.Get(false, "To:").Value;
 
-            if (!CheckIfThereIsChoiceRemembered())
+            bool choiceRemembered = CheckIfThereIsChoiceRemembered();
+
+            if (!choiceRemembered)
             {
                 BaseEdgeSet();
 
                 if (showDialog)
+                {
                     ShowDialog();
+                }
             }
         }    
 
@@ -102,10 +109,8 @@ namespace m0.UIWpf.UX
 
             temp.DeleteEdge(e);
 
-            if (res.Count() > 0)
-                return true;
-            else
-                return false;
+            bool matched = res.Count() > 0;
+            return matched;
         }
 
         IVertex ItemsList; 
@@ -191,6 +196,22 @@ namespace m0.UIWpf.UX
 
             if (ItemsList.Count() > 0)
                 this.List.SelectedIndex = 0;
+        }
+
+        public static UXTemplate TryGetRememberedDirectUxTemplate(IVertex baseEdge)
+        {
+            IVertex meta = baseEdge.Get(false, "Meta:");
+            if (meta == null || meta.Value == null)
+                return null;
+
+            IVertex question = MinusZero.Instance.CreateTempVertex();
+            question.Value = "create diagram item for " + meta.Value;
+
+            IVertex answer = User.Process.UX.NonAtomProcess.GetUserChoice(question);
+            if (answer == null)
+                return null;
+
+            return TypedEdge.GetFromDictionary(answer) as UXTemplate;
         }
 
         private bool CheckIfThereIsChoiceRemembered()

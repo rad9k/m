@@ -11,6 +11,12 @@ namespace m0.Graph.ExecutionFlow
     {
         static IVertex graphChangeTrigger_meta;
         static IVertex graphChangeTrigger_type;
+
+        public static IVertex GraphChangeTriggerMeta
+        {
+            get { return graphChangeTrigger_meta; }
+        }
+
         static IVertex scopeQuery_meta;
         static IVertex changeTypeFilter_meta;
 

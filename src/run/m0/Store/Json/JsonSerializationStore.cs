@@ -9,6 +9,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using m0.Foundation;
 using m0.Graph;
+using m0.Graph.ExecutionFlow;
 using m0.Util;
 using m0.Store.FileSystem;
 
@@ -459,7 +460,7 @@ namespace m0.Store.Json
         private JsonSerializationData GetJsonSerializationData()
         {
             GraphChangeTriggerMetaIdentity graphChangeTriggerMetaIdentity = new GraphChangeTriggerMetaIdentity(
-                MinusZero.Instance.root.Get(false, @"System\Meta\Base\Vertex\$GraphChangeTrigger"));
+                GraphChangeTrigger.GraphChangeTriggerMeta);
 
             HashSet<object> excludedVertexIdentifiers = GetExcludedVerticesForJsonSerialization(graphChangeTriggerMetaIdentity);
 

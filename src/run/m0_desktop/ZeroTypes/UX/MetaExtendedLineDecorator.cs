@@ -1,6 +1,7 @@
 ﻿using m0.Foundation;
 using m0.Graph;
 using m0.UIWpf.Controls;
+using m0.UIWpf.UX;
 using m0.ZeroCode.Helpers;
 using System;
 using System.Collections.Generic;
@@ -116,6 +117,9 @@ namespace m0.ZeroTypes.UX
         
         public override void RemoveFromCanvas()
         {
+            if (OwningVisualiser == null || OwningVisualiser.Canvas == null)
+                return;
+
             OwningVisualiser.Canvas.Children.Remove(MetaLine);
             OwningVisualiser.Canvas.Children.Remove(LineEndings);
             OwningVisualiser.Canvas.Children.Remove(Line);

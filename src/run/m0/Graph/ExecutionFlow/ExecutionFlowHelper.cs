@@ -125,6 +125,10 @@ namespace m0.Graph.ExecutionFlow
             listener_meta = r.Get(false, @"System\Meta\ZeroTypes\ExecutionFlow\EventTrigger\Listener");
         }
 
+        // When true, Transaction.Commit still writes atoms and runs second-stage
+        // actions, but does not build, send, or dispose graph-change event trees.
+        public static bool SkipGraphChangeEventDispatch;
+
         public static void StartTransaction()
         {
             IExecution exe = new ZeroCodeExecution();

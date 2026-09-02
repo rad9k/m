@@ -96,7 +96,9 @@ namespace m0.ZeroTypes.UX
         {
             if (OwningVisualiser is UXVisualiser owningUxVisualiser &&
                 owningUxVisualiser.SuspendAutomaticDiagramLineUpdates)
+            {
                 return;
+            }
 
             if (OwningVisualiser is UXVisualiser draggingUxVisualiser &&
                 draggingUxVisualiser.IsItemMoveGraphInteractionActive)
@@ -344,9 +346,11 @@ namespace m0.ZeroTypes.UX
             needRebuildDiagramLinesDictionary = true;
 
             DiagramFromLines.Remove(line);
-            line.ToItem.DiagramToLines.Remove(line);
+            if (line.ToItem != null)
+                line.ToItem.DiagramToLines.Remove(line);
 
-            line.RemoveFromCanvas();
+            if (line.OwningVisualiser != null)
+                line.RemoveFromCanvas();
 
             IEdge decoratorEdge = line.Edge;
             line.Dispose();
@@ -485,7 +489,9 @@ namespace m0.ZeroTypes.UX
             bool deferHeavyWorkDuringItemDrag = deferGraphPositionPersistence;
 
             if (!deferHeavyWorkDuringItemDrag)
+            {
                 UpdateLayout();
+            }
 
             if (deferHeavyWorkDuringItemDrag &&
                 OwningVisualiser is UXVisualiser draggingUxVisualiser)
@@ -831,6 +837,7 @@ namespace m0.ZeroTypes.UX
             if (toItem.OwningVisualiser == null)
                 return;
 
+
             Dictionary<IUXItem, List<ILineDecoratorBase>> DiagramLinesToDiagramItemDictionary = GetDiagramLinesToDiagramItemDictionary();
             List<ILineDecoratorBase> sameToItemLines;
             if (!DiagramLinesToDiagramItemDictionary.TryGetValue(
@@ -881,6 +888,7 @@ namespace m0.ZeroTypes.UX
 
         public void UpdateDiagramLines()
         {
+
             foreach (ILineDecoratorBase m in DiagramToAsMetaLines)
                 m.UpdateMetaPosition();
 

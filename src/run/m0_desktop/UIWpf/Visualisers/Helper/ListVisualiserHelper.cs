@@ -128,7 +128,8 @@ namespace m0.UIWpf.Visualisers.Helper
 
         protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
-            if (ForceVertexChangeOff)
+            if (ForceVertexChangeOff ||
+                SuppressVertexChangeDuringDiagramCommit)
                 return exe.Stack;
 
             if (!firstVertexChangeExecuted && updateBaseEdgeCallSchema == UpdateBaseEdgeCallSchemeEnum.OmmitSecond)

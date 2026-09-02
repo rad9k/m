@@ -17,7 +17,6 @@ using m0.UIWpf.Visualisers.Helper;
 using m0.Graph.ExecutionFlow;
 using m0.UIWpf.Foundation;
 using m0.UIWpf.Controls;
-using System.Threading;
 
 namespace m0.UIWpf.Visualisers
 {
@@ -217,6 +216,7 @@ namespace m0.UIWpf.Visualisers
 
         public FormVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile)
         {
+
             ListVisualiserHelper visualiserHelper = new ListVisualiserHelper(parentVisualiser,
                 isVolatile,
                 MinusZero.Instance.Root.Get(false, @"System\Meta\Visualiser\Form"),
@@ -245,6 +245,7 @@ namespace m0.UIWpf.Visualisers
             visualiserHelper.CustomVertexChangeEvent += FormVertexChange;
 
             SetVertexDefaultValues();
+
             BaseEdgeToUpdated();
 
             this.BorderBrush = new SolidColorBrush(Colors.Red);
@@ -255,7 +256,9 @@ namespace m0.UIWpf.Visualisers
 
         private INoInEdgeInOutVertexVertex FormVertexChange(IExecution exe)
         {
-            if (isBaseEdgeToUpdateInProgress)
+
+            if (isBaseEdgeToUpdateInProgress ||
+                AtomVisualiserHelper.SuppressVertexChangeDuringDiagramCommit)
                 return exe.Stack;
 
             IVertex baseEdge = Vertex.Get(false, @"BaseEdge:");
@@ -285,7 +288,11 @@ namespace m0.UIWpf.Visualisers
                             && !suppressTypedBaseEdgeToRebuild)));
 
             if (willRebuild)
-                return helper.VertexChangeLogic(exe);
+            {
+                INoInEdgeInOutVertexVertex rebuildResult =
+                    helper.VertexChangeLogic(exe);
+                return rebuildResult;
+            }
 
             if (ExecutionFlowHelper.IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(
                 exe.Stack,
@@ -1669,7 +1676,6 @@ namespace m0.UIWpf.Visualisers
         }
 
         IVertex BaseVertexEdge = null;
-        
 
         public void BaseEdgeToUpdated()
         {
@@ -1749,6 +1755,7 @@ namespace m0.UIWpf.Visualisers
                     childEdges,
                     expertEdges,
                     executableEdges);
+
                 PreFillForm(fieldDescriptors);
 
                 InitializeControlContent();
@@ -1783,7 +1790,9 @@ namespace m0.UIWpf.Visualisers
                 return true;
 
             if (allowUpdateLayout && !i.WidthCorrectionDone)
+            {
                 this.UpdateLayout();
+            }
 
            if (i.ControlInfos.First().Value.MetaControl.ActualWidth == 0)
                 return false;
@@ -1929,6 +1938,7 @@ namespace m0.UIWpf.Visualisers
             if (!MetaOnLeft || isDisposed || TabList == null)
                 return;
 
+
             if (retryCount == 0)
             {
                 if (widthCorrectionScheduled)
@@ -2003,6 +2013,7 @@ namespace m0.UIWpf.Visualisers
 
         private void FormVisualiser_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+
             if (!e.WidthChanged)
                 return;
 
@@ -2122,7 +2133,7 @@ namespace m0.UIWpf.Visualisers
                 BaseVertexEdgeAdded = true;
                 AddEdge(BaseVertexEdge, false);
             }
-            
+
             string group = getGroup(meta);
             string section = getSection(meta);  
 
@@ -2144,6 +2155,7 @@ namespace m0.UIWpf.Visualisers
 
             if (!WpfUtil.HasParentsGotContextMenu(metaControl))
                 metaControl.ContextMenu = new m0ContextMenu(this);
+
 
             System.Windows.FrameworkElement dataControl = null;
             

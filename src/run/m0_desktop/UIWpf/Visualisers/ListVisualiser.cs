@@ -1441,14 +1441,9 @@ namespace m0.UIWpf.Visualisers
                     if (GraphUtil.GetQueryOutCount(e.Meta, "$Hide", null) == 0)
                         ItemsSourceValueNoHide.Add(e);
 
-                SetDataGridItemsSourceWithDiagnostics(ItemsSourceValueNoHide, "ListVisualiser.BaseEdgeToUpdated");
+                ThisDataGrid.ItemsSource = ItemsSourceValueNoHide;
                 RefreshVisualStatesAfterItemsChanged();
             }
-        }
-
-        protected void SetDataGridItemsSourceWithDiagnostics(IEnumerable itemsSource, string reason)
-        {
-            ThisDataGrid.ItemsSource = itemsSource;
         }
 
         private void ConfigureDataGridVirtualization()

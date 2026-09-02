@@ -153,6 +153,8 @@ namespace m0.UIWpf.UX
                 deferredLineDecoratorListenerRegistrations.ToArray();
             deferredLineDecoratorListenerRegistrations.Clear();
 
+
+
             Interaction.BeginInteractionWithGraph();
             try
             {
@@ -168,6 +170,7 @@ namespace m0.UIWpf.UX
             {
                 Interaction.EndInteractionWithGraph();
             }
+            
         }
 
         void BeginDeferNewUXItemListenerRegistrations()
@@ -202,6 +205,8 @@ namespace m0.UIWpf.UX
             UXItem[] items = deferredUXItemListenerRegistrations.ToArray();
             deferredUXItemListenerRegistrations.Clear();
 
+
+
             Interaction.BeginInteractionWithGraph();
             try
             {
@@ -217,6 +222,7 @@ namespace m0.UIWpf.UX
             {
                 Interaction.EndInteractionWithGraph();
             }
+            
         }
 
         internal void RequestDraggedItemRenderUpdate(IUXItem item)
@@ -245,6 +251,7 @@ namespace m0.UIWpf.UX
             IUXItem[] items = pendingDraggedItemRenderUpdates.ToArray();
             pendingDraggedItemRenderUpdates.Clear();
 
+
             foreach (IUXItem item in items)
             {
                 if (!itemsAllSet.Contains(item))
@@ -253,6 +260,7 @@ namespace m0.UIWpf.UX
                 CheckAndUpdateItemParent(item, true);
                 item.UpdateDiagramLines();
             }
+
         }
 
         void CompleteDraggedItemRenderUpdate(IUXItem item)
@@ -394,13 +402,6 @@ namespace m0.UIWpf.UX
 
             if (alreadyOpened != null)
             {
-                MinusZero.Instance.Log(1, "UXVisualiser.DisposeNesting",
-                    "ctor blocked alreadyOpened type=" + alreadyOpened.GetType().Name
-                    + " baseEdgeTo=" + DescribeVertexForDisposeNestingLog(baseEdgeTo)
-                    + " parentVisualiser=" + DescribeVertexForDisposeNestingLog(parentVisualiser)
-                    + " isVolatile=" + isVolatile
-                    + " alreadyOpenedIsDisposed=" + DescribeDisposedFlag(alreadyOpened));
-
                 UserInteractionUtil.ShowException("Diagram Visualiser", "There is allready Diagram Visualiser opened for this Edge", ExceptionLevelEnum.Warning);
 
                 canLoad = false;
@@ -431,13 +432,6 @@ namespace m0.UIWpf.UX
                 true);
             visualiserHelper.CustomVertexChangeEvent +=
                 UXVisualiserVertexChange;
-
-            MinusZero.Instance.Log(1, "UXVisualiser.DisposeNesting",
-                "ctor created baseEdgeTo=" + DescribeVertexForDisposeNestingLog(baseEdgeTo)
-                + " registeredVertex=" + DescribeVertexForDisposeNestingLog(Vertex)
-                + " parentVisualiser=" + DescribeVertexForDisposeNestingLog(parentVisualiser)
-                + " isVolatile=" + isVolatile
-                + " note=AddVertexFalse_noItemEdgeOnParent");
 
             this.AllowDrop = true;
             this.Loaded += new RoutedEventHandler(OnLoad);
@@ -728,6 +722,8 @@ namespace m0.UIWpf.UX
             if (definitionEdges == null)
                 return;
 
+            int copiedEdges = 0;
+
             //foreach (IEdge e in definitionEdges.OutEdgesRaw)
             foreach (IEdge e in definitionEdges.OutEdges)
                 if (e.Meta.Value.ToString()[0]!='$' && (!(GraphUtil.ExistQueryOut(e.Meta, "$NoCopy", null) || GraphUtil.ExistQueryOut(e.To, "$NoCopy", null))))
@@ -737,6 +733,8 @@ namespace m0.UIWpf.UX
                     else
 
                         GraphUtil.CreateOrReplaceEdge_DeepCopy(baseVertex, e.Meta, e.To);
+
+                    copiedEdges++;
 
                     /*if (VertexOperations.IsAtomicVertex(e.To))
                         GraphUtil.SetVertexValue(baseVertex, e.Meta, e.To.Value); // shallow copy
@@ -748,12 +746,14 @@ namespace m0.UIWpf.UX
                             GraphUtil.CreateOrReplaceEdge_DeepCopy(baseVertex, e.Meta, e.To);
                     }*/
                 }
+
         }
 
         public void HostItem(IUXContainer host, IUXItem item, bool newItemCreation)
         {
             if (!(item is UIElement))
                 return;
+
 
             Items_all.Add(item);
             itemsAllSet.Add(item);
@@ -836,7 +836,9 @@ namespace m0.UIWpf.UX
             //
 
             if (!deferHostItemUpdateLayout)
+            {
                 item_UIElement.UpdateLayout();
+            }
 
             FindAndOrCreateContainerEdge(item, newItemCreation);
         }
@@ -905,13 +907,20 @@ namespace m0.UIWpf.UX
                     GetEdgesForDiagramLineDecorators(item)
                         .GroupBy(e => (e.Meta, e.To))
                         .ToDictionary(g => g.Key, g => g.Count());
-                List<LineDecorator> lineDecoratorsToAdd =
-                    new List<LineDecorator>();
+                List<(LineDecorator LineDecorator, IUXItem HostedToItem)> lineDecoratorsToAdd =
+                    new List<(LineDecorator, IUXItem)>();
 
                 foreach (IUXItem decorator in decorators)
                 {
-                    if (!(decorator is LineDecorator lineDecorator)
-                        || !hostedItems.Contains(lineDecorator.ToItem))
+                    LineDecorator lineDecorator = decorator as LineDecorator;
+                    if (lineDecorator == null)
+                        continue;
+
+                    IUXItem hostedToItem = GetHostedToItemForLineDecorator(
+                        lineDecorator,
+                        hostedItems);
+
+                    if (hostedToItem == null)
                         continue;
 
                     Edge decoratorBaseEdge = decorator.BaseEdge;
@@ -930,27 +939,61 @@ namespace m0.UIWpf.UX
                             remainingEdgeCounts[key] =
                                 remainingCount - 1;
 
-                        lineDecoratorsToAdd.Add(lineDecorator);
+                        lineDecoratorsToAdd.Add((lineDecorator, hostedToItem));
                     }
                     else
+                    {
                         item.Vertex.DeleteEdge(decorator.Edge);
+                    }
                 }
 
-                foreach (LineDecorator lineDecorator in lineDecoratorsToAdd)
+                foreach ((LineDecorator lineDecorator, IUXItem hostedToItem) in lineDecoratorsToAdd)
+                {
                     item.AddDiagramLineObject(
-                        lineDecorator.ToItem,
+                        hostedToItem,
                         lineDecorator,
                         false);
+                }
             }
 
         }
 
-        // TOO
-        public IUXItem GetToDiagramItemFromLineVertex(LineDecorator lineDecorator) // this one is probably NOT needed
+        IUXItem GetHostedToItemForLineDecorator(
+            ILineDecoratorBase lineDecorator,
+            ISet<IUXItem> hostedItems)
         {
+            IUXItem storedToItem = lineDecorator.ToItem;
+            if (storedToItem != null && hostedItems.Contains(storedToItem))
+                return storedToItem;
+
+            IUXItem resolvedToItem = GetToDiagramItemFromLineVertex(lineDecorator);
+            if (resolvedToItem != null && hostedItems.Contains(resolvedToItem))
+                return resolvedToItem;
+
+            Edge baseEdge = lineDecorator.BaseEdge;
+            if (baseEdge != null)
+            {
+                List<IUXItem> itemsByBaseEdgeTo =
+                    GetItemsByBaseEdgeTo_ForLines(baseEdge);
+
+                foreach (IUXItem candidate in itemsByBaseEdgeTo)
+                    if (candidate != null && hostedItems.Contains(candidate))
+                        return candidate;
+            }
+
+            return null;
+        }
+
+        public IUXItem GetToDiagramItemFromLineVertex(ILineDecoratorBase lineDecorator)
+        {
+            if (lineDecorator == null)
+                return null;
+
             IVertex toFind = null;
 
             Edge lineDecorator_BaseEdge = lineDecorator.BaseEdge;
+            if (lineDecorator_BaseEdge == null)
+                return null;
 
             if (GraphUtil.ExistQueryOut(lineDecorator_BaseEdge.Meta, "$VertexTarget", null)
             //&& !((UXDecoratorTemplate)lineDecorator.UXTemplate).CreateEdgeOnly // ???? ZZZ added ! hope this is ok
@@ -966,7 +1009,11 @@ namespace m0.UIWpf.UX
                 if (dict.ContainsKey(toFind))
                     foreach (IUXItem i in dict[toFind])
                     {
-                        string tdtq = ((UXDecoratorTemplate)lineDecorator.UXTemplate).ToDiagramItemTestQuery;
+                        UXDecoratorTemplate decoratorTemplate =
+                            lineDecorator.UXTemplate as UXDecoratorTemplate;
+                        string tdtq = decoratorTemplate != null
+                            ? decoratorTemplate.ToDiagramItemTestQuery
+                            : null;
 
                         if (!(tdtq != null && i.Vertex.Get(false, tdtq) == null))
                             return i;
@@ -983,7 +1030,9 @@ namespace m0.UIWpf.UX
             UIElement uie = (UIElement)item;
 
             if (item.ParentItem != this)
+            {
                 return uie.TranslatePoint(new Point(0, 0), Canvas);
+            }
             else
                 return new Point(Canvas.GetLeft(uie), Canvas.GetTop(uie));
         }
@@ -1037,75 +1086,101 @@ namespace m0.UIWpf.UX
             Paint();
         }
 
+        void CommitInteractionWithGraphSuppressingNestedVisualiserUpdates()
+        {
+            bool previousSuppress =
+                AtomVisualiserHelper.SuppressVertexChangeDuringDiagramCommit;
+            bool previousSkipEventDispatch =
+                ExecutionFlowHelper.SkipGraphChangeEventDispatch;
+            AtomVisualiserHelper.SuppressVertexChangeDuringDiagramCommit = true;
+            ExecutionFlowHelper.SkipGraphChangeEventDispatch = true;
+            try
+            {
+                Interaction.EndInteractionWithGraph();
+            }
+            finally
+            {
+                ExecutionFlowHelper.SkipGraphChangeEventDispatch =
+                    previousSkipEventDispatch;
+                AtomVisualiserHelper.SuppressVertexChangeDuringDiagramCommit =
+                    previousSuppress;
+            }
+        }
+
         public void Paint()
         {
             if (ActualHeight != 0 || IsFirstPainted)
             {
-                ScaleChange();
+                    ScaleChange();
 
-                Canvas.Children.Clear();
+                    Canvas.Children.Clear();
 
-                Width = Size.Width;
-                Height = Size.Height;
+                    Width = Size.Width;
+                    Height = Size.Height;
 
-                Background = GetBackgroundBrush();
-                //new SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 200, 200));
+                    Background = GetBackgroundBrush();
+                    //new SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 200, 200));
 
-                BeginSuspendAutomaticDiagramLineUpdates();
-                deferHostItemUpdateLayout = true;
+                    BeginSuspendAutomaticDiagramLineUpdates();
+                    deferHostItemUpdateLayout = true;
 
-                try
-                {
-                    ////////////////////////////////////////
-                    Interaction.BeginInteractionWithGraph();
-                    //////////////////////////////////////// 
-
-                    Items_all.Clear();
-                    itemsAllSet.Clear();
-                    Containers_all.Clear();
-
-                    //
-
-                    foreach (ITypedEdge _i in Items)
+                    try
                     {
-                        IUXItem i = UXItem.GetUXItem(this, _i);
+                        ////////////////////////////////////////
+                        Interaction.BeginInteractionWithGraph();
+                        //////////////////////////////////////// 
 
-                        if (i == null)
-                            continue;
+                        Items_all.Clear();
+                        itemsAllSet.Clear();
+                        Containers_all.Clear();
 
-                        if (CheckIfItemIsValidAndRemoveIfInvalid(i))
-                            HostItem(this, i, false);
+                        //
+
+
+                        foreach (ITypedEdge _i in Items)
+                        {
+                            IUXItem i = UXItem.GetUXItem(this, _i);
+
+                            if (i == null)
+                                continue;
+
+                            if (CheckIfItemIsValidAndRemoveIfInvalid(i))
+                                HostItem(this, i, false);
+                        }
+                        
+
+                        //
+
+                        UpdateLayout(); // here
+
+                        AddLineObjects();
+
+                        SelectionArea = new SelectionArea(Canvas);
+
+
+                        SelectionArea.HideSelectionArea();
+
+
+                        SelectWrappersForSelectedVertices();
+
+                        IsFirstPainted = true;
+
+
+                        CheckAndUpdateDiagramLines();
+
+
+
+                        ////////////////////////////////////////
+                        CommitInteractionWithGraphSuppressingNestedVisualiserUpdates();
+                        ////////////////////////////////////////    
+                        
                     }
-
-                    //
-
-                    UpdateLayout(); // here
-                    AddLineObjects();
-
-                    SelectionArea = new SelectionArea(Canvas);
-
-
-                    SelectionArea.HideSelectionArea();
-
-
-                    SelectWrappersForSelectedVertices();
-
-                    IsFirstPainted = true;
-
-
-                    CheckAndUpdateDiagramLines();
-
-
-                    ////////////////////////////////////////
-                    Interaction.EndInteractionWithGraph();
-                    ////////////////////////////////////////    
-                }
-                finally
-                {
-                    deferHostItemUpdateLayout = false;
-                    EndSuspendAutomaticDiagramLineUpdates();
-                    UpdateAllDiagramLineGeometries();
-                }
+                    finally
+                    {
+                        deferHostItemUpdateLayout = false;
+                        EndSuspendAutomaticDiagramLineUpdates();
+                        UpdateAllDiagramLineGeometries();
+                    }
             }
         }
 
@@ -1448,12 +1523,15 @@ namespace m0.UIWpf.UX
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////            
 
+
             foreach (IEdge ed in Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"))
                 foreach (IUXItem item in GetItemsByVertex(ed.To))
                     if (item.NestingLevel == 1)
                         item.MoveItem(item.Position.X + x, item.Position.Y + y, false);
                     else
                         item.MoveItem(x, y, true);
+            
+
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
@@ -1778,6 +1856,7 @@ namespace m0.UIWpf.UX
                 }
             }
 
+
             if (best < LineSelectionDelta && bestLine != null)
             {
                 if (bestLine != prevSelectedLine)
@@ -1993,10 +2072,6 @@ namespace m0.UIWpf.UX
             {
                 IsDisposed = true;
 
-                MinusZero.Instance.Log(1, "UXVisualiser.DisposeNesting",
-                    "Dispose begin IsVisualiser=" + IsVisualiser
-                    + " vertex=" + DescribeVertexForDisposeNestingLog(Vertex));
-
                 if (IsVisualiser)
                 {
                     VisualisersList.RemoveVisualiser(this);
@@ -2006,48 +2081,17 @@ namespace m0.UIWpf.UX
                     DisposeAllItems();
 
                     SaveDiagram();
-
-                    MinusZero.Instance.Log(1, "UXVisualiser.DisposeNesting",
-                        "Dispose end removedFromVisualisersList vertex=" + DescribeVertexForDisposeNestingLog(Vertex));
                 }
                 else
-                {
                     TypedEdge.RemoveFromDictionary(this);
-
-                    MinusZero.Instance.Log(1, "UXVisualiser.DisposeNesting",
-                        "Dispose end TypedEdge path vertex=" + DescribeVertexForDisposeNestingLog(Vertex));
-                }
             }
-            else
-            {
-                MinusZero.Instance.Log(1, "UXVisualiser.DisposeNesting",
-                    "Dispose skipped alreadyDisposed vertex=" + DescribeVertexForDisposeNestingLog(Vertex));
-            }
-        }
-
-        private static string DescribeVertexForDisposeNestingLog(IVertex vertex)
-        {
-            if (vertex == null)
-                return "null";
-
-            return "val=" + (vertex.Value == null ? "null" : vertex.Value.ToString())
-                + " hash=" + vertex.GetHashCode();
-        }
-
-        private static string DescribeDisposedFlag(IVisualiser visualiser)
-        {
-            UXVisualiser uxVisualiser = visualiser as UXVisualiser;
-
-            if (uxVisualiser != null)
-                return uxVisualiser.IsDisposed.ToString();
-
-            return "unknown";
         }
 
         private void SaveDiagram()
         {
             string path = GraphUtil.GetQueryBetweenVertexes_byInEdges(this.Vertex, MinusZero.Instance.Root);
             string pathEncoded = Lib.StdView.Html.DiagramQueryToDiagramId_internal(path);
+
             string startFullFilename = GraphUtil.GetStringValue(MinusZero.Instance.Root.Get(false, @"Start:\FullFilename:"));
             string diagramsDirectoryPath = System.IO.Path.Combine(startFullFilename, "diagrams");
             string diagramFilePath = System.IO.Path.Combine(diagramsDirectoryPath, pathEncoded + ".png");
@@ -2168,6 +2212,7 @@ namespace m0.UIWpf.UX
                     && toBeParentItem != item)
                     MoveToParentItem(item, toBeParentItem);
             }
+
         }
 
         private void MoveToParentItem(IUXItem item, IUXContainer NewParentItem)
@@ -2277,29 +2322,56 @@ namespace m0.UIWpf.UX
 
             IVertex r = m0.MinusZero.Instance.Root;
 
-            NewUXItem ndi = new NewUXItem(this, droppedVertex, isSet, WpfUtil.GetMousePositionDnd(e));
+            UXTemplate uxTemplate;
+            bool instanceOfMeta;
+            string instanceValue;
+            IVertex itemBaseEdge;
 
-            if (ndi.UXTemplate != null)
+            UXTemplate rememberedTemplate =
+                NewUXItem.TryGetRememberedDirectUxTemplate(droppedVertex);
+
+            if (rememberedTemplate != null)
             {
-                if (ndi.InstanceOfMeta)
+                uxTemplate = rememberedTemplate;
+                instanceOfMeta = false;
+                instanceValue = null;
+                itemBaseEdge = droppedVertex;
+            }
+            else
+            {
+                NewUXItem ndi = new NewUXItem(
+                    this,
+                    droppedVertex,
+                    isSet,
+                    WpfUtil.GetMousePositionDnd(e));
+
+                uxTemplate = ndi.UXTemplate;
+                instanceOfMeta = ndi.InstanceOfMeta;
+                instanceValue = ndi.InstanceValue;
+                itemBaseEdge = ndi.BaseEdge;
+            }
+
+            if (uxTemplate != null)
+            {
+                if (instanceOfMeta)
                 {
                     IUXItem clickedItem = GetItemByPoint(p);
 
                     IEdge ve = VertexOperations.AddInstanceAndReturnEdge(
                         clickedItem.BaseEdge.To
-                        , ndi.BaseEdge.Get(false, "To:"));
+                        , itemBaseEdge.Get(false, "To:"));
 
                     IVertex newVertex = ve.To;
 
-                    newVertex.Value = ndi.InstanceValue;
+                    newVertex.Value = instanceValue;
 
-                    if (ndi.UXTemplate.ForceShowEditForm)
+                    if (uxTemplate.ForceShowEditForm)
                         MinusZero.Instance.UserInteraction.EditEdge(newVertex);
 
                     IVertex newEdgeVertex = EdgeHelper.CreateTempEdgeVertex(/*ve.From*/null, ve.Meta, ve.To);
 
                     newUXItem = AddDiagramItem(p,
-                                   ndi.UXTemplate,
+                                   uxTemplate,
                                    newEdgeVertex);
                 }
                 else
@@ -2307,14 +2379,14 @@ namespace m0.UIWpf.UX
                     bool ThereIsDiagramItemOfThisClassAndThisBaseEdgeTo = false;
                     bool ThereIsDiagramItemOfThisBaseEdgeTo = false;
 
-                    IVertex DiagramItemOfThisDiagramItemDefinition = Vertex.GetAll(false, @"Item:{UXTemplate:" + ndi.UXTemplate.Vertex.Value + "}");
+                    IVertex DiagramItemOfThisDiagramItemDefinition = Vertex.GetAll(false, @"Item:{UXTemplate:" + uxTemplate.Vertex.Value + "}");
 
                     foreach (IEdge ee in DiagramItemOfThisDiagramItemDefinition)
-                        if (ee.To.Get(false, @"BaseEdge:\To:") == ndi.BaseEdge.Get(false, "To:"))
+                        if (ee.To.Get(false, @"BaseEdge:\To:") == itemBaseEdge.Get(false, "To:"))
                             ThereIsDiagramItemOfThisClassAndThisBaseEdgeTo = true;
 
-                    if (GetItemsDictionaryByBaseEdgeTo().ContainsKey(ndi.BaseEdge.Get(false, "To:")))
-                        foreach (IUXItem b in GetItemsDictionaryByBaseEdgeTo()[ndi.BaseEdge.Get(false, "To:")])
+                    if (GetItemsDictionaryByBaseEdgeTo().ContainsKey(itemBaseEdge.Get(false, "To:")))
+                        foreach (IUXItem b in GetItemsDictionaryByBaseEdgeTo()[itemBaseEdge.Get(false, "To:")])
                             ThereIsDiagramItemOfThisBaseEdgeTo = true;
 
                     /*if (b.Vertex.Get(false, @"BaseEdge:\To:") == ndi.BaseEdge.Get(false, "To:"))
@@ -2326,8 +2398,8 @@ namespace m0.UIWpf.UX
                             GeneralUtil.CompareStrings(r.Get(false, @"Home:\CurrentUser:\Settings:\AllowManyUXItemsWithSameBaseEdgeTo:").Value, "True"))
                         {
                             newUXItem = AddDiagramItem(p,
-                                        ndi.UXTemplate,
-                                        ndi.BaseEdge);
+                                        uxTemplate,
+                                        itemBaseEdge);
                         }
                         else
                             UserInteractionUtil.ShowException(Vertex.Value + "UXAggregtor", "There is allready UX Item, that visualises dropped vertex.\n\nNow, it is not possible to add second representation of same vertex.\n\nOne can change this limitation by changing \"User\\CurrentUser:\\Settings:\\AllowManyUXItemsWithSameBaseEdgeTo:\" setting."
@@ -2335,7 +2407,7 @@ namespace m0.UIWpf.UX
 
                     }
                     else
-                        UserInteractionUtil.ShowException(Vertex.Value + "UXAggregator", "There is allready \"" + ndi.UXTemplate.Vertex.Value + "\" UX Item, that visualises dropped vertex.\n\nIt is not possible to add second representation of same vertex, with the same UX Item type."
+                        UserInteractionUtil.ShowException(Vertex.Value + "UXAggregator", "There is allready \"" + uxTemplate.Vertex.Value + "\" UX Item, that visualises dropped vertex.\n\nIt is not possible to add second representation of same vertex, with the same UX Item type."
                             , ExceptionLevelEnum.Warning);
                 }
             }
@@ -2544,77 +2616,79 @@ namespace m0.UIWpf.UX
         {
             if (e.Data.GetDataPresent("Vertex"))
             {
-                IVertex r = m0.MinusZero.Instance.Root;
+                    IVertex r = m0.MinusZero.Instance.Root;
 
-                IVertex dndVertex = e.Data.GetData("Vertex") as IVertex;
+                    IVertex dndVertex = e.Data.GetData("Vertex") as IVertex;
 
-                Point p = e.GetPosition(Canvas);
+                    Point p = e.GetPosition(Canvas);
 
-                bool isSet = false;
+                    bool isSet = false;
 
-                if (dndVertex.Count() > 1)
-                    isSet = true;
+                    if (dndVertex.Count() > 1)
+                        isSet = true;
 
-                if (isSet)
-                    User.Process.UX.NonAtomProcess.StartNonAtomProcess();
+                    if (isSet)
+                        User.Process.UX.NonAtomProcess.StartNonAtomProcess();
 
-                NewUXItemsList.Clear();
-                IList<IUXItem> affectedLineItems = new List<IUXItem>();
-                bool originalDeferHostItemUpdateLayout =
-                    deferHostItemUpdateLayout;
+                    NewUXItemsList.Clear();
+                    IList<IUXItem> affectedLineItems = new List<IUXItem>();
+                    bool originalDeferHostItemUpdateLayout =
+                        deferHostItemUpdateLayout;
 
-                BeginSuspendAutomaticDiagramLineUpdates();
-                BeginDeferNewUXItemListenerRegistrations();
-                deferHostItemUpdateLayout = true;
-                try
-                {
-                    Interaction.BeginInteractionWithGraph();
+                    BeginSuspendAutomaticDiagramLineUpdates();
+                    BeginDeferNewUXItemListenerRegistrations();
+                    deferHostItemUpdateLayout = true;
                     try
                     {
-                        foreach (IEdge eee in dndVertex)
+                        Interaction.BeginInteractionWithGraph();
+                        try
                         {
-                            IUXItem newUXItem =
-                                AddDiagramItemDialog(
-                                    p,
-                                    eee.To,
-                                    isSet,
-                                    e);
 
-                            if (newUXItem != null)
+                            foreach (IEdge eee in dndVertex)
                             {
-                                newUXItem.ForceVertexChangeOff = true;
-                                NewUXItemsList.Add(newUXItem);
+                                IUXItem newUXItem =
+                                    AddDiagramItemDialog(
+                                        p,
+                                        eee.To,
+                                        isSet,
+                                        e);
+
+                                if (newUXItem != null)
+                                {
+                                    newUXItem.ForceVertexChangeOff = true;
+                                    NewUXItemsList.Add(newUXItem);
+                                }
+
+                                p.X += 25;
+                                p.Y += 25;
                             }
+                            
 
-                            p.X += 25;
-                            p.Y += 25;
+
+                            affectedLineItems =
+                                GetItemsWhoseDiagramLinesMayBeAffectedByNewItems(
+                                    NewUXItemsList);
+                            
+
+                            CheckAndUpdateDiagramLinesForItems(
+                                affectedLineItems);
                         }
-
-                        affectedLineItems =
-                            GetItemsWhoseDiagramLinesMayBeAffectedByNewItems(
-                                NewUXItemsList);
-
-                        CheckAndUpdateDiagramLinesForItems(
-                            affectedLineItems);
+                        finally
+                        {
+                            CommitInteractionWithGraphSuppressingNestedVisualiserUpdates();
+                        }
                     }
                     finally
                     {
-                        Interaction.EndInteractionWithGraph();
-                    }
-                }
-                finally
-                {
-                    foreach (IUXItem item in NewUXItemsList)
-                        item.ForceVertexChangeOff = false;
+                        foreach (IUXItem item in NewUXItemsList)
+                            item.ForceVertexChangeOff = false;
 
-                    deferHostItemUpdateLayout =
-                        originalDeferHostItemUpdateLayout;
+                        deferHostItemUpdateLayout =
+                            originalDeferHostItemUpdateLayout;
 
-                    // Register all listeners in one transaction after the item
-                    // and line graph changes have already been committed.
-                    Interaction.BeginInteractionWithGraph();
-                    try
-                    {
+                        // Register all listeners in one transaction after the item
+                        // and line graph changes have already been committed.
+                        Interaction.BeginInteractionWithGraph();
                         try
                         {
                             EndDeferNewUXItemListenerRegistrations();
@@ -2622,27 +2696,25 @@ namespace m0.UIWpf.UX
                         finally
                         {
                             EndSuspendAutomaticDiagramLineUpdates();
+                            Interaction.EndInteractionWithGraph();
                         }
                     }
-                    finally
-                    {
-                        Interaction.EndInteractionWithGraph();
-                    }
-                }
 
-                UpdateLayout();
-                UpdateDiagramLineGeometries(affectedLineItems);
-                NewUXItemsList.Clear();
+                    UpdateLayout();
+                    UpdateDiagramLineGeometries(affectedLineItems);
 
 
-                if (isSet)
-                    User.Process.UX.NonAtomProcess.StopNonAtomProcess();
+                    NewUXItemsList.Clear();
 
-                if (e.Data.GetData("DragSource") is IHasSelectableEdges)
-                    ((IHasSelectableEdges)e.Data.GetData("DragSource")).UnselectAllSelectedEdges();
 
-                //GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(dndVertex);
-                GraphUtil.RemoveAllEdges(dndVertex);
+                    if (isSet)
+                        User.Process.UX.NonAtomProcess.StopNonAtomProcess();
+
+                    if (e.Data.GetData("DragSource") is IHasSelectableEdges)
+                        ((IHasSelectableEdges)e.Data.GetData("DragSource")).UnselectAllSelectedEdges();
+
+                    //GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(dndVertex);
+                    GraphUtil.RemoveAllEdges(dndVertex);
             }
         }
 
@@ -2662,7 +2734,9 @@ namespace m0.UIWpf.UX
             i.UXTemplate = UXTemplate;
 
             if (UXTemplate.ItemVertex != null)
+            {
                 AddEdgesFromDefintion(i.Vertex, UXTemplate.ItemVertex);
+            }
 
             return i;
         }
@@ -2752,6 +2826,7 @@ namespace m0.UIWpf.UX
 
         void CheckAndUpdateDiagramLinesForItems(IList<IUXItem> items)
         {
+
             HashSet<IEdge> containerEdges = GetContainerEdges();
 
             BeginSuspendAutomaticDiagramLineUpdates();
@@ -2777,6 +2852,7 @@ namespace m0.UIWpf.UX
                 if (!SuspendAutomaticDiagramLineUpdates)
                     UpdateDiagramLineGeometries(items);
             }
+            
         }
 
         HashSet<IEdge> GetContainerEdges()
@@ -2835,9 +2911,14 @@ namespace m0.UIWpf.UX
                         unmatchedEdgeCounts.Remove(key);
                     else
                         unmatchedEdgeCounts[key] = matchingEdgeCount - 1;
+
+                    // Matching is by BaseEdge, not stored ToItem. A stale ToItem
+                    // still keeps the decorator so AddLineObjects can retarget it.
                 }
                 else
+                {
                     item.RemoveDiagramLine(lineDecorator);
+                }
             }
         }
 
@@ -2901,6 +2982,34 @@ namespace m0.UIWpf.UX
                         }
                     }
 
+                if (needAdding)
+                {
+                    ILineDecoratorBase existingUnhostedLine = GetMatchingLineDecorator(
+                        item,
+                        e);
+
+                    if (existingUnhostedLine != null)
+                    {
+                        if (existingUnhostedLine.OwningVisualiser == null)
+                        {
+                            IUXItem hostedToItem = GetHostedToItemForLineDecorator(
+                                existingUnhostedLine,
+                                itemsAllSet);
+
+                            if (hostedToItem != null)
+                            {
+                                item.AddDiagramLineObject(
+                                    hostedToItem,
+                                    existingUnhostedLine,
+                                    false);
+                                needAdding = false;
+                            }
+                        }
+                        else
+                            needAdding = false;
+                    }
+                }
+
                 bool canAddLine = false;
                 if (needAdding)
                     canAddLine = CanAddLine(item, e);
@@ -2914,6 +3023,24 @@ namespace m0.UIWpf.UX
                     TryAddDiagramLineVertexForListOfItems(item, e, toDiagramItems_EdgeTargetInEdgePointingToTargetItemBaseEdgeTo, true);
                 }
             }
+        }
+
+        static ILineDecoratorBase GetMatchingLineDecorator(IUXItem item, IEdge e)
+        {
+            foreach (IUXItem decorator in item.Decorators)
+            {
+                ILineDecoratorBase lineDecorator = decorator as ILineDecoratorBase;
+                if (lineDecorator == null)
+                    continue;
+
+                Edge decoratorBaseEdge = lineDecorator.BaseEdge;
+                if (decoratorBaseEdge != null
+                    && decoratorBaseEdge.Meta == e.Meta
+                    && decoratorBaseEdge.To == e.To)
+                    return lineDecorator;
+            }
+
+            return null;
         }
 
         private bool CanAddLine(IUXItem item, IEdge e)
@@ -3694,33 +3821,36 @@ namespace m0.UIWpf.UX
 
             foreach (IUXItem i in items)
                 if (i is UIElement ue) ue.UpdateLayout();
+                
 
             MinusZero.Instance.Log(1, "UXVisualiser.RepositionGraph", algorithm.ToString() + " on " + items.Count + " items");
 
-            Interaction.BeginInteractionWithGraph();
-            try
-            {
-                switch (algorithm)
+                Interaction.BeginInteractionWithGraph();
+                try
                 {
-                    case RepositionAlgorithmEnum.Radial:   ApplyRadialLayoutUX(items);      break;
-                    case RepositionAlgorithmEnum.Force:    ApplyForceLayoutUX(items);       break;
-                    case RepositionAlgorithmEnum.Sugiyama: ApplySugiyamaLayoutUX(items);    break;
-                    case RepositionAlgorithmEnum.Kamada:   ApplyKamadaKawaiLayoutUX(items); break;
-                    case RepositionAlgorithmEnum.Tree:     ApplyTreeLayoutUX(items);        break;
-                    default:                               ApplyRadialLayoutUX(items);      break;
+
+                    switch (algorithm)
+                    {
+                        case RepositionAlgorithmEnum.Radial:   ApplyRadialLayoutUX(items);      break;
+                        case RepositionAlgorithmEnum.Force:    ApplyForceLayoutUX(items);       break;
+                        case RepositionAlgorithmEnum.Sugiyama: ApplySugiyamaLayoutUX(items);    break;
+                        case RepositionAlgorithmEnum.Kamada:   ApplyKamadaKawaiLayoutUX(items); break;
+                        case RepositionAlgorithmEnum.Tree:     ApplyTreeLayoutUX(items);        break;
+                        default:                               ApplyRadialLayoutUX(items);      break;
+                    }
+                    
+
+                    // Post-process (6): rectangle overlap removal - applied for every algorithm
+                    ApplyOverlapRemovalUX(items);
+
+                    CommitItemPositions(items);
+                }
+                finally
+                {
+                    Interaction.EndInteractionWithGraph();
                 }
 
-                // Post-process (6): rectangle overlap removal - applied for every algorithm
-                ApplyOverlapRemovalUX(items);
-
-                CommitItemPositions(items);
-            }
-            finally
-            {
-                Interaction.EndInteractionWithGraph();
-            }
-
-            CheckAndUpdateDiagramLines();
+                CheckAndUpdateDiagramLines();
         }
 
         // HELPERS =============================================================

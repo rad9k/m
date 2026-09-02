@@ -239,7 +239,9 @@ namespace m0.ZeroTypes.UX
                 OwningVisualiser.Canvas.Children.Remove(Label);
             else
                 if (!OwningVisualiser.Canvas.Children.Contains(Label))
+                {
                     OwningVisualiser.Canvas.Children.Add(Label);
+                }
         }
 
         protected virtual void UpdateLineEnds()
@@ -415,6 +417,7 @@ namespace m0.ZeroTypes.UX
                 return;
             }
 
+
             PointCollection pc = LineEndings.Points;
             if (pc == null || pc.Count < 2)
                 return;
@@ -528,13 +531,18 @@ namespace m0.ZeroTypes.UX
             OwningVisualiser.Canvas.Children.Add(Line);
 
             if (!HideLabel)
+            {
                 OwningVisualiser.Canvas.Children.Add(Label);
+            }
 
             VertexSetedUp(); 
         }
 
         public override void RemoveFromCanvas()
         {
+            if (OwningVisualiser == null || OwningVisualiser.Canvas == null)
+                return;
+
             OwningVisualiser.Canvas.Children.Remove(LineEndings);
             OwningVisualiser.Canvas.Children.Remove(Line);
             OwningVisualiser.Canvas.Children.Remove(Label);

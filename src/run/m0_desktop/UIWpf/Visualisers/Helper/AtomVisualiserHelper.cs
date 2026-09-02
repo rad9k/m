@@ -16,7 +16,6 @@ using m0.UIWpf.Foundation;
 using m0.UIWpf.Commands;
 using m0.Graph.ExecutionFlow;
 using m0.User.Process.UX;
-using m0.UIWpf.UX;
 using m0.ZeroTypes.UX;
 using m0.ZeroCode.Helpers;
 
@@ -27,6 +26,8 @@ namespace m0.UIWpf.Visualisers.Helper
     public class AtomVisualiserHelper
     {
         public bool ForceVertexChangeOff = false;
+
+        public static bool SuppressVertexChangeDuringDiagramCommit = false;
 
         protected bool IsUX = false;
 
@@ -223,7 +224,8 @@ namespace m0.UIWpf.Visualisers.Helper
 
         protected virtual INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
-            if (ForceVertexChangeOff)
+            if (ForceVertexChangeOff ||
+                SuppressVertexChangeDuringDiagramCommit)
                 return exe.Stack;
 
             if (!firstVertexChangeExecuted && updateBaseEdgeCallSchema == UpdateBaseEdgeCallSchemeEnum.OmmitSecond)

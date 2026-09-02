@@ -42,7 +42,10 @@ namespace m0.Graph.ExecutionFlow
         public Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_InEdge = new Dictionary<IVertex, List<GraphChangeTransactionAtom>>();
         public Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_MetaEdge = new Dictionary<IVertex, List<GraphChangeTransactionAtom>>();
 
-        IList<ISecondStageCommitAction> secondStageCommitActionList = new List<ISecondStageCommitAction>();
+        HashSet<ISecondStageCommitAction> secondStageCommitActionSet =
+            new HashSet<ISecondStageCommitAction>(
+                ReferenceEqualityComparer.Instance);
+        bool suppressSecondStageCommitActions;
 
         ITransaction previous;
         public ITransaction Previous { get => previous; }
@@ -55,6 +58,7 @@ namespace m0.Graph.ExecutionFlow
         public void Start()
         {
             state = TransactionStateEnum.Started;
+            suppressSecondStageCommitActions = false;
             GraphLifecycleLog.TransactionState(
                 this,
                 "started");
@@ -152,7 +156,8 @@ namespace m0.Graph.ExecutionFlow
                 if (graphChangeTransactionAtoms_OutEdgeValueChange_copy.ContainsKey(kvp.Key))
                     foreach (GraphChangeTransactionAtom a in graphChangeTransactionAtoms_OutEdgeValueChange_copy[kvp.Key])
                         foreach (WatcherEntry we in kvp.Value)
-                            if(IsFilterMatch_OutEdgeValueChange(we, a))
+                            if (we.triggerVertex.DisposedState == DisposeStateEnum.Live &&
+                                IsFilterMatch_OutEdgeValueChange(we, a))
                                 {                            
                                     IVertex eventVertex = a.CreateEventVertex_GraphChange(we.triggerVertex, we.sourceVertex, EdgeDirectionEnum.Out);
                                     if (eventVertex != null)
@@ -165,7 +170,8 @@ namespace m0.Graph.ExecutionFlow
                 if (graphChangeTransactionAtoms_InEdge_copy.ContainsKey(kvp.Key))
                     foreach (GraphChangeTransactionAtom a in graphChangeTransactionAtoms_InEdge_copy[kvp.Key])
                         foreach (WatcherEntry we in kvp.Value)
-                            if(IsFilterMatch_InEdge(we, a))
+                            if (we.triggerVertex.DisposedState == DisposeStateEnum.Live &&
+                                IsFilterMatch_InEdge(we, a))
                                 {
                                     IVertex eventVertex = a.CreateEventVertex_GraphChange(we.triggerVertex, we.sourceVertex, EdgeDirectionEnum.In);
                                     if (eventVertex != null)
@@ -178,7 +184,8 @@ namespace m0.Graph.ExecutionFlow
                 if (graphChangeTransactionAtoms_MetaEdge_copy.ContainsKey(kvp.Key))
                     foreach (GraphChangeTransactionAtom a in graphChangeTransactionAtoms_MetaEdge_copy[kvp.Key])
                         foreach (WatcherEntry we in kvp.Value)
-                            if (IsFilterMatch_MetaEdge(we, a))
+                            if (we.triggerVertex.DisposedState == DisposeStateEnum.Live &&
+                                IsFilterMatch_MetaEdge(we, a))
                             {
                                 IVertex eventVertex = a.CreateEventVertex_GraphChange(we.triggerVertex, we.sourceVertex, EdgeDirectionEnum.Meta);
                                 if (eventVertex != null)
@@ -204,7 +211,8 @@ namespace m0.Graph.ExecutionFlow
                 if (watchedVertexDictionary.ContainsKey(kvp.Key))
                     foreach (WatcherEntry we in watchedVertexDictionary[kvp.Key])
                         foreach (GraphChangeTransactionAtom a in kvp.Value)
-                            if (IsFilterMatch_OutEdgeValueChange(we, a))
+                            if (we.triggerVertex.DisposedState == DisposeStateEnum.Live &&
+                                IsFilterMatch_OutEdgeValueChange(we, a))
                                 {
                                     IVertex eventVertex = a.CreateEventVertex_GraphChange(we.triggerVertex, we.sourceVertex, EdgeDirectionEnum.Out);
                                     if (eventVertex != null)
@@ -218,7 +226,8 @@ namespace m0.Graph.ExecutionFlow
                 if (watchedVertexDictionary.ContainsKey(kvp.Key))
                     foreach (WatcherEntry we in watchedVertexDictionary[kvp.Key])
                         foreach (GraphChangeTransactionAtom a in kvp.Value)
-                            if (IsFilterMatch_InEdge(we, a))
+                            if (we.triggerVertex.DisposedState == DisposeStateEnum.Live &&
+                                IsFilterMatch_InEdge(we, a))
                                 {
                                     IVertex eventVertex = a.CreateEventVertex_GraphChange(we.triggerVertex, we.sourceVertex, EdgeDirectionEnum.In);
                                     if (eventVertex != null)
@@ -232,7 +241,8 @@ namespace m0.Graph.ExecutionFlow
                 if (watchedVertexDictionary.ContainsKey(kvp.Key))
                     foreach (WatcherEntry we in watchedVertexDictionary[kvp.Key])
                         foreach (GraphChangeTransactionAtom a in kvp.Value)
-                            if (IsFilterMatch_MetaEdge(we, a))
+                            if (we.triggerVertex.DisposedState == DisposeStateEnum.Live &&
+                                IsFilterMatch_MetaEdge(we, a))
                             {
                                 IVertex eventVertex = a.CreateEventVertex_GraphChange(we.triggerVertex, we.sourceVertex, EdgeDirectionEnum.Meta);
                                 if (eventVertex != null)
@@ -294,7 +304,9 @@ namespace m0.Graph.ExecutionFlow
             }
         }
 
-        private void SendGrahChangeEvents(IExecution exe, Dictionary<IVertex, List<IVertex>> triggerEventDictionary)
+        private void SendGrahChangeEvents(
+            IExecution exe,
+            Dictionary<IVertex, List<IVertex>> triggerEventDictionary)
         {
             //SendGrahChangeEvents_log(triggerEventDictionary, true);
 
@@ -314,7 +326,8 @@ namespace m0.Graph.ExecutionFlow
             }
         }
 
-        private void PrepareAndSendGrahChangeEvents_Loop(IExecution exe)
+        private void PrepareAndSendGrahChangeEvents_Loop(
+            IExecution exe)
         {
             Dictionary<IVertex, List<WatcherEntry>> watchedVertexDictionary;
 
@@ -322,11 +335,34 @@ namespace m0.Graph.ExecutionFlow
             Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_InEdge_copy;
             Dictionary<IVertex, List<GraphChangeTransactionAtom>> graphChangeTransactionAtoms_MetaEdge_copy;
 
+            if (ExecutionFlowHelper.SkipGraphChangeEventDispatch)
+            {
+                graphChangeTransactionAtoms_OutEdgeValueChange.Clear();
+                graphChangeTransactionAtoms_InEdge.Clear();
+                graphChangeTransactionAtoms_MetaEdge.Clear();
+                return;
+            }
+
             while (graphChangeTransactionAtoms_OutEdgeValueChange.Count() > 0 ||
                 graphChangeTransactionAtoms_InEdge.Count() > 0 ||
                 graphChangeTransactionAtoms_MetaEdge.Count() > 0)
             {
-                watchedVertexDictionary = GraphChangeTriggerWatcher.GetWatchedVertexDictionary();
+                HashSet<IVertex> changedVertices =
+                    new HashSet<IVertex>(
+                        ReferenceEqualityComparer.Instance);
+                foreach (IVertex vertex in
+                    graphChangeTransactionAtoms_OutEdgeValueChange.Keys)
+                    changedVertices.Add(vertex);
+                foreach (IVertex vertex in
+                    graphChangeTransactionAtoms_InEdge.Keys)
+                    changedVertices.Add(vertex);
+                foreach (IVertex vertex in
+                    graphChangeTransactionAtoms_MetaEdge.Keys)
+                    changedVertices.Add(vertex);
+
+                watchedVertexDictionary =
+                    GraphChangeTriggerWatcher.GetWatchedVertexDictionary(
+                        changedVertices);
 
                 graphChangeTransactionAtoms_OutEdgeValueChange_copy =
                     new Dictionary<IVertex, List<GraphChangeTransactionAtom>>(graphChangeTransactionAtoms_OutEdgeValueChange);
@@ -359,6 +395,7 @@ namespace m0.Graph.ExecutionFlow
                 triggerEventDictionary;
 
             GraphChangeWatchActive = false;
+            suppressSecondStageCommitActions = true;
 
             try
             {
@@ -388,6 +425,7 @@ namespace m0.Graph.ExecutionFlow
             }
             finally
             {
+                suppressSecondStageCommitActions = false;
                 GraphChangeWatchActive =
                     previousGraphChangeWatchActive;
             }
@@ -407,17 +445,105 @@ namespace m0.Graph.ExecutionFlow
 
         void RemoveExternalReferences(Dictionary<IVertex, List<IVertex>> triggerEventDictionary)
         {
-            foreach (List<IVertex> eventList in triggerEventDictionary.Values)
-                foreach (IVertex v in eventList)
-                {
-                    GraphLifecycleLog.EventExternalReference(
-                        v,
-                        "remove-begin");
-                    v.RemoveExternalReference();
-                    GraphLifecycleLog.EventExternalReference(
-                        v,
-                        "remove-end");
-                }
+            IStore tempStore = MinusZero.Instance.TempStore;
+            bool previousGraphChangeWatchActive =
+                GraphChangeWatchActive;
+            bool previousSuppressSecondStage =
+                suppressSecondStageCommitActions;
+
+            GraphChangeWatchActive = false;
+            suppressSecondStageCommitActions = true;
+
+            try
+            {
+                foreach (List<IVertex> eventList in triggerEventDictionary.Values)
+                    foreach (IVertex v in eventList)
+                    {
+                        GraphLifecycleLog.EventExternalReference(
+                            v,
+                            "remove-begin");
+                        v.RemoveExternalReference();
+                        GraphLifecycleLog.EventExternalReference(
+                            v,
+                            "remove-end");
+
+                        DisposeTempEventTree(v, tempStore);
+                    }
+            }
+            finally
+            {
+                suppressSecondStageCommitActions =
+                    previousSuppressSecondStage;
+                GraphChangeWatchActive =
+                    previousGraphChangeWatchActive;
+            }
+        }
+
+        static bool DisposeTempEventTree(
+            IVertex vertex,
+            IStore tempStore)
+        {
+            if (vertex == null ||
+                vertex.DisposedState != DisposeStateEnum.Live)
+            {
+                return false;
+            }
+
+            if (!ReferenceEquals(vertex.Store, tempStore))
+                return false;
+
+            List<IVertex> tempChildren = null;
+            foreach (IEdge edge in vertex.OutEdgesRaw)
+            {
+                IVertex to = edge.To;
+                if (!IsOwnedTempEventChild(vertex, to, tempStore))
+                    continue;
+
+                if (tempChildren == null)
+                    tempChildren = new List<IVertex>();
+
+                tempChildren.Add(to);
+            }
+
+            if (tempChildren != null)
+            {
+                foreach (IVertex child in tempChildren)
+                    DisposeTempEventTree(child, tempStore);
+            }
+
+            if (vertex.DisposedState == DisposeStateEnum.Live)
+                vertex.Dispose();
+
+            return true;
+        }
+
+        static bool IsOwnedTempEventChild(
+            IVertex parent,
+            IVertex child,
+            IStore tempStore)
+        {
+            if (child == null ||
+                ReferenceEquals(child, parent) ||
+                child.DisposedState != DisposeStateEnum.Live ||
+                !ReferenceEquals(child.Store, tempStore))
+            {
+                return false;
+            }
+
+            IList<IEdge> inEdges = child.InEdgesRaw;
+            if (inEdges == null)
+                return true;
+
+            foreach (IEdge inEdge in inEdges)
+            {
+                if (inEdge.From == null)
+                    continue;
+
+                if (!ReferenceEquals(inEdge.From, parent))
+                    return false;
+            }
+
+            return true;
         }
 
         public void Commit_SecondStage()
@@ -425,12 +551,12 @@ namespace m0.Graph.ExecutionFlow
             IList<ISecondStageCommitAction> secondStageCommitActionList_copy;
             int wave = 0;
 
-            while(secondStageCommitActionList.Count() > 0)
+            while(secondStageCommitActionSet.Count > 0)
             {
                 wave++;
-                secondStageCommitActionList_copy = secondStageCommitActionList.ToList();
+                secondStageCommitActionList_copy = secondStageCommitActionSet.ToList();
 
-                secondStageCommitActionList.Clear();
+                secondStageCommitActionSet.Clear();
 
                 GraphLifecycleLog.SecondStageWave(
                     this,
@@ -743,7 +869,10 @@ namespace m0.Graph.ExecutionFlow
 
         public void AddSecondStageCommitAction(ISecondStageCommitAction commitAction)
         {
-            secondStageCommitActionList.Add(commitAction);
+            if (suppressSecondStageCommitActions)
+                return;
+
+            secondStageCommitActionSet.Add(commitAction);
         }
     }
 }

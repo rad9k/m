@@ -48,15 +48,10 @@ namespace m0.Graph.ExecutionFlow
         static IList<WatcherEntry> watcherEntryList;
         static Dictionary<IEdge, TriggerDefinitionState>
             triggerDefinitionStates;
-
-        internal static int TriggerCount
-        {
-            get
-            {
-                lock (synchronizationRoot)
-                    return triggerEdgeList.Count;
-            }
-        }
+        static Dictionary<IVertex, List<WatcherEntry>>
+            watchersBySourceVertex;
+        static Dictionary<IVertex, List<WatcherEntry>>
+            cachedWatchedVertexDictionary;
 
         public static void AddGraphChangeTrigger(IEdge triggerEdge)
         {
@@ -164,8 +159,24 @@ namespace m0.Graph.ExecutionFlow
                 watcherEntryList.Add(en);
             }
 
+            RebuildWatchersBySourceVertex();
+            cachedWatchedVertexDictionary = null;
+
             CaptureTriggerDefinitionStates();
             triggerListChanged = false;
+        }
+
+        private static bool IsTriggerDefinitionEdge(IEdge edge)
+        {
+            if (edge == null || edge.Meta == null)
+                return false;
+
+            return GeneralUtil.CompareStrings(
+                    edge.Meta.Value,
+                    "ScopeQuery") ||
+                GeneralUtil.CompareStrings(
+                    edge.Meta.Value,
+                    "ChangeTypeFilter");
         }
 
         private static bool TriggerDefinitionsAreCurrent()
@@ -198,18 +209,24 @@ namespace m0.Graph.ExecutionFlow
                     return false;
                 }
 
+                int definitionEdgeIndex = 0;
                 IList<IEdge> currentEdges =
-                    triggerEdge.To.OutEdges;
-                if (currentEdges.Count != state.Edges.Count)
-                    return false;
+                    triggerEdge.To.OutEdgesRaw;
 
-                for (var index = 0;
+                for (int index = 0;
                      index < currentEdges.Count;
                      index++)
                 {
                     IEdge currentEdge = currentEdges[index];
+                    if (!IsTriggerDefinitionEdge(currentEdge))
+                        continue;
+
+                    if (definitionEdgeIndex >= state.Edges.Count)
+                        return false;
+
                     DefinitionEdgeState edgeState =
-                        state.Edges[index];
+                        state.Edges[definitionEdgeIndex];
+                    definitionEdgeIndex++;
 
                     if (!ReferenceEquals(
                             edgeState.Edge,
@@ -230,6 +247,9 @@ namespace m0.Graph.ExecutionFlow
                         return false;
                     }
                 }
+
+                if (definitionEdgeIndex != state.Edges.Count)
+                    return false;
             }
 
             return true;
@@ -246,7 +266,11 @@ namespace m0.Graph.ExecutionFlow
                 IList<DefinitionEdgeState> edgeStates =
                     new List<DefinitionEdgeState>();
 
-                foreach (IEdge edge in triggerEdge.To.OutEdges)
+                foreach (IEdge edge in triggerEdge.To.OutEdgesRaw)
+                {
+                    if (!IsTriggerDefinitionEdge(edge))
+                        continue;
+
                     edgeStates.Add(
                         new DefinitionEdgeState
                         {
@@ -258,6 +282,7 @@ namespace m0.Graph.ExecutionFlow
                             ToValue =
                                 GetValueString(edge.To)
                         });
+                }
 
                 triggerDefinitionStates.Add(
                     triggerEdge,
@@ -267,6 +292,31 @@ namespace m0.Graph.ExecutionFlow
                         TriggerVertex = triggerEdge.To,
                         Edges = edgeStates
                     });
+            }
+        }
+
+        private static void RebuildWatchersBySourceVertex()
+        {
+            watchersBySourceVertex =
+                new Dictionary<IVertex, List<WatcherEntry>>(
+                    ReferenceEqualityComparer.Instance);
+
+            foreach (WatcherEntry en in watcherEntryList)
+            {
+                if (en.sourceVertex == null)
+                    continue;
+
+                if (!watchersBySourceVertex.TryGetValue(
+                    en.sourceVertex,
+                    out List<WatcherEntry> entries))
+                {
+                    entries = new List<WatcherEntry>();
+                    watchersBySourceVertex.Add(
+                        en.sourceVertex,
+                        entries);
+                }
+
+                entries.Add(en);
             }
         }
 
@@ -282,6 +332,9 @@ namespace m0.Graph.ExecutionFlow
             IVertex vertex,
             WatcherEntry watcherEntry)
         {
+            if (vertex == null)
+                return;
+
             if (!watchedVertexDictionary.TryGetValue(
                 vertex,
                 out List<WatcherEntry> entries))
@@ -294,48 +347,213 @@ namespace m0.Graph.ExecutionFlow
                 entries.Add(watcherEntry);
         }
 
-        public static Dictionary<IVertex, List<WatcherEntry>> GetWatchedVertexDictionary()
+        private static void AddWatcherToWatchedDictionary(
+            Dictionary<IVertex, List<WatcherEntry>>
+                watchedVertexDictionary,
+            WatcherEntry en)
+        {
+            if (en.triggerVertex == null ||
+                en.triggerVertex.DisposedState !=
+                    DisposeStateEnum.Live)
+            {
+                return;
+            }
+
+            if (en.sourceVertex == null ||
+                en.sourceVertex.DisposedState !=
+                    DisposeStateEnum.Live)
+            {
+                return;
+            }
+
+            if (!en.FilterOutRootVertexEvents)
+                AddWatchedVertex(
+                    watchedVertexDictionary,
+                    en.sourceVertex,
+                    en);
+
+            if (en.scopeQuery == null)
+                return;
+
+            foreach (string scopeQuery in en.scopeQuery)
+                foreach (IEdge edge in
+                    en.sourceVertex.GetAll(
+                        false,
+                        scopeQuery))
+                {
+                    AddWatchedVertex(
+                        watchedVertexDictionary,
+                        edge.To,
+                        en);
+                }
+        }
+
+        private static Dictionary<IVertex, List<WatcherEntry>>
+            BuildWatchedVertexDictionary()
+        {
+            Dictionary<IVertex, List<WatcherEntry>> dict =
+                new Dictionary<IVertex, List<WatcherEntry>>(
+                    ReferenceEqualityComparer.Instance);
+
+            foreach (WatcherEntry en in watcherEntryList)
+                AddWatcherToWatchedDictionary(dict, en);
+
+            return dict;
+        }
+
+        const int IncomingEdgeFanoutLimit = 32;
+
+        private static void AddParentWatcherSourcesForNewVertex(
+            IVertex vertex,
+            HashSet<IVertex> sourcesToRefresh)
+        {
+            if (vertex == null ||
+                vertex.DisposedState != DisposeStateEnum.Live)
+            {
+                return;
+            }
+
+            IList<IEdge> inEdges = vertex.InEdgesRaw;
+            if (inEdges == null ||
+                inEdges.Count == 0 ||
+                inEdges.Count > IncomingEdgeFanoutLimit)
+            {
+                return;
+            }
+
+            foreach (IEdge edge in inEdges)
+            {
+                if (edge.From == null)
+                    continue;
+
+                if (watchersBySourceVertex.ContainsKey(
+                    edge.From))
+                {
+                    sourcesToRefresh.Add(edge.From);
+                }
+            }
+        }
+
+        private static int PruneDisposedWatchedVertices()
+        {
+            List<IVertex> disposedVertices = null;
+
+            foreach (IVertex vertex in
+                cachedWatchedVertexDictionary.Keys)
+            {
+                if (vertex.DisposedState ==
+                    DisposeStateEnum.Live)
+                {
+                    continue;
+                }
+
+                if (disposedVertices == null)
+                    disposedVertices = new List<IVertex>();
+
+                disposedVertices.Add(vertex);
+            }
+
+            if (disposedVertices == null)
+                return 0;
+
+            foreach (IVertex vertex in disposedVertices)
+                cachedWatchedVertexDictionary.Remove(vertex);
+
+            return disposedVertices.Count;
+        }
+
+        private static int RefreshWatchedVertexDictionary(
+            ICollection<IVertex> changedVertices)
+        {
+            HashSet<IVertex> sourcesToRefresh =
+                new HashSet<IVertex>(
+                    ReferenceEqualityComparer.Instance);
+
+            foreach (IVertex changedVertex in changedVertices)
+            {
+                if (changedVertex == null)
+                    continue;
+
+                if (watchersBySourceVertex.ContainsKey(
+                    changedVertex))
+                {
+                    sourcesToRefresh.Add(changedVertex);
+                }
+
+                if (!cachedWatchedVertexDictionary.ContainsKey(
+                    changedVertex))
+                {
+                    AddParentWatcherSourcesForNewVertex(
+                        changedVertex,
+                        sourcesToRefresh);
+                }
+            }
+
+            int watcherCount = watcherEntryList.Count;
+            if (watcherCount > 0 &&
+                sourcesToRefresh.Count * 4 > watcherCount)
+            {
+                return -1;
+            }
+
+            foreach (IVertex sourceVertex in sourcesToRefresh)
+            {
+                if (!watchersBySourceVertex.TryGetValue(
+                    sourceVertex,
+                    out List<WatcherEntry> watchers))
+                {
+                    continue;
+                }
+
+                foreach (WatcherEntry en in watchers)
+                    AddWatcherToWatchedDictionary(
+                        cachedWatchedVertexDictionary,
+                        en);
+            }
+
+            return sourcesToRefresh.Count;
+        }
+
+        public static Dictionary<IVertex, List<WatcherEntry>>
+            GetWatchedVertexDictionary()
+        {
+            return GetWatchedVertexDictionary(null);
+        }
+
+        public static Dictionary<IVertex, List<WatcherEntry>>
+            GetWatchedVertexDictionary(
+                ICollection<IVertex> changedVertices)
         {
             lock (synchronizationRoot)
             {
                 if (!TriggerDefinitionsAreCurrent())
                     CreateWatcherEntryList();
 
-                Dictionary<IVertex, List<WatcherEntry>> dict =
-                    new Dictionary<IVertex, List<WatcherEntry>>(
-                        ReferenceEqualityComparer.Instance);
-
-                foreach (WatcherEntry en in watcherEntryList)
+                if (cachedWatchedVertexDictionary == null ||
+                    watchersBySourceVertex == null)
                 {
-                    if (en.triggerVertex.DisposedState !=
-                        DisposeStateEnum.Live)
+                    cachedWatchedVertexDictionary =
+                        BuildWatchedVertexDictionary();
+                }
+                else if (changedVertices == null)
+                {
+                    cachedWatchedVertexDictionary =
+                        BuildWatchedVertexDictionary();
+                }
+                else
+                {
+                    PruneDisposedWatchedVertices();
+                    int sourcesRefreshed =
+                        RefreshWatchedVertexDictionary(
+                            changedVertices);
+                    if (sourcesRefreshed < 0)
                     {
-                        continue;
+                        cachedWatchedVertexDictionary =
+                            BuildWatchedVertexDictionary();
                     }
-
-                    if (!en.FilterOutRootVertexEvents)
-                        AddWatchedVertex(
-                            dict,
-                            en.sourceVertex,
-                            en);
-
-                    if (en.scopeQuery == null)
-                        continue;
-
-                    foreach (string scopeQuery in en.scopeQuery)
-                        foreach (IEdge edge in
-                            en.sourceVertex.GetAll(
-                                false,
-                                scopeQuery))
-                        {
-                            AddWatchedVertex(
-                                dict,
-                                edge.To,
-                                en);
-                        }
                 }
 
-                return dict;
+                return cachedWatchedVertexDictionary;
             }
         }        
     }
