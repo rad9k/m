@@ -13,8 +13,8 @@ namespace m0.UIWpf.Controls
 
         private readonly StackPanel contentPanel;
         private readonly Image iconImage;
-        private readonly Label metaLabel;
-        private readonly Label toLabel;
+        private readonly TextBlock metaTextBlock;
+        private readonly TextBlock toTextBlock;
         private int visualUpdateBatchDepth;
         private bool visualUpdatePending;
 
@@ -159,26 +159,18 @@ namespace m0.UIWpf.Controls
             // Fant + strong downscale on transparent PNGs often produces gray "tiles" behind the glyph.
             RenderOptions.SetBitmapScalingMode(iconImage, BitmapScalingMode.Fant);
 
-            metaLabel = new Label();
-            metaLabel.Padding = new Thickness(0);
-            metaLabel.Margin = new Thickness(0);
-            metaLabel.Background = null;
-            metaLabel.Foreground = GetMetaForegroundBrush();
-            metaLabel.FontStyle = FontStyles.Italic;
-            metaLabel.FontWeight = WpfUtil.MetaWeight;
-            metaLabel.VerticalContentAlignment = VerticalAlignment.Center;
+            metaTextBlock = CreateDisplayTextBlock();
+            metaTextBlock.Foreground = GetMetaForegroundBrush();
+            metaTextBlock.FontStyle = FontStyles.Italic;
+            metaTextBlock.FontWeight = WpfUtil.MetaWeight;
 
-            toLabel = new Label();
-            toLabel.Padding = new Thickness(0);
-            toLabel.Margin = new Thickness(0);
-            toLabel.Background = null;
-            toLabel.Foreground = GetForegroundBrush();
-            toLabel.FontWeight = WpfUtil.ValueWeight;
-            toLabel.VerticalContentAlignment = VerticalAlignment.Center;
+            toTextBlock = CreateDisplayTextBlock();
+            toTextBlock.Foreground = GetForegroundBrush();
+            toTextBlock.FontWeight = WpfUtil.ValueWeight;
 
             contentPanel.Children.Add(iconImage);
-            contentPanel.Children.Add(metaLabel);
-            contentPanel.Children.Add(toLabel);
+            contentPanel.Children.Add(metaTextBlock);
+            contentPanel.Children.Add(toTextBlock);
 
             Child = contentPanel;
         }
@@ -247,16 +239,16 @@ namespace m0.UIWpf.Controls
 
             if (isMetaEmpty)
             {
-                metaLabel.Content = null;
-                metaLabel.Visibility = Visibility.Collapsed;
+                metaTextBlock.Text = string.Empty;
+                metaTextBlock.Visibility = Visibility.Collapsed;
             }
             else
             {
-                metaLabel.Content = GetMetaText(edge);
-                metaLabel.Visibility = Visibility.Visible;
+                metaTextBlock.Text = GetMetaText(edge);
+                metaTextBlock.Visibility = Visibility.Visible;
             }
 
-            toLabel.Content = GetToText(edge);
+            toTextBlock.Text = GetToText(edge);
 
             if (!ShowIcon)
             {
@@ -337,6 +329,15 @@ namespace m0.UIWpf.Controls
             return text;
         }
 
+        private static TextBlock CreateDisplayTextBlock()
+        {
+            TextBlock textBlock = new TextBlock();
+            textBlock.VerticalAlignment = VerticalAlignment.Center;
+            textBlock.TextWrapping = TextWrapping.NoWrap;
+
+            return textBlock;
+        }
+
         private Brush GetForegroundBrush()
         {
             return FindResource("0ForegroundBrush") as Brush ?? Brushes.Black;
@@ -386,8 +387,8 @@ namespace m0.UIWpf.Controls
         {
             Brush resolved = ResolveLabelForegroundBrush();
 
-            metaLabel.Foreground = resolved ?? normalMetaForeground;
-            toLabel.Foreground = resolved ?? normalToForeground;
+            metaTextBlock.Foreground = resolved ?? normalMetaForeground;
+            toTextBlock.Foreground = resolved ?? normalToForeground;
         }
 
         private void UpdateSelectionState()
@@ -398,9 +399,6 @@ namespace m0.UIWpf.Controls
                 contentPanel.Background = null;
 
                 ApplyLabelForeground(GetMetaForegroundBrush(), GetForegroundBrush());
-
-                metaLabel.Background = null;
-                toLabel.Background = null;
                 return;
             }
 
@@ -413,8 +411,8 @@ namespace m0.UIWpf.Controls
                     ? GetForegroundBrush()
                     : GetHighlightForegroundBrush();
 
-                metaLabel.Foreground = foreground;
-                toLabel.Foreground = foreground;
+                metaTextBlock.Foreground = foreground;
+                toTextBlock.Foreground = foreground;
             }
             else if (IsMouseHoverHighlighted && IsSelected)
             {
@@ -422,16 +420,16 @@ namespace m0.UIWpf.Controls
                 contentPanel.Background = GetForegroundBrush();
 
                 Brush highlightBrush = GetHighlightBrush();
-                metaLabel.Foreground = highlightBrush;
-                toLabel.Foreground = highlightBrush;
+                metaTextBlock.Foreground = highlightBrush;
+                toTextBlock.Foreground = highlightBrush;
             }
             else if (IsSelected)
             {
                 Background = GetForegroundBrush();
                 contentPanel.Background = GetForegroundBrush();
 
-                metaLabel.Foreground = GetBackgroundBrush();
-                toLabel.Foreground = GetBackgroundBrush();
+                metaTextBlock.Foreground = GetBackgroundBrush();
+                toTextBlock.Foreground = GetBackgroundBrush();
             }
             else if (IsMouseHoverHighlighted)
             {
@@ -439,20 +437,17 @@ namespace m0.UIWpf.Controls
                 contentPanel.Background = GetBackgroundBrush();
 
                 Brush highlightBrush = GetHighlightBrush();
-                metaLabel.Foreground = highlightBrush;
-                toLabel.Foreground = highlightBrush;
+                metaTextBlock.Foreground = highlightBrush;
+                toTextBlock.Foreground = highlightBrush;
             }
             else
             {
                 Background = null;
                 contentPanel.Background = null;
 
-                metaLabel.Foreground = GetMetaForegroundBrush();
-                toLabel.Foreground = GetForegroundBrush();
+                metaTextBlock.Foreground = GetMetaForegroundBrush();
+                toTextBlock.Foreground = GetForegroundBrush();
             }
-
-            metaLabel.Background = null;
-            toLabel.Background = null;
         }
     }
 }

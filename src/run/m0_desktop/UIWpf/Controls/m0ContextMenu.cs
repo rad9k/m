@@ -245,7 +245,7 @@ namespace m0.UIWpf.Controls
         public static MenuItem createMenuItem(string icon, string header)
         {
             MenuItem m = new MenuItem();
-            m.Header = header;
+            m.Header = CreateMenuHeaderTextBlock(header);
 
             ImageSource iconSource = IconServer.GetIconByString(icon);
 
@@ -269,6 +269,15 @@ namespace m0.UIWpf.Controls
             }
 
             return m;
+        }
+
+        private static TextBlock CreateMenuHeaderTextBlock(string header)
+        {
+            TextBlock headerTextBlock = new TextBlock();
+            headerTextBlock.Text = header ?? string.Empty;
+            headerTextBlock.TextWrapping = TextWrapping.NoWrap;
+
+            return headerTextBlock;
         }
 
         public void AddSeparator(){

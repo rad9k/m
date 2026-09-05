@@ -1462,7 +1462,7 @@ namespace m0.UIWpf.Visualisers
                     return TabList.Values.FirstOrDefault();
 
                 foreach (TabInfo tie in TabList.Values)
-                    if (tie.TabItem.Header == i.Header)
+                    if (tie.TabItem == i)
                         return tie;
 
                 return null;
@@ -1896,7 +1896,7 @@ namespace m0.UIWpf.Visualisers
                 foreach (KeyValuePair<string,TabInfo> t in TabList)
                 {
                     TabItem i = new TabItem();
-                    i.Header = t.Key ;
+                    i.Header = CreateTabHeaderTextBlock(t.Key);
                     TabControl.Items.Add(i);
                     t.Value.TabItem = i;
                     i.Tag = t.Value;
@@ -1917,6 +1917,15 @@ namespace m0.UIWpf.Visualisers
                 this.SizeChanged += FormVisualiser_SizeChanged;
 
            // Content = new Button();
+        }
+
+        private static TextBlock CreateTabHeaderTextBlock(string headerText)
+        {
+            TextBlock headerTextBlock = new TextBlock();
+            headerTextBlock.Text = headerText ?? string.Empty;
+            headerTextBlock.TextWrapping = TextWrapping.NoWrap;
+
+            return headerTextBlock;
         }
 
         private TabInfo GetTabInfoForWidthCorrection()
