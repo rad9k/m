@@ -14,12 +14,48 @@ namespace m0.Store.FileSystem
 {
     public class FileSystemUtil
     {
+        public static string NormalizeFileSystemIdentifier(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                return path;
+
+            string fullPath;
+            try
+            {
+                fullPath = Path.GetFullPath(path);
+            }
+            catch (Exception)
+            {
+                fullPath = path;
+            }
+
+            if (IsWindowsDriveRoot(fullPath))
+                return fullPath;
+
+            if (fullPath == "/" || fullPath == "\\")
+                return fullPath;
+
+            return fullPath.TrimEnd(
+                Path.DirectorySeparatorChar,
+                Path.AltDirectorySeparatorChar);
+        }
+
+        public static bool IsWindowsDriveRoot(string path)
+        {
+            if (string.IsNullOrEmpty(path) || path.Length != 3)
+                return false;
+
+            return char.IsLetter(path[0]) &&
+                path[1] == ':' &&
+                (path[2] == '\\' || path[2] == '/');
+        }
+
         public static IVertex GetDirectoryFromFileSystem(string path)
         {
             if (string.IsNullOrWhiteSpace(path) || !Directory.Exists(path))
                 return null;
 
-            string fullPath = Path.GetFullPath(path);
+            string fullPath = NormalizeFileSystemIdentifier(path);
 
             IStore bestStore = FindBestMatchingFileSystemStore(fullPath);
 

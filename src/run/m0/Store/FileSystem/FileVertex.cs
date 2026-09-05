@@ -94,7 +94,8 @@ namespace m0.Store.FileSystem
         internal void SetIdentifierAfterRename(
             string identifier)
         {
-            _Identifier = identifier;
+            _Identifier =
+                FileSystemUtil.NormalizeFileSystemIdentifier(identifier);
         }
 
         public override void Refresh()
@@ -169,7 +170,9 @@ namespace m0.Store.FileSystem
         }
 
         public FileVertex(IStore store, string identifier)
-            : base(store, identifier)
+            : base(
+                store,
+                FileSystemUtil.NormalizeFileSystemIdentifier(identifier))
         {
             FI = new FileInfo(Identifier.ToString());
         }

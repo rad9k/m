@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -350,6 +351,9 @@ namespace m0.UIWpf.Visualisers
 
             IsFilled = true;
 
+            LogSpacingDiagnostics("OnExpanded");
+            ScheduleSpacingLayoutLog("OnExpanded");
+
             if (shouldStartExpandAnimation)
                 BeginExpandAnimation();
         }
@@ -400,6 +404,9 @@ namespace m0.UIWpf.Visualisers
                     {
                         if (requestId == expandAnimationRequestId)
                             isExpandCollapseAnimationInProgress = false;
+
+                        LogGeneratedChildrenSpacing("ExpandAnimationCompleted");
+                        ScheduleSpacingLayoutLog("ExpandAnimationCompleted");
                     });
                 });
             }), DispatcherPriority.Loaded);
@@ -742,6 +749,146 @@ namespace m0.UIWpf.Visualisers
         }
 
 
+        internal static string GetEdgeLogLabel(IEdge edge)
+        {
+            string metaValue = edge?.Meta?.Value != null ? edge.Meta.Value.ToString() : "";
+            string toValue = edge?.To?.Value != null ? edge.To.Value.ToString() : "";
+            string identifier = edge?.To?.Identifier != null ? edge.To.Identifier.ToString() : "";
+
+            return "meta='" + metaValue + "' to='" + toValue + "' identifier='" + identifier + "'";
+        }
+
+        internal static string FormatLayoutNumber(double value)
+        {
+            if (double.IsNaN(value))
+                return "NaN";
+
+            return value.ToString("0.##", CultureInfo.InvariantCulture);
+        }
+
+        internal int CountDummyChildren()
+        {
+            int dummyCount = 0;
+
+            foreach (object item in Items)
+            {
+                TreeViewItem treeViewItem = item as TreeViewItem;
+
+                if (treeViewItem != null &&
+                    (treeViewItem is TreeVisualiserViewItem) == false)
+                    dummyCount++;
+            }
+
+            return dummyCount;
+        }
+
+        internal void LogSpacingDiagnostics(string reason)
+        {
+            IEdge edge = GetEdge();
+            FrameworkElement headerElement = Header as FrameworkElement;
+            TranslateTransform translateTransform = RenderTransform as TranslateTransform;
+            ItemsPresenter itemsHost = GetTemplateChild("ItemsHost") as ItemsPresenter;
+
+            double headerHeight = headerElement != null ? headerElement.ActualHeight : 0;
+            double extraHeight = ActualHeight - headerHeight;
+            double translateY = translateTransform != null ? translateTransform.Y : 0;
+            int dummyCount = CountDummyChildren();
+            bool hasChildren = Node != null && Node.HasChildren;
+            bool childrenLoaded = Node != null && Node.ChildrenLoaded;
+            string itemsHostVisibility = itemsHost != null
+                ? itemsHost.Visibility.ToString()
+                : "null";
+            double itemsHostHeight = itemsHost != null ? itemsHost.ActualHeight : 0;
+
+            MinusZero.Instance.Log(0, "TreeVisualiser.Spacing",
+                reason +
+                " " + GetEdgeLogLabel(edge) +
+                " isExpanded=" + IsExpanded +
+                " isFilled=" + IsFilled +
+                " hasItems=" + HasItems +
+                " itemsCount=" + Items.Count +
+                " dummyCount=" + dummyCount +
+                " hasChildren=" + hasChildren +
+                " childrenLoaded=" + childrenLoaded +
+                " actualHeight=" + FormatLayoutNumber(ActualHeight) +
+                " desiredHeight=" + FormatLayoutNumber(DesiredSize.Height) +
+                " headerHeight=" + FormatLayoutNumber(headerHeight) +
+                " extraHeight=" + FormatLayoutNumber(extraHeight) +
+                " itemsHostVisibility=" + itemsHostVisibility +
+                " itemsHostHeight=" + FormatLayoutNumber(itemsHostHeight) +
+                " opacity=" + FormatLayoutNumber(Opacity) +
+                " translateY=" + FormatLayoutNumber(translateY) +
+                " isVirtualizing=" + VirtualizingStackPanel.GetIsVirtualizing(this));
+        }
+
+        internal void ScheduleSpacingLayoutLog(string reason)
+        {
+            Dispatcher.BeginInvoke(new Action(delegate
+            {
+                LogGeneratedChildrenSpacing(reason + "-layout");
+            }), DispatcherPriority.Loaded);
+
+            Dispatcher.BeginInvoke(new Action(delegate
+            {
+                LogGeneratedChildrenSpacing(reason + "-idle");
+            }), DispatcherPriority.ContextIdle);
+        }
+
+        internal void LogGeneratedChildrenSpacing(string reason)
+        {
+            List<FrameworkElement> childElements = GetChildItemElements();
+
+            MinusZero.Instance.Log(0, "TreeVisualiser.Spacing",
+                reason + "-parent " + GetEdgeLogLabel(GetEdge()) +
+                " isExpanded=" + IsExpanded +
+                " generatedChildCount=" + childElements.Count +
+                " itemsCount=" + Items.Count +
+                " dummyCount=" + CountDummyChildren() +
+                " actualHeight=" + FormatLayoutNumber(ActualHeight) +
+                " headerHeight=" + FormatLayoutNumber(
+                    Header is FrameworkElement headerElement ? headerElement.ActualHeight : 0) +
+                " isVirtualizing=" + VirtualizingStackPanel.GetIsVirtualizing(this));
+
+            double previousBottom = double.NaN;
+
+            for (int index = 0; index < childElements.Count; index++)
+            {
+                FrameworkElement childElement = childElements[index];
+                TreeVisualiserViewItem childItem = childElement as TreeVisualiserViewItem;
+                double gapFromPrevious = double.NaN;
+                double positionY = double.NaN;
+
+                try
+                {
+                    positionY = childElement.TranslatePoint(new Point(0, 0), this).Y;
+                }
+                catch (InvalidOperationException)
+                {
+                }
+
+                if (double.IsNaN(previousBottom) == false && double.IsNaN(positionY) == false)
+                    gapFromPrevious = positionY - previousBottom;
+
+                string gapReason = reason + "-child[" + index + "] gapFromPrevious=" +
+                    FormatLayoutNumber(gapFromPrevious);
+
+                if (childItem != null)
+                    childItem.LogSpacingDiagnostics(gapReason);
+                else
+                    MinusZero.Instance.Log(0, "TreeVisualiser.Spacing",
+                        gapReason +
+                        " dummyOrPlainTreeViewItem actualHeight=" +
+                        FormatLayoutNumber(childElement.ActualHeight) +
+                        " desiredHeight=" +
+                        FormatLayoutNumber(childElement.DesiredSize.Height) +
+                        " opacity=" +
+                        FormatLayoutNumber(childElement.Opacity));
+
+                if (double.IsNaN(positionY) == false)
+                    previousBottom = positionY + childElement.ActualHeight;
+            }
+        }
+
         private bool IsDisposed;
 
         public void Dispose()
@@ -982,6 +1129,13 @@ namespace m0.UIWpf.Visualisers
 
         internal void PrepareVirtualTreeViewItem(TreeEdgeNode node, TreeVisualiserViewItem treeItem)
         {
+            string previousLabel = TreeVisualiserViewItem.GetEdgeLogLabel(treeItem.Tag as IEdge);
+            bool previousIsExpanded = treeItem.IsExpanded;
+            bool previousIsFilled = treeItem.IsFilled;
+            int previousItemsCount = treeItem.Items.Count;
+            int previousDummyCount = treeItem.CountDummyChildren();
+            double previousActualHeight = treeItem.ActualHeight;
+
             ClearVirtualTreeViewItem(treeItem);
 
             treeItem.Node = node;
@@ -995,14 +1149,33 @@ namespace m0.UIWpf.Visualisers
 
             virtualContainers[node] = treeItem;
 
+            bool dummyAdded = false;
+
             if (node.ChildrenLoaded)
             {
                 treeItem.ItemsSource = node.Children;
             }
             else if (node.HasChildren)
             {
+                dummyAdded = true;
                 treeItem.Items.Add(new TreeViewItem());
             }
+
+            MinusZero.Instance.Log(0, "TreeVisualiser.PrepareVirtualTreeViewItem",
+                "previous={" + previousLabel +
+                " isExpanded=" + previousIsExpanded +
+                " isFilled=" + previousIsFilled +
+                " itemsCount=" + previousItemsCount +
+                " dummyCount=" + previousDummyCount +
+                " actualHeight=" + TreeVisualiserViewItem.FormatLayoutNumber(previousActualHeight) +
+                "} leftoverIsExpanded=" + treeItem.IsExpanded +
+                " dummyAdded=" + dummyAdded +
+                " hasChildren=" + node.HasChildren +
+                " childrenLoaded=" + node.ChildrenLoaded +
+                " new={" + TreeVisualiserViewItem.GetEdgeLogLabel(node.Edge) + "}");
+
+            if (dummyAdded || previousIsExpanded || treeItem.IsExpanded)
+                treeItem.ScheduleSpacingLayoutLog("PrepareVirtualTreeViewItem");
 
             if (!treeItem.doNotTrackGraphChanges)
             {
@@ -1030,6 +1203,15 @@ namespace m0.UIWpf.Visualisers
         {
             if (treeItem == null)
                 return;
+
+            if (treeItem.IsExpanded)
+                MinusZero.Instance.Log(0, "TreeVisualiser.ClearVirtualTreeViewItem",
+                    "leftoverIsExpanded=True " +
+                    TreeVisualiserViewItem.GetEdgeLogLabel(treeItem.Tag as IEdge) +
+                    " actualHeight=" +
+                    TreeVisualiserViewItem.FormatLayoutNumber(treeItem.ActualHeight) +
+                    " itemsCount=" + treeItem.Items.Count +
+                    " dummyCount=" + treeItem.CountDummyChildren());
 
             if (treeItem.vertexChangeListenerEdge != null)
             {
@@ -1062,6 +1244,13 @@ namespace m0.UIWpf.Visualisers
             treeItem.Items.Clear();
             treeItem.ItemsSource = node.Children;
             treeItem.IsFilled = true;
+
+            MinusZero.Instance.Log(0, "TreeVisualiser.FillVirtualNode",
+                TreeVisualiserViewItem.GetEdgeLogLabel(node.Edge) +
+                " childrenCount=" + node.Children.Count +
+                " isExpanded=" + treeItem.IsExpanded);
+
+            treeItem.ScheduleSpacingLayoutLog("FillVirtualNode");
         }
 
         internal INoInEdgeInOutVertexVertex VirtualItemVertexChange(
@@ -1100,7 +1289,13 @@ namespace m0.UIWpf.Visualisers
             if (hasChildren)
             {
                 if (treeItem.Items.Count == 0)
+                {
                     treeItem.Items.Add(new TreeViewItem());
+
+                    MinusZero.Instance.Log(0, "TreeVisualiser.SyncUnloadedVirtualItemHasChildren",
+                        "ADD dummy " + TreeVisualiserViewItem.GetEdgeLogLabel(node.Edge) +
+                        " isExpanded=" + treeItem.IsExpanded);
+                }
             }
             else
             {
@@ -1142,7 +1337,17 @@ namespace m0.UIWpf.Visualisers
             if (edge.Meta != null && GeneralUtil.CompareStrings(edge.Meta.Value, "FormalTextLanguage"))
                 doNotTrackGraphChanges = true;
 
-            bool hasChildren = edge.To != null && edge.To.Count() > 0;
+            int rawOutEdgeCount = edge.To != null ? edge.To.Count() : 0;
+            int filteredEdgeCount = edge.To != null
+                ? VisualiserUtil.FilterEdges(edge.To, Vertex).Count()
+                : 0;
+            bool hasChildren = rawOutEdgeCount > 0;
+
+            MinusZero.Instance.Log(0, "TreeVisualiser.CreateVirtualNode",
+                TreeVisualiserViewItem.GetEdgeLogLabel(edge) +
+                " rawOutEdgeCount=" + rawOutEdgeCount +
+                " filteredEdgeCount=" + filteredEdgeCount +
+                " hasChildren=" + hasChildren);
 
             return new TreeEdgeNode(edge, parent, hasChildren, doNotTrackGraphChanges);
         }
@@ -2017,6 +2222,11 @@ namespace m0.UIWpf.Visualisers
                 {
                     TreeViewItem tvi = new TreeViewItem();
                     i.Items.Add(tvi);
+
+                    MinusZero.Instance.Log(0, "TreeVisualiser.CreateTreeViewItem",
+                        "ADD dummy " + TreeVisualiserViewItem.GetEdgeLogLabel(e) +
+                        " rawOutEdgeCount=" + e.To.Count() +
+                        " isExpanded=" + i.IsExpanded);
                 }
 
             if (!i.doNotTrackGraphChanges &&

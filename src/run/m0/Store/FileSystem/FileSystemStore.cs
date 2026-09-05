@@ -9,8 +9,21 @@ namespace m0.Store.FileSystem
 {
     public class FileSystemStore : IStore
     {
-        static public Dictionary<string, IVertex> FileVertexDictionary = new Dictionary<string, IVertex>();
-        static public Dictionary<string, IVertex> DirectoryVertexDictionary = new Dictionary<string, IVertex>();
+        static public Dictionary<string, IVertex> FileVertexDictionary;
+        static public Dictionary<string, IVertex> DirectoryVertexDictionary;
+
+        static FileSystemStore()
+        {
+            IEqualityComparer<string> fileSystemPathComparer =
+                OperatingSystem.IsWindows()
+                    ? StringComparer.OrdinalIgnoreCase
+                    : StringComparer.Ordinal;
+
+            FileVertexDictionary =
+                new Dictionary<string, IVertex>(fileSystemPathComparer);
+            DirectoryVertexDictionary =
+                new Dictionary<string, IVertex>(fileSystemPathComparer);
+        }
 
         private static readonly object
             vertexRegistrySynchronizationRoot =
@@ -127,33 +140,33 @@ namespace m0.Store.FileSystem
                 return null;
             }
 
-            string fileName = (string)VertexIdentifier;
+            string rawFileName = (string)VertexIdentifier;
+            string fileName =
+                FileSystemUtil.NormalizeFileSystemIdentifier(rawFileName);
+
+            bool fileExists = System.IO.File.Exists(fileName);
+            bool directoryExists = System.IO.Directory.Exists(fileName);
+            bool looksLikeDriveRoot =
+                FileSystemUtil.IsWindowsDriveRoot(fileName);
 
             lock (vertexRegistrySynchronizationRoot)
             {
-                if (System.IO.File.Exists(fileName))
+                if (fileExists)
                 {
                     if (FileVertexDictionary.TryGetValue(
                         fileName,
                         out IVertex fileVertex))
-                    {
                         return fileVertex;
-                    }
 
                     return new FileVertex(this, fileName);
                 }
 
-                if (System.IO.Directory.Exists(fileName) ||
-                    (fileName.Length == 3 &&
-                     fileName[1] == ':' &&
-                     fileName[2] == '\\'))
+                if (directoryExists || looksLikeDriveRoot)
                 {
                     if (DirectoryVertexDictionary.TryGetValue(
                         fileName,
                         out IVertex directoryVertex))
-                    {
                         return directoryVertex;
-                    }
 
                     return new DirectoryVertex(this, fileName);
                 }
@@ -183,6 +196,13 @@ namespace m0.Store.FileSystem
             if (!ReferenceEquals(vertex.Store, this))
                 throw new InvalidOperationException(
                     "Cannot rename a vertex owned by another store.");
+
+            oldIdentifier =
+                FileSystemUtil.NormalizeFileSystemIdentifier(
+                    oldIdentifier);
+            newIdentifier =
+                FileSystemUtil.NormalizeFileSystemIdentifier(
+                    newIdentifier);
 
             lock (vertexRegistrySynchronizationRoot)
             {
@@ -560,7 +580,8 @@ namespace m0.Store.FileSystem
             if (!staticVariablesInitialisationMade)
                 IntializeStaticVariables();
 
-            _Identifier = identifier;
+            _Identifier =
+                FileSystemUtil.NormalizeFileSystemIdentifier(identifier);
 
             _StoreUniverse = storeUniverse;
 
@@ -568,7 +589,7 @@ namespace m0.Store.FileSystem
             
             storeUniverse.Stores.Add(this);
 
-            _Root = new DirectoryVertex(this, identifier);
+            _Root = new DirectoryVertex(this, _Identifier);
 
             _Root.IsRoot = true;
 

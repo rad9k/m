@@ -18,10 +18,16 @@ namespace m0.Store.FileSystem
         {
             get
             {
-                if (((string)Identifier).Length == 3 && ((string)Identifier)[1] == ':' && ((string)Identifier)[2] == '\\')
-                    return ((string)Identifier)[0].ToString();
+                string identifierString =
+                    Identifier as string ?? "";
 
-                return FileSystemUtil.GetFileNamePart((string)Identifier);
+                if (FileSystemUtil.IsWindowsDriveRoot(identifierString))
+                    return identifierString[0].ToString();
+
+                if (DI != null)
+                    return DI.Name;
+
+                return FileSystemUtil.GetFileNamePart(identifierString);
             }
             set
             {
@@ -64,19 +70,16 @@ namespace m0.Store.FileSystem
 
             AddVertexToFileSystemVertex(FileSystemStore.Directory_Filename, DI.Name);
 
-            string extension = DI.Extension;
-
-            if (extension.Length > 1)
-                extension = extension.Substring(1);
+            GetDirectoryBasenameAndExtension(
+                DI.Name,
+                out string basename,
+                out string extension);
 
             AddVertexToFileSystemVertex(FileSystemStore.Directory_Extension, extension);
 
             AddVertexToFileSystemVertex(FileSystemStore.Directory_FullFilename, DI.FullName);
 
-            if (DI.Name.Contains("."))
-                AddVertexToFileSystemVertex(FileSystemStore.Directory_Basename, DI.Name.Substring(0, DI.Name.LastIndexOf(".")));
-            else
-                AddVertexToFileSystemVertex(FileSystemStore.Directory_Basename, DI.Name);
+            AddVertexToFileSystemVertex(FileSystemStore.Directory_Basename, basename);
 
             AddVertexToFileSystemVertex(FileSystemStore.Directory_FileAttribute, DI.Attributes.ToString());
             AddVertexToFileSystemVertex(FileSystemStore.Directory_CreationDateTime, DI.CreationTime.ToString());
@@ -89,23 +92,70 @@ namespace m0.Store.FileSystem
 
             try
             {
-                foreach (DirectoryInfo directoryInfo in DI.EnumerateDirectories().OrderBy(d => d.Name, StringComparer.OrdinalIgnoreCase))
-                {
-                    IVertex DirectoryVertex = new DirectoryVertex(this.Store, directoryInfo.FullName);
+                List<DirectoryInfo> childDirectories =
+                    DI.EnumerateDirectories()
+                        .OrderBy(d => d.Name, StringComparer.OrdinalIgnoreCase)
+                        .ToList();
+                List<FileInfo> childFiles =
+                    DI.EnumerateFiles()
+                        .OrderBy(f => f.Name, StringComparer.OrdinalIgnoreCase)
+                        .ToList();
 
-                    base.AddEdge(DirectoryMetaVertex, DirectoryVertex);
-                    //AddVertexToFileSystemVertex(DirectoryMetaVertex, DirectoryVertex);
-                }
+                foreach (DirectoryInfo directoryInfo in childDirectories)
+                    AddChildFileSystemVertex(
+                        DirectoryMetaVertex,
+                        directoryInfo.FullName);
 
-                foreach (FileInfo fileInfo in DI.EnumerateFiles().OrderBy(f => f.Name, StringComparer.OrdinalIgnoreCase))
-                {
-                    IVertex FileVertex = new FileVertex(this.Store, fileInfo.FullName);                        
-
-                    base.AddEdge(FileMetaVertex, FileVertex);
-                    //AddVertexToFileSystemVertex(FileMetaVertex, FileVertex);
-                }
+                foreach (FileInfo fileInfo in childFiles)
+                    AddChildFileSystemVertex(
+                        FileMetaVertex,
+                        fileInfo.FullName);
             }
-            catch (Exception) { } // no access
+            catch (Exception)
+            {
+            }
+        }
+
+        void AddChildFileSystemVertex(
+            IVertex metaVertex,
+            string childPath)
+        {
+            try
+            {
+                IVertex childVertex =
+                    this.Store.GetVertexByIdentifier(childPath);
+
+                if (childVertex == null)
+                    return;
+
+                base.AddEdge(metaVertex, childVertex);
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        static void GetDirectoryBasenameAndExtension(
+            string directoryName,
+            out string basename,
+            out string extension)
+        {
+            basename = directoryName;
+            extension = "";
+
+            if (string.IsNullOrEmpty(directoryName))
+                return;
+
+            int lastDotIndex = directoryName.LastIndexOf('.');
+            if (lastDotIndex <= 0 ||
+                lastDotIndex == directoryName.Length - 1)
+                return;
+
+            if (directoryName.IndexOf('.') != lastDotIndex)
+                return;
+
+            basename = directoryName.Substring(0, lastDotIndex);
+            extension = directoryName.Substring(lastDotIndex + 1);
         }
 
         public override IEdge AddVertexAndReturnEdge(IVertex metaVertex, object val)
@@ -125,20 +175,32 @@ namespace m0.Store.FileSystem
             {
                 DI.CreateSubdirectory(name);
 
-                IVertex DirectoryVertex = new DirectoryVertex(this.Store, this.Identifier + "\\" + name);
+                string childDirectoryPath =
+                    Path.Combine(Identifier.ToString(), name);
+                IVertex childDirectoryVertex =
+                    this.Store.GetVertexByIdentifier(childDirectoryPath);
 
-                return base.AddEdge(metaVertex, DirectoryVertex);
+                if (childDirectoryVertex == null)
+                    return null;
+
+                return base.AddEdge(metaVertex, childDirectoryVertex);
             }
 
             if (GraphUtil.GetValueAndCompareStrings(metaVertex, "File"))
             {
-                FileInfo fi = new FileInfo(this.Identifier.ToString() + Path.DirectorySeparatorChar + name);
+                string childFilePath =
+                    Path.Combine(Identifier.ToString(), name);
+                FileInfo fi = new FileInfo(childFilePath);
 
                 fi.Create().Dispose();
 
-                IVertex FileVertex = new FileVertex(this.Store, this.Identifier.ToString() + Path.DirectorySeparatorChar + name);
+                IVertex childFileVertex =
+                    this.Store.GetVertexByIdentifier(childFilePath);
 
-                return base.AddEdge(metaVertex, FileVertex);
+                if (childFileVertex == null)
+                    return null;
+
+                return base.AddEdge(metaVertex, childFileVertex);
             }
 
             return null;
@@ -179,7 +241,9 @@ namespace m0.Store.FileSystem
         }
 
         public DirectoryVertex(IStore store, string identifier)
-            : base(store, identifier)
+            : base(
+                store,
+                FileSystemUtil.NormalizeFileSystemIdentifier(identifier))
         {
             DI = new DirectoryInfo(Identifier.ToString());
         }
