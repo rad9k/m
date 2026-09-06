@@ -652,76 +652,75 @@ namespace m0.UIWpf.Visualisers
             if (Vertex.DisposedState != DisposeStateEnum.Live)
                 return;
 
-            if (ActualHeight != 0)
-            {
-                //MinusZero.Instance.Log(1, "PaintGraph", "");
+            if (ActualHeight == 0)
+                return;
 
-                // turn off Vertex.Change listener
+            IsPaiting = true;
 
-                //PlatformClass.RemoveVertexChangeListeners(this.Vertex, new VertexChange(VertexChange));
+            if (GeneralUtil.CompareStrings(Vertex.Get(false, "FastMode:"), "True"))
+                FastMode = true;
+            else
+                FastMode = false;
 
-                //                                
+            if (GeneralUtil.CompareStrings(Vertex.Get(false, "MetaLabels:"), "True"))
+                MetaLabels = true;
+            else
+                MetaLabels = false;
 
-                IsPaiting = true;
+            if (GeneralUtil.CompareStrings(Vertex.Get(false, "ShowOutEdges:"), "True"))
+                ShowOutEdges = true;
+            else
+                ShowOutEdges = false;
 
-                if (GeneralUtil.CompareStrings(Vertex.Get(false, "FastMode:"), "True"))
-                    FastMode = true;
-                else
-                    FastMode = false;
+            if (GeneralUtil.CompareStrings(Vertex.Get(false, "ShowInEdges:"), "True"))
+                ShowInEdges = true;
+            else
+                ShowInEdges = false;
 
-                if (GeneralUtil.CompareStrings(Vertex.Get(false, "MetaLabels:"), "True"))
-                    MetaLabels = true;
-                else
-                    MetaLabels = false;
+            ShowFromToChangedVertex = GraphUtil.GetBooleanValueOrFalse(Vertex.Get(false, "ShowFromToSourceChangedVertex:"));
 
-                if (GeneralUtil.CompareStrings(Vertex.Get(false, "ShowOutEdges:"), "True"))
-                    ShowOutEdges = true;
-                else
-                    ShowOutEdges = false;
+            bool animateEdgesIsNull = false;
+            AnimateEdges = GraphUtil.GetBooleanValue(Vertex.Get(false, "AnimateEdges:"), ref animateEdgesIsNull);
 
-                if (GeneralUtil.CompareStrings(Vertex.Get(false, "ShowInEdges:"), "True"))
-                    ShowInEdges = true;
-                else
-                    ShowInEdges = false;
+            if (GeneralUtil.CompareStrings(Vertex.Get(false, "ShowIcons:"), "True"))
+                ShowIcons = true;
+            else
+                ShowIcons = false;
 
-                ShowFromToChangedVertex = GraphUtil.GetBooleanValueOrFalse(Vertex.Get(false, "ShowFromToSourceChangedVertex:"));
+            this.Children.Clear();
 
-                bool animateEdgesIsNull = false;
-                AnimateEdges = GraphUtil.GetBooleanValue(Vertex.Get(false, "AnimateEdges:"), ref animateEdgesIsNull);
-
-                if (GeneralUtil.CompareStrings(Vertex.Get(false, "ShowIcons:"), "True"))
-                    ShowIcons = true;
-                else
-                    ShowIcons = false;
-
-                this.Children.Clear();
-
-                foreach (UIElement e in DisplayedVerticesUIElements.Values)
-                    if (e is IDisposable)
-                        ((IDisposable)e).Dispose();
-                    
-                DisplayedVerticesUIElements.Clear();
-
-                //GraphUtil.RemoveAllEdges(Vertex.Get(false, "DisplayedEdges:"));
+            foreach (UIElement e in DisplayedVerticesUIElements.Values)
+                if (e is IDisposable)
+                    ((IDisposable)e).Dispose();
                 
-                Width = ((int)GraphUtil.GetIntegerValue(Vertex.Get(false, "NumberOfCircles:")))*(GraphUtil.GetIntegerValueOr0(Vertex.Get(false, "VisualiserCircleSize:")))*2;
-                Height = Width;                
-                             
-                AddCircle(0,null);
-                UpdateLayout();
+            DisplayedVerticesUIElements.Clear();
 
-                SelectWrappersForSelectedVertices();
+            int? numberOfCircles = GraphUtil.GetIntegerValue(Vertex.Get(false, "NumberOfCircles:"));
+            int visualiserCircleSize = GraphUtil.GetIntegerValueOr0(Vertex.Get(false, "VisualiserCircleSize:"));
+            double widthBeforeCircleSize = Width;
+            double heightBeforeCircleSize = Height;
+            double circleWorld = ((int)(numberOfCircles ?? 0)) * visualiserCircleSize * 2;
 
-                IsFirstPainted = true;
+            if (circleWorld < 100)
+                circleWorld = 800;
 
-                IsPaiting = false;
+            Width = circleWorld;
+            if (IsUsableKeptSize(widthBeforeCircleSize) && widthBeforeCircleSize > Width)
+                Width = widthBeforeCircleSize;
 
-                // turn on Vertex.Change listener
+            Height = circleWorld;
+            if (IsUsableKeptSize(heightBeforeCircleSize) && heightBeforeCircleSize > Height)
+                Height = heightBeforeCircleSize;
+                         
+            AddCircle(0,null);
+            UpdateLayout();
+            ExpandCanvasToContentBounds();
 
-                //PlatformClass.RegisterVertexChangeListeners(this.Vertex, new VertexChange(VertexChange), new string[] { "BaseEdge", "SelectedEdges" });
+            SelectWrappersForSelectedVertices();
 
-                //
-            }
+            IsFirstPainted = true;
+
+            IsPaiting = false;
         }
 
         internal void ApplyEdgeStyle(Shape edge, bool highlighted)
@@ -952,15 +951,18 @@ namespace m0.UIWpf.Visualisers
         {
             double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get(false, "Scale:"))) / 100;
 
+            this.LayoutTransform = null;
+
             if (scale != 1.0)
             {
                 if (ActualHeight != 0)
                 {
-                    this.LayoutTransform = new ScaleTransform(scale, scale, ActualWidth/2, ActualHeight/2);
+                    this.RenderTransformOrigin = new Point(0.5, 0.5);
+                    this.RenderTransform = new ScaleTransform(scale, scale);
                 }
             }
             else
-                this.LayoutTransform = null;
+                this.RenderTransform = null;
         }
 
         protected KeyValuePair<IVertex, SimpleVisualiserWrapper> GetVertexWrapperByEventSource(object eventSource)
@@ -1688,6 +1690,49 @@ namespace m0.UIWpf.Visualisers
 
         private double GetCanvasWidth()  { return this.Width  > 0 ? this.Width  : Math.Max(this.ActualWidth,  800); }
         private double GetCanvasHeight() { return this.Height > 0 ? this.Height : Math.Max(this.ActualHeight, 800); }
+
+        private static bool IsUsableKeptSize(double value)
+        {
+            return !double.IsNaN(value) && !double.IsInfinity(value) && value > 0;
+        }
+
+        private void ExpandCanvasToContentBounds()
+        {
+            double maxX = Width;
+            double maxY = Height;
+
+            if (!IsUsableKeptSize(maxX))
+                maxX = 0;
+
+            if (!IsUsableKeptSize(maxY))
+                maxY = 0;
+
+            foreach (UIElement child in Children)
+            {
+                FrameworkElement frameworkElement = child as FrameworkElement;
+
+                if (frameworkElement == null)
+                    continue;
+
+                double x = Canvas.GetLeft(frameworkElement);
+                double y = Canvas.GetTop(frameworkElement);
+
+                if (double.IsNaN(x))
+                    x = 0;
+
+                if (double.IsNaN(y))
+                    y = 0;
+
+                maxX = Math.Max(maxX, x + frameworkElement.ActualWidth);
+                maxY = Math.Max(maxY, y + frameworkElement.ActualHeight);
+            }
+
+            if (Width < maxX)
+                Width = maxX;
+
+            if (Height < maxY)
+                Height = maxY;
+        }
 
         private void ExpandCanvasForRelaxedLayout(double factor)
         {

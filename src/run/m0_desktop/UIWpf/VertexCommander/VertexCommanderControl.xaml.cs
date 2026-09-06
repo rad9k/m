@@ -162,15 +162,17 @@ namespace m0.UIWpf.VertexCommander
 
         private void RegisterSectionViewportSizedVisualiserLayoutEventHandlers(ScrollViewer sectionScrollViewer)
         {
-            sectionScrollViewer.SizeChanged += delegate
+            sectionScrollViewer.SizeChanged += delegate(object sender, SizeChangedEventArgs e)
             {
                 ScheduleViewportSizedVisualiserLayoutsRefresh();
             };
 
             sectionScrollViewer.ScrollChanged += delegate(object sender, ScrollChangedEventArgs e)
             {
-                if (e.ViewportWidthChange != 0 || e.ViewportHeightChange != 0)
-                    ScheduleViewportSizedVisualiserLayoutsRefresh();
+                if (e.ViewportWidthChange == 0 && e.ViewportHeightChange == 0)
+                    return;
+
+                ScheduleViewportSizedVisualiserLayoutsRefresh();
             };
         }
 
@@ -201,10 +203,14 @@ namespace m0.UIWpf.VertexCommander
         private static void RefreshViewportSizedVisualiserLayout(ContentControl visualiserHost, ScrollViewer sectionScrollViewer)
         {
             object visualiser = visualiserHost?.Content;
+            bool appliesToViewportSizedVisualiser =
+                visualiser is IconVisualiser
+                || visualiser is ListVisualiser
+                || visualiser is InEdgesListVisualiser
+                || visualiser is GraphVisualiser
+                || visualiser is GraphVisualiser3D;
 
-            if (!(visualiser is IconVisualiser)
-                && !(visualiser is ListVisualiser)
-                && !(visualiser is InEdgesListVisualiser))
+            if (!appliesToViewportSizedVisualiser)
                 return;
 
             SetViewportSizeIfNeeded(visualiser, sectionScrollViewer);
@@ -1969,7 +1975,32 @@ namespace m0.UIWpf.VertexCommander
                 return;
             }
 
-            if (!(visualiser is GraphVisualiser) && !(visualiser is GraphVisualiser3D))
+            if (visualiser is GraphVisualiser)
+            {
+                double graphWorld = GetGraphCircleWorldSize(visualiser);
+                if (graphWorld < 100)
+                    graphWorld = 800;
+
+                double nonVisualiserHeight = GetNonVisualiserHeight(frameworkElement, sectionScrollViewer);
+                double availableVisualiserHeight = viewportHeight - nonVisualiserHeight;
+
+                if (!IsUsableLayoutMetric(availableVisualiserHeight))
+                    availableVisualiserHeight = viewportHeight - 40;
+
+                double minWidth = graphWorld;
+                if (IsUsableLayoutMetric(frameworkElement.Width) && frameworkElement.Width > minWidth)
+                    minWidth = frameworkElement.Width;
+
+                double minHeight = graphWorld;
+                if (IsUsableLayoutMetric(frameworkElement.Height) && frameworkElement.Height > minHeight)
+                    minHeight = frameworkElement.Height;
+
+                frameworkElement.Width = System.Math.Max(minWidth, System.Math.Max(100, viewportWidth - 4));
+                frameworkElement.Height = System.Math.Max(minHeight, System.Math.Max(100, availableVisualiserHeight));
+                return;
+            }
+
+            if (!(visualiser is GraphVisualiser3D))
                 return;
 
             frameworkElement.Width = System.Math.Max(100, viewportWidth - 4);
@@ -2016,6 +2047,19 @@ namespace m0.UIWpf.VertexCommander
         private static bool IsUsableLayoutMetric(double value)
         {
             return !double.IsNaN(value) && !double.IsInfinity(value) && value > 0;
+        }
+
+        private static double GetGraphCircleWorldSize(object visualiser)
+        {
+            GraphVisualiser graphVisualiser = visualiser as GraphVisualiser;
+
+            if (graphVisualiser == null || graphVisualiser.Vertex == null)
+                return 0;
+
+            int? numberOfCircles = GraphUtil.GetIntegerValue(graphVisualiser.Vertex.Get(false, "NumberOfCircles:"));
+            int visualiserCircleSize = GraphUtil.GetIntegerValueOr0(graphVisualiser.Vertex.Get(false, "VisualiserCircleSize:"));
+
+            return ((int)(numberOfCircles ?? 0)) * visualiserCircleSize * 2;
         }
     }
 }

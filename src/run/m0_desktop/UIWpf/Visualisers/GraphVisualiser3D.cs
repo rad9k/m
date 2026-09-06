@@ -894,7 +894,6 @@ namespace m0.UIWpf.Visualisers
             if (ActualWidth == 0 || ActualHeight == 0)
                 return;
 
-            Stopwatch sw = Stopwatch.StartNew();
             isPainting = true;
 
             metaLabels = !GeneralUtil.CompareStrings(Vertex.Get(false, "MetaLabels:"), "False");
@@ -944,10 +943,6 @@ namespace m0.UIWpf.Visualisers
             isFirstPainted = true;
             isPainting = false;
             UpdateLabels();
-
-            sw.Stop();
-            MinusZero.Instance.Log(1, "GraphVisualiser3D.PaintGraph",
-                "vertices=" + displayedNodes.Count + " edges=" + edgeVisuals.Count + " elapsed_ms=" + sw.ElapsedMilliseconds);
         }
 
         public void RequestRepaint()
