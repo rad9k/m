@@ -11,9 +11,12 @@
             <ColumnDefinition Width="184*"/>
             <ColumnDefinition Width="145*"/>
         </Grid.ColumnDefinitions>
-        <Label Content="minus zero" HorizontalAlignment="Left" Margin="32,44,0,0" VerticalAlignment="Top" FontSize="24"/>
+        <Label Content="minus zero 1.0" HorizontalAlignment="Left" Margin="32,44,0,0" VerticalAlignment="Top" FontSize="24" Grid.ColumnSpan="2" Height="42" Width="205"/>
         <Label Content="PUBLIC DOMAIN software by Radosław Tereszczuk" HorizontalAlignment="Left" Margin="32,86,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
-        <Label Content="you will die. someday. remember" HorizontalAlignment="Left" Margin="32,145,0,0" VerticalAlignment="Top" FontStyle="Italic" Grid.ColumnSpan="2" Width="197"/>
+        <TextBlock HorizontalAlignment="Left" Margin="36,125,0,0" VerticalAlignment="Top">
+            <Hyperlink NavigateUri="http://tereszczuk.com" RequestNavigate="WebsiteHyperlink_RequestNavigate">tereszczuk.com</Hyperlink>
+        </TextBlock>
+        <Label Content="you will die. someday. remember" HorizontalAlignment="Left" Margin="32,155,0,0" VerticalAlignment="Top" FontStyle="Italic" Grid.ColumnSpan="2" Width="197"/>
         <Button Content="OK" Grid.Column="1" HorizontalAlignment="Left" Height="26" Margin="38.667,197,0,0" VerticalAlignment="Top" Width="83" Click="Button_Click"/>
 
     </Grid>
