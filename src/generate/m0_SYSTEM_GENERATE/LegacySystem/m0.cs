@@ -244,6 +244,14 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex"));
 
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$Inherits").AddVertex(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$MinCardinality"),
+                "0");
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$Inherits").AddVertex(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$MaxCardinality"),
+                "-1");            
+
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$Inherits").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$NoInherit"),
                 Empty);
