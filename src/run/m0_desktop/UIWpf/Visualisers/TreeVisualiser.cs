@@ -47,6 +47,8 @@ namespace m0.UIWpf.Visualisers
         private ToggleButton expanderToggleButton;
         private bool isKeyboardHighlighted;
         private bool isMouseHoverHighlighted;
+        internal bool suppressCollapsedRemember;
+        internal int expandRestoreGeneration;
 
         private void Select(bool IsCtrl)
         {
@@ -365,6 +367,9 @@ namespace m0.UIWpf.Visualisers
 
         private void RememberVirtualExpandedState(bool isExpanded)
         {
+            if (suppressCollapsedRemember && isExpanded == false)
+                return;
+
             if (IsClearingVirtualState || Node == null || ParentVisualiser == null)
                 return;
 
@@ -729,7 +734,7 @@ namespace m0.UIWpf.Visualisers
             TreeVisualiserViewItem childItem = element as TreeVisualiserViewItem;
 
             if (childItem != null && ParentVisualiser != null)
-                ParentVisualiser.ClearVirtualTreeViewItem(childItem);
+                ParentVisualiser.ClearVirtualTreeViewItem(childItem, false);
 
             base.ClearContainerForItemOverride(element, item);
         }
@@ -756,6 +761,85 @@ namespace m0.UIWpf.Visualisers
         internal void ScheduleSelectionVisualRefreshAfterLayout()
         {
             Dispatcher.BeginInvoke(new Action(RefreshSelectionVisualAfterLayout), DispatcherPriority.Loaded);
+        }
+
+        internal void ApplyVirtualExpandedStateAfterPrepare(bool restoreIsExpanded)
+        {
+            if (restoreIsExpanded)
+            {
+                suppressCollapsedRemember = true;
+
+                if (!IsExpanded)
+                    ApplyRestoredExpandedState();
+
+                // One Loaded pass only: re-expand if WPF reset IsExpanded after Prepare,
+                // otherwise just release suppressCollapsedRemember. A second ContextIdle
+                // expand used to change extent after layout and recycle the same row.
+                ScheduleVirtualExpandedRestore();
+                return;
+            }
+
+            suppressCollapsedRemember = false;
+
+            if (!IsExpanded)
+                return;
+
+            IsClearingVirtualState = true;
+            try
+            {
+                IsExpanded = false;
+            }
+            finally
+            {
+                IsClearingVirtualState = false;
+            }
+        }
+
+        internal void ScheduleVirtualExpandedRestore()
+        {
+            suppressCollapsedRemember = true;
+            int generation = expandRestoreGeneration;
+            Dispatcher.BeginInvoke(
+                new Action(() => RestoreVirtualExpandedAfterPrepare(generation)),
+                DispatcherPriority.Loaded);
+        }
+
+        private void RestoreVirtualExpandedAfterPrepare(int generation)
+        {
+            try
+            {
+                if (generation != expandRestoreGeneration)
+                    return;
+
+                if (Node == null || ParentVisualiser == null)
+                    return;
+
+                if (!ParentVisualiser.IsVirtualNodeMarkedExpanded(Node))
+                    return;
+
+                ApplyRestoredExpandedState();
+            }
+            finally
+            {
+                if (generation == expandRestoreGeneration)
+                    suppressCollapsedRemember = false;
+            }
+        }
+
+        private void ApplyRestoredExpandedState()
+        {
+            if (IsExpanded)
+                return;
+
+            IsRestoringExpandedState = true;
+            try
+            {
+                IsExpanded = true;
+            }
+            finally
+            {
+                IsRestoringExpandedState = false;
+            }
         }
 
         private void RefreshSelectionVisualAfterLayout()
@@ -1004,14 +1088,50 @@ namespace m0.UIWpf.Visualisers
             TreeVisualiserViewItem treeItem = element as TreeVisualiserViewItem;
 
             if (UseDataVirtualization && treeItem != null)
-                ClearVirtualTreeViewItem(treeItem);
+                ClearVirtualTreeViewItem(treeItem, false);
 
             base.ClearContainerForItemOverride(element, item);
         }
 
         internal void PrepareVirtualTreeViewItem(TreeEdgeNode node, TreeVisualiserViewItem treeItem)
         {
-            ClearVirtualTreeViewItem(treeItem);
+            if (treeItem.Node == node)
+            {
+                PrepareReusedVirtualTreeViewItem(node, treeItem);
+                return;
+            }
+
+            PrepareReboundVirtualTreeViewItem(node, treeItem);
+        }
+
+        private void PrepareReusedVirtualTreeViewItem(TreeEdgeNode node, TreeVisualiserViewItem treeItem)
+        {
+            treeItem.ParentVisualiser = this;
+            treeItem.doNotTrackGraphChanges = node.DoNotTrackGraphChanges;
+            treeItem.IsFilled = node.ChildrenLoaded;
+            treeItem.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+            treeItem.IsSelected = IsEdgeSelected(node.Edge);
+            treeItem.UpdateHeader();
+
+            virtualContainers[node] = treeItem;
+            EnsureVirtualTreeViewItemItems(treeItem, node);
+            treeItem.ApplyVirtualExpandedStateAfterPrepare(expandedVirtualNodes.Contains(node));
+
+            if (treeItem.IsSelected || treeItem.IsKeyboardHighlighted)
+                treeItem.ScheduleSelectionVisualRefreshAfterLayout();
+
+            AttachVirtualTreeViewItemListener(treeItem, node);
+        }
+
+        private void PrepareReboundVirtualTreeViewItem(TreeEdgeNode node, TreeVisualiserViewItem treeItem)
+        {
+            treeItem.expandRestoreGeneration++;
+
+            if (treeItem.Node != null || treeItem.ItemsSource != null || treeItem.Items.Count > 0)
+                DetachVirtualTreeViewItemItems(treeItem);
+
+            treeItem.ResetAnimationVisualState();
+            ReleaseVirtualTreeViewItemBookkeeping(treeItem);
 
             treeItem.Node = node;
             treeItem.Tag = node.Edge;
@@ -1033,44 +1153,41 @@ namespace m0.UIWpf.Visualisers
                 treeItem.Items.Add(new TreeViewItem());
             }
 
-            bool restoreIsExpanded = expandedVirtualNodes.Contains(node);
-
-            if (restoreIsExpanded && treeItem.IsExpanded == false)
-            {
-                treeItem.IsRestoringExpandedState = true;
-                try
-                {
-                    treeItem.IsExpanded = true;
-                }
-                finally
-                {
-                    treeItem.IsRestoringExpandedState = false;
-                }
-            }
+            treeItem.ApplyVirtualExpandedStateAfterPrepare(expandedVirtualNodes.Contains(node));
 
             if (treeItem.IsSelected || treeItem.IsKeyboardHighlighted)
                 treeItem.ScheduleSelectionVisualRefreshAfterLayout();
 
-            if (!treeItem.doNotTrackGraphChanges)
-            {
-                IVertex virtualTreeViewItemTriggerTarget = node.Edge == null ? null : node.Edge.To;
+            AttachVirtualTreeViewItemListener(treeItem, node);
+        }
 
-                if (virtualTreeViewItemTriggerTarget == null ||
-                    virtualTreeViewItemTriggerTarget.DisposedState !=
-                        DisposeStateEnum.Live)
-                    return;
+        private void AttachVirtualTreeViewItemListener(TreeVisualiserViewItem treeItem, TreeEdgeNode node)
+        {
+            if (treeItem.doNotTrackGraphChanges || treeItem.vertexChangeListenerEdge != null)
+                return;
 
-                treeItem.vertexChangeListenerEdge = ExecutionFlowHelper.AddTriggerAndListener(virtualTreeViewItemTriggerTarget,
-                    new List<string> { },
-                    new List<GraphChangeFilterEnum> {
-                        GraphChangeFilterEnum.ValueChange,
-                        GraphChangeFilterEnum.OutputEdgeAdded,
-                        GraphChangeFilterEnum.OutputEdgeRemoved,
-                        GraphChangeFilterEnum.OutputEdgeDisposed
-                    },
-                    "VirtualTreeViewItem",
-                    treeItem.VertexChange);
-            }
+            IVertex virtualTreeViewItemTriggerTarget = node.Edge == null ? null : node.Edge.To;
+
+            if (virtualTreeViewItemTriggerTarget == null ||
+                virtualTreeViewItemTriggerTarget.DisposedState !=
+                    DisposeStateEnum.Live)
+                return;
+
+            treeItem.vertexChangeListenerEdge = ExecutionFlowHelper.AddTriggerAndListener(virtualTreeViewItemTriggerTarget,
+                new List<string> { },
+                new List<GraphChangeFilterEnum> {
+                    GraphChangeFilterEnum.ValueChange,
+                    GraphChangeFilterEnum.OutputEdgeAdded,
+                    GraphChangeFilterEnum.OutputEdgeRemoved,
+                    GraphChangeFilterEnum.OutputEdgeDisposed
+                },
+                "VirtualTreeViewItem",
+                treeItem.VertexChange);
+        }
+
+        internal bool IsVirtualNodeMarkedExpanded(TreeEdgeNode node)
+        {
+            return node != null && expandedVirtualNodes.Contains(node);
         }
 
         internal void SetVirtualNodeIsExpanded(TreeEdgeNode node, bool isExpanded)
@@ -1086,25 +1203,34 @@ namespace m0.UIWpf.Visualisers
 
         internal void ClearVirtualTreeViewItem(TreeVisualiserViewItem treeItem)
         {
+            ClearVirtualTreeViewItem(treeItem, true);
+        }
+
+        internal void ClearVirtualTreeViewItem(TreeVisualiserViewItem treeItem, bool collapseLeftoverExpanded)
+        {
             if (treeItem == null)
                 return;
 
             bool leftoverIsExpanded = treeItem.IsExpanded;
+            bool inSetBefore = IsVirtualNodeMarkedExpanded(treeItem.Node);
 
             if (leftoverIsExpanded && treeItem.Node != null)
                 expandedVirtualNodes.Add(treeItem.Node);
 
-            if (treeItem.vertexChangeListenerEdge != null)
+            if (leftoverIsExpanded || inSetBefore)
+                treeItem.suppressCollapsedRemember = true;
+
+            treeItem.expandRestoreGeneration++;
+            ReleaseVirtualTreeViewItemBookkeeping(treeItem);
+
+            if (!collapseLeftoverExpanded)
             {
-                ExecutionFlowHelper.RemoveGraphChangeListener(treeItem.vertexChangeListenerEdge);
-                treeItem.vertexChangeListenerEdge = null;
+                // Keep Node, Items and IsExpanded. Prepare reuses the same visual tree
+                // when the generator returns this container for the same node, which
+                // stops the children-appear-and-disappear recycle loop.
+                return;
             }
 
-            if (treeItem.Node != null)
-                virtualContainers.Remove(treeItem.Node);
-
-            treeItem.ItemsSource = null;
-            treeItem.Items.Clear();
             treeItem.IsFilled = false;
             treeItem.IsSelected = false;
             treeItem.IsKeyboardHighlighted = false;
@@ -1113,6 +1239,10 @@ namespace m0.UIWpf.Visualisers
             treeItem.IsClearingVirtualState = true;
             try
             {
+                treeItem.ItemsSource = null;
+                treeItem.Items.Clear();
+
+                treeItem.suppressCollapsedRemember = false;
                 if (treeItem.IsExpanded)
                     treeItem.IsExpanded = false;
             }
@@ -1123,8 +1253,60 @@ namespace m0.UIWpf.Visualisers
 
             treeItem.Node = null;
             treeItem.Tag = null;
-            treeItem.InvalidateMeasure();
-            treeItem.InvalidateArrange();
+        }
+
+        private void ReleaseVirtualTreeViewItemBookkeeping(TreeVisualiserViewItem treeItem)
+        {
+            if (treeItem.vertexChangeListenerEdge != null)
+            {
+                ExecutionFlowHelper.RemoveGraphChangeListener(treeItem.vertexChangeListenerEdge);
+                treeItem.vertexChangeListenerEdge = null;
+            }
+
+            if (treeItem.Node != null)
+                virtualContainers.Remove(treeItem.Node);
+        }
+
+        private static void DetachVirtualTreeViewItemItems(TreeVisualiserViewItem treeItem)
+        {
+            treeItem.IsClearingVirtualState = true;
+            try
+            {
+                treeItem.ItemsSource = null;
+                treeItem.Items.Clear();
+            }
+            finally
+            {
+                treeItem.IsClearingVirtualState = false;
+            }
+        }
+
+        private static void EnsureVirtualTreeViewItemItems(TreeVisualiserViewItem treeItem, TreeEdgeNode node)
+        {
+            if (node.ChildrenLoaded)
+            {
+                if (!object.ReferenceEquals(treeItem.ItemsSource, node.Children))
+                {
+                    DetachVirtualTreeViewItemItems(treeItem);
+                    treeItem.ItemsSource = node.Children;
+                }
+
+                return;
+            }
+
+            if (treeItem.ItemsSource != null)
+                DetachVirtualTreeViewItemItems(treeItem);
+
+            if (node.HasChildren)
+            {
+                if (treeItem.Items.Count == 0)
+                    treeItem.Items.Add(new TreeViewItem());
+
+                return;
+            }
+
+            if (treeItem.Items.Count > 0)
+                DetachVirtualTreeViewItemItems(treeItem);
         }
 
         internal void FillVirtualNode(TreeVisualiserViewItem treeItem)
