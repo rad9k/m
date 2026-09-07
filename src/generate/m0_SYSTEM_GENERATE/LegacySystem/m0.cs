@@ -6927,15 +6927,17 @@ namespace m0
         {
             IVertex zu = Root.Get(false, @"System\Meta\ZeroUML");
 
-            GraphUtil.LoadTXTParseAndMove(@"_RES\ZeroUML_Types.txt",
+            GraphUtil.LoadTXTParseAndMove(@"_RES\ZeroUML_Structure.txt",
                 zu,
-                "Types");            
+                "Structure");            
 
-            IVertex package = Root.Get(false, @"System\Meta\ZeroUML\Package");
+            IVertex component = Root.Get(false, @"System\Meta\ZeroUML\Structure\Component");
+
+            IVertex _class = Root.Get(false, @"System\Meta\ZeroUML\Class");
 
             IVertex inherits = Root.Get(false, @"System\Meta\Base\Vertex\$Inherits");
 
-            //package.AddEdge(inherits, Root.Get(false, @"System\Meta\ZeroUML\Types\Component"));                    
+            _class.AddEdge(inherits, component);                    
         }
 
         void CreateSystemMetaCustomDomain()

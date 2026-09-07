@@ -1,0 +1,105 @@
+"ZeroUML"
+	import @System\Meta\ZeroUML direct meta	
+	 
+	package "Structure"
+		"Component"
+			"Relation"
+				<@$EdgeTarget :: @Structure\Component>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+			"Create"
+				<@$EdgeTarget :: @Structure\Component>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+			"Read"
+				<@$EdgeTarget :: @Structure\Component>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+			"Write"
+				<@$EdgeTarget :: @Structure\Component>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+			"Use"
+				<@$EdgeTarget :: @Structure\Component>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+			"Deploy"
+				<@$EdgeTarget :: @Structure\Machine>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+			"Component"
+				<@$IsAggregation :: @$Empty>
+				<@$EdgeTarget :: @Structure\Component>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+			"Interface"
+				<@$IsAggregation :: @$Empty>
+				<@$EdgeTarget :: @Structure\Interface>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+		"Workstation"
+			inherits @Structure\Machine
+		"Server"
+			inherits @Structure\Machine
+		"Enironment"
+			inherits @Structure\Component
+			"System"
+				<@$IsAggregation :: @$Empty>
+				<@$EdgeTarget :: @Structure\System>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+		"System"
+			inherits @Structure\Component
+		"Firewall"
+			inherits @Structure\System
+		"LoadBalancer"
+			inherits @Structure\System
+		"Database"
+			inherits @Structure\System
+		"MinusZero"
+			inherits @Structure\System
+		"Container"
+			inherits @Structure\Enironment
+			"OperatingSystem"
+				<@$IsAggregation :: @$Empty>
+				<@$EdgeTarget :: @Structure\OperatingSystem>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+		"OperatingSystem"
+			inherits @Structure\Enironment
+		"Interface"
+			"Method"
+				<@$IsAggregation :: @$Empty>
+				<@$EdgeTarget :: @System\Meta\ZeroUML\Class\Method>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+		"Region"
+			"Datacenter"
+				<@$EdgeTarget :: @Structure\Datacenter>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+		"Datacenter"
+			"ServerRoom"
+				<@$EdgeTarget :: @Structure\ServerRoom>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+			"Machine"
+				<@$EdgeTarget :: @Structure\Machine>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+		"ServerRoom"
+			"Row"
+				<@$EdgeTarget :: @Structure\Row>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+		"Row"
+			"Rack"
+				<@$EdgeTarget :: @Structure\Rack>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+		"Rack"
+			"Machine"
+				<@$EdgeTarget :: @Structure\Machine>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+		"Machine"
