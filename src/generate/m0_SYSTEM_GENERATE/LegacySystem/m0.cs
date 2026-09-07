@@ -4127,6 +4127,7 @@ namespace m0
                 "Class:LabeledItem{Attribute:ConstantLabel{$MinCardinality:0,$MaxCardinality:1},Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:HideLabel{$MinCardinality:0,$MaxCardinality:1},Attribute:UseCodeLabel{$MinCardinality:0,$MaxCardinality:1},Attribute:ShowIcons{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True}}," +
                 "Class:RectangleItem{Attribute:HideHeader{$MinCardinality:0,$MaxCardinality:1},Attribute:RoundEdgeSize{MinValue:0,MaxValue:200,$MinCardinality:0,$MaxCardinality:1}}," +
                 "Class:ImageItem{Attribute:Filename{$MinCardinality:1,$MaxCardinality:1}}," +
+                "Class:IconItem{Attribute:Filename{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:OvalItem{}," +
                 "Class:RhombusItem{}," +
                 "Class:CodeItem," +
@@ -4348,6 +4349,12 @@ namespace m0
             IVertex Image_section = smzu.Get(false, @"ImageItem\Filename").AddVertex(sm.Get(false, @"?$Section"), "Image");
             smzu.Get(false, @"ImageItem\Filename").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
 
+            // IconItem
+
+            smzu.Get(false, @"IconItem").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
+            smzu.Get(false, @"IconItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"RectangleItem"));
+            smzu.Get(false, @"IconItem").AddEdge(sm.Get(false, "?$Inherits"), smzu.Get(false, @"LabeledItem"));
+            smzu.Get(false, @"IconItem").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.ZeroTypes.UX.IconItem, m0_desktop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");                     
 
             // OvalItem
 

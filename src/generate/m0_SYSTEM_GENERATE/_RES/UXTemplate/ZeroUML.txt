@@ -583,6 +583,24 @@
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
 					
+		<@UXTemplate :: "XXX">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@ItemClass :: @IconItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\GenericItemVertex>
+				<@LabeledItem\ShowMeta :: "False">
+			<@UXDecoratorTemplate :: "Edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:\">				
+				<@SupportAnyMetaEdge :: "True">
+				<@SupportEmptyMetaEdge :: "True">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @MetaExtendedLineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+					
 		<@UXTemplate :: "Edge">
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "">

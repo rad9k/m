@@ -78,6 +78,10 @@
 				<@$EdgeTarget :: @Structure\Datacenter>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
+			"Cluster"
+				<@$EdgeTarget :: @Structure\Cluster>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
 		"Datacenter"
 			"ServerRoom"
 				<@$EdgeTarget :: @Structure\ServerRoom>
@@ -98,6 +102,11 @@
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
 		"Rack"
+			"Machine"
+				<@$EdgeTarget :: @Structure\Machine>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+		"Cluster"
 			"Machine"
 				<@$EdgeTarget :: @Structure\Machine>
 				<@$MinCardinality :: "0">
