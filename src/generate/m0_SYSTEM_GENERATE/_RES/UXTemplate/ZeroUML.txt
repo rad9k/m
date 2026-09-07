@@ -581,25 +581,7 @@
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @MetaExtendedLineDecorator>
 				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-					
-		<@UXTemplate :: "XXX">
-			<@$Is :: @UXTemplate>
-			<@DirectVertexTestQuery :: "">
-			<@ItemClass :: @IconItem>
-			<@InstanceCreation :: @InstanceCreationEnum\Direct>
-			<@ItemVertex :: "">
-				<@$Inherits :: @ZeroUML\GenericItemVertex>
-				<@LabeledItem\ShowMeta :: "False">
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">				
-				<@SupportAnyMetaEdge :: "True">
-				<@SupportEmptyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @MetaExtendedLineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>					
 					
 		<@UXTemplate :: "Edge">
 			<@$Is :: @UXTemplate>
@@ -638,6 +620,46 @@
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
 					
+		<@UXTemplate :: "Component">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:Component}">
+			<@MetaVertexTestQuery :: "Component">
+			<@ItemClass :: @IconItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\StructureItemVertex>				
+			<@UXDecoratorTemplate :: "Edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:\">
+				<@SupportAnyMetaEdge :: "True">
+				<@SupportEmptyMetaEdge :: "True">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+					
+		<@UXTemplate :: "Interface">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:Interface}">
+			<@MetaVertexTestQuery :: "Interface">
+			<@ItemClass :: @IconItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\StructureItemVertex>				
+			<@UXDecoratorTemplate :: "Edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:\">
+				<@SupportAnyMetaEdge :: "True">
+				<@SupportEmptyMetaEdge :: "True">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+					
+		<"StructureItemVertex">
+			<@UXItem\BackgroundColor :: @VeryVeryVeryLightCyan>
+		<"StructureContainerItemVertex">
+			<@UXItem\BackgroundColor :: @VeryVeryVeryVeryLighCyan>
 		<"GenericItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightRed>
 		<"StaticItemVertex">
