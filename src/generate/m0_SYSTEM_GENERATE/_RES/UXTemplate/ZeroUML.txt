@@ -627,7 +627,40 @@
 			<@ItemClass :: @IconItem>
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
-				<@$Inherits :: @ZeroUML\StructureItemVertex>				
+				<@$Inherits :: @ZeroUML\StructureItemVertex>
+			<@UXDecoratorTemplate :: "Component">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:Component\Component">				
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			<@UXDecoratorTemplate :: "Edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:\">
+				<@SupportAnyMetaEdge :: "True">				
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+					
+		<@UXTemplate :: "Component CONTAINER">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:Component}">
+			<@MetaVertexTestQuery :: "Component">
+			<@ContainerEdgeMetaVertex :: @System\Meta\ZeroUML\Structure\Component\Component>
+			<@ItemClass :: @ContainerItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\StructureContainerItemVertex>				
+				<@LabeledItem\ShowMeta :: "True">
+			<@UXDecoratorTemplate :: "Component">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:Component\Component">				
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
 			<@UXDecoratorTemplate :: "Edge">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "$Is:\">
@@ -659,7 +692,7 @@
 		<"StructureItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightCyan>
 		<"StructureContainerItemVertex">
-			<@UXItem\BackgroundColor :: @VeryVeryVeryVeryLighCyan>
+			<@UXItem\BackgroundColor :: @VeryVeryVeryVeryLightCyan>
 		<"GenericItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightRed>
 		<"StaticItemVertex">

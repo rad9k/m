@@ -7190,9 +7190,9 @@ namespace m0
 
             CreateSystemMetaCustomDomain();
 
-            CreateSystemDataUXZeroUMLTemplate();
-
             AddZeroUMLFromFile();
+
+            CreateSystemDataUXZeroUMLTemplate();            
 
             //
 
