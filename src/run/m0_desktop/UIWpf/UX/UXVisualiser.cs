@@ -1107,6 +1107,55 @@ namespace m0.UIWpf.UX
             }
         }
 
+        // Drop already rebuilt the canvas (HostItem, lines). Dispatch graph-change
+        // events so listeners outside this visualiser (Tree, etc.) see new edges,
+        // but mute diagram-owned VertexChange so Paint / line sync does not rerun.
+        void CommitInteractionWithGraphSuppressingDiagramOwnedListeners()
+        {
+            bool previousSuppress =
+                AtomVisualiserHelper.SuppressVertexChangeDuringDiagramCommit;
+            bool previousVisualiserForceVertexChangeOff =
+                ForceVertexChangeOff;
+
+            List<KeyValuePair<IUXItem, bool>> previousItemForceVertexChangeOff =
+                new List<KeyValuePair<IUXItem, bool>>();
+
+            foreach (IUXItem item in Items_all)
+            {
+                previousItemForceVertexChangeOff.Add(
+                    new KeyValuePair<IUXItem, bool>(
+                        item,
+                        item.ForceVertexChangeOff));
+                item.ForceVertexChangeOff = true;
+            }
+
+            AtomVisualiserHelper.SuppressVertexChangeDuringDiagramCommit = true;
+            ForceVertexChangeOff = true;
+
+            MinusZero.Instance.Log(1,
+                "UXVisualiser.CommitInteractionWithGraphSuppressingDiagramOwnedListeners",
+                "drop commit with event dispatch; diagram-owned listeners muted, items="
+                    + previousItemForceVertexChangeOff.Count);
+
+            try
+            {
+                Interaction.EndInteractionWithGraph();
+            }
+            finally
+            {
+                ForceVertexChangeOff = previousVisualiserForceVertexChangeOff;
+                AtomVisualiserHelper.SuppressVertexChangeDuringDiagramCommit =
+                    previousSuppress;
+
+                foreach (KeyValuePair<IUXItem, bool> itemForceVertexChangeOff in
+                    previousItemForceVertexChangeOff)
+                {
+                    itemForceVertexChangeOff.Key.ForceVertexChangeOff =
+                        itemForceVertexChangeOff.Value;
+                }
+            }
+        }
+
         public void Paint()
         {
             if (ActualHeight != 0 || IsFirstPainted)
@@ -2675,7 +2724,7 @@ namespace m0.UIWpf.UX
                         }
                         finally
                         {
-                            CommitInteractionWithGraphSuppressingNestedVisualiserUpdates();
+                            CommitInteractionWithGraphSuppressingDiagramOwnedListeners();
                         }
                     }
                     finally
