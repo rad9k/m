@@ -4127,7 +4127,7 @@ namespace m0
                 "Class:LabeledItem{Attribute:ConstantLabel{$MinCardinality:0,$MaxCardinality:1},Attribute:ShowMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:HideLabel{$MinCardinality:0,$MaxCardinality:1},Attribute:UseCodeLabel{$MinCardinality:0,$MaxCardinality:1},Attribute:ShowIcons{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True}}," +
                 "Class:RectangleItem{Attribute:HideHeader{$MinCardinality:0,$MaxCardinality:1},Attribute:RoundEdgeSize{MinValue:0,MaxValue:200,$MinCardinality:0,$MaxCardinality:1}}," +
                 "Class:ImageItem{Attribute:Filename{$MinCardinality:1,$MaxCardinality:1}}," +
-                "Class:IconItem{Attribute:Filename{$MinCardinality:1,$MaxCardinality:1}}," +
+                "Class:IconItem," +
                 "Class:OvalItem{}," +
                 "Class:RhombusItem{}," +
                 "Class:CodeItem," +
