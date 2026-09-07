@@ -3,6 +3,7 @@
 	 
 	package "Structure"
 		"Component"
+			<@$InstanceCreationPriority :: "">
 			"Relation"
 				<@$EdgeTarget :: @Structure\Component>
 				<@$MinCardinality :: "0">
@@ -19,6 +20,10 @@
 				<@$EdgeTarget :: @Structure\Component>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
+			"Depends"
+				<@$EdgeTarget :: @Structure\Component>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">	
 			"Use"
 				<@$EdgeTarget :: @Structure\Component>
 				<@$MinCardinality :: "0">
@@ -32,16 +37,18 @@
 				<@$EdgeTarget :: @Structure\Component>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
-			"Interface"
-				<@$IsAggregation :: @$Empty>
+			"Interface"				
 				<@$EdgeTarget :: @Structure\Interface>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
 		"Workstation"
+			<@$InstanceCreationPriority :: "">
 			inherits @Structure\Machine
 		"Server"
+			<@$InstanceCreationPriority :: "">
 			inherits @Structure\Machine
-		"Enironment"
+		"Environment"
+			<@$InstanceCreationPriority :: "">
 			inherits @Structure\Component
 			"System"
 				<@$IsAggregation :: @$Empty>
@@ -49,16 +56,22 @@
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
 		"System"
+			<@$InstanceCreationPriority :: "">
 			inherits @Structure\Component
 		"Firewall"
+			<@$InstanceCreationPriority :: "">
 			inherits @Structure\System
 		"LoadBalancer"
+			<@$InstanceCreationPriority :: "">
 			inherits @Structure\System
 		"Database"
+			<@$InstanceCreationPriority :: "">
 			inherits @Structure\System
 		"MinusZero"
+			<@$InstanceCreationPriority :: "">
 			inherits @Structure\System
 		"Container"
+			<@$InstanceCreationPriority :: "">
 			inherits @Structure\Enironment
 			"OperatingSystem"
 				<@$IsAggregation :: @$Empty>
@@ -66,14 +79,17 @@
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
 		"OperatingSystem"
+			<@$InstanceCreationPriority :: "">
 			inherits @Structure\Enironment
 		"Interface"
+			<@$InstanceCreationPriority :: "">
 			"Method"
 				<@$IsAggregation :: @$Empty>
 				<@$EdgeTarget :: @System\Meta\ZeroUML\Class\Method>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
 		"Region"
+			<@$InstanceCreationPriority :: "">
 			"Datacenter"
 				<@$EdgeTarget :: @Structure\Datacenter>
 				<@$MinCardinality :: "0">
@@ -83,6 +99,7 @@
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
 		"Datacenter"
+			<@$InstanceCreationPriority :: "">
 			"ServerRoom"
 				<@$EdgeTarget :: @Structure\ServerRoom>
 				<@$MinCardinality :: "0">
@@ -92,23 +109,28 @@
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
 		"ServerRoom"
+			<@$InstanceCreationPriority :: "">
 			"Row"
 				<@$EdgeTarget :: @Structure\Row>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
 		"Row"
+			<@$InstanceCreationPriority :: "">
 			"Rack"
 				<@$EdgeTarget :: @Structure\Rack>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
 		"Rack"
+			<@$InstanceCreationPriority :: "">
 			"Machine"
 				<@$EdgeTarget :: @Structure\Machine>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
 		"Cluster"
+			<@$InstanceCreationPriority :: "">
 			"Machine"
 				<@$EdgeTarget :: @Structure\Machine>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
 		"Machine"
+			<@$InstanceCreationPriority :: "">
