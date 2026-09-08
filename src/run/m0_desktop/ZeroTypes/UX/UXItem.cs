@@ -866,7 +866,25 @@ namespace m0.ZeroTypes.UX
                 Point end = toItem.GetLineAnchorLocation(this, false, new Point(), allCnt, cnt, false);
 
                 if (toItem == this)
-                    l.SetPosition(start.X, start.Y, end.X, end.Y, true, Canvas.GetLeft(this) + this.ActualWidth + 25 * (allCnt - cnt), Canvas.GetTop(this) - 25 * ((allCnt - cnt)));
+                {
+                    // Elbow must be in OwningVisualiser.Canvas space, same as start/end.
+                    // Canvas.GetLeft/GetTop are parent-local; after nesting that is not
+                    // the line canvas, so the self-relation hung at the top of the diagram.
+                    Point visualiserLeftTop = new Point(Canvas.GetLeft(this), Canvas.GetTop(this));
+                    try
+                    {
+                        if (OwningVisualiser != null && OwningVisualiser.Canvas != null)
+                            visualiserLeftTop = TranslatePoint(new Point(0, 0), OwningVisualiser.Canvas);
+                    }
+                    catch
+                    {
+                    }
+
+                    double selfRelationX = visualiserLeftTop.X + this.ActualWidth + 25 * (allCnt - cnt);
+                    double selfRelationY = visualiserLeftTop.Y - 25 * (allCnt - cnt);
+
+                    l.SetPosition(start.X, start.Y, end.X, end.Y, true, selfRelationX, selfRelationY);
+                }
                 else
                     l.SetPosition(start.X, start.Y, end.X, end.Y, false, 0, 0);
 

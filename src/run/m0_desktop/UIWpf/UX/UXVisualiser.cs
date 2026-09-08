@@ -650,6 +650,10 @@ namespace m0.UIWpf.UX
                 }
             }
 
+            // Incoming lines live on the from-item. Remove them before Dispose,
+            // while ToItem still resolves to this instance (not a TypedEdge reincarnation).
+            RemoveIncomingDiagramLines(item);
+
             item.ParentItem.RemoveItem(item);
 
             Items_all.Remove(item);
@@ -663,25 +667,62 @@ namespace m0.UIWpf.UX
             item.RemoveFromCanvas();
 
             item.Dispose(); // check if will not cause problems
-
-            RemoveAllDecoratorsWithGivenBaseEdgeTo(item);
         }
 
-        private void RemoveAllDecoratorsWithGivenBaseEdgeTo(IUXItem item)
+        private void RemoveIncomingDiagramLines(IUXItem item)
         {
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             //////////////////////////////////////// 
 
-            foreach (IUXItem i in Items_all)
-                foreach (IUXItem decorator in i.Decorators)
-                    if (decorator is ILineDecoratorBase)
-                    {
-                        ILineDecoratorBase lineDecorator = (ILineDecoratorBase)decorator;
+            List<ILineDecoratorBase> incomingLines = new List<ILineDecoratorBase>();
 
-                        if (lineDecorator.ToItem.BaseEdgeTo == item.BaseEdgeTo)
-                            i.RemoveDecorator(lineDecorator);
+            if (item.DiagramToLines != null)
+                incomingLines.AddRange(item.DiagramToLines);
+
+            if (item.DiagramToAsMetaLines != null)
+            {
+                foreach (ILineDecoratorBase metaLine in item.DiagramToAsMetaLines)
+                    if (!incomingLines.Contains(metaLine))
+                        incomingLines.Add(metaLine);
+            }
+
+            foreach (ILineDecoratorBase line in incomingLines)
+            {
+                IUXItem fromItem = line.FromDiagramItem;
+
+                if (fromItem != null)
+                    fromItem.RemoveDiagramLine(line);
+            }
+
+            foreach (IUXItem host in Items_all.ToList())
+            {
+                if (object.ReferenceEquals(host, item))
+                    continue;
+
+                foreach (IUXItem decorator in host.Decorators.ToList())
+                {
+                    if (!(decorator is ILineDecoratorBase))
+                        continue;
+
+                    ILineDecoratorBase lineDecorator = (ILineDecoratorBase)decorator;
+
+                    IUXItem toItem = null;
+                    try
+                    {
+                        toItem = lineDecorator.ToItem;
                     }
+                    catch
+                    {
+                        continue;
+                    }
+
+                    if (!object.ReferenceEquals(toItem, item))
+                        continue;
+
+                    host.RemoveDiagramLine(lineDecorator);
+                }
+            }
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
@@ -2323,6 +2364,10 @@ namespace m0.UIWpf.UX
 
                 // Keep line graph changes in the same transaction as reparenting.
                 CheckAndUpdateDiagramLinesForItem(OldParentItem);
+                // OldParentItem==visualiser early-returns without updating this item.
+                // After leaving a container, OldParentItem.UpdateDiagramLines no longer
+                // walks the moved child. Always refresh the item's own lines (self-relation).
+                item.UpdateDiagramLines();
             }
             finally
             {
@@ -2482,8 +2527,15 @@ namespace m0.UIWpf.UX
 
             IVertex fromItemBaseEdgeTo = fromItem.BaseEdge.To;
 
-            foreach (UXDecoratorTemplate tem in fromItem.UXTemplate.UXDecoratorTemplates)
+            IList<UXDecoratorTemplate> decoratorTemplates =
+                fromItem.UXTemplate.UXDecoratorTemplates;
+
+            // Last defined decorator template first in the choose-line list.
+            // Edge options inside one template keep definition order.
+            for (int templateIndex = decoratorTemplates.Count - 1; templateIndex >= 0; templateIndex--)
             {
+                UXDecoratorTemplate tem = decoratorTemplates[templateIndex];
+
                 string tem_EdgeTestQuery = tem.EdgeTestQuery;
 
                 if (tem_EdgeTestQuery != null)
