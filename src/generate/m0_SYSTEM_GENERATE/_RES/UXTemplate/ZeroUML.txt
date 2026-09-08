@@ -636,9 +636,9 @@
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Component">
+			<@UXDecoratorTemplate :: "Contain">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Component\Component">				
+				<@EdgeTestQuery :: "$Is:Component\Contain">				
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
@@ -648,7 +648,7 @@
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:Component}">
 			<@MetaVertexTestQuery :: "Component">
-			<@ContainerEdgeMetaVertex :: @System\Meta\ZeroUML\Structure\Component\Component>
+			<@ContainerEdgeMetaVertex :: @System\Meta\ZeroUML\Structure\Component\Contain>
 			<@ItemClass :: @ContainerItem>
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
@@ -662,9 +662,9 @@
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Component">
+			<@UXDecoratorTemplate :: "Contain">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Component\Component">				
+				<@EdgeTestQuery :: "$Is:Component\Contain">				
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
@@ -720,9 +720,9 @@
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Component">
+			<@UXDecoratorTemplate :: "Contain">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Environment\Component">				
+				<@EdgeTestQuery :: "$Is:Environment\Contain">				
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
@@ -739,7 +739,7 @@
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:Environment}">
 			<@MetaVertexTestQuery :: "Environment">
-			<@ContainerEdgeMetaVertex :: @System\Meta\ZeroUML\Structure\Component\Component>
+			<@ContainerEdgeMetaVertex :: @System\Meta\ZeroUML\Structure\Component\Contain>
 			<@ItemClass :: @ContainerItem>
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
@@ -753,9 +753,9 @@
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Component">
+			<@UXDecoratorTemplate :: "Contain">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Environment\Component">				
+				<@EdgeTestQuery :: "$Is:Environment\Contain">				
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
@@ -784,9 +784,9 @@
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Component">
+			<@UXDecoratorTemplate :: "Contain">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:System\Component">				
+				<@EdgeTestQuery :: "$Is:System\Contain">				
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
@@ -796,7 +796,7 @@
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:System}">
 			<@MetaVertexTestQuery :: "System">
-			<@ContainerEdgeMetaVertex :: @System\Meta\ZeroUML\Structure\Component\Component>
+			<@ContainerEdgeMetaVertex :: @System\Meta\ZeroUML\Structure\Component\Contain>
 			<@ItemClass :: @ContainerItem>
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
@@ -810,9 +810,9 @@
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Component">
+			<@UXDecoratorTemplate :: "Contain">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:System\Component">				
+				<@EdgeTestQuery :: "$Is:System\Contain">				
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
@@ -834,9 +834,9 @@
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Component">
+			<@UXDecoratorTemplate :: "Contain">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Firewall\Component">				
+				<@EdgeTestQuery :: "$Is:Firewall\Contain">				
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
@@ -846,7 +846,7 @@
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:Firewall}">
 			<@MetaVertexTestQuery :: "Firewall">
-			<@ContainerEdgeMetaVertex :: @System\Meta\ZeroUML\Structure\Component\Component>
+			<@ContainerEdgeMetaVertex :: @System\Meta\ZeroUML\Structure\Component\Contain>
 			<@ItemClass :: @ContainerItem>
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
@@ -860,9 +860,9 @@
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Component">
+			<@UXDecoratorTemplate :: "Contain">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Firewall\Component">				
+				<@EdgeTestQuery :: "$Is:Firewall\Contain">				
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
@@ -884,9 +884,9 @@
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Component">
+			<@UXDecoratorTemplate :: "Contain">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:LoadBalancer\Component">				
+				<@EdgeTestQuery :: "$Is:LoadBalancer\Contain">				
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
@@ -896,7 +896,7 @@
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:LoadBalancer}">
 			<@MetaVertexTestQuery :: "LoadBalancer">
-			<@ContainerEdgeMetaVertex :: @System\Meta\ZeroUML\Structure\Component\Component>
+			<@ContainerEdgeMetaVertex :: @System\Meta\ZeroUML\Structure\Component\Contain>
 			<@ItemClass :: @ContainerItem>
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
@@ -910,9 +910,9 @@
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Component">
+			<@UXDecoratorTemplate :: "Contain">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:LoadBalancer\Component">				
+				<@EdgeTestQuery :: "$Is:LoadBalancer\Contain">				
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
@@ -934,9 +934,9 @@
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Component">
+			<@UXDecoratorTemplate :: "Contain">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Database\Component">				
+				<@EdgeTestQuery :: "$Is:Database\Contain">				
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
@@ -946,7 +946,7 @@
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:Database}">
 			<@MetaVertexTestQuery :: "Database">
-			<@ContainerEdgeMetaVertex :: @System\Meta\ZeroUML\Structure\Component\Component>
+			<@ContainerEdgeMetaVertex :: @System\Meta\ZeroUML\Structure\Component\Contain>
 			<@ItemClass :: @ContainerItem>
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
@@ -960,9 +960,9 @@
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Component">
+			<@UXDecoratorTemplate :: "Contain">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Database\Component">				
+				<@EdgeTestQuery :: "$Is:Database\Contain">				
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
@@ -996,7 +996,7 @@
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:MinusZero}">
 			<@MetaVertexTestQuery :: "MinusZero">
-			<@ContainerEdgeMetaVertex :: @System\Meta\ZeroUML\Structure\Component\Component>
+			<@ContainerEdgeMetaVertex :: @System\Meta\ZeroUML\Structure\Component\Contain>
 			<@ItemClass :: @ContainerItem>
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
@@ -1010,9 +1010,9 @@
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Component">
+			<@UXDecoratorTemplate :: "Contain">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:MinusZero\Component">				
+				<@EdgeTestQuery :: "$Is:MinusZero\Contain">				
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
@@ -1034,9 +1034,9 @@
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Component">
+			<@UXDecoratorTemplate :: "Contain">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Container\Component">				
+				<@EdgeTestQuery :: "$Is:Container\Contain">				
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
@@ -1059,8 +1059,8 @@
 		<@UXTemplate :: "Container CONTAINER">
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:Container}">
-			<@MetaVertexTestQuery :: Container">
-			<@ContainerEdgeMetaVertex :: @System\Meta\ZeroUML\Structure\Component\Component>
+			<@MetaVertexTestQuery :: "Container">
+			<@ContainerEdgeMetaVertex :: @System\Meta\ZeroUML\Structure\Component\Contain>
 			<@ItemClass :: @ContainerItem>
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
@@ -1074,9 +1074,9 @@
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Component">
+			<@UXDecoratorTemplate :: "Contain">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Container\Component">				
+				<@EdgeTestQuery :: "$Is:Container\Contain">				
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
@@ -1112,9 +1112,9 @@
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Component">
+			<@UXDecoratorTemplate :: "Contain">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:OperatingSystem\Component">				
+				<@EdgeTestQuery :: "$Is:OperatingSystem\Contain">				
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
@@ -1131,7 +1131,7 @@
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:OperatingSystem}">
 			<@MetaVertexTestQuery :: "OperatingSystem">
-			<@ContainerEdgeMetaVertex :: @System\Meta\ZeroUML\Structure\Component\Component>
+			<@ContainerEdgeMetaVertex :: @System\Meta\ZeroUML\Structure\Component\Contain>
 			<@ItemClass :: @ContainerItem>
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
@@ -1145,9 +1145,9 @@
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Component">
+			<@UXDecoratorTemplate :: "Contain">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:OperatingSystem\Component">				
+				<@EdgeTestQuery :: "$Is:OperatingSystem\Contain">				
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
@@ -1177,6 +1177,92 @@
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+			<@UXDecoratorTemplate :: "Method">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:Interface\Method">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+					
+		<@UXTemplate :: "Interface CONTAINER">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:Interface}">
+			<@MetaVertexTestQuery :: "Interface">
+			<@ContainerEdgeMetaVertex :: @System\Meta\ZeroUML\Structure\Interface\Method>
+			<@ItemClass :: @ContainerItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\StructureContainerItemVertex>				
+				<@LabeledItem\ShowMeta :: "True">
+			<@UXDecoratorTemplate :: "Edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:\">
+				<@SupportAnyMetaEdge :: "True">
+				<@SupportEmptyMetaEdge :: "True">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+			<@UXDecoratorTemplate :: "Method">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:Interface\Method">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+					
+		<@UXTemplate :: "Region">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:Region}">
+			<@MetaVertexTestQuery :: "Region">
+			<@ItemClass :: @IconItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\StructureItemVertex>				
+			<@UXDecoratorTemplate :: "Edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:\">
+				<@SupportAnyMetaEdge :: "True">
+				<@SupportEmptyMetaEdge :: "True">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+			<@UXDecoratorTemplate :: "Contain">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:Region\Contain">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+					
+		<@UXTemplate :: "Region CONTAINER">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:Region}">
+			<@MetaVertexTestQuery :: "Region">
+			<@ContainerEdgeMetaVertex :: @System\Meta\ZeroUML\Structure\Interface\Method>
+			<@ItemClass :: @ContainerItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\StructureContainerItemVertex>				
+				<@LabeledItem\ShowMeta :: "True">
+			<@UXDecoratorTemplate :: "Edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:\">
+				<@SupportAnyMetaEdge :: "True">
+				<@SupportEmptyMetaEdge :: "True">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+			<@UXDecoratorTemplate :: "Contain">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:Interface\Contain">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
 					
 		<"StructureItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightCyan>

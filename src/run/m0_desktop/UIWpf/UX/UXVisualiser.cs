@@ -225,9 +225,61 @@ namespace m0.UIWpf.UX
             
         }
 
+        bool IsItemOrDescendantOf(IUXItem item, IUXItem ancestor)
+        {
+            if (item == null || ancestor == null)
+                return false;
+
+            IItem current = item;
+            while (current != null)
+            {
+                if (current == ancestor)
+                    return true;
+
+                current = current.ParentItem;
+            }
+
+            return false;
+        }
+
+        // MultiContainerItem.Canvas is null, so UXItem.UpdateDiagramLines does
+        // not walk nested sections. LineDecorators live on the visualiser canvas
+        // and must be refreshed here without CheckAndUpdateItemParent.
+        void UpdateDiagramLinesForMovedItem(IUXItem item)
+        {
+            if (item == null)
+                return;
+
+            item.UpdateDiagramLines();
+
+            IUXContainer container = item as IUXContainer;
+            bool needsNestedWalk =
+                item is IUXMultiContainerItem
+                || (container != null && container.Canvas == null);
+
+            if (!needsNestedWalk)
+                return;
+
+            foreach (IUXItem nested in Items_all)
+            {
+                if (nested == null || nested == item)
+                    continue;
+
+                if (!IsItemOrDescendantOf(nested, item))
+                    continue;
+
+                nested.UpdateDiagramLines();
+            }
+        }
+
         internal void RequestDraggedItemRenderUpdate(IUXItem item)
         {
             if (item == null)
+                return;
+
+            // Sections live in MultiContainerItem.SubGrid, not on a diagram Canvas.
+            // SizeChanged during resize still fires for them; they must not enter reparenting.
+            if (item is IUXMultiContainerSubItem)
                 return;
 
             pendingDraggedItemRenderUpdates.Add(item);
@@ -251,14 +303,13 @@ namespace m0.UIWpf.UX
             IUXItem[] items = pendingDraggedItemRenderUpdates.ToArray();
             pendingDraggedItemRenderUpdates.Clear();
 
-
             foreach (IUXItem item in items)
             {
                 if (!itemsAllSet.Contains(item))
                     continue;
 
                 CheckAndUpdateItemParent(item, true);
-                item.UpdateDiagramLines();
+                UpdateDiagramLinesForMovedItem(item);
             }
 
         }
@@ -270,7 +321,7 @@ namespace m0.UIWpf.UX
 
             pendingDraggedItemRenderUpdates.Remove(item);
             CheckAndUpdateItemParent(item, false);
-            item.UpdateDiagramLines();
+            UpdateDiagramLinesForMovedItem(item);
         }
 
         public ILineDecoratorBase prevSelectedLine;
@@ -2266,7 +2317,25 @@ namespace m0.UIWpf.UX
 
         public void CheckAndUpdateItemParent(IUXItem item, bool fastMode)
         {
-            Point itemPosition_absolute = GetItemAbsolutePosition(item);
+            if (item == null)
+                return;
+
+            // MultiContainerSubItem is a layout section, not a canvas-hosted diagram item.
+            // Hit-test cannot see MultiContainerItem (its Canvas is null), so the visualiser
+            // would otherwise be chosen as parent and MoveToParentItem would NRE.
+            if (item is IUXMultiContainerSubItem)
+                return;
+
+            Point itemPosition_absolute;
+
+            try
+            {
+                itemPosition_absolute = GetItemAbsolutePosition(item);
+            }
+            catch
+            {
+                return;
+            }
 
             /*  if (fastMode) // will not use it as seems not to be needed
               {
@@ -2297,9 +2366,7 @@ namespace m0.UIWpf.UX
             {
                 IUXContainer toBeParentItem = GetItemByPoint_ByCanvas(itemPosition_absolute); // can take some time, especially when moving
 
-                if (toBeParentItem != item.ParentItem
-                    && toBeParentItem.ParentItem != item
-                    && toBeParentItem != item)
+                if (toBeParentItem != item.ParentItem && toBeParentItem != null && toBeParentItem.ParentItem != item && toBeParentItem != item)
                     MoveToParentItem(item, toBeParentItem);
             }
 
@@ -2314,28 +2381,44 @@ namespace m0.UIWpf.UX
                 if (NewParentItem == null)
                     return;
             }*/
+
+            if (item is IUXMultiContainerSubItem)
+                return;
+
+            IUXContainer OldParentItem = (IUXContainer)item.ParentItem;
+
+            if (OldParentItem == null)
+                OldParentItem = this;
+
+            UIElement itemElement = item as UIElement;
+            if (itemElement == null)
+                return;
+
+            double itemLeft = Canvas.GetLeft(itemElement);
+            double itemTop = Canvas.GetTop(itemElement);
+            Position itemPosition = item.Position;
+
+            if (double.IsNaN(itemLeft) || double.IsNaN(itemTop))
+            {
+                if (itemPosition == null)
+                    return;
+
+                itemLeft = itemPosition.X;
+                itemTop = itemPosition.Y;
+            }
+
+            if (itemPosition == null)
+                return;
+
+            if (OldParentItem.Canvas == null || NewParentItem == null || NewParentItem.Canvas == null)
+                return;
+
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
 
             try
             {
-                IUXContainer OldParentItem = (IUXContainer)item.ParentItem;
-
-                if (OldParentItem == null)
-                    OldParentItem = this;
-
-                UIElement itemElement = (UIElement)item;
-                double itemLeft = Canvas.GetLeft(itemElement);
-                double itemTop = Canvas.GetTop(itemElement);
-
-                if (double.IsNaN(itemLeft) || double.IsNaN(itemTop))
-                {
-                    Position itemPosition = item.Position;
-                    itemLeft = itemPosition.X;
-                    itemTop = itemPosition.Y;
-                }
-
                 OldParentItem.Canvas.Children.Remove(itemElement);
 
                 NewParentItem.MoveExistingItemAsThisItemsSubItem(item);
@@ -2349,6 +2432,9 @@ namespace m0.UIWpf.UX
                     NewParentItem.Canvas);
 
                 Position p = item.Position;
+                if (p == null)
+                    return;
+
                 p.X = newPosition.X;
                 p.Y = newPosition.Y;
 

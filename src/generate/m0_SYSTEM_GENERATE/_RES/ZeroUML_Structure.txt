@@ -20,7 +20,7 @@
 				<@$EdgeTarget :: @Structure\Component>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
-			"Depends"
+			"Depend"
 				<@$EdgeTarget :: @Structure\Component>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">	
@@ -32,7 +32,7 @@
 				<@$EdgeTarget :: @Structure\Machine>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
-			"Component"
+			"Contain"
 				<@$IsAggregation :: @$Empty>
 				<@$EdgeTarget :: @Structure\Component>
 				<@$MinCardinality :: "0">
@@ -88,49 +88,29 @@
 				<@$EdgeTarget :: @System\Meta\ZeroUML\Class\Method>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
+		"DeploymentTarget"
+			"Contain"
+				<@$EdgeTarget :: @Structure\DeploymentTarget>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
 		"Region"
 			<@$InstanceCreationPriority :: "">
-			"Datacenter"
-				<@$EdgeTarget :: @Structure\Datacenter>
-				<@$MinCardinality :: "0">
-				<@$MaxCardinality :: "-1">
-			"Cluster"
-				<@$EdgeTarget :: @Structure\Cluster>
-				<@$MinCardinality :: "0">
-				<@$MaxCardinality :: "-1">
+			inherits @Structure\DeploymentTarget			
 		"Datacenter"
 			<@$InstanceCreationPriority :: "">
-			"ServerRoom"
-				<@$EdgeTarget :: @Structure\ServerRoom>
-				<@$MinCardinality :: "0">
-				<@$MaxCardinality :: "-1">
-			"Machine"
-				<@$EdgeTarget :: @Structure\Machine>
-				<@$MinCardinality :: "0">
-				<@$MaxCardinality :: "-1">
+			inherits @Structure\DeploymentTarget			
 		"ServerRoom"
 			<@$InstanceCreationPriority :: "">
-			"Row"
-				<@$EdgeTarget :: @Structure\Row>
-				<@$MinCardinality :: "0">
-				<@$MaxCardinality :: "-1">
+			inherits @Structure\DeploymentTarget			
 		"Row"
 			<@$InstanceCreationPriority :: "">
-			"Rack"
-				<@$EdgeTarget :: @Structure\Rack>
-				<@$MinCardinality :: "0">
-				<@$MaxCardinality :: "-1">
+			inherits @Structure\DeploymentTarget			
 		"Rack"
 			<@$InstanceCreationPriority :: "">
-			"Machine"
-				<@$EdgeTarget :: @Structure\Machine>
-				<@$MinCardinality :: "0">
-				<@$MaxCardinality :: "-1">
+			inherits @Structure\DeploymentTarget			
 		"Cluster"
 			<@$InstanceCreationPriority :: "">
-			"Machine"
-				<@$EdgeTarget :: @Structure\Machine>
-				<@$MinCardinality :: "0">
-				<@$MaxCardinality :: "-1">
+			inherits @Structure\DeploymentTarget			
 		"Machine"
 			<@$InstanceCreationPriority :: "">
+			inherits @Structure\DeploymentTarget			
