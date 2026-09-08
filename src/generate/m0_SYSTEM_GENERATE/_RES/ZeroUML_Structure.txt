@@ -95,22 +95,22 @@
 				<@$MaxCardinality :: "-1">
 		"Region"
 			<@$InstanceCreationPriority :: "">
-			inherits @Structure\DeploymentTarget			
+			inherits @Structure\DeploymentTarget
 		"Datacenter"
 			<@$InstanceCreationPriority :: "">
-			inherits @Structure\DeploymentTarget			
+			inherits @Structure\DeploymentTarget
 		"ServerRoom"
 			<@$InstanceCreationPriority :: "">
-			inherits @Structure\DeploymentTarget			
+			inherits @Structure\DeploymentTarget
 		"Row"
 			<@$InstanceCreationPriority :: "">
-			inherits @Structure\DeploymentTarget			
+			inherits @Structure\DeploymentTarget
 		"Rack"
 			<@$InstanceCreationPriority :: "">
-			inherits @Structure\DeploymentTarget			
+			inherits @Structure\DeploymentTarget
 		"Cluster"
 			<@$InstanceCreationPriority :: "">
-			inherits @Structure\DeploymentTarget			
+			inherits @Structure\DeploymentTarget
 		"Machine"
 			<@$InstanceCreationPriority :: "">
-			inherits @Structure\DeploymentTarget			
+			inherits @Structure\DeploymentTarget
