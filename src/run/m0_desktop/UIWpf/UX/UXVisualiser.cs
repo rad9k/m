@@ -1224,11 +1224,6 @@ namespace m0.UIWpf.UX
             AtomVisualiserHelper.SuppressVertexChangeDuringDiagramCommit = true;
             ForceVertexChangeOff = true;
 
-            MinusZero.Instance.Log(1,
-                "UXVisualiser.CommitInteractionWithGraphSuppressingDiagramOwnedListeners",
-                "drop commit with event dispatch; diagram-owned listeners muted, items="
-                    + previousItemForceVertexChangeOff.Count);
-
             try
             {
                 Interaction.EndInteractionWithGraph();

@@ -1,6 +1,7 @@
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Highlighting;
+using m0;
 using m0.FormalTextLanguage;
 using m0.Foundation;
 using m0.Graph;
@@ -238,7 +239,7 @@ namespace m0.UIWpf.Controls
 
                 if (baseEdge_new != null)
                     SetBaseEdgeFinal(baseEdge_new);
-              
+
                 //
 
                 int errorLine = -1;

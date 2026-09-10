@@ -736,7 +736,14 @@ namespace m0.ZeroTypes.UX
                 IVertex edgeMeta = edge.Get(false, "Meta:");
 
                 if (edgeFrom == edgeStub && GraphUtil.GetValueAndCompareStrings(edgeMeta, "To"))
+                {
+                    // Parse can remap BaseEdge:\To: to a new live vertex in the same
+                    // transaction. The old To removal must not destroy the UX item.
+                    if (baseEdgeTo != null && baseEdgeTo.DisposedState == DisposeStateEnum.Live)
+                        continue;
+
                     return true;
+                }
             }
 
             return false;

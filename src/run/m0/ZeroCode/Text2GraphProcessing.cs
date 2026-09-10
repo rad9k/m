@@ -3441,8 +3441,6 @@ namespace m0.ZeroCode
         {
             processBaseEdgeTo = _baseEdge.To;
 
-            IVertex _baseEdge_meta = _baseEdge.Meta;
-
             MultiLineString mls = new MultiLineString(_text);
 
             mls.AddLeftTab(1);
@@ -3461,10 +3459,10 @@ namespace m0.ZeroCode
 
             IEdge parsedRootEdge = _baseEdge_parentEdge.To.First();
 
-            if (_baseEdge_meta == MinusZero.Instance.Empty)
+            if (_baseEdge.Meta == MinusZero.Instance.Empty)
                 rootEdge_new = parsedRootEdge;
             else
-                rootEdge_new = _baseEdge.From.AddEdge(_baseEdge_meta, parsedRootEdge.To);
+                rootEdge_new = _baseEdge.From.AddEdge(_baseEdge.Meta, parsedRootEdge.To);
             
             //
 
