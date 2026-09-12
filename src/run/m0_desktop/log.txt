@@ -1,2 +1,3 @@
 16:23:49:581[0]: InitializeLog: START
 16:23:53:340[0]: DisposeLog: STOP
+test
