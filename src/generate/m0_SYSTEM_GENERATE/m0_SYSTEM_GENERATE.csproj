@@ -69,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CreateBootstrap.cs" />
+    <Compile Include="CreateExamplesFinal.cs" />
     <Compile Include="CreateExamples.cs" />
     <Compile Include="Lib\CreateLib.cs" />
     <Compile Include="LegacySystem\FormalTextLanguage\GoldParser\GoldGenericParser.cs" />
