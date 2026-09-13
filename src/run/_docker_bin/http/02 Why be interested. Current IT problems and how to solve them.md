@@ -2,7 +2,7 @@
 
 -zero unifies requirements, code, data, and architecture into a single queryable graph, making IT systems transparent, consistent, and instantly analyzable.
 
-Modern IT systems are plagued by fragmentation—requirements, architecture, code, and data drift apart, creating inefficiency, risk, and complexity. -zero, powered by the Fractal Graph, unifies all system elements into a single, coherent, queryable structure, allowing instant visualization, real-time updates, and seamless analysis across every layer. This is not just an improvement—it’s a paradigm shift, turning IT chaos into clarity and enabling systems that are smarter, more adaptable, and future-ready from day one.
+Modern IT systems are plagued by fragmentation-requirements, architecture, code, and data drift apart, creating inefficiency, risk, and complexity. -zero, powered by the Fractal Graph, unifies all system elements into a single, coherent, queryable structure, allowing instant visualization, real-time updates, and seamless analysis across every layer. This is not just an improvement-it’s a paradigm shift, turning IT chaos into clarity and enabling systems that are smarter, more adaptable, and future-ready from day one.
 
 > in -zero **architecture becomes (higher level of) implementation, requirements become code scaffolding filled with technical details, eliminating requirements ⇔ implementation ⇔ architecture synchronization hell**
 

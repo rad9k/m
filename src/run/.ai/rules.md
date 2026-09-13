@@ -19,3 +19,5 @@ Upper cammel case for class, metods, functions, public variables. Lower cammel c
 For filtering edges use GraphUtil.GetQueryOut family of methods and not manually iterating over OutEdges. If you want to iterate over all edges you can use IVertex.OutEdges (with inheritence) and IVertex.OutEdgesRaw.
 
 For checking or converting IVertex.To.Value use GraphUtil.GetBooleanValueOrFalse(flagVertex) and similar functions from GraphUtil
+
+Test code (for example autonomous test programs) should be placed in __work_test directory)
