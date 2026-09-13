@@ -71,14 +71,14 @@ namespace m0_SYSTEM_GENERATE
 
             //
 
-            CreateExamples.CreateTestData();
+            CreateExamplesFinal.CreateTestData();
 
             IVertex root = LegacySystem_MinusZero.Instance.Root;
             IVertex SystemVertex = root.Get(false, "System");
             IVertex User = root.Get(false, "User");
             IVertex Quick = root.Get(false, "Quick");
 
-            IVertex examples = root.Get(false, "examples");
+            IVertex examples = root.Get(false, "Examples");
 
             print("* saving System to \"system.m0j\"");
 

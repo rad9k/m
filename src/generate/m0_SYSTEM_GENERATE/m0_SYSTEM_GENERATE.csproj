@@ -92,6 +92,24 @@
     <Content Include="_RES\CustomDomain\SQL.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="_RES\Examples\-composer.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_RES\Examples\AI_model_pipeline.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_RES\Examples\Enterprise_Architecture.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_RES\Examples\LLM_orchestrator.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_RES\Examples\Online_retail_backend.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_RES\Examples\Online_retail_model.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="_RES\Lib\Music\Chord\BasicChords.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
