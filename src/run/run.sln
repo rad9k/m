@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.7.34003.232
+# Visual Studio Version 18
+VisualStudioVersion = 18.9.12128.139 oobstable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "m0", "m0\m0.csproj", "{A8A00DED-611C-4FF5-8B12-5ECC14242B23}"
 EndProject
@@ -18,15 +18,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "m0_console", "m0_console\m0
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestTest", "RestTest\RestTest.csproj", "{53B5BF7D-2AEE-4D0A-80EB-730445C6BDF9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "m0_graph_tests", "m0_graph_tests\m0_graph_tests.csproj", "{7C1DC86E-7355-469E-A112-6AA46D64CD31}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "m0_graph_tests", "__work_tests\m0_graph_tests\m0_graph_tests.csproj", "{7C1DC86E-7355-469E-A112-6AA46D64CD31}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "m0_graph_benchmarks", "m0_graph_benchmarks\m0_graph_benchmarks.csproj", "{30A4950F-BF17-4BB7-B393-AADCBC3197F4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "m0_graph_benchmarks", "__work_tests\m0_graph_benchmarks\m0_graph_benchmarks.csproj", "{30A4950F-BF17-4BB7-B393-AADCBC3197F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "m0_graph_test_support", "m0_graph_test_support\m0_graph_test_support.csproj", "{9A6CF56E-D23B-4943-BFB1-8E34F4144C20}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "m0_graph_test_support", "__work_tests\m0_graph_test_support\m0_graph_test_support.csproj", "{9A6CF56E-D23B-4943-BFB1-8E34F4144C20}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "m0_graph_integration_tests", "m0_graph_integration_tests\m0_graph_integration_tests.csproj", "{1AB75670-5D75-4F57-A1F2-F5A70DD53D22}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "m0_graph_integration_tests", "__work_tests\m0_graph_integration_tests\m0_graph_integration_tests.csproj", "{1AB75670-5D75-4F57-A1F2-F5A70DD53D22}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "m0_desktop_tests", "m0_desktop_tests\m0_desktop_tests.csproj", "{8E759B49-8DA8-45A8-9C28-8A531A64C09D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "m0_desktop_tests", "__work_tests\m0_desktop_tests\m0_desktop_tests.csproj", "{8E759B49-8DA8-45A8-9C28-8A531A64C09D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "__work_tests", "__work_tests", "{50059826-3BB9-43F3-8C43-E6AA6787B457}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -161,6 +163,13 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7C1DC86E-7355-469E-A112-6AA46D64CD31} = {50059826-3BB9-43F3-8C43-E6AA6787B457}
+		{30A4950F-BF17-4BB7-B393-AADCBC3197F4} = {50059826-3BB9-43F3-8C43-E6AA6787B457}
+		{9A6CF56E-D23B-4943-BFB1-8E34F4144C20} = {50059826-3BB9-43F3-8C43-E6AA6787B457}
+		{1AB75670-5D75-4F57-A1F2-F5A70DD53D22} = {50059826-3BB9-43F3-8C43-E6AA6787B457}
+		{8E759B49-8DA8-45A8-9C28-8A531A64C09D} = {50059826-3BB9-43F3-8C43-E6AA6787B457}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EDCC8115-68E6-440B-892C-A16EE0DB0E33}
