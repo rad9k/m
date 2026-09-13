@@ -89,8 +89,12 @@ namespace m0.ZeroTypes.UX
             IVertex baseEdgeTo = BaseEdge.To;
 
             if (Items.Count == 0)
-                foreach (UXTemplate template in UXTemplate.UXTemplate_)
+                foreach (IEdge nestedTemplateEdge in GraphUtil.GetQueryOut(UXTemplate.Vertex, "UXTemplate", null))
                 {
+                    UXTemplate template;
+                    if (!TryGetMultiContainerSectionUxTemplate(nestedTemplateEdge, out template))
+                        continue;
+
                     MultiContainerSubItem item = (MultiContainerSubItem)AddItem(MultiContainerSubItem_type);                    
 
                     item.NestingLevel = this.NestingLevel + 1;
@@ -212,10 +216,12 @@ namespace m0.ZeroTypes.UX
 
             UXTemplate iUXTemplate = item.UXTemplate;
 
-
             Size size = item.Size;
 
-            IEdge template_SizeEdge = GraphUtil.GetQueryOutFirstEdge(item.UXTemplate.ItemVertex, "Size", null);
+            IVertex templateItemVertex = iUXTemplate == null ? null : iUXTemplate.ItemVertex;
+            IEdge template_SizeEdge = templateItemVertex == null
+                ? null
+                : GraphUtil.GetQueryOutFirstEdge(templateItemVertex, "Size", null);
 
             //
 
@@ -568,6 +574,32 @@ namespace m0.ZeroTypes.UX
             this.InternalFrame.BorderBrush = borderBrush;            
         }
         
+        bool TryGetMultiContainerSectionUxTemplate(IEdge nestedTemplateEdge, out UXTemplate template)
+        {
+            template = null;
+
+            if (nestedTemplateEdge == null)
+                return false;
+
+            // GetQueryOut("UXTemplate") also returns UXDecoratorTemplate edges because
+            // UXDecoratorTemplate $Inherits UXTemplate in the query-meta index.
+            if (!GeneralUtil.CompareStrings(nestedTemplateEdge.Meta.Value, "UXTemplate"))
+                return false;
+
+            ITypedEdge typedEdge = TypedEdge.Get(nestedTemplateEdge);
+            template = typedEdge as UXTemplate;
+            if (template == null || template is UXDecoratorTemplate)
+            {
+                template = null;
+                return false;
+            }
+
+            if (template.ItemVertex == null)
+                return false;
+
+            return true;
+        }
+
         // UNDER        
 
         static IVertex Orientation_meta = MinusZero.Instance.root.Get(false, @"System\Meta\ZeroTypes\UX\MultiContainerItem\Orientation");

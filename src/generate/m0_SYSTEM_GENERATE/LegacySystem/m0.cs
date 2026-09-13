@@ -6978,10 +6978,7 @@ namespace m0
             quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\If"));
             quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Test"));
             quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Case"));
-            quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Fallback"));
-            quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\ForEdge"));
-            quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\ForVertex"));
-
+            quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Fallback"));            
 
 
             quick.AddEdge(atomtype, Root.Get(false, @"System\Meta\ZeroTypes\String"));

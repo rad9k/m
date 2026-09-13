@@ -118,6 +118,11 @@ namespace m0.UIWpf.UX
 
         bool deferHostItemUpdateLayout;
 
+        // Resolved once at the original drop point and reused for every payload
+        // item; the +25 cascade is position only.
+        IUXItem dndDropIntendedClicked;
+        IUXContainer dndDropIntendedHost;
+
         void BeginSuspendAutomaticDiagramLineUpdates()
         {
             suspendAutomaticDiagramLineUpdatesDepth++;
@@ -2262,13 +2267,21 @@ namespace m0.UIWpf.UX
 
                 Canvas item_canvas = container.Canvas;
 
-                Point item_absolute = item_canvas.TranslatePoint(new Point(0, 0), Canvas);
-                FrameworkElement item_FrameworkElement = (FrameworkElement)i;
+                Point canvas_absolute = item_canvas.TranslatePoint(new Point(0, 0), Canvas);
 
-                if (item_absolute.X <= p.X &&
-                    item_absolute.Y <= p.Y &&
-                    p.X <= item_absolute.X + item_FrameworkElement.ActualWidth &&
-                    p.Y <= item_absolute.Y + item_FrameworkElement.ActualHeight)
+                double canvasWidth = item_canvas.ActualWidth;
+                double canvasHeight = item_canvas.ActualHeight;
+
+                // Origin and size must both be the canvas. Mixing canvas origin with
+                // the item's ActualWidth/Height extends the hit rect below the header
+                // by ~item height, so a later drop in the same gesture (+25,+25)
+                // falsely nests into a newly created ContainerItem.
+                if (canvasWidth > 0 &&
+                    canvasHeight > 0 &&
+                    canvas_absolute.X <= p.X &&
+                    canvas_absolute.Y <= p.Y &&
+                    p.X <= canvas_absolute.X + canvasWidth &&
+                    p.Y <= canvas_absolute.Y + canvasHeight)
                     if (i.NestingLevel > highestNestingLevel
                         && !itemToReturn.SubItemsNotVisible)
                     {
@@ -2530,7 +2543,7 @@ namespace m0.UIWpf.UX
             {
                 if (instanceOfMeta)
                 {
-                    IUXItem clickedItem = GetItemByPoint(p);
+                    IUXItem clickedItem = GetClickedItemForNewDiagramItem(p);
 
                     IEdge ve = VertexOperations.AddInstanceAndReturnEdge(
                         clickedItem.BaseEdge.To
@@ -2809,6 +2822,11 @@ namespace m0.UIWpf.UX
                     if (dndVertex.Count() > 1)
                         isSet = true;
 
+                    dndDropIntendedClicked = null;
+                    dndDropIntendedHost = null;
+
+                    try
+                    {
                     if (isSet)
                         User.Process.UX.NonAtomProcess.StartNonAtomProcess();
 
@@ -2816,6 +2834,9 @@ namespace m0.UIWpf.UX
                     IList<IUXItem> affectedLineItems = new List<IUXItem>();
                     bool originalDeferHostItemUpdateLayout =
                         deferHostItemUpdateLayout;
+
+                    dndDropIntendedClicked = GetItemByPoint(p);
+                    dndDropIntendedHost = GetItemByPoint_ByCanvas(p);
 
                     BeginSuspendAutomaticDiagramLineUpdates();
                     BeginDeferNewUXItemListenerRegistrations();
@@ -2825,7 +2846,6 @@ namespace m0.UIWpf.UX
                         Interaction.BeginInteractionWithGraph();
                         try
                         {
-
                             foreach (IEdge eee in dndVertex)
                             {
                                 IUXItem newUXItem =
@@ -2897,6 +2917,12 @@ namespace m0.UIWpf.UX
 
                     //GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(dndVertex);
                     GraphUtil.RemoveAllEdges(dndVertex);
+                    }
+                    finally
+                    {
+                        dndDropIntendedClicked = null;
+                        dndDropIntendedHost = null;
+                    }
             }
         }
 
@@ -2923,9 +2949,25 @@ namespace m0.UIWpf.UX
             return i;
         }
 
+        IUXItem GetClickedItemForNewDiagramItem(Point p)
+        {
+            if (dndDropIntendedClicked != null)
+                return dndDropIntendedClicked;
+
+            return GetItemByPoint(p);
+        }
+
+        IUXContainer GetHostForNewDiagramItem(Point p)
+        {
+            if (dndDropIntendedHost != null)
+                return dndDropIntendedHost;
+
+            return GetItemByPoint_ByCanvas(p);
+        }
+
         public IUXItem AddDiagramItem(Point p, UXTemplate UXTemplate, IVertex BaseEdge)
         {
-            IUXContainer host = GetItemByPoint_ByCanvas(p);
+            IUXContainer host = GetHostForNewDiagramItem(p);
 
             Point p_translated = new Point(p.X, p.Y);
 
