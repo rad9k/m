@@ -149,6 +149,9 @@
     <Content Include="_RES\ZeroUML_Structure.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="_RES\ZeroUML_UseCase.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\m0\m0.csproj">

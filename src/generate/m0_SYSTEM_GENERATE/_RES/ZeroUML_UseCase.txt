@@ -1,0 +1,12 @@
+"ZeroUML"
+	import @System\Meta\ZeroUML direct meta	
+	 
+	package "UseCase"
+		"UseCase"
+			<@$InstanceCreationPriority :: "">
+			"Relation"
+				<@$EdgeTarget :: @UseCase\Actor>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+		"Actor"
+			<@$InstanceCreationPriority :: "">

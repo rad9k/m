@@ -1574,12 +1574,54 @@
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>	
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+					
+		<@UXTemplate :: "UseCase">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:UseCase}">
+			<@MetaVertexTestQuery :: "UseCase">
+			<@ItemClass :: @OvalItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\UseCaseItemVertex>				
+			<@UXDecoratorTemplate :: "Relation">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:\Relation">
+				<@ToDiagramItemTestQuery :: "Actor">
+				<@DecoratorClass :: @LineDecorator>
+			<@UXDecoratorTemplate :: "Inherits">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Inherits">
+				<@ToDiagramItemTestQuery :: "UXTemplate:UseCase">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Triangle>
+					<@LineDecorator\HideLabel :: "True">
+					
+		<@UXTemplate :: "Actor">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:Actor}">
+			<@MetaVertexTestQuery :: "Actor">
+			<@ItemClass :: @ImageItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\UseCaseItemVertex>
+				<@ImageItem\Filename :: "ZeroUML\UseCase\actor.png">
+			<@UXDecoratorTemplate :: "Inherits">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Inherits">
+				<@ToDiagramItemTestQuery :: "UXTemplate:Actor">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Triangle>
+					<@LineDecorator\HideLabel :: "True">
 					
 		<"StructureItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightCyan>
 		<"StructureContainerItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryVeryLightCyan>
+		<"UseCaseItemVertex">
+			<@UXItem\BackgroundColor :: @VeryVeryVeryLightRose>
 		<"GenericItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightRed>
 		<"StaticItemVertex">

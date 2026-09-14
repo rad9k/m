@@ -6944,7 +6944,12 @@ namespace m0
 
             IVertex inherits = Root.Get(false, @"System\Meta\Base\Vertex\$Inherits");
 
-            _class.AddEdge(inherits, component);                    
+            _class.AddEdge(inherits, component);
+
+
+            GraphUtil.LoadTXTParseAndMove(@"_RES\ZeroUML_UseCase.txt",
+                zu,
+                "UseCase");
         }
 
         void CreateSystemMetaCustomDomain()
