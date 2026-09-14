@@ -98,7 +98,7 @@
     <Content Include="_RES\Examples\AI_model_pipeline.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="_RES\Examples\Enterprise_Architecture.txt">
+    <Content Include="_RES\Examples\Enterprise_AI_Architecture.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="_RES\Examples\LLM_orchestrator.txt">

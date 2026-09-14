@@ -1583,12 +1583,14 @@
 			<@ItemClass :: @OvalItem>
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
-				<@$Inherits :: @ZeroUML\UseCaseItemVertex>				
+				<@$Inherits :: @ZeroUML\UseCaseItemVertex>		
 			<@UXDecoratorTemplate :: "Relation">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "$Is:\Relation">
 				<@ToDiagramItemTestQuery :: "Actor">
 				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">					
+					<@LineDecorator\HideLabel :: "True">
 			<@UXDecoratorTemplate :: "Inherits">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "$Inherits">
@@ -1607,6 +1609,10 @@
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\UseCaseItemVertex>
 				<@ImageItem\Filename :: "ZeroUML\UseCase\actor.png">
+				<@Size :: "">
+					<@Size\Width :: "47">
+					<@Size\Height :: "90">
+				<@LabeledItem\ShowIcons :: "False">
 			<@UXDecoratorTemplate :: "Inherits">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "$Inherits">

@@ -22,9 +22,9 @@ namespace m0_SYSTEM_GENERATE
             
             IVertex tr = MinusZero.Instance.Root.AddVertex(null, "Examples");
 
-            IVertex EnterpriseArchitecture = tr.AddVertex(null, "Enterprise Architecture");
+            IVertex EnterpriseArchitecture = tr.AddVertex(null, "Enterprise AI Architecture");
 
-            GraphUtil.LoadTXTParseAndMove_ChildEdges(@"_RES\Examples\Enterprise_Architecture.txt", EnterpriseArchitecture);
+            GraphUtil.LoadTXTParseAndMove_ChildEdges(@"_RES\Examples\Enterprise_AI_Architecture.txt", EnterpriseArchitecture);
 
 
             IVertex OnlineRetailModel = tr.AddVertex(null, "Online retail model");
