@@ -1582,6 +1582,7 @@
 			<@MetaVertexTestQuery :: "UseCase">
 			<@ItemClass :: @OvalItem>
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@DoNotShowInherited :: "True">
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\UseCaseItemVertex>		
 			<@UXDecoratorTemplate :: "Relation">
@@ -1606,6 +1607,7 @@
 			<@MetaVertexTestQuery :: "Actor">
 			<@ItemClass :: @ImageItem>
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@DoNotShowInherited :: "True">
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\UseCaseItemVertex>
 				<@ImageItem\Filename :: "ZeroUML\UseCase\actor.png">

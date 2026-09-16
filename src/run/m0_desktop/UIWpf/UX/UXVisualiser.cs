@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -74,6 +75,625 @@ namespace m0.UIWpf.UX
 
         public Canvas Canvas { get; set; }
 
+        const double MiniaturesOuterMargin = 10;
+        const double MiniaturesContentPaddingRatio = 0.07;
+        const double MiniaturesMinimumLogicalPadding = 20;
+        const double MiniaturesMinimumItemSize = 1.5;
+
+        MiniaturesAdorner miniaturesAdorner;
+        AdornerLayer miniaturesAdornerLayer;
+        ScrollViewer miniaturesScrollViewer;
+        bool miniaturesItemsDirty;
+        System.Windows.Threading.DispatcherOperation miniaturesUpdateOperation;
+        readonly HashSet<FrameworkElement>
+            miniatureItemEventSubscriptions =
+                new HashSet<FrameworkElement>();
+
+        enum MiniatureShapeKind
+        {
+            Rectangle,
+            Oval,
+            Rhombus
+        }
+
+        struct MiniatureItemSnapshot
+        {
+            public Rect Bounds;
+            public MiniatureShapeKind ShapeKind;
+        }
+
+        sealed class MiniaturesAdorner : Adorner
+        {
+            readonly UXVisualiser owner;
+            readonly ScrollViewer scrollViewer;
+            IList<MiniatureItemSnapshot> itemSnapshots =
+                new List<MiniatureItemSnapshot>();
+            Rect worldBounds = Rect.Empty;
+            Rect mapBounds = Rect.Empty;
+            DrawingGroup itemDrawing = new DrawingGroup();
+            Rect displayedViewportBounds = Rect.Empty;
+            Rect projectedViewportBounds = Rect.Empty;
+            Point dragPointerOffset;
+            bool isDraggingViewport;
+            bool dragStartedFromOutsideWorld;
+
+            public MiniaturesAdorner(
+                UXVisualiser owner,
+                ScrollViewer scrollViewer)
+                : base(scrollViewer)
+            {
+                this.owner = owner;
+                this.scrollViewer = scrollViewer;
+                IsHitTestVisible = true;
+            }
+
+            public void SetItems(
+                IList<MiniatureItemSnapshot> snapshots,
+                Rect effectiveWorldBounds)
+            {
+                itemSnapshots = snapshots ??
+                    new List<MiniatureItemSnapshot>();
+                worldBounds = effectiveWorldBounds;
+                RebuildItemDrawing();
+                InvalidateVisual();
+            }
+
+            public void RebuildForViewportSize()
+            {
+                RebuildItemDrawing();
+                InvalidateVisual();
+            }
+
+            public void InvalidateViewport()
+            {
+                InvalidateVisual();
+            }
+
+            protected override void OnRender(DrawingContext drawingContext)
+            {
+                base.OnRender(drawingContext);
+
+                if (mapBounds.IsEmpty ||
+                    mapBounds.Width <= 0 ||
+                    mapBounds.Height <= 0)
+                {
+                    displayedViewportBounds = Rect.Empty;
+                    projectedViewportBounds = Rect.Empty;
+                    return;
+                }
+
+                Brush backgroundBrush =
+                    (Brush)owner.FindResource("0BackgroundBrush");
+                Brush foregroundBrush =
+                    (Brush)owner.FindResource("0ForegroundBrush");
+                Brush viewportBrush =
+                    (Brush)owner.FindResource(
+                        "0VeryLightHighlightBrush");
+
+                drawingContext.DrawRectangle(
+                    backgroundBrush,
+                    null,
+                    mapBounds);
+                drawingContext.DrawDrawing(itemDrawing);
+                drawingContext.DrawRectangle(
+                    null,
+                    new Pen(foregroundBrush, 1),
+                    mapBounds);
+
+                UpdateViewportBounds();
+
+                if (!displayedViewportBounds.IsEmpty)
+                {
+                    drawingContext.DrawRectangle(
+                        null,
+                        new Pen(viewportBrush, 2),
+                        displayedViewportBounds);
+                }
+            }
+
+            protected override HitTestResult HitTestCore(
+                PointHitTestParameters hitTestParameters)
+            {
+                if (!mapBounds.IsEmpty &&
+                    mapBounds.Contains(hitTestParameters.HitPoint))
+                {
+                    return new PointHitTestResult(
+                        this,
+                        hitTestParameters.HitPoint);
+                }
+
+                return null;
+            }
+
+            protected override void OnMouseLeftButtonDown(
+                MouseButtonEventArgs e)
+            {
+                Point position = e.GetPosition(this);
+                UpdateViewportBounds();
+
+                if (displayedViewportBounds.IsEmpty ||
+                    !displayedViewportBounds.Contains(position))
+                {
+                    return;
+                }
+
+                isDraggingViewport = true;
+                dragStartedFromOutsideWorld =
+                    !projectedViewportBounds.IntersectsWith(mapBounds);
+
+                if (dragStartedFromOutsideWorld)
+                {
+                    dragPointerOffset = new Point(
+                        displayedViewportBounds.Width / 2,
+                        displayedViewportBounds.Height / 2);
+                }
+                else
+                {
+                    dragPointerOffset = new Point(
+                        position.X - projectedViewportBounds.Left,
+                        position.Y - projectedViewportBounds.Top);
+                }
+
+                CaptureMouse();
+                e.Handled = true;
+            }
+
+            protected override void OnMouseMove(MouseEventArgs e)
+            {
+                if (!isDraggingViewport ||
+                    e.LeftButton != MouseButtonState.Pressed)
+                {
+                    return;
+                }
+
+                MoveViewport(e.GetPosition(this));
+                e.Handled = true;
+            }
+
+            protected override void OnMouseLeftButtonUp(
+                MouseButtonEventArgs e)
+            {
+                if (!isDraggingViewport)
+                    return;
+
+                isDraggingViewport = false;
+                dragStartedFromOutsideWorld = false;
+                ReleaseMouseCapture();
+                e.Handled = true;
+            }
+
+            protected override void OnLostMouseCapture(MouseEventArgs e)
+            {
+                isDraggingViewport = false;
+                dragStartedFromOutsideWorld = false;
+                base.OnLostMouseCapture(e);
+            }
+
+            void RebuildItemDrawing()
+            {
+                mapBounds = CalculateMapBounds();
+                DrawingGroup drawing = new DrawingGroup();
+
+                if (mapBounds.IsEmpty ||
+                    worldBounds.IsEmpty ||
+                    worldBounds.Width <= 0 ||
+                    worldBounds.Height <= 0)
+                {
+                    itemDrawing = drawing;
+                    return;
+                }
+
+                Brush foregroundBrush =
+                    (Brush)owner.FindResource("0ForegroundBrush");
+
+                using (DrawingContext drawingContext = drawing.Open())
+                {
+                    drawingContext.PushClip(
+                        new RectangleGeometry(mapBounds));
+
+                    foreach (MiniatureItemSnapshot snapshot in
+                        itemSnapshots)
+                    {
+                        Rect itemBounds =
+                            ProjectWorldRect(snapshot.Bounds);
+                        itemBounds = EnsureMinimumItemSize(itemBounds);
+
+                        if (!itemBounds.IntersectsWith(mapBounds))
+                            continue;
+
+                        switch (snapshot.ShapeKind)
+                        {
+                            case MiniatureShapeKind.Oval:
+                                drawingContext.DrawEllipse(
+                                    foregroundBrush,
+                                    null,
+                                    new Point(
+                                        itemBounds.Left +
+                                            itemBounds.Width / 2,
+                                        itemBounds.Top +
+                                            itemBounds.Height / 2),
+                                    itemBounds.Width / 2,
+                                    itemBounds.Height / 2);
+                                break;
+
+                            case MiniatureShapeKind.Rhombus:
+                                drawingContext.DrawGeometry(
+                                    foregroundBrush,
+                                    null,
+                                    CreateRhombusGeometry(itemBounds));
+                                break;
+
+                            default:
+                                drawingContext.DrawRectangle(
+                                    foregroundBrush,
+                                    null,
+                                    itemBounds);
+                                break;
+                        }
+                    }
+
+                    drawingContext.Pop();
+                }
+
+                itemDrawing = drawing;
+            }
+
+            Rect CalculateMapBounds()
+            {
+                if (worldBounds.IsEmpty ||
+                    worldBounds.Width <= 0 ||
+                    worldBounds.Height <= 0)
+                {
+                    return Rect.Empty;
+                }
+
+                double viewportWidth = scrollViewer.ViewportWidth;
+                double viewportHeight = scrollViewer.ViewportHeight;
+
+                if (double.IsNaN(viewportWidth) || viewportWidth <= 0)
+                    viewportWidth = scrollViewer.ActualWidth;
+
+                if (double.IsNaN(viewportHeight) || viewportHeight <= 0)
+                    viewportHeight = scrollViewer.ActualHeight;
+
+                double availableWidth = Math.Max(
+                    0,
+                    viewportWidth - MiniaturesOuterMargin * 2);
+                double availableHeight = Math.Max(
+                    0,
+                    viewportHeight - MiniaturesOuterMargin * 2);
+
+                if (availableWidth <= 0 || availableHeight <= 0)
+                    return Rect.Empty;
+
+                double maximumWidth = Math.Min(
+                    availableWidth,
+                    Math.Min(
+                        280,
+                        Math.Max(140, viewportWidth * 0.24)));
+                double maximumHeight = Math.Min(
+                    availableHeight,
+                    Math.Min(
+                        200,
+                        Math.Max(90, viewportHeight * 0.24)));
+
+                double mapScale = Math.Min(
+                    maximumWidth / worldBounds.Width,
+                    maximumHeight / worldBounds.Height);
+
+                if (double.IsNaN(mapScale) ||
+                    double.IsInfinity(mapScale) ||
+                    mapScale <= 0)
+                {
+                    return Rect.Empty;
+                }
+
+                double width = worldBounds.Width * mapScale;
+                double height = worldBounds.Height * mapScale;
+
+                return new Rect(
+                    viewportWidth - MiniaturesOuterMargin - width,
+                    viewportHeight - MiniaturesOuterMargin - height,
+                    width,
+                    height);
+            }
+
+            Rect ProjectWorldRect(Rect sourceBounds)
+            {
+                double horizontalScale =
+                    mapBounds.Width / worldBounds.Width;
+                double verticalScale =
+                    mapBounds.Height / worldBounds.Height;
+
+                return new Rect(
+                    mapBounds.Left +
+                        (sourceBounds.Left - worldBounds.Left) *
+                        horizontalScale,
+                    mapBounds.Top +
+                        (sourceBounds.Top - worldBounds.Top) *
+                        verticalScale,
+                    Math.Max(0, sourceBounds.Width * horizontalScale),
+                    Math.Max(0, sourceBounds.Height * verticalScale));
+            }
+
+            Rect EnsureMinimumItemSize(Rect itemBounds)
+            {
+                double width = Math.Max(
+                    MiniaturesMinimumItemSize,
+                    itemBounds.Width);
+                double height = Math.Max(
+                    MiniaturesMinimumItemSize,
+                    itemBounds.Height);
+
+                return new Rect(
+                    itemBounds.Left - (width - itemBounds.Width) / 2,
+                    itemBounds.Top - (height - itemBounds.Height) / 2,
+                    width,
+                    height);
+            }
+
+            static Geometry CreateRhombusGeometry(Rect bounds)
+            {
+                StreamGeometry geometry = new StreamGeometry();
+
+                using (StreamGeometryContext context = geometry.Open())
+                {
+                    context.BeginFigure(
+                        new Point(
+                            bounds.Left + bounds.Width / 2,
+                            bounds.Top),
+                        true,
+                        true);
+                    context.LineTo(
+                        new Point(
+                            bounds.Right,
+                            bounds.Top + bounds.Height / 2),
+                        true,
+                        false);
+                    context.LineTo(
+                        new Point(
+                            bounds.Left + bounds.Width / 2,
+                            bounds.Bottom),
+                        true,
+                        false);
+                    context.LineTo(
+                        new Point(
+                            bounds.Left,
+                            bounds.Top + bounds.Height / 2),
+                        true,
+                        false);
+                }
+
+                return geometry;
+            }
+
+            void UpdateViewportBounds()
+            {
+                projectedViewportBounds = CalculateProjectedViewportBounds();
+
+                if (projectedViewportBounds.IsEmpty ||
+                    mapBounds.IsEmpty)
+                {
+                    displayedViewportBounds = Rect.Empty;
+                    return;
+                }
+
+                Rect intersection = Rect.Intersect(
+                    projectedViewportBounds,
+                    mapBounds);
+
+                if (!intersection.IsEmpty &&
+                    intersection.Width > 0 &&
+                    intersection.Height > 0)
+                {
+                    displayedViewportBounds = intersection;
+                    return;
+                }
+
+                const double outsideMarkerSize = 7;
+                double markerCenterX = Clamp(
+                    projectedViewportBounds.Left +
+                        projectedViewportBounds.Width / 2,
+                    mapBounds.Left + outsideMarkerSize / 2,
+                    mapBounds.Right - outsideMarkerSize / 2);
+                double markerCenterY = Clamp(
+                    projectedViewportBounds.Top +
+                        projectedViewportBounds.Height / 2,
+                    mapBounds.Top + outsideMarkerSize / 2,
+                    mapBounds.Bottom - outsideMarkerSize / 2);
+
+                displayedViewportBounds = new Rect(
+                    markerCenterX - outsideMarkerSize / 2,
+                    markerCenterY - outsideMarkerSize / 2,
+                    outsideMarkerSize,
+                    outsideMarkerSize);
+            }
+
+            Rect CalculateProjectedViewportBounds()
+            {
+                if (mapBounds.IsEmpty ||
+                    worldBounds.IsEmpty)
+                {
+                    return Rect.Empty;
+                }
+
+                double virtualWidth;
+                double virtualHeight;
+                owner.GetMiniaturesVirtualSize(
+                    out virtualWidth,
+                    out virtualHeight);
+
+                if (virtualWidth <= 0 || virtualHeight <= 0)
+                    return Rect.Empty;
+
+                double extentScaleX =
+                    scrollViewer.ExtentWidth > 0
+                        ? scrollViewer.ExtentWidth / virtualWidth
+                        : owner.GetEffectiveMiniaturesScale();
+                double extentScaleY =
+                    scrollViewer.ExtentHeight > 0
+                        ? scrollViewer.ExtentHeight / virtualHeight
+                        : owner.GetEffectiveMiniaturesScale();
+
+                if (extentScaleX <= 0 || extentScaleY <= 0)
+                    return Rect.Empty;
+
+                Rect logicalViewport = new Rect(
+                    scrollViewer.HorizontalOffset / extentScaleX,
+                    scrollViewer.VerticalOffset / extentScaleY,
+                    scrollViewer.ViewportWidth / extentScaleX,
+                    scrollViewer.ViewportHeight / extentScaleY);
+
+                return ProjectWorldRect(logicalViewport);
+            }
+
+            void MoveViewport(Point pointerPosition)
+            {
+                if (mapBounds.IsEmpty ||
+                    worldBounds.IsEmpty ||
+                    projectedViewportBounds.IsEmpty)
+                {
+                    return;
+                }
+
+                double projectedWidth = Math.Min(
+                    mapBounds.Width,
+                    projectedViewportBounds.Width);
+                double projectedHeight = Math.Min(
+                    mapBounds.Height,
+                    projectedViewportBounds.Height);
+
+                double desiredLeft;
+                double desiredTop;
+
+                if (dragStartedFromOutsideWorld)
+                {
+                    desiredLeft =
+                        pointerPosition.X - projectedWidth / 2;
+                    desiredTop =
+                        pointerPosition.Y - projectedHeight / 2;
+                }
+                else
+                {
+                    desiredLeft =
+                        pointerPosition.X - dragPointerOffset.X;
+                    desiredTop =
+                        pointerPosition.Y - dragPointerOffset.Y;
+                }
+
+                desiredLeft = Clamp(
+                    desiredLeft,
+                    mapBounds.Left,
+                    mapBounds.Right - projectedWidth);
+                desiredTop = Clamp(
+                    desiredTop,
+                    mapBounds.Top,
+                    mapBounds.Bottom - projectedHeight);
+
+                double logicalLeft = worldBounds.Left;
+                double logicalTop = worldBounds.Top;
+
+                if (mapBounds.Width > projectedWidth)
+                {
+                    logicalLeft +=
+                        (desiredLeft - mapBounds.Left) /
+                        (mapBounds.Width - projectedWidth) *
+                        Math.Max(
+                            0,
+                            worldBounds.Width -
+                                GetLogicalViewportWidth());
+                }
+
+                if (mapBounds.Height > projectedHeight)
+                {
+                    logicalTop +=
+                        (desiredTop - mapBounds.Top) /
+                        (mapBounds.Height - projectedHeight) *
+                        Math.Max(
+                            0,
+                            worldBounds.Height -
+                                GetLogicalViewportHeight());
+                }
+
+                double virtualWidth;
+                double virtualHeight;
+                owner.GetMiniaturesVirtualSize(
+                    out virtualWidth,
+                    out virtualHeight);
+
+                double extentScaleX =
+                    virtualWidth > 0 &&
+                    scrollViewer.ExtentWidth > 0
+                        ? scrollViewer.ExtentWidth / virtualWidth
+                        : owner.GetEffectiveMiniaturesScale();
+                double extentScaleY =
+                    virtualHeight > 0 &&
+                    scrollViewer.ExtentHeight > 0
+                        ? scrollViewer.ExtentHeight / virtualHeight
+                        : owner.GetEffectiveMiniaturesScale();
+
+                scrollViewer.ScrollToHorizontalOffset(
+                    Clamp(
+                        logicalLeft * extentScaleX,
+                        0,
+                        scrollViewer.ScrollableWidth));
+                scrollViewer.ScrollToVerticalOffset(
+                    Clamp(
+                        logicalTop * extentScaleY,
+                        0,
+                        scrollViewer.ScrollableHeight));
+            }
+
+            double GetLogicalViewportWidth()
+            {
+                double virtualWidth;
+                double virtualHeight;
+                owner.GetMiniaturesVirtualSize(
+                    out virtualWidth,
+                    out virtualHeight);
+
+                double extentScale =
+                    virtualWidth > 0 &&
+                    scrollViewer.ExtentWidth > 0
+                        ? scrollViewer.ExtentWidth / virtualWidth
+                        : owner.GetEffectiveMiniaturesScale();
+
+                return extentScale > 0
+                    ? scrollViewer.ViewportWidth / extentScale
+                    : 0;
+            }
+
+            double GetLogicalViewportHeight()
+            {
+                double virtualWidth;
+                double virtualHeight;
+                owner.GetMiniaturesVirtualSize(
+                    out virtualWidth,
+                    out virtualHeight);
+
+                double extentScale =
+                    virtualHeight > 0 &&
+                    scrollViewer.ExtentHeight > 0
+                        ? scrollViewer.ExtentHeight / virtualHeight
+                        : owner.GetEffectiveMiniaturesScale();
+
+                return extentScale > 0
+                    ? scrollViewer.ViewportHeight / extentScale
+                    : 0;
+            }
+
+            static double Clamp(
+                double value,
+                double minimum,
+                double maximum)
+            {
+                if (maximum < minimum)
+                    return minimum;
+
+                return Math.Max(minimum, Math.Min(maximum, value));
+            }
+        }
+
         public bool IsSelecting { get; set; }
 
         public bool IsDrawingOrMovingLine { get; set; }
@@ -110,6 +730,51 @@ namespace m0.UIWpf.UX
         readonly HashSet<IUXItem> pendingDraggedItemRenderUpdates =
             new HashSet<IUXItem>();
         bool draggedItemRenderUpdateScheduled;
+
+        const double AlignmentGuideCoordinateQuantum = 0.01;
+        const double AlignmentGuideSnapDistanceInScreenDips = 3;
+
+        struct AlignmentGuideRange
+        {
+            public double Coordinate;
+            public double Minimum;
+            public double Maximum;
+        }
+
+        struct AlignmentGuideSegment
+        {
+            public double Coordinate;
+            public double Minimum;
+            public double Maximum;
+        }
+
+        readonly Dictionary<long, AlignmentGuideRange>
+            verticalAlignmentReferenceEdgesByX =
+                new Dictionary<long, AlignmentGuideRange>();
+        readonly Dictionary<long, AlignmentGuideRange>
+            horizontalAlignmentReferenceEdgesByY =
+                new Dictionary<long, AlignmentGuideRange>();
+        readonly List<long> verticalAlignmentReferenceCoordinateKeys =
+            new List<long>();
+        readonly List<long> horizontalAlignmentReferenceCoordinateKeys =
+            new List<long>();
+        readonly Dictionary<long, AlignmentGuideSegment>
+            activeVerticalAlignmentGuides =
+                new Dictionary<long, AlignmentGuideSegment>();
+        readonly Dictionary<long, AlignmentGuideSegment>
+            activeHorizontalAlignmentGuides =
+                new Dictionary<long, AlignmentGuideSegment>();
+        readonly HashSet<IUXItem> alignmentGuideMovingItems =
+            new HashSet<IUXItem>();
+        readonly List<Line> alignmentGuideLines = new List<Line>();
+        readonly Action processAlignmentGuideUpdateAction;
+        System.Windows.Threading.DispatcherOperation
+            alignmentGuideUpdateOperation;
+        bool alignmentGuideInteractionActive;
+        bool alignmentGuideReferenceIndexReady;
+        bool alignmentGuideLinesAttached;
+        double multiSelectionSnappedOffsetX;
+        double multiSelectionSnappedOffsetY;
 
         public bool SuspendAutomaticDiagramLineUpdates
         {
@@ -350,7 +1015,7 @@ namespace m0.UIWpf.UX
         static string[] _MetaTriggeringUpdateVertex = new string[] { "Width", "Height" };
         public virtual string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
-        static string[] _MetaTriggeringUpdateView = new string[] { };
+        static string[] _MetaTriggeringUpdateView = new string[] { "HasMiniatures" };
         public virtual string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
         public virtual void BaseEdgeToUpdated() { Paint(); }
@@ -419,6 +1084,9 @@ namespace m0.UIWpf.UX
 
         public UXVisualiser(IEdge _edge)
         {
+            processAlignmentGuideUpdateAction =
+                ProcessAlignmentGuideUpdate;
+
             Edge = _edge;
 
             vertex = _edge.To;
@@ -451,8 +1119,380 @@ namespace m0.UIWpf.UX
             this.Child = Canvas;
         }
 
+        bool HasMiniaturesEnabled
+        {
+            get
+            {
+                if (Vertex == null)
+                    return false;
+
+                return GraphUtil.GetBooleanValueOrFalse(
+                    GraphUtil.GetQueryOutFirst(
+                        Vertex,
+                        "HasMiniatures",
+                        null));
+            }
+        }
+
+        void RequestMiniaturesUpdate(bool rebuildItems)
+        {
+            if (IsDisposed)
+                return;
+
+            if (rebuildItems)
+                miniaturesItemsDirty = true;
+
+            if (miniaturesUpdateOperation != null)
+                return;
+
+            miniaturesUpdateOperation = Dispatcher.BeginInvoke(
+                new Action(ProcessMiniaturesUpdate),
+                System.Windows.Threading.DispatcherPriority.Render);
+        }
+
+        void ProcessMiniaturesUpdate()
+        {
+            miniaturesUpdateOperation = null;
+
+            if (IsDisposed)
+                return;
+
+            if (!HasMiniaturesEnabled)
+            {
+                DetachMiniatures();
+                return;
+            }
+
+            EnsureMiniaturesAttached();
+
+            if (miniaturesAdorner == null)
+                return;
+
+            if (miniaturesItemsDirty)
+            {
+                miniaturesItemsDirty = false;
+                RebuildMiniaturesItems();
+            }
+            else
+                miniaturesAdorner.InvalidateViewport();
+        }
+
+        void EnsureMiniaturesAttached()
+        {
+            if (ScrollViewerParent == null)
+                return;
+
+            ScrollViewer scrollViewer =
+                ScrollViewerParent.GetScrollViewer();
+
+            if (scrollViewer == null)
+                return;
+
+            if (miniaturesAdorner != null &&
+                miniaturesScrollViewer == scrollViewer)
+            {
+                return;
+            }
+
+            DetachMiniatures();
+
+            AdornerLayer adornerLayer =
+                AdornerLayer.GetAdornerLayer(scrollViewer);
+
+            if (adornerLayer == null)
+                return;
+
+            miniaturesScrollViewer = scrollViewer;
+            miniaturesAdornerLayer = adornerLayer;
+            miniaturesAdorner =
+                new MiniaturesAdorner(this, scrollViewer);
+
+            miniaturesScrollViewer.ScrollChanged +=
+                MiniaturesScrollViewer_ScrollChanged;
+            miniaturesScrollViewer.SizeChanged +=
+                MiniaturesScrollViewer_SizeChanged;
+            miniaturesAdornerLayer.Add(miniaturesAdorner);
+            miniaturesItemsDirty = true;
+        }
+
+        void DetachMiniatures()
+        {
+            UnsubscribeFromMiniatureItemEvents();
+
+            if (miniaturesScrollViewer != null)
+            {
+                miniaturesScrollViewer.ScrollChanged -=
+                    MiniaturesScrollViewer_ScrollChanged;
+                miniaturesScrollViewer.SizeChanged -=
+                    MiniaturesScrollViewer_SizeChanged;
+            }
+
+            if (miniaturesAdornerLayer != null &&
+                miniaturesAdorner != null)
+            {
+                miniaturesAdornerLayer.Remove(miniaturesAdorner);
+            }
+
+            miniaturesAdorner = null;
+            miniaturesAdornerLayer = null;
+            miniaturesScrollViewer = null;
+        }
+
+        void MiniaturesScrollViewer_ScrollChanged(
+            object sender,
+            ScrollChangedEventArgs e)
+        {
+            RequestMiniaturesUpdate(
+                e.ViewportWidthChange != 0 ||
+                e.ViewportHeightChange != 0);
+        }
+
+        void MiniaturesScrollViewer_SizeChanged(
+            object sender,
+            SizeChangedEventArgs e)
+        {
+            RequestMiniaturesUpdate(true);
+        }
+
+        void MiniatureItem_SizeChanged(
+            object sender,
+            SizeChangedEventArgs e)
+        {
+            RequestMiniaturesUpdate(true);
+        }
+
+        void MiniatureItem_IsVisibleChanged(
+            object sender,
+            DependencyPropertyChangedEventArgs e)
+        {
+            RequestMiniaturesUpdate(true);
+        }
+
+        void UpdateMiniatureItemEventSubscriptions()
+        {
+            HashSet<FrameworkElement> currentElements =
+                new HashSet<FrameworkElement>();
+
+            foreach (IUXItem item in Items_all)
+            {
+                if (item is IUXDecorator ||
+                    item is ILineDecoratorBase)
+                {
+                    continue;
+                }
+
+                FrameworkElement element =
+                    item as FrameworkElement;
+
+                if (element != null)
+                    currentElements.Add(element);
+            }
+
+            foreach (FrameworkElement subscribedElement in
+                miniatureItemEventSubscriptions.ToArray())
+            {
+                if (currentElements.Contains(subscribedElement))
+                    continue;
+
+                subscribedElement.SizeChanged -=
+                    MiniatureItem_SizeChanged;
+                subscribedElement.IsVisibleChanged -=
+                    MiniatureItem_IsVisibleChanged;
+                miniatureItemEventSubscriptions.Remove(
+                    subscribedElement);
+            }
+
+            foreach (FrameworkElement element in currentElements)
+            {
+                if (!miniatureItemEventSubscriptions.Add(element))
+                    continue;
+
+                element.SizeChanged += MiniatureItem_SizeChanged;
+                element.IsVisibleChanged +=
+                    MiniatureItem_IsVisibleChanged;
+            }
+        }
+
+        void UnsubscribeFromMiniatureItemEvents()
+        {
+            foreach (FrameworkElement element in
+                miniatureItemEventSubscriptions)
+            {
+                element.SizeChanged -= MiniatureItem_SizeChanged;
+                element.IsVisibleChanged -=
+                    MiniatureItem_IsVisibleChanged;
+            }
+
+            miniatureItemEventSubscriptions.Clear();
+        }
+
+        void RebuildMiniaturesItems()
+        {
+            if (miniaturesAdorner == null)
+                return;
+
+            UpdateMiniatureItemEventSubscriptions();
+
+            double virtualWidth;
+            double virtualHeight;
+            GetMiniaturesVirtualSize(
+                out virtualWidth,
+                out virtualHeight);
+
+            if (virtualWidth <= 0 || virtualHeight <= 0)
+            {
+                miniaturesAdorner.SetItems(
+                    new List<MiniatureItemSnapshot>(),
+                    Rect.Empty);
+                return;
+            }
+
+            Rect virtualBounds =
+                new Rect(0, 0, virtualWidth, virtualHeight);
+            Rect occupiedBounds = Rect.Empty;
+            List<MiniatureItemSnapshot> snapshots =
+                new List<MiniatureItemSnapshot>();
+
+            foreach (IUXItem item in Items_all)
+            {
+                if (item == null ||
+                    item is IUXDecorator ||
+                    item is ILineDecoratorBase)
+                {
+                    continue;
+                }
+
+                Rect itemBounds;
+
+                if (!TryGetItemBoundsOnVisualiserCanvas(
+                    item,
+                    out itemBounds))
+                {
+                    continue;
+                }
+
+                itemBounds = Rect.Intersect(
+                    itemBounds,
+                    virtualBounds);
+
+                if (itemBounds.IsEmpty ||
+                    itemBounds.Width <= 0 ||
+                    itemBounds.Height <= 0)
+                {
+                    continue;
+                }
+
+                MiniatureShapeKind shapeKind =
+                    MiniatureShapeKind.Rectangle;
+
+                if (item is OvalItem)
+                    shapeKind = MiniatureShapeKind.Oval;
+                else if (item is RhombusItem)
+                    shapeKind = MiniatureShapeKind.Rhombus;
+
+                snapshots.Add(
+                    new MiniatureItemSnapshot
+                    {
+                        Bounds = itemBounds,
+                        ShapeKind = shapeKind
+                    });
+
+                if (occupiedBounds.IsEmpty)
+                    occupiedBounds = itemBounds;
+                else
+                    occupiedBounds.Union(itemBounds);
+            }
+
+            Rect effectiveWorldBounds =
+                GetEffectiveMiniaturesWorldBounds(
+                    occupiedBounds,
+                    virtualBounds);
+
+            miniaturesAdorner.SetItems(
+                snapshots,
+                effectiveWorldBounds);
+        }
+
+        Rect GetEffectiveMiniaturesWorldBounds(
+            Rect occupiedBounds,
+            Rect virtualBounds)
+        {
+            if (occupiedBounds.IsEmpty)
+                return virtualBounds;
+
+            double horizontalPadding = Math.Max(
+                MiniaturesMinimumLogicalPadding,
+                occupiedBounds.Width *
+                    MiniaturesContentPaddingRatio);
+            double verticalPadding = Math.Max(
+                MiniaturesMinimumLogicalPadding,
+                occupiedBounds.Height *
+                    MiniaturesContentPaddingRatio);
+
+            double left = Math.Max(
+                virtualBounds.Left,
+                occupiedBounds.Left - horizontalPadding);
+            double top = Math.Max(
+                virtualBounds.Top,
+                occupiedBounds.Top - verticalPadding);
+            double right = Math.Min(
+                virtualBounds.Right,
+                occupiedBounds.Right + horizontalPadding);
+            double bottom = Math.Min(
+                virtualBounds.Bottom,
+                occupiedBounds.Bottom + verticalPadding);
+
+            if (right <= left || bottom <= top)
+                return virtualBounds;
+
+            return new Rect(
+                left,
+                top,
+                right - left,
+                bottom - top);
+        }
+
+        void GetMiniaturesVirtualSize(
+            out double width,
+            out double height)
+        {
+            ZeroTypes.UX.Size size = Size;
+
+            width = size != null ? size.Width : 0;
+            height = size != null ? size.Height : 0;
+
+            if (width <= 0 && Canvas != null)
+                width = Canvas.ActualWidth;
+
+            if (height <= 0 && Canvas != null)
+                height = Canvas.ActualHeight;
+
+            if (width <= 0)
+                width = ActualWidth;
+
+            if (height <= 0)
+                height = ActualHeight;
+        }
+
+        double GetEffectiveMiniaturesScale()
+        {
+            double effectiveScale = Scale / 100;
+
+            if (effectiveScale <= 0 ||
+                double.IsNaN(effectiveScale) ||
+                double.IsInfinity(effectiveScale))
+            {
+                effectiveScale = 1;
+            }
+
+            return effectiveScale;
+        }
+
         public UXVisualiser(IVertex baseEdgeVertex, IVertex parentVisualiser, bool isVolatile)
         {
+            processAlignmentGuideUpdateAction =
+                ProcessAlignmentGuideUpdate;
+
             IVertex baseEdgeTo = baseEdgeVertex == null ? null : baseEdgeVertex.Get(false, "To:");
             IVisualiser alreadyOpened = VisualisersList.GetVisualiser(baseEdgeTo);
 
@@ -595,6 +1635,7 @@ namespace m0.UIWpf.UX
             catch (Exception e) { }
 
             prev_Scale = scale;
+            RequestMiniaturesUpdate(false);
         }
 
         IVertex vertex = null;
@@ -719,6 +1760,7 @@ namespace m0.UIWpf.UX
                 Containers_all.Remove(containerToRemove);
 
             needRebuildItemsDictionary();
+            RequestMiniaturesUpdate(true);
 
             item.RemoveFromCanvas();
 
@@ -854,6 +1896,7 @@ namespace m0.UIWpf.UX
 
             Items_all.Add(item);
             itemsAllSet.Add(item);
+            RequestMiniaturesUpdate(true);
 
             if (item is IUXContainer itemContainer)
                 Containers_all.Add(itemContainer);
@@ -1134,6 +2177,818 @@ namespace m0.UIWpf.UX
                 return new Point(Canvas.GetLeft(uie), Canvas.GetTop(uie));
         }
 
+        static long GetAlignmentGuideCoordinateKey(double coordinate)
+        {
+            return (long)Math.Round(
+                coordinate / AlignmentGuideCoordinateQuantum,
+                MidpointRounding.AwayFromZero);
+        }
+
+        bool TryGetItemBoundsOnVisualiserCanvas(
+            IUXItem item,
+            out Rect bounds)
+        {
+            bounds = Rect.Empty;
+
+            FrameworkElement itemElement = item as FrameworkElement;
+            if (itemElement == null ||
+                !itemElement.IsVisible ||
+                itemElement.ActualWidth <= 0 ||
+                itemElement.ActualHeight <= 0)
+                return false;
+
+            try
+            {
+                GeneralTransform transform =
+                    itemElement.TransformToAncestor(Canvas);
+                bounds = transform.TransformBounds(
+                    new Rect(
+                        0,
+                        0,
+                        itemElement.ActualWidth,
+                        itemElement.ActualHeight));
+            }
+            catch (InvalidOperationException)
+            {
+                return false;
+            }
+
+            return !bounds.IsEmpty &&
+                !double.IsNaN(bounds.Left) &&
+                !double.IsNaN(bounds.Top) &&
+                !double.IsNaN(bounds.Right) &&
+                !double.IsNaN(bounds.Bottom) &&
+                !double.IsInfinity(bounds.Left) &&
+                !double.IsInfinity(bounds.Top) &&
+                !double.IsInfinity(bounds.Right) &&
+                !double.IsInfinity(bounds.Bottom);
+        }
+
+        static void IncludeAlignmentReferenceEdge(
+            Dictionary<long, AlignmentGuideRange> edgeIndex,
+            long coordinateKey,
+            double coordinate,
+            double minimum,
+            double maximum)
+        {
+            AlignmentGuideRange range;
+            if (edgeIndex.TryGetValue(coordinateKey, out range))
+            {
+                range.Minimum = Math.Min(range.Minimum, minimum);
+                range.Maximum = Math.Max(range.Maximum, maximum);
+            }
+            else
+            {
+                range = new AlignmentGuideRange
+                {
+                    Coordinate = coordinate,
+                    Minimum = minimum,
+                    Maximum = maximum
+                };
+            }
+
+            edgeIndex[coordinateKey] = range;
+        }
+
+        void CaptureAlignmentGuideMovingItems()
+        {
+            alignmentGuideMovingItems.Clear();
+
+            if (IsMultiSelectionMoving)
+            {
+                foreach (Rectangle movingSprite in MovingSprites)
+                {
+                    IUXItem movingItem = movingSprite.Tag as IUXItem;
+                    if (movingItem != null)
+                        alignmentGuideMovingItems.Add(movingItem);
+                }
+            }
+
+            if (alignmentGuideMovingItems.Count == 0 &&
+                ClickedItem != null)
+                alignmentGuideMovingItems.Add(ClickedItem);
+        }
+
+        bool IsAlignmentGuideReferenceExcluded(IUXItem candidate)
+        {
+            IItem current = candidate;
+            while (current != null)
+            {
+                IUXItem currentUXItem = current as IUXItem;
+                if (currentUXItem != null &&
+                    alignmentGuideMovingItems.Contains(currentUXItem))
+                    return true;
+
+                current = current.ParentItem;
+            }
+
+            return false;
+        }
+
+        void BuildAlignmentGuideReferenceIndex()
+        {
+            verticalAlignmentReferenceEdgesByX.Clear();
+            horizontalAlignmentReferenceEdgesByY.Clear();
+
+            CaptureAlignmentGuideMovingItems();
+
+            foreach (IUXItem candidate in Items_all)
+            {
+                if (candidate == null ||
+                    IsAlignmentGuideReferenceExcluded(candidate))
+                    continue;
+
+                Rect candidateBounds;
+                if (!TryGetItemBoundsOnVisualiserCanvas(
+                    candidate,
+                    out candidateBounds))
+                    continue;
+
+                long leftKey =
+                    GetAlignmentGuideCoordinateKey(candidateBounds.Left);
+                long rightKey =
+                    GetAlignmentGuideCoordinateKey(candidateBounds.Right);
+                long topKey =
+                    GetAlignmentGuideCoordinateKey(candidateBounds.Top);
+                long bottomKey =
+                    GetAlignmentGuideCoordinateKey(candidateBounds.Bottom);
+
+                IncludeAlignmentReferenceEdge(
+                    verticalAlignmentReferenceEdgesByX,
+                    leftKey,
+                    candidateBounds.Left,
+                    candidateBounds.Top,
+                    candidateBounds.Bottom);
+
+                if (rightKey != leftKey)
+                    IncludeAlignmentReferenceEdge(
+                        verticalAlignmentReferenceEdgesByX,
+                        rightKey,
+                        candidateBounds.Right,
+                        candidateBounds.Top,
+                        candidateBounds.Bottom);
+
+                IncludeAlignmentReferenceEdge(
+                    horizontalAlignmentReferenceEdgesByY,
+                    topKey,
+                    candidateBounds.Top,
+                    candidateBounds.Left,
+                    candidateBounds.Right);
+
+                if (bottomKey != topKey)
+                    IncludeAlignmentReferenceEdge(
+                        horizontalAlignmentReferenceEdgesByY,
+                        bottomKey,
+                        candidateBounds.Bottom,
+                        candidateBounds.Left,
+                        candidateBounds.Right);
+            }
+
+            verticalAlignmentReferenceCoordinateKeys.Clear();
+            foreach (long coordinateKey in
+                verticalAlignmentReferenceEdgesByX.Keys)
+                verticalAlignmentReferenceCoordinateKeys.Add(
+                    coordinateKey);
+            verticalAlignmentReferenceCoordinateKeys.Sort();
+
+            horizontalAlignmentReferenceCoordinateKeys.Clear();
+            foreach (long coordinateKey in
+                horizontalAlignmentReferenceEdgesByY.Keys)
+                horizontalAlignmentReferenceCoordinateKeys.Add(
+                    coordinateKey);
+            horizontalAlignmentReferenceCoordinateKeys.Sort();
+
+            alignmentGuideReferenceIndexReady = true;
+        }
+
+        void EnsureAlignmentGuideReferenceIndex()
+        {
+            if (!alignmentGuideReferenceIndexReady)
+                BuildAlignmentGuideReferenceIndex();
+        }
+
+        double GetAlignmentGuideSnapDistanceInCanvasCoordinates()
+        {
+            double visualiserScale = Math.Abs(prev_Scale);
+            if (visualiserScale <= 0)
+                visualiserScale = 1;
+
+            return AlignmentGuideSnapDistanceInScreenDips /
+                visualiserScale;
+        }
+
+        static bool TryGetNearestAlignmentReference(
+            double coordinate,
+            List<long> sortedCoordinateKeys,
+            Dictionary<long, AlignmentGuideRange> edgeIndex,
+            double maximumDistance,
+            out AlignmentGuideRange nearestRange,
+            out double correction)
+        {
+            nearestRange = new AlignmentGuideRange();
+            correction = 0;
+
+            if (sortedCoordinateKeys.Count == 0)
+                return false;
+
+            double coordinateKey =
+                coordinate / AlignmentGuideCoordinateQuantum;
+            int low = 0;
+            int high = sortedCoordinateKeys.Count;
+
+            while (low < high)
+            {
+                int middle = low + ((high - low) / 2);
+                if (sortedCoordinateKeys[middle] < coordinateKey)
+                    low = middle + 1;
+                else
+                    high = middle;
+            }
+
+            bool found = false;
+            double bestDistance = double.PositiveInfinity;
+            int firstCandidateIndex = Math.Max(0, low - 1);
+            int lastCandidateIndex = Math.Min(
+                sortedCoordinateKeys.Count - 1,
+                low);
+
+            for (int candidateIndex = firstCandidateIndex;
+                candidateIndex <= lastCandidateIndex;
+                candidateIndex++)
+            {
+                AlignmentGuideRange candidateRange =
+                    edgeIndex[
+                        sortedCoordinateKeys[candidateIndex]];
+                double candidateCorrection =
+                    candidateRange.Coordinate - coordinate;
+                double candidateDistance =
+                    Math.Abs(candidateCorrection);
+
+                if (candidateDistance > maximumDistance ||
+                    candidateDistance >= bestDistance)
+                    continue;
+
+                found = true;
+                bestDistance = candidateDistance;
+                correction = candidateCorrection;
+                nearestRange = candidateRange;
+            }
+
+            return found;
+        }
+
+        static void ConsiderBestAlignmentSnapCorrection(
+            double coordinate,
+            List<long> sortedCoordinateKeys,
+            Dictionary<long, AlignmentGuideRange> edgeIndex,
+            double maximumDistance,
+            ref bool found,
+            ref double bestCorrection)
+        {
+            AlignmentGuideRange nearestRange;
+            double correction;
+
+            if (!TryGetNearestAlignmentReference(
+                coordinate,
+                sortedCoordinateKeys,
+                edgeIndex,
+                maximumDistance,
+                out nearestRange,
+                out correction))
+                return;
+
+            if (!found ||
+                Math.Abs(correction) <
+                    Math.Abs(bestCorrection))
+            {
+                found = true;
+                bestCorrection = correction;
+            }
+        }
+
+        void IncludeActiveVerticalAlignmentGuide(
+            double coordinate,
+            double movingMinimum,
+            double movingMaximum)
+        {
+            long coordinateKey =
+                GetAlignmentGuideCoordinateKey(coordinate);
+            AlignmentGuideRange referenceRange;
+
+            if (!verticalAlignmentReferenceEdgesByX.TryGetValue(
+                coordinateKey,
+                out referenceRange))
+                return;
+
+            AlignmentGuideSegment segment;
+            if (activeVerticalAlignmentGuides.TryGetValue(
+                coordinateKey,
+                out segment))
+            {
+                segment.Minimum = Math.Min(
+                    segment.Minimum,
+                    movingMinimum);
+                segment.Maximum = Math.Max(
+                    segment.Maximum,
+                    movingMaximum);
+            }
+            else
+            {
+                segment = new AlignmentGuideSegment
+                {
+                    Coordinate = referenceRange.Coordinate,
+                    Minimum = Math.Min(
+                        movingMinimum,
+                        referenceRange.Minimum),
+                    Maximum = Math.Max(
+                        movingMaximum,
+                        referenceRange.Maximum)
+                };
+            }
+
+            activeVerticalAlignmentGuides[coordinateKey] = segment;
+        }
+
+        void IncludeActiveHorizontalAlignmentGuide(
+            double coordinate,
+            double movingMinimum,
+            double movingMaximum)
+        {
+            long coordinateKey =
+                GetAlignmentGuideCoordinateKey(coordinate);
+            AlignmentGuideRange referenceRange;
+
+            if (!horizontalAlignmentReferenceEdgesByY.TryGetValue(
+                coordinateKey,
+                out referenceRange))
+                return;
+
+            AlignmentGuideSegment segment;
+            if (activeHorizontalAlignmentGuides.TryGetValue(
+                coordinateKey,
+                out segment))
+            {
+                segment.Minimum = Math.Min(
+                    segment.Minimum,
+                    movingMinimum);
+                segment.Maximum = Math.Max(
+                    segment.Maximum,
+                    movingMaximum);
+            }
+            else
+            {
+                segment = new AlignmentGuideSegment
+                {
+                    Coordinate = referenceRange.Coordinate,
+                    Minimum = Math.Min(
+                        movingMinimum,
+                        referenceRange.Minimum),
+                    Maximum = Math.Max(
+                        movingMaximum,
+                        referenceRange.Maximum)
+                };
+            }
+
+            activeHorizontalAlignmentGuides[coordinateKey] = segment;
+        }
+
+        void IncludeAlignmentGuidesForMovingBounds(Rect movingBounds)
+        {
+            long leftKey =
+                GetAlignmentGuideCoordinateKey(movingBounds.Left);
+            long rightKey =
+                GetAlignmentGuideCoordinateKey(movingBounds.Right);
+            long topKey =
+                GetAlignmentGuideCoordinateKey(movingBounds.Top);
+            long bottomKey =
+                GetAlignmentGuideCoordinateKey(movingBounds.Bottom);
+
+            IncludeActiveVerticalAlignmentGuide(
+                movingBounds.Left,
+                movingBounds.Top,
+                movingBounds.Bottom);
+
+            if (rightKey != leftKey)
+                IncludeActiveVerticalAlignmentGuide(
+                    movingBounds.Right,
+                    movingBounds.Top,
+                    movingBounds.Bottom);
+
+            IncludeActiveHorizontalAlignmentGuide(
+                movingBounds.Top,
+                movingBounds.Left,
+                movingBounds.Right);
+
+            if (bottomKey != topKey)
+                IncludeActiveHorizontalAlignmentGuide(
+                    movingBounds.Bottom,
+                    movingBounds.Left,
+                    movingBounds.Right);
+        }
+
+        bool TryGetMovingSpriteBounds(
+            Rectangle movingSprite,
+            out Rect bounds)
+        {
+            bounds = Rect.Empty;
+
+            double left = Canvas.GetLeft(movingSprite);
+            double top = Canvas.GetTop(movingSprite);
+            double width = movingSprite.Width;
+            double height = movingSprite.Height;
+
+            if (double.IsNaN(left) ||
+                double.IsNaN(top) ||
+                double.IsNaN(width) ||
+                double.IsNaN(height) ||
+                width <= 0 ||
+                height <= 0)
+                return false;
+
+            bounds = new Rect(left, top, width, height);
+            return true;
+        }
+
+        void ApplySingleItemMoveAlignmentSnap(
+            ref double left,
+            ref double top,
+            double width,
+            double height)
+        {
+            EnsureAlignmentGuideReferenceIndex();
+
+            double maximumDistance =
+                GetAlignmentGuideSnapDistanceInCanvasCoordinates();
+            bool horizontalCorrectionFound = false;
+            bool verticalCorrectionFound = false;
+            double horizontalCorrection = 0;
+            double verticalCorrection = 0;
+
+            ConsiderBestAlignmentSnapCorrection(
+                left,
+                verticalAlignmentReferenceCoordinateKeys,
+                verticalAlignmentReferenceEdgesByX,
+                maximumDistance,
+                ref horizontalCorrectionFound,
+                ref horizontalCorrection);
+            ConsiderBestAlignmentSnapCorrection(
+                left + width,
+                verticalAlignmentReferenceCoordinateKeys,
+                verticalAlignmentReferenceEdgesByX,
+                maximumDistance,
+                ref horizontalCorrectionFound,
+                ref horizontalCorrection);
+            ConsiderBestAlignmentSnapCorrection(
+                top,
+                horizontalAlignmentReferenceCoordinateKeys,
+                horizontalAlignmentReferenceEdgesByY,
+                maximumDistance,
+                ref verticalCorrectionFound,
+                ref verticalCorrection);
+            ConsiderBestAlignmentSnapCorrection(
+                top + height,
+                horizontalAlignmentReferenceCoordinateKeys,
+                horizontalAlignmentReferenceEdgesByY,
+                maximumDistance,
+                ref verticalCorrectionFound,
+                ref verticalCorrection);
+
+            if (horizontalCorrectionFound)
+                left += horizontalCorrection;
+
+            if (verticalCorrectionFound)
+                top += verticalCorrection;
+        }
+
+        void MoveAndResizeClickedItemWithAlignmentSnap(
+            Point mousePosition,
+            FrameworkElement clickedItemElement,
+            double currentLeft,
+            double currentTop)
+        {
+            double left = currentLeft;
+            double top = currentTop;
+            double width = clickedItemElement.ActualWidth;
+            double height = clickedItemElement.ActualHeight;
+            bool resizeLeft = false;
+            bool resizeRight = false;
+            bool resizeTop = false;
+            bool resizeBottom = false;
+
+            switch (ClickTarget)
+            {
+                case ClickTargetEnum.AnchorLeftTop:
+                    left =
+                        mousePosition.X -
+                        ClickPositionX_ItemCordinates;
+                    top =
+                        mousePosition.Y -
+                        ClickPositionY_ItemCordinates;
+                    width =
+                        clickedItemElement.ActualWidth -
+                        (left - currentLeft);
+                    height =
+                        clickedItemElement.ActualHeight -
+                        (top - currentTop);
+                    resizeLeft = true;
+                    resizeTop = true;
+                    break;
+
+                case ClickTargetEnum.AnchorMiddleTop:
+                    top =
+                        mousePosition.Y -
+                        ClickPositionY_ItemCordinates;
+                    height =
+                        clickedItemElement.ActualHeight -
+                        (top - currentTop);
+                    resizeTop = true;
+                    break;
+
+                case ClickTargetEnum.AnchorLeftMiddle:
+                    left =
+                        mousePosition.X -
+                        ClickPositionX_ItemCordinates;
+                    width =
+                        clickedItemElement.ActualWidth -
+                        (left - currentLeft);
+                    resizeLeft = true;
+                    break;
+
+                case ClickTargetEnum.AnchorRightMiddle:
+                    width =
+                        mousePosition.X -
+                        currentLeft -
+                        ClickPositionX_AnchorCordinates;
+                    resizeRight = true;
+                    break;
+
+                case ClickTargetEnum.AnchorLeftBottom:
+                    left =
+                        mousePosition.X -
+                        ClickPositionX_ItemCordinates;
+                    width =
+                        clickedItemElement.ActualWidth -
+                        (left - currentLeft);
+                    height =
+                        mousePosition.Y -
+                        currentTop -
+                        ClickPositionY_AnchorCordinates;
+                    resizeLeft = true;
+                    resizeBottom = true;
+                    break;
+
+                case ClickTargetEnum.AnchorMiddleBottom:
+                    height =
+                        mousePosition.Y -
+                        currentTop -
+                        ClickPositionY_AnchorCordinates;
+                    resizeBottom = true;
+                    break;
+
+                case ClickTargetEnum.AnchorRightBottom:
+                    width =
+                        mousePosition.X -
+                        currentLeft -
+                        ClickPositionX_AnchorCordinates;
+                    height =
+                        mousePosition.Y -
+                        currentTop -
+                        ClickPositionY_AnchorCordinates;
+                    resizeRight = true;
+                    resizeBottom = true;
+                    break;
+
+                default:
+                    return;
+            }
+
+            if (width < 0 || height < 0)
+                return;
+
+            EnsureAlignmentGuideReferenceIndex();
+
+            double maximumDistance =
+                GetAlignmentGuideSnapDistanceInCanvasCoordinates();
+            bool correctionFound = false;
+            double correction = 0;
+
+            if (resizeLeft || resizeRight)
+            {
+                double resizedVerticalEdge =
+                    resizeLeft ? left : left + width;
+                ConsiderBestAlignmentSnapCorrection(
+                    resizedVerticalEdge,
+                    verticalAlignmentReferenceCoordinateKeys,
+                    verticalAlignmentReferenceEdgesByX,
+                    maximumDistance,
+                    ref correctionFound,
+                    ref correction);
+
+                if (correctionFound)
+                {
+                    if (resizeLeft &&
+                        width - correction >= 0)
+                    {
+                        left += correction;
+                        width -= correction;
+                    }
+                    else if (resizeRight &&
+                        width + correction >= 0)
+                        width += correction;
+                }
+            }
+
+            correctionFound = false;
+            correction = 0;
+
+            if (resizeTop || resizeBottom)
+            {
+                double resizedHorizontalEdge =
+                    resizeTop ? top : top + height;
+                ConsiderBestAlignmentSnapCorrection(
+                    resizedHorizontalEdge,
+                    horizontalAlignmentReferenceCoordinateKeys,
+                    horizontalAlignmentReferenceEdgesByY,
+                    maximumDistance,
+                    ref correctionFound,
+                    ref correction);
+
+                if (correctionFound)
+                {
+                    if (resizeTop &&
+                        height - correction >= 0)
+                    {
+                        top += correction;
+                        height -= correction;
+                    }
+                    else if (resizeBottom &&
+                        height + correction >= 0)
+                        height += correction;
+                }
+            }
+
+            ClickedItem.MoveAndResizeItem(
+                left,
+                top,
+                width,
+                height);
+        }
+
+        void EnsureAlignmentGuideLinesAttached()
+        {
+            if (alignmentGuideLinesAttached)
+                return;
+
+            foreach (Line alignmentGuideLine in alignmentGuideLines)
+                Canvas.Children.Add(alignmentGuideLine);
+
+            alignmentGuideLinesAttached = true;
+        }
+
+        Line GetAlignmentGuideLine(int index)
+        {
+            if (index < alignmentGuideLines.Count)
+                return alignmentGuideLines[index];
+
+            Line alignmentGuideLine = new Line
+            {
+                Stroke =
+                    (Brush)FindResource(
+                        "0VeryLightHighlightBrush"),
+                StrokeThickness = 1,
+                StrokeDashArray =
+                    new DoubleCollection(
+                        new double[] { 3, 3 }),
+                IsHitTestVisible = false,
+                SnapsToDevicePixels = true
+            };
+
+            Panel.SetZIndex(alignmentGuideLine, 100001);
+            Canvas.Children.Add(alignmentGuideLine);
+            alignmentGuideLines.Add(alignmentGuideLine);
+
+            return alignmentGuideLine;
+        }
+
+        void RenderActiveAlignmentGuides()
+        {
+            int lineIndex = 0;
+
+            if (activeVerticalAlignmentGuides.Count > 0 ||
+                activeHorizontalAlignmentGuides.Count > 0)
+                EnsureAlignmentGuideLinesAttached();
+
+            foreach (AlignmentGuideSegment segment in
+                activeVerticalAlignmentGuides.Values)
+            {
+                Line alignmentGuideLine =
+                    GetAlignmentGuideLine(lineIndex++);
+                alignmentGuideLine.X1 = segment.Coordinate;
+                alignmentGuideLine.X2 = segment.Coordinate;
+                alignmentGuideLine.Y1 = segment.Minimum;
+                alignmentGuideLine.Y2 = segment.Maximum;
+                alignmentGuideLine.Visibility = Visibility.Visible;
+            }
+
+            foreach (AlignmentGuideSegment segment in
+                activeHorizontalAlignmentGuides.Values)
+            {
+                Line alignmentGuideLine =
+                    GetAlignmentGuideLine(lineIndex++);
+                alignmentGuideLine.X1 = segment.Minimum;
+                alignmentGuideLine.X2 = segment.Maximum;
+                alignmentGuideLine.Y1 = segment.Coordinate;
+                alignmentGuideLine.Y2 = segment.Coordinate;
+                alignmentGuideLine.Visibility = Visibility.Visible;
+            }
+
+            for (int i = lineIndex;
+                i < alignmentGuideLines.Count;
+                i++)
+                alignmentGuideLines[i].Visibility =
+                    Visibility.Collapsed;
+        }
+
+        void ProcessAlignmentGuideUpdate()
+        {
+            alignmentGuideUpdateOperation = null;
+
+            if (!alignmentGuideInteractionActive)
+                return;
+
+            if (!alignmentGuideReferenceIndexReady)
+                BuildAlignmentGuideReferenceIndex();
+
+            activeVerticalAlignmentGuides.Clear();
+            activeHorizontalAlignmentGuides.Clear();
+
+            if (IsMultiSelectionMoving &&
+                MovingSprites.Count > 0)
+            {
+                foreach (Rectangle movingSprite in MovingSprites)
+                {
+                    Rect movingBounds;
+                    if (TryGetMovingSpriteBounds(
+                        movingSprite,
+                        out movingBounds))
+                        IncludeAlignmentGuidesForMovingBounds(
+                            movingBounds);
+                }
+            }
+            else
+            {
+                Rect movingBounds;
+                if (TryGetItemBoundsOnVisualiserCanvas(
+                    ClickedItem,
+                    out movingBounds))
+                    IncludeAlignmentGuidesForMovingBounds(
+                        movingBounds);
+            }
+
+            RenderActiveAlignmentGuides();
+        }
+
+        void RequestAlignmentGuideUpdate()
+        {
+            alignmentGuideInteractionActive = true;
+
+            if (alignmentGuideUpdateOperation != null)
+                return;
+
+            alignmentGuideUpdateOperation = Dispatcher.BeginInvoke(
+                processAlignmentGuideUpdateAction,
+                System.Windows.Threading.DispatcherPriority.Render);
+        }
+
+        void ClearAlignmentGuides()
+        {
+            if (!alignmentGuideInteractionActive &&
+                !alignmentGuideReferenceIndexReady &&
+                alignmentGuideUpdateOperation == null)
+                return;
+
+            alignmentGuideInteractionActive = false;
+            alignmentGuideReferenceIndexReady = false;
+
+            if (alignmentGuideUpdateOperation != null)
+            {
+                alignmentGuideUpdateOperation.Abort();
+                alignmentGuideUpdateOperation = null;
+            }
+
+            verticalAlignmentReferenceEdgesByX.Clear();
+            horizontalAlignmentReferenceEdgesByY.Clear();
+            verticalAlignmentReferenceCoordinateKeys.Clear();
+            horizontalAlignmentReferenceCoordinateKeys.Clear();
+            activeVerticalAlignmentGuides.Clear();
+            activeHorizontalAlignmentGuides.Clear();
+            alignmentGuideMovingItems.Clear();
+
+            foreach (Line alignmentGuideLine in alignmentGuideLines)
+                alignmentGuideLine.Visibility =
+                    Visibility.Collapsed;
+        }
+
         void SelectItemsBySelectionArea()
         {
             ////////////////////////////////////////
@@ -1254,7 +3109,9 @@ namespace m0.UIWpf.UX
             {
                     ScaleChange();
 
+                    ClearAlignmentGuides();
                     Canvas.Children.Clear();
+                    alignmentGuideLinesAttached = false;
 
                     Width = Size.Width;
                     Height = Size.Height;
@@ -1321,6 +3178,7 @@ namespace m0.UIWpf.UX
                         deferHostItemUpdateLayout = false;
                         EndSuspendAutomaticDiagramLineUpdates();
                         UpdateAllDiagramLineGeometries();
+                        RequestMiniaturesUpdate(true);
                     }
             }
         }
@@ -1375,6 +3233,7 @@ namespace m0.UIWpf.UX
             ScrollViewerParent = GetScrollViewerParent(this);
 
             Paint();
+            RequestMiniaturesUpdate(true);
 
             if (IsFirstPainted)
                 this.Loaded -= OnLoad;
@@ -1606,6 +3465,73 @@ namespace m0.UIWpf.UX
 
         List<Rectangle> MovingSprites = new List<Rectangle>();
 
+        void ApplyMultiSelectionMoveAlignmentSnap(
+            ref double horizontalOffset,
+            ref double verticalOffset)
+        {
+            EnsureAlignmentGuideReferenceIndex();
+
+            double maximumDistance =
+                GetAlignmentGuideSnapDistanceInCanvasCoordinates();
+            bool horizontalCorrectionFound = false;
+            bool verticalCorrectionFound = false;
+            double horizontalCorrection = 0;
+            double verticalCorrection = 0;
+
+            foreach (Rectangle movingSprite in MovingSprites)
+            {
+                IUXItem movingItem =
+                    movingSprite.Tag as IUXItem;
+                if (movingItem == null ||
+                    movingItem.Position == null)
+                    continue;
+
+                double left =
+                    movingItem.Position.X +
+                    horizontalOffset;
+                double top =
+                    movingItem.Position.Y +
+                    verticalOffset;
+                double right = left + movingSprite.Width;
+                double bottom = top + movingSprite.Height;
+
+                ConsiderBestAlignmentSnapCorrection(
+                    left,
+                    verticalAlignmentReferenceCoordinateKeys,
+                    verticalAlignmentReferenceEdgesByX,
+                    maximumDistance,
+                    ref horizontalCorrectionFound,
+                    ref horizontalCorrection);
+                ConsiderBestAlignmentSnapCorrection(
+                    right,
+                    verticalAlignmentReferenceCoordinateKeys,
+                    verticalAlignmentReferenceEdgesByX,
+                    maximumDistance,
+                    ref horizontalCorrectionFound,
+                    ref horizontalCorrection);
+                ConsiderBestAlignmentSnapCorrection(
+                    top,
+                    horizontalAlignmentReferenceCoordinateKeys,
+                    horizontalAlignmentReferenceEdgesByY,
+                    maximumDistance,
+                    ref verticalCorrectionFound,
+                    ref verticalCorrection);
+                ConsiderBestAlignmentSnapCorrection(
+                    bottom,
+                    horizontalAlignmentReferenceCoordinateKeys,
+                    horizontalAlignmentReferenceEdgesByY,
+                    maximumDistance,
+                    ref verticalCorrectionFound,
+                    ref verticalCorrection);
+            }
+
+            if (horizontalCorrectionFound)
+                horizontalOffset += horizontalCorrection;
+
+            if (verticalCorrectionFound)
+                verticalOffset += verticalCorrection;
+        }
+
         void AddOrMoveMultiSelectionMovingSprites(double x, double y)
         {
             if (IsMultiSelectionMoving == false)
@@ -1641,20 +3567,28 @@ namespace m0.UIWpf.UX
                         MovingSprites.Add(r);
                     }
             }
-            else
-            {
-                foreach (Rectangle r in MovingSprites)
-                {
-                    IUXItem i = (IUXItem)r.Tag;
 
-                    Canvas.SetLeft(r, i.Position.X + x);
-                    Canvas.SetTop(r, i.Position.Y + y);
-                }
+            ApplyMultiSelectionMoveAlignmentSnap(
+                ref x,
+                ref y);
+
+            multiSelectionSnappedOffsetX = x;
+            multiSelectionSnappedOffsetY = y;
+
+            foreach (Rectangle r in MovingSprites)
+            {
+                IUXItem i = (IUXItem)r.Tag;
+
+                Canvas.SetLeft(r, i.Position.X + x);
+                Canvas.SetTop(r, i.Position.Y + y);
             }
         }
 
         void RemoveMultiSelectionMovingSprites(double x, double y)
         {
+            x = multiSelectionSnappedOffsetX;
+            y = multiSelectionSnappedOffsetY;
+
             IsMultiSelectionMoving = false;
 
             foreach (Rectangle r in MovingSprites)
@@ -1677,6 +3611,10 @@ namespace m0.UIWpf.UX
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             //////////////////////////////////////// 
+
+            multiSelectionSnappedOffsetX = 0;
+            multiSelectionSnappedOffsetY = 0;
+            RequestMiniaturesUpdate(true);
         }
 
         //protected void MouseButtonDownHandler(object sender, MouseButtonEventArgs e)
@@ -1767,6 +3705,7 @@ namespace m0.UIWpf.UX
             }
             finally
             {
+                ClearAlignmentGuides();
                 EndItemMoveGraphInteractionIfNeeded();
             }
         }
@@ -1843,7 +3782,10 @@ namespace m0.UIWpf.UX
                 }
 
                 if (!(ClickedItem is FrameworkElement))
+                {
+                    ClearAlignmentGuides();
                     return;
+                }
 
                 FrameworkElement ClickedItem_FrameworkElement = (FrameworkElement)ClickedItem;
 
@@ -1856,80 +3798,31 @@ namespace m0.UIWpf.UX
 
                 double ClickedItem_left = clickedItem_absolute.X;
                 double ClickedItem_top = clickedItem_absolute.Y;
+                Point mousePosition = e.GetPosition(Canvas);
 
                 //
 
-                if (ClickTarget == ClickTargetEnum.AnchorLeftTop)
-                {
-                    ClickedItem.MoveAndResizeItem(
-                        (e.GetPosition(Canvas).X - ClickPositionX_ItemCordinates),
-                        (e.GetPosition(Canvas).Y - ClickPositionY_ItemCordinates),
-                        ClickedItem_FrameworkElement.ActualWidth - ((e.GetPosition(Canvas).X - ClickPositionX_ItemCordinates) - ClickedItem_left),
-                        ClickedItem_FrameworkElement.ActualHeight - ((e.GetPosition(Canvas).Y - ClickPositionY_ItemCordinates) - ClickedItem_top));
-                }
-
-                if (ClickTarget == ClickTargetEnum.AnchorMiddleTop)
-                {
-                    ClickedItem.MoveAndResizeItem(
+                if (IsResizeClickTarget(ClickTarget))
+                    MoveAndResizeClickedItemWithAlignmentSnap(
+                        mousePosition,
+                        ClickedItem_FrameworkElement,
                         ClickedItem_left,
-                        (e.GetPosition(Canvas).Y - ClickPositionY_ItemCordinates),
-                        ClickedItem_FrameworkElement.ActualWidth,
-                       ClickedItem_FrameworkElement.ActualHeight - ((e.GetPosition(Canvas).Y - ClickPositionY_ItemCordinates) - ClickedItem_top));
-                }
+                        ClickedItem_top);
 
                 if (ClickTarget == ClickTargetEnum.AnchorRightTop_CreateDiagramLine)
-                    CreateAndUpdateCreateDiagramLine(e.GetPosition(Canvas).X, e.GetPosition(Canvas).Y);
+                    CreateAndUpdateCreateDiagramLine(
+                        mousePosition.X,
+                        mousePosition.Y);
 
                 if (ClickTarget == ClickTargetEnum.AnchorRightTop_SubItem_CreateDiagramLine)
-                    CreateAndUpdateCreateDiagramLine(e.GetPosition(Canvas).X, e.GetPosition(Canvas).Y);
+                    CreateAndUpdateCreateDiagramLine(
+                        mousePosition.X,
+                        mousePosition.Y);
 
                 if (ClickTarget == ClickTargetEnum.AnchorRightTop_MoveDiagramLine)
-                    CreateAndUpdateMoveDiagramLine(e.GetPosition(Canvas).X, e.GetPosition(Canvas).Y);
-
-                if (ClickTarget == ClickTargetEnum.AnchorLeftMiddle)
-                {
-                    ClickedItem.MoveAndResizeItem(
-                        (e.GetPosition(Canvas).X - ClickPositionX_ItemCordinates),
-                        ClickedItem_top,
-                        ClickedItem_FrameworkElement.ActualWidth - ((e.GetPosition(Canvas).X - ClickPositionX_ItemCordinates) - ClickedItem_left),
-                        ClickedItem_FrameworkElement.ActualHeight);
-                }
-
-                if (ClickTarget == ClickTargetEnum.AnchorRightMiddle)
-                {
-                    ClickedItem.MoveAndResizeItem(
-                        ClickedItem_left,
-                        ClickedItem_top,
-                        e.GetPosition(Canvas).X - ClickedItem_left - ClickPositionX_AnchorCordinates,
-                        ClickedItem_FrameworkElement.ActualHeight);
-                }
-
-                if (ClickTarget == ClickTargetEnum.AnchorLeftBottom)
-                {
-                    ClickedItem.MoveAndResizeItem(
-                      (e.GetPosition(Canvas).X - ClickPositionX_ItemCordinates),
-                      ClickedItem_top,
-                      ClickedItem_FrameworkElement.ActualWidth - ((e.GetPosition(Canvas).X - ClickPositionX_ItemCordinates) - ClickedItem_left),
-                     e.GetPosition(Canvas).Y - ClickedItem_top - ClickPositionY_AnchorCordinates);
-                }
-
-                if (ClickTarget == ClickTargetEnum.AnchorMiddleBottom)
-                {
-                    ClickedItem.MoveAndResizeItem(
-                      ClickedItem_left,
-                      ClickedItem_top,
-                      ClickedItem_FrameworkElement.ActualWidth,
-                    e.GetPosition(Canvas).Y - ClickedItem_top - ClickPositionY_AnchorCordinates); ;
-                }
-
-                if (ClickTarget == ClickTargetEnum.AnchorRightBottom)
-                {
-                    ClickedItem.MoveAndResizeItem(
-                      ClickedItem_left,
-                      ClickedItem_top,
-                      e.GetPosition(Canvas).X - ClickedItem_left - ClickPositionX_AnchorCordinates,
-                    e.GetPosition(Canvas).Y - ClickedItem_top - ClickPositionY_AnchorCordinates);
-                }
+                    CreateAndUpdateMoveDiagramLine(
+                        mousePosition.X,
+                        mousePosition.Y);
 
                 if (ClickTarget == ClickTargetEnum.Item) // item move
                 {
@@ -1955,13 +3848,42 @@ namespace m0.UIWpf.UX
 
                         BeginItemMoveGraphInteractionIfNeeded();
 
-                        ClickedItem.MoveItem((e.GetPosition(Canvas).X - ClickPositionX_ItemCordinates),
-                            (e.GetPosition(Canvas).Y - ClickPositionY_ItemCordinates), false);
+                        double desiredLeft =
+                            mousePosition.X -
+                            ClickPositionX_ItemCordinates;
+                        double desiredTop =
+                            mousePosition.Y -
+                            ClickPositionY_ItemCordinates;
+                        Rect currentBounds;
+
+                        if (TryGetItemBoundsOnVisualiserCanvas(
+                            ClickedItem,
+                            out currentBounds))
+                            ApplySingleItemMoveAlignmentSnap(
+                                ref desiredLeft,
+                                ref desiredTop,
+                                currentBounds.Width,
+                                currentBounds.Height);
+
+                        ClickedItem.MoveItem(
+                            desiredLeft,
+                            desiredTop,
+                            false);
                     }
                 }
+
+                if (ClickTarget == ClickTargetEnum.Item ||
+                    IsResizeClickTarget(ClickTarget))
+                {
+                    RequestAlignmentGuideUpdate();
+                    RequestMiniaturesUpdate(true);
+                }
+                else
+                    ClearAlignmentGuides();
             }
             else
             {
+                ClearAlignmentGuides();
                 CheckIfLineNeedsSelection(e.GetPosition(Canvas));
             }
         }
@@ -2212,6 +4134,13 @@ namespace m0.UIWpf.UX
             if (IsDisposed == false)
             {
                 IsDisposed = true;
+                DetachMiniatures();
+
+                if (miniaturesUpdateOperation != null)
+                {
+                    miniaturesUpdateOperation.Abort();
+                    miniaturesUpdateOperation = null;
+                }
 
                 if (IsVisualiser)
                 {
@@ -4155,6 +6084,7 @@ namespace m0.UIWpf.UX
                 i.MoveItem(left, top, false);
             }
             _pendingCenters = null;
+            RequestMiniaturesUpdate(true);
         }
 
         private Dictionary<IUXItem, List<IUXItem>> BuildUndirectedAdjacencyUX(List<IUXItem> items)

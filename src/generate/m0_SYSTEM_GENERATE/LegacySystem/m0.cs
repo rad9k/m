@@ -3538,7 +3538,7 @@ namespace m0
                 + ",Class:HasColor{Attribute:Color{$MinCardinality:0,$MaxCardinality:1}}"
                 + ",Class:Item{Aggregation:Item{$MinCardinality:0,$MaxCardinality:-1},Aggregation:VolatileItem{$MinCardinality:0,$MaxCardinality:-1}}"
                 + ",Class:UXItem{Attribute:Scale{$MinCardinality:1,$MaxCardinality:1,$DisplayLarger:,$DefaultValue:100},Attribute:DesignMode{$MinCardinality:0,$MaxCardinality:1},Attribute:Size{$MinCardinality:0,$MaxCardinality:1},Attribute:Position{$MinCardinality:0,$MaxCardinality:1},Attribute:Layout{$MinCardinality:0,$MaxCardinality:1},Attribute:BackgroundColor{$MinCardinality:0,$MaxCardinality:1},Attribute:ForegroundColor{$MinCardinality:0,$MaxCardinality:1},Attribute:BorderColor{$MinCardinality:0,$MaxCardinality:1},Attribute:BorderSize{MinValue:0,MaxValue:10,$MinCardinality:0,$MaxCardinality:1},Attribute:Gap{$MinCardinality:0,$MaxCardinality:1},Aggregation:Decorator{$MinCardinality:0,$MaxCardinality:-1},Association:UXTemplate{$MinCardinality:0,$MaxCardinality:1}}"
-                + ",Class:UXContainer{Association:NewItemUXTemplate{$MinCardinality:0,$MaxCardinality:1},Attribute:IsExpanded{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:CollapsedSize{$MinCardinality:0,$MaxCardinality:1},Attribute:ExpandedSize{$MinCardinality:0,$MaxCardinality:1},Attribute:SubItemsNotVisible{$MinCardinality:0,$MaxCardinality:1}}"
+                + ",Class:UXContainer{Association:NewItemUXTemplate{$MinCardinality:0,$MaxCardinality:1},Attribute:IsExpanded{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:CollapsedSize{$MinCardinality:0,$MaxCardinality:1},Attribute:ExpandedSize{$MinCardinality:0,$MaxCardinality:1},Attribute:SubItemsNotVisible{$MinCardinality:0,$MaxCardinality:1},Attribute:HasMiniatures{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True}}"
                 + ",Class:Size{Attribute:Width,Attribute:Height}"
                 + ",Class:Position{Attribute:X,Attribute:Y}"
                 + ",Enum:LayoutTypeEnum{EnumValue:Vertical,EnumValue:Horizontal,EnumValue:Wrap,EnumValue:Manual,EnumValue:Auto,EnumValue:Hidden}"
@@ -3669,6 +3669,10 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\UX\Size"));
 
             LegacySystem.Graph.EasyVertex.Get(smz, false, @"UX\UXContainer\SubItemsNotVisible").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Boolean"));
+
+            LegacySystem.Graph.EasyVertex.Get(smz, false, @"UX\UXContainer\HasMiniatures").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Boolean"));
 
@@ -4199,12 +4203,14 @@ namespace m0
 
             //
 
+            smzu.Get(false, @"UXContainer\HasMiniatures").AddEdge(sm.Get(false, @"?$Section"), View_section);
+
             smzu.Get(false, @"UXContainer\NewItemUXTemplate").AddEdge(sm.Get(false, @"?$Section"), HasBaseEdge_BaseEdge_section);
 
             Nesting_section = smzu.Get(false, @"UXContainer\IsExpanded").AddVertex(sm.Get(false, @"?$Section"), "Nesting");
             smzu.Get(false, @"UXContainer\CollapsedSize").AddEdge(sm.Get(false, @"?$Section"), Nesting_section);
             smzu.Get(false, @"UXContainer\ExpandedSize").AddEdge(sm.Get(false, @"?$Section"), Nesting_section);
-            smzu.Get(false, @"UXContainer\SubItemsNotVisible").AddEdge(sm.Get(false, @"?$Section"), Nesting_section);
+            smzu.Get(false, @"UXContainer\SubItemsNotVisible").AddEdge(sm.Get(false, @"?$Section"), Nesting_section);            
 
             smzu.Get(false, @"UXContainer\IsExpanded").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
             smzu.Get(false, @"UXContainer\CollapsedSize").AddEdge(sm.Get(false, @"?$Group"), Extra_group);
