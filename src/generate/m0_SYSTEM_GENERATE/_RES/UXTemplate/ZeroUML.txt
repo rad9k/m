@@ -1609,7 +1609,7 @@
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@DoNotShowInherited :: "True">
 			<@ItemVertex :: "">
-				<@$Inherits :: @ZeroUML\UseCaseItemVertex>
+				<@$Inherits :: @ZeroUML\Opacity>		
 				<@ImageItem\Filename :: "ZeroUML\UseCase\actor.png">
 				<@Size :: "">
 					<@Size\Width :: "47">
@@ -1624,6 +1624,10 @@
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Triangle>
 					<@LineDecorator\HideLabel :: "True">
 					
+		<"OpacityItemVertex">
+			<@UXItem\BackgroundColor :: "">
+				<@$Is :: @Color>
+				<@Color\Opacity :: "0">
 		<"StructureItemVertex">
 			<@UXItem\BackgroundColor :: @VeryVeryVeryLightCyan>
 		<"StructureContainerItemVertex">
