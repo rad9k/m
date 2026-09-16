@@ -1,0 +1,53 @@
+System\FormalTextLanguage\ZeroCode_VertexAndManyLines
+"Enterprise AI Architecture"
+	"yes"
+	<@UX\UXContainer :: "Component diagram">
+		<@$Is :: @UX\UXContainer>
+		<@IsExpanded :: "True">
+		<@HasMiniatures :: "True">
+		<@Scale :: "100">
+		<@BaseEdge :: "">
+			<@$Is :: @Edge>
+			<@From :: @'net10.0-windows7.0'\Examples\'Enterprise_AI_Architecture.m0t'>
+			<@Meta :: @System\Meta\Store\FileSystem\$Store>
+			<@To :: @$CodeRoot>
+		<@SelectedEdges :: "">
+		<@ShowSelectedEdgesBaseEdge :: "False">
+		<@Size :: "">
+			<@$Is :: @UX\Size>
+			<@Width :: "5000">
+			<@Height :: "5000">
+		<@NewItemUXTemplate :: @System\Data\UX\Templates\ZeroUML>
+		<@Item :: "">
+			<@$Is :: @UX\ContainerItem>
+			<@IsExpanded :: "True">
+			<@HasMiniatures :: "True">
+			<@Scale :: "100">
+			<@SelectedEdges :: "">
+			<@ShowSelectedEdgesBaseEdge :: "False">
+			<@ShowIcons :: "True">
+			<@FontSize :: "14">
+			<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+			<@Position :: "">
+				<@$Is :: @UX\Position>
+				<@X :: "402">
+				<@Y :: "92.84">
+			<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Database CONTAINER'>
+			<@ShowMeta :: "True">
+			<@BackgroundColor :: "VeryVeryVeryVeryLightCyan">
+				<@$Is :: @UX\Color>
+				<@Red :: "248">
+				<@Green :: "255">
+				<@Blue :: "255">
+				<@Opacity :: "255">
+			<@BaseEdge :: "">
+				<@$Is :: @Edge>
+				<@From :: @$Empty>
+				<@Meta :: @Structure\Database>
+				<@To :: @'AI lakehouse'>
+			<@Size :: "">
+				<@$Is :: @UX\Size>
+				<@Width :: "467.85333333333335">
+				<@Height :: "459">
+	<@Structure\Database :: "AI lakehouse">
+		<@$Is :: @Structure\Database>
