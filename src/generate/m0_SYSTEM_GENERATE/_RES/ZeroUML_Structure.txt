@@ -2,42 +2,45 @@
 	import @System\Meta\ZeroUML direct meta	
 	 
 	package "Structure"
-		"Component"
+		"StaticComponent"		
 			<@$InstanceCreationPriority :: "">
 			"Relation"
-				<@$EdgeTarget :: @Structure\Component>
-				<@$MinCardinality :: "0">
-				<@$MaxCardinality :: "-1">
-			"Create"
-				<@$EdgeTarget :: @Structure\Component>
-				<@$MinCardinality :: "0">
-				<@$MaxCardinality :: "-1">
-			"Read"
-				<@$EdgeTarget :: @Structure\Component>
-				<@$MinCardinality :: "0">
-				<@$MaxCardinality :: "-1">
-			"Write"
-				<@$EdgeTarget :: @Structure\Component>
+				<@$EdgeTarget :: @Structure\StaticComponent>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
 			"Depend"
-				<@$EdgeTarget :: @Structure\Component>
+				<@$EdgeTarget :: @Structure\StaticComponent>
 				<@$MinCardinality :: "0">
-				<@$MaxCardinality :: "-1">	
+				<@$MaxCardinality :: "-1">
+			"Contain"
+				<@$IsAggregation :: @$Empty>
+				<@$EdgeTarget :: @Structure\StaticComponent>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+		"Component"
+			<@$InstanceCreationPriority :: "">
+			inherits @Structure\StaticComponent			
+			"Create"
+				<@$EdgeTarget :: @Structure\StaticComponent>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+			"Read"
+				<@$EdgeTarget :: @Structure\StaticComponent>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+			"Write"
+				<@$EdgeTarget :: @Structure\StaticComponent>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">			
 			"Use"
-				<@$EdgeTarget :: @Structure\Component>
+				<@$EdgeTarget :: @Structure\StaticComponent>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
 			"Deploy"
 				<@$EdgeTarget :: @Structure\Machine>
 				<@$MinCardinality :: "0">
-				<@$MaxCardinality :: "-1">
-			"Contain"
-				<@$IsAggregation :: @$Empty>
-				<@$EdgeTarget :: @Structure\Component>
-				<@$MinCardinality :: "0">
-				<@$MaxCardinality :: "-1">
-			"Interface"				
+				<@$MaxCardinality :: "-1">			
+			"Implements"
 				<@$EdgeTarget :: @Structure\Interface>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
@@ -114,3 +117,17 @@
 		"Machine"
 			<@$InstanceCreationPriority :: "">
 			inherits @Structure\DeploymentTarget
+		"Model"
+			<@$InstanceCreationPriority :: "">
+			inherits @Structure\Data
+			"Instance"
+				<@$EdgeTarget :: @Structure\Data>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">			
+		"Data"
+			<@$InstanceCreationPriority :: "">
+			inherits @Structure\StaticComponent
+			"Model"
+				<@$EdgeTarget :: @Structure\Model>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
