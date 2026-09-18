@@ -17,9 +17,17 @@
 				<@$EdgeTarget :: @Structure\StaticComponent>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
+			"Deploy"
+				<@$EdgeTarget :: @Structure\Machine>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+			"Implements"
+				<@$EdgeTarget :: @Structure\Interface>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
 		"Component"
 			<@$InstanceCreationPriority :: "">
-			inherits @Structure\StaticComponent			
+			inherits @Structure\StaticComponent
 			"Create"
 				<@$EdgeTarget :: @Structure\StaticComponent>
 				<@$MinCardinality :: "0">
@@ -35,15 +43,7 @@
 			"Use"
 				<@$EdgeTarget :: @Structure\StaticComponent>
 				<@$MinCardinality :: "0">
-				<@$MaxCardinality :: "-1">
-			"Deploy"
-				<@$EdgeTarget :: @Structure\Machine>
-				<@$MinCardinality :: "0">
-				<@$MaxCardinality :: "-1">			
-			"Implements"
-				<@$EdgeTarget :: @Structure\Interface>
-				<@$MinCardinality :: "0">
-				<@$MaxCardinality :: "-1">
+				<@$MaxCardinality :: "-1">						
 		"Workstation"
 			<@$InstanceCreationPriority :: "">
 			inherits @Structure\Machine
@@ -83,7 +83,7 @@
 				<@$MaxCardinality :: "-1">
 		"OperatingSystem"
 			<@$InstanceCreationPriority :: "">
-			inherits @Structure\Enironment
+			inherits @Structure\Environment
 		"Interface"
 			<@$InstanceCreationPriority :: "">
 			"Method"
