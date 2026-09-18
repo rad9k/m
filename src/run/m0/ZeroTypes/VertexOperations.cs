@@ -974,9 +974,8 @@ namespace m0.ZeroTypes
                 return result;
 
             result.Add(typeVertex);
-
-            foreach (IEdge inheritsEdge in GraphUtil.GetQueryOut(typeVertex, "$Inherits", null))
-                result.Add(inheritsEdge.To);
+            result.UnionWith(
+                VertexHelper.GetInheritParents(typeVertex));
 
             return result;
         }
