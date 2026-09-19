@@ -2965,6 +2965,13 @@ namespace m0.UIWpf.UX
             {
                 foreach (Rectangle movingSprite in MovingSprites)
                 {
+                    IUXItem movingItem =
+                        movingSprite.Tag as IUXItem;
+                    if (movingItem != null &&
+                        multiSelectionItemsMovedBySelectedAncestor.Contains(
+                            movingItem))
+                        continue;
+
                     Rect movingBounds;
                     if (TryGetMovingSpriteBounds(
                         movingSprite,
@@ -3502,6 +3509,32 @@ namespace m0.UIWpf.UX
         bool IsMultiSelectionMoving = false;
 
         List<Rectangle> MovingSprites = new List<Rectangle>();
+        readonly List<IUXItem> multiSelectionMovingItems =
+            new List<IUXItem>();
+        readonly Dictionary<IUXItem, Rect> multiSelectionInitialBounds =
+            new Dictionary<IUXItem, Rect>();
+        readonly Dictionary<IUXItem, Point> multiSelectionInitialAbsolutePositions =
+            new Dictionary<IUXItem, Point>();
+        readonly HashSet<IUXItem> multiSelectionItemsMovedBySelectedAncestor =
+            new HashSet<IUXItem>();
+
+        bool HasSelectedAncestor(
+            IUXItem item,
+            HashSet<IUXItem> selectedItems)
+        {
+            IItem ancestor = item.ParentItem;
+            while (ancestor != null)
+            {
+                IUXItem ancestorUXItem = ancestor as IUXItem;
+                if (ancestorUXItem != null &&
+                    selectedItems.Contains(ancestorUXItem))
+                    return true;
+
+                ancestor = ancestor.ParentItem;
+            }
+
+            return false;
+        }
 
         void ApplyMultiSelectionMoveAlignmentSnap(
             ref double horizontalOffset,
@@ -3521,17 +3554,20 @@ namespace m0.UIWpf.UX
                 IUXItem movingItem =
                     movingSprite.Tag as IUXItem;
                 if (movingItem == null ||
-                    movingItem.Position == null)
+                    multiSelectionItemsMovedBySelectedAncestor.Contains(
+                        movingItem))
                     continue;
 
-                double left =
-                    movingItem.Position.X +
-                    horizontalOffset;
-                double top =
-                    movingItem.Position.Y +
-                    verticalOffset;
-                double right = left + movingSprite.Width;
-                double bottom = top + movingSprite.Height;
+                Rect initialBounds;
+                if (!multiSelectionInitialBounds.TryGetValue(
+                    movingItem,
+                    out initialBounds))
+                    continue;
+
+                double left = initialBounds.Left + horizontalOffset;
+                double top = initialBounds.Top + verticalOffset;
+                double right = initialBounds.Right + horizontalOffset;
+                double bottom = initialBounds.Bottom + verticalOffset;
 
                 ConsiderBestAlignmentSnapCorrection(
                     left,
@@ -3577,33 +3613,61 @@ namespace m0.UIWpf.UX
                 IsMultiSelectionMoving = true;
 
                 MovingSprites.Clear();
+                multiSelectionMovingItems.Clear();
+                multiSelectionInitialBounds.Clear();
+                multiSelectionInitialAbsolutePositions.Clear();
+                multiSelectionItemsMovedBySelectedAncestor.Clear();
 
+                HashSet<IUXItem> selectedItems =
+                    new HashSet<IUXItem>();
                 foreach (IEdge ed in Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"))
                     foreach (IUXItem item in GetItemsByVertex(ed.To))
                     {
-                        if (!(item is FrameworkElement) || item.NestingLevel != 1)
-                            continue;
-
-                        FrameworkElement item_FrameworkElement = (FrameworkElement)item;
-
-                        double rx = Canvas.GetLeft(item_FrameworkElement);
-                        double ry = Canvas.GetTop(item_FrameworkElement);
-                        double rwidth = item_FrameworkElement.ActualWidth;
-                        double rheight = item_FrameworkElement.ActualHeight;
-
-                        Rectangle r = new Rectangle();
-                        Canvas.SetLeft(r, rx);
-                        Canvas.SetTop(r, ry);
-                        r.Width = rwidth;
-                        r.Height = rheight;
-                        r.Stroke = (Brush)FindResource("0ForegroundBrush");
-                        r.StrokeDashArray = new DoubleCollection(new double[] { 1, 4 });
-                        r.Tag = item;
-                        Panel.SetZIndex(r, 99999);
-
-                        Canvas.Children.Add(r);
-                        MovingSprites.Add(r);
+                        if (item is FrameworkElement &&
+                            item.Position != null &&
+                            selectedItems.Add(item))
+                            multiSelectionMovingItems.Add(item);
                     }
+
+                foreach (IUXItem item in multiSelectionMovingItems)
+                {
+                    if (HasSelectedAncestor(item, selectedItems))
+                        multiSelectionItemsMovedBySelectedAncestor.Add(item);
+
+                    try
+                    {
+                        multiSelectionInitialAbsolutePositions.Add(
+                            item,
+                            GetItemAbsolutePosition(item));
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        continue;
+                    }
+
+                    Rect initialBounds;
+                    if (!TryGetItemBoundsOnVisualiserCanvas(
+                        item,
+                        out initialBounds))
+                        continue;
+
+                    multiSelectionInitialBounds.Add(item, initialBounds);
+
+                    Rectangle movingSprite = new Rectangle();
+                    Canvas.SetLeft(movingSprite, initialBounds.Left);
+                    Canvas.SetTop(movingSprite, initialBounds.Top);
+                    movingSprite.Width = initialBounds.Width;
+                    movingSprite.Height = initialBounds.Height;
+                    movingSprite.Stroke =
+                        (Brush)FindResource("0ForegroundBrush");
+                    movingSprite.StrokeDashArray =
+                        new DoubleCollection(new double[] { 1, 4 });
+                    movingSprite.Tag = item;
+                    Panel.SetZIndex(movingSprite, 99999);
+
+                    Canvas.Children.Add(movingSprite);
+                    MovingSprites.Add(movingSprite);
+                }
             }
 
             ApplyMultiSelectionMoveAlignmentSnap(
@@ -3615,10 +3679,15 @@ namespace m0.UIWpf.UX
 
             foreach (Rectangle r in MovingSprites)
             {
-                IUXItem i = (IUXItem)r.Tag;
+                IUXItem item = (IUXItem)r.Tag;
+                Rect initialBounds;
+                if (!multiSelectionInitialBounds.TryGetValue(
+                    item,
+                    out initialBounds))
+                    continue;
 
-                Canvas.SetLeft(r, i.Position.X + x);
-                Canvas.SetTop(r, i.Position.Y + y);
+                Canvas.SetLeft(r, initialBounds.Left + x);
+                Canvas.SetTop(r, initialBounds.Top + y);
             }
         }
 
@@ -3636,19 +3705,41 @@ namespace m0.UIWpf.UX
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////            
 
+            try
+            {
+                foreach (IUXItem item in multiSelectionMovingItems)
+                {
+                    if (multiSelectionItemsMovedBySelectedAncestor.Contains(item))
+                        continue;
 
-            foreach (IEdge ed in Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"))
-                foreach (IUXItem item in GetItemsByVertex(ed.To))
-                    if (item.NestingLevel == 1)
-                        item.MoveItem(item.Position.X + x, item.Position.Y + y, false);
-                    else
+                    Point initialAbsolutePosition;
+                    if (!multiSelectionInitialAbsolutePositions.TryGetValue(
+                        item,
+                        out initialAbsolutePosition))
+                        continue;
+
+                    item.MoveItem(
+                        initialAbsolutePosition.X + x,
+                        initialAbsolutePosition.Y + y,
+                        false);
+                }
+
+                foreach (IUXItem item in multiSelectionMovingItems)
+                    if (multiSelectionItemsMovedBySelectedAncestor.Contains(item))
                         item.MoveItem(x, y, true);
-            
+            }
+            finally
+            {
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                //////////////////////////////////////// 
+            }
 
-
-            ////////////////////////////////////////
-            Interaction.EndInteractionWithGraph();
-            //////////////////////////////////////// 
+            MovingSprites.Clear();
+            multiSelectionMovingItems.Clear();
+            multiSelectionInitialBounds.Clear();
+            multiSelectionInitialAbsolutePositions.Clear();
+            multiSelectionItemsMovedBySelectedAncestor.Clear();
 
             multiSelectionSnappedOffsetX = 0;
             multiSelectionSnappedOffsetY = 0;
