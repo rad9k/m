@@ -8,23 +8,28 @@
 				<@$EdgeTarget :: @Structure\StaticComponent>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
+				"ToArrow"
 			"Depend"
 				<@$EdgeTarget :: @Structure\StaticComponent>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
+				"ToArrow"
 			"Contain"
 				<@$IsAggregation :: @$Empty>
 				<@$EdgeTarget :: @Structure\StaticComponent>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
+				"ToDiamond"
 			"Deploy"
 				<@$EdgeTarget :: @Structure\Machine>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
+				"ToArrow"
 			"Implements"
 				<@$EdgeTarget :: @Structure\Interface>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
+				"ToArrow"
 		"Component"
 			<@$InstanceCreationPriority :: "">
 			inherits @Structure\StaticComponent
@@ -32,18 +37,27 @@
 				<@$EdgeTarget :: @Structure\StaticComponent>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
+				"ToArrow"
 			"Read"
 				<@$EdgeTarget :: @Structure\StaticComponent>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
+				"FromFilledTriangle"
 			"Write"
 				<@$EdgeTarget :: @Structure\StaticComponent>
 				<@$MinCardinality :: "0">
-				<@$MaxCardinality :: "-1">			
+				<@$MaxCardinality :: "-1">
+				"ToFilledTriangle"
+			"ReadWrite"
+				<@$EdgeTarget :: @Structure\StaticComponent>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+				"FromToFilledTriangle"
 			"Use"
 				<@$EdgeTarget :: @Structure\StaticComponent>
 				<@$MinCardinality :: "0">
-				<@$MaxCardinality :: "-1">						
+				<@$MaxCardinality :: "-1">
+				"ToArrow"
 		"Workstation"
 			<@$InstanceCreationPriority :: "">
 			inherits @Structure\Machine
@@ -58,6 +72,7 @@
 				<@$EdgeTarget :: @Structure\System>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
+				"ToArrow"
 		"System"
 			<@$InstanceCreationPriority :: "">
 			inherits @Structure\Component
@@ -75,12 +90,13 @@
 			inherits @Structure\System
 		"Container"
 			<@$InstanceCreationPriority :: "">
-			inherits @Structure\Enironment
+			inherits @Structure\Environment
 			"OperatingSystem"
 				<@$IsAggregation :: @$Empty>
 				<@$EdgeTarget :: @Structure\OperatingSystem>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
+				"ToArrow"
 		"OperatingSystem"
 			<@$InstanceCreationPriority :: "">
 			inherits @Structure\Environment
@@ -91,11 +107,13 @@
 				<@$EdgeTarget :: @System\Meta\ZeroUML\Class\Method>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
+				"ToArrow"
 		"DeploymentTarget"
 			"Contain"
 				<@$EdgeTarget :: @Structure\DeploymentTarget>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
+				"ToDiamond"
 		"Region"
 			<@$InstanceCreationPriority :: "">
 			inherits @Structure\DeploymentTarget
@@ -123,7 +141,8 @@
 			"Instance"
 				<@$EdgeTarget :: @Structure\Data>
 				<@$MinCardinality :: "0">
-				<@$MaxCardinality :: "-1">			
+				<@$MaxCardinality :: "-1">
+				"ToArrow"
 		"Data"
 			<@$InstanceCreationPriority :: "">
 			inherits @Structure\StaticComponent
@@ -131,3 +150,4 @@
 				<@$EdgeTarget :: @Structure\Model>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
+				"ToArrow"

@@ -8,5 +8,6 @@
 				<@$EdgeTarget :: @UseCase\Actor>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
+				"Straight"
 		"Actor"
 			<@$InstanceCreationPriority :: "">

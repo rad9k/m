@@ -6977,6 +6977,9 @@ namespace m0
 
             quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Package"));
 
+            quick.AddEdge(Root.Get(false, @"System\Meta\ZeroUML\Package"), Root.Get(false, @"System\Meta\ZeroUML\Package:Structure"));
+            quick.AddEdge(Root.Get(false, @"System\Meta\ZeroUML\Package"), Root.Get(false, @"System\Meta\ZeroUML\Package:UseCase"));
+
             quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Variable"));
             quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Function"));
             quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Class"));

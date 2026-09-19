@@ -628,21 +628,7 @@
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureItemVertex>
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Component\Contain">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "Component CONTAINER">
 			<@$Is :: @UXTemplate>
@@ -654,21 +640,7 @@
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureContainerItemVertex>				
 				<@LabeledItem\ShowMeta :: "True">
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Component\Contain">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 
 		<@UXTemplate :: "Workstation">
 			<@$Is :: @UXTemplate>
@@ -678,14 +650,7 @@
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureItemVertex>
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "Server">
 			<@$Is :: @UXTemplate>
@@ -695,14 +660,7 @@
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureItemVertex>
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "Environment">
 			<@$Is :: @UXTemplate>
@@ -712,28 +670,7 @@
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureItemVertex>
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Environment\Contain">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
-			<@UXDecoratorTemplate :: "System">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Component\System">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "Environment CONTAINER">
 			<@$Is :: @UXTemplate>
@@ -745,28 +682,7 @@
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureContainerItemVertex>				
 				<@LabeledItem\ShowMeta :: "True">
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Environment\Contain">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
-			<@UXDecoratorTemplate :: "System">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Component\System">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 		
 		<@UXTemplate :: "System">
 			<@$Is :: @UXTemplate>
@@ -776,21 +692,7 @@
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureItemVertex>
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:System\Contain">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "System CONTAINER">
 			<@$Is :: @UXTemplate>
@@ -802,21 +704,7 @@
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureContainerItemVertex>				
 				<@LabeledItem\ShowMeta :: "True">
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:System\Contain">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "Firewall">
 			<@$Is :: @UXTemplate>
@@ -826,21 +714,7 @@
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureItemVertex>
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Firewall\Contain">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "Firewall CONTAINER">
 			<@$Is :: @UXTemplate>
@@ -852,21 +726,7 @@
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureContainerItemVertex>				
 				<@LabeledItem\ShowMeta :: "True">
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Firewall\Contain">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "LoadBalancer">
 			<@$Is :: @UXTemplate>
@@ -876,21 +736,7 @@
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureItemVertex>
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:LoadBalancer\Contain">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "LoadBalancer CONTAINER">
 			<@$Is :: @UXTemplate>
@@ -902,21 +748,7 @@
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureContainerItemVertex>				
 				<@LabeledItem\ShowMeta :: "True">
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:LoadBalancer\Contain">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "Database">
 			<@$Is :: @UXTemplate>
@@ -926,21 +758,7 @@
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureItemVertex>
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Database\Contain">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "Database CONTAINER">
 			<@$Is :: @UXTemplate>
@@ -952,21 +770,7 @@
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureContainerItemVertex>				
 				<@LabeledItem\ShowMeta :: "True">
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Database\Contain">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "MinusZero">
 			<@$Is :: @UXTemplate>
@@ -976,21 +780,7 @@
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureItemVertex>
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Component">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:MinusZero\Component">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "MinusZero CONTAINER">
 			<@$Is :: @UXTemplate>
@@ -1002,21 +792,7 @@
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureContainerItemVertex>				
 				<@LabeledItem\ShowMeta :: "True">
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:MinusZero\Contain">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "Container">
 			<@$Is :: @UXTemplate>
@@ -1026,35 +802,7 @@
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureItemVertex>
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Container\Contain">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
-			<@UXDecoratorTemplate :: "System">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Container\System">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
-			<@UXDecoratorTemplate :: "OperatingSystem">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Container\OperatingSystem">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "Container CONTAINER">
 			<@$Is :: @UXTemplate>
@@ -1066,35 +814,7 @@
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureContainerItemVertex>				
 				<@LabeledItem\ShowMeta :: "True">
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Container\Contain">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
-			<@UXDecoratorTemplate :: "System">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Container\System">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
-			<@UXDecoratorTemplate :: "OperatingSystem">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Container\OperatingSystem">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "OperatingSystem">
 			<@$Is :: @UXTemplate>
@@ -1104,28 +824,7 @@
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureItemVertex>
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:OperatingSystem\Contain">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
-			<@UXDecoratorTemplate :: "System">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:OperatingSystem\System">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "OperatingSystem CONTAINER">
 			<@$Is :: @UXTemplate>
@@ -1137,28 +836,7 @@
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureContainerItemVertex>				
 				<@LabeledItem\ShowMeta :: "True">
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:OperatingSystem\Contain">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
-			<@UXDecoratorTemplate :: "System">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:OperatingSystem\System">				
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "Interface">
 			<@$Is :: @UXTemplate>
@@ -1168,22 +846,7 @@
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureItemVertex>				
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">
-				<@SupportEmptyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Method">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Interface\Method">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "Interface CONTAINER">
 			<@$Is :: @UXTemplate>
@@ -1195,22 +858,7 @@
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureContainerItemVertex>				
 				<@LabeledItem\ShowMeta :: "True">
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">
-				<@SupportEmptyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Method">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Interface\Method">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "Region">
 			<@$Is :: @UXTemplate>
@@ -1220,22 +868,7 @@
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureItemVertex>				
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">
-				<@SupportEmptyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Region\Contain">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "Region CONTAINER">
 			<@$Is :: @UXTemplate>
@@ -1247,22 +880,7 @@
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureContainerItemVertex>				
 				<@LabeledItem\ShowMeta :: "True">
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">
-				<@SupportEmptyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Region\Contain">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 		
 		<@UXTemplate :: "Datacenter">
 			<@$Is :: @UXTemplate>
@@ -1272,22 +890,7 @@
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureItemVertex>				
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">
-				<@SupportEmptyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Datacenter\Contain">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "Datacenter CONTAINER">
 			<@$Is :: @UXTemplate>
@@ -1299,22 +902,7 @@
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureContainerItemVertex>				
 				<@LabeledItem\ShowMeta :: "True">
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">
-				<@SupportEmptyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Datacenter\Contain">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>	
+			inherits @ZeroUML\UniversalDecorators
 		
 		<@UXTemplate :: "ServerRoom">
 			<@$Is :: @UXTemplate>
@@ -1324,22 +912,7 @@
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureItemVertex>				
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">
-				<@SupportEmptyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:ServerRoom\Contain">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "ServerRoom CONTAINER">
 			<@$Is :: @UXTemplate>
@@ -1351,22 +924,7 @@
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureContainerItemVertex>				
 				<@LabeledItem\ShowMeta :: "True">
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">
-				<@SupportEmptyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:ServerRoom\Contain">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>	
+			inherits @ZeroUML\UniversalDecorators
 		
 		<@UXTemplate :: "Row">
 			<@$Is :: @UXTemplate>
@@ -1376,22 +934,7 @@
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureItemVertex>				
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">
-				<@SupportEmptyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Row\Contain">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "Row CONTAINER">
 			<@$Is :: @UXTemplate>
@@ -1403,22 +946,7 @@
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureContainerItemVertex>				
 				<@LabeledItem\ShowMeta :: "True">
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">
-				<@SupportEmptyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Row\Contain">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>	
+			inherits @ZeroUML\UniversalDecorators
 		
 		<@UXTemplate :: "Rack">
 			<@$Is :: @UXTemplate>
@@ -1428,22 +956,7 @@
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureItemVertex>				
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">
-				<@SupportEmptyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Rack\Contain">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "Rack CONTAINER">
 			<@$Is :: @UXTemplate>
@@ -1455,22 +968,7 @@
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureContainerItemVertex>				
 				<@LabeledItem\ShowMeta :: "True">
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">
-				<@SupportEmptyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Rack\Contain">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>	
+			inherits @ZeroUML\UniversalDecorators	
 		
 		<@UXTemplate :: "Cluster">
 			<@$Is :: @UXTemplate>
@@ -1480,22 +978,7 @@
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureItemVertex>				
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">
-				<@SupportEmptyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Cluster\Contain">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "Cluster CONTAINER">
 			<@$Is :: @UXTemplate>
@@ -1507,22 +990,7 @@
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureContainerItemVertex>				
 				<@LabeledItem\ShowMeta :: "True">
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">
-				<@SupportEmptyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Cluster\Contain">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>	
+			inherits @ZeroUML\UniversalDecorators	
 		
 		<@UXTemplate :: "Machine">
 			<@$Is :: @UXTemplate>
@@ -1532,22 +1000,7 @@
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureItemVertex>				
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">
-				<@SupportEmptyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Machine\Contain">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "Machine CONTAINER">
 			<@$Is :: @UXTemplate>
@@ -1559,22 +1012,7 @@
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureContainerItemVertex>				
 				<@LabeledItem\ShowMeta :: "True">
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">
-				<@SupportEmptyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Machine\Contain">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "UseCase">
 			<@$Is :: @UXTemplate>
@@ -1632,22 +1070,7 @@
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureItemVertex>				
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">
-				<@SupportEmptyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Model\Contain">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "Model CONTAINER">
 			<@$Is :: @UXTemplate>
@@ -1659,22 +1082,7 @@
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureContainerItemVertex>				
 				<@LabeledItem\ShowMeta :: "True">
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">
-				<@SupportEmptyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Model\Contain">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "Data">
 			<@$Is :: @UXTemplate>
@@ -1684,22 +1092,7 @@
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureItemVertex>				
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">
-				<@SupportEmptyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Data\Contain">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "Data CONTAINER">
 			<@$Is :: @UXTemplate>
@@ -1711,22 +1104,7 @@
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StructureContainerItemVertex>				
 				<@LabeledItem\ShowMeta :: "True">
-			<@UXDecoratorTemplate :: "Edge">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\">
-				<@SupportAnyMetaEdge :: "True">
-				<@SupportEmptyMetaEdge :: "True">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-			<@UXDecoratorTemplate :: "Contain">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:Data\Contain">
-				<@ToDiagramItemTestQuery :: "">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">
-					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+			inherits @ZeroUML\UniversalDecorators
 					
 		<"OpacityItemVertex">
 			<@UXItem\BackgroundColor :: "">
@@ -1883,3 +1261,50 @@
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+		
+		<"UniversalDecorators">
+			<@UXDecoratorTemplate :: "Edge - Straight">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:\{Straight}">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>				
+			<@UXDecoratorTemplate :: "Edge - ToArrow">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:\{ToArrow}">
+				<@SupportAnyMetaEdge :: "True">				
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+			<@UXDecoratorTemplate :: "Edge - ToFilledTriangle">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:\{ToFilledTriangle}">
+				<@SupportAnyMetaEdge :: "True">				
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\FilledTriangle>
+			<@UXDecoratorTemplate :: "Edge - FromFilledTriangle">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:\{FromFilledTriangle}">
+				<@SupportAnyMetaEdge :: "True">				
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\StartAnchor :: @LineEndEnum\FilledTriangle>
+			<@UXDecoratorTemplate :: "Edge - FromToFilledTriangle">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:\{FromToFilledTriangle}">
+				<@SupportAnyMetaEdge :: "True">				
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\StartAnchor :: @LineEndEnum\FilledTriangle>
+					<@LineDecorator\EndAnchor :: @LineEndEnum\FilledTriangle>
+			<@UXDecoratorTemplate :: "Edge - ToDiamond">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:\{ToDiamond}">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>

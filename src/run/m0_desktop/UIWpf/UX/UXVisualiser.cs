@@ -104,6 +104,11 @@ namespace m0.UIWpf.UX
 
         sealed class MiniaturesAdorner : Adorner
         {
+            const double InactiveOpacity = 0.5;
+            const double ActiveOpacity = 1;
+            static readonly TimeSpan OpacityTransitionDuration =
+                TimeSpan.FromSeconds(0.3);
+
             readonly UXVisualiser owner;
             readonly ScrollViewer scrollViewer;
             IList<MiniatureItemSnapshot> itemSnapshots =
@@ -125,6 +130,7 @@ namespace m0.UIWpf.UX
                 this.owner = owner;
                 this.scrollViewer = scrollViewer;
                 IsHitTestVisible = true;
+                Opacity = InactiveOpacity;
             }
 
             public void SetItems(
@@ -203,6 +209,38 @@ namespace m0.UIWpf.UX
                 }
 
                 return null;
+            }
+
+            protected override void OnMouseEnter(MouseEventArgs e)
+            {
+                base.OnMouseEnter(e);
+                AnimateOpacity(ActiveOpacity);
+            }
+
+            protected override void OnMouseLeave(MouseEventArgs e)
+            {
+                base.OnMouseLeave(e);
+                AnimateOpacity(InactiveOpacity);
+            }
+
+            void AnimateOpacity(double targetOpacity)
+            {
+                double currentOpacity = Opacity;
+                System.Windows.Media.Animation.DoubleAnimation animation =
+                    new System.Windows.Media.Animation.DoubleAnimation
+                    {
+                        From = currentOpacity,
+                        To = targetOpacity,
+                        Duration = OpacityTransitionDuration,
+                        FillBehavior =
+                            System.Windows.Media.Animation.FillBehavior.HoldEnd
+                    };
+
+                BeginAnimation(
+                    OpacityProperty,
+                    animation,
+                    System.Windows.Media.Animation.HandoffBehavior
+                        .SnapshotAndReplace);
             }
 
             protected override void OnMouseLeftButtonDown(
