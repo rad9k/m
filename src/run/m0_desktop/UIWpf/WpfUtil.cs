@@ -20,6 +20,7 @@ using m0.ZeroTypes;
 using System.Windows.Threading;
 using m0.ZeroTypes.UX;
 using System.Windows.Forms;
+using System.Windows.Interop;
 
 namespace m0.UIWpf
 {
@@ -394,14 +395,14 @@ namespace m0.UIWpf
             return p;
         }
 
-        public static Point GetMousePositionDnd(System.Windows.DragEventArgs e)
+        public static Point GetMousePositionDndPhysicalPixels(
+            System.Windows.DragEventArgs e)
         {
-            Point p = new Point();
+            Point positionRelativeToMainWindow = e.GetPosition(m0Main.Instance);
+            Point positionInPhysicalPixels =
+                m0Main.Instance.PointToScreen(positionRelativeToMainWindow);
 
-            p.X = e.GetPosition(m0Main.Instance).X + m0Main.Instance.Left;
-            p.Y = e.GetPosition(m0Main.Instance).Y + m0Main.Instance.Top;
-
-            return p;
+            return positionInPhysicalPixels;
         }
 
         public static System.Windows.Size GetWpfScreenSizeFromPoint(Point wpfPoint)
@@ -448,6 +449,88 @@ namespace m0.UIWpf
 
             window.Left = position_tobe.X;
             window.Top = position_tobe.Y;
-        }        
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        struct NativeWindowRectangle
+        {
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
+        }
+
+        const uint SetWindowPositionNoSize = 0x0001;
+        const uint SetWindowPositionNoZOrder = 0x0004;
+        const uint SetWindowPositionNoActivate = 0x0010;
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern bool GetWindowRect(
+            IntPtr windowHandle,
+            out NativeWindowRectangle rectangle);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern bool SetWindowPos(
+            IntPtr windowHandle,
+            IntPtr insertAfterWindowHandle,
+            int x,
+            int y,
+            int width,
+            int height,
+            uint flags);
+
+        public static void SetWindowPositionNearPhysicalPoint(
+            Window window,
+            Point positionInPhysicalPixels)
+        {
+            IntPtr windowHandle = new WindowInteropHelper(window).Handle;
+            if (windowHandle == IntPtr.Zero)
+                return;
+
+            if (!GetWindowRect(windowHandle, out NativeWindowRectangle windowRectangle))
+                return;
+
+            System.Drawing.Point anchorPoint =
+                new System.Drawing.Point(
+                    (int)Math.Round(positionInPhysicalPixels.X),
+                    (int)Math.Round(positionInPhysicalPixels.Y));
+            Screen screen = Screen.FromPoint(anchorPoint);
+            System.Drawing.Rectangle workingArea = screen.WorkingArea;
+
+            int windowWidth = windowRectangle.Right - windowRectangle.Left;
+            int windowHeight = windowRectangle.Bottom - windowRectangle.Top;
+            const int distanceFromDropPoint = 12;
+
+            int targetX = anchorPoint.X + distanceFromDropPoint;
+            if (targetX + windowWidth > workingArea.Right)
+                targetX = anchorPoint.X - windowWidth - distanceFromDropPoint;
+
+            int targetY = anchorPoint.Y + distanceFromDropPoint;
+            if (targetY + windowHeight > workingArea.Bottom)
+                targetY = anchorPoint.Y - windowHeight - distanceFromDropPoint;
+
+            int maximumX = workingArea.Right - windowWidth;
+            int maximumY = workingArea.Bottom - windowHeight;
+
+            targetX = windowWidth <= workingArea.Width
+                ? Math.Max(workingArea.Left, Math.Min(targetX, maximumX))
+                : workingArea.Left;
+            targetY = windowHeight <= workingArea.Height
+                ? Math.Max(workingArea.Top, Math.Min(targetY, maximumY))
+                : workingArea.Top;
+
+            uint flags =
+                SetWindowPositionNoSize |
+                SetWindowPositionNoZOrder |
+                SetWindowPositionNoActivate;
+            SetWindowPos(
+                windowHandle,
+                IntPtr.Zero,
+                targetX,
+                targetY,
+                0,
+                0,
+                flags);
+        }
     }
 }

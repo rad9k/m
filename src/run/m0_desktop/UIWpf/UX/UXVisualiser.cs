@@ -4589,7 +4589,7 @@ namespace m0.UIWpf.UX
                     this,
                     droppedVertex,
                     isSet,
-                    WpfUtil.GetMousePositionDnd(e));
+                    WpfUtil.GetMousePositionDndPhysicalPixels(e));
 
                 uxTemplate = ndi.UXTemplate;
                 instanceOfMeta = ndi.InstanceOfMeta;
@@ -4873,7 +4873,9 @@ namespace m0.UIWpf.UX
 
                     IVertex dndVertex = e.Data.GetData("Vertex") as IVertex;
 
-                    Point p = e.GetPosition(Canvas);
+                    Point dropPositionInCanvas = e.GetPosition(Canvas);
+
+                    Point p = dropPositionInCanvas;
 
                     bool isSet = false;
 

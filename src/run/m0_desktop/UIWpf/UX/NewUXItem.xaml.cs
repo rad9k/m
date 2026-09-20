@@ -26,27 +26,40 @@ namespace m0.UIWpf.UX
 
         IVertex baseedge;
 
-        Point _mousePosition;
+        Point _mousePositionInPhysicalPixels;
 
-        void PositionWindowBeforeShow()
+        void PositionWindowNearDropPoint()
         {
-            WindowStartupLocation = WindowStartupLocation.Manual;
-            WpfUtil.SetWindowPosition(this, _mousePosition); 
+            WpfUtil.SetWindowPositionNearPhysicalPoint(
+                this,
+                _mousePositionInPhysicalPixels);
         }
 
         IUXVisualiser visualiser;
 
         Boolean showDialog = true;
 
-        public NewUXItem(IUXVisualiser _visualiser, IVertex _baseEdge, bool isSet, Point mousePos)
+        public NewUXItem(
+            IUXVisualiser _visualiser,
+            IVertex _baseEdge,
+            bool isSet,
+            Point mousePositionInPhysicalPixels)
         {
             visualiser = _visualiser;
 
             InitializeComponent();
 
+            WindowStartupLocation = WindowStartupLocation.Manual;
+            SourceInitialized +=
+                (sender, eventArgs) =>
+                    PositionWindowNearDropPoint();
+            Loaded +=
+                (sender, eventArgs) =>
+                    PositionWindowNearDropPoint();
+
           //  this.Owner = m0Main.Instance;
 
-            _mousePosition = mousePos;
+            _mousePositionInPhysicalPixels = mousePositionInPhysicalPixels;
 
             baseedge = _baseEdge;
 
@@ -63,8 +76,6 @@ namespace m0.UIWpf.UX
             BaseEdge = baseedge;
 
             //Owner = m0Main.Instance;
-
-            PositionWindowBeforeShow();
 
             ItemName.Content = baseedge.Get(false, "To:").Value;
 
