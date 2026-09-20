@@ -823,7 +823,6 @@ namespace m0.UIWpf.UX
 
         // Resolved once at the original drop point and reused for every payload
         // item; the +25 cascade is position only.
-        IUXItem dndDropIntendedClicked;
         IUXContainer dndDropIntendedHost;
 
         void BeginSuspendAutomaticDiagramLineUpdates()
@@ -4601,11 +4600,44 @@ namespace m0.UIWpf.UX
             {
                 if (instanceOfMeta)
                 {
-                    IUXItem clickedItem = GetClickedItemForNewDiagramItem(p);
+                    IUXContainer host = GetHostForNewDiagramItem(p);
+                    if (host == null)
+                        host = this;
 
-                    IEdge ve = VertexOperations.AddInstanceAndReturnEdge(
-                        clickedItem.BaseEdge.To
-                        , itemBaseEdge.Get(false, "To:"));
+                    IVertex originalMetaVertex = itemBaseEdge.Get(false, "To:");
+                    IVertex containerEdgeMetaVertex = host.UXTemplate != null
+                        ? host.UXTemplate.ContainerEdgeMetaVertex
+                        : null;
+
+                    IEdge ve;
+
+                    if (containerEdgeMetaVertex == null)
+                    {
+                        ve = VertexOperations.AddInstanceAndReturnEdge(
+                            host.BaseEdgeTo,
+                            originalMetaVertex);
+                    }
+                    else
+                    {
+                        ve = VertexOperations.AddInstanceAndReturnEdge(
+                            host.BaseEdgeTo,
+                            originalMetaVertex,
+                            containerEdgeMetaVertex);
+
+                        // $EmptyMetaInstance ignores the requested edge meta.
+                        // Attach the final edge before removing the temporary one
+                        // so the newly created vertex always has an incoming edge.
+                        if (ve.Meta != containerEdgeMetaVertex)
+                        {
+                            IEdge temporaryEdge = ve;
+
+                            ve = host.BaseEdgeTo.AddEdge(
+                                containerEdgeMetaVertex,
+                                temporaryEdge.To);
+
+                            temporaryEdge.From.DeleteEdge(temporaryEdge);
+                        }
+                    }
 
                     IVertex newVertex = ve.To;
 
@@ -4614,7 +4646,7 @@ namespace m0.UIWpf.UX
                     if (uxTemplate.ForceShowEditForm)
                         MinusZero.Instance.UserInteraction.EditEdge(newVertex);
 
-                    IVertex newEdgeVertex = EdgeHelper.CreateTempEdgeVertex(/*ve.From*/null, ve.Meta, ve.To);
+                    IVertex newEdgeVertex = EdgeHelper.CreateTempEdgeVertex(ve);
 
                     newUXItem = AddDiagramItem(p,
                                    uxTemplate,
@@ -4882,7 +4914,6 @@ namespace m0.UIWpf.UX
                     if (dndVertex.Count() > 1)
                         isSet = true;
 
-                    dndDropIntendedClicked = null;
                     dndDropIntendedHost = null;
 
                     try
@@ -4895,7 +4926,6 @@ namespace m0.UIWpf.UX
                     bool originalDeferHostItemUpdateLayout =
                         deferHostItemUpdateLayout;
 
-                    dndDropIntendedClicked = GetItemByPoint(p);
                     dndDropIntendedHost = GetItemByPoint_ByCanvas(p);
 
                     BeginSuspendAutomaticDiagramLineUpdates();
@@ -4980,7 +5010,6 @@ namespace m0.UIWpf.UX
                     }
                     finally
                     {
-                        dndDropIntendedClicked = null;
                         dndDropIntendedHost = null;
                     }
             }
@@ -5007,14 +5036,6 @@ namespace m0.UIWpf.UX
             }
 
             return i;
-        }
-
-        IUXItem GetClickedItemForNewDiagramItem(Point p)
-        {
-            if (dndDropIntendedClicked != null)
-                return dndDropIntendedClicked;
-
-            return GetItemByPoint(p);
         }
 
         IUXContainer GetHostForNewDiagramItem(Point p)

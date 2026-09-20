@@ -171,7 +171,7 @@
 				<@LabeledItem\ConstantLabel :: "block">
 			<@$Inherits :: @ZeroUML\PackageDecorators>
 			<@$Inherits :: @ZeroUML\NextDecorator>
-			<@$Inherits :: @ZeroUML\bodyDecorator>
+			<@$Inherits :: @ZeroUML\BodyDecorator>
 			
 		<@UXTemplate :: "NamedBlock CONTAINER">
 			<@$Is :: @UXTemplate>
@@ -185,7 +185,7 @@
 				<@LabeledItem\ConstantLabel :: "named block">
 			<@$Inherits :: @ZeroUML\PackageDecorators>
 			<@$Inherits :: @ZeroUML\NextDecorator>
-			<@$Inherits :: @ZeroUML\bodyDecorator>				
+			<@$Inherits :: @ZeroUML\BodyDecorator>				
 			
 		<@UXTemplate :: "Package">
 			<@$Is :: @UXTemplate>
@@ -531,7 +531,7 @@
 						<@Width :: "0">
 						<@Height :: "0">
 				<@$Inherits :: @ZeroUML\PackageDecorators>
-				<@$Inherits :: @ZeroUML\bodyDecorator>
+				<@$Inherits :: @ZeroUML\BodyDecorator>
 				
 		<@UXTemplate :: "Method">
 			<@$Is :: @UXTemplate>
@@ -563,7 +563,7 @@
 						<@Width :: "0">
 						<@Height :: "0">
 				<@$Inherits :: @ZeroUML\PackageDecorators>
-				<@$Inherits :: @ZeroUML\bodyDecorator>
+				<@$Inherits :: @ZeroUML\BodyDecorator>
 		
 		<@UXTemplate :: "Vertex">
 			<@$Is :: @UXTemplate>
@@ -1152,7 +1152,7 @@
 					<@UXItem\ForegroundColor :: @Black>
 					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-		<"bodyDecorator">
+		<"BodyDecorator">
 			<@UXDecoratorTemplate :: "body">
 				<@$Is :: @UXDecoratorTemplate>
 				<@SupportEmptyMetaEdge :: "True">
