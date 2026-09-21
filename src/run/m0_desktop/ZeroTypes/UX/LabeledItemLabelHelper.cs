@@ -80,7 +80,15 @@ namespace m0.ZeroTypes.UX
             if (labelEdge == null)
                 return string.Empty;
 
-            object metaValue = labelEdge.Meta?.Value;
+            IVertex metaVertex = labelEdge.Meta;
+            IEdge isEdge = labelEdge.To == null
+                ? null
+                : GraphUtil.GetQueryOut(labelEdge.To, "$Is", null).FirstOrDefault();
+
+            if (isEdge != null)
+                metaVertex = isEdge.To;
+
+            object metaValue = metaVertex?.Value;
 
             if (!showMeta || GeneralUtil.CompareStrings(metaValue, "$Empty"))
                 return string.Empty;
