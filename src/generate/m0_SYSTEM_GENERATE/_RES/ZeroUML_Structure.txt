@@ -110,6 +110,7 @@
 				"ToArrow"
 		"DeploymentTarget"
 			"Contain"
+				<@$IsAggregation :: @$Empty>
 				<@$EdgeTarget :: @Structure\DeploymentTarget>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">

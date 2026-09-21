@@ -1076,7 +1076,7 @@
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:Model}">
 			<@MetaVertexTestQuery :: "Model">
-			<@ContainerEdgeMetaVertex :: @System\Meta\ZeroUML\Structure\DeploymentTarget\Contain>
+			<@ContainerEdgeMetaVertex :: @System\Meta\ZeroUML\Structure\StaticComponent\Contain>
 			<@ItemClass :: @ContainerItem>
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
@@ -1098,7 +1098,7 @@
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:Data}">
 			<@MetaVertexTestQuery :: "Data">
-			<@ContainerEdgeMetaVertex :: @System\Meta\ZeroUML\Structure\DeploymentTarget\Contain>
+			<@ContainerEdgeMetaVertex :: @System\Meta\ZeroUML\Structure\StaticComponent\Contain>
 			<@ItemClass :: @ContainerItem>
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@ItemVertex :: "">
