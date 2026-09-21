@@ -85,6 +85,8 @@ namespace m0.UIWpf.UX
         AdornerLayer miniaturesAdornerLayer;
         ScrollViewer miniaturesScrollViewer;
         bool miniaturesItemsDirty;
+        bool miniaturesUpdateReschedulePending;
+        bool miniaturesUpdateRescheduleRebuildItems;
         System.Windows.Threading.DispatcherOperation miniaturesUpdateOperation;
         readonly HashSet<FrameworkElement>
             miniatureItemEventSubscriptions =
@@ -1413,7 +1415,14 @@ namespace m0.UIWpf.UX
                 miniaturesItemsDirty = true;
 
             if (miniaturesUpdateOperation != null)
+            {
+                miniaturesUpdateReschedulePending = true;
+
+                if (rebuildItems)
+                    miniaturesUpdateRescheduleRebuildItems = true;
+
                 return;
+            }
 
             miniaturesUpdateOperation = Dispatcher.BeginInvoke(
                 new Action(ProcessMiniaturesUpdate),
@@ -1445,6 +1454,154 @@ namespace m0.UIWpf.UX
             }
             else
                 miniaturesAdorner.InvalidateViewport();
+
+            if (miniaturesUpdateReschedulePending)
+            {
+                bool rescheduleRebuildItems =
+                    miniaturesUpdateRescheduleRebuildItems;
+                miniaturesUpdateReschedulePending = false;
+                miniaturesUpdateRescheduleRebuildItems = false;
+                RequestMiniaturesUpdate(rescheduleRebuildItems);
+            }
+        }
+
+        static double ClampMiniaturesScrollValue(
+            double value,
+            double minimum,
+            double maximum)
+        {
+            if (maximum < minimum)
+                return minimum;
+
+            return Math.Max(minimum, Math.Min(maximum, value));
+        }
+
+        bool TryComputeOccupiedBounds(out Rect occupiedBounds)
+        {
+            occupiedBounds = Rect.Empty;
+
+            double virtualWidth;
+            double virtualHeight;
+            GetMiniaturesVirtualSize(
+                out virtualWidth,
+                out virtualHeight);
+
+            if (virtualWidth <= 0 || virtualHeight <= 0)
+                return false;
+
+            Rect virtualBounds =
+                new Rect(0, 0, virtualWidth, virtualHeight);
+
+            foreach (IUXItem item in Items_all)
+            {
+                if (item == null ||
+                    item is IUXDecorator ||
+                    item is ILineDecoratorBase)
+                {
+                    continue;
+                }
+
+                Rect itemBounds;
+
+                if (!TryGetItemBoundsOnVisualiserCanvas(
+                    item,
+                    out itemBounds))
+                {
+                    continue;
+                }
+
+                itemBounds = Rect.Intersect(
+                    itemBounds,
+                    virtualBounds);
+
+                if (itemBounds.IsEmpty ||
+                    itemBounds.Width <= 0 ||
+                    itemBounds.Height <= 0)
+                {
+                    continue;
+                }
+
+                if (occupiedBounds.IsEmpty)
+                    occupiedBounds = itemBounds;
+                else
+                    occupiedBounds.Union(itemBounds);
+            }
+
+            return !occupiedBounds.IsEmpty;
+        }
+
+        void ScrollToShowRepositionedContent()
+        {
+            Rect occupiedBounds;
+
+            if (!TryComputeOccupiedBounds(out occupiedBounds))
+                return;
+
+            ScrollViewer scrollViewer = miniaturesScrollViewer;
+
+            if (scrollViewer == null && ScrollViewerParent != null)
+                scrollViewer = ScrollViewerParent.GetScrollViewer();
+
+            if (scrollViewer == null)
+                return;
+
+            double virtualWidth;
+            double virtualHeight;
+            GetMiniaturesVirtualSize(
+                out virtualWidth,
+                out virtualHeight);
+
+            if (virtualWidth <= 0 || virtualHeight <= 0)
+                return;
+
+            double extentScaleX =
+                scrollViewer.ExtentWidth > 0
+                    ? scrollViewer.ExtentWidth / virtualWidth
+                    : GetEffectiveMiniaturesScale();
+            double extentScaleY =
+                scrollViewer.ExtentHeight > 0
+                    ? scrollViewer.ExtentHeight / virtualHeight
+                    : GetEffectiveMiniaturesScale();
+
+            if (extentScaleX <= 0 || extentScaleY <= 0)
+                return;
+
+            double logicalViewportWidth =
+                scrollViewer.ViewportWidth / extentScaleX;
+            double logicalViewportHeight =
+                scrollViewer.ViewportHeight / extentScaleY;
+
+            Rect currentLogicalViewport = new Rect(
+                scrollViewer.HorizontalOffset / extentScaleX,
+                scrollViewer.VerticalOffset / extentScaleY,
+                logicalViewportWidth,
+                logicalViewportHeight);
+
+            if (currentLogicalViewport.IntersectsWith(occupiedBounds))
+                return;
+
+            double targetLogicalLeft =
+                occupiedBounds.Left +
+                occupiedBounds.Width / 2 -
+                logicalViewportWidth / 2;
+            double targetLogicalTop =
+                occupiedBounds.Top +
+                occupiedBounds.Height / 2 -
+                logicalViewportHeight / 2;
+
+            targetLogicalLeft = ClampMiniaturesScrollValue(
+                targetLogicalLeft,
+                0,
+                Math.Max(0, virtualWidth - logicalViewportWidth));
+            targetLogicalTop = ClampMiniaturesScrollValue(
+                targetLogicalTop,
+                0,
+                Math.Max(0, virtualHeight - logicalViewportHeight));
+
+            scrollViewer.ScrollToHorizontalOffset(
+                targetLogicalLeft * extentScaleX);
+            scrollViewer.ScrollToVerticalOffset(
+                targetLogicalTop * extentScaleY);
         }
 
         void EnsureMiniaturesAttached()
@@ -6754,6 +6911,19 @@ namespace m0.UIWpf.UX
                 }
 
                 CheckAndUpdateDiagramLines();
+
+            UpdateLayout();
+
+            ScrollViewer scrollViewer = miniaturesScrollViewer;
+
+            if (scrollViewer == null && ScrollViewerParent != null)
+                scrollViewer = ScrollViewerParent.GetScrollViewer();
+
+            if (scrollViewer != null)
+                scrollViewer.UpdateLayout();
+
+            ScrollToShowRepositionedContent();
+            RequestMiniaturesUpdate(true);
         }
 
         // HELPERS =============================================================
@@ -6834,7 +7004,6 @@ namespace m0.UIWpf.UX
                 i.MoveItem(left, top, false);
             }
             _pendingCenters = null;
-            RequestMiniaturesUpdate(true);
         }
 
         private Dictionary<IUXItem, List<IUXItem>> BuildUndirectedAdjacencyUX(List<IUXItem> items)
