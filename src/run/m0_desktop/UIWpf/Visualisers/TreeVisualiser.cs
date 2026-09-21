@@ -1748,6 +1748,9 @@ namespace m0.UIWpf.Visualisers
 
         private void EdgeAdded(IEdge edge)
         {
+            if (!VisualiserUtil.FilterEdge(edge, Vertex))
+                return;
+
             if (UseDataVirtualization)
             {
                 virtualRootNodes.Add(CreateVirtualNode(edge, null));
@@ -2336,12 +2339,16 @@ namespace m0.UIWpf.Visualisers
             TurnOffSelectedItemsUpdate=true;
 
             IVertex selectedEdges = Vertex.Get(false, @"SelectedEdges:");
+            IVertex baseEdgeTo = Vertex.Get(false, @"BaseEdge:\To:");
 
             //if (selectedEdges is VertexBase)
               //  ((VertexBase)selectedEdges).CanFireChangeEvent = false;                        
 
-            foreach (IEdge ee in Vertex.Get(false, @"BaseEdge:\To:"))
-                EdgeHelper.AddEdgeVertex(selectedEdges, ee);
+            if (baseEdgeTo != null)
+            {
+                foreach (IEdge ee in VisualiserUtil.FilterEdges(baseEdgeTo, Vertex))
+                    EdgeHelper.AddEdgeVertex(selectedEdges, ee);
+            }
 
             //if (selectedEdges is VertexBase)
               //  ((VertexBase)selectedEdges).CanFireChangeEvent = true;            

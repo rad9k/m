@@ -54,7 +54,10 @@ namespace m0.UIWpf.Visualisers.Helper
         }
 
         public static bool FilterEdge_0(IEdge toFilterEdge)
-        {            
+        {
+            if (IsGraphChangeTriggerEdge(toFilterEdge))
+                return false;
+
             if (GraphUtil.ExistQueryOut(toFilterEdge.Meta, "$Hide", "0"))
                 return false;
 
@@ -63,10 +66,21 @@ namespace m0.UIWpf.Visualisers.Helper
 
         public static bool FilterEdge_1(IEdge toFilterEdge)
         {
+            if (IsGraphChangeTriggerEdge(toFilterEdge))
+                return false;
+
             if (GraphUtil.ExistQueryOut(toFilterEdge.Meta, "$Hide", "1"))
                 return false;
 
             return true;
+        }
+
+        static bool IsGraphChangeTriggerEdge(IEdge edge)
+        {
+            if (edge == null || edge.Meta == null)
+                return false;
+
+            return GeneralUtil.CompareStrings(edge.Meta, "$GraphChangeTrigger");
         }
     }
 }
