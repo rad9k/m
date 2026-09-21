@@ -85,6 +85,7 @@
 		"Database"
 			<@$InstanceCreationPriority :: "">
 			inherits @Structure\System
+			inherits @Structure\Data
 		"MinusZero"
 			<@$InstanceCreationPriority :: "">
 			inherits @Structure\System

@@ -213,7 +213,7 @@ namespace m0.UIWpf.Controls
 
                         bool isClosed = false;
 
-                        if (StartEnding == LineEndEnum.FilledTriangle || EndEnding == LineEndEnum.Triangle)
+                        if (EndEnding == LineEndEnum.FilledTriangle || EndEnding == LineEndEnum.Triangle)
                             isClosed = true;
 
                         pathgeo.Figures.Add(CalculateArrow(pathfigHead2, pt1, pt2,isClosed));

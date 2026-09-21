@@ -12,6 +12,7 @@ using m0.ZeroTypes;
 using m0.ZeroTypes.UX;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -768,6 +769,22 @@ namespace m0.UIWpf.UX
         readonly HashSet<IUXItem> pendingDraggedItemRenderUpdates =
             new HashSet<IUXItem>();
         bool draggedItemRenderUpdateScheduled;
+        bool allDiagramLineGeometryUpdateScheduled;
+        bool allDiagramLineGeometryUpdatePendingAfterSuspension;
+        bool allDiagramLineGeometryUpdateNeeded;
+        string pendingDiagramLineGeometryUpdateReason =
+            "scheduled";
+        long lastDiagramLineGeometryPassTimestamp;
+        bool diagramLineGeometryPassInProgress;
+        bool skipLifecycleDiagramLineGeometryRequests;
+        bool incrementalDragSettleScheduled;
+        readonly HashSet<IUXItem> dragMovedItems =
+            new HashSet<IUXItem>();
+        readonly Dictionary<IUXItem, Rect> dragStartItemBounds =
+            new Dictionary<IUXItem, Rect>();
+        const double SuppressLifecycleDiagramLineGeometryMilliseconds =
+            400;
+        const double DragSettleSweptClearance = 24;
 
         const double AlignmentGuideCoordinateQuantum = 0.01;
         const double AlignmentGuideSnapDistanceInScreenDips = 3;
@@ -836,7 +853,17 @@ namespace m0.UIWpf.UX
                 suspendAutomaticDiagramLineUpdatesDepth--;
 
             if (suspendAutomaticDiagramLineUpdatesDepth == 0)
+            {
                 RegisterDeferredLineDecoratorListeners();
+
+                if (allDiagramLineGeometryUpdatePendingAfterSuspension)
+                {
+                    allDiagramLineGeometryUpdatePendingAfterSuspension =
+                        false;
+                    RequestAllDiagramLineGeometryUpdate(
+                        "end-suspend");
+                }
+            }
         }
 
         internal bool TryDeferLineDecoratorListenerRegistration(
@@ -1009,6 +1036,7 @@ namespace m0.UIWpf.UX
 
             IUXItem[] items = pendingDraggedItemRenderUpdates.ToArray();
             pendingDraggedItemRenderUpdates.Clear();
+            bool anyItemUpdated = false;
 
             foreach (IUXItem item in items)
             {
@@ -1016,9 +1044,15 @@ namespace m0.UIWpf.UX
                     continue;
 
                 CheckAndUpdateItemParent(item, true);
-                UpdateDiagramLinesForMovedItem(item);
+                anyItemUpdated = true;
             }
 
+            if (anyItemUpdated)
+            {
+                UpdateIncidentDiagramLineGeometries(
+                    items,
+                    "drag-render-frame");
+            }
         }
 
         void CompleteDraggedItemRenderUpdate(IUXItem item)
@@ -1028,7 +1062,206 @@ namespace m0.UIWpf.UX
 
             pendingDraggedItemRenderUpdates.Remove(item);
             CheckAndUpdateItemParent(item, false);
-            UpdateDiagramLinesForMovedItem(item);
+            UpdateIncidentDiagramLineGeometries(
+                new[] { item },
+                "drag-complete-live");
+        }
+
+        internal bool ShouldSuppressLifecycleDiagramLineGeometryUpdate()
+        {
+            if (incrementalDragSettleScheduled ||
+                diagramLineGeometryPassInProgress)
+            {
+                return true;
+            }
+
+            if (lastDiagramLineGeometryPassTimestamp == 0)
+                return false;
+
+            double elapsedMilliseconds =
+                (Stopwatch.GetTimestamp() -
+                    lastDiagramLineGeometryPassTimestamp) *
+                1000.0 /
+                Stopwatch.Frequency;
+
+            return elapsedMilliseconds <
+                SuppressLifecycleDiagramLineGeometryMilliseconds;
+        }
+
+        void BeginDiagramLineGeometryPass()
+        {
+            allDiagramLineGeometryUpdateNeeded = false;
+            diagramLineGeometryPassInProgress = true;
+            skipLifecycleDiagramLineGeometryRequests = true;
+            lastDiagramLineGeometryPassTimestamp =
+                Stopwatch.GetTimestamp();
+        }
+
+        void EndDiagramLineGeometryPass()
+        {
+            diagramLineGeometryPassInProgress = false;
+            MarkDiagramLineGeometryPassCompleted();
+        }
+
+        void MarkDiagramLineGeometryPassCompleted()
+        {
+            skipLifecycleDiagramLineGeometryRequests = true;
+            lastDiagramLineGeometryPassTimestamp =
+                Stopwatch.GetTimestamp();
+        }
+
+        bool ShouldIgnoreRedundantDiagramLineGeometryRequest(
+            string reason)
+        {
+            if (string.IsNullOrEmpty(reason))
+                return false;
+
+            bool hasOrchestrationReason = false;
+            bool hasSizeChangedReason = false;
+            bool hasNonRedundantReason = false;
+            bool hasAnyPart = false;
+
+            string[] reasonParts = reason.Split(',');
+            for (int reasonIndex = 0;
+                reasonIndex < reasonParts.Length;
+                reasonIndex++)
+            {
+                string reasonPart = reasonParts[reasonIndex].Trim();
+                if (reasonPart.Length == 0)
+                    continue;
+
+                hasAnyPart = true;
+
+                switch (reasonPart)
+                {
+                    case "host-item":
+                    case "end-suspend":
+                    case "item-loaded":
+                    case "item-visible":
+                        hasOrchestrationReason = true;
+                        break;
+                    case "item-sizechanged":
+                        hasSizeChangedReason = true;
+                        break;
+                    default:
+                        hasNonRedundantReason = true;
+                        break;
+                }
+            }
+
+            if (!hasAnyPart || hasNonRedundantReason)
+                return false;
+
+            if (diagramLineGeometryPassInProgress)
+                return true;
+
+            if (hasSizeChangedReason)
+                return ShouldSuppressLifecycleDiagramLineGeometryUpdate();
+
+            return hasOrchestrationReason &&
+                skipLifecycleDiagramLineGeometryRequests;
+        }
+
+        internal void RequestAllDiagramLineGeometryUpdate(
+            string reason = "scheduled")
+        {
+            if (IsDisposed)
+                return;
+
+            if (ShouldIgnoreRedundantDiagramLineGeometryRequest(
+                    reason))
+            {
+                return;
+            }
+
+            skipLifecycleDiagramLineGeometryRequests = false;
+
+            RememberPendingDiagramLineGeometryUpdateReason(
+                reason);
+            allDiagramLineGeometryUpdateNeeded = true;
+
+            if (SuspendAutomaticDiagramLineUpdates)
+            {
+                allDiagramLineGeometryUpdatePendingAfterSuspension =
+                    true;
+                return;
+            }
+
+            if (allDiagramLineGeometryUpdateScheduled)
+            {
+                return;
+            }
+
+            allDiagramLineGeometryUpdateScheduled = true;
+            Dispatcher.BeginInvoke(
+                new Action(
+                    ProcessRequestedDiagramLineGeometryUpdate),
+                System.Windows.Threading.DispatcherPriority.Render);
+        }
+
+        void RememberPendingDiagramLineGeometryUpdateReason(
+            string reason)
+        {
+            if (string.IsNullOrEmpty(reason))
+                return;
+
+            if (string.IsNullOrEmpty(
+                    pendingDiagramLineGeometryUpdateReason) ||
+                pendingDiagramLineGeometryUpdateReason ==
+                    "scheduled")
+            {
+                pendingDiagramLineGeometryUpdateReason =
+                    reason;
+                return;
+            }
+
+            if (pendingDiagramLineGeometryUpdateReason.IndexOf(
+                    reason,
+                    StringComparison.Ordinal) >= 0)
+            {
+                return;
+            }
+
+            pendingDiagramLineGeometryUpdateReason =
+                pendingDiagramLineGeometryUpdateReason +
+                "," +
+                reason;
+        }
+
+        void ProcessRequestedDiagramLineGeometryUpdate()
+        {
+            allDiagramLineGeometryUpdateScheduled = false;
+
+            if (IsDisposed)
+            {
+                return;
+            }
+
+            if (SuspendAutomaticDiagramLineUpdates)
+            {
+                allDiagramLineGeometryUpdatePendingAfterSuspension =
+                    true;
+                return;
+            }
+
+            string reason =
+                pendingDiagramLineGeometryUpdateReason;
+            pendingDiagramLineGeometryUpdateReason =
+                "scheduled";
+
+            if (!allDiagramLineGeometryUpdateNeeded)
+            {
+                return;
+            }
+
+            if (ShouldIgnoreRedundantDiagramLineGeometryRequest(
+                    reason))
+            {
+                allDiagramLineGeometryUpdateNeeded = false;
+                return;
+            }
+
+            UpdateAllDiagramLineGeometries(reason);
         }
 
         public ILineDecoratorBase prevSelectedLine;
@@ -1703,6 +1936,16 @@ namespace m0.UIWpf.UX
         readonly List<IUXContainer> Containers_all =
             new List<IUXContainer>();
 
+        internal IList<IUXItem> GetDiagramRoutingItems()
+        {
+            return Items_all
+                .Where(item =>
+                    item != null &&
+                    !(item is IUXDecorator) &&
+                    !(item is ILineDecoratorBase))
+                .ToList();
+        }
+
         Dictionary<IVertex, List<IUXItem>> ItemsDictionaryByBaseEdgeTo = new Dictionary<IVertex, List<IUXItem>>();
 
         bool _needRebuildItemsDictionary = true;
@@ -1802,6 +2045,7 @@ namespace m0.UIWpf.UX
             item.RemoveFromCanvas();
 
             item.Dispose(); // check if will not cause problems
+            RequestAllDiagramLineGeometryUpdate("remove-item");
         }
 
         private void RemoveIncomingDiagramLines(IUXItem item)
@@ -1934,6 +2178,7 @@ namespace m0.UIWpf.UX
             Items_all.Add(item);
             itemsAllSet.Add(item);
             RequestMiniaturesUpdate(true);
+            RequestAllDiagramLineGeometryUpdate("host-item");
 
             if (item is IUXContainer itemContainer)
                 Containers_all.Add(itemContainer);
@@ -3189,12 +3434,10 @@ namespace m0.UIWpf.UX
                             if (CheckIfItemIsValidAndRemoveIfInvalid(i))
                                 HostItem(this, i, false);
                         }
-                        
 
                         //
 
                         UpdateLayout(); // here
-
                         AddLineObjects();
 
                         SelectionArea = new SelectionArea(Canvas);
@@ -3206,7 +3449,6 @@ namespace m0.UIWpf.UX
                         SelectWrappersForSelectedVertices();
 
                         IsFirstPainted = true;
-
 
                         CheckAndUpdateDiagramLines();
 
@@ -3221,26 +3463,378 @@ namespace m0.UIWpf.UX
                     {
                         deferHostItemUpdateLayout = false;
                         EndSuspendAutomaticDiagramLineUpdates();
-                        UpdateAllDiagramLineGeometries();
+                        UpdateAllDiagramLineGeometries(
+                            "paint-final");
                         RequestMiniaturesUpdate(true);
                     }
             }
         }
 
-        void UpdateAllDiagramLineGeometries()
+        internal void UpdateAllDiagramLineGeometries(
+            string reason = "unspecified")
         {
-            UpdateDiagramLineGeometries(Items_all);
+            BeginDiagramLineGeometryPass();
+            try
+            {
+                HashSet<UXItem> updatedItems =
+                    new HashSet<UXItem>();
+
+                foreach (IUXItem item in Items_all)
+                {
+                    UXItem concreteItem = item as UXItem;
+
+                    if (concreteItem != null)
+                    {
+                        if (updatedItems.Add(concreteItem))
+                            concreteItem
+                                .UpdateOwnedDiagramLines();
+
+                        continue;
+                    }
+
+                    if (item != null)
+                        item.UpdateDiagramLines();
+                }
+            }
+            finally
+            {
+                EndDiagramLineGeometryPass();
+            }
         }
 
-        void UpdateDiagramLineGeometries(IEnumerable<IUXItem> items)
+        void UpdateDiagramLineGeometries(
+            IEnumerable<IUXItem> items,
+            string reason = "partial")
         {
-            foreach (IUXItem item in items)
+            BeginDiagramLineGeometryPass();
+            try
+            {
+                HashSet<UXItem> updatedItems =
+                    new HashSet<UXItem>();
+
+                foreach (IUXItem item in items)
+                {
+                    UXItem concreteItem = item as UXItem;
+
+                    if (concreteItem != null)
+                    {
+                        if (updatedItems.Add(concreteItem))
+                            concreteItem
+                                .UpdateOwnedDiagramLines();
+
+                        continue;
+                    }
+
+                    if (item != null)
+                        item.UpdateDiagramLines();
+                }
+            }
+            finally
+            {
+                EndDiagramLineGeometryPass();
+            }
+        }
+
+        void CaptureDragGeometrySnapshot()
+        {
+            dragMovedItems.Clear();
+            dragStartItemBounds.Clear();
+
+            List<IUXItem> seedItems = new List<IUXItem>();
+
+            if (alignmentGuideMovingItems.Count > 0)
+            {
+                seedItems.AddRange(alignmentGuideMovingItems);
+            }
+            else if (ClickedItem != null)
+            {
+                seedItems.Add(ClickedItem);
+            }
+
+            HashSet<IUXItem> movedClosure =
+                CollectMovedItemClosure(seedItems);
+
+            foreach (IUXItem item in movedClosure)
             {
                 if (item == null)
                     continue;
 
-                item.UpdateDiagramLines();
+                dragMovedItems.Add(item);
+
+                Rect bounds;
+                if (DiagramLineRouter.TryGetVisibleBounds(
+                        item,
+                        Canvas,
+                        out bounds))
+                {
+                    dragStartItemBounds[item] = bounds;
+                }
             }
+        }
+
+        HashSet<IUXItem> CollectMovedItemClosure(
+            IEnumerable<IUXItem> seedItems)
+        {
+            HashSet<IUXItem> moved =
+                new HashSet<IUXItem>();
+
+            foreach (IUXItem seed in seedItems)
+            {
+                if (seed != null)
+                    moved.Add(seed);
+            }
+
+            if (moved.Count == 0)
+                return moved;
+
+            IUXItem[] seeds = moved.ToArray();
+
+            foreach (IUXItem nested in Items_all)
+            {
+                if (nested == null || moved.Contains(nested))
+                    continue;
+
+                foreach (IUXItem seed in seeds)
+                {
+                    if (IsItemOrDescendantOf(nested, seed))
+                    {
+                        moved.Add(nested);
+                        break;
+                    }
+                }
+            }
+
+            return moved;
+        }
+
+        void UpdateIncidentDiagramLineGeometries(
+            IEnumerable<IUXItem> movedItems,
+            string reason)
+        {
+            HashSet<IUXItem> movedClosure =
+                CollectMovedItemClosure(movedItems);
+
+            foreach (IUXItem item in movedClosure)
+                dragMovedItems.Add(item);
+
+            HashSet<ILineDecoratorBase> incidentLines =
+                CollectIncidentDiagramLines(movedClosure);
+
+            UpdateUniqueDiagramLinePairs(
+                incidentLines,
+                reason);
+        }
+
+        void RequestIncrementalDragSettleDiagramLineGeometry()
+        {
+            if (IsDisposed)
+                return;
+
+            incrementalDragSettleScheduled = true;
+            Dispatcher.BeginInvoke(
+                new Action(
+                    ProcessIncrementalDragSettleDiagramLineGeometry),
+                System.Windows.Threading.DispatcherPriority.Render);
+        }
+
+        void ProcessIncrementalDragSettleDiagramLineGeometry()
+        {
+            incrementalDragSettleScheduled = false;
+
+            if (IsDisposed)
+            {
+                dragMovedItems.Clear();
+                dragStartItemBounds.Clear();
+                return;
+            }
+
+            HashSet<IUXItem> movedClosure =
+                CollectMovedItemClosure(dragMovedItems);
+            HashSet<ILineDecoratorBase> linesToUpdate =
+                CollectIncidentDiagramLines(movedClosure);
+
+            Rect sweptBounds = BuildDragSweptBounds(movedClosure);
+
+            if (!sweptBounds.IsEmpty)
+            {
+                foreach (ILineDecoratorBase line in
+                    GetAllOwnedDiagramLines())
+                {
+                    if (line == null ||
+                        linesToUpdate.Contains(line))
+                    {
+                        continue;
+                    }
+
+                    if (DiagramLineIntersectsBounds(line, sweptBounds))
+                        linesToUpdate.Add(line);
+                }
+            }
+
+            BeginDiagramLineGeometryPass();
+            try
+            {
+                UpdateUniqueDiagramLinePairs(
+                    linesToUpdate,
+                    "drag-settle");
+            }
+            finally
+            {
+                dragMovedItems.Clear();
+                dragStartItemBounds.Clear();
+                EndDiagramLineGeometryPass();
+            }
+        }
+
+        Rect BuildDragSweptBounds(IEnumerable<IUXItem> movedItems)
+        {
+            Rect swept = Rect.Empty;
+
+            foreach (IUXItem item in movedItems)
+            {
+                Rect oldBounds;
+                if (dragStartItemBounds.TryGetValue(
+                        item,
+                        out oldBounds))
+                {
+                    oldBounds.Inflate(
+                        DragSettleSweptClearance,
+                        DragSettleSweptClearance);
+                    if (swept.IsEmpty)
+                        swept = oldBounds;
+                    else
+                        swept.Union(oldBounds);
+                }
+
+                Rect newBounds;
+                if (DiagramLineRouter.TryGetVisibleBounds(
+                        item,
+                        Canvas,
+                        out newBounds))
+                {
+                    newBounds.Inflate(
+                        DragSettleSweptClearance,
+                        DragSettleSweptClearance);
+                    if (swept.IsEmpty)
+                        swept = newBounds;
+                    else
+                        swept.Union(newBounds);
+                }
+            }
+
+            return swept;
+        }
+
+        HashSet<ILineDecoratorBase> CollectIncidentDiagramLines(
+            IEnumerable<IUXItem> items)
+        {
+            HashSet<ILineDecoratorBase> lines =
+                new HashSet<ILineDecoratorBase>();
+
+            foreach (IUXItem item in items)
+            {
+                UXItem concreteItem = item as UXItem;
+                if (concreteItem == null)
+                    continue;
+
+                concreteItem.CollectIncidentDiagramLines(lines);
+            }
+
+            return lines;
+        }
+
+        IEnumerable<ILineDecoratorBase> GetAllOwnedDiagramLines()
+        {
+            foreach (IUXItem item in Items_all)
+            {
+                UXItem concreteItem = item as UXItem;
+                if (concreteItem == null)
+                    continue;
+
+                foreach (ILineDecoratorBase line in
+                    concreteItem.OwnedDiagramLines)
+                {
+                    if (line != null)
+                        yield return line;
+                }
+            }
+        }
+
+        static bool DiagramLineIntersectsBounds(
+            ILineDecoratorBase line,
+            Rect bounds)
+        {
+            LineDecoratorBase decorator =
+                line as LineDecoratorBase;
+            if (decorator == null ||
+                decorator.CurrentRoute == null)
+            {
+                return true;
+            }
+
+            DiagramLineRoute route = decorator.CurrentRoute;
+            if (!route.Bounds.IsEmpty &&
+                !route.Bounds.IntersectsWith(bounds))
+            {
+                return false;
+            }
+
+            return DiagramLineRouter.PolylineIntersectsBounds(
+                route.FlattenedPoints,
+                bounds);
+        }
+
+        void UpdateUniqueDiagramLinePairs(
+            IEnumerable<ILineDecoratorBase> lines,
+            string reason)
+        {
+            List<ILineDecoratorBase> lineList =
+                lines == null
+                    ? new List<ILineDecoratorBase>()
+                    : lines.Where(line => line != null).ToList();
+
+            HashSet<string> updatedPairs =
+                new HashSet<string>();
+
+            foreach (ILineDecoratorBase line in lineList)
+            {
+                UXItem fromItem =
+                    line.FromDiagramItem as UXItem;
+                IUXItem toItem = line.ToItem;
+
+                if (fromItem == null || toItem == null)
+                    continue;
+
+                string pairKey =
+                    GetCanonicalDiagramLinePairKey(
+                        fromItem,
+                        toItem);
+
+                if (!updatedPairs.Add(pairKey))
+                    continue;
+
+                fromItem.UpdateDiagramLinesToTarget(toItem);
+            }
+        }
+
+        static string GetCanonicalDiagramLinePairKey(
+            IUXItem first,
+            IUXItem second)
+        {
+            int firstHash =
+                System.Runtime.CompilerServices.RuntimeHelpers
+                    .GetHashCode(first);
+            int secondHash =
+                System.Runtime.CompilerServices.RuntimeHelpers
+                    .GetHashCode(second);
+
+            if (object.ReferenceEquals(first, second))
+                return "self:" + firstHash;
+
+            if (firstHash < secondHash)
+                return firstHash + ":" + secondHash;
+
+            return secondHash + ":" + firstHash;
         }
 
         private bool CheckIfItemIsValidAndRemoveIfInvalid(IUXItem item)
@@ -3845,6 +4439,7 @@ namespace m0.UIWpf.UX
 
             Interaction.BeginInteractionWithGraph();
             itemMoveGraphInteractionActive = true;
+            CaptureDragGeometrySnapshot();
         }
 
         void BeginItemResizeGraphInteractionIfNeeded()
@@ -3874,6 +4469,7 @@ namespace m0.UIWpf.UX
             ProcessPendingDraggedItemRenderUpdates();
             Interaction.EndInteractionWithGraph();
             itemMoveGraphInteractionActive = false;
+            RequestIncrementalDragSettleDiagramLineGeometry();
         }
 
         void PersistDraggedItemPosition(IUXItem item)
@@ -4993,7 +5589,9 @@ namespace m0.UIWpf.UX
                     }
 
                     UpdateLayout();
-                    UpdateDiagramLineGeometries(affectedLineItems);
+                    UpdateDiagramLineGeometries(
+                        affectedLineItems,
+                        "dnd-final");
 
 
                     NewUXItemsList.Clear();
@@ -5131,7 +5729,6 @@ namespace m0.UIWpf.UX
 
         void CheckAndUpdateDiagramLinesForItems(IList<IUXItem> items)
         {
-
             HashSet<IEdge> containerEdges = GetContainerEdges();
 
             BeginSuspendAutomaticDiagramLineUpdates();
@@ -5155,7 +5752,11 @@ namespace m0.UIWpf.UX
 
                 // When not nested under Paint (which refreshes after), update geometry once.
                 if (!SuspendAutomaticDiagramLineUpdates)
-                    UpdateDiagramLineGeometries(items);
+                {
+                    UpdateDiagramLineGeometries(
+                        items,
+                        "line-sync-partial");
+                }
             }
             
         }

@@ -30,39 +30,124 @@ namespace m0.ZeroTypes.UX
         
         public override void SetPosition(double _FromX, double _FromY, double _ToX, double _ToY, bool isSelfRelation, double selfRelationX, double selfRelationY)
         {
-            FromX = _FromX;
-            FromY = _FromY;
-            ToX = _ToX;
-            ToY = _ToY;
+            base.SetPosition(
+                _FromX,
+                _FromY,
+                _ToX,
+                _ToY,
+                isSelfRelation,
+                selfRelationX,
+                selfRelationY);
 
-            base.SetPosition(FromX, FromY, ToX, ToY, isSelfRelation, selfRelationX, selfRelationY);            
-
-            if (MetaDiagramItem == null)
-                return;
-
-            PointCollection pc = new PointCollection();
-
-            if (!isSelfRelation) 
-            {
-                Point p = new Point(FromX + ((ToX - FromX) / 2), FromY + ((ToY - FromY) / 2));
-                pc.Add(p);
-                pc.Add(MetaDiagramItem.GetLineAnchorLocation(this, true, p, 1, 1, false));                    
-
-                MetaLine.Points = pc;
-            }
+            UpdateMetaLinePosition();
         }
 
         public override void UpdateMetaPosition()
         {
             base.UpdateMetaPosition();
 
-            PointCollection pc = new PointCollection();
+            UpdateMetaLinePosition();
+        }
 
-            Point p = new Point(FromX + ((ToX - FromX) / 2), FromY + ((ToY - FromY) / 2));
-            pc.Add(p);
-            pc.Add(MetaDiagramItem.GetLineAnchorLocation(this, true, p, 1, 1, false));
+        void UpdateMetaLinePosition()
+        {
+            if (MetaDiagramItem == null ||
+                CurrentRoute == null ||
+                CurrentRoute.Segments.Count == 0 ||
+                OwningVisualiser == null ||
+                OwningVisualiser.Canvas == null)
+            {
+                MetaLine.Points = new PointCollection();
+                return;
+            }
 
-            MetaLine.Points = pc;
+            Point routeMiddle;
+            Vector routeTangent;
+            CurrentRoute.GetPointAndTangentAtFraction(
+                0.5,
+                out routeMiddle,
+                out routeTangent);
+
+            Rect metaBounds;
+            Point metaAnchor = routeMiddle;
+
+            if (DiagramLineRouter.TryGetVisibleBounds(
+                    MetaDiagramItem,
+                    OwningVisualiser.Canvas,
+                    out metaBounds))
+            {
+                if (metaBounds.Contains(routeMiddle))
+                {
+                    IReadOnlyList<Point> flattenedPoints =
+                        CurrentRoute.FlattenedPoints;
+                    int middleIndex =
+                        flattenedPoints.Count / 2;
+                    bool foundOutsidePoint = false;
+
+                    for (int offset = 0;
+                        offset < flattenedPoints.Count;
+                        offset++)
+                    {
+                        int beforeIndex =
+                            middleIndex - offset;
+                        int afterIndex =
+                            middleIndex + offset;
+
+                        if (beforeIndex >= 0 &&
+                            !metaBounds.Contains(
+                                flattenedPoints[beforeIndex]))
+                        {
+                            routeMiddle =
+                                flattenedPoints[beforeIndex];
+                            foundOutsidePoint = true;
+                            break;
+                        }
+
+                        if (afterIndex <
+                                flattenedPoints.Count &&
+                            !metaBounds.Contains(
+                                flattenedPoints[afterIndex]))
+                        {
+                            routeMiddle =
+                                flattenedPoints[afterIndex];
+                            foundOutsidePoint = true;
+                            break;
+                        }
+                    }
+
+                    if (!foundOutsidePoint)
+                    {
+                        MetaLine.Points =
+                            new PointCollection();
+                        UpdateLabelVisibility();
+                        return;
+                    }
+                }
+
+                Point metaCenter = new Point(
+                    metaBounds.Left + metaBounds.Width / 2,
+                    metaBounds.Top + metaBounds.Height / 2);
+                Vector direction = metaCenter - routeMiddle;
+
+                if (direction.Length > 0.001)
+                    metaAnchor =
+                        MetaDiagramItem.GetLineEdgeIntersection(
+                            routeMiddle,
+                            direction);
+            }
+
+            if ((metaAnchor - routeMiddle).Length > 0.001)
+            {
+                MetaLine.Points = new PointCollection
+                {
+                    routeMiddle,
+                    metaAnchor
+                };
+            }
+            else
+                MetaLine.Points = new PointCollection();
+
+            UpdateLabelVisibility();
         }
         
         public override void AddToCanvas()
@@ -92,7 +177,9 @@ namespace m0.ZeroTypes.UX
                 previousMetaItem.RemoveAsToMetaLine(this);
             }
 
-            if (MetaDiagramItem != null)
+            if (MetaDiagramItem != null &&
+                MetaLine.Points != null &&
+                MetaLine.Points.Count >= 2)
             {
                 OwningVisualiser.Canvas.Children.Add(MetaLine);
                 MetaDiagramItem.AddAsToMetaLine(this);
@@ -104,6 +191,79 @@ namespace m0.ZeroTypes.UX
             }
             
             VertexSetedUp();
+        }
+
+        protected override void UpdateLabelVisibility()
+        {
+            if (MetaDiagramItem != null)
+            {
+                if (OwningVisualiser != null &&
+                    OwningVisualiser.Canvas != null)
+                {
+                    OwningVisualiser.Canvas.Children.Remove(Label);
+                }
+
+                return;
+            }
+
+            base.UpdateLabelVisibility();
+        }
+
+        public override double GetMouseDistance(Point point)
+        {
+            double minimumDistance =
+                base.GetMouseDistance(point);
+
+            if (MetaLine.Points == null ||
+                MetaLine.Points.Count < 2)
+            {
+                return minimumDistance;
+            }
+
+            for (int pointIndex = 0;
+                pointIndex < MetaLine.Points.Count - 1;
+                pointIndex++)
+            {
+                minimumDistance = Math.Min(
+                    minimumDistance,
+                    GetPointToSegmentDistance(
+                        point,
+                        MetaLine.Points[pointIndex],
+                        MetaLine.Points[pointIndex + 1]));
+            }
+
+            return minimumDistance;
+        }
+
+        static double GetPointToSegmentDistance(
+            Point point,
+            Point segmentStart,
+            Point segmentEnd)
+        {
+            Vector segment = segmentEnd - segmentStart;
+            double squaredLength =
+                segment.X * segment.X +
+                segment.Y * segment.Y;
+
+            if (squaredLength <= 0.000001)
+                return (point - segmentStart).Length;
+
+            Vector fromStart = point - segmentStart;
+            double projection =
+                (fromStart.X * segment.X +
+                 fromStart.Y * segment.Y) /
+                squaredLength;
+            projection = Math.Max(
+                0,
+                Math.Min(1, projection));
+
+            Point closest = new Point(
+                segmentStart.X +
+                    segment.X * projection,
+                segmentStart.Y +
+                    segment.Y * projection);
+
+            return (point - closest).Length;
         }
 
         public override void Dispose()

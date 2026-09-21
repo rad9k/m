@@ -323,6 +323,37 @@ namespace m0.ZeroTypes.UX
             return p;
         }
 
+        public override bool UsesRectangularLinePorts
+        {
+            get { return false; }
+        }
+
+        internal override bool SegmentCrossesVisibleInterior(
+            Point start,
+            Point end)
+        {
+            if (OwningVisualiser == null ||
+                OwningVisualiser.Canvas == null)
+            {
+                return false;
+            }
+
+            Rect bounds;
+            if (!DiagramLineRouter.TryGetVisibleBounds(
+                    this,
+                    OwningVisualiser.Canvas,
+                    out bounds))
+            {
+                return false;
+            }
+
+            return DiagramLineRouter
+                .SegmentCrossesInscribedRhombusInterior(
+                    start,
+                    end,
+                    bounds);
+        }
+
         // Rhombus equivalent of UXItem.GetLineEdgeIntersection.
         // The rhombus is inscribed in the item bounding box, with vertices
         // at the midpoints of the bounding box sides. Ray is intersected

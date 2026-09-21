@@ -18,6 +18,8 @@ namespace m0.ZeroTypes.UX
         public double ToX { get; set; }
         public double ToY { get; set; }
 
+        public DiagramLineRoute CurrentRoute { get; protected set; }
+
         public bool isSelfRelation { get; set; }
 
         public IUXItem FromDiagramItem { get; set; }        

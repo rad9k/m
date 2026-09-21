@@ -253,6 +253,37 @@ namespace m0.ZeroTypes.UX
             return p;
         }
 
+        public override bool UsesRectangularLinePorts
+        {
+            get { return false; }
+        }
+
+        internal override bool SegmentCrossesVisibleInterior(
+            Point start,
+            Point end)
+        {
+            if (OwningVisualiser == null ||
+                OwningVisualiser.Canvas == null)
+            {
+                return false;
+            }
+
+            Rect bounds;
+            if (!DiagramLineRouter.TryGetVisibleBounds(
+                    this,
+                    OwningVisualiser.Canvas,
+                    out bounds))
+            {
+                return false;
+            }
+
+            return DiagramLineRouter
+                .SegmentCrossesEllipseInterior(
+                    start,
+                    end,
+                    bounds);
+        }
+
         // Ellipse equivalent of UXItem.GetLineEdgeIntersection.
         // Solves the ray <-> ellipse intersection (2 candidates) and returns
         // the one strictly forward along the ray (closest to fromPoint).

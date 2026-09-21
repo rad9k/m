@@ -56,6 +56,21 @@ namespace m0.ZeroTypes.UX
         readonly List<ILineDecoratorBase> DiagramFromLines =
             new List<ILineDecoratorBase>();
 
+        internal int OwnedDiagramLineCount
+        {
+            get { return DiagramFromLines.Count; }
+        }
+
+        internal IList<ILineDecoratorBase> OwnedDiagramLines
+        {
+            get { return DiagramFromLines; }
+        }
+
+        public virtual bool UsesRectangularLinePorts
+        {
+            get { return true; }
+        }
+
         public List<ILineDecoratorBase> DiagramToLines { get; } = new List<ILineDecoratorBase>();
 
         public List<ILineDecoratorBase> DiagramToAsMetaLines { get; } = new List<ILineDecoratorBase>();
@@ -90,24 +105,73 @@ namespace m0.ZeroTypes.UX
             }
 
             this.SizeChanged += UXItem_SizeChanged;
+            this.Loaded += UXItem_Loaded;
+            this.IsVisibleChanged +=
+                UXItem_IsVisibleChanged;
+        }
+
+        private void UXItem_Loaded(
+            object sender,
+            RoutedEventArgs e)
+        {
+            RequestDiagramLineGeometryUpdate("item-loaded");
+        }
+
+        private void UXItem_IsVisibleChanged(
+            object sender,
+            DependencyPropertyChangedEventArgs e)
+        {
+            RequestDiagramLineGeometryUpdate("item-visible");
+        }
+
+        void RequestDiagramLineGeometryUpdate(string reason)
+        {
+            UXVisualiser visualiser =
+                OwningVisualiser as UXVisualiser;
+
+            if (visualiser == null)
+                return;
+
+            if (visualiser.ShouldSuppressLifecycleDiagramLineGeometryUpdate())
+                return;
+
+            visualiser
+                .RequestAllDiagramLineGeometryUpdate(reason);
         }
 
         private void UXItem_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (OwningVisualiser is UXVisualiser owningUxVisualiser &&
+            UXVisualiser owningUxVisualiser =
+                OwningVisualiser as UXVisualiser;
+
+            if (owningUxVisualiser != null &&
                 owningUxVisualiser.SuspendAutomaticDiagramLineUpdates)
             {
                 return;
             }
 
-            if (OwningVisualiser is UXVisualiser draggingUxVisualiser &&
-                draggingUxVisualiser.IsItemMoveGraphInteractionActive)
+            if (owningUxVisualiser != null &&
+                owningUxVisualiser.IsItemMoveGraphInteractionActive)
             {
-                draggingUxVisualiser.RequestDraggedItemRenderUpdate(this);
+                owningUxVisualiser.RequestDraggedItemRenderUpdate(
+                    this);
                 return;
             }
 
-            UpdateDiagramLines();
+            if (owningUxVisualiser != null)
+            {
+                if (owningUxVisualiser
+                    .ShouldSuppressLifecycleDiagramLineGeometryUpdate())
+                {
+                    return;
+                }
+
+                owningUxVisualiser
+                    .RequestAllDiagramLineGeometryUpdate(
+                        "item-sizechanged");
+            }
+            else
+                UpdateDiagramLines();
         }
 
         protected Brush GetBackgroundBrush()
@@ -503,8 +567,16 @@ namespace m0.ZeroTypes.UX
             }
             else
             {
-                UpdateDiagramLines();
                 OwningVisualiser.CheckAndUpdateItemParent(this, false);
+
+                if (OwningVisualiser is UXVisualiser owningUxVisualiser)
+                {
+                    owningUxVisualiser
+                        .RequestAllDiagramLineGeometryUpdate(
+                            "item-moved");
+                }
+                else
+                    UpdateDiagramLines();
             }
         }
 
@@ -598,7 +670,18 @@ namespace m0.ZeroTypes.UX
                 draggingUxVisualiser.RequestDraggedItemRenderUpdate(this);
             }
             else
+            {
                 OwningVisualiser.CheckAndUpdateItemParent(this, true);
+
+                if (OwningVisualiser is UXVisualiser owningUxVisualiser)
+                {
+                    owningUxVisualiser
+                        .RequestAllDiagramLineGeometryUpdate(
+                            "item-resized");
+                }
+                else
+                    UpdateDiagramLines();
+            }
         }
 
         public void AddToSelectedEdges()
@@ -868,9 +951,19 @@ namespace m0.ZeroTypes.UX
 
             foreach (ILineDecoratorBase l in sameToItemLines)
             {
-                Point start = GetLineAnchorLocation(toItem, false, new Point(), allCnt, cnt, toItem == this);
+                Point start = GetTimedLineAnchorLocation(
+                    this,
+                    toItem,
+                    allCnt,
+                    cnt,
+                    toItem == this);
 
-                Point end = toItem.GetLineAnchorLocation(this, false, new Point(), allCnt, cnt, false);
+                Point end = GetTimedLineAnchorLocation(
+                    toItem,
+                    this,
+                    allCnt,
+                    cnt,
+                    false);
 
                 if (toItem == this)
                 {
@@ -900,9 +993,19 @@ namespace m0.ZeroTypes.UX
 
             foreach (ILineDecoratorBase l in sameFromItemLinesTo)
             {
-                Point end = GetLineAnchorLocation(toItem, false, new Point(), allCnt, cnt, false);
+                Point end = GetTimedLineAnchorLocation(
+                    this,
+                    toItem,
+                    allCnt,
+                    cnt,
+                    false);
 
-                Point start = toItem.GetLineAnchorLocation(this, false, new Point(), allCnt, cnt, false);
+                Point start = GetTimedLineAnchorLocation(
+                    toItem,
+                    this,
+                    allCnt,
+                    cnt,
+                    false);
 
                 if (toItem != this)
                     l.SetPosition(start.X, start.Y, end.X, end.Y, false, 0, 0);
@@ -911,9 +1014,71 @@ namespace m0.ZeroTypes.UX
             }
         }
 
+        Point GetTimedLineAnchorLocation(
+            IUXItem fromItem,
+            IUXItem toItem,
+            int toItemDiagramLinesCount,
+            int toItemDiagramLineNumber,
+            bool isSelfStart)
+        {
+            Point point = fromItem.GetLineAnchorLocation(
+                toItem,
+                false,
+                new Point(),
+                toItemDiagramLinesCount,
+                toItemDiagramLineNumber,
+                isSelfStart);
+            return point;
+        }
+
+        internal void UpdateOwnedDiagramLines()
+        {
+            HashSet<IUXItem> updatedTargets =
+                new HashSet<IUXItem>();
+
+            foreach (ILineDecoratorBase line in DiagramFromLines)
+            {
+                IUXItem target = line.ToItem;
+
+                if (target == null ||
+                    !updatedTargets.Add(target))
+                {
+                    continue;
+                }
+
+                UpdateDiagramLines(target);
+            }
+        }
+
+        internal void UpdateDiagramLinesToTarget(IUXItem toItem)
+        {
+            if (toItem == null)
+                return;
+
+            UpdateDiagramLines(toItem);
+        }
+
+        internal void CollectIncidentDiagramLines(
+            ICollection<ILineDecoratorBase> lines)
+        {
+            if (lines == null)
+                return;
+
+            foreach (ILineDecoratorBase line in DiagramFromLines)
+            {
+                if (line != null)
+                    lines.Add(line);
+            }
+
+            foreach (ILineDecoratorBase line in DiagramToLines)
+            {
+                if (line != null)
+                    lines.Add(line);
+            }
+        }
+
         public void UpdateDiagramLines()
         {
-
             foreach (ILineDecoratorBase m in DiagramToAsMetaLines)
                 m.UpdateMetaPosition();
 
@@ -1297,6 +1462,30 @@ namespace m0.ZeroTypes.UX
                 p = p.ParentItem;
             }
             return false;
+        }
+
+        internal virtual bool SegmentCrossesVisibleInterior(
+            Point start,
+            Point end)
+        {
+            if (OwningVisualiser == null ||
+                OwningVisualiser.Canvas == null)
+            {
+                return false;
+            }
+
+            Rect bounds;
+            if (!DiagramLineRouter.TryGetVisibleBounds(
+                    this,
+                    OwningVisualiser.Canvas,
+                    out bounds))
+            {
+                return false;
+            }
+
+            return DiagramLineRouter.PolylineIntersectsBounds(
+                new[] { start, end },
+                bounds);
         }
 
         public virtual Point GetLineAnchorLocation(IUXItem _toItem, bool useToPoint, Point toPoint, int toItemDiagramLinesCount, int toItemDiagramLineNumber, bool isSelfStart)
