@@ -80,11 +80,14 @@ namespace m0.UIWpf.UX
         const double MiniaturesContentPaddingRatio = 0.07;
         const double MiniaturesMinimumLogicalPadding = 20;
         const double MiniaturesMinimumItemSize = 1.5;
+        const double MiniaturesHighlightLineThickness = 4;
+        const double MiniaturesSelfRelationLoopRadius = 8;
 
         MiniaturesAdorner miniaturesAdorner;
         AdornerLayer miniaturesAdornerLayer;
         ScrollViewer miniaturesScrollViewer;
         bool miniaturesItemsDirty;
+        bool miniaturesHighlightDirty;
         bool miniaturesUpdateReschedulePending;
         bool miniaturesUpdateRescheduleRebuildItems;
         System.Windows.Threading.DispatcherOperation miniaturesUpdateOperation;
@@ -105,6 +108,13 @@ namespace m0.UIWpf.UX
             public MiniatureShapeKind ShapeKind;
         }
 
+        struct MiniatureHighlightLineSnapshot
+        {
+            public Point From;
+            public Point To;
+            public bool IsSelfRelation;
+        }
+
         sealed class MiniaturesAdorner : Adorner
         {
             const double InactiveOpacity = 0.5;
@@ -116,9 +126,14 @@ namespace m0.UIWpf.UX
             readonly ScrollViewer scrollViewer;
             IList<MiniatureItemSnapshot> itemSnapshots =
                 new List<MiniatureItemSnapshot>();
+            IList<MiniatureItemSnapshot> highlightItemSnapshots =
+                new List<MiniatureItemSnapshot>();
+            IList<MiniatureHighlightLineSnapshot> highlightLineSnapshots =
+                new List<MiniatureHighlightLineSnapshot>();
             Rect worldBounds = Rect.Empty;
             Rect mapBounds = Rect.Empty;
             DrawingGroup itemDrawing = new DrawingGroup();
+            DrawingGroup highlightDrawing = new DrawingGroup();
             Rect displayedViewportBounds = Rect.Empty;
             Rect projectedViewportBounds = Rect.Empty;
             Point dragPointerOffset;
@@ -144,6 +159,18 @@ namespace m0.UIWpf.UX
                     new List<MiniatureItemSnapshot>();
                 worldBounds = effectiveWorldBounds;
                 RebuildItemDrawing();
+                InvalidateVisual();
+            }
+
+            public void SetHighlight(
+                IList<MiniatureItemSnapshot> highlightedItems,
+                IList<MiniatureHighlightLineSnapshot> highlightedLines)
+            {
+                highlightItemSnapshots = highlightedItems ??
+                    new List<MiniatureItemSnapshot>();
+                highlightLineSnapshots = highlightedLines ??
+                    new List<MiniatureHighlightLineSnapshot>();
+                RebuildHighlightDrawing();
                 InvalidateVisual();
             }
 
@@ -184,6 +211,7 @@ namespace m0.UIWpf.UX
                     null,
                     mapBounds);
                 drawingContext.DrawDrawing(itemDrawing);
+                drawingContext.DrawDrawing(highlightDrawing);
                 drawingContext.DrawRectangle(
                     null,
                     new Pen(foregroundBrush, 1),
@@ -335,48 +363,153 @@ namespace m0.UIWpf.UX
                     foreach (MiniatureItemSnapshot snapshot in
                         itemSnapshots)
                     {
-                        Rect itemBounds =
-                            ProjectWorldRect(snapshot.Bounds);
-                        itemBounds = EnsureMinimumItemSize(itemBounds);
-
-                        if (!itemBounds.IntersectsWith(mapBounds))
-                            continue;
-
-                        switch (snapshot.ShapeKind)
-                        {
-                            case MiniatureShapeKind.Oval:
-                                drawingContext.DrawEllipse(
-                                    foregroundBrush,
-                                    null,
-                                    new Point(
-                                        itemBounds.Left +
-                                            itemBounds.Width / 2,
-                                        itemBounds.Top +
-                                            itemBounds.Height / 2),
-                                    itemBounds.Width / 2,
-                                    itemBounds.Height / 2);
-                                break;
-
-                            case MiniatureShapeKind.Rhombus:
-                                drawingContext.DrawGeometry(
-                                    foregroundBrush,
-                                    null,
-                                    CreateRhombusGeometry(itemBounds));
-                                break;
-
-                            default:
-                                drawingContext.DrawRectangle(
-                                    foregroundBrush,
-                                    null,
-                                    itemBounds);
-                                break;
-                        }
+                        DrawMiniatureShape(
+                            drawingContext,
+                            snapshot,
+                            foregroundBrush);
                     }
 
                     drawingContext.Pop();
                 }
 
                 itemDrawing = drawing;
+            }
+
+            void DrawMiniatureShape(
+                DrawingContext drawingContext,
+                MiniatureItemSnapshot snapshot,
+                Brush fillBrush)
+            {
+                Rect itemBounds = ProjectWorldRect(snapshot.Bounds);
+                itemBounds = EnsureMinimumItemSize(itemBounds);
+
+                if (!itemBounds.IntersectsWith(mapBounds))
+                    return;
+
+                switch (snapshot.ShapeKind)
+                {
+                    case MiniatureShapeKind.Oval:
+                        drawingContext.DrawEllipse(
+                            fillBrush,
+                            null,
+                            new Point(
+                                itemBounds.Left + itemBounds.Width / 2,
+                                itemBounds.Top + itemBounds.Height / 2),
+                            itemBounds.Width / 2,
+                            itemBounds.Height / 2);
+                        break;
+
+                    case MiniatureShapeKind.Rhombus:
+                        drawingContext.DrawGeometry(
+                            fillBrush,
+                            null,
+                            CreateRhombusGeometry(itemBounds));
+                        break;
+
+                    default:
+                        drawingContext.DrawRectangle(
+                            fillBrush,
+                            null,
+                            itemBounds);
+                        break;
+                }
+            }
+
+            void RebuildHighlightDrawing()
+            {
+                DrawingGroup drawing = new DrawingGroup();
+
+                if (mapBounds.IsEmpty ||
+                    worldBounds.IsEmpty ||
+                    worldBounds.Width <= 0 ||
+                    worldBounds.Height <= 0)
+                {
+                    highlightDrawing = drawing;
+                    return;
+                }
+
+                Brush highlightBrush =
+                    (Brush)owner.FindResource("0HighlightBrush");
+                Pen highlightPen = new Pen(
+                    highlightBrush,
+                    MiniaturesHighlightLineThickness)
+                {
+                    StartLineCap = PenLineCap.Round,
+                    EndLineCap = PenLineCap.Round,
+                    LineJoin = PenLineJoin.Round
+                };
+
+                if (highlightPen.CanFreeze)
+                    highlightPen.Freeze();
+
+                using (DrawingContext drawingContext = drawing.Open())
+                {
+                    drawingContext.PushClip(
+                        new RectangleGeometry(mapBounds));
+
+                    foreach (MiniatureHighlightLineSnapshot line in
+                        highlightLineSnapshots)
+                    {
+                        if (line.IsSelfRelation)
+                        {
+                            DrawSelfRelationLoop(
+                                drawingContext,
+                                highlightPen,
+                                line.From);
+                            continue;
+                        }
+
+                        drawingContext.DrawLine(
+                            highlightPen,
+                            ProjectWorldPoint(line.From),
+                            ProjectWorldPoint(line.To));
+                    }
+
+                    foreach (MiniatureItemSnapshot snapshot in
+                        highlightItemSnapshots)
+                    {
+                        DrawMiniatureShape(
+                            drawingContext,
+                            snapshot,
+                            highlightBrush);
+                    }
+
+                    drawingContext.Pop();
+                }
+
+                highlightDrawing = drawing;
+            }
+
+            void DrawSelfRelationLoop(
+                DrawingContext drawingContext,
+                Pen pen,
+                Point worldCenter)
+            {
+                Point center = ProjectWorldPoint(worldCenter);
+                double radius = MiniaturesSelfRelationLoopRadius;
+
+                drawingContext.DrawEllipse(
+                    null,
+                    pen,
+                    new Point(center.X, center.Y - radius),
+                    radius,
+                    radius * 0.65);
+            }
+
+            Point ProjectWorldPoint(Point sourcePoint)
+            {
+                double horizontalScale =
+                    mapBounds.Width / worldBounds.Width;
+                double verticalScale =
+                    mapBounds.Height / worldBounds.Height;
+
+                return new Point(
+                    mapBounds.Left +
+                        (sourcePoint.X - worldBounds.Left) *
+                        horizontalScale,
+                    mapBounds.Top +
+                        (sourcePoint.Y - worldBounds.Top) *
+                        verticalScale);
             }
 
             Rect CalculateMapBounds()
@@ -1406,6 +1539,15 @@ namespace m0.UIWpf.UX
             }
         }
 
+        public void NotifyMiniaturesHighlightChanged()
+        {
+            if (IsDisposed || miniaturesAdorner == null)
+                return;
+
+            miniaturesHighlightDirty = true;
+            RequestMiniaturesUpdate(false);
+        }
+
         void RequestMiniaturesUpdate(bool rebuildItems)
         {
             if (IsDisposed)
@@ -1447,10 +1589,19 @@ namespace m0.UIWpf.UX
             if (miniaturesAdorner == null)
                 return;
 
+            bool itemsRebuilt = false;
+
             if (miniaturesItemsDirty)
             {
                 miniaturesItemsDirty = false;
                 RebuildMiniaturesItems();
+                itemsRebuilt = true;
+            }
+
+            if (miniaturesHighlightDirty || itemsRebuilt)
+            {
+                miniaturesHighlightDirty = false;
+                RebuildMiniaturesHighlight();
             }
             else
                 miniaturesAdorner.InvalidateViewport();
@@ -1838,6 +1989,161 @@ namespace m0.UIWpf.UX
             miniaturesAdorner.SetItems(
                 snapshots,
                 effectiveWorldBounds);
+        }
+
+        void RebuildMiniaturesHighlight()
+        {
+            if (miniaturesAdorner == null)
+                return;
+
+            List<MiniatureItemSnapshot> highlightedItems =
+                new List<MiniatureItemSnapshot>();
+            List<MiniatureHighlightLineSnapshot> highlightedLines =
+                new List<MiniatureHighlightLineSnapshot>();
+
+            double virtualWidth;
+            double virtualHeight;
+            GetMiniaturesVirtualSize(
+                out virtualWidth,
+                out virtualHeight);
+
+            if (virtualWidth <= 0 || virtualHeight <= 0)
+            {
+                miniaturesAdorner.SetHighlight(
+                    highlightedItems,
+                    highlightedLines);
+                return;
+            }
+
+            Rect virtualBounds =
+                new Rect(0, 0, virtualWidth, virtualHeight);
+            HashSet<ILineDecoratorBase> seenLines =
+                new HashSet<ILineDecoratorBase>();
+
+            foreach (IUXItem item in Items_all)
+            {
+                if (item == null)
+                    continue;
+
+                if (item.IsHighlighted &&
+                    !(item is ILineDecoratorBase) &&
+                    !(item is IUXDecorator))
+                {
+                    Rect itemBounds;
+
+                    if (TryGetMiniatureItemBounds(
+                        item,
+                        virtualBounds,
+                        out itemBounds))
+                    {
+                        highlightedItems.Add(
+                            new MiniatureItemSnapshot
+                            {
+                                Bounds = itemBounds,
+                                ShapeKind = GetMiniatureShapeKind(item)
+                            });
+                    }
+                }
+
+                UXItem uxItem = item as UXItem;
+
+                if (uxItem == null)
+                    continue;
+
+                foreach (ILineDecoratorBase line in uxItem.OwnedDiagramLines)
+                {
+                    if (line == null ||
+                        !line.IsHighlighted ||
+                        !seenLines.Add(line))
+                    {
+                        continue;
+                    }
+
+                    MiniatureHighlightLineSnapshot lineSnapshot;
+
+                    if (TryCreateMiniatureHighlightLine(
+                        line,
+                        virtualBounds,
+                        out lineSnapshot))
+                    {
+                        highlightedLines.Add(lineSnapshot);
+                    }
+                }
+            }
+
+            miniaturesAdorner.SetHighlight(
+                highlightedItems,
+                highlightedLines);
+        }
+
+        static MiniatureShapeKind GetMiniatureShapeKind(IUXItem item)
+        {
+            if (item is OvalItem)
+                return MiniatureShapeKind.Oval;
+
+            if (item is RhombusItem)
+                return MiniatureShapeKind.Rhombus;
+
+            return MiniatureShapeKind.Rectangle;
+        }
+
+        bool TryGetMiniatureItemBounds(
+            IUXItem item,
+            Rect virtualBounds,
+            out Rect itemBounds)
+        {
+            if (!TryGetItemBoundsOnVisualiserCanvas(item, out itemBounds))
+                return false;
+
+            itemBounds = Rect.Intersect(itemBounds, virtualBounds);
+
+            return !itemBounds.IsEmpty &&
+                itemBounds.Width > 0 &&
+                itemBounds.Height > 0;
+        }
+
+        bool TryCreateMiniatureHighlightLine(
+            ILineDecoratorBase line,
+            Rect virtualBounds,
+            out MiniatureHighlightLineSnapshot snapshot)
+        {
+            snapshot = new MiniatureHighlightLineSnapshot();
+
+            IUXItem fromItem = line.FromDiagramItem;
+            IUXItem toItem = line.ToItem;
+
+            if (fromItem == null || toItem == null)
+                return false;
+
+            Rect fromBounds;
+            Rect toBounds;
+
+            if (!TryGetMiniatureItemBounds(
+                    fromItem,
+                    virtualBounds,
+                    out fromBounds) ||
+                !TryGetMiniatureItemBounds(
+                    toItem,
+                    virtualBounds,
+                    out toBounds))
+            {
+                return false;
+            }
+
+            snapshot.From = GetBoundsCenter(fromBounds);
+            snapshot.To = GetBoundsCenter(toBounds);
+            snapshot.IsSelfRelation =
+                line.isSelfRelation ||
+                ReferenceEquals(fromItem, toItem);
+
+            return true;
+        }
+
+        static Point GetBoundsCenter(Rect bounds)
+        {
+            return new Point(
+                bounds.Left + bounds.Width / 2,
+                bounds.Top + bounds.Height / 2);
         }
 
         Rect GetEffectiveMiniaturesWorldBounds(

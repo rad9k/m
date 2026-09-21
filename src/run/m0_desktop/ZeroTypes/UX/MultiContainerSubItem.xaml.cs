@@ -268,11 +268,19 @@ namespace m0.ZeroTypes.UX
         }
 
         public override void Highlight() {
+            IsHighlighted = true;
+
             SetColors((Brush)FindResource("0HighlightForegroundBrush"), (Brush)FindResource("0HighlightBrush"), (Brush)FindResource("0HighlightForegroundBrush"));
+
+            NotifyMiniaturesHighlightChanged();
         }
 
         public override void Unhighlight() {
+            IsHighlighted = false;
+
             SetColors(GetParentBackgroundBrush(), GetParentSubBackgroundBrush(), GetParentSubForegroundBrush());
+
+            NotifyMiniaturesHighlightChanged();
         }
 
         protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)        

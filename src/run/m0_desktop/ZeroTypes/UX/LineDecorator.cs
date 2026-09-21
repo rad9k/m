@@ -820,6 +820,8 @@ namespace m0.ZeroTypes.UX
 
             Line.StrokeThickness = thickness;
             LineEndings.StrokeThickness = thickness;
+
+            NotifyMiniaturesHighlightChanged();
         }
 
         public override void Unhighlight()
@@ -848,6 +850,8 @@ namespace m0.ZeroTypes.UX
 
             Line.StrokeThickness = thickness;
             LineEndings.StrokeThickness = thickness;
+
+            NotifyMiniaturesHighlightChanged();
         }
 
         public override void Select()

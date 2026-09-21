@@ -472,6 +472,8 @@ namespace m0.ZeroTypes.UX
             IsHighlighted = true;
 
             Panel.SetZIndex(this, 99998);
+
+            NotifyMiniaturesHighlightChanged();
         }
 
         public virtual void Unhighlight()
@@ -484,6 +486,19 @@ namespace m0.ZeroTypes.UX
                 Select();
             else
                 Unselect();
+
+            NotifyMiniaturesHighlightChanged();
+        }
+
+        protected void NotifyMiniaturesHighlightChanged()
+        {
+            UXVisualiser visualiser =
+                OwningVisualiser as UXVisualiser;
+
+            if (visualiser == null)
+                return;
+
+            visualiser.NotifyMiniaturesHighlightChanged();
         }
 
         public void MoveItem(double x, double y, bool onlyAnchors)
