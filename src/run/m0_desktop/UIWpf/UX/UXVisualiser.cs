@@ -6727,9 +6727,6 @@ namespace m0.UIWpf.UX
 
             foreach (IUXItem i in items)
                 if (i is UIElement ue) ue.UpdateLayout();
-                
-
-            MinusZero.Instance.Log(1, "UXVisualiser.RepositionGraph", algorithm.ToString() + " on " + items.Count + " items");
 
                 Interaction.BeginInteractionWithGraph();
                 try
@@ -6924,8 +6921,6 @@ namespace m0.UIWpf.UX
 
         private void ApplyRadialLayoutUX(List<IUXItem> items)
         {
-            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
-
             ResetPendingCenters(items);
 
             Dictionary<IUXItem, List<IUXItem>> adj = BuildUndirectedAdjacencyUX(items);
@@ -7006,18 +7001,12 @@ namespace m0.UIWpf.UX
                 previousRadius = radius;
                 previousHalfHeight = maxHalfHeight[lvl];
             }
-
-            sw.Stop();
-            MinusZero.Instance.Log(1, "UXVisualiser.ApplyRadialLayoutUX",
-                "items=" + items.Count + " rings=" + byLevel.Count + " elapsed_ms=" + sw.ElapsedMilliseconds);
         }
 
         // 2) FORCE-DIRECTED ===================================================
 
         private void ApplyForceLayoutUX(List<IUXItem> items)
         {
-            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
-
             ResetPendingCenters(items);
 
             Dictionary<IUXItem, List<IUXItem>> adj = BuildUndirectedAdjacencyUX(items);
@@ -7195,21 +7184,12 @@ namespace m0.UIWpf.UX
 
             NormalizePositionsUX(items, pos);
             foreach (KeyValuePair<IUXItem, Point> kv in pos) SetPendingCenter(kv.Key, kv.Value.X, kv.Value.Y);
-
-            sw.Stop();
-            MinusZero.Instance.Log(1, "UXVisualiser.ApplyForceLayoutUX",
-                "items=" + items.Count + " edges=" + edges.Count +
-                " isolated=" + isolatedItems.Count +
-                " k=" + k.ToString("F1") + " avgItemSize=" + avgItemSize.ToString("F1") +
-                " elapsed_ms=" + sw.ElapsedMilliseconds);
         }
 
         // 3) SUGIYAMA (layered) ==============================================
 
         private void ApplySugiyamaLayoutUX(List<IUXItem> items)
         {
-            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
-
             ResetPendingCenters(items);
 
             Dictionary<IUXItem, List<IUXItem>> outAdj;
@@ -7228,7 +7208,6 @@ namespace m0.UIWpf.UX
                 if (remainingInDeg[i] == 0) { readyQueue.Enqueue(i); layer[i] = 0; }
 
             int maxAllowedLayer = Math.Max(1, items.Count - 1);
-            int cyclesBroken = 0;
 
             while (processed.Count < items.Count)
             {
@@ -7249,7 +7228,6 @@ namespace m0.UIWpf.UX
                     int lw = Math.Min(maxP + 1, maxAllowedLayer);
                     layer[pick] = lw;
                     readyQueue.Enqueue(pick);
-                    cyclesBroken++;
                 }
 
                 IUXItem v = readyQueue.Dequeue();
@@ -7329,11 +7307,6 @@ namespace m0.UIWpf.UX
                     curX += w + xPadding;
                 }
             }
-
-            sw.Stop();
-            MinusZero.Instance.Log(1, "UXVisualiser.ApplySugiyamaLayoutUX",
-                "items=" + items.Count + " maxLayer=" + maxLayer + " cyclesBroken=" + cyclesBroken +
-                " yPadding=" + yPadding.ToString("F1") + " elapsed_ms=" + sw.ElapsedMilliseconds);
         }
 
         private double BarycenterUX(IUXItem w,
@@ -7358,8 +7331,6 @@ namespace m0.UIWpf.UX
 
         private void ApplyKamadaKawaiLayoutUX(List<IUXItem> items)
         {
-            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
-
             ResetPendingCenters(items);
 
             int n = items.Count;
@@ -7443,20 +7414,12 @@ namespace m0.UIWpf.UX
 
             NormalizePositionsUX(items, pos);
             foreach (KeyValuePair<IUXItem, Point> kv in pos) SetPendingCenter(kv.Key, kv.Value.X, kv.Value.Y);
-
-            sw.Stop();
-            MinusZero.Instance.Log(1, "UXVisualiser.ApplyKamadaKawaiLayoutUX",
-                "items=" + items.Count + " diameter=" + diameter +
-                " L=" + L.ToString("F1") + " avgItemSize=" + avgItemSize.ToString("F1") +
-                " elapsed_ms=" + sw.ElapsedMilliseconds);
         }
 
         // 5) TREE (Reingold-Tilford style) ==================================
 
         private void ApplyTreeLayoutUX(List<IUXItem> items)
         {
-            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
-
             ResetPendingCenters(items);
 
             Dictionary<IUXItem, List<IUXItem>> adj = BuildUndirectedAdjacencyUX(items);
@@ -7485,10 +7448,6 @@ namespace m0.UIWpf.UX
 
             double startX = GetUXCanvasWidth() / 2 - subtreeWidth[root] / 2;
             PlaceTreeNodeUX(root, children, subtreeWidth, startX, 80, yGap);
-
-            sw.Stop();
-            MinusZero.Instance.Log(1, "UXVisualiser.ApplyTreeLayoutUX",
-                "items=" + items.Count + " rootChildren=" + children[root].Count + " elapsed_ms=" + sw.ElapsedMilliseconds);
         }
 
         private double ComputeSubtreeWidthUX(IUXItem w,
@@ -7539,12 +7498,10 @@ namespace m0.UIWpf.UX
 
             double convergenceThreshold = 0.25 * items.Count;
 
-            int iterationsUsed = 0;
             double totalMovement = 0;
 
             for (int iter = 0; iter < maxIter; iter++)
             {
-                iterationsUsed = iter + 1;
                 totalMovement = 0;
 
                 for (int i = 0; i < items.Count; i++)
@@ -7586,10 +7543,6 @@ namespace m0.UIWpf.UX
 
                 if (totalMovement < convergenceThreshold) break;
             }
-
-            MinusZero.Instance.Log(1, "UXVisualiser.ApplyOverlapRemovalUX",
-                "iterations=" + iterationsUsed + " lastTotalMovement=" + totalMovement.ToString("F2") +
-                " items=" + items.Count);
         }
 
         // Normalization shared by Force and Kamada-Kawai =====================
