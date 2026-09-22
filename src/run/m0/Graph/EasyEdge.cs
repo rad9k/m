@@ -109,62 +109,19 @@ namespace m0.Graph
             if (metaVertex.DisposedState != DisposeStateEnum.Live)
                 throw new Exception(MetaIdentifier + " meta vertex not live");
 
-            bool targetReverseEdgeAttachmentStarted = false;
-            bool metaReverseEdgeAttachmentStarted = false;
-            bool sourceHookAttachmentStarted = false;
-            bool targetHookAttachmentStarted = false;
-
             _to = targetVertex;
             _meta = metaVertex;
 
-            try
-            {
-                targetReverseEdgeAttachmentStarted = true;
-                targetVertex.InEdgesRaw.Add(this);
+            targetVertex.InEdgesRaw.Add(this);
 
-                metaReverseEdgeAttachmentStarted = true;
-                metaVertex.MetaInEdgesRaw.Add(this);
+            metaVertex.MetaInEdgesRaw.Add(this);
 
-                sourceHookAttachmentStarted = true;
-                From.AttachEdge(this);
+            From.AttachEdge(this);
 
-                targetHookAttachmentStarted = true;
-                targetVertex.AttachInEdge(this);
+            targetVertex.AttachInEdge(this);
 
-                _DetachState = DetachStateEnum.Attached;
-            }
-            catch
-            {
-                bool previousEdgeRemovalExecuting = EdgeRemovalExecuting;
-                EdgeRemovalExecuting = true;
-
-                try
-                {
-                    if (targetHookAttachmentStarted)
-                        targetVertex.DetachInEdge(this);
-
-                    if (sourceHookAttachmentStarted)
-                        From.DetachEdge(this);
-
-                    if (metaReverseEdgeAttachmentStarted &&
-                        metaVertex.MetaInEdgesRaw.Contains(this))
-                        metaVertex.MetaInEdgesRaw.Remove(this);
-
-                    if (targetReverseEdgeAttachmentStarted &&
-                        targetVertex.InEdgesRaw.Contains(this))
-                        targetVertex.InEdgesRaw.Remove(this);
-                }
-                finally
-                {
-                    EdgeRemovalExecuting = previousEdgeRemovalExecuting;
-                    _to = null;
-                    _meta = null;
-                    _DetachState = DetachStateEnum.Detached;
-                }
-
-                throw;
-            }
-        }      
+            _DetachState = DetachStateEnum.Attached;
+        }
 
     }
 }

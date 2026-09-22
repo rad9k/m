@@ -147,7 +147,7 @@ namespace m0.ZeroUML.Instructions
 
                 foreach (IEdge sourceEdge in sourceVertex.OutEdgesRaw)
                 {
-                    IVertex targetMeta, targetTo;                    
+                    IVertex targetMeta, targetTo;
 
                     if (source2targetDictionary.ContainsKey(sourceEdge.Meta))
                         targetMeta = source2targetDictionary[sourceEdge.Meta];
