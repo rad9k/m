@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\..\m0\m0.csproj" />
+    <ProjectReference Include="..\m0\m0.csproj" />
     <ProjectReference Include="..\m0_graph_test_support\m0_graph_test_support.csproj" />
   </ItemGroup>
 
@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\..\_docker_bin\*.m0j">
+    <Content Include="..\_docker_bin\*.m0j">
       <Link>%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

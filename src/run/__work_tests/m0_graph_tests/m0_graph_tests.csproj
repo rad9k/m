@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\m0\m0.csproj" />
+    <ProjectReference Include="..\m0\m0.csproj" />
     <ProjectReference Include="..\m0_graph_test_support\m0_graph_test_support.csproj" />
   </ItemGroup>
 

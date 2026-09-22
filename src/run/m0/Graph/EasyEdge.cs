@@ -109,19 +109,62 @@ namespace m0.Graph
             if (metaVertex.DisposedState != DisposeStateEnum.Live)
                 throw new Exception(MetaIdentifier + " meta vertex not live");
 
+            bool targetReverseEdgeAttachmentStarted = false;
+            bool metaReverseEdgeAttachmentStarted = false;
+            bool sourceHookAttachmentStarted = false;
+            bool targetHookAttachmentStarted = false;
+
             _to = targetVertex;
             _meta = metaVertex;
 
-            targetVertex.InEdgesRaw.Add(this);
+            try
+            {
+                targetReverseEdgeAttachmentStarted = true;
+                targetVertex.InEdgesRaw.Add(this);
 
-            metaVertex.MetaInEdgesRaw.Add(this);
+                metaReverseEdgeAttachmentStarted = true;
+                metaVertex.MetaInEdgesRaw.Add(this);
 
-            From.AttachEdge(this);
+                sourceHookAttachmentStarted = true;
+                From.AttachEdge(this);
 
-            targetVertex.AttachInEdge(this);
+                targetHookAttachmentStarted = true;
+                targetVertex.AttachInEdge(this);
 
-            _DetachState = DetachStateEnum.Attached;
-        }
+                _DetachState = DetachStateEnum.Attached;
+            }
+            catch
+            {
+                bool previousEdgeRemovalExecuting = EdgeRemovalExecuting;
+                EdgeRemovalExecuting = true;
+
+                try
+                {
+                    if (targetHookAttachmentStarted)
+                        targetVertex.DetachInEdge(this);
+
+                    if (sourceHookAttachmentStarted)
+                        From.DetachEdge(this);
+
+                    if (metaReverseEdgeAttachmentStarted &&
+                        metaVertex.MetaInEdgesRaw.Contains(this))
+                        metaVertex.MetaInEdgesRaw.Remove(this);
+
+                    if (targetReverseEdgeAttachmentStarted &&
+                        targetVertex.InEdgesRaw.Contains(this))
+                        targetVertex.InEdgesRaw.Remove(this);
+                }
+                finally
+                {
+                    EdgeRemovalExecuting = previousEdgeRemovalExecuting;
+                    _to = null;
+                    _meta = null;
+                    _DetachState = DetachStateEnum.Detached;
+                }
+
+                throw;
+            }
+        }      
 
     }
 }
