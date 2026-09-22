@@ -1,0 +1,458 @@
+System\FormalTextLanguage\ZeroCode_VertexAndManyLines
+"Enterprise AI Architecture"
+	<@UX\UXContainer :: "Component diagram">
+		<@$Is :: @UX\UXContainer>
+		<@IsExpanded :: "True">
+		<@HasMiniatures :: "True">
+		<@Scale :: "80">
+		<@BaseEdge :: "">
+			<@$Is :: @Edge>
+			<@From :: @'net10.0-windows7.0'\Examples\'Enterprise_AI_Architecture.m0t'>
+			<@Meta :: @System\Meta\Store\FileSystem\$Store>
+			<@To :: @$CodeRoot>
+		<@SelectedEdges :: "">
+		<@ShowSelectedEdgesBaseEdge :: "False">
+		<@Size :: "">
+			<@$Is :: @UX\Size>
+			<@Width :: "5000">
+			<@Height :: "5000">
+		<@NewItemUXTemplate :: @System\Data\UX\Templates\ZeroUML>
+		<@Item :: "">
+			<@$Is :: @UX\ContainerItem>
+			<@IsExpanded :: "True">
+			<@HasMiniatures :: "True">
+			<@Scale :: "100">
+			<@SelectedEdges :: "">
+			<@ShowSelectedEdgesBaseEdge :: "False">
+			<@ShowIcons :: "True">
+			<@FontSize :: "14">
+			<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+			<@Position :: "">
+				<@$Is :: @UX\Position>
+				<@X :: "125.99999999999989">
+				<@Y :: "20.840000000000003">
+			<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Database CONTAINER'>
+			<@ShowMeta :: "True">
+			<@BackgroundColor :: "VeryVeryVeryVeryLightCyan">
+				<@$Is :: @UX\Color>
+				<@Red :: "248">
+				<@Green :: "255">
+				<@Blue :: "255">
+				<@Opacity :: "255">
+			<@BaseEdge :: "">
+				<@$Is :: @Edge>
+				<@From :: @$Empty>
+				<@Meta :: @Structure\Database>
+				<@To :: @'AI lakehouse'>
+			<@Size :: "">
+				<@$Is :: @UX\Size>
+				<@Width :: "846.2533333333334">
+				<@Height :: "538.2">
+			<@Item :: "">
+				<@$Is :: @UX\ContainerItem>
+				<@IsExpanded :: "True">
+				<@HasMiniatures :: "True">
+				<@Scale :: "100">
+				<@SelectedEdges :: "">
+				<@ShowSelectedEdgesBaseEdge :: "False">
+				<@ShowIcons :: "True">
+				<@FontSize :: "14">
+				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+				<@Position :: "">
+					<@$Is :: @UX\Position>
+					<@X :: "342.20000000000005">
+					<@Y :: "89.99999999999997">
+				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Database CONTAINER'>
+				<@ShowMeta :: "True">
+				<@BackgroundColor :: "VeryVeryVeryVeryLightCyan">
+					<@$Is :: @UX\Color>
+					<@Red :: "248">
+					<@Green :: "255">
+					<@Blue :: "255">
+					<@Opacity :: "255">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @'AI lakehouse'>
+					<@Meta :: @Structure\StaticComponent\Contain>
+					<@To :: @'AI lakehouse'\Relational>
+				<@Size :: "">
+					<@$Is :: @UX\Size>
+					<@Width :: "178.6833333333334">
+					<@Height :: "239.8000000000001">
+				<@Item :: "">
+					<@$Is :: @UX\IconItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "13.399999999999977">
+						<@Y :: "5.999999999999943">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Data>
+					<@BackgroundColor :: "VeryVeryVeryLightCyan">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "255">
+						<@Blue :: "255">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @'AI lakehouse'\Relational>
+						<@Meta :: @Structure\StaticComponent\Contain>
+						<@To :: @'AI lakehouse'\Relational\Gold>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "50">
+						<@Height :: "58.400000000000006">
+				<@Item :: "">
+					<@$Is :: @UX\IconItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "92.99999999999989">
+						<@Y :: "5.999999999999943">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Data>
+					<@BackgroundColor :: "VeryVeryVeryLightCyan">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "255">
+						<@Blue :: "255">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @'AI lakehouse'\Relational>
+						<@Meta :: @Structure\StaticComponent\Contain>
+						<@To :: @'AI lakehouse'\Relational\Reporting>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "70.40000000000003">
+						<@Height :: "58.400000000000006">
+				<@Item :: "">
+					<@$Is :: @UX\IconItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "13.399999999999977">
+						<@Y :: "77.99999999999991">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Data>
+					<@BackgroundColor :: "VeryVeryVeryLightCyan">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "255">
+						<@Blue :: "255">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @'AI lakehouse'\Relational>
+						<@Meta :: @Structure\StaticComponent\Contain>
+						<@To :: @'AI lakehouse'\Relational\Silver>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "50">
+						<@Height :: "58.400000000000006">
+				<@Item :: "">
+					<@$Is :: @UX\IconItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "13.399999999999977">
+						<@Y :: "153.19999999999996">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Data>
+					<@BackgroundColor :: "VeryVeryVeryLightCyan">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "255">
+						<@Blue :: "255">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @'AI lakehouse'\Relational>
+						<@Meta :: @Structure\StaticComponent\Contain>
+						<@To :: @'AI lakehouse'\Relational\Bronze>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "50">
+						<@Height :: "58.39999999999998">
+			<@Item :: "">
+				<@$Is :: @UX\ContainerItem>
+				<@IsExpanded :: "True">
+				<@HasMiniatures :: "True">
+				<@Scale :: "100">
+				<@SelectedEdges :: "">
+				<@ShowSelectedEdgesBaseEdge :: "False">
+				<@ShowIcons :: "True">
+				<@FontSize :: "14">
+				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+				<@Position :: "">
+					<@$Is :: @UX\Position>
+					<@X :: "24.600000000000108">
+					<@Y :: "105.20000000000002">
+				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Model CONTAINER'>
+				<@ShowMeta :: "True">
+				<@BackgroundColor :: "VeryVeryVeryVeryLightCyan">
+					<@$Is :: @UX\Color>
+					<@Red :: "248">
+					<@Green :: "255">
+					<@Blue :: "255">
+					<@Opacity :: "255">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @'AI lakehouse'>
+					<@Meta :: @Structure\StaticComponent\Contain>
+					<@To :: @'AI lakehouse'\'Corporate Data Model'>
+				<@Size :: "">
+					<@$Is :: @UX\Size>
+					<@Width :: "226.13666666666668">
+					<@Height :: "180.60000000000002">
+				<@Item :: "">
+					<@$Is :: @UX\IconItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "35.000000000000085">
+						<@Y :: "82.79999999999987">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Model>
+					<@BackgroundColor :: "VeryVeryVeryLightCyan">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "255">
+						<@Blue :: "255">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @'AI lakehouse'\'Corporate Data Model'>
+						<@Meta :: @Structure\StaticComponent\Contain>
+						<@To :: @'AI lakehouse'\'Corporate Data Model'\'Semantic Data Model'>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "142.66333333333336">
+						<@Height :: "58.400000000000006">
+					<@Decorator :: "">
+						<@$Is :: @UX\LineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@From :: @'AI lakehouse'\'Corporate Data Model'\'Semantic Data Model'>
+							<@Meta :: @Structure\Model\Instance>
+							<@To :: @'AI lakehouse'\Relational\Gold>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToArrow'>
+						<@EndAnchor :: @UX\LineEndEnum\Arrow>
+						<@ToItem :: @'Component diagram'\Item:\Item:<<"1">>\Item:<<"1">>>
+					<@Decorator :: "">
+						<@$Is :: @UX\LineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@From :: @'AI lakehouse'\'Corporate Data Model'\'Semantic Data Model'>
+							<@Meta :: @Structure\Model\Instance>
+							<@To :: @'AI lakehouse'\Relational\Reporting>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToArrow'>
+						<@EndAnchor :: @UX\LineEndEnum\Arrow>
+						<@ToItem :: @'Component diagram'\Item:\Item:<<"1">>\Item:<<"2">>>
+				<@Item :: "">
+					<@$Is :: @UX\IconItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "35.000000000000085">
+						<@Y :: "5.999999999999801">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Model>
+					<@BackgroundColor :: "VeryVeryVeryLightCyan">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "255">
+						<@Blue :: "255">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @'AI lakehouse'\'Corporate Data Model'>
+						<@Meta :: @Structure\StaticComponent\Contain>
+						<@To :: @'AI lakehouse'\'Corporate Data Model'\KPI>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "142.66333333333336">
+						<@Height :: "58.39999999999972">
+					<@Decorator :: "">
+						<@$Is :: @UX\LineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@From :: @'AI lakehouse'\'Corporate Data Model'\KPI>
+							<@Meta :: @Structure\Model\Instance>
+							<@To :: @'AI lakehouse'\Relational\Gold>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToArrow'>
+						<@EndAnchor :: @UX\LineEndEnum\Arrow>
+						<@ToItem :: @'Component diagram'\Item:\Item:<<"1">>\Item:<<"1">>>
+					<@Decorator :: "">
+						<@$Is :: @UX\LineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@From :: @'AI lakehouse'\'Corporate Data Model'\KPI>
+							<@Meta :: @Structure\Model\Instance>
+							<@To :: @'AI lakehouse'\Relational\Reporting>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToArrow'>
+						<@EndAnchor :: @UX\LineEndEnum\Arrow>
+						<@ToItem :: @'Component diagram'\Item:\Item:<<"1">>\Item:<<"2">>>
+				<@Decorator :: "">
+					<@$Is :: @UX\LineDecorator>
+					<@Scale :: "100">
+					<@BaseEdge :: "">
+						<@From :: @'AI lakehouse'\'Corporate Data Model'>
+						<@Meta :: @Structure\Model\Instance>
+						<@To :: @'AI lakehouse'\'Feature Store'>
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToArrow'>
+					<@EndAnchor :: @UX\LineEndEnum\Arrow>
+					<@ToItem :: @'Component diagram'\Item:\Item:<<"3">>>
+			<@Item :: "">
+				<@$Is :: @UX\ContainerItem>
+				<@IsExpanded :: "True">
+				<@HasMiniatures :: "True">
+				<@Scale :: "100">
+				<@SelectedEdges :: "">
+				<@ShowSelectedEdgesBaseEdge :: "False">
+				<@ShowIcons :: "True">
+				<@FontSize :: "14">
+				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+				<@Position :: "">
+					<@$Is :: @UX\Position>
+					<@X :: "606.2000000000002">
+					<@Y :: "105.20000000000002">
+				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Database CONTAINER'>
+				<@ShowMeta :: "True">
+				<@BackgroundColor :: "VeryVeryVeryVeryLightCyan">
+					<@$Is :: @UX\Color>
+					<@Red :: "248">
+					<@Green :: "255">
+					<@Blue :: "255">
+					<@Opacity :: "255">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @'AI lakehouse'>
+					<@Meta :: @Structure\StaticComponent\Contain>
+					<@To :: @'AI lakehouse'\'Feature Store'>
+				<@Size :: "">
+					<@$Is :: @UX\Size>
+					<@Width :: "185.64666666666665">
+					<@Height :: "239.8000000000001">
+				<@Item :: "">
+					<@$Is :: @UX\IconItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "7.000000000000114">
+						<@Y :: "6">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Data>
+					<@BackgroundColor :: "VeryVeryVeryLightCyan">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "255">
+						<@Blue :: "255">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @'AI lakehouse'\'Feature Store'>
+						<@Meta :: @Structure\StaticComponent\Contain>
+						<@To :: @'AI lakehouse'\'Feature Store'\'Offline Feature Store'>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "174.0633333333334">
+						<@Height :: "58.400000000000006">
+				<@Item :: "">
+					<@$Is :: @UX\IconItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "7.000000000000114">
+						<@Y :: "78.00000000000051">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Data>
+					<@BackgroundColor :: "VeryVeryVeryLightCyan">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "255">
+						<@Blue :: "255">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @'AI lakehouse'\'Feature Store'>
+						<@Meta :: @Structure\StaticComponent\Contain>
+						<@To :: @'AI lakehouse'\'Feature Store'\'Online Feature Store'>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "174.0633333333334">
+						<@Height :: "58.40000000000012">
+				<@Item :: "">
+					<@$Is :: @UX\IconItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "7.000000000000114">
+						<@Y :: "153.20000000000056">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Data>
+					<@BackgroundColor :: "VeryVeryVeryLightCyan">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "255">
+						<@Blue :: "255">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @'AI lakehouse'\'Feature Store'>
+						<@Meta :: @Structure\StaticComponent\Contain>
+						<@To :: @'AI lakehouse'\'Feature Store'\'Baseline feature fingerprint'>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "174.0633333333334">
+						<@Height :: "58.399999999999295">
+	<@Structure\Database :: "AI lakehouse">
+		<@$Is :: @Structure\Database>
+		<@Contain :: "Relational">
+			<@$Is :: @Structure\Database>
+			<@Contain :: "Gold">
+				<@$Is :: @Structure\Data>
+			<@Contain :: "Reporting">
+				<@$Is :: @Structure\Data>
+			<@Contain :: "Silver">
+				<@$Is :: @Structure\Data>
+			<@Contain :: "Bronze">
+				<@$Is :: @Structure\Data>
+		<@Contain :: "Corporate Data Model">
+			<@$Is :: @Structure\Model>
+			<@Contain :: "Semantic Data Model">
+				<@$Is :: @Structure\Model>
+				<@Instance :: @'AI lakehouse'\Relational\Gold>
+				<@Instance :: @'AI lakehouse'\Relational\Reporting>
+			<@Contain :: "KPI">
+				<@$Is :: @Structure\Model>
+				<@Instance :: @'AI lakehouse'\Relational\Gold>
+				<@Instance :: @'AI lakehouse'\Relational\Reporting>
+			<@Instance :: @'AI lakehouse'\'Feature Store'>
+		<@Contain :: "Feature Store">
+			<@$Is :: @Structure\Database>
+			<@Contain :: "Offline Feature Store">
+				<@$Is :: @Structure\Data>
+			<@Contain :: "Online Feature Store">
+				<@$Is :: @Structure\Data>
+			<@Contain :: "Baseline feature fingerprint">
+				<@$Is :: @Structure\Data>

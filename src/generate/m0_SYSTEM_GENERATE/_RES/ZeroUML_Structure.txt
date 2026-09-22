@@ -30,14 +30,6 @@
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
 				"ToArrow"
-		"Component"
-			<@$InstanceCreationPriority :: "">
-			inherits @Structure\StaticComponent
-			"Create"
-				<@$EdgeTarget :: @Structure\StaticComponent>
-				<@$MinCardinality :: "0">
-				<@$MaxCardinality :: "-1">
-				"ToArrow"
 			"Read"
 				<@$EdgeTarget :: @Structure\StaticComponent>
 				<@$MinCardinality :: "0">
@@ -52,7 +44,15 @@
 				<@$EdgeTarget :: @Structure\StaticComponent>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
-				"FromToFilledTriangle"
+				"FromToFilledTriangle"			
+		"Component"
+			<@$InstanceCreationPriority :: "">
+			inherits @Structure\StaticComponent
+			"Create"
+				<@$EdgeTarget :: @Structure\StaticComponent>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+				"ToArrow"
 			"Use"
 				<@$EdgeTarget :: @Structure\StaticComponent>
 				<@$MinCardinality :: "0">
