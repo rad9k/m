@@ -29,8 +29,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 			<@Position :: "">
 				<@$Is :: @UX\Position>
-				<@X :: "125.99999999999989">
-				<@Y :: "20.840000000000003">
+				<@X :: "385.0000000000001">
+				<@Y :: "127.84000000000006">
 			<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Database CONTAINER'>
 			<@ShowMeta :: "True">
 			<@BackgroundColor :: "VeryVeryVeryVeryLightCyan">
@@ -46,7 +46,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@To :: @'AI lakehouse'>
 			<@Size :: "">
 				<@$Is :: @UX\Size>
-				<@Width :: "846.2533333333334">
+				<@Width :: "712.2533333333337">
 				<@Height :: "538.2">
 			<@Item :: "">
 				<@$Is :: @UX\ContainerItem>
@@ -60,8 +60,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 				<@Position :: "">
 					<@$Is :: @UX\Position>
-					<@X :: "342.20000000000005">
-					<@Y :: "89.99999999999997">
+					<@X :: "298.20000000000005">
+					<@Y :: "13.200000000000045">
 				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Database CONTAINER'>
 				<@ShowMeta :: "True">
 				<@BackgroundColor :: "VeryVeryVeryVeryLightCyan">
@@ -183,6 +183,16 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @UX\Size>
 						<@Width :: "50">
 						<@Height :: "58.39999999999998">
+				<@Decorator :: "">
+					<@$Is :: @UX\LineDecorator>
+					<@Scale :: "100">
+					<@BaseEdge :: "">
+						<@From :: @'AI lakehouse'\Relational>
+						<@Meta :: @Structure\Component\Write>
+						<@To :: @'AI lakehouse'\'Feature Store'>
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToFilledTriangle'>
+					<@EndAnchor :: @UX\LineEndEnum\FilledTriangle>
+					<@ToItem :: @'Component diagram'\Item:\Item:<<"3">>>
 			<@Item :: "">
 				<@$Is :: @UX\ContainerItem>
 				<@IsExpanded :: "True">
@@ -195,8 +205,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 				<@Position :: "">
 					<@$Is :: @UX\Position>
-					<@X :: "24.600000000000108">
-					<@Y :: "105.20000000000002">
+					<@X :: "36.60000000000025">
+					<@Y :: "72.40000000000012">
 				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Model CONTAINER'>
 				<@ShowMeta :: "True">
 				<@BackgroundColor :: "VeryVeryVeryVeryLightCyan">
@@ -240,26 +250,6 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @UX\Size>
 						<@Width :: "142.66333333333336">
 						<@Height :: "58.400000000000006">
-					<@Decorator :: "">
-						<@$Is :: @UX\LineDecorator>
-						<@Scale :: "100">
-						<@BaseEdge :: "">
-							<@From :: @'AI lakehouse'\'Corporate Data Model'\'Semantic Data Model'>
-							<@Meta :: @Structure\Model\Instance>
-							<@To :: @'AI lakehouse'\Relational\Gold>
-						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToArrow'>
-						<@EndAnchor :: @UX\LineEndEnum\Arrow>
-						<@ToItem :: @'Component diagram'\Item:\Item:<<"1">>\Item:<<"1">>>
-					<@Decorator :: "">
-						<@$Is :: @UX\LineDecorator>
-						<@Scale :: "100">
-						<@BaseEdge :: "">
-							<@From :: @'AI lakehouse'\'Corporate Data Model'\'Semantic Data Model'>
-							<@Meta :: @Structure\Model\Instance>
-							<@To :: @'AI lakehouse'\Relational\Reporting>
-						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToArrow'>
-						<@EndAnchor :: @UX\LineEndEnum\Arrow>
-						<@ToItem :: @'Component diagram'\Item:\Item:<<"1">>\Item:<<"2">>>
 				<@Item :: "">
 					<@$Is :: @UX\IconItem>
 					<@Scale :: "100">
@@ -286,26 +276,6 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @UX\Size>
 						<@Width :: "142.66333333333336">
 						<@Height :: "58.39999999999972">
-					<@Decorator :: "">
-						<@$Is :: @UX\LineDecorator>
-						<@Scale :: "100">
-						<@BaseEdge :: "">
-							<@From :: @'AI lakehouse'\'Corporate Data Model'\KPI>
-							<@Meta :: @Structure\Model\Instance>
-							<@To :: @'AI lakehouse'\Relational\Gold>
-						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToArrow'>
-						<@EndAnchor :: @UX\LineEndEnum\Arrow>
-						<@ToItem :: @'Component diagram'\Item:\Item:<<"1">>\Item:<<"1">>>
-					<@Decorator :: "">
-						<@$Is :: @UX\LineDecorator>
-						<@Scale :: "100">
-						<@BaseEdge :: "">
-							<@From :: @'AI lakehouse'\'Corporate Data Model'\KPI>
-							<@Meta :: @Structure\Model\Instance>
-							<@To :: @'AI lakehouse'\Relational\Reporting>
-						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToArrow'>
-						<@EndAnchor :: @UX\LineEndEnum\Arrow>
-						<@ToItem :: @'Component diagram'\Item:\Item:<<"1">>\Item:<<"2">>>
 				<@Decorator :: "">
 					<@$Is :: @UX\LineDecorator>
 					<@Scale :: "100">
@@ -316,6 +286,16 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToArrow'>
 					<@EndAnchor :: @UX\LineEndEnum\Arrow>
 					<@ToItem :: @'Component diagram'\Item:\Item:<<"3">>>
+				<@Decorator :: "">
+					<@$Is :: @UX\LineDecorator>
+					<@Scale :: "100">
+					<@BaseEdge :: "">
+						<@From :: @'AI lakehouse'\'Corporate Data Model'>
+						<@Meta :: @Structure\Model\Instance>
+						<@To :: @'AI lakehouse'\Relational>
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToArrow'>
+					<@EndAnchor :: @UX\LineEndEnum\Arrow>
+					<@ToItem :: @'Component diagram'\Item:\Item:<<"1">>>
 			<@Item :: "">
 				<@$Is :: @UX\ContainerItem>
 				<@IsExpanded :: "True">
@@ -328,8 +308,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 				<@Position :: "">
 					<@$Is :: @UX\Position>
-					<@X :: "606.2000000000002">
-					<@Y :: "105.20000000000002">
+					<@X :: "510.2000000000001">
+					<@Y :: "13.200000000000045">
 				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Database CONTAINER'>
 				<@ShowMeta :: "True">
 				<@BackgroundColor :: "VeryVeryVeryVeryLightCyan">
@@ -425,6 +405,37 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @UX\Size>
 						<@Width :: "174.0633333333334">
 						<@Height :: "58.399999999999295">
+			<@Item :: "">
+				<@$Is :: @UX\ContainerItem>
+				<@IsExpanded :: "True">
+				<@HasMiniatures :: "True">
+				<@Scale :: "100">
+				<@SelectedEdges :: "">
+				<@ShowSelectedEdgesBaseEdge :: "False">
+				<@ShowIcons :: "True">
+				<@FontSize :: "14">
+				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+				<@Position :: "">
+					<@$Is :: @UX\Position>
+					<@X :: "36.60000000000031">
+					<@Y :: "303.4599999999999">
+				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Database CONTAINER'>
+				<@ShowMeta :: "True">
+				<@BackgroundColor :: "VeryVeryVeryVeryLightCyan">
+					<@$Is :: @UX\Color>
+					<@Red :: "248">
+					<@Green :: "255">
+					<@Blue :: "255">
+					<@Opacity :: "255">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @'AI lakehouse'>
+					<@Meta :: @Structure\StaticComponent\Contain>
+					<@To :: @'AI lakehouse'\'Data lake'>
+				<@Size :: "">
+					<@$Is :: @UX\Size>
+					<@Width :: "659.2466666666663">
+					<@Height :: "116.00000000000006">
 	<@Structure\Database :: "AI lakehouse">
 		<@$Is :: @Structure\Database>
 		<@Contain :: "Relational">
@@ -437,17 +448,15 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@$Is :: @Structure\Data>
 			<@Contain :: "Bronze">
 				<@$Is :: @Structure\Data>
+			<@Write :: @'AI lakehouse'\'Feature Store'>
 		<@Contain :: "Corporate Data Model">
 			<@$Is :: @Structure\Model>
 			<@Contain :: "Semantic Data Model">
 				<@$Is :: @Structure\Model>
-				<@Instance :: @'AI lakehouse'\Relational\Gold>
-				<@Instance :: @'AI lakehouse'\Relational\Reporting>
 			<@Contain :: "KPI">
 				<@$Is :: @Structure\Model>
-				<@Instance :: @'AI lakehouse'\Relational\Gold>
-				<@Instance :: @'AI lakehouse'\Relational\Reporting>
 			<@Instance :: @'AI lakehouse'\'Feature Store'>
+			<@Instance :: @'AI lakehouse'\Relational>
 		<@Contain :: "Feature Store">
 			<@$Is :: @Structure\Database>
 			<@Contain :: "Offline Feature Store">
@@ -456,3 +465,5 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@$Is :: @Structure\Data>
 			<@Contain :: "Baseline feature fingerprint">
 				<@$Is :: @Structure\Data>
+		<@Contain :: "Data lake">
+			<@$Is :: @Structure\Database>
