@@ -82,6 +82,9 @@
 		"LoadBalancer"
 			<@$InstanceCreationPriority :: "">
 			inherits @Structure\System
+		"Queue"
+			<@$InstanceCreationPriority :: "">
+			inherits @Structure\System
 		"Database"
 			<@$InstanceCreationPriority :: "">
 			inherits @Structure\System

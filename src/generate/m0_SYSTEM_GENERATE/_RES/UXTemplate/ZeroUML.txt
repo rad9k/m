@@ -749,6 +749,28 @@
 				<@$Inherits :: @ZeroUML\StructureContainerItemVertex>				
 				<@LabeledItem\ShowMeta :: "True">
 			inherits @ZeroUML\UniversalDecorators
+			
+		<@UXTemplate :: "Queue">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:Queue}">
+			<@MetaVertexTestQuery :: "Queue">
+			<@ItemClass :: @IconItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\StructureItemVertex>
+			inherits @ZeroUML\UniversalDecorators
+					
+		<@UXTemplate :: "Queue CONTAINER">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:Queue}">
+			<@MetaVertexTestQuery :: "Queue">
+			<@ContainerEdgeMetaVertex :: @System\Meta\ZeroUML\Structure\Component\Contain>
+			<@ItemClass :: @ContainerItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\StructureContainerItemVertex>				
+				<@LabeledItem\ShowMeta :: "True">
+			inherits @ZeroUML\UniversalDecorators
 					
 		<@UXTemplate :: "Database">
 			<@$Is :: @UXTemplate>
