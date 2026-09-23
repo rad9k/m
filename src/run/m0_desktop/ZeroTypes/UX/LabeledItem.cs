@@ -38,6 +38,7 @@ namespace m0.ZeroTypes.UX
 
             UpdateLabelControl(GetLabelControl());
 
+            this.ClipToBounds = !UseCodeLabel;
         }
 
         public override void ViewAttributesUpdated()
@@ -45,6 +46,8 @@ namespace m0.ZeroTypes.UX
             base.ViewAttributesUpdated();
 
             UpdateLabelControl(GetLabelControl());
+
+            this.ClipToBounds = !UseCodeLabel;
         }
 
         protected virtual void SetBaselineColors()
@@ -120,26 +123,62 @@ namespace m0.ZeroTypes.UX
         {
             BaseEdge_forLabel = LabeledItemLabelHelper.GetLabelEdge(BaseEdge, ContentQuery);
 
-            StackPanel stack = LabeledItemLabelHelper.CreateRootStack();
-
-            if (BaseEdge_forLabel == null)
+            if (UseCodeLabel)
             {
+                StackPanel stack = LabeledItemLabelHelper.CreateRootStack();
+
+                if (BaseEdge_forLabel == null)
+                {
+                    LabelControl = stack;
+
+                    return stack;
+                }
+
+                LabeledItemLabelHelper.AddConstantLabel(stack, ConstantLabel, GetTextBlock);
+
+                if (!HideLabel)
+                {
+                    LabeledItemLabelHelper.AddIconIfNeeded(stack, ShowIcons, BaseEdge_forLabel);
+                    stack.Children.Add(GetLabelControl_RightPart());
+                }
+
                 LabelControl = stack;
 
                 return stack;
             }
 
-            LabeledItemLabelHelper.AddConstantLabel(stack, ConstantLabel, GetTextBlock);
+            return GetLabelControl_WrappingText();
+        }
 
-            if (!HideLabel)
+        FrameworkElement GetLabelControl_WrappingText()
+        {
+            textBox_forBaseEdge = null;
+
+            if (BaseEdge_forLabel != null && !HideLabel)
             {
-                LabeledItemLabelHelper.AddIconIfNeeded(stack, ShowIcons, BaseEdge_forLabel);
-                stack.Children.Add(GetLabelControl_RightPart());
+                GetTextBox(HorizontalAlignment.Stretch);
+                LabeledItemLabelHelper.ApplyWrappingTextBoxLayout(textBox_forBaseEdge);
+                textBox_forBaseEdge.Text = GetLabel_Right();
             }
 
-            LabelControl = stack;
+            string leftText = string.Empty;
 
-            return stack;
+            if (BaseEdge_forLabel != null && !HideLabel)
+                leftText = GetLabel_Left();
+
+            LabelControl = LabeledItemLabelHelper.BuildWrappingLabelControl(
+                BaseEdge_forLabel,
+                ConstantLabel,
+                HideLabel,
+                ShowIcons,
+                leftText,
+                GetTextBlock,
+                textBox_forBaseEdge,
+                System.Windows.VerticalAlignment.Center);
+
+            LabeledItemLabelHelper.LimitLabelControlToItemHeight(LabelControl, this);
+
+            return LabelControl;
         }
 
         public string GetLabel_Left()

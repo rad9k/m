@@ -45,6 +45,8 @@ namespace m0.ZeroTypes.UX
         {
             if (!HideHeader)
                 LabelContainer.Child = LabelControl;
+
+            LabeledItemLabelHelper.ApplyLabelContainerClipping(LabelContainer, UseCodeLabel);
         }
 
         public override void ViewAttributesUpdated()
@@ -94,7 +96,19 @@ namespace m0.ZeroTypes.UX
 
             Image.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize/2, RoundEdgeSize, RoundEdgeSize/2);
 
-            TheGrid.RowDefinitions[1].Height = new GridLength(16 + RoundEdgeSize);
+            if (!UseCodeLabel && !HideHeader)
+            {
+                LabeledItemLabelHelper.ApplyHeaderRowHeightForWrappingLabel(
+                    TheGrid.RowDefinitions[1],
+                    false,
+                    false,
+                    16 + RoundEdgeSize);
+            }
+            else
+            {
+                TheGrid.RowDefinitions[1].Height = new GridLength(16 + RoundEdgeSize);
+                TheGrid.RowDefinitions[1].MinHeight = 0;
+            }
 
             SetBaselineColors();
         }

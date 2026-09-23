@@ -27,10 +27,12 @@ namespace m0.ZeroTypes.UX
 
         protected override void UpdateLabelControl(FrameworkElement LabelControl)
         {
-            RemoveLabelIcon(LabelControl);
+            LabeledItemLabelHelper.RemoveIconsFromLabelControl(LabelControl);
 
             if (!HideHeader)
                 LabelContainer.Child = LabelControl;
+
+            LabeledItemLabelHelper.ApplyLabelContainerClipping(LabelContainer, UseCodeLabel);
         }
 
         public override void BaseEdgeToUpdated()
@@ -76,7 +78,19 @@ namespace m0.ZeroTypes.UX
 
             Image.Margin = new Thickness(RoundEdgeSize, RoundEdgeSize/2, RoundEdgeSize, RoundEdgeSize/2);
 
-            TheGrid.RowDefinitions[1].Height = new GridLength(16 + RoundEdgeSize);
+            if (!UseCodeLabel && !HideHeader)
+            {
+                LabeledItemLabelHelper.ApplyHeaderRowHeightForWrappingLabel(
+                    TheGrid.RowDefinitions[1],
+                    false,
+                    false,
+                    16 + RoundEdgeSize);
+            }
+            else
+            {
+                TheGrid.RowDefinitions[1].Height = new GridLength(16 + RoundEdgeSize);
+                TheGrid.RowDefinitions[1].MinHeight = 0;
+            }
 
             SetBaselineColors();
         }
@@ -128,20 +142,6 @@ namespace m0.ZeroTypes.UX
             Image.Source = IconServer.GetIconByEdge(labelEdge);
 
             RenderOptions.SetBitmapScalingMode(Image, BitmapScalingMode.Fant);
-        }
-
-        static void RemoveLabelIcon(FrameworkElement labelControl)
-        {
-            StackPanel stack = labelControl as StackPanel;
-
-            if (stack == null)
-                return;
-
-            for (int i = stack.Children.Count - 1; i >= 0; i--)
-            {
-                if (stack.Children[i] is Image)
-                    stack.Children.RemoveAt(i);
-            }
         }
     }
 }

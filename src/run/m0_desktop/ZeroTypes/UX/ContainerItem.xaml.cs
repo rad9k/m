@@ -40,6 +40,7 @@ namespace m0.ZeroTypes.UX
         protected override void UpdateLabelControl(FrameworkElement LabelControl)
         {
             LabelContainer.Child = LabelControl;
+            LabeledItemLabelHelper.ApplyLabelContainerClipping(LabelContainer, UseCodeLabel);
         }
 
         public override void VertexSetedUp()
@@ -64,13 +65,27 @@ namespace m0.ZeroTypes.UX
 
             this.LabelContainer.Margin = new Thickness(RoundEdgeSize + 2, RoundEdgeSize, RoundEdgeSize + 2, 1);
 
+            double headerMinHeight = 16 + RoundEdgeSize;
+
             if (roundEdgeSize != 0)
             {
                 this.Frame.CornerRadius = new CornerRadius(RoundEdgeSize);
                
                 Canvas.Margin = new Thickness(RoundEdgeSize, 0, RoundEdgeSize, RoundEdgeSize);
+            }
 
-                TheGrid.RowDefinitions[0].Height = new GridLength(16 + RoundEdgeSize);
+            if (!UseCodeLabel)
+            {
+                LabeledItemLabelHelper.ApplyHeaderRowHeightForWrappingLabel(
+                    TheGrid.RowDefinitions[0],
+                    false,
+                    false,
+                    headerMinHeight);
+            }
+            else
+            {
+                TheGrid.RowDefinitions[0].Height = new GridLength(headerMinHeight);
+                TheGrid.RowDefinitions[0].MinHeight = 0;
             }
 
             double borderSize = BorderSize;

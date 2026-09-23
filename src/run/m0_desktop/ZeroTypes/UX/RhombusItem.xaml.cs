@@ -47,6 +47,7 @@ namespace m0.ZeroTypes.UX
         protected override void UpdateLabelControl(FrameworkElement LabelControl)
         {
             LabelContainer.Child = LabelControl;
+            LabeledItemLabelHelper.ApplyLabelContainerClipping(LabelContainer, UseCodeLabel);
         }
         public override void ViewAttributesUpdated()
         {

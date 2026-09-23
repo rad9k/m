@@ -51,6 +51,7 @@ namespace m0.ZeroTypes.UX
         protected override void UpdateLabelControl(FrameworkElement LabelControl)
         {
             LabelContainer.Child = LabelControl;
+            LabeledItemLabelHelper.ApplyLabelContainerClipping(LabelContainer, UseCodeLabel);
         }
 
         public override void VertexSetedUp()
@@ -139,6 +140,19 @@ namespace m0.ZeroTypes.UX
 
             
             TheGrid.RowDefinitions[0].Height = new GridLength(headerHeight + RoundEdgeSize);
+
+            if (!UseCodeLabel && !HideHeader)
+            {
+                LabeledItemLabelHelper.ApplyHeaderRowHeightForWrappingLabel(
+                    TheGrid.RowDefinitions[0],
+                    false,
+                    false,
+                    headerHeight + RoundEdgeSize);
+            }
+            else
+            {
+                TheGrid.RowDefinitions[0].MinHeight = 0;
+            }
                        
             SetBaselineColors();
         }        

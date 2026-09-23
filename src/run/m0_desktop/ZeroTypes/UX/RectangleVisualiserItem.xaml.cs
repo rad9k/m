@@ -102,6 +102,7 @@ namespace m0.ZeroTypes.UX
         protected override void UpdateLabelControl(FrameworkElement LabelControl)
         {
             LabelContainer.Child = LabelControl;
+            LabeledItemLabelHelper.ApplyLabelContainerClipping(LabelContainer, UseCodeLabel);
         }
 
         public override void ViewAttributesUpdated()
@@ -166,6 +167,30 @@ namespace m0.ZeroTypes.UX
 
                     TheGrid.Children.Remove(InternalFrame);
                 }
+            }
+
+            if (!UseCodeLabel && !HideHeader)
+            {
+                RowDefinition headerRow = TheGrid.RowDefinitions[0];
+                double minHeight;
+
+                if (headerRow.Height.GridUnitType == GridUnitType.Pixel)
+                    minHeight = headerRow.Height.Value;
+                else
+                    minHeight = 16 + RoundEdgeSize;
+
+                if (minHeight < 1)
+                    minHeight = 16 + RoundEdgeSize;
+
+                LabeledItemLabelHelper.ApplyHeaderRowHeightForWrappingLabel(
+                    headerRow,
+                    false,
+                    false,
+                    minHeight);
+            }
+            else
+            {
+                TheGrid.RowDefinitions[0].MinHeight = 0;
             }
 
             //

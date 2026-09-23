@@ -3,9 +3,11 @@ using m0.Graph;
 using m0.UIWpf;
 using m0.UIWpf.Controls;
 using m0.Util;
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 
 namespace m0.ZeroTypes.UX
@@ -115,6 +117,152 @@ namespace m0.ZeroTypes.UX
                 return false;
 
             return GraphUtil.GetBooleanValueOrFalse(val);
+        }
+
+        public static Grid CreateWrappingLabelGrid(VerticalAlignment verticalAlignment)
+        {
+            Grid grid = new Grid();
+            grid.HorizontalAlignment = HorizontalAlignment.Stretch;
+            grid.VerticalAlignment = verticalAlignment;
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+            return grid;
+        }
+
+        public static void ApplyWrappingTextBoxLayout(TextBox textBox)
+        {
+            if (textBox == null)
+                return;
+
+            textBox.HorizontalAlignment = HorizontalAlignment.Stretch;
+            textBox.VerticalAlignment = VerticalAlignment.Top;
+            textBox.VerticalContentAlignment = VerticalAlignment.Top;
+            textBox.TextAlignment = TextAlignment.Center;
+            textBox.AcceptsReturn = true;
+            textBox.TextWrapping = TextWrapping.Wrap;
+            textBox.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
+            textBox.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
+        }
+
+        public static Grid BuildWrappingLabelControl(
+            IEdge baseEdgeForLabel,
+            string constantLabel,
+            bool hideLabel,
+            bool showIcons,
+            string leftText,
+            Func<HorizontalAlignment, TextBlock> createTextBlock,
+            TextBox valueTextBox,
+            VerticalAlignment gridVerticalAlignment)
+        {
+            Grid grid = CreateWrappingLabelGrid(gridVerticalAlignment);
+
+            if (baseEdgeForLabel == null)
+                return grid;
+
+            StackPanel prefix = CreateRootStack();
+            prefix.HorizontalAlignment = HorizontalAlignment.Left;
+            prefix.VerticalAlignment = VerticalAlignment.Top;
+
+            AddConstantLabel(prefix, constantLabel, createTextBlock);
+
+            if (!hideLabel)
+            {
+                AddIconIfNeeded(prefix, showIcons, baseEdgeForLabel);
+
+                if (!string.IsNullOrEmpty(leftText))
+                {
+                    TextBlock left = createTextBlock(HorizontalAlignment.Center);
+                    left.Text = leftText;
+                    prefix.Children.Add(left);
+                }
+            }
+
+            if (prefix.Children.Count > 0)
+            {
+                Grid.SetColumn(prefix, 0);
+                grid.Children.Add(prefix);
+            }
+
+            if (valueTextBox != null)
+            {
+                if (prefix.Children.Count == 0)
+                {
+                    Grid.SetColumn(valueTextBox, 0);
+                    Grid.SetColumnSpan(valueTextBox, 2);
+                }
+                else
+                    Grid.SetColumn(valueTextBox, 1);
+
+                grid.Children.Add(valueTextBox);
+            }
+
+            return grid;
+        }
+
+        public static void LimitLabelControlToItemHeight(FrameworkElement labelControl, FrameworkElement item)
+        {
+            if (labelControl == null || item == null)
+                return;
+
+            Binding maxHeightBinding = new Binding("ActualHeight");
+            maxHeightBinding.Source = item;
+
+            BindingOperations.SetBinding(
+                labelControl,
+                FrameworkElement.MaxHeightProperty,
+                maxHeightBinding);
+        }
+
+        public static void ApplyLabelContainerClipping(Border labelContainer, bool useCodeLabel)
+        {
+            if (labelContainer == null)
+                return;
+
+            labelContainer.ClipToBounds = !useCodeLabel;
+        }
+
+        public static void ApplyHeaderRowHeightForWrappingLabel(
+            RowDefinition row,
+            bool useCodeLabel,
+            bool hideHeader,
+            double minHeightWhenVisible)
+        {
+            if (row == null)
+                return;
+
+            if (hideHeader)
+            {
+                row.Height = new GridLength(0);
+                row.MinHeight = 0;
+                return;
+            }
+
+            if (useCodeLabel)
+            {
+                row.Height = new GridLength(minHeightWhenVisible);
+                row.MinHeight = 0;
+                return;
+            }
+
+            row.Height = GridLength.Auto;
+            row.MinHeight = minHeightWhenVisible;
+        }
+
+        public static void RemoveIconsFromLabelControl(FrameworkElement labelControl)
+        {
+            Panel panel = labelControl as Panel;
+
+            if (panel == null)
+                return;
+
+            for (int i = panel.Children.Count - 1; i >= 0; i--)
+            {
+                if (panel.Children[i] is Image)
+                    panel.Children.RemoveAt(i);
+                else if (panel.Children[i] is FrameworkElement nested)
+                    RemoveIconsFromLabelControl(nested);
+            }
         }
     }
 }
