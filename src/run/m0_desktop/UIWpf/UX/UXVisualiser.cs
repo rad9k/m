@@ -94,6 +94,22 @@ namespace m0.UIWpf.UX
         bool scrollToOccupiedContentPending;
         bool initialOccupiedContentScrollCompleted;
         bool occupiedContentScrollInProgress;
+
+        const double MinimumDiagramScale = 1;
+        const double MaximumDiagramScale = 1600;
+        const double CanvasPanStartThreshold = 3;
+
+        bool hasCursorZoomAnchor;
+        Point cursorZoomContentPoint;
+        Point cursorZoomViewportPoint;
+
+        bool isCanvasPanPending;
+        bool isCanvasPanActive;
+        bool canvasPanOwnsOverrideCursor;
+        bool suppressContextMenuAfterCanvasPan;
+        Point canvasPanStartViewportPoint;
+        double canvasPanStartHorizontalOffset;
+        double canvasPanStartVerticalOffset;
         readonly HashSet<FrameworkElement>
             miniatureItemEventSubscriptions =
                 new HashSet<FrameworkElement>();
@@ -2351,6 +2367,11 @@ namespace m0.UIWpf.UX
             this.MouseLeave += MouseLeaveHandler;
             this.MouseLeftButtonDown += MouseButtonDownHandler;
             this.MouseLeftButtonUp += MouseButtonUpHandler;
+            this.PreviewMouseRightButtonDown += CanvasPan_PreviewMouseRightButtonDown;
+            this.PreviewMouseMove += CanvasPan_PreviewMouseMove;
+            this.PreviewMouseRightButtonUp += CanvasPan_PreviewMouseRightButtonUp;
+            this.LostMouseCapture += CanvasPan_LostMouseCapture;
+            this.ContextMenuOpening += CanvasPan_ContextMenuOpening;
             this.Drop += dndDrop;
 
             this.KeyDown += Diagram_KeyDown;
@@ -2361,52 +2382,62 @@ namespace m0.UIWpf.UX
         public void MouseWheelAction(MouseWheelEventArgs e)
         {
             double scale = Scale;
+            double toBeScale = GetNextDiagramScale(scale, e.Delta);
+
+            if (toBeScale == scale)
+            {
+                hasCursorZoomAnchor = false;
+                return;
+            }
+
+            ScrollViewer scrollViewer = GetDiagramScrollViewer();
+
+            if (scrollViewer != null && ActualWidth > 0 && ActualHeight > 0)
+            {
+                hasCursorZoomAnchor = true;
+                cursorZoomContentPoint = e.GetPosition(this);
+                cursorZoomViewportPoint = e.GetPosition(scrollViewer);
+            }
+            else
+                hasCursorZoomAnchor = false;
 
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             //////////////////////////////////////// 
 
-            double toBeScale = 0;
-
-            if (e.Delta > 0)
-            {
-                if (scale >= 0 && scale < 10)
-                    toBeScale = scale + 1;
-
-                if (scale >= 10 && scale < 20)
-                    toBeScale = scale + 2;
-
-                if (scale >= 20 && scale < 40)
-                    toBeScale = scale + 5;
-
-                if (scale >= 40)
-                    toBeScale = scale + 10;
-            }
-            else
-            {
-                if (scale >= 0 && scale < 10)
-                    toBeScale = scale - 1;
-
-                if (scale >= 10 && scale < 20)
-                    toBeScale = scale - 2;
-
-                if (scale >= 20 && scale < 40)
-                    toBeScale = scale - 5;
-
-                if (scale >= 40)
-                    toBeScale = scale - 10;
-            }
-
-            toBeScale = Math.Abs(toBeScale);
-
-            if (toBeScale < 0)
-                Scale = 0.001;
-            else
-                Scale = toBeScale;
+            Scale = toBeScale;
 
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             //////////////////////////////////////// 
+        }
+
+        static double GetNextDiagramScale(double scale, int wheelDelta)
+        {
+            double band = Math.Abs(scale);
+            double step;
+
+            if (band < 10)
+                step = 1;
+            else if (band < 20)
+                step = 2;
+            else if (band < 40)
+                step = 5;
+            else
+                step = 10;
+
+            if (wheelDelta > 0)
+            {
+                if (scale >= MaximumDiagramScale)
+                    return scale;
+
+                return Math.Min(scale + step, MaximumDiagramScale);
+            }
+
+            if (scale <= MinimumDiagramScale)
+                return scale;
+
+            return Math.Max(scale - step, MinimumDiagramScale);
         }
 
         double prev_Scale = -1;
@@ -2416,19 +2447,14 @@ namespace m0.UIWpf.UX
             if (prev_Scale == -1)
                 prev_Scale = 1;
 
-            //
-
             double scale = Scale / 100;
 
-            ScrollViewer sv = ScrollViewerParent.GetScrollViewer();
+            bool useCursorAnchor = hasCursorZoomAnchor;
+            Point contentPoint = cursorZoomContentPoint;
+            Point viewportPoint = cursorZoomViewportPoint;
+            hasCursorZoomAnchor = false;
 
-            double half_horizontal = sv.ActualWidth / 2;
-            double half_vertical = sv.ActualHeight / 2;
-
-            double scrollBarPosAbstract_horizontal = (sv.HorizontalOffset + half_horizontal) / (Canvas.ActualWidth * prev_Scale);
-            double scrollBarPosAbstract_vertical = (sv.VerticalOffset + half_vertical) / (Canvas.ActualHeight * prev_Scale);
-
-            //
+            ScrollViewer scrollViewer = GetDiagramScrollViewer();
 
             if (scale != 1.0)
             {
@@ -2440,18 +2466,223 @@ namespace m0.UIWpf.UX
             else
                 this.LayoutTransform = null;
 
-            //
-
-            try
+            if (scrollViewer != null)
             {
+                try
+                {
+                    if (useCursorAnchor)
+                        UpdateLayout();
 
-                sv.ScrollToHorizontalOffset((scrollBarPosAbstract_horizontal * Canvas.ActualWidth * scale) - half_horizontal);
-                sv.ScrollToVerticalOffset((scrollBarPosAbstract_vertical * Canvas.ActualHeight * scale) - half_vertical);
+                    double offsetX;
+                    double offsetY;
+
+                    if (useCursorAnchor && ActualWidth > 0 && ActualHeight > 0)
+                    {
+                        offsetX = contentPoint.X * scale - viewportPoint.X;
+                        offsetY = contentPoint.Y * scale - viewportPoint.Y;
+                    }
+                    else
+                    {
+                        double halfHorizontal = scrollViewer.ActualWidth / 2;
+                        double halfVertical = scrollViewer.ActualHeight / 2;
+                        double previousContentWidth = Canvas.ActualWidth * prev_Scale;
+                        double previousContentHeight = Canvas.ActualHeight * prev_Scale;
+
+                        double abstractHorizontal = previousContentWidth > 0
+                            ? (scrollViewer.HorizontalOffset + halfHorizontal) / previousContentWidth
+                            : 0;
+                        double abstractVertical = previousContentHeight > 0
+                            ? (scrollViewer.VerticalOffset + halfVertical) / previousContentHeight
+                            : 0;
+
+                        offsetX = abstractHorizontal * Canvas.ActualWidth * scale - halfHorizontal;
+                        offsetY = abstractVertical * Canvas.ActualHeight * scale - halfVertical;
+                    }
+
+                    double contentWidth = useCursorAnchor
+                        ? scrollViewer.ExtentWidth
+                        : Canvas.ActualWidth * scale;
+                    double contentHeight = useCursorAnchor
+                        ? scrollViewer.ExtentHeight
+                        : Canvas.ActualHeight * scale;
+
+                    scrollViewer.ScrollToHorizontalOffset(
+                        ClampScrollOffset(offsetX, contentWidth, scrollViewer.ViewportWidth));
+                    scrollViewer.ScrollToVerticalOffset(
+                        ClampScrollOffset(offsetY, contentHeight, scrollViewer.ViewportHeight));
+                }
+                catch (Exception) { }
             }
-            catch (Exception e) { }
 
             prev_Scale = scale;
             RequestMiniaturesUpdate(false);
+        }
+
+        static double ClampScrollOffset(
+            double offset,
+            double contentExtent,
+            double viewport)
+        {
+            if (double.IsNaN(offset) || double.IsInfinity(offset))
+                return 0;
+
+            double maxOffset = contentExtent - viewport;
+
+            if (double.IsNaN(maxOffset) || double.IsInfinity(maxOffset) || maxOffset < 0)
+                maxOffset = 0;
+
+            if (offset < 0)
+                return 0;
+
+            if (offset > maxOffset)
+                return maxOffset;
+
+            return offset;
+        }
+
+        ScrollViewer GetDiagramScrollViewer()
+        {
+            if (ScrollViewerParent == null)
+                return null;
+
+            return ScrollViewerParent.GetScrollViewer();
+        }
+
+        bool IsPointerOverUxItem(DependencyObject source)
+        {
+            DependencyObject current = source;
+
+            while (current != null && current != this)
+            {
+                if (current is IUXItem)
+                    return true;
+
+                current = VisualTreeHelper.GetParent(current);
+            }
+
+            return false;
+        }
+
+        void CanvasPan_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            suppressContextMenuAfterCanvasPan = false;
+
+            if (e.LeftButton == MouseButtonState.Pressed)
+                return;
+
+            if (IsPointerOverUxItem(e.OriginalSource as DependencyObject))
+                return;
+
+            ScrollViewer scrollViewer = GetDiagramScrollViewer();
+
+            if (scrollViewer == null)
+                return;
+
+            isCanvasPanPending = true;
+            isCanvasPanActive = false;
+            canvasPanStartViewportPoint = e.GetPosition(scrollViewer);
+            canvasPanStartHorizontalOffset = scrollViewer.HorizontalOffset;
+            canvasPanStartVerticalOffset = scrollViewer.VerticalOffset;
+        }
+
+        void CanvasPan_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            if (!isCanvasPanPending && !isCanvasPanActive)
+                return;
+
+            if (e.RightButton != MouseButtonState.Pressed)
+            {
+                EndCanvasPan(false);
+                return;
+            }
+
+            ScrollViewer scrollViewer = GetDiagramScrollViewer();
+
+            if (scrollViewer == null)
+            {
+                EndCanvasPan(false);
+                return;
+            }
+
+            Point currentViewportPoint = e.GetPosition(scrollViewer);
+            Vector delta = currentViewportPoint - canvasPanStartViewportPoint;
+
+            if (!isCanvasPanActive)
+            {
+                if (Math.Abs(delta.X) < CanvasPanStartThreshold &&
+                    Math.Abs(delta.Y) < CanvasPanStartThreshold)
+                    return;
+
+                isCanvasPanActive = true;
+                Mouse.OverrideCursor = Cursors.Hand;
+                canvasPanOwnsOverrideCursor = true;
+                CaptureMouse();
+            }
+
+            scrollViewer.ScrollToHorizontalOffset(
+                ClampScrollOffset(
+                    canvasPanStartHorizontalOffset - delta.X,
+                    scrollViewer.ExtentWidth,
+                    scrollViewer.ViewportWidth));
+            scrollViewer.ScrollToVerticalOffset(
+                ClampScrollOffset(
+                    canvasPanStartVerticalOffset - delta.Y,
+                    scrollViewer.ExtentHeight,
+                    scrollViewer.ViewportHeight));
+
+            RequestMiniaturesUpdate(false);
+            e.Handled = true;
+        }
+
+        void CanvasPan_PreviewMouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (!isCanvasPanPending && !isCanvasPanActive)
+                return;
+
+            bool wasPanning = isCanvasPanActive;
+            EndCanvasPan(wasPanning);
+
+            if (wasPanning)
+                e.Handled = true;
+        }
+
+        void CanvasPan_LostMouseCapture(object sender, MouseEventArgs e)
+        {
+            if (!isCanvasPanPending && !isCanvasPanActive)
+                return;
+
+            EndCanvasPan(isCanvasPanActive, false);
+        }
+
+        void CanvasPan_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            if (!suppressContextMenuAfterCanvasPan)
+                return;
+
+            suppressContextMenuAfterCanvasPan = false;
+            e.Handled = true;
+        }
+
+        void EndCanvasPan(bool suppressContextMenu, bool releaseCapture = true)
+        {
+            bool wasPanning = isCanvasPanActive;
+
+            isCanvasPanPending = false;
+            isCanvasPanActive = false;
+
+            if (wasPanning && suppressContextMenu)
+                suppressContextMenuAfterCanvasPan = true;
+
+            if (canvasPanOwnsOverrideCursor)
+            {
+                canvasPanOwnsOverrideCursor = false;
+
+                if (Mouse.OverrideCursor == Cursors.Hand)
+                    Mouse.OverrideCursor = null;
+            }
+
+            if (releaseCapture && IsMouseCaptured)
+                ReleaseMouseCapture();
         }
 
         IVertex vertex = null;
@@ -4899,6 +5130,9 @@ namespace m0.UIWpf.UX
 
         protected void MouseLeaveHandler(object sender, MouseEventArgs e)
         {
+            if (isCanvasPanPending && !isCanvasPanActive)
+                EndCanvasPan(false);
+
             MouseUpOrLeave(false, e);
         }
 
