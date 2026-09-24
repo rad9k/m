@@ -91,6 +91,9 @@ namespace m0.UIWpf.UX
         bool miniaturesUpdateReschedulePending;
         bool miniaturesUpdateRescheduleRebuildItems;
         System.Windows.Threading.DispatcherOperation miniaturesUpdateOperation;
+        bool scrollToOccupiedContentPending;
+        bool initialOccupiedContentScrollCompleted;
+        bool occupiedContentScrollInProgress;
         readonly HashSet<FrameworkElement>
             miniatureItemEventSubscriptions =
                 new HashSet<FrameworkElement>();
@@ -1606,6 +1609,8 @@ namespace m0.UIWpf.UX
             else
                 miniaturesAdorner.InvalidateViewport();
 
+            SettleOccupiedContentScroll();
+
             if (miniaturesUpdateReschedulePending)
             {
                 bool rescheduleRebuildItems =
@@ -1681,12 +1686,51 @@ namespace m0.UIWpf.UX
             return !occupiedBounds.IsEmpty;
         }
 
+        void RequestInitialScrollToOccupiedContent()
+        {
+            if (initialOccupiedContentScrollCompleted)
+                return;
+
+            scrollToOccupiedContentPending = true;
+            SettleOccupiedContentScroll();
+        }
+
         void ScrollToShowRepositionedContent()
+        {
+            scrollToOccupiedContentPending = true;
+            SettleOccupiedContentScroll();
+        }
+
+        void SettleOccupiedContentScroll()
+        {
+            if (!scrollToOccupiedContentPending ||
+                occupiedContentScrollInProgress)
+            {
+                return;
+            }
+
+            occupiedContentScrollInProgress = true;
+
+            try
+            {
+                if (!TryApplyOccupiedContentScroll())
+                    return;
+
+                scrollToOccupiedContentPending = false;
+                initialOccupiedContentScrollCompleted = true;
+            }
+            finally
+            {
+                occupiedContentScrollInProgress = false;
+            }
+        }
+
+        bool TryApplyOccupiedContentScroll()
         {
             Rect occupiedBounds;
 
             if (!TryComputeOccupiedBounds(out occupiedBounds))
-                return;
+                return false;
 
             ScrollViewer scrollViewer = miniaturesScrollViewer;
 
@@ -1694,7 +1738,7 @@ namespace m0.UIWpf.UX
                 scrollViewer = ScrollViewerParent.GetScrollViewer();
 
             if (scrollViewer == null)
-                return;
+                return false;
 
             double virtualWidth;
             double virtualHeight;
@@ -1703,19 +1747,31 @@ namespace m0.UIWpf.UX
                 out virtualHeight);
 
             if (virtualWidth <= 0 || virtualHeight <= 0)
-                return;
+                return false;
+
+            if (scrollViewer.ViewportWidth <= 0 ||
+                scrollViewer.ViewportHeight <= 0)
+            {
+                return false;
+            }
+
+            double effectiveScale = GetEffectiveMiniaturesScale();
+            bool extentReady =
+                scrollViewer.ExtentWidth + 1 >=
+                    virtualWidth * effectiveScale * 0.85 &&
+                scrollViewer.ExtentHeight + 1 >=
+                    virtualHeight * effectiveScale * 0.85;
+
+            if (!extentReady)
+                return false;
 
             double extentScaleX =
-                scrollViewer.ExtentWidth > 0
-                    ? scrollViewer.ExtentWidth / virtualWidth
-                    : GetEffectiveMiniaturesScale();
+                scrollViewer.ExtentWidth / virtualWidth;
             double extentScaleY =
-                scrollViewer.ExtentHeight > 0
-                    ? scrollViewer.ExtentHeight / virtualHeight
-                    : GetEffectiveMiniaturesScale();
+                scrollViewer.ExtentHeight / virtualHeight;
 
             if (extentScaleX <= 0 || extentScaleY <= 0)
-                return;
+                return false;
 
             double logicalViewportWidth =
                 scrollViewer.ViewportWidth / extentScaleX;
@@ -1728,17 +1784,23 @@ namespace m0.UIWpf.UX
                 logicalViewportWidth,
                 logicalViewportHeight);
 
-            if (currentLogicalViewport.IntersectsWith(occupiedBounds))
-                return;
+            Point occupiedCenter = new Point(
+                occupiedBounds.Left + occupiedBounds.Width / 2,
+                occupiedBounds.Top + occupiedBounds.Height / 2);
+
+            if (currentLogicalViewport.Contains(occupiedCenter))
+            {
+                MinusZero.Instance.Log(
+                    1,
+                    "UXVisualiser.ScrollToOccupiedContent",
+                    "occupied center already inside viewport");
+                return true;
+            }
 
             double targetLogicalLeft =
-                occupiedBounds.Left +
-                occupiedBounds.Width / 2 -
-                logicalViewportWidth / 2;
+                occupiedCenter.X - logicalViewportWidth / 2;
             double targetLogicalTop =
-                occupiedBounds.Top +
-                occupiedBounds.Height / 2 -
-                logicalViewportHeight / 2;
+                occupiedCenter.Y - logicalViewportHeight / 2;
 
             targetLogicalLeft = ClampMiniaturesScrollValue(
                 targetLogicalLeft,
@@ -1749,10 +1811,22 @@ namespace m0.UIWpf.UX
                 0,
                 Math.Max(0, virtualHeight - logicalViewportHeight));
 
+            MinusZero.Instance.Log(
+                1,
+                "UXVisualiser.ScrollToOccupiedContent",
+                "extent " + scrollViewer.ExtentWidth.ToString("0.#")
+                    + "x" + scrollViewer.ExtentHeight.ToString("0.#")
+                    + " virtual " + virtualWidth.ToString("0.#")
+                    + "x" + virtualHeight.ToString("0.#")
+                    + " logicalOffset "
+                    + targetLogicalLeft.ToString("0.#")
+                    + "," + targetLogicalTop.ToString("0.#"));
+
             scrollViewer.ScrollToHorizontalOffset(
                 targetLogicalLeft * extentScaleX);
             scrollViewer.ScrollToVerticalOffset(
                 targetLogicalTop * extentScaleY);
+            return true;
         }
 
         void EnsureMiniaturesAttached()
@@ -1820,6 +1894,15 @@ namespace m0.UIWpf.UX
             object sender,
             ScrollChangedEventArgs e)
         {
+            if (scrollToOccupiedContentPending &&
+                (e.ExtentWidthChange != 0 ||
+                    e.ExtentHeightChange != 0 ||
+                    e.ViewportWidthChange != 0 ||
+                    e.ViewportHeightChange != 0))
+            {
+                SettleOccupiedContentScroll();
+            }
+
             RequestMiniaturesUpdate(
                 e.ViewportWidthChange != 0 ||
                 e.ViewportHeightChange != 0);
@@ -3859,14 +3942,15 @@ namespace m0.UIWpf.UX
         {
             if (ActualHeight != 0 || IsFirstPainted)
             {
-                    ScaleChange();
-
                     ClearAlignmentGuides();
                     Canvas.Children.Clear();
                     alignmentGuideLinesAttached = false;
 
                     Width = Size.Width;
                     Height = Size.Height;
+
+                    UpdateLayout();
+                    ScaleChange();
 
                     Background = GetBackgroundBrush();
                     //new SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 200, 200));
@@ -3928,6 +4012,7 @@ namespace m0.UIWpf.UX
                         EndSuspendAutomaticDiagramLineUpdates();
                         UpdateAllDiagramLineGeometries(
                             "paint-final");
+                        RequestInitialScrollToOccupiedContent();
                         RequestMiniaturesUpdate(true);
                     }
             }
