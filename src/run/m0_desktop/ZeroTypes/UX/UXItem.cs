@@ -141,6 +141,27 @@ namespace m0.ZeroTypes.UX
 
         private void UXItem_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            RequestDiagramLineGeometryUpdateForLayoutChange(
+                "item-sizechanged");
+        }
+
+        protected void AttachInnerCanvasDiagramLineRefresh(Canvas innerCanvas)
+        {
+            if (innerCanvas == null)
+                return;
+
+            innerCanvas.SizeChanged -= InnerCanvas_SizeChanged;
+            innerCanvas.SizeChanged += InnerCanvas_SizeChanged;
+        }
+
+        void InnerCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            RequestDiagramLineGeometryUpdateForLayoutChange(
+                "inner-canvas-sizechanged");
+        }
+
+        void RequestDiagramLineGeometryUpdateForLayoutChange(string reason)
+        {
             UXVisualiser owningUxVisualiser =
                 OwningVisualiser as UXVisualiser;
 
@@ -167,8 +188,7 @@ namespace m0.ZeroTypes.UX
                 }
 
                 owningUxVisualiser
-                    .RequestAllDiagramLineGeometryUpdate(
-                        "item-sizechanged");
+                    .RequestAllDiagramLineGeometryUpdate(reason);
             }
             else
                 UpdateDiagramLines();

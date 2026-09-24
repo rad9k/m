@@ -38,12 +38,16 @@ namespace m0.ZeroTypes.UX
 
         public MultiContainerItem() : base(new ZeroTypes.Edge(null))
         {
-            InitializeComponent();            
+            InitializeComponent();
+
+            AttachInnerCanvasDiagramLineRefresh(_Canvas);
         }
 
         public MultiContainerItem(IEdge edge) : base(edge)
         {
             InitializeComponent();
+
+            AttachInnerCanvasDiagramLineRefresh(_Canvas);
         }
 
         public override void VertexSetedUp()

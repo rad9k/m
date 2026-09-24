@@ -55,6 +55,8 @@ namespace m0.ZeroTypes.UX
             Canvas.ClipToBounds = true;
 
             Grid.SetRow(Canvas, 2);
+
+            AttachInnerCanvasDiagramLineRefresh(Canvas);
         }
 
         public override void ViewAttributesUpdated()

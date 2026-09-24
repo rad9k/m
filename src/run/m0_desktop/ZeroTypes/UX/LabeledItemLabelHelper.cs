@@ -136,13 +136,45 @@ namespace m0.ZeroTypes.UX
                 return;
 
             textBox.HorizontalAlignment = HorizontalAlignment.Stretch;
-            textBox.VerticalAlignment = VerticalAlignment.Top;
-            textBox.VerticalContentAlignment = VerticalAlignment.Top;
             textBox.TextAlignment = TextAlignment.Center;
             textBox.AcceptsReturn = true;
             textBox.TextWrapping = TextWrapping.Wrap;
             textBox.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
             textBox.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
+            textBox.Margin = new Thickness(0);
+            textBox.Padding = new Thickness(0);
+
+            ApplyWrappingTextBoxVerticalAlignment(textBox);
+
+            textBox.SizeChanged += WrappingTextBox_SizeChanged;
+            textBox.TextChanged += WrappingTextBox_TextChanged;
+        }
+
+        static void WrappingTextBox_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ApplyWrappingTextBoxVerticalAlignment(sender as TextBox);
+        }
+
+        static void WrappingTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ApplyWrappingTextBoxVerticalAlignment(sender as TextBox);
+        }
+
+        public static void ApplyWrappingTextBoxVerticalAlignment(TextBox textBox)
+        {
+            if (textBox == null)
+                return;
+
+            bool singleLine = textBox.LineCount <= 1;
+            VerticalAlignment verticalAlignment = singleLine
+                ? VerticalAlignment.Center
+                : VerticalAlignment.Top;
+
+            if (textBox.VerticalAlignment != verticalAlignment)
+                textBox.VerticalAlignment = verticalAlignment;
+
+            if (textBox.VerticalContentAlignment != verticalAlignment)
+                textBox.VerticalContentAlignment = verticalAlignment;
         }
 
         public static Grid BuildWrappingLabelControl(
