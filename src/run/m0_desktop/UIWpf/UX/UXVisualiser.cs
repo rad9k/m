@@ -16,6 +16,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -942,6 +943,7 @@ namespace m0.UIWpf.UX
 
         const double AlignmentGuideCoordinateQuantum = 0.01;
         const double AlignmentGuideSnapDistanceInScreenDips = 3;
+        const double KeyboardNudgeAlignmentGuideHideMilliseconds = 2000;
 
         struct AlignmentGuideRange
         {
@@ -975,7 +977,11 @@ namespace m0.UIWpf.UX
                 new Dictionary<long, AlignmentGuideSegment>();
         readonly HashSet<IUXItem> alignmentGuideMovingItems =
             new HashSet<IUXItem>();
+        readonly HashSet<IUXItem> keyboardNudgeGuideItems =
+            new HashSet<IUXItem>();
         readonly List<Line> alignmentGuideLines = new List<Line>();
+        System.Windows.Threading.DispatcherTimer
+            keyboardNudgeAlignmentGuideHideTimer;
         readonly Action processAlignmentGuideUpdateAction;
         System.Windows.Threading.DispatcherOperation
             alignmentGuideUpdateOperation;
@@ -2375,6 +2381,7 @@ namespace m0.UIWpf.UX
             this.Drop += dndDrop;
 
             this.KeyDown += Diagram_KeyDown;
+            this.KeyUp += Diagram_KeyUp;
 
             ForceVertexChangeOff = false;
         }
@@ -3313,6 +3320,14 @@ namespace m0.UIWpf.UX
         {
             alignmentGuideMovingItems.Clear();
 
+            if (KeyboardNudgeAlignmentGuidesAreCurrent())
+            {
+                foreach (IUXItem item in keyboardNudgeGuideItems)
+                    alignmentGuideMovingItems.Add(item);
+
+                return;
+            }
+
             if (IsMultiSelectionMoving)
             {
                 foreach (Rectangle movingSprite in MovingSprites)
@@ -3975,13 +3990,32 @@ namespace m0.UIWpf.UX
             if (!alignmentGuideInteractionActive)
                 return;
 
+            if (keyboardNudgeGuideItems.Count > 0 &&
+                !KeyboardNudgeAlignmentGuidesAreCurrent())
+            {
+                keyboardNudgeGuideItems.Clear();
+                alignmentGuideReferenceIndexReady = false;
+            }
+
             if (!alignmentGuideReferenceIndexReady)
                 BuildAlignmentGuideReferenceIndex();
 
             activeVerticalAlignmentGuides.Clear();
             activeHorizontalAlignmentGuides.Clear();
 
-            if (IsMultiSelectionMoving &&
+            if (KeyboardNudgeAlignmentGuidesAreCurrent())
+            {
+                foreach (IUXItem item in keyboardNudgeGuideItems)
+                {
+                    Rect movingBounds;
+                    if (TryGetItemBoundsOnVisualiserCanvas(
+                        item,
+                        out movingBounds))
+                        IncludeAlignmentGuidesForMovingBounds(
+                            movingBounds);
+                }
+            }
+            else if (IsMultiSelectionMoving &&
                 MovingSprites.Count > 0)
             {
                 foreach (Rectangle movingSprite in MovingSprites)
@@ -4014,8 +4048,94 @@ namespace m0.UIWpf.UX
             RenderActiveAlignmentGuides();
         }
 
+        bool KeyboardNudgeAlignmentGuidesAreCurrent()
+        {
+            if (keyboardNudgeGuideItems.Count == 0)
+                return false;
+
+            if (IsMultiSelectionMoving || IsItemMoveGraphInteractionActive)
+                return false;
+
+            if (ClickTarget == ClickTargetEnum.Item ||
+                IsResizeClickTarget(ClickTarget))
+                return false;
+
+            return true;
+        }
+
+        bool KeyboardNudgeGuideItemsMatch(IList<IUXItem> itemsMovedDirectly)
+        {
+            if (keyboardNudgeGuideItems.Count != itemsMovedDirectly.Count)
+                return false;
+
+            foreach (IUXItem item in itemsMovedDirectly)
+            {
+                if (!keyboardNudgeGuideItems.Contains(item))
+                    return false;
+            }
+
+            return true;
+        }
+
+        // Shows the same dashed edge guides as a mouse drag, without moving
+        // the selection onto those edges. The reference index stays cached
+        // while the nudged set does not change.
+        void RequestKeyboardNudgeAlignmentGuides(IList<IUXItem> itemsMovedDirectly)
+        {
+            if (!KeyboardNudgeGuideItemsMatch(itemsMovedDirectly))
+            {
+                keyboardNudgeGuideItems.Clear();
+                foreach (IUXItem item in itemsMovedDirectly)
+                    keyboardNudgeGuideItems.Add(item);
+
+                alignmentGuideReferenceIndexReady = false;
+
+                MinusZero.Instance.Log(
+                    1,
+                    "UXVisualiser.RequestKeyboardNudgeAlignmentGuides",
+                    "items " + keyboardNudgeGuideItems.Count);
+            }
+
+            RequestAlignmentGuideUpdate();
+        }
+
+        bool KeyboardNudgeAlignmentGuideHideIsScheduled()
+        {
+            return keyboardNudgeAlignmentGuideHideTimer != null &&
+                keyboardNudgeAlignmentGuideHideTimer.IsEnabled;
+        }
+
+        void CancelKeyboardNudgeAlignmentGuideHide()
+        {
+            if (keyboardNudgeAlignmentGuideHideTimer != null)
+                keyboardNudgeAlignmentGuideHideTimer.Stop();
+        }
+
+        void ScheduleKeyboardNudgeAlignmentGuideHide()
+        {
+            if (keyboardNudgeAlignmentGuideHideTimer == null)
+            {
+                keyboardNudgeAlignmentGuideHideTimer =
+                    new System.Windows.Threading.DispatcherTimer();
+                keyboardNudgeAlignmentGuideHideTimer.Interval =
+                    TimeSpan.FromMilliseconds(
+                        KeyboardNudgeAlignmentGuideHideMilliseconds);
+                keyboardNudgeAlignmentGuideHideTimer.Tick +=
+                    KeyboardNudgeAlignmentGuideHideTimer_Tick;
+            }
+
+            keyboardNudgeAlignmentGuideHideTimer.Stop();
+            keyboardNudgeAlignmentGuideHideTimer.Start();
+        }
+
+        void KeyboardNudgeAlignmentGuideHideTimer_Tick(object sender, EventArgs e)
+        {
+            ClearAlignmentGuides();
+        }
+
         void RequestAlignmentGuideUpdate()
         {
+            CancelKeyboardNudgeAlignmentGuideHide();
             alignmentGuideInteractionActive = true;
 
             if (alignmentGuideUpdateOperation != null)
@@ -4030,9 +4150,13 @@ namespace m0.UIWpf.UX
         {
             if (!alignmentGuideInteractionActive &&
                 !alignmentGuideReferenceIndexReady &&
-                alignmentGuideUpdateOperation == null)
+                alignmentGuideUpdateOperation == null &&
+                keyboardNudgeGuideItems.Count == 0 &&
+                !KeyboardNudgeAlignmentGuideHideIsScheduled())
                 return;
 
+            CancelKeyboardNudgeAlignmentGuideHide();
+            keyboardNudgeGuideItems.Clear();
             alignmentGuideInteractionActive = false;
             alignmentGuideReferenceIndexReady = false;
 
@@ -4674,10 +4798,299 @@ namespace m0.UIWpf.UX
         private void Diagram_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Delete)
+            {
                 if (IsLineSelected)
                     DeleteLine();
                 else
                     DeleteSelectedItems();
+
+                return;
+            }
+
+            if (e.Key == Key.Left ||
+                e.Key == Key.Right ||
+                e.Key == Key.Up ||
+                e.Key == Key.Down)
+                NudgeSelectedItemsByArrowKey(e);
+        }
+
+        void Diagram_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Left &&
+                e.Key != Key.Right &&
+                e.Key != Key.Up &&
+                e.Key != Key.Down)
+                return;
+
+            if (keyboardNudgeGuideItems.Count == 0)
+                return;
+
+            ScheduleKeyboardNudgeAlignmentGuideHide();
+        }
+
+        // Arrow keys move the diagram selection by one canvas unit.
+        // A focused TextBox keeps the key for caret movement, including BaseEdge.To editing.
+        void NudgeSelectedItemsByArrowKey(KeyEventArgs e)
+        {
+            if (Keyboard.FocusedElement is TextBoxBase)
+                return;
+
+            if (IsItemMoveGraphInteractionActive ||
+                IsMultiSelectionMoving ||
+                IsDrawingOrMovingLine)
+                return;
+
+            double requestedDeltaX = 0;
+            double requestedDeltaY = 0;
+
+            if (e.Key == Key.Left)
+                requestedDeltaX = -1;
+            else if (e.Key == Key.Right)
+                requestedDeltaX = 1;
+            else if (e.Key == Key.Up)
+                requestedDeltaY = -1;
+            else if (e.Key == Key.Down)
+                requestedDeltaY = 1;
+            else
+                return;
+
+            List<IUXItem> selectedItems = CollectSelectedUXItemsForNudge();
+
+            if (selectedItems.Count == 0)
+                return;
+
+            e.Handled = true;
+
+            HashSet<IUXItem> selectedItemSet = new HashSet<IUXItem>(selectedItems);
+            List<IUXItem> itemsMovedDirectly = new List<IUXItem>();
+            List<IUXItem> itemsMovedBySelectedAncestor = new List<IUXItem>();
+
+            foreach (IUXItem item in selectedItems)
+            {
+                if (HasSelectedAncestor(item, selectedItemSet))
+                    itemsMovedBySelectedAncestor.Add(item);
+                else
+                    itemsMovedDirectly.Add(item);
+            }
+
+            if (itemsMovedDirectly.Count == 0)
+                return;
+
+            double canvasWidth;
+            double canvasHeight;
+
+            if (!TryGetDiagramCanvasSize(out canvasWidth, out canvasHeight))
+            {
+                MinusZero.Instance.Log(
+                    1,
+                    "UXVisualiser.NudgeSelectedItemsByArrowKey",
+                    "diagram canvas size unavailable");
+                RequestKeyboardNudgeAlignmentGuides(itemsMovedDirectly);
+                return;
+            }
+
+            double deltaX = requestedDeltaX;
+            double deltaY = requestedDeltaY;
+
+            ClampNudgeDeltaToDiagramCanvas(
+                itemsMovedDirectly,
+                canvasWidth,
+                canvasHeight,
+                ref deltaX,
+                ref deltaY);
+            ClampNudgeDeltaToDiagramCanvas(
+                itemsMovedBySelectedAncestor,
+                canvasWidth,
+                canvasHeight,
+                ref deltaX,
+                ref deltaY);
+
+            if (deltaX == 0 && deltaY == 0)
+            {
+                RequestKeyboardNudgeAlignmentGuides(itemsMovedDirectly);
+                return;
+            }
+
+            Dictionary<IUXItem, Point> absolutePositions =
+                new Dictionary<IUXItem, Point>();
+
+            foreach (IUXItem item in itemsMovedDirectly)
+            {
+                Point absolutePosition;
+
+                try
+                {
+                    absolutePosition = GetItemAbsolutePosition(item);
+                }
+                catch (InvalidOperationException)
+                {
+                    continue;
+                }
+
+                if (double.IsNaN(absolutePosition.X) ||
+                    double.IsNaN(absolutePosition.Y) ||
+                    double.IsInfinity(absolutePosition.X) ||
+                    double.IsInfinity(absolutePosition.Y))
+                    continue;
+
+                absolutePositions.Add(item, absolutePosition);
+            }
+
+            if (absolutePositions.Count == 0)
+            {
+                RequestKeyboardNudgeAlignmentGuides(itemsMovedDirectly);
+                return;
+            }
+
+            MinusZero.Instance.Log(
+                1,
+                "UXVisualiser.NudgeSelectedItemsByArrowKey",
+                "dx " + deltaX.ToString("0.###")
+                    + " dy " + deltaY.ToString("0.###")
+                    + " items " + absolutePositions.Count
+                    + " canvas " + canvasWidth.ToString("0.#")
+                    + "x" + canvasHeight.ToString("0.#"));
+
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
+            try
+            {
+                foreach (KeyValuePair<IUXItem, Point> itemPosition in absolutePositions)
+                {
+                    itemPosition.Key.MoveItem(
+                        itemPosition.Value.X + deltaX,
+                        itemPosition.Value.Y + deltaY,
+                        false);
+                }
+
+                // A selected child of a selected parent already moves with the parent canvas.
+                // Only its anchors, which live on the visualiser canvas, need the same delta.
+                foreach (IUXItem item in itemsMovedBySelectedAncestor)
+                {
+                    if (HasMovedSelectedAncestor(item, absolutePositions))
+                        item.MoveItem(deltaX, deltaY, true);
+                }
+            }
+            finally
+            {
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                ////////////////////////////////////////
+            }
+
+            RequestMiniaturesUpdate(true);
+            RequestKeyboardNudgeAlignmentGuides(itemsMovedDirectly);
+        }
+
+        static bool HasMovedSelectedAncestor(
+            IUXItem item,
+            Dictionary<IUXItem, Point> movedItems)
+        {
+            IItem ancestor = item.ParentItem;
+
+            while (ancestor != null)
+            {
+                IUXItem ancestorUXItem = ancestor as IUXItem;
+
+                if (ancestorUXItem != null &&
+                    movedItems.ContainsKey(ancestorUXItem))
+                    return true;
+
+                ancestor = ancestor.ParentItem;
+            }
+
+            return false;
+        }
+
+        List<IUXItem> CollectSelectedUXItemsForNudge()
+        {
+            List<IUXItem> selectedItems = new List<IUXItem>();
+            HashSet<IUXItem> seenItems = new HashSet<IUXItem>();
+
+            foreach (IEdge selectedEdge in Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}"))
+            {
+                foreach (IUXItem item in GetItemsByVertex(selectedEdge.To))
+                {
+                    if (item is FrameworkElement &&
+                        item.Position != null &&
+                        seenItems.Add(item))
+                        selectedItems.Add(item);
+                }
+            }
+
+            return selectedItems;
+        }
+
+        bool TryGetDiagramCanvasSize(out double canvasWidth, out double canvasHeight)
+        {
+            canvasWidth = 0;
+            canvasHeight = 0;
+
+            if (Canvas != null)
+            {
+                if (Canvas.ActualWidth > 0)
+                    canvasWidth = Canvas.ActualWidth;
+                else if (Canvas.Width > 0 && !double.IsNaN(Canvas.Width))
+                    canvasWidth = Canvas.Width;
+
+                if (Canvas.ActualHeight > 0)
+                    canvasHeight = Canvas.ActualHeight;
+                else if (Canvas.Height > 0 && !double.IsNaN(Canvas.Height))
+                    canvasHeight = Canvas.Height;
+            }
+
+            if (canvasWidth <= 0 && Size != null)
+                canvasWidth = Size.Width;
+
+            if (canvasHeight <= 0 && Size != null)
+                canvasHeight = Size.Height;
+
+            return canvasWidth > 0 &&
+                canvasHeight > 0 &&
+                !double.IsNaN(canvasWidth) &&
+                !double.IsNaN(canvasHeight) &&
+                !double.IsInfinity(canvasWidth) &&
+                !double.IsInfinity(canvasHeight);
+        }
+
+        void ClampNudgeDeltaToDiagramCanvas(
+            IList<IUXItem> items,
+            double canvasWidth,
+            double canvasHeight,
+            ref double deltaX,
+            ref double deltaY)
+        {
+            foreach (IUXItem item in items)
+            {
+                Rect bounds;
+
+                if (!TryGetItemBoundsOnVisualiserCanvas(item, out bounds))
+                    continue;
+
+                if (deltaX < 0)
+                {
+                    double room = Math.Max(0, bounds.Left);
+                    deltaX = Math.Max(deltaX, -room);
+                }
+                else if (deltaX > 0)
+                {
+                    double room = Math.Max(0, canvasWidth - bounds.Right);
+                    deltaX = Math.Min(deltaX, room);
+                }
+
+                if (deltaY < 0)
+                {
+                    double room = Math.Max(0, bounds.Top);
+                    deltaY = Math.Max(deltaY, -room);
+                }
+                else if (deltaY > 0)
+                {
+                    double room = Math.Max(0, canvasHeight - bounds.Bottom);
+                    deltaY = Math.Min(deltaY, room);
+                }
+            }
         }
 
         private void DeleteSelectedItems()
