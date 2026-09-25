@@ -523,14 +523,53 @@ namespace m0.UIWpf
                 SetWindowPositionNoSize |
                 SetWindowPositionNoZOrder |
                 SetWindowPositionNoActivate;
-            SetWindowPos(
+            if (!SetWindowPos(
                 windowHandle,
                 IntPtr.Zero,
                 targetX,
                 targetY,
                 0,
                 0,
-                flags);
+                flags))
+                return;
+
+            if (!GetWindowRect(
+                windowHandle,
+                out NativeWindowRectangle positionedWindowRectangle))
+                return;
+
+            int positionedWindowWidth =
+                positionedWindowRectangle.Right -
+                positionedWindowRectangle.Left;
+            int positionedWindowHeight =
+                positionedWindowRectangle.Bottom -
+                positionedWindowRectangle.Top;
+
+            int correctedX = positionedWindowWidth <= workingArea.Width
+                ? Math.Max(
+                    workingArea.Left,
+                    Math.Min(
+                        positionedWindowRectangle.Left,
+                        workingArea.Right - positionedWindowWidth))
+                : workingArea.Left;
+            int correctedY = positionedWindowHeight <= workingArea.Height
+                ? Math.Max(
+                    workingArea.Top,
+                    Math.Min(
+                        positionedWindowRectangle.Top,
+                        workingArea.Bottom - positionedWindowHeight))
+                : workingArea.Top;
+
+            if (correctedX != positionedWindowRectangle.Left ||
+                correctedY != positionedWindowRectangle.Top)
+                SetWindowPos(
+                    windowHandle,
+                    IntPtr.Zero,
+                    correctedX,
+                    correctedY,
+                    0,
+                    0,
+                    flags);
         }
     }
 }

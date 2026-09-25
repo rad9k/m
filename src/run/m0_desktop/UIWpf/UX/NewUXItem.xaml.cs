@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace m0.UIWpf.UX
 {
@@ -56,6 +57,14 @@ namespace m0.UIWpf.UX
             Loaded +=
                 (sender, eventArgs) =>
                     PositionWindowNearDropPoint();
+            ContentRendered +=
+                (sender, eventArgs) =>
+                    PositionWindowNearDropPoint();
+            DpiChanged +=
+                (sender, eventArgs) =>
+                    Dispatcher.BeginInvoke(
+                        DispatcherPriority.Loaded,
+                        new Action(PositionWindowNearDropPoint));
 
           //  this.Owner = m0Main.Instance;
 
