@@ -2614,7 +2614,7 @@ namespace m0.UIWpf.UX
                     return;
 
                 isCanvasPanActive = true;
-                Mouse.OverrideCursor = Cursors.Hand;
+                Mouse.OverrideCursor = Cursors.ScrollAll;
                 canvasPanOwnsOverrideCursor = true;
                 CaptureMouse();
             }
@@ -2677,7 +2677,7 @@ namespace m0.UIWpf.UX
             {
                 canvasPanOwnsOverrideCursor = false;
 
-                if (Mouse.OverrideCursor == Cursors.Hand)
+                if (Mouse.OverrideCursor == Cursors.ScrollAll)
                     Mouse.OverrideCursor = null;
             }
 
