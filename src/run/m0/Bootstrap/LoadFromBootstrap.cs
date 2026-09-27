@@ -3,6 +3,7 @@ using m0.Graph;
 using m0.Store;
 using m0.Store.Binary;
 using m0.Store.Json;
+using m0.Util;
 using m0.ZeroUML.Instructions;
 using System;
 using System.Collections.Generic;
@@ -57,9 +58,14 @@ namespace m0.Bootstrap
 
                     if (importFilePath.EndsWith(".m0x"))
                     {
-                        loadedStore = new BinaryStore(importFilePath, MinusZero.Instance, new AccessLevelEnum[] { });                            
+                        loadedStore = new BinaryStore(importFilePath, MinusZero.Instance, new AccessLevelEnum[] { });
+
+                        object mountName = importRoot.Value;
 
                         ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_IncludeEverythingBesidesList(loadedStore.Root, importRoot, new HashSet<IVertex>(system));
+
+                        if (GeneralUtil.CompareStrings(importRoot.Value, "") || GeneralUtil.CompareStrings(importRoot.Value, "$Empty"))
+                            importRoot.Value = mountName;
                     }
 
                 }
