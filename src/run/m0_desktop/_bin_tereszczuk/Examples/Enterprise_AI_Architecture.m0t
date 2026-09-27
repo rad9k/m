@@ -4,13 +4,18 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 		<@$Is :: @UX\UXContainer>
 		<@IsExpanded :: "True">
 		<@HasMiniatures :: "True">
-		<@Scale :: "50">
+		<@Scale :: "90">
 		<@BaseEdge :: "">
 			<@$Is :: @Edge>
 			<@From :: @'net10.0-windows7.0'\Examples\'Enterprise_AI_Architecture.m0t'>
 			<@Meta :: @System\Meta\Store\FileSystem\$Store>
 			<@To :: @$CodeRoot>
 		<@SelectedEdges :: "">
+			<@Edge :: "">
+				<@$Is :: @Edge>
+				<@From :: @'Component diagram'>
+				<@Meta :: @UX\Item\Item>
+				<@To :: @'Component diagram'\Item:<<"12">>>
 		<@ShowSelectedEdgesBaseEdge :: "True">
 		<@Size :: "">
 			<@$Is :: @UX\Size>
@@ -1052,8 +1057,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 			<@Position :: "">
 				<@$Is :: @UX\Position>
-				<@X :: "1358.2202031746037">
-				<@Y :: "481.9566666666666">
+				<@X :: "1306.9177777777784">
+				<@Y :: "528.3566666666666">
 			<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'System CONTAINER'>
 			<@ShowMeta :: "True">
 			<@BackgroundColor :: "VeryVeryVeryVeryLightCyan">
@@ -1647,7 +1652,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@To :: @'Models repository'>
 				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToArrow'>
 				<@EndAnchor :: @UX\LineEndEnum\Arrow>
-				<@ToItem :: @'Component diagram'\Item:<<"12">>>
+				<@ToItem :: @'Component diagram'\Item:<<"11">>>
 			<@Decorator :: "">
 				<@$Is :: @UX\LineDecorator>
 				<@Scale :: "100">
@@ -1657,7 +1662,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@To :: @'Prompt DB'>
 				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToArrow'>
 				<@EndAnchor :: @UX\LineEndEnum\Arrow>
-				<@ToItem :: @'Component diagram'\Item:<<"14">>>
+				<@ToItem :: @'Component diagram'\Item:<<"13">>>
 		<@Item :: "">
 			<@$Is :: @UX\IconItem>
 			<@Scale :: "100">
@@ -1916,49 +1921,6 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@Width :: "224.59333333333336">
 					<@Height :: "21.62">
 		<@Item :: "">
-			<@$Is :: @UX\IconItem>
-			<@Scale :: "100">
-			<@ShowIcons :: "True">
-			<@FontSize :: "14">
-			<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
-			<@Position :: "">
-				<@$Is :: @UX\Position>
-				<@X :: "947.7159128768948">
-				<@Y :: "491.28999999999996">
-			<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\System>
-			<@BackgroundColor :: "VeryVeryVeryLightCyan">
-				<@$Is :: @UX\Color>
-				<@Red :: "237">
-				<@Green :: "255">
-				<@Blue :: "255">
-				<@Opacity :: "255">
-			<@BaseEdge :: "">
-				<@$Is :: @Edge>
-				<@From :: @$CodeRoot>
-				<@Meta :: @Structure\System>
-				<@To :: @'Frontend systems'>
-			<@Decorator :: "">
-				<@$Is :: @UX\LineDecorator>
-				<@Scale :: "100">
-				<@BaseEdge :: "">
-					<@From :: @'Frontend systems'>
-					<@Meta :: @Structure\Component\Use>
-					<@To :: @'AI Runtime'\Runtime>
-				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToArrow'>
-				<@EndAnchor :: @UX\LineEndEnum\Arrow>
-				<@ToItem :: @'Component diagram'\Item:<<"7">>\Item:<<"2">>>
-			<@Decorator :: "">
-				<@$Is :: @UX\LineDecorator>
-				<@Scale :: "100">
-				<@BaseEdge :: "">
-					<@From :: @'Frontend systems'>
-					<@Meta :: @Structure\StaticComponent\ReadWrite>
-					<@To :: @'AI lakehouse'>
-				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - FromToFilledTriangle'>
-				<@StartAnchor :: @UX\LineEndEnum\FilledTriangle>
-				<@EndAnchor :: @UX\LineEndEnum\FilledTriangle>
-				<@ToItem :: @'Component diagram'\Item:<<"1">>>
-		<@Item :: "">
 			<@$Is :: @UX\ContainerItem>
 			<@IsExpanded :: "True">
 			<@HasMiniatures :: "True">
@@ -1971,7 +1933,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			<@Position :: "">
 				<@$Is :: @UX\Position>
 				<@X :: "812.3425795435616">
-				<@Y :: "222.51271188610295">
+				<@Y :: "222.51271188610292">
 			<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Component CONTAINER'>
 			<@ShowMeta :: "True">
 			<@BackgroundColor :: "VeryVeryVeryVeryLightCyan">
@@ -1988,7 +1950,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			<@Size :: "">
 				<@$Is :: @UX\Size>
 				<@Width :: "263.3733333333334">
-				<@Height :: "225.28666666666666">
+				<@Height :: "316.8168913930448">
 			<@Item :: "">
 				<@$Is :: @UX\RectangleVisualiserItem>
 				<@Scale :: "100">
@@ -2157,6 +2119,32 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToArrow'>
 				<@EndAnchor :: @UX\LineEndEnum\Arrow>
 				<@ToItem :: @'Component diagram'\Item:<<"10">>>
+			<@Item :: "">
+				<@$Is :: @UX\IconItem>
+				<@Scale :: "100">
+				<@ShowIcons :: "True">
+				<@FontSize :: "14">
+				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+				<@Position :: "">
+					<@$Is :: @UX\Position>
+					<@X :: "68.24519823421622">
+					<@Y :: "209.66666666666657">
+				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Component>
+				<@BackgroundColor :: "VeryVeryVeryLightCyan">
+					<@$Is :: @UX\Color>
+					<@Red :: "237">
+					<@Green :: "255">
+					<@Blue :: "255">
+					<@Opacity :: "255">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @'Models repository'>
+					<@Meta :: @Structure\StaticComponent\Contain>
+					<@To :: @'Models repository'\'Model binary files'>
+				<@Size :: "">
+					<@$Is :: @UX\Size>
+					<@Width :: "128">
+					<@Height :: "59.4199999999999">
 		<@Item :: "">
 			<@$Is :: @UX\ContainerItem>
 			<@IsExpanded :: "True">
@@ -2169,8 +2157,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 			<@Position :: "">
 				<@$Is :: @UX\Position>
-				<@X :: "1336.666666666663">
-				<@Y :: "222.51271188610295">
+				<@X :: "1914.5611111111111">
+				<@Y :: "355.5111575826252">
 			<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Component CONTAINER'>
 			<@ShowMeta :: "True">
 			<@BackgroundColor :: "VeryVeryVeryVeryLightCyan">
@@ -2369,8 +2357,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 			<@Position :: "">
 				<@$Is :: @UX\Position>
-				<@X :: "1111.3544935245252">
-				<@Y :: "222.51271188610295">
+				<@X :: "1599.3944935245252">
+				<@Y :: "228.51271188610298">
 			<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Component CONTAINER'>
 			<@ShowMeta :: "True">
 			<@BackgroundColor :: "VeryVeryVeryVeryLightCyan">
@@ -2546,6 +2534,76 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@From :: @'Prompt DB'>
 					<@Meta :: @Structure\StaticComponent\Contain>
 					<@To :: @'Prompt DB'\'Environment reference'>
+		<@Item :: "">
+			<@$Is :: @UX\IconItem>
+			<@Scale :: "100">
+			<@ShowIcons :: "True">
+			<@FontSize :: "14">
+			<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+			<@Position :: "">
+				<@$Is :: @UX\Position>
+				<@X :: "1350.111111111111">
+				<@Y :: "287.84449091595854">
+			<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\System>
+			<@BackgroundColor :: "VeryVeryVeryLightCyan">
+				<@$Is :: @UX\Color>
+				<@Red :: "237">
+				<@Green :: "255">
+				<@Blue :: "255">
+				<@Opacity :: "255">
+			<@BaseEdge :: "">
+				<@$Is :: @Edge>
+				<@From :: @$CodeRoot>
+				<@Meta :: @Structure\System>
+				<@To :: @'Frontend systems'>
+			<@Decorator :: "">
+				<@$Is :: @UX\LineDecorator>
+				<@Scale :: "100">
+				<@BaseEdge :: "">
+					<@From :: @'Frontend systems'>
+					<@Meta :: @Structure\Component\Use>
+					<@To :: @'AI Runtime'\Runtime>
+				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToArrow'>
+				<@EndAnchor :: @UX\LineEndEnum\Arrow>
+				<@ToItem :: @'Component diagram'\Item:<<"7">>\Item:<<"2">>>
+			<@Decorator :: "">
+				<@$Is :: @UX\LineDecorator>
+				<@Scale :: "100">
+				<@BaseEdge :: "">
+					<@From :: @'Frontend systems'>
+					<@Meta :: @Structure\StaticComponent\ReadWrite>
+					<@To :: @'AI lakehouse'>
+				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - FromToFilledTriangle'>
+				<@StartAnchor :: @UX\LineEndEnum\FilledTriangle>
+				<@EndAnchor :: @UX\LineEndEnum\FilledTriangle>
+				<@ToItem :: @'Component diagram'\Item:<<"1">>>
+		<@Item :: "">
+			<@$Is :: @UX\ContainerItem>
+			<@IsExpanded :: "True">
+			<@HasMiniatures :: "True">
+			<@Scale :: "100">
+			<@SelectedEdges :: "">
+			<@ShowSelectedEdgesBaseEdge :: "False">
+			<@ShowIcons :: "True">
+			<@FontSize :: "14">
+			<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+			<@Position :: "">
+				<@$Is :: @UX\Position>
+				<@X :: "1270.4651786606694">
+				<@Y :: "181.87999999999994">
+			<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Component CONTAINER'>
+			<@ShowMeta :: "True">
+			<@BackgroundColor :: "VeryVeryVeryVeryLightCyan">
+				<@$Is :: @UX\Color>
+				<@Red :: "248">
+				<@Green :: "255">
+				<@Blue :: "255">
+				<@Opacity :: "255">
+			<@BaseEdge :: "">
+				<@$Is :: @Edge>
+				<@From :: @$CodeRoot>
+				<@Meta :: @Structure\System>
+				<@To :: @'Model training and testing'>
 	<@Structure\Database :: "AI lakehouse">
 		<@$Is :: @Structure\Database>
 		<@Contain :: "Relational">
@@ -2703,6 +2761,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 		<@Contain :: "External test / train data reference">
 			<@$Is :: @Structure\Component>
 		<@Use :: @'AI & Data compliance'>
+		<@Contain :: "Model binary files">
+			<@$Is :: @Structure\Component>
 	<@Structure\System :: "KPI Governance">
 		<@$Is :: @Structure\System>
 		<@Contain :: "KPI hierarchy">
@@ -2742,3 +2802,5 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 		<@$Is :: @Structure\System>
 		<@Use :: @'AI Runtime'\Runtime>
 		<@ReadWrite :: @'AI lakehouse'>
+	<@Structure\System :: "Model training and testing">
+		<@$Is :: @Structure\System>
