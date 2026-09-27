@@ -38,11 +38,7 @@ namespace m0_SYSTEM_GENERATE
             examples.AddVertex(null, "_examples.m0x");
 
             IVertex documentation_diagrams = r.AddVertex(null, "DocumentationDiagrams");
-            documentation_diagrams.AddVertex(null, "_documentation_diagrams.m0x");
-
-            //IVertex documentationDiagrams = r.AddVertex(null, "DocumentationDiagrams");
-            //documentationDiagrams.AddVertex(null, "documentation_diagrams.m0j");
-
+            documentation_diagrams.AddVertex(null, "_documentation_diagrams.m0x");            
 
 
             /*IVertex lib_std = r.AddVertex(null, "System\\Lib\\Std");
