@@ -217,12 +217,7 @@ namespace m0
         {
             IVertex localComputer = root.Get(false, @"Hardware\LocalComputer:");
 
-            IEnumerable<DriveInfo> drives = DriveInfo.GetDrives()
-                .Where(d => d.DriveType == DriveType.Fixed
-                || d.DriveType == DriveType.Removable
-                || d.DriveType == DriveType.Network);
-
-                //System.IO.Directory.GetLogicalDrives();
+            DriveInfo[] drives = DriveInfo.GetDrives();
 
             IVertex DriveMeta = Root.Get(false, @"System\Meta\Store\FileSystem\Drive");
 
@@ -238,8 +233,17 @@ namespace m0
 
             foreach (DriveInfo driveInfo in drives)
             {
+                string driveName = driveInfo.Name;
+
+                DriveType driveType = driveInfo.DriveType;
+
+                if (driveType != DriveType.Fixed
+                    && driveType != DriveType.Removable
+                    && driveType != DriveType.Network)
+                    continue;
+
                 string driveIdentifier =
-                    FileSystemUtil.NormalizeFileSystemIdentifier(driveInfo.Name);
+                    FileSystemUtil.NormalizeFileSystemIdentifier(driveName);
 
                 FileSystemStore fileSystemStore =
                     (FileSystemStore)Stores.FirstOrDefault(store =>
@@ -270,6 +274,10 @@ namespace m0
         private System.IO.StreamWriter logFile;
 
         public bool DoLog = true;
+
+        public bool DeferAutostart;
+
+        public bool DeferBinaryBootstrapImports;
 
         public int LogLevel;
 
@@ -528,16 +536,20 @@ namespace m0
 
             PreBootstrap();
 
-            
-
             Bootstrap();
-            
 
+            ExecutionFlowHelper.StartTransaction();
 
-            ExecutionFlowHelper.StartTransaction();            
+            ExecutionFlowHelper.GraphChangeWatchOff();
 
-
-            LoadFromBootstrap.Execute();
+            try
+            {
+                LoadFromBootstrap.Execute();
+            }
+            finally
+            {
+                ExecutionFlowHelper.GraphChangeWatchOn();
+            }
 
             InitRootVariables();
 
@@ -547,22 +559,15 @@ namespace m0
 
             AddHardware();
 
-
             UserInteraction.UserInteractionInitialize();
-            
 
             StaticMetaInitialize();
 
             m0.Graph.ExecutionFlow.Initialize.Run();
 
-
             AddDrives();
 
-            //
-
             CommandLineParameters.CommandLineExecute_BeforeInitialisation();
-
-            //
 
             CreateStart();
 
@@ -570,14 +575,10 @@ namespace m0
 
             BuildVariantsInitialize();
 
-            CreateAutostart();
+            if (!DeferAutostart)
+                CreateAutostart();
 
-            //
-
-            CommandLineParameters.CommandLineExecute_AfterInitialisation();            
-
-            //
-
+            CommandLineParameters.CommandLineExecute_AfterInitialisation();
 
             ExecutionFlowHelper.CommitTransaction();
 
@@ -608,13 +609,27 @@ namespace m0
                 BuildVariants.m0_COMPOSER.RuntimeInitialize();
         }
 
+        public void RunDeferredStartup()
+        {
+            if (DeferAutostart)
+            {
+                ExecutionFlowHelper.StartTransaction();
+
+                CreateAutostart();
+
+                ExecutionFlowHelper.CommitTransaction();
+            }
+
+            Initialize_AfterPossibleUXInitialized();
+        }
+
         public void Initialize_AfterPossibleUXInitialized()
         {
-            ExecutionFlowHelper.StartTransaction();            
+            ExecutionFlowHelper.StartTransaction();
 
             Autostart();
 
-            ExecutionFlowHelper.CommitTransaction();            
+            ExecutionFlowHelper.CommitTransaction();
         }
     }
 }

@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using m0.Bootstrap;
 using m0.Graph;
 using m0.UIWpf.Controls;
 using m0.UIWpf.Foundation;
@@ -325,6 +326,11 @@ namespace m0.UIWpf.Visualisers
 
         void Fill()
         {
+            IEdge filledEdge = GetEdge();
+
+            if (filledEdge != null)
+                LoadFromBootstrap.EnsureImported(filledEdge.To);
+
             if (Node != null && ParentVisualiser.UseDataVirtualization)
             {
                 ParentVisualiser.FillVirtualNode(this);
@@ -1350,7 +1356,8 @@ namespace m0.UIWpf.Visualisers
             if (node == null || node.Edge == null || node.Edge.To == null)
                 return;
 
-            bool hasChildren = VisualiserUtil.FilterEdges(node.Edge.To, Vertex).Any();
+            bool hasChildren = LoadFromBootstrap.HasPendingImport(node.Edge.To)
+                || VisualiserUtil.FilterEdges(node.Edge.To, Vertex).Any();
 
             node.UpdateHasChildren(hasChildren);
 
@@ -1403,8 +1410,8 @@ namespace m0.UIWpf.Visualisers
             if (edge.Meta != null && GeneralUtil.CompareStrings(edge.Meta.Value, "FormalTextLanguage"))
                 doNotTrackGraphChanges = true;
 
-            int rawOutEdgeCount = edge.To != null ? edge.To.Count() : 0;
-            bool hasChildren = rawOutEdgeCount > 0;
+            bool hasChildren = edge.To != null &&
+                (LoadFromBootstrap.HasPendingImport(edge.To) || edge.To.Count() > 0);
 
             return new TreeEdgeNode(edge, parent, hasChildren, doNotTrackGraphChanges);
         }
@@ -2284,7 +2291,7 @@ namespace m0.UIWpf.Visualisers
             TurnOffSelectedVerticesUpdate = false;
 
             if(generateDeeperLevel)
-                if (e.To.Count() > 0)
+                if (LoadFromBootstrap.HasPendingImport(e.To) || e.To.Count() > 0)
                 {
                     TreeViewItem tvi = new TreeViewItem();
                     i.Items.Add(tvi);

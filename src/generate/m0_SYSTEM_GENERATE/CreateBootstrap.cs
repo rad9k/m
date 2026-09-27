@@ -35,10 +35,10 @@ namespace m0_SYSTEM_GENERATE
             lib_std.AddVertex(null, "lib.m0j");
 
             IVertex examples = r.AddVertex(null, "Examples");
-            examples.AddVertex(null, "examples.m0x");
+            examples.AddVertex(null, "_examples.m0x");
 
             IVertex documentation_diagrams = r.AddVertex(null, "DocumentationDiagrams");
-            documentation_diagrams.AddVertex(null, "documentation_diagrams.m0x");
+            documentation_diagrams.AddVertex(null, "_documentation_diagrams.m0x");
 
             //IVertex documentationDiagrams = r.AddVertex(null, "DocumentationDiagrams");
             //documentationDiagrams.AddVertex(null, "documentation_diagrams.m0j");

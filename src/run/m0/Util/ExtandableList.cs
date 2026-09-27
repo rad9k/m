@@ -31,6 +31,27 @@ namespace m0.Util
             OnAdd(item);
         }
 
+        public void MoveItemWithoutCallbacks(int fromIndex, int toIndex)
+        {
+            if (fromIndex == toIndex)
+                return;
+
+            if (fromIndex < 0 ||
+                toIndex < 0 ||
+                fromIndex >= list.Count ||
+                toIndex >= list.Count)
+                return;
+
+            T item = list[fromIndex];
+
+            list.RemoveAt(fromIndex);
+
+            if (toIndex > fromIndex)
+                toIndex--;
+
+            list.Insert(toIndex, item);
+        }
+
         public void RemoveAt(int index)
         {
             T removedItem = list[index];

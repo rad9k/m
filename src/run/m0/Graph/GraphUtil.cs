@@ -1787,10 +1787,15 @@ namespace m0.Graph
                 for (int index = edges.Count - 1;
                     index >= 0;
                     index--)
-                    if (!excludeList.Contains(
-                        edges[index].To))
-                        pending.Push(
-                            edges[index].To);
+                {
+                    IVertex edgeTo = edges[index].To;
+
+                    if (excludeList.Contains(edgeTo) ||
+                        edgeTo == MinusZero.Instance.root)
+                        continue;
+
+                    pending.Push(edgeTo);
+                }
             }
 
             return visited;

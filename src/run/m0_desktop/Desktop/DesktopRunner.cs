@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace m0.Desktop
 {
@@ -28,7 +29,10 @@ namespace m0.Desktop
 
             MinusZero.Instance.SetUserInteraction(mainWindow);
 
-            HandleArgs();            
+            MinusZero.Instance.DeferAutostart = true;
+            MinusZero.Instance.DeferBinaryBootstrapImports = true;
+
+            HandleArgs();
 
             MinusZero.Instance.Initialize();
 
@@ -42,6 +46,18 @@ namespace m0.Desktop
             mainWindow.Show();
 
             m0Main.mainTree.BaseEdgeToUpdated();
+
+            mainWindow.Dispatcher.BeginInvoke(
+                DispatcherPriority.ContextIdle,
+                new Action(RunDeferredUiStartup));
+        }
+
+        static void RunDeferredUiStartup()
+        {
+            MinusZero.Instance.RunDeferredStartup();
+
+            if (m0Main.mainTree != null)
+                m0Main.mainTree.BaseEdgeToUpdated();
         }
 
         //

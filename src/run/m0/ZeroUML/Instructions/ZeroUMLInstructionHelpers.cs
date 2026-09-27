@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.Util;
 using m0.ZeroCode.Helpers;
 using System.Collections.Generic;
 using System.Linq;
@@ -105,17 +106,34 @@ namespace m0.ZeroUML.Instructions
 
         public static void MoveEdgesIntoVertex_IncludeEverythingBesidesList(IVertex source, IVertex target, HashSet<IVertex> excludeList)
         {
-            IEnumerable<IVertex> sourceGraph_Flat = GraphUtil.GetSubGraphWithLinksAsListButExcludeRoot(source);
+            IEnumerable<IVertex> sourceGraph_Flat = GraphUtil.GetSubGraphWithLinksAsListButExcludeList(source, excludeList);
 
             sourceGraph_Flat = RemoveAlwaysPresent(sourceGraph_Flat);
 
-            IList<IVertex> sourceGraph_Flat_afterRemoval = new List<IVertex>();
+            _MoveEdgesIntoVertex(source, target, sourceGraph_Flat);
+        }
 
-            foreach (IVertex v in sourceGraph_Flat)            
-                if (!excludeList.Contains(v))
-                    sourceGraph_Flat_afterRemoval.Add(v);            
+        // Keeps the edge's position. Rebuilding the whole out-edge list once per
+        // external edge rewrites every unrelated edge on that vertex.
+        static void RetargetExternalEdge(IVertex sourceFrom, IEdge sourceEdge, IVertex targetMeta, IVertex targetTo)
+        {
+            IList<IEdge> outEdges = sourceFrom.OutEdgesRaw;
+            int index = outEdges.IndexOf(sourceEdge);
+            int countBeforeDelete = outEdges.Count;
 
-            _MoveEdgesIntoVertex(source, target, sourceGraph_Flat_afterRemoval);
+            sourceFrom.DeleteEdge(sourceEdge);
+
+            if (outEdges.Count == countBeforeDelete)
+                return;
+
+            sourceFrom.AddEdge(targetMeta, targetTo);
+
+            int lastIndex = outEdges.Count - 1;
+
+            if (index >= 0 &&
+                index < lastIndex &&
+                outEdges is ExtandableList<IEdge> extensibleOutEdges)
+                extensibleOutEdges.MoveItemWithoutCallbacks(lastIndex, index);
         }
 
         private static void _MoveEdgesIntoVertex(IVertex sourceRoot, IVertex targetRoot, IEnumerable<IVertex> sourceGraph_Flat)
@@ -177,26 +195,7 @@ namespace m0.ZeroUML.Instructions
 
                         IVertex targetTo = source2targetDictionary[sourceVertex];
 
-                        // this is done below but with proper order
-                        //sourceFrom.AddEdge(targetMeta, targetTo); 
-                        //sourceFrom.DeleteEdge(sourceInEdge);
-
-                        IList<IEdge> sourceFromEdges = new List<IEdge>();
-
-                        foreach (IEdge sourceFromEdge in sourceFrom.OutEdgesRaw)
-                            sourceFromEdges.Add(sourceFromEdge);
-
-                        //sourceFrom.DeleteEdgesList(sourceFromEdges);
-
-                        foreach(IEdge sourceFromEdgeToAdd in sourceFromEdges)
-                        {
-                            if (GraphUtil.CompareEdges(sourceFromEdgeToAdd, sourceInEdge))
-                                sourceFrom.AddEdge(targetMeta, targetTo);
-                            else
-                                sourceFrom.AddEdge(sourceFromEdgeToAdd.Meta, sourceFromEdgeToAdd.To);
-                        }
-
-                        sourceFrom.DeleteEdgesList(sourceFromEdges); // MOVED
+                        RetargetExternalEdge(sourceFrom, sourceInEdge, targetMeta, targetTo);
                     }
 
             foreach (IVertex sourceVertex in sourceGraph_Flat) // META replace old edges with new vertexes
@@ -216,26 +215,7 @@ namespace m0.ZeroUML.Instructions
                         else
                             targetTo = metaInEdge.To;
 
-                        // this is done below but with proper order
-                        // sourceFrom.AddEdge(targetMeta, targetTo);
-                        // sourceFrom.DeleteEdge(metaInEdge);
-
-                        IList<IEdge> sourceFromEdges = new List<IEdge>();
-
-                        foreach (IEdge sourceFromEdge in sourceFrom.OutEdgesRaw)
-                            sourceFromEdges.Add(sourceFromEdge);
-
-                        //sourceFrom.DeleteEdgesList(sourceFromEdges);
-
-                        foreach (IEdge sourceFromEdgeToAdd in sourceFromEdges)
-                        {
-                            if (GraphUtil.CompareEdges(sourceFromEdgeToAdd, metaInEdge))
-                                sourceFrom.AddEdge(targetMeta, targetTo);
-                            else
-                                sourceFrom.AddEdge(sourceFromEdgeToAdd.Meta, sourceFromEdgeToAdd.To);
-                        }
-
-                        sourceFrom.DeleteEdgesList(sourceFromEdges); // MOVED
+                        RetargetExternalEdge(sourceFrom, metaInEdge, targetMeta, targetTo);
                     }                                    
 
             foreach (IEdge e in toDeleteEdges) // delete rest

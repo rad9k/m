@@ -1,3 +1,4 @@
+using m0.Bootstrap;
 using m0.Foundation;
 using System;
 using System.Collections;
@@ -273,8 +274,19 @@ namespace m0.UIWpf.Commands
             MinusZero.Instance.UserInteraction.ShowContentFloating(d, FloatingWindowSize.Medium);
         }
 
+        static void EnsureOpenedVertexImported(IVertex baseVertex)
+        {
+            if (baseVertex == null)
+                return;
+
+            LoadFromBootstrap.EnsureImported(baseVertex);
+            LoadFromBootstrap.EnsureImported(baseVertex.Get(false, "To:"));
+        }
+
         public static void OpenDefaultVisualiser(IVertex baseVertex, bool isFloating)
         {
+            EnsureOpenedVertexImported(baseVertex);
+
             IVertex DefaultVis;
 
             DefaultVis=baseVertex.Get(false, @"Meta:\$DefaultOpenVisualiser:");
@@ -301,7 +313,9 @@ namespace m0.UIWpf.Commands
         }
 
         public static void OpenFormVisualiser(IVertex baseVertex, bool isFloating)
-        {            
+        {
+            EnsureOpenedVertexImported(baseVertex);
+
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
@@ -315,6 +329,8 @@ namespace m0.UIWpf.Commands
 
         public static void OpenDiagram(IVertex baseVertex, IVertex inputVertex, bool isFloating)
         {
+            EnsureOpenedVertexImported(baseVertex);
+
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
@@ -336,6 +352,8 @@ namespace m0.UIWpf.Commands
 
         public static void OpenVertexCommander(IVertex baseVertex)
         {
+            EnsureOpenedVertexImported(baseVertex);
+
             VertexCommanderControl sv = new VertexCommanderControl(baseVertex, baseVertex);
             MinusZero.Instance.UserInteraction.ShowContent(sv);
 
@@ -343,6 +361,8 @@ namespace m0.UIWpf.Commands
 
         public static void OpenVisualiser(IVertex baseVertex, IVertex inputVertex, bool isFloating)
         {
+            EnsureOpenedVertexImported(baseVertex);
+
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
