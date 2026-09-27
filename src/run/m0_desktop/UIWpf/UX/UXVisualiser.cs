@@ -1222,6 +1222,8 @@ namespace m0.UIWpf.UX
 
             pendingDraggedItemRenderUpdates.Remove(item);
             CheckAndUpdateItemParent(item, false);
+            // Parent is final only after mouse up. Mid-drag reparent must not AddEdge.
+            FindAndOrCreateContainerEdge(item, true);
             UpdateIncidentDiagramLineGeometries(
                 new[] { item },
                 "drag-complete-live");
@@ -6281,7 +6283,10 @@ namespace m0.UIWpf.UX
 
                 NewParentItem.Canvas.Children.Add(itemElement);
 
-                FindAndOrCreateContainerEdge(item, true);
+                // While the button is still down the pointer can leave this container.
+                // Create the default container edge only when the gesture has ended.
+                bool createContainerEdge = !itemMoveGraphInteractionActive;
+                FindAndOrCreateContainerEdge(item, createContainerEdge);
 
                 Point newPosition = OldParentItem.Canvas.TranslatePoint(
                     new Point(itemLeft, itemTop),
