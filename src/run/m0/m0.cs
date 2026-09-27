@@ -228,15 +228,37 @@ namespace m0
 
             IVertex ComputerDrive = Root.Get(false, @"System\Meta\Hardware\Computer\Drive");
 
-            foreach (DriveInfo di in drives)
+            string fileSystemStoreTypeName =
+                typeof(FileSystemStore).AssemblyQualifiedName;
+
+            StringComparer driveIdentifierComparer =
+                OperatingSystem.IsWindows()
+                    ? StringComparer.OrdinalIgnoreCase
+                    : StringComparer.Ordinal;
+
+            foreach (DriveInfo driveInfo in drives)
             {
-                FileSystemStore fss = new FileSystemStore(di.Name, this, new AccessLevelEnum[] { AccessLevelEnum.NoRestrictions });
+                string driveIdentifier =
+                    FileSystemUtil.NormalizeFileSystemIdentifier(driveInfo.Name);
 
-                //fss.IncludeFileContent = true;                
+                FileSystemStore fileSystemStore =
+                    (FileSystemStore)Stores.FirstOrDefault(store =>
+                        store.TypeName == fileSystemStoreTypeName &&
+                        driveIdentifierComparer.Equals(
+                            store.Identifier,
+                            driveIdentifier));
 
-                Root.AddEdge(DriveMeta, fss.Root);
+                if (fileSystemStore == null)
+                    fileSystemStore =
+                        (FileSystemStore)GetStore(
+                            fileSystemStoreTypeName,
+                            driveIdentifier);
 
-                localComputer.AddEdge(ComputerDrive, fss.Root);
+                //fileSystemStore.IncludeFileContent = true;
+
+                Root.AddEdge(DriveMeta, fileSystemStore.Root);
+
+                localComputer.AddEdge(ComputerDrive, fileSystemStore.Root);
             }
         }
 

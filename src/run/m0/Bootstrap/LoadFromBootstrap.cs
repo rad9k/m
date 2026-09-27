@@ -1,5 +1,7 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.Store;
+using m0.Store.Binary;
 using m0.Store.Json;
 using m0.ZeroUML.Instructions;
 using System;
@@ -32,7 +34,7 @@ namespace m0.Bootstrap
                 if (importRoot == null)
                     importRoot = GraphUtil.SimpleCreateVertexPath(root, importVertexPath);
 
-                JsonSerializationStore loadedStore;
+                StoreBase loadedStore = null;
 
                 if (isSystem)
                 {
@@ -46,12 +48,24 @@ namespace m0.Bootstrap
                 }
                 else
                 {
-                    loadedStore = new JsonSerializationStore(importFilePath, MinusZero.Instance, new AccessLevelEnum[] { });
+                    if (importFilePath.EndsWith(".m0j"))
+                    {
+                        loadedStore = new JsonSerializationStore(importFilePath, MinusZero.Instance, new AccessLevelEnum[] { });
 
-                    ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_IncludeEverythingBesidesList(loadedStore.Root, importRoot, new HashSet<IVertex>(system));
+                        ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_IncludeEverythingBesidesList(loadedStore.Root, importRoot, new HashSet<IVertex>(system));
+                    }
+
+                    if (importFilePath.EndsWith(".m0x"))
+                    {
+                        loadedStore = new BinaryStore(importFilePath, MinusZero.Instance, new AccessLevelEnum[] { });                            
+
+                        ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_IncludeEverythingBesidesList(loadedStore.Root, importRoot, new HashSet<IVertex>(system));
+                    }
+
                 }
 
-                MinusZero.Instance.RemoveStore(loadedStore);
+                if (loadedStore != null)
+                    MinusZero.Instance.RemoveStore(loadedStore);
             }
 
             MinusZero.Instance.RemoveStore(bootstrapStore);

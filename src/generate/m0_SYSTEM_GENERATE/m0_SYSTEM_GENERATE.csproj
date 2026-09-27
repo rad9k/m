@@ -69,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CreateBootstrap.cs" />
+    <Compile Include="CreateDocumentationDiagrams.cs" />
     <Compile Include="CreateExamplesFinal.cs" />
     <Compile Include="CreateExamples.cs" />
     <Compile Include="Lib\CreateLib.cs" />
@@ -90,6 +91,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="_RES\CustomDomain\SQL.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_RES\DocumentationDiagrams\DocumentationDiagrams.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="_RES\Examples\-composer.txt">

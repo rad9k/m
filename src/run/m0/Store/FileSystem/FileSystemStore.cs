@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using m0.Foundation;
+using m0.Graph;
 using m0.Util;
 
 namespace m0.Store.FileSystem
@@ -448,36 +449,38 @@ namespace m0.Store.FileSystem
         {
             MinusZero z = MinusZero.Instance;
 
-            FileSystem = z.Root.Get(false, @"System\Meta\Store\FileSystem");            
+            IVertex system = GraphUtil.GetQueryOutFirst(z.Root, null, "System");
+            IVertex meta = GraphUtil.GetQueryOutFirst(system, null, "Meta");
+            IVertex storeMeta = GraphUtil.GetQueryOutFirst(meta, null, "Store");
 
-            IVertex sm = z.Root.Get(false, @"System\Meta");                       
+            FileSystem = GraphUtil.GetQueryOutFirst(storeMeta, null, "FileSystem");
 
-            Directory = FileSystem.Get(false, "Directory");
-            File = FileSystem.Get(false, "File");
+            Directory = GraphUtil.GetQueryOutFirst(FileSystem, null, "Directory");
+            File = GraphUtil.GetQueryOutFirst(FileSystem, null, "File");
 
-            Store = FileSystem.Get(false, "$Store");
-                        
-            Directory_Filename = Directory.Get(false, "Filename");            
-            Directory_Extension = Directory.Get(false, "Extension");           
-            Directory_FullFilename = Directory.Get(false, "FullFilename");
-            Directory_Basename = Directory.Get(false, "Basename");
-            Directory_FileAttribute = Directory.Get(false, "FileAttribute");
-            Directory_CreationDateTime = Directory.Get(false, "CreationDateTime");
-            Directory_UpdateDateTime = Directory.Get(false, "UpdateDateTime");
-            Directory_ReadDateTime = Directory.Get(false, "ReadDateTime");
-            Directory_File = Directory.Get(false, "File");
-            Directory_Directory = Directory.Get(false, "Directory");
+            Store = GraphUtil.GetQueryOutFirst(FileSystem, null, "$Store");
 
-            File_Content = File.Get(false, "Content");
-            File_Filename = File.Get(false, "Filename");
-            File_Basename = File.Get(false, "Basename");
-            File_Extension = File.Get(false, "Extension");
-            File_FullFilename = File.Get(false, "FullFilename");
-            File_Size = File.Get(false, "Size");
-            File_FileAttribute = File.Get(false, "FileAttribute");
-            File_CreationDateTime = File.Get(false, "CreationDateTime");
-            File_UpdateDateTime = File.Get(false, "UpdateDateTime");
-            File_ReadDateTime = File.Get(false, "ReadDateTime");
+            Directory_Filename = GraphUtil.GetQueryOutFirst(Directory, null, "Filename");
+            Directory_Extension = GraphUtil.GetQueryOutFirst(Directory, null, "Extension");
+            Directory_FullFilename = GraphUtil.GetQueryOutFirst(Directory, null, "FullFilename");
+            Directory_Basename = GraphUtil.GetQueryOutFirst(Directory, null, "Basename");
+            Directory_FileAttribute = GraphUtil.GetQueryOutFirst(Directory, null, "FileAttribute");
+            Directory_CreationDateTime = GraphUtil.GetQueryOutFirst(Directory, null, "CreationDateTime");
+            Directory_UpdateDateTime = GraphUtil.GetQueryOutFirst(Directory, null, "UpdateDateTime");
+            Directory_ReadDateTime = GraphUtil.GetQueryOutFirst(Directory, null, "ReadDateTime");
+            Directory_File = GraphUtil.GetQueryOutFirst(Directory, null, "File");
+            Directory_Directory = GraphUtil.GetQueryOutFirst(Directory, null, "Directory");
+
+            File_Content = GraphUtil.GetQueryOutFirst(File, null, "Content");
+            File_Filename = GraphUtil.GetQueryOutFirst(File, null, "Filename");
+            File_Basename = GraphUtil.GetQueryOutFirst(File, null, "Basename");
+            File_Extension = GraphUtil.GetQueryOutFirst(File, null, "Extension");
+            File_FullFilename = GraphUtil.GetQueryOutFirst(File, null, "FullFilename");
+            File_Size = GraphUtil.GetQueryOutFirst(File, null, "Size");
+            File_FileAttribute = GraphUtil.GetQueryOutFirst(File, null, "FileAttribute");
+            File_CreationDateTime = GraphUtil.GetQueryOutFirst(File, null, "CreationDateTime");
+            File_UpdateDateTime = GraphUtil.GetQueryOutFirst(File, null, "UpdateDateTime");
+            File_ReadDateTime = GraphUtil.GetQueryOutFirst(File, null, "ReadDateTime");
 
             staticVariablesInitialisationMade = true;
         }
