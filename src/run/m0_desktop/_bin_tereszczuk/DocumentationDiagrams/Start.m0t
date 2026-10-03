@@ -1,3 +1,660 @@
 System\FormalTextLanguage\ZeroCode_VertexAndManyLines
-"AI model pipeline"
-	"yes"
+""
+	"Start"
+		"Use cases scope"
+			<@UX\UXContainer :: "Use cases scope">
+				<@$Is :: @UX\UXContainer>
+				<@IsExpanded :: "True">
+				<@HasMiniatures :: "True">
+				<@Scale :: "80">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @Start>
+					<@Meta :: @$Empty>
+					<@To :: @Start\'Use cases scope'>
+				<@SelectedEdges :: "">
+				<@ShowSelectedEdgesBaseEdge :: "False">
+				<@Size :: "">
+					<@$Is :: @UX\Size>
+					<@Width :: "5000">
+					<@Height :: "5000">
+				<@NewItemUXTemplate :: @System\Data\UX\Templates\ZeroUML>
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "773.4900799600209">
+						<@Y :: "202.31500000000014">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Vertex>
+					<@ShowMeta :: "False">
+					<@BackgroundColor :: "VeryVeryVeryLightRed">
+						<@$Is :: @UX\Color>
+						<@Red :: "255">
+						<@Green :: "237">
+						<@Blue :: "237">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Start\'Use cases scope'\'minus zero'>
+						<@Meta :: @$Empty>
+						<@To :: @Start\'Use cases scope'\'minus zero'\'Meta model creation'>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "60.276666666666756">
+						<@Height :: "80.81999999999996">
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "835.7667466266877">
+						<@Y :: "202.31500000000017">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Vertex>
+					<@ShowMeta :: "False">
+					<@BackgroundColor :: "VeryVeryVeryLightRed">
+						<@$Is :: @UX\Color>
+						<@Red :: "255">
+						<@Green :: "237">
+						<@Blue :: "237">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Start\'Use cases scope'\'minus zero'>
+						<@Meta :: @$Empty>
+						<@To :: @Start\'Use cases scope'\'minus zero'\'CUSTOM diagram type definition'>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "70.86333333333317">
+						<@Height :: "80.81999999999996">
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "908.6900799600207">
+						<@Y :: "202.31500000000003">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Vertex>
+					<@ShowMeta :: "False">
+					<@BackgroundColor :: "VeryVeryVeryLightRed">
+						<@$Is :: @UX\Color>
+						<@Red :: "255">
+						<@Green :: "237">
+						<@Blue :: "237">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Start\'Use cases scope'\'minus zero'>
+						<@Meta :: @$Empty>
+						<@To :: @Start\'Use cases scope'\'minus zero'\'Model / diagram creation'>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "61.981764705882256">
+						<@Height :: "80.82000000000005">
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "971.9410603521782">
+						<@Y :: "202.31500000000014">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Vertex>
+					<@ShowMeta :: "False">
+					<@BackgroundColor :: "VeryVeryVeryLightRed">
+						<@$Is :: @UX\Color>
+						<@Red :: "255">
+						<@Green :: "237">
+						<@Blue :: "237">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Start\'Use cases scope'\'minus zero'>
+						<@Meta :: @$Empty>
+						<@To :: @Start\'Use cases scope'\'minus zero'\'Imperative code creation'>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "76.1613725490194">
+						<@Height :: "80.81999999999996">
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "1050.1024329011975">
+						<@Y :: "202.31500000000014">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Vertex>
+					<@ShowMeta :: "False">
+					<@BackgroundColor :: "VeryVeryVeryLightRed">
+						<@$Is :: @UX\Color>
+						<@Red :: "255">
+						<@Green :: "237">
+						<@Blue :: "237">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Start\'Use cases scope'\'minus zero'>
+						<@Meta :: @$Empty>
+						<@To :: @Start\'Use cases scope'\'minus zero'\'CUSTOM text language definition'>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "69.78764705882355">
+						<@Height :: "80.81999999999996">
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "1121.890079960021">
+						<@Y :: "202.31500000000014">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Vertex>
+					<@ShowMeta :: "False">
+					<@BackgroundColor :: "VeryVeryVeryLightRed">
+						<@$Is :: @UX\Color>
+						<@Red :: "255">
+						<@Green :: "237">
+						<@Blue :: "237">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Start\'Use cases scope'\'minus zero'>
+						<@Meta :: @$Empty>
+						<@To :: @Start\'Use cases scope'\'minus zero'\'CUSTOM text language use'>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "68.39039215686273">
+						<@Height :: "80.81999999999996">
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "1395.787557861936">
+						<@Y :: "202.31500000000014">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Vertex>
+					<@ShowMeta :: "False">
+					<@BackgroundColor :: "VeryVeryVeryLightRed">
+						<@$Is :: @UX\Color>
+						<@Red :: "255">
+						<@Green :: "237">
+						<@Blue :: "237">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Start\'Use cases scope'\'minus zero'>
+						<@Meta :: @$Empty>
+						<@To :: @Start\'Use cases scope'\'minus zero'\'Graph DB'>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "83.36470588235215">
+						<@Height :: "80.81999999999996">
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "1191.6451779992358">
+						<@Y :: "202.3150000000001">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Vertex>
+					<@ShowMeta :: "False">
+					<@BackgroundColor :: "VeryVeryVeryLightRed">
+						<@$Is :: @UX\Color>
+						<@Red :: "255">
+						<@Green :: "237">
+						<@Blue :: "237">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Start\'Use cases scope'\'minus zero'>
+						<@Meta :: @$Empty>
+						<@To :: @Start\'Use cases scope'\'minus zero'\'Model querying / dependencies'>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "96.81536231884058">
+						<@Height :: "80.81999999999996">
+					<@UseCodeLabel :: "False">
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "1290.4605403180763">
+						<@Y :: "202.31500000000017">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Vertex>
+					<@ShowMeta :: "False">
+					<@BackgroundColor :: "VeryVeryVeryLightRed">
+						<@$Is :: @UX\Color>
+						<@Red :: "255">
+						<@Green :: "237">
+						<@Blue :: "237">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Start\'Use cases scope'\'minus zero'>
+						<@Meta :: @$Empty>
+						<@To :: @Start\'Use cases scope'\'minus zero'\'Model transformation'>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "103.3270175438596">
+						<@Height :: "80.81999999999996">
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "1480.787557861936">
+						<@Y :: "202.31500000000014">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Vertex>
+					<@ShowMeta :: "False">
+					<@BackgroundColor :: "VeryVeryVeryLightRed">
+						<@$Is :: @UX\Color>
+						<@Red :: "255">
+						<@Green :: "237">
+						<@Blue :: "237">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Start\'Use cases scope'\'minus zero'>
+						<@Meta :: @$Empty>
+						<@To :: @Start\'Use cases scope'\'minus zero'\'Imperative code execution'>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "76.17701754385894">
+						<@Height :: "80.81999999999996">
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "1558.1140550261541">
+						<@Y :: "202.31500000000017">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Vertex>
+					<@ShowMeta :: "False">
+					<@BackgroundColor :: "VeryVeryVeryLightRed">
+						<@$Is :: @UX\Color>
+						<@Red :: "255">
+						<@Green :: "237">
+						<@Blue :: "237">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Start\'Use cases scope'\'minus zero'>
+						<@Meta :: @$Empty>
+						<@To :: @Start\'Use cases scope'\'minus zero'\'Documentation server'>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "106.27228070175369">
+						<@Height :: "80.81999999999996">
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "652.1622011721422">
+						<@Y :: "293.9574331224331">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Vertex>
+					<@ShowMeta :: "False">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Start\'Use cases scope'>
+						<@Meta :: @Package>
+						<@To :: @Start\'Use cases scope'\'Analysis / Architecture '>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "110.87333333333333">
+						<@Height :: "62.34727272727241">
+					<@BackgroundColor :: "VeryVeryVeryLightGreen">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "255">
+						<@Blue :: "237">
+						<@Opacity :: "255">
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "652.1622011721422">
+						<@Y :: "367.04834221334215">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Vertex>
+					<@ShowMeta :: "False">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Start\'Use cases scope'>
+						<@Meta :: @Package>
+						<@To :: @Start\'Use cases scope'\'Domain Specyfic Laguage'>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "110.87333333333333">
+						<@Height :: "62.34727272727241">
+					<@BackgroundColor :: "VeryVeryVeryLightBlue">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "237">
+						<@Blue :: "255">
+						<@Opacity :: "255">
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "652.1622011721422">
+						<@Y :: "440.4119785769784">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Vertex>
+					<@ShowMeta :: "False">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Start\'Use cases scope'>
+						<@Meta :: @Package>
+						<@To :: @Start\'Use cases scope'\'CODE development and execution'>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "110.87333333333339">
+						<@Height :: "62.34727272727241">
+					<@BackgroundColor :: "VeryVeryVeryLightCyan">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "255">
+						<@Blue :: "255">
+						<@Opacity :: "255">
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "652.030079960021">
+						<@Y :: "513.6847058497058">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Vertex>
+					<@ShowMeta :: "False">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Start\'Use cases scope'>
+						<@Meta :: @Package>
+						<@To :: @Start\'Use cases scope'\'Platform for platforms'>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "110.87333333333339">
+						<@Height :: "62.34727272727241">
+					<@BackgroundColor :: "VeryVeryVeryLightAzure">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "246">
+						<@Blue :: "255">
+						<@Opacity :: "255">
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "773.4900799600209">
+						<@Y :: "293.9574331224331">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Vertex>
+					<@ShowMeta :: "False">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Start\'Use cases scope'\'Analysis / Architecture '>
+						<@Meta :: @$Empty>
+						<@To :: @Start\'Use cases scope'\'Analysis / Architecture '\container\<<"1">>>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "197.18176470588207">
+						<@Height :: "62.34727272727238">
+					<@BackgroundColor :: @Start\'Use cases scope'\'Use cases scope'\Item:<<"12">>\VeryVeryVeryLightGreen>
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "1191.6451779992358">
+						<@Y :: "293.9574331224331">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Vertex>
+					<@ShowMeta :: "False">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Start\'Use cases scope'\'Analysis / Architecture '\container>
+						<@Meta :: @$Empty>
+						<@To :: @Start\'Use cases scope'\'Analysis / Architecture '\container\<<"2">>>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "287.5070857450522">
+						<@Height :: "62.34727272727238">
+					<@BackgroundColor :: @Start\'Use cases scope'\'Use cases scope'\Item:<<"12">>\VeryVeryVeryLightGreen>
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "1558.1140550261541">
+						<@Y :: "293.9574331224331">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Vertex>
+					<@ShowMeta :: "False">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Start\'Use cases scope'\'Analysis / Architecture '\container>
+						<@Meta :: @$Empty>
+						<@To :: @Start\'Use cases scope'\'Analysis / Architecture '\container\<<"3">>>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "106.27228070175374">
+						<@Height :: "62.34727272727241">
+					<@BackgroundColor :: @Start\'Use cases scope'\'Use cases scope'\Item:<<"12">>\VeryVeryVeryLightGreen>
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "1050.1024329011975">
+						<@Y :: "367.04834221334215">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Vertex>
+					<@ShowMeta :: "False">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Start\'Use cases scope'\'Domain Specyfic Laguage'\container>
+						<@Meta :: @$Empty>
+						<@To :: @Start\'Use cases scope'\'Domain Specyfic Laguage'\container\<<"1">>>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "429.04983084309055">
+						<@Height :: "62.34727272727238">
+					<@BackgroundColor :: @Start\'Use cases scope'\'Use cases scope'\Item:<<"13">>\VeryVeryVeryLightBlue>
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "908.6900799600207">
+						<@Y :: "440.4119785769784">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Vertex>
+					<@ShowMeta :: "False">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Start\'Use cases scope'\'CODE development and execution'\container>
+						<@Meta :: @$Empty>
+						<@To :: @Start\'Use cases scope'\'CODE development and execution'\container\<<"1">>>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "139.41235294117678">
+						<@Height :: "62.34727272727241">
+					<@BackgroundColor :: @Start\'Use cases scope'\'Use cases scope'\Item:<<"14">>\VeryVeryVeryLightCyan>
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "908.6900799600207">
+						<@Y :: "367.04834221334215">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Vertex>
+					<@ShowMeta :: "False">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Start\'Use cases scope'\'Domain Specyfic Laguage'\container>
+						<@Meta :: @$Empty>
+						<@To :: @Start\'Use cases scope'\'Domain Specyfic Laguage'\container\<<"2">>>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "61.981764705882256">
+						<@Height :: "62.34727272727244">
+					<@BackgroundColor :: @Start\'Use cases scope'\'Use cases scope'\Item:<<"13">>\VeryVeryVeryLightBlue>
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "1558.1140550261541">
+						<@Y :: "367.04834221334215">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Vertex>
+					<@ShowMeta :: "False">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Start\'Use cases scope'\'Domain Specyfic Laguage'\container>
+						<@Meta :: @$Empty>
+						<@To :: @Start\'Use cases scope'\'Domain Specyfic Laguage'\container\<<"3">>>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "106.27228070175374">
+						<@Height :: "62.34727272727244">
+					<@BackgroundColor :: @Start\'Use cases scope'\'Use cases scope'\Item:<<"13">>\VeryVeryVeryLightBlue>
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "1191.6451779992358">
+						<@Y :: "440.4119785769784">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Vertex>
+					<@ShowMeta :: "False">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Start\'Use cases scope'\'CODE development and execution'\container>
+						<@Meta :: @$Empty>
+						<@To :: @Start\'Use cases scope'\'CODE development and execution'\container\<<"2">>>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "472.7411577286721">
+						<@Height :: "62.34727272727241">
+					<@BackgroundColor :: @Start\'Use cases scope'\'Use cases scope'\Item:<<"14">>\VeryVeryVeryLightCyan>
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "773.4900799600209">
+						<@Y :: "513.6847058497058">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Vertex>
+					<@ShowMeta :: "False">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Start\'Use cases scope'\'Platform for platforms'\container>
+						<@Meta :: @$Empty>
+						<@To :: @Start\'Use cases scope'\'Platform for platforms'\container\>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "890.8962557678869">
+						<@Height :: "62.34727272727241">
+					<@BackgroundColor :: @Start\'Use cases scope'\'Use cases scope'\Item:<<"15">>\VeryVeryVeryLightAzure>
+			"Use case analysis"
+			"Requirements analysis"
+			"Domain model creation"
+			"Business rules definition"
+			"Business process definition"
+			"Solution architecture defintion"
+			package "minus zero"
+				"Meta model creation"
+				"CUSTOM diagram type definition"
+				"Model / diagram creation"
+				"Imperative code creation"
+				"CUSTOM text language definition"
+				"CUSTOM text language use"
+				"Graph DB"
+				"Model querying / dependencies"
+				"Model transformation"
+				"Imperative code execution"
+				"Documentation server"
+			package "Analysis / Architecture "
+				"container"
+					""
+					""
+					""
+			package "Domain Specyfic Laguage"
+				"container"
+					""
+					""
+					""
+			package "CODE development and execution"
+				"container"
+					""
+					""
+			package "Platform for platforms"
+				"container"
+					""
