@@ -3010,7 +3010,7 @@ namespace m0
 
             IVertex o_enum = k.AddVertex(keyword, "enum (?<name>)");
 
-            IVertex o_enum_base = o_block.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Enum"), "(?<name>)");
+            IVertex o_enum_base = o_enum.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Enum"), "(?<name>)");
 
             o_enum_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Enum"));
 
@@ -3018,7 +3018,7 @@ namespace m0
 
             IVertex o_enum_value = k.AddVertex(keyword, "enum value (?<value>)");
 
-            IVertex o_enum_value_base = o_block.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Enum\EnumValue"), "(?<value>)");
+            IVertex o_enum_value_base = o_enum_value.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Enum\EnumValue"), "(?<value>)");
 
             o_enum_value_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Enum\EnumValue"));
 
