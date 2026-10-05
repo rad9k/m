@@ -1387,13 +1387,13 @@ namespace m0
             IVertex importDirectMeta_link = importDirectMeta.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$ImportDirectMeta"), "(?<link>)");
 
 
-              // comment
-              //
-              // !! (?<text>)
+            // comment
+            //
+            // txt (?<text>)
 
-              IVertex comment = k.AddVertex(keyword, "txt (?<text>)");
+            IVertex comment = k.AddVertex(keyword, "txt (?<text>)");
 
-              comment.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Description"), "(?<text>)");
+            comment.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Description"), "(?<text>)");
               
 
             // default
@@ -3003,6 +3003,26 @@ namespace m0
             o_http_mapping_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMappingEntry\PathMask"), "(?<pathmask>)");
 
             o_http_mapping_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMappingEntry\Handler"), "(?<handler>)");
+
+            // ENUM
+
+            // enum
+
+            IVertex o_enum = k.AddVertex(keyword, "enum (?<name>)");
+
+            IVertex o_enum_base = o_block.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Enum"), "(?<name>)");
+
+            o_enum_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Enum"));
+
+            // enum value
+
+            IVertex o_enum_value = k.AddVertex(keyword, "enum value (?<value>)");
+
+            IVertex o_enum_value_base = o_block.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Enum"), "(?<value>)");
+
+            o_block_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Enum\EnumValue"));
+
+            // STATE MACHINE
         }
 
         private static void AddDoubleOperator(IVertex k, IVertex smu, IVertex smb, IVertex keyword, IVertex any, string text, string _is)
