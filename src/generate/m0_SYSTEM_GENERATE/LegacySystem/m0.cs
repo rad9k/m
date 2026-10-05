@@ -1391,9 +1391,9 @@ namespace m0
               //
               // !! (?<text>)
 
-              //IVertex comment = k.AddVertex(keyword, "REM (?<text>)");
+              IVertex comment = k.AddVertex(keyword, "txt (?<text>)");
 
-              //comment.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Description"), "(?<text>)");
+              comment.AddVertex(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Description"), "(?<text>)");
               
 
             // default
