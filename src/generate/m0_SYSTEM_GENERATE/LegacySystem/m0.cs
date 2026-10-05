@@ -3018,11 +3018,35 @@ namespace m0
 
             IVertex o_enum_value = k.AddVertex(keyword, "enum value (?<value>)");
 
-            IVertex o_enum_value_base = o_block.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Enum"), "(?<value>)");
+            IVertex o_enum_value_base = o_block.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Enum\EnumValue"), "(?<value>)");
 
-            o_block_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Enum\EnumValue"));
+            o_enum_value_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Enum\EnumValue"));
 
             // STATE MACHINE
+
+            // state machine
+
+            IVertex o_state_machine = k.AddVertex(keyword, "state machine (?<name>)");
+
+            IVertex o_state_machine_base = o_block.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"StateMachine"), "(?<name>)");
+
+            o_state_machine_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"StateMachine"));
+
+            // state
+
+            IVertex o_state = k.AddVertex(keyword, "state (?<name>)");
+
+            IVertex o_state_base = o_block.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"StateMachine\State"), "(?<name>)");
+
+            o_state_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"StateMachine\State"));
+
+            // transition
+
+            IVertex o_transition = k.AddVertex(keyword, "transition (?<state>)");
+
+            IVertex o_transition_base = o_block.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"StateMachine\Transition"), "(?<state>)");
+
+            o_transition_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"StateMachine\Transition"));
         }
 
         private static void AddDoubleOperator(IVertex k, IVertex smu, IVertex smb, IVertex keyword, IVertex any, string text, string _is)
