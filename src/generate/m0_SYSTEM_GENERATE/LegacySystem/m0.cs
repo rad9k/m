@@ -3028,7 +3028,7 @@ namespace m0
 
             IVertex o_state_machine = k.AddVertex(keyword, "state machine (?<name>)");
 
-            IVertex o_state_machine_base = o_block.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"StateMachine"), "(?<name>)");
+            IVertex o_state_machine_base = o_state_machine.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"StateMachine"), "(?<name>)");
 
             o_state_machine_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"StateMachine"));
 
@@ -3036,7 +3036,7 @@ namespace m0
 
             IVertex o_state = k.AddVertex(keyword, "state (?<name>)");
 
-            IVertex o_state_base = o_block.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"StateMachine\State"), "(?<name>)");
+            IVertex o_state_base = o_state.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"StateMachine\State"), "(?<name>)");
 
             o_state_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"StateMachine\State"));
 
@@ -3044,7 +3044,7 @@ namespace m0
 
             IVertex o_transition = k.AddVertex(keyword, "transition (?<state>)");
 
-            IVertex o_transition_base = o_block.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"StateMachine\Transition"), "(?<state>)");
+            IVertex o_transition_base = o_transition.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"StateMachine\Transition"), "(?<state>)");
 
             o_transition_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"StateMachine\Transition"));
         }
