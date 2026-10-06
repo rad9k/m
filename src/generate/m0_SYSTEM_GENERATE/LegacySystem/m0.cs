@@ -3045,9 +3045,9 @@ namespace m0
 
             IVertex o_transition = k.AddVertex(keyword, "transition (?<state>)");
 
-            IVertex o_transition_base = o_transition.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"StateMachine\Transition"), "(?<state>)");
+            IVertex o_transition_base = o_transition.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"StateMachine\State\Transition"), "(?<state>)");
 
-            o_transition_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"StateMachine\Transition"));
+            o_transition_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"StateMachine\State\Transition"));
         }
 
         private static void AddDoubleOperator(IVertex k, IVertex smu, IVertex smb, IVertex keyword, IVertex any, string text, string _is)
