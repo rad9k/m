@@ -3025,9 +3025,9 @@ namespace m0
 
             // STATE MACHINE
 
-            // state machine
+            // automata
 
-            IVertex o_state_machine = k.AddVertex(keyword, "state machine (?<name>)");
+            IVertex o_state_machine = k.AddVertex(keyword, "automata (?<name>)");
 
             IVertex o_state_machine_base = o_state_machine.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"StateMachine"), "(?<name>)");
 
