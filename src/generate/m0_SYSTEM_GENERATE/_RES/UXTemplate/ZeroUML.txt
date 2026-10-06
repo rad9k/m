@@ -218,6 +218,44 @@
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
 					<@LineDecorator\ConstantLabel :: "Type">
 					
+		<@UXTemplate :: "Enum">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:Enum}">
+			<@MetaVertexTestQuery :: "Enum">
+			<@ItemClass :: @RectangleVisualiserItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\StaticItemVertex>
+				<@LabeledItem\ShowMeta :: "True">
+			<@UXDecoratorTemplate :: "EnumValue">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "EnumValue">				
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+					<@LineDecorator\ConstantLabel :: "Type">
+					
+		<@UXTemplate :: "Enum CONTAINER">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:Enum}">
+			<@MetaVertexTestQuery :: "Enum">
+			<@ItemClass :: @ContainerItem>
+			<@ContainerEdgeMetaVertex :: @System\Meta\ZeroUML\Enum\EnumValue>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>			
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\StaticItemVertex>
+				
+		<@UXTemplate :: "EnumValue">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:EnumValue}">
+			<@MetaVertexTestQuery :: "EnumValue">
+			<@ItemClass :: @RectangleVisualiserItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\StaticItemVertex>
+				<@LabeledItem\ShowMeta :: "True">
+					
 		<@UXTemplate :: "If">
 			<@$Is :: @UXTemplate>
 			<@DirectVertexTestQuery :: "{$Is:If}">

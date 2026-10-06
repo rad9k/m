@@ -378,7 +378,7 @@ namespace m0
         {
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, null, "{ZeroUML{Type,AtomType,StateMachine{State{Transition}},Enum{EnumValue},Selector,Class{Attribute{MinValue,MaxValue},Association,Aggregation,$PlatformClassName}}}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, null, "{ZeroUML{Type,AtomType,Automata{State{Transition}},Enum{EnumValue},Selector,Class{Attribute{MinValue,MaxValue},Association,Aggregation,$PlatformClassName}}}");
 
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Selector"), sm, "{$MinCardinality:0,$MaxCardinality:-1}");
 
@@ -429,13 +429,13 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Enum\EnumValue").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$IsAggregation"), empty);
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\StateMachine\State"), sm, "{$MinCardinality:0,$MaxCardinality:-1}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Automata\State"), sm, "{$MinCardinality:0,$MaxCardinality:-1}");
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\StateMachine\State\Transition"), sm, "{$MinCardinality:0,$MaxCardinality:-1}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Automata\State\Transition"), sm, "{$MinCardinality:0,$MaxCardinality:-1}");
 
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\StateMachine\State\Transition").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Automata\State\Transition").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
-                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\StateMachine\State"));
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Automata\State"));
 
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class").AddEdge(
@@ -478,7 +478,7 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Enum").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\AtomType")); // was ZeroUML\Type
-            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\StateMachine").AddEdge(
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Automata").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\AtomType"));
         }
@@ -1270,6 +1270,8 @@ namespace m0
             IVertex link = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Link");
 
             package.AddEdge(link, LegacySystem.Graph.EasyVertex.Get(smu, false, "Package"));
+            package.AddEdge(link, LegacySystem.Graph.EasyVertex.Get(smu, false, "Enum"));
+            package.AddEdge(link, LegacySystem.Graph.EasyVertex.Get(smu, false, "Automata"));
             package.AddEdge(link, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Variable"));
             package.AddEdge(link, LegacySystem.Graph.EasyVertex.Get(smu, false, "Function"));
             package.AddEdge(link, LegacySystem.Graph.EasyVertex.Get(smu, false, "Class"));
@@ -1279,7 +1281,6 @@ namespace m0
             package.AddEdge(link, LegacySystem.Graph.EasyVertex.Get(smu, false, "While"));
             package.AddEdge(link, LegacySystem.Graph.EasyVertex.Get(smu, false, "If"));
             package.AddEdge(link, LegacySystem.Graph.EasyVertex.Get(smu, false, "ForVertex"));
-            package.AddEdge(link, LegacySystem.Graph.EasyVertex.Get(smu, false, "ForEdge"));
 
             package.AddEdge(link, LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\$Import"));
             package.AddEdge(link, LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\$ImportMeta"));
@@ -3029,25 +3030,23 @@ namespace m0
 
             IVertex o_state_machine = k.AddVertex(keyword, "automata (?<name>)");
 
-            IVertex o_state_machine_base = o_state_machine.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"StateMachine"), "(?<name>)");
+            IVertex o_state_machine_base = o_state_machine.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Automata"), "(?<name>)");
 
-            o_state_machine_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"StateMachine"));
+            o_state_machine_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Automata"));
 
             // state
 
             IVertex o_state = k.AddVertex(keyword, "state (?<name>)");
 
-            IVertex o_state_base = o_state.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"StateMachine\State"), "(?<name>)");
+            IVertex o_state_base = o_state.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Automata\State"), "(?<name>)");
 
-            o_state_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"StateMachine\State"));
+            o_state_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Automata\State"));
 
             // transition
 
             IVertex o_transition = k.AddVertex(keyword, "transition (?<state>)");
 
-            IVertex o_transition_base = o_transition.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"StateMachine\State\Transition"), "(?<state>)");
-
-            o_transition_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"StateMachine\State\Transition"));
+            IVertex o_transition_base = o_transition.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Automata\State\Transition"), "(?<state>)");
         }
 
         private static void AddDoubleOperator(IVertex k, IVertex smu, IVertex smb, IVertex keyword, IVertex any, string text, string _is)
@@ -7026,6 +7025,8 @@ namespace m0
             quick.AddEdge(Root.Get(false, @"System\Meta\ZeroUML\Package"), Root.Get(false, @"System\Meta\ZeroUML\Package:UseCase"));
 
             quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Variable"));
+            quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Enum"));
+            quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Automata"));
             quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Function"));
             quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Class"));
             quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Class\Method"));
@@ -7096,7 +7097,12 @@ namespace m0
               "to filter",
               "to from transform",
               "create http mapping",
-              "mapping" };
+              "mapping",
+              "enum",
+              "automata",
+              "state",
+              "transition"
+            };
 
             string[] operators =
             {
