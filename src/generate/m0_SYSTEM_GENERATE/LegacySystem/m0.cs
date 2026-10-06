@@ -1637,7 +1637,7 @@ namespace m0
 
             // method
             //
-            // method (?<name>) [(*(+, +)(?<paramType>) (?<paramName>)*)]
+            // method (?<name>) ((*(+, +)(?<paramType>) (?<paramName>)*))
 
             IVertex method2 = k.AddVertex(keyword, "method (?<name>) ((*(+, +)(?<paramType>) (?<paramName>)*))");
 
@@ -1655,7 +1655,7 @@ namespace m0
 
             // function
             //
-            // function (?<name>) (?<returnType>) [(*(+, +)(?<paramType>) (?<paramName>)*)]
+            // function (?<name>) (?<returnType>) ((*(+, +)(?<paramType>) (?<paramName>)*))
 
             IVertex function = k.AddVertex(keyword, "function (?<name>) (?<returnType>)((*(+, +)(?<paramType>) (?<paramName>)*))");
 
@@ -1675,7 +1675,7 @@ namespace m0
 
             // function
             //
-            // function (?<name>) [(*(+, +)(?<paramType>) (?<paramName>)*)]
+            // function (?<name>) ((*(+, +)(?<paramType>) (?<paramName>)*))
 
             IVertex function2 = k.AddVertex(keyword, "function (?<name>) ((*(+, +)(?<paramType>) (?<paramName>)*))");
 
@@ -3007,20 +3007,21 @@ namespace m0
             // ENUM
 
             // enum
+            //
+            // enum (?<name>) ((*(+, +)(?<value>)*))
 
-            IVertex o_enum = k.AddVertex(keyword, "enum (?<name>)");
+            IVertex o_enum = k.AddVertex(keyword, "enum (?<name>) ((*(+, +)(?<value>)*))");
 
             IVertex o_enum_base = o_enum.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Enum"), "(?<name>)");
 
             o_enum_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Enum"));
 
-            // enum value
+            IVertex o_enum_value = o_enum_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Enum\EnumValue"), "(?<value>)");
 
-            IVertex o_enum_value = k.AddVertex(keyword, "enum value (?<value>)");
+            o_enum_value.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Enum\EnumValue"));
 
-            IVertex o_enum_value_base = o_enum_value.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Enum\EnumValue"), "(?<value>)");
-
-            o_enum_value_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Enum\EnumValue"));
+            o_enum_value.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
+                Empty);            
 
             // STATE MACHINE
 
