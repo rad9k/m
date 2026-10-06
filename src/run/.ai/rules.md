@@ -20,4 +20,4 @@ For filtering edges use GraphUtil.GetQueryOut family of methods and not manually
 
 For checking or converting IVertex.To.Value use GraphUtil.GetBooleanValueOrFalse(flagVertex) and similar functions from GraphUtil
 
-Test code (for example autonomous test programs) should be placed in __work_test directory)
+Test code (for example autonomous test programs) should be placed in __work_tests directory)
