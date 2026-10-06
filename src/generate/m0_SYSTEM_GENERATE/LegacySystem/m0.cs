@@ -3033,9 +3033,7 @@ namespace m0
 
             o_enum_base.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Enum"));
 
-            IVertex o_enum_value = o_enum_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Enum\EnumValue"), "(?<value>)");
-
-            o_enum_value.AddEdge(_is, LegacySystem.Graph.EasyVertex.Get(smu, false, @"Enum\EnumValue"));
+            IVertex o_enum_value = o_enum_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"Enum\EnumValue"), "(?<value>)");            
 
             o_enum_value.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"$$KeywordManyRoot"),
                 Empty);            
