@@ -227,14 +227,14 @@
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StaticItemVertex>
 				<@LabeledItem\ShowMeta :: "True">
-			<@UXDecoratorTemplate :: "$Is:Enum\EnumValue">
+			<@UXDecoratorTemplate :: "EnumValue">
 				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "EnumValue">				
+				<@EdgeTestQuery :: "$Is:Enum\EnumValue">				
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
-					<@LineDecorator\ConstantLabel :: "Type">
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+					<@LineDecorator\HideLabel :: "True">					
 					
 		<@UXTemplate :: "Enum CONTAINER">
 			<@$Is :: @UXTemplate>
@@ -244,7 +244,16 @@
 			<@ContainerEdgeMetaVertex :: @System\Meta\ZeroUML\Enum\EnumValue>
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>			
 			<@ItemVertex :: "">
-				<@$Inherits :: @ZeroUML\StaticItemVertex>
+				<@$Inherits :: @ZeroUML\StaticContainerItemVertex>
+				<@LabeledItem\ShowMeta :: "True">
+			<@UXDecoratorTemplate :: "EnumValue">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:Enum\EnumValue">				
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+					<@LineDecorator\HideLabel :: "True">
 				
 		<@UXTemplate :: "EnumValue">
 			<@$Is :: @UXTemplate>
@@ -255,6 +264,62 @@
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StaticItemVertex>
 				<@LabeledItem\ShowMeta :: "True">
+								
+		<@UXTemplate :: "Automata">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:Automata}">
+			<@MetaVertexTestQuery :: "Automata">
+			<@ItemClass :: @RectangleVisualiserItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\StaticItemVertex>
+				<@LabeledItem\ShowMeta :: "True">
+			<@UXDecoratorTemplate :: "State">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:Automata\State">				
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>					
+					<@LineDecorator\HideLabel :: "True">
+					
+		<@UXTemplate :: "Automata CONTAINER">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:Automata}">
+			<@MetaVertexTestQuery :: "Automata">
+			<@ItemClass :: @ContainerItem>
+			<@ContainerEdgeMetaVertex :: @System\Meta\ZeroUML\Automata\State>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>			
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\StaticContainerItemVertex>
+				<@LabeledItem\ShowMeta :: "True">
+			<@UXDecoratorTemplate :: "State">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:Automata\State">				
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\StartAnchor :: @LineEndEnum\Diamond>
+					<@LineDecorator\HideLabel :: "True">
+				
+		<@UXTemplate :: "State">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "{$Is:State}">
+			<@MetaVertexTestQuery :: "State">
+			<@ItemClass :: @RectangleVisualiserItem>
+			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\StaticItemVertex>
+				<@LabeledItem\ShowMeta :: "True">	
+				<@RectangleVisualiserItem\RoundEdgeSize :: "8">
+			<@UXDecoratorTemplate :: "Transition">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:State\Transition">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+					<@LineDecorator\HideLabel :: "True">
 					
 		<@UXTemplate :: "If">
 			<@$Is :: @UXTemplate>
