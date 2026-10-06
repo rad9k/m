@@ -378,7 +378,7 @@ namespace m0
         {
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, null, "{ZeroUML{Type,AtomType,Automata{State{Transition}},Enum{EnumValue},Selector,Class{Attribute{MinValue,MaxValue},Association,Aggregation,$PlatformClassName}}}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, null, "{ZeroUML{Type,AtomType,Automata{$InstanceCreationPriority:,State{$InstanceCreationPriority:,Transition}},Enum{$InstanceCreationPriority:,EnumValue{$InstanceCreationPriority:}},Selector,Class{Attribute{MinValue,MaxValue},Association,Aggregation,$PlatformClassName}}}");
 
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Selector"), sm, "{$MinCardinality:0,$MaxCardinality:-1}");
 

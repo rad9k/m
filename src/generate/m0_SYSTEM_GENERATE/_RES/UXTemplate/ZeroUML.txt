@@ -227,7 +227,7 @@
 			<@ItemVertex :: "">
 				<@$Inherits :: @ZeroUML\StaticItemVertex>
 				<@LabeledItem\ShowMeta :: "True">
-			<@UXDecoratorTemplate :: "EnumValue">
+			<@UXDecoratorTemplate :: "{$Is:Enum}\EnumValue">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "EnumValue">				
 				<@ToDiagramItemTestQuery :: "">
