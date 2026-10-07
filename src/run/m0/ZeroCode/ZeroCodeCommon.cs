@@ -166,7 +166,8 @@ namespace m0.ZeroCode
                 {
                     sPos++;
 
-                    if (testIfIsKeywordSubstring(sPos, text, allKeywordsSubstringsDictionary, null))
+                    if (!isInEscape
+                        && testIfIsKeywordSubstring(sPos, text, allKeywordsSubstringsDictionary, null))
                         shallProceed = false;
 
                     if (sPos == endPos)
@@ -181,7 +182,7 @@ namespace m0.ZeroCode
                     if (text[sPos] == dict.EscapedSequencePrefix && !isInEscape)
                         isInEscape = true;
 
-                    if (text[sPos] == dict.EscapedSequenceSuffix && isInEscape
+                    else if (text[sPos] == dict.EscapedSequenceSuffix && isInEscape
                         && sPos > 0 && text[sPos - 1] != dict.EscapeCharacter) // if is no \'
                         isInEscape = false;
                 }

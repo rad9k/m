@@ -1815,7 +1815,8 @@ namespace m0.ZeroCode
                 if (dict.linkKeywordByGroupsDictionary.ContainsKey(keywordsFilter))
                     possible_linkKeywordsByKeywordsFilter = dict.linkKeywordByGroupsDictionary[keywordsFilter];
 
-                if (c1089 && ((possible_emptyKeyworsByKeywordsFilter!=null || possible_newVertexKeywordsByKeywordsFilter!=null) && keywordsFilter!="")
+                if (tryLink != null
+                    || (c1089 && ((possible_emptyKeyworsByKeywordsFilter!=null || possible_newVertexKeywordsByKeywordsFilter!=null) && keywordsFilter!=""))
                     //_specialKeywordGroups_empty.Contains(keywordsFilter) // A
                     /*keywordsFilter=="Atom"*/) // B
                     //( (afterKeywordPartExist && sPos_copy == endPos_forAtomParts && isPrevStartPosSameAsStartPos)
