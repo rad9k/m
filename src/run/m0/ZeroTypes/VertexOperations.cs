@@ -1205,7 +1205,7 @@ namespace m0.ZeroTypes
                 && !CreateEdgeOnly
                 )
             {                
-                IVertex n = VertexOperations.AddInstance(baseVertex, metaVertex);
+                IVertex n = VertexOperations.AddInstanceAndReturnEdge(baseVertex, metaVertex, metaVertex, true).To;
 
                 IEdge e = new EasyEdge(baseVertex, metaVertex, n);
 
@@ -1227,7 +1227,12 @@ namespace m0.ZeroTypes
             return AddInstanceAndReturnEdge(baseVertex, metaVertex, edgeVertex).To;
         }
 
-        public static IEdge AddInstanceAndReturnEdge(IVertex baseVertex,IVertex metaVertex, IVertex edgeVertex)
+        public static IEdge AddInstanceAndReturnEdge(IVertex baseVertex, IVertex metaVertex, IVertex edgeVertex)
+        {
+            return AddInstanceAndReturnEdge(baseVertex, metaVertex, edgeVertex, false);
+        }
+
+        public static IEdge AddInstanceAndReturnEdge(IVertex baseVertex, IVertex metaVertex, IVertex edgeVertex, bool isRelationMeta)
         {
             IEdge ne = null;
             IVertex nv;
@@ -1252,8 +1257,10 @@ namespace m0.ZeroTypes
 
             ///
 
-            if (GraphUtil.ExistQueryOut(metaVertex,"$IsAggregation",null))
-                nv.AddEdge(MinusZero.Instance.IsAggregation, MinusZero.Instance.Empty); // 2026.04.09 wtf
+            // Base vertex of a relation keeps $IsAggregation from its meta.
+            // UX item instances and decorator vertices do not.
+            if (isRelationMeta && GraphUtil.ExistQueryOut(metaVertex, "$IsAggregation", null))
+                nv.AddEdge(MinusZero.Instance.IsAggregation, MinusZero.Instance.Empty);
 
             ///
 
