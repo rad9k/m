@@ -685,6 +685,15 @@ namespace m0
 
             ////////////////////////////////////////////////////////////////////////
 
+            // automata
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"Automata").AddEdge(
+              LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
+              LegacySystem.Graph.EasyVertex.Get(smu, false, "Enum"));
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"Automata\State").AddEdge(
+              LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
+              LegacySystem.Graph.EasyVertex.Get(smu, false, @"Enum\EnumValue"));
 
             // method
             IVertex method = LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class").AddVertex(null, "Method");
