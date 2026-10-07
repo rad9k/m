@@ -374,8 +374,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 					<@Position :: "">
 						<@$Is :: @UX\Position>
-						<@X :: "292.62166666666667">
-						<@Y :: "33.37666666666661">
+						<@X :: "303.7416666666661">
+						<@Y :: "33.376666666666665">
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State>
 					<@ShowMeta :: "True">
 					<@RoundEdgeSize :: "8">

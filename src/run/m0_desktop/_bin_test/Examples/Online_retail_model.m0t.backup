@@ -374,8 +374,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 					<@Position :: "">
 						<@$Is :: @UX\Position>
-						<@X :: "323.0749999999998">
-						<@Y :: "33.376666666666665">
+						<@X :: "292.62166666666667">
+						<@Y :: "33.37666666666661">
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State>
 					<@ShowMeta :: "True">
 					<@RoundEdgeSize :: "8">
@@ -414,6 +414,42 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@HideLabel :: "True">
 
 						<@ToItem :: @'Online retail model'\UXContainer:'Order state'\Item:\Item:<<"1">>>
+					<@Decorator :: "">
+						<@$Is :: @UX\LineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@From :: @'Online retail model'\Automata:'Order state'\OrderCompleted>
+							<@Meta :: @Automata\State\Transition>
+							<@To :: @'Online retail model'\Automata:'Order state'\OrderCompleted>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
+						<@EndAnchor :: @UX\LineEndEnum\Arrow>
+						<@HideLabel :: "True">
+
+						<@ToItem :: @'Online retail model'\UXContainer:'Order state'\Item:\Item:<<"2">>>
+					<@Decorator :: "">
+						<@$Is :: @UX\LineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@From :: @'Online retail model'\Automata:'Order state'\OrderCompleted>
+							<@Meta :: @Automata\State\Transition>
+							<@To :: @'Online retail model'\Automata:'Order state'\OrderCompleted>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
+						<@EndAnchor :: @UX\LineEndEnum\Arrow>
+						<@HideLabel :: "True">
+
+						<@ToItem :: @'Online retail model'\UXContainer:'Order state'\Item:\Item:<<"2">>>
+					<@Decorator :: "">
+						<@$Is :: @UX\LineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@From :: @'Online retail model'\Automata:'Order state'\OrderCompleted>
+							<@Meta :: @Automata\State\Transition>
+							<@To :: @'Online retail model'\Automata:'Order state'\OrderCompleted>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
+						<@EndAnchor :: @UX\LineEndEnum\Arrow>
+						<@HideLabel :: "True">
+
+						<@ToItem :: @'Online retail model'\UXContainer:'Order state'\Item:\Item:<<"2">>>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -912,6 +948,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			state "OrderCompleted"
 				transition @'Online retail model'\Automata:'Order state'\ShippingAdressAndMethodDefined
 				transition @'Online retail model'\Automata:'Order state'\CompletingOrder
+				transition @'Online retail model'\Automata:'Order state'\OrderCompleted
+				transition @'Online retail model'\Automata:'Order state'\OrderCompleted
+				transition @'Online retail model'\Automata:'Order state'\OrderCompleted
 			state "PaymentStarted"
 				transition @'Online retail model'\Automata:'Order state'\PaymentFailed
 				transition @'Online retail model'\Automata:'Order state'\PaymentCompleted

@@ -629,6 +629,7 @@ namespace m0.ZeroTypes.UX
             double lineWidth,
             double startMarkerExtent,
             double endMarkerExtent,
+            bool preserveRequestedEndpoints,
             DiagramLineRoute previousRoute)
         {
             if (sourceItem == null ||
@@ -718,6 +719,7 @@ namespace m0.ZeroTypes.UX
                     obstacles,
                     startMarkerExtent,
                     endMarkerExtent,
+                    preserveRequestedEndpoints,
                     previousRoute);
             }
 
@@ -758,6 +760,16 @@ namespace m0.ZeroTypes.UX
                 clearance,
                 "T",
                 UsesRectangularLinePorts(targetItem));
+
+            if (preserveRequestedEndpoints)
+            {
+                sourcePorts = sourcePorts
+                    .Where(port => port.Id == "SD")
+                    .ToList();
+                targetPorts = targetPorts
+                    .Where(port => port.Id == "TD")
+                    .ToList();
+            }
 
             List<PortPair> portPairs =
                 BuildRankedPortPairs(
@@ -993,6 +1005,7 @@ namespace m0.ZeroTypes.UX
             IList<RoutingObstacle> obstacles,
             double startMarkerExtent,
             double endMarkerExtent,
+            bool preserveRequestedEndpoints,
             DiagramLineRoute previousRoute)
         {
             double loopDistance = clearance;
@@ -1045,53 +1058,56 @@ namespace m0.ZeroTypes.UX
                 loopDistance + 4 * clearance
             };
 
-            foreach (double candidateLoopDistance in
-                loopDistances)
+            if (!preserveRequestedEndpoints)
             {
-                AddSelfLoopCandidate(
-                    candidates,
-                    signatures,
-                    portsBySide,
-                    "T",
-                    "R",
-                    new Point(
-                        itemBounds.Right +
-                            candidateLoopDistance,
-                        itemBounds.Top -
-                            candidateLoopDistance));
-                AddSelfLoopCandidate(
-                    candidates,
-                    signatures,
-                    portsBySide,
-                    "R",
-                    "B",
-                    new Point(
-                        itemBounds.Right +
-                            candidateLoopDistance,
-                        itemBounds.Bottom +
-                            candidateLoopDistance));
-                AddSelfLoopCandidate(
-                    candidates,
-                    signatures,
-                    portsBySide,
-                    "B",
-                    "L",
-                    new Point(
-                        itemBounds.Left -
-                            candidateLoopDistance,
-                        itemBounds.Bottom +
-                            candidateLoopDistance));
-                AddSelfLoopCandidate(
-                    candidates,
-                    signatures,
-                    portsBySide,
-                    "L",
-                    "T",
-                    new Point(
-                        itemBounds.Left -
-                            candidateLoopDistance,
-                        itemBounds.Top -
-                            candidateLoopDistance));
+                foreach (double candidateLoopDistance in
+                    loopDistances)
+                {
+                    AddSelfLoopCandidate(
+                        candidates,
+                        signatures,
+                        portsBySide,
+                        "T",
+                        "R",
+                        new Point(
+                            itemBounds.Right +
+                                candidateLoopDistance,
+                            itemBounds.Top -
+                                candidateLoopDistance));
+                    AddSelfLoopCandidate(
+                        candidates,
+                        signatures,
+                        portsBySide,
+                        "R",
+                        "B",
+                        new Point(
+                            itemBounds.Right +
+                                candidateLoopDistance,
+                            itemBounds.Bottom +
+                                candidateLoopDistance));
+                    AddSelfLoopCandidate(
+                        candidates,
+                        signatures,
+                        portsBySide,
+                        "B",
+                        "L",
+                        new Point(
+                            itemBounds.Left -
+                                candidateLoopDistance,
+                            itemBounds.Bottom +
+                                candidateLoopDistance));
+                    AddSelfLoopCandidate(
+                        candidates,
+                        signatures,
+                        portsBySide,
+                        "L",
+                        "T",
+                        new Point(
+                            itemBounds.Left -
+                                candidateLoopDistance,
+                            itemBounds.Top -
+                                candidateLoopDistance));
+                }
             }
 
             if (IsFinite(requestedStart) &&
@@ -1848,15 +1864,12 @@ namespace m0.ZeroTypes.UX
             if (IsFinite(requestedAnchor))
             {
                 Vector requestedNormal =
-                    requestedAnchor - center;
-
-                if (requestedNormal.Length <
-                    GeometryEpsilon)
-                {
-                    requestedNormal = desiredDirection;
-                }
-
-                requestedNormal.Normalize();
+                    GetRequestedPortNormal(
+                        itemBounds,
+                        requestedAnchor,
+                        center,
+                        desiredDirection,
+                        includeCardinalPorts);
                 AddPortIfUnique(
                     ports,
                     new PortCandidate
@@ -1915,6 +1928,79 @@ namespace m0.ZeroTypes.UX
                 requestedAnchor);
 
             return ports;
+        }
+
+        static Vector GetRequestedPortNormal(
+            Rect itemBounds,
+            Point requestedAnchor,
+            Point center,
+            Vector desiredDirection,
+            bool usesRectangularBoundary)
+        {
+            if (usesRectangularBoundary)
+            {
+                Vector[] boundaryNormals =
+                {
+                    new Vector(-1, 0),
+                    new Vector(1, 0),
+                    new Vector(0, -1),
+                    new Vector(0, 1)
+                };
+                double[] boundaryDistances =
+                {
+                    Math.Abs(requestedAnchor.X -
+                        itemBounds.Left),
+                    Math.Abs(requestedAnchor.X -
+                        itemBounds.Right),
+                    Math.Abs(requestedAnchor.Y -
+                        itemBounds.Top),
+                    Math.Abs(requestedAnchor.Y -
+                        itemBounds.Bottom)
+                };
+                double minimumBoundaryDistance =
+                    boundaryDistances.Min();
+                double bestAlignment =
+                    double.NegativeInfinity;
+                Vector bestNormal = desiredDirection;
+                const double boundaryTieTolerance = 0.5;
+
+                for (int boundaryIndex = 0;
+                    boundaryIndex < boundaryNormals.Length;
+                    boundaryIndex++)
+                {
+                    if (boundaryDistances[boundaryIndex] >
+                        minimumBoundaryDistance +
+                            boundaryTieTolerance)
+                    {
+                        continue;
+                    }
+
+                    Vector candidateNormal =
+                        boundaryNormals[boundaryIndex];
+                    double candidateAlignment =
+                        candidateNormal.X *
+                            desiredDirection.X +
+                        candidateNormal.Y *
+                            desiredDirection.Y;
+
+                    if (candidateAlignment > bestAlignment)
+                    {
+                        bestAlignment = candidateAlignment;
+                        bestNormal = candidateNormal;
+                    }
+                }
+
+                return bestNormal;
+            }
+
+            Vector requestedNormal =
+                requestedAnchor - center;
+
+            if (requestedNormal.Length < GeometryEpsilon)
+                return desiredDirection;
+
+            requestedNormal.Normalize();
+            return requestedNormal;
         }
 
         static void AddCardinalPort(

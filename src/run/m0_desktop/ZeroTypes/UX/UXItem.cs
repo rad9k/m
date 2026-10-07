@@ -962,6 +962,16 @@ namespace m0.ZeroTypes.UX
             if (toItem.OwningVisualiser == null)
                 return;
 
+            UXItem concreteToItem = toItem as UXItem;
+            if (!object.ReferenceEquals(this, toItem) &&
+                concreteToItem != null &&
+                CompareDiagramRoutingItemOrder(
+                    this,
+                    concreteToItem) > 0)
+            {
+                concreteToItem.UpdateDiagramLines(this);
+                return;
+            }
 
             Dictionary<IUXItem, List<ILineDecoratorBase>> DiagramLinesToDiagramItemDictionary = GetDiagramLinesToDiagramItemDictionary();
             List<ILineDecoratorBase> sameToItemLines;
@@ -977,7 +987,9 @@ namespace m0.ZeroTypes.UX
                 out sameFromItemLinesTo))
                 sameFromItemLinesTo = new List<ILineDecoratorBase>();
 
-            int allCnt = sameToItemLines.Count() + sameFromItemLinesTo.Count();
+            int allCnt =
+                sameToItemLines.Count() +
+                sameFromItemLinesTo.Count();
 
             int cnt = 0;
 
@@ -1021,7 +1033,9 @@ namespace m0.ZeroTypes.UX
                     l.SetPosition(start.X, start.Y, end.X, end.Y, true, selfRelationX, selfRelationY);
                 }
                 else
+                {
                     l.SetPosition(start.X, start.Y, end.X, end.Y, false, 0, 0);
+                }
 
                 cnt++;
             }
@@ -1043,10 +1057,41 @@ namespace m0.ZeroTypes.UX
                     false);
 
                 if (toItem != this)
+                {
                     l.SetPosition(start.X, start.Y, end.X, end.Y, false, 0, 0);
+                }
 
                 cnt++;
             }
+        }
+
+        static int CompareDiagramRoutingItemOrder(
+            IUXItem first,
+            IUXItem second)
+        {
+            string firstKey =
+                first == null || first.Vertex == null
+                    ? string.Empty
+                    : GraphUtil.GetVertexIdString(
+                        first.Vertex);
+            string secondKey =
+                second == null || second.Vertex == null
+                    ? string.Empty
+                    : GraphUtil.GetVertexIdString(
+                        second.Vertex);
+            int keyComparison =
+                string.CompareOrdinal(
+                    firstKey,
+                    secondKey);
+
+            if (keyComparison != 0)
+                return keyComparison;
+
+            return System.Runtime.CompilerServices.RuntimeHelpers
+                .GetHashCode(first)
+                .CompareTo(
+                    System.Runtime.CompilerServices.RuntimeHelpers
+                        .GetHashCode(second));
         }
 
         Point GetTimedLineAnchorLocation(
