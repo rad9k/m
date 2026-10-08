@@ -7065,6 +7065,8 @@ namespace m0.UIWpf.UX
 
             Dictionary<IVertex, List<ILineDecoratorBase>> diagramLinesByBaseEdgeTo =
                 item.GetDiagramLinesBaseEdgeToDictionary();
+            HashSet<ILineDecoratorBase> pairedLineDecorators =
+                new HashSet<ILineDecoratorBase>();
 
             foreach (IEdge e in edges)
             {
@@ -7074,6 +7076,7 @@ namespace m0.UIWpf.UX
                     continue;
 
                 bool needAdding = true;
+                ILineDecoratorBase pairedLineDecorator = null;
 
                 if (diagramLinesByBaseEdgeTo.TryGetValue(e.To, out List<ILineDecoratorBase> existingLines))
                     foreach (ILineDecoratorBase l in existingLines)
@@ -7081,18 +7084,20 @@ namespace m0.UIWpf.UX
                         Edge existingLineBaseEdge = l.BaseEdge;
 
                         if (existingLineBaseEdge != null &&
-                            existingLineBaseEdge.Meta == e.Meta)
+                            existingLineBaseEdge.Meta == e.Meta &&
+                            !pairedLineDecorators.Contains(l))
                         {
-                            needAdding = false;
+                            pairedLineDecorator = l;
                             break;
                         }
                     }
 
-                if (needAdding)
+                if (pairedLineDecorator == null)
                 {
                     ILineDecoratorBase existingUnhostedLine = GetMatchingLineDecorator(
                         item,
-                        e);
+                        e,
+                        pairedLineDecorators);
 
                     if (existingUnhostedLine != null)
                     {
@@ -7108,12 +7113,18 @@ namespace m0.UIWpf.UX
                                     hostedToItem,
                                     existingUnhostedLine,
                                     false);
-                                needAdding = false;
+                                pairedLineDecorator = existingUnhostedLine;
                             }
                         }
                         else
-                            needAdding = false;
+                            pairedLineDecorator = existingUnhostedLine;
                     }
+                }
+
+                if (pairedLineDecorator != null)
+                {
+                    pairedLineDecorators.Add(pairedLineDecorator);
+                    needAdding = false;
                 }
 
                 bool canAddLine = false;
@@ -7122,21 +7133,54 @@ namespace m0.UIWpf.UX
 
                 if (needAdding && canAddLine)
                 {
+                    HashSet<ILineDecoratorBase> lineDecoratorsBeforeAdd =
+                        GetLineDecorators(item);
+
                     List<IUXItem> toDiagramItems = GetItemsByBaseEdgeTo_ForLines(e);
                     TryAddDiagramLineVertexForListOfItems(item, e, toDiagramItems, false);
 
                     List<IUXItem> toDiagramItems_EdgeTargetInEdgePointingToTargetItemBaseEdgeTo = GetItemsByBaseEdgeTo_ForLines_EdgeTargetInEdgePointingToTargetItemBaseEdgeTo(e);
                     TryAddDiagramLineVertexForListOfItems(item, e, toDiagramItems_EdgeTargetInEdgePointingToTargetItemBaseEdgeTo, true);
+
+                    foreach (ILineDecoratorBase createdLineDecorator in
+                        GetLineDecorators(item))
+                    {
+                        if (!lineDecoratorsBeforeAdd.Contains(
+                                createdLineDecorator))
+                            pairedLineDecorators.Add(
+                                createdLineDecorator);
+                    }
                 }
             }
         }
 
-        static ILineDecoratorBase GetMatchingLineDecorator(IUXItem item, IEdge e)
+        static HashSet<ILineDecoratorBase> GetLineDecorators(IUXItem item)
+        {
+            HashSet<ILineDecoratorBase> lineDecorators =
+                new HashSet<ILineDecoratorBase>();
+
+            foreach (IUXItem decorator in item.Decorators)
+            {
+                ILineDecoratorBase lineDecorator =
+                    decorator as ILineDecoratorBase;
+
+                if (lineDecorator != null)
+                    lineDecorators.Add(lineDecorator);
+            }
+
+            return lineDecorators;
+        }
+
+        static ILineDecoratorBase GetMatchingLineDecorator(
+            IUXItem item,
+            IEdge e,
+            ISet<ILineDecoratorBase> pairedLineDecorators)
         {
             foreach (IUXItem decorator in item.Decorators)
             {
                 ILineDecoratorBase lineDecorator = decorator as ILineDecoratorBase;
-                if (lineDecorator == null)
+                if (lineDecorator == null ||
+                    pairedLineDecorators.Contains(lineDecorator))
                     continue;
 
                 Edge decoratorBaseEdge = lineDecorator.BaseEdge;

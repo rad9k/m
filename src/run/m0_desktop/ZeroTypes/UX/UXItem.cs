@@ -778,11 +778,17 @@ namespace m0.ZeroTypes.UX
             {
                 edgeWasRemovedFromBaseEdgeTo = true;
 
-                ILineDecoratorBase toRemove = null;
                 IVertex removedEdgeMeta =
                     edgeVertex.Get(false, "Meta:");
                 IVertex removedEdgeTo =
                     edgeVertex.Get(false, "To:");
+
+                if (!HasExcessDiagramLineForRemovedEdge(
+                        removedEdgeMeta,
+                        removedEdgeTo))
+                    continue;
+
+                ILineDecoratorBase toRemove = null;
 
                 foreach (ILineDecoratorBase line in DiagramFromLines)
                 {
@@ -818,6 +824,35 @@ namespace m0.ZeroTypes.UX
                 ViewAttributesUpdated();
 
             return exe.Stack;
+        }
+
+        bool HasExcessDiagramLineForRemovedEdge(
+            IVertex removedEdgeMeta,
+            IVertex removedEdgeTo)
+        {
+            if (removedEdgeMeta == null ||
+                removedEdgeTo == null ||
+                BaseEdgeTo == null)
+                return true;
+
+            int matchingDecoratorCount = 0;
+
+            foreach (ILineDecoratorBase line in DiagramFromLines)
+            {
+                IEdge lineBaseEdge = line.BaseEdge;
+
+                if (lineBaseEdge != null &&
+                    lineBaseEdge.Meta == removedEdgeMeta &&
+                    lineBaseEdge.To == removedEdgeTo)
+                    matchingDecoratorCount++;
+            }
+
+            int matchingEdgeCount = GraphUtil.GetQueryOutCount(
+                BaseEdgeTo,
+                removedEdgeMeta,
+                removedEdgeTo);
+
+            return matchingDecoratorCount > matchingEdgeCount;
         }
 
         private bool ShouldRemoveItemAfterBaseEdgeTargetDisposed(IVertex stack, IVertex baseEdgeTo)
