@@ -189,7 +189,9 @@ namespace m0.ZeroTypes.UX
                 if (!HideLabel)
                     OwningVisualiser.Canvas.Children.Add(Label);
             }
-            
+
+            AddTargetCardinalityLabelToCanvas();
+
             VertexSetedUp();
         }
 
@@ -284,6 +286,7 @@ namespace m0.ZeroTypes.UX
             OwningVisualiser.Canvas.Children.Remove(LineEndings);
             OwningVisualiser.Canvas.Children.Remove(Line);
             OwningVisualiser.Canvas.Children.Remove(Label);
+            RemoveTargetCardinalityLabelFromCanvas();
         }
 
         protected override void UpdateLine()

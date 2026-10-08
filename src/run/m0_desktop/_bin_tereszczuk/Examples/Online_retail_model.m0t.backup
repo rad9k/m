@@ -12,7 +12,12 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@Meta :: @$Empty>
 				<@To :: @'Online retail model'>
 			<@SelectedEdges :: "">
-			<@ShowSelectedEdgesBaseEdge :: "False">
+				<@Edge :: "">
+					<@$Is :: @Edge>
+					<@From :: @'Online retail model'>
+					<@Meta :: @UX\Item\Item>
+					<@To :: @'Online retail model'\'Online retail model'\Item:<<"6">>>
+			<@ShowSelectedEdgesBaseEdge :: "True">
 			<@Size :: "">
 				<@$Is :: @UX\Size>
 				<@Width :: "5000">
@@ -151,7 +156,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 				<@Position :: "">
 					<@$Is :: @UX\Position>
-					<@X :: "180.40000000000003">
+					<@X :: "180.3266666666667">
 					<@Y :: "144.84">
 				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
 				<@ShowMeta :: "False">
@@ -193,17 +198,6 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@From :: @'Online retail model'>
 					<@Meta :: @Class>
 					<@To :: @'Online retail model'\Card>
-				<@Decorator :: "">
-					<@$Is :: @UX\LineDecorator>
-					<@Scale :: "100">
-					<@BaseEdge :: "">
-						<@From :: @'Online retail model'\Card>
-						<@Meta :: @$Inherits>
-						<@To :: @'Online retail model'\PaymentMethod>
-					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Inherits>
-					<@EndAnchor :: @UX\LineEndEnum\Triangle>
-					<@HideLabel :: "True">
-					<@ToItem :: @'Online retail model'\'Online retail model'\Item:<<"5">>>
 			<@Item :: "">
 				<@$Is :: @UX\RectangleVisualiserItem>
 				<@Scale :: "100">
@@ -229,17 +223,6 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@From :: @'Online retail model'>
 					<@Meta :: @Class>
 					<@To :: @'Online retail model'\PayPal>
-				<@Decorator :: "">
-					<@$Is :: @UX\LineDecorator>
-					<@Scale :: "100">
-					<@BaseEdge :: "">
-						<@From :: @'Online retail model'\PayPal>
-						<@Meta :: @$Inherits>
-						<@To :: @'Online retail model'\PaymentMethod>
-					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Inherits>
-					<@EndAnchor :: @UX\LineEndEnum\Triangle>
-					<@HideLabel :: "True">
-					<@ToItem :: @'Online retail model'\'Online retail model'\Item:<<"5">>>
 			<@Item :: "">
 				<@$Is :: @UX\RectangleVisualiserItem>
 				<@Scale :: "100">
@@ -271,6 +254,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 		class "User"
 		class "PaymentMethod"
 		class "Address"
+			<@Attribute :: "AddressLine1">
+				<@$Is :: @Class\Attribute>
+				<@$EdgeTarget :: @Fallback>
 		class "Card"
 			inherits @$Empty
 		class "PayPal"
@@ -280,7 +266,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			<@$Is :: @UX\UXContainer>
 			<@IsExpanded :: "True">
 			<@HasMiniatures :: "True">
-			<@Scale :: "90">
+			<@Scale :: "70">
 			<@BaseEdge :: "">
 				<@$Is :: @Edge>
 				<@From :: @$CodeRoot>
