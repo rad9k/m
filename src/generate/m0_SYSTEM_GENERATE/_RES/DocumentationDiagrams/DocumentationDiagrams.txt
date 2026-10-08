@@ -1,2 +1,0 @@
-"DocumentationDiagrams"
-	"yes"

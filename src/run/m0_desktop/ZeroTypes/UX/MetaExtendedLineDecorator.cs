@@ -158,6 +158,8 @@ namespace m0.ZeroTypes.UX
 
             OwningVisualiser.Canvas.Children.Add(LineEndings);
             OwningVisualiser.Canvas.Children.Add(Line);
+            OwningVisualiser.Canvas.Children.Add(
+                CardinalityLabel);
 
             if (baseEdge.Meta != MinusZero.Instance.Empty)
             {
@@ -284,6 +286,8 @@ namespace m0.ZeroTypes.UX
             OwningVisualiser.Canvas.Children.Remove(LineEndings);
             OwningVisualiser.Canvas.Children.Remove(Line);
             OwningVisualiser.Canvas.Children.Remove(Label);
+            OwningVisualiser.Canvas.Children.Remove(
+                CardinalityLabel);
         }
 
         protected override void UpdateLine()

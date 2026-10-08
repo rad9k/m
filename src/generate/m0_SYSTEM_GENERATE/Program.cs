@@ -71,12 +71,6 @@ namespace m0_SYSTEM_GENERATE
 
             //
 
-            CreateExamplesFinal.CreateTestData();
-
-            CreateDocumentationDiagrams.Create();
-
-            //
-
             IVertex root = LegacySystem_MinusZero.Instance.Root;
             IVertex SystemVertex = root.Get(false, "System");
             IVertex User = root.Get(false, "User");
@@ -131,23 +125,7 @@ namespace m0_SYSTEM_GENERATE
 
             print("* Quick saved to \"quick.m0j\"");
 
-            //
-
-            print("* saving examples to \"examples.m0j\"");
-
-            GeneralUtil.CreateM0JAndMoveEdgesIntoIt_IncludeEverythingBesidesList("examples.m0j", examples, new HashSet<IVertex>(systemSubGraphWithLinks), storeOverride);
-
-            print("* examples saved to \"examples.m0j\"");
-
-            //
-
-            print("* saving documentation diagrams to \"documentation_diagrams.m0j\"");
-
-            GeneralUtil.CreateM0JAndMoveEdgesIntoIt_IncludeEverythingBesidesList("documentation_diagrams.m0j", documentationDiagrams, new HashSet<IVertex>(systemSubGraphWithLinks), storeOverride);
-
-            print("* documentation diagrams saved to \"documentation_diagrams.m0j\"");
-
-            //
+            //          
 
             // system.m0 instead of $-0$ROOT$STORE$ BEG
 

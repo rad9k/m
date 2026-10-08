@@ -25,6 +25,7 @@ namespace m0.ZeroTypes.UX
         protected Path Line = new Path();
 
         protected TextBlock Label = new TextBlock();
+        protected TextBlock CardinalityLabel = new TextBlock();
 
         double currentSelfRelationX;
         double currentSelfRelationY;
@@ -35,6 +36,7 @@ namespace m0.ZeroTypes.UX
         {
             UpdateLineEnds();
             VertexUpdated();
+            UpdateCardinalityLabel();
             UpdateLabelVisibility();
 
             if (graphChangeListenerEdge != null)
@@ -65,6 +67,8 @@ namespace m0.ZeroTypes.UX
                      @"BaseEdge:",
                      @"BaseEdge:\From:",
                      @"BaseEdge:\Meta:",
+                     @"BaseEdge:\Meta:\$MinCardinality:",
+                     @"BaseEdge:\Meta:\$MaxCardinality:",
                      @"BaseEdge:\To:",
                      @"StartAnchor:",
                      @"EndAnchor:",
@@ -109,8 +113,11 @@ namespace m0.ZeroTypes.UX
             Line.Stroke = GetForegroundBrush();
 
             Label.Foreground = GetForegroundBrush();
+            CardinalityLabel.Foreground = GetForegroundBrush();
+            CardinalityLabel.IsHitTestVisible = false;
 
             Panel.SetZIndex(Label, 99999);
+            Panel.SetZIndex(CardinalityLabel, 99999);
             Panel.SetZIndex(LineEndings, 99999);
             Panel.SetZIndex(Line, 99999);
         }
@@ -151,12 +158,46 @@ namespace m0.ZeroTypes.UX
             if (needToUpdateLineEnds)
                 UpdateLineEnds();
 
+            IVertex baseEdgeVertex =
+                Vertex.Get(false, @"BaseEdge:");
+            IVertex baseEdgeMeta =
+                Vertex.Get(false, @"BaseEdge:\Meta:");
+            IVertex baseEdgeTo =
+                Vertex.Get(false, @"BaseEdge:\To:");
+
+            bool baseEdgeDefinitionChanged =
+                IsVertexChageOrEdgeAddedRemovedDisposedFromTo(
+                    exe.Stack,
+                    baseEdgeVertex);
             bool willCallVertexUpdated =
-                   IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:"))
-                || IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:\To:"));
+                   baseEdgeDefinitionChanged
+                || IsVertexChageOrEdgeAddedRemovedDisposedFromTo(
+                    exe.Stack,
+                    baseEdgeMeta)
+                || IsVertexChageOrEdgeAddedRemovedDisposedFromTo(
+                    exe.Stack,
+                    baseEdgeTo)
+                || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(
+                    exe.Stack,
+                    Vertex,
+                    "ConstantLabel");
 
             if (willCallVertexUpdated)
                 VertexUpdated();
+
+            bool cardinalityChanged =
+                   baseEdgeDefinitionChanged
+                || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(
+                    exe.Stack,
+                    baseEdgeMeta,
+                    "$MinCardinality")
+                || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(
+                    exe.Stack,
+                    baseEdgeMeta,
+                    "$MaxCardinality");
+
+            if (cardinalityChanged)
+                UpdateCardinalityLabel();
 
             if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "HideLabel"))
                 UpdateLabelVisibility();
@@ -266,6 +307,7 @@ namespace m0.ZeroTypes.UX
             LineEndings.Stroke = foregroundBrush;
             Line.Stroke = foregroundBrush;
             Label.Foreground = foregroundBrush;
+            CardinalityLabel.Foreground = foregroundBrush;
 
             LineEndings.StartEnding = StartAnchor;
 
@@ -330,6 +372,7 @@ namespace m0.ZeroTypes.UX
             // refresh the side prong tips so DefiningGeometry sees them on the
             // very next render.
             UpdateRenderedRoute();
+            UpdateCardinalityLabelPosition();
         }
 
         Brush FillBrush = null;
@@ -374,6 +417,84 @@ namespace m0.ZeroTypes.UX
             UpdateLabelPosition();
         }
 
+        protected virtual void UpdateCardinalityLabel()
+        {
+            CardinalityLabel.Text =
+                GetCardinalityLabelText();
+            UpdateCardinalityLabelVisibility();
+            UpdateCardinalityLabelPosition();
+        }
+
+        string GetCardinalityLabelText()
+        {
+            IEdge baseEdge = BaseEdge;
+
+            if (baseEdge == null ||
+                baseEdge.Meta == null)
+            {
+                return string.Empty;
+            }
+
+            IVertex minCardinalityVertex =
+                GraphUtil.GetQueryOutFirst(
+                    baseEdge.Meta,
+                    "$MinCardinality",
+                    null);
+            IVertex maxCardinalityVertex =
+                GraphUtil.GetQueryOutFirst(
+                    baseEdge.Meta,
+                    "$MaxCardinality",
+                    null);
+
+            if (minCardinalityVertex == null ||
+                maxCardinalityVertex == null)
+            {
+                return string.Empty;
+            }
+
+            int? minCardinality =
+                GraphUtil.GetIntegerValue(
+                    minCardinalityVertex);
+            int? maxCardinality =
+                GraphUtil.GetIntegerValue(
+                    maxCardinalityVertex);
+
+            if (!minCardinality.HasValue ||
+                !maxCardinality.HasValue ||
+                (minCardinality.Value == 1 &&
+                 maxCardinality.Value == 1))
+            {
+                return string.Empty;
+            }
+
+            if (minCardinality.Value == 0 &&
+                maxCardinality.Value == -1)
+            {
+                return "*";
+            }
+
+            if (minCardinality.Value ==
+                maxCardinality.Value)
+            {
+                return minCardinality.Value.ToString();
+            }
+
+            return minCardinality.Value +
+                ".." +
+                maxCardinality.Value;
+        }
+
+        protected virtual void UpdateCardinalityLabelVisibility()
+        {
+            CardinalityLabel.Visibility =
+                CurrentRoute == null ||
+                CurrentRoute.Segments.Count == 0 ||
+                string.IsNullOrEmpty(
+                    CardinalityLabel.Text)
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
+        }
+
         public override void SetPosition(double _FromX, double _FromY, double _ToX, double _ToY, bool _isSelfRelation, double selfRelationX, double selfRelationY)
         {
             FromX = _FromX;
@@ -416,6 +537,7 @@ namespace m0.ZeroTypes.UX
 
             UpdateRenderedRoute();
             UpdateLabelPosition();
+            UpdateCardinalityLabelPosition();
         }
 
         int GetRelatedDiagramLineCount()
@@ -474,10 +596,13 @@ namespace m0.ZeroTypes.UX
                 Line.Data = Geometry.Empty;
                 LineEndings.Points = new PointCollection();
                 Label.Visibility = Visibility.Collapsed;
+                CardinalityLabel.Visibility =
+                    Visibility.Collapsed;
                 return;
             }
 
             Label.Visibility = Visibility.Visible;
+            UpdateCardinalityLabelVisibility();
 
             double startInset = GetEndingInset(StartAnchor);
             double endInset = GetEndingInset(EndAnchor);
@@ -575,7 +700,8 @@ namespace m0.ZeroTypes.UX
                         sideIndex * 0.05;
 
                     score += GetLabelCollisionScore(
-                        labelBounds);
+                        labelBounds,
+                        Label);
 
                     if (score < bestScore)
                     {
@@ -589,7 +715,172 @@ namespace m0.ZeroTypes.UX
             Canvas.SetTop(Label, bestLeftTop.Y);
         }
 
-        double GetLabelCollisionScore(Rect labelBounds)
+        protected virtual void UpdateCardinalityLabelPosition()
+        {
+            if (CurrentRoute == null ||
+                CurrentRoute.Segments.Count == 0 ||
+                CardinalityLabel.Visibility !=
+                    Visibility.Visible)
+            {
+                return;
+            }
+
+            CardinalityLabel.Measure(
+                new System.Windows.Size(
+                    double.PositiveInfinity,
+                    double.PositiveInfinity));
+
+            double labelWidth = Math.Max(
+                1,
+                CardinalityLabel.DesiredSize.Width);
+            double labelHeight = Math.Max(
+                1,
+                CardinalityLabel.DesiredSize.Height);
+            Point routeEnd = CurrentRoute.EndPoint;
+            Vector tangent =
+                CurrentRoute.GetEndTangent();
+
+            if (tangent.Length < 0.001)
+                tangent = new Vector(1, 0);
+            else
+                tangent.Normalize();
+
+            Vector normal = new Vector(
+                -tangent.Y,
+                tangent.X);
+            double halfLabelProjectionOnTangent =
+                Math.Abs(tangent.X) *
+                    labelWidth / 2 +
+                Math.Abs(tangent.Y) *
+                    labelHeight / 2;
+            double halfLabelProjectionOnNormal =
+                Math.Abs(normal.X) *
+                    labelWidth / 2 +
+                Math.Abs(normal.Y) *
+                    labelHeight / 2;
+            double baseTangentOffset =
+                GetEndingRequiredLength(EndAnchor) +
+                halfLabelProjectionOnTangent +
+                5;
+            double normalOffset =
+                halfLabelProjectionOnNormal +
+                4;
+            double[] additionalTangentOffsets =
+                { 0, 8, 16, 24, 40, 64, 96, 128 };
+            double bestScore = double.MaxValue;
+            Point bestLeftTop = new Point();
+            bool foundCandidateOutsideTarget = false;
+            Rect targetBounds = Rect.Empty;
+            bool hasTargetBounds =
+                ToItem != null &&
+                OwningVisualiser != null &&
+                DiagramLineRouter.TryGetVisibleBounds(
+                    ToItem,
+                    OwningVisualiser.Canvas,
+                    out targetBounds);
+
+            foreach (double additionalTangentOffset in
+                additionalTangentOffsets)
+            {
+                for (int sideIndex = 0;
+                    sideIndex < 2;
+                    sideIndex++)
+                {
+                    double side =
+                        sideIndex == 0 ? -1 : 1;
+                    Point labelCenter =
+                        routeEnd -
+                        tangent *
+                            (baseTangentOffset +
+                             additionalTangentOffset) +
+                        normal *
+                            normalOffset *
+                            side;
+                    Point leftTop = new Point(
+                        labelCenter.X -
+                            labelWidth / 2,
+                        labelCenter.Y -
+                            labelHeight / 2);
+                    Rect labelBounds = new Rect(
+                        leftTop,
+                        new System.Windows.Size(
+                            labelWidth,
+                            labelHeight));
+
+                    if (hasTargetBounds &&
+                        targetBounds.IntersectsWith(
+                            labelBounds))
+                    {
+                        continue;
+                    }
+
+                    foundCandidateOutsideTarget = true;
+                    double score =
+                        additionalTangentOffset * 0.1 +
+                        sideIndex * 0.05 +
+                        GetLabelCollisionScore(
+                            labelBounds,
+                            CardinalityLabel) +
+                        GetCanvasVisibilityPenalty(
+                            labelBounds);
+
+                    if (score < bestScore)
+                    {
+                        bestScore = score;
+                        bestLeftTop = leftTop;
+                    }
+                }
+            }
+
+            if (!foundCandidateOutsideTarget)
+            {
+                CardinalityLabel.Visibility =
+                    Visibility.Collapsed;
+                return;
+            }
+
+            Canvas.SetLeft(
+                CardinalityLabel,
+                bestLeftTop.X);
+            Canvas.SetTop(
+                CardinalityLabel,
+                bestLeftTop.Y);
+        }
+
+        double GetCanvasVisibilityPenalty(
+            Rect labelBounds)
+        {
+            if (OwningVisualiser == null ||
+                OwningVisualiser.Canvas == null ||
+                OwningVisualiser.Canvas.ActualWidth <= 0 ||
+                OwningVisualiser.Canvas.ActualHeight <= 0)
+            {
+                return 0;
+            }
+
+            Rect canvasBounds = new Rect(
+                0,
+                0,
+                OwningVisualiser.Canvas.ActualWidth,
+                OwningVisualiser.Canvas.ActualHeight);
+            Rect visibleBounds = Rect.Intersect(
+                canvasBounds,
+                labelBounds);
+            double visibleArea =
+                visibleBounds.IsEmpty
+                    ? 0
+                    : visibleBounds.Width *
+                        visibleBounds.Height;
+            double labelArea =
+                labelBounds.Width *
+                labelBounds.Height;
+
+            return (labelArea - visibleArea) * 10;
+        }
+
+        double GetLabelCollisionScore(
+            Rect labelBounds,
+            TextBlock positionedLabel)
         {
             UXVisualiser visualiser =
                 OwningVisualiser as UXVisualiser;
@@ -635,7 +926,7 @@ namespace m0.ZeroTypes.UX
                 if (otherLabel == null ||
                     object.ReferenceEquals(
                         otherLabel,
-                        Label) ||
+                        positionedLabel) ||
                     otherLabel.Visibility !=
                         Visibility.Visible)
                 {
@@ -833,6 +1124,8 @@ namespace m0.ZeroTypes.UX
         {
             OwningVisualiser.Canvas.Children.Add(LineEndings);
             OwningVisualiser.Canvas.Children.Add(Line);
+            OwningVisualiser.Canvas.Children.Add(
+                CardinalityLabel);
 
             if (!HideLabel)
             {
@@ -850,6 +1143,8 @@ namespace m0.ZeroTypes.UX
             OwningVisualiser.Canvas.Children.Remove(LineEndings);
             OwningVisualiser.Canvas.Children.Remove(Line);
             OwningVisualiser.Canvas.Children.Remove(Label);
+            OwningVisualiser.Canvas.Children.Remove(
+                CardinalityLabel);
         }
 
         public override void Highlight()
@@ -864,9 +1159,15 @@ namespace m0.ZeroTypes.UX
 
 
             Label.Foreground = (Brush)LineEndings.FindResource("0HighlightBrush");
+            CardinalityLabel.Foreground =
+                (Brush)LineEndings.FindResource(
+                    "0HighlightBrush");
 
             Panel.SetZIndex(LineEndings, 99999);
             Panel.SetZIndex(Label, 99999);
+            Panel.SetZIndex(
+                CardinalityLabel,
+                99999);
 
             //
 
@@ -891,9 +1192,14 @@ namespace m0.ZeroTypes.UX
                 LineEndings.Fill = FillBrush;
 
             Label.Foreground = foregroundBrush;
+            CardinalityLabel.Foreground =
+                foregroundBrush;
 
             Panel.SetZIndex(LineEndings, 0);
             Panel.SetZIndex(Label, 0);
+            Panel.SetZIndex(
+                CardinalityLabel,
+                0);
 
             //
 
