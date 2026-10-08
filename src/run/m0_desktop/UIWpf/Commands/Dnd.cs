@@ -192,8 +192,10 @@ namespace m0.UIWpf.Commands
                     IVertex eeTo   = ee.To.Get(false, "To:");
 
                     bool selfDrop = (eeTo == baseVertex);
+                    bool alwaysCopy = eeTo != null && GraphUtil.ExistQueryOut(eeTo, "$DndAlwaysCopy", null);
+                    bool copyThisEdge = doCopy || alwaysCopy;
 
-                    if (doCopy)
+                    if (copyThisEdge)
                     {
                         baseVertex.AddEdge(eeMeta, eeTo);
                     }

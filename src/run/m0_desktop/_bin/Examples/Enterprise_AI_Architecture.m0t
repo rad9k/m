@@ -5,7 +5,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			<@$Is :: @UX\UXContainer>
 			<@IsExpanded :: "True">
 			<@HasMiniatures :: "True">
-			<@Scale :: "50">
+			<@Scale :: "80">
 			<@BaseEdge :: "">
 				<@$Is :: @Edge>
 				<@From :: @'net10.0-windows7.0'\Examples\'Enterprise_AI_Architecture.m0t'>
@@ -2739,12 +2739,12 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@$Is :: @Edge>
 					<@From :: @$CodeRoot>
 					<@Meta :: @Structure\System>
-					<@To :: @'File sources'>
+					<@To :: @'Enterprise AI Architecture'\'File sources'>
 				<@Decorator :: "">
 					<@$Is :: @UX\LineDecorator>
 					<@Scale :: "100">
 					<@BaseEdge :: "">
-						<@From :: @'File sources'>
+						<@From :: @'Enterprise AI Architecture'\'File sources'>
 						<@Meta :: @Structure\StaticComponent\Write>
 						<@To :: @'Enterprise AI Architecture'\'AI lakehouse'\'Data lake'>
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToFilledTriangle'>
@@ -2959,6 +2959,6 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@$Is :: @Structure\Component>
 			<@Contain :: "Model composition">
 				<@$Is :: @Structure\Component>
-	<@Structure\System :: "File sources">
-		<@$Is :: @Structure\System>
-		<@Write :: @'Enterprise AI Architecture'\'AI lakehouse'\'Data lake'>
+		<@Structure\System :: "File sources">
+			<@$Is :: @Structure\System>
+			<@Write :: @'Enterprise AI Architecture'\'AI lakehouse'\'Data lake'>
