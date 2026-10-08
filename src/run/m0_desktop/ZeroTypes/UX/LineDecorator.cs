@@ -25,10 +25,6 @@ namespace m0.ZeroTypes.UX
         protected Path Line = new Path();
 
         protected TextBlock Label = new TextBlock();
-        protected TextBlock TargetCardinalityLabel = new TextBlock();
-
-        IEdge metaCardinalityListenerEdge;
-        IVertex metaCardinalityListenerVertex;
 
         double currentSelfRelationX;
         double currentSelfRelationY;
@@ -63,8 +59,6 @@ namespace m0.ZeroTypes.UX
             if (graphChangeListenerEdge != null)
                 return;
 
-            EnsureMetaCardinalityListener();
-
             graphChangeListenerEdge = ExecutionFlowHelper.AddTriggerAndListener(Vertex,
                  new List<string>
                  {
@@ -93,8 +87,6 @@ namespace m0.ZeroTypes.UX
 
         public override void Dispose()
         {
-            RemoveMetaCardinalityListener();
-
             if (!IsDisposed)
             {
                 GraphChangeTrigger.RemoveListener(graphChangeListenerEdge);
@@ -118,12 +110,7 @@ namespace m0.ZeroTypes.UX
 
             Label.Foreground = GetForegroundBrush();
 
-            TargetCardinalityLabel.Foreground = GetForegroundBrush();
-            TargetCardinalityLabel.IsHitTestVisible = false;
-            TargetCardinalityLabel.Visibility = Visibility.Collapsed;
-
             Panel.SetZIndex(Label, 99999);
-            Panel.SetZIndex(TargetCardinalityLabel, 99999);
             Panel.SetZIndex(LineEndings, 99999);
             Panel.SetZIndex(Line, 99999);
         }
@@ -279,7 +266,6 @@ namespace m0.ZeroTypes.UX
             LineEndings.Stroke = foregroundBrush;
             Line.Stroke = foregroundBrush;
             Label.Foreground = foregroundBrush;
-            TargetCardinalityLabel.Foreground = foregroundBrush;
 
             LineEndings.StartEnding = StartAnchor;
 
@@ -351,9 +337,6 @@ namespace m0.ZeroTypes.UX
 
         private void VertexUpdated()
         {
-            EnsureMetaCardinalityListener();
-            UpdateTargetCardinality();
-
             if (GraphUtil.GetValueAndCompareStrings(UXTemplate.Vertex, "Inheritence")) // not to display "$Inherits"                 
                 return;
 
@@ -433,7 +416,6 @@ namespace m0.ZeroTypes.UX
 
             UpdateRenderedRoute();
             UpdateLabelPosition();
-            UpdateTargetCardinalityPosition();
         }
 
         int GetRelatedDiagramLineCount()
@@ -492,7 +474,6 @@ namespace m0.ZeroTypes.UX
                 Line.Data = Geometry.Empty;
                 LineEndings.Points = new PointCollection();
                 Label.Visibility = Visibility.Collapsed;
-                TargetCardinalityLabel.Visibility = Visibility.Collapsed;
                 return;
             }
 
@@ -608,295 +589,6 @@ namespace m0.ZeroTypes.UX
             Canvas.SetTop(Label, bestLeftTop.Y);
         }
 
-        void EnsureMetaCardinalityListener()
-        {
-            IVertex meta = null;
-            IEdge baseEdge = BaseEdge;
-
-            if (baseEdge != null)
-                meta = baseEdge.Meta;
-
-            if (meta == MinusZero.Instance.Empty)
-                meta = null;
-
-            if (object.ReferenceEquals(meta, metaCardinalityListenerVertex)
-                && metaCardinalityListenerEdge != null)
-                return;
-
-            RemoveMetaCardinalityListener();
-
-            if (meta == null || meta.DisposedState != DisposeStateEnum.Live)
-                return;
-
-            metaCardinalityListenerEdge = ExecutionFlowHelper.AddTriggerAndListener(
-                meta,
-                new List<string>
-                {
-                    @"$MinCardinality:",
-                    @"$MaxCardinality:"
-                },
-                new List<GraphChangeFilterEnum>
-                {
-                    GraphChangeFilterEnum.ValueChange,
-                    GraphChangeFilterEnum.OutputEdgeAdded,
-                    GraphChangeFilterEnum.OutputEdgeRemoved,
-                    GraphChangeFilterEnum.OutputEdgeDisposed
-                },
-                "LineDecoratorTargetCardinality",
-                MetaCardinalityChange);
-
-            if (metaCardinalityListenerEdge == null)
-                return;
-
-            metaCardinalityListenerVertex = meta;
-        }
-
-        void RemoveMetaCardinalityListener()
-        {
-            if (metaCardinalityListenerEdge != null)
-            {
-                GraphChangeTrigger.RemoveListener(metaCardinalityListenerEdge);
-                metaCardinalityListenerEdge = null;
-            }
-
-            metaCardinalityListenerVertex = null;
-        }
-
-        protected INoInEdgeInOutVertexVertex MetaCardinalityChange(IExecution exe)
-        {
-            UpdateTargetCardinality();
-            return exe.Stack;
-        }
-
-        void UpdateTargetCardinality()
-        {
-            string text = GetTargetCardinalityText();
-            if (text == null)
-                text = "";
-
-            if (TargetCardinalityLabel.Text != text)
-            {
-                MinusZero.Instance.Log(
-                    1,
-                    "LineDecorator.UpdateTargetCardinality",
-                    "text=" + text);
-                TargetCardinalityLabel.Text = text;
-            }
-
-            UpdateTargetCardinalityPosition();
-        }
-
-        string GetTargetCardinalityText()
-        {
-            IEdge baseEdge = BaseEdge;
-
-            if (baseEdge == null || baseEdge.Meta == null)
-                return null;
-
-            IVertex minVertex = GraphUtil.GetQueryOutFirst(
-                baseEdge.Meta,
-                "$MinCardinality",
-                null);
-            IVertex maxVertex = GraphUtil.GetQueryOutFirst(
-                baseEdge.Meta,
-                "$MaxCardinality",
-                null);
-
-            if (minVertex == null && maxVertex == null)
-                return null;
-
-            int min = minVertex == null
-                ? 1
-                : GraphUtil.GetIntegerValue(minVertex) ?? 1;
-            int max = maxVertex == null
-                ? 1
-                : GraphUtil.GetIntegerValue(maxVertex) ?? 1;
-
-            if (min == 1 && max == 1)
-                return null;
-
-            if (min == 0 && max == -1)
-                return "*";
-
-            if (min == max)
-                return FormatCardinalityNumber(min);
-
-            return FormatCardinalityNumber(min)
-                + ".."
-                + FormatCardinalityNumber(max);
-        }
-
-        static string FormatCardinalityNumber(int value)
-        {
-            if (value == -1)
-                return "*";
-
-            return value.ToString();
-        }
-
-        void UpdateTargetCardinalityPosition()
-        {
-            if (string.IsNullOrEmpty(TargetCardinalityLabel.Text)
-                || CurrentRoute == null
-                || CurrentRoute.Segments.Count == 0)
-            {
-                TargetCardinalityLabel.Visibility = Visibility.Collapsed;
-                return;
-            }
-
-            TargetCardinalityLabel.Visibility = Visibility.Visible;
-            TargetCardinalityLabel.Measure(
-                new System.Windows.Size(
-                    double.PositiveInfinity,
-                    double.PositiveInfinity));
-
-            double labelWidth = Math.Max(
-                1,
-                TargetCardinalityLabel.DesiredSize.Width);
-            double labelHeight = Math.Max(
-                1,
-                TargetCardinalityLabel.DesiredSize.Height);
-
-            Point end = CurrentRoute.EndPoint;
-            Vector intoTarget = CurrentRoute.GetEndTangent();
-
-            if (intoTarget.Length < 0.001)
-                intoTarget = new Vector(1, 0);
-            else
-                intoTarget.Normalize();
-
-            Vector outward = -intoTarget;
-            Vector normal = new Vector(-outward.Y, outward.X);
-
-            if (normal.Length < 0.001)
-                normal = new Vector(0, -1);
-            else
-                normal.Normalize();
-
-            const double gap = 3;
-            double halfAlongOutward =
-                Math.Abs(outward.X) * labelWidth / 2
-                + Math.Abs(outward.Y) * labelHeight / 2;
-            double halfAlongNormal =
-                Math.Abs(normal.X) * labelWidth / 2
-                + Math.Abs(normal.Y) * labelHeight / 2;
-            double lateral = halfAlongNormal + Math.Max(4, LineWidth);
-            double endingClearance = GetEndingInset(EndAnchor);
-
-            Rect targetBounds = Rect.Empty;
-            bool hasTargetBounds = false;
-
-            if (ToItem != null
-                && OwningVisualiser != null
-                && OwningVisualiser.Canvas != null)
-            {
-                hasTargetBounds = DiagramLineRouter.TryGetVisibleBounds(
-                    ToItem,
-                    OwningVisualiser.Canvas,
-                    out targetBounds);
-            }
-
-            double bestScore = double.MaxValue;
-            Point bestLeftTop = new Point(
-                end.X + outward.X * (gap + halfAlongOutward) - labelWidth / 2,
-                end.Y + outward.Y * (gap + halfAlongOutward) - labelHeight / 2);
-            double[] sideSigns = { 1, -1 };
-
-            for (int step = 0; step <= 8; step++)
-            {
-                bool foundAtStep = false;
-                double outwardDistance = gap + halfAlongOutward + step * 4;
-
-                for (int sideIndex = 0; sideIndex < sideSigns.Length; sideIndex++)
-                {
-                    double sideSign = sideSigns[sideIndex];
-                    Point center =
-                        end
-                        + outward * outwardDistance
-                        + normal * lateral * sideSign;
-
-                    if (TryAcceptCardinalityPlacement(
-                        center,
-                        labelWidth,
-                        labelHeight,
-                        hasTargetBounds,
-                        targetBounds,
-                        outwardDistance + sideIndex * 0.05,
-                        ref bestScore,
-                        ref bestLeftTop))
-                        foundAtStep = true;
-                }
-
-                double axisDistance =
-                    gap + endingClearance + halfAlongOutward + step * 4;
-                Point axisCenter = end + outward * axisDistance;
-
-                if (TryAcceptCardinalityPlacement(
-                    axisCenter,
-                    labelWidth,
-                    labelHeight,
-                    hasTargetBounds,
-                    targetBounds,
-                    axisDistance + 0.5,
-                    ref bestScore,
-                    ref bestLeftTop))
-                    foundAtStep = true;
-
-                if (foundAtStep)
-                    break;
-            }
-
-            Canvas.SetLeft(TargetCardinalityLabel, bestLeftTop.X);
-            Canvas.SetTop(TargetCardinalityLabel, bestLeftTop.Y);
-        }
-
-        bool TryAcceptCardinalityPlacement(
-            Point center,
-            double labelWidth,
-            double labelHeight,
-            bool hasTargetBounds,
-            Rect targetBounds,
-            double score,
-            ref double bestScore,
-            ref Point bestLeftTop)
-        {
-            Point leftTop = new Point(
-                center.X - labelWidth / 2,
-                center.Y - labelHeight / 2);
-            Rect labelBounds = new Rect(
-                leftTop,
-                new System.Windows.Size(labelWidth, labelHeight));
-
-            if (hasTargetBounds && labelBounds.IntersectsWith(targetBounds))
-                return false;
-
-            score += GetLabelCollisionScore(labelBounds);
-
-            if (score >= bestScore)
-                return true;
-
-            bestScore = score;
-            bestLeftTop = leftTop;
-            return true;
-        }
-
-        protected void AddTargetCardinalityLabelToCanvas()
-        {
-            if (OwningVisualiser == null || OwningVisualiser.Canvas == null)
-                return;
-
-            if (!OwningVisualiser.Canvas.Children.Contains(TargetCardinalityLabel))
-                OwningVisualiser.Canvas.Children.Add(TargetCardinalityLabel);
-        }
-
-        protected void RemoveTargetCardinalityLabelFromCanvas()
-        {
-            if (OwningVisualiser == null || OwningVisualiser.Canvas == null)
-                return;
-
-            OwningVisualiser.Canvas.Children.Remove(TargetCardinalityLabel);
-        }
-
         double GetLabelCollisionScore(Rect labelBounds)
         {
             UXVisualiser visualiser =
@@ -944,9 +636,6 @@ namespace m0.ZeroTypes.UX
                     object.ReferenceEquals(
                         otherLabel,
                         Label) ||
-                    object.ReferenceEquals(
-                        otherLabel,
-                        TargetCardinalityLabel) ||
                     otherLabel.Visibility !=
                         Visibility.Visible)
                 {
@@ -1150,8 +839,6 @@ namespace m0.ZeroTypes.UX
                 OwningVisualiser.Canvas.Children.Add(Label);
             }
 
-            AddTargetCardinalityLabelToCanvas();
-
             VertexSetedUp(); 
         }
 
@@ -1163,7 +850,6 @@ namespace m0.ZeroTypes.UX
             OwningVisualiser.Canvas.Children.Remove(LineEndings);
             OwningVisualiser.Canvas.Children.Remove(Line);
             OwningVisualiser.Canvas.Children.Remove(Label);
-            RemoveTargetCardinalityLabelFromCanvas();
         }
 
         public override void Highlight()
@@ -1178,11 +864,9 @@ namespace m0.ZeroTypes.UX
 
 
             Label.Foreground = (Brush)LineEndings.FindResource("0HighlightBrush");
-            TargetCardinalityLabel.Foreground = (Brush)LineEndings.FindResource("0HighlightBrush");
 
             Panel.SetZIndex(LineEndings, 99999);
             Panel.SetZIndex(Label, 99999);
-            Panel.SetZIndex(TargetCardinalityLabel, 99999);
 
             //
 
@@ -1207,11 +891,9 @@ namespace m0.ZeroTypes.UX
                 LineEndings.Fill = FillBrush;
 
             Label.Foreground = foregroundBrush;
-            TargetCardinalityLabel.Foreground = foregroundBrush;
 
             Panel.SetZIndex(LineEndings, 0);
             Panel.SetZIndex(Label, 0);
-            Panel.SetZIndex(TargetCardinalityLabel, 0);
 
             //
 
