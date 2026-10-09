@@ -31,6 +31,10 @@ namespace m0.UIWpf.Visualisers
 
         public double Margin { get; set; } // do not want to expose those as PlatformClass.Vertex 
 
+        private const string UnsectionedSectionName = "Other";
+        private readonly Dictionary<string, WrapPanel> sectionPanels =
+            new Dictionary<string, WrapPanel>();
+
         //
 
         public void UnselectAllSelectedEdges() { }
@@ -98,11 +102,68 @@ namespace m0.UIWpf.Visualisers
           //  VisualiserHelper.AddContextMenu(); // no contex menu here
         }        
 
-        protected void AddEdge(IEdge e)
+        private string GetSectionName(IEdge edge)
+        {
+            if (edge == null || edge.Meta == null)
+                return UnsectionedSectionName;
+
+            IVertex section = edge.Meta.Get(false, "$Section:");
+
+            if (section == null)
+                return UnsectionedSectionName;
+
+            object sectionValue = GraphUtil.GetValue(section);
+            string sectionName = sectionValue == null ? null : sectionValue.ToString();
+
+            if (String.IsNullOrWhiteSpace(sectionName))
+                return UnsectionedSectionName;
+
+            return sectionName;
+        }
+
+        private Border CreateSectionCard(string sectionName, out WrapPanel sectionPanel)
+        {
+            Border sectionCard = new Border
+            {
+                Background = (Brush)FindResource("0BackgroundBrush"),
+                BorderBrush = (Brush)FindResource("0VeryVeryLightForegroundBrush"),
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(4),
+                Margin = new Thickness(1),
+                Padding = new Thickness(2)
+            };
+
+            StackPanel sectionContent = new StackPanel();
+
+            TextBlock sectionHeader = new TextBlock
+            {
+                Text = sectionName,
+                Background = (Brush)FindResource("0ForegroundBrush"),
+                Foreground = (Brush)FindResource("0BackgroundBrush"),
+                FontWeight = FontWeights.Bold,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Margin = new Thickness(0, 0, 0, 1),
+                Padding = new Thickness(2, 1, 2, 1),
+                LayoutTransform = new ScaleTransform(Scale, Scale)
+            };
+
+            sectionPanel = new WrapPanel
+            {
+                Orientation = Orientation.Horizontal
+            };
+
+            sectionContent.Children.Add(sectionHeader);
+            sectionContent.Children.Add(sectionPanel);
+            sectionCard.Child = sectionContent;
+
+            return sectionCard;
+        }
+
+        protected void AddEdge(IEdge e, Panel sectionPanel)
         {
             StackPanel p = new StackPanel();
 
-            p.Margin = new Thickness(Margin);   
+            p.Margin = new Thickness(1);   
             
             if(!GeneralUtil.CompareStrings(e.Meta.Value,"$Empty")){
                 TextBlock label=new TextBlock();
@@ -124,7 +185,7 @@ namespace m0.UIWpf.Visualisers
             if (GraphUtil.GetQueryOutCount(e.Meta, "$DisplayLarger", null) > 0)
                 p.Width = 100;
 
-            Children.Add(p);
+            sectionPanel.Children.Add(p);
         }
 
         public void BaseEdgeToUpdated()
@@ -137,6 +198,7 @@ namespace m0.UIWpf.Visualisers
             if (baseEdgeTo != null && meta != null)
             {
                 Children.Clear();
+                sectionPanels.Clear();
 
                 VisualiserHelper.DisposeAllChildVisualisers();                
 
@@ -147,7 +209,19 @@ namespace m0.UIWpf.Visualisers
                     if(ee != null)                        
                         if(VisualiserUtil.FilterEdge(ee, this.Vertex))
                         //if(ee.Meta.Get(false, "$Hide:") == null)
-                            AddEdge(ee);
+                        {
+                            string sectionName = GetSectionName(ee);
+                            WrapPanel sectionPanel;
+
+                            if (!sectionPanels.TryGetValue(sectionName, out sectionPanel))
+                            {
+                                Border sectionCard = CreateSectionCard(sectionName, out sectionPanel);
+                                sectionPanels.Add(sectionName, sectionPanel);
+                                Children.Add(sectionCard);
+                            }
+
+                            AddEdge(ee, sectionPanel);
+                        }
                 }
             }           
         }

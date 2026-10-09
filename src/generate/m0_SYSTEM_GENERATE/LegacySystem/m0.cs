@@ -4914,6 +4914,112 @@ namespace m0
             sm.Get(false, @"Visualiser\Song\ShowToolbarNames").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"?Boolean"));
             sm.Get(false, @"Visualiser\Song\SnapToGrid").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"Visualiser\SongSnapToGridEnum"));
 
+            // Visualiser-specific attribute sections.
+
+            sm.Get(false, @"Visualiser\Form\ExpertMode").AddVertex(sm.Get(false, @"?$Section"), "General");
+            IVertex Form_layout_section = sm.Get(false, @"Visualiser\Form\ColumnNumber").AddVertex(sm.Get(false, @"?$Section"), "Layout");
+            sm.Get(false, @"Visualiser\Form\MetaOnLeft").AddEdge(sm.Get(false, @"?$Section"), Form_layout_section);
+            sm.Get(false, @"Visualiser\Form\MetaAlignRight").AddEdge(sm.Get(false, @"?$Section"), Form_layout_section);
+            sm.Get(false, @"Visualiser\Form\SectionsAsTabs").AddEdge(sm.Get(false, @"?$Section"), Form_layout_section);
+
+            IVertex Code_section = sm.Get(false, @"Visualiser\Code\ShowWhiteSpace").AddVertex(sm.Get(false, @"?$Section"), "Code");
+            sm.Get(false, @"Visualiser\Code\ShowLineNumbers").AddEdge(sm.Get(false, @"?$Section"), Code_section);
+            sm.Get(false, @"Visualiser\Code\HighlightedLine").AddEdge(sm.Get(false, @"?$Section"), Code_section);
+            sm.Get(false, @"Visualiser\Code\ShowFolding").AddEdge(sm.Get(false, @"?$Section"), Code_section);
+            sm.Get(false, @"Visualiser\Code\TextMemoryCurrent").AddEdge(sm.Get(false, @"?$Section"), Code_section);
+            sm.Get(false, @"Visualiser\Code\TextMemoryMax").AddEdge(sm.Get(false, @"?$Section"), Code_section);
+
+            sm.Get(false, @"Visualiser\Icon\IconSize").AddVertex(sm.Get(false, @"?$Section"), "Icons");
+
+            IVertex List_display_section = sm.Get(false, @"Visualiser\List\ShowMeta").AddVertex(sm.Get(false, @"?$Section"), "Display");
+            sm.Get(false, @"Visualiser\List\ShowHeader").AddEdge(sm.Get(false, @"?$Section"), List_display_section);
+            sm.Get(false, @"Visualiser\List\GridStyle").AddVertex(sm.Get(false, @"?$Section"), "Layout");
+            sm.Get(false, @"Visualiser\List\ShowIcons").AddVertex(sm.Get(false, @"?$Section"), "Icons");
+            IVertex List_editing_section = sm.Get(false, @"Visualiser\List\IsMetaRightAlign").AddVertex(sm.Get(false, @"?$Section"), "Editing");
+            sm.Get(false, @"Visualiser\List\IsAllVisualisersEdit").AddEdge(sm.Get(false, @"?$Section"), List_editing_section);
+
+            IVertex InEdgesList_display_section = sm.Get(false, @"Visualiser\InEdgesList\ShowMeta").AddVertex(sm.Get(false, @"?$Section"), "Display");
+            sm.Get(false, @"Visualiser\InEdgesList\ShowHeader").AddEdge(sm.Get(false, @"?$Section"), InEdgesList_display_section);
+            sm.Get(false, @"Visualiser\InEdgesList\GridStyle").AddVertex(sm.Get(false, @"?$Section"), "Layout");
+            sm.Get(false, @"Visualiser\InEdgesList\ShowIcons").AddVertex(sm.Get(false, @"?$Section"), "Icons");
+            sm.Get(false, @"Visualiser\InEdgesList\IsMetaRightAlign").AddVertex(sm.Get(false, @"?$Section"), "Editing");
+
+            IVertex Table_data_section = sm.Get(false, @"Visualiser\Table\ToShowEdgesMeta").AddVertex(sm.Get(false, @"?$Section"), "Data");
+            sm.Get(false, @"Visualiser\Table\ExpertMode").AddEdge(sm.Get(false, @"?$Section"), Table_data_section);
+            IVertex Table_display_section = sm.Get(false, @"Visualiser\Table\ShowHeader").AddVertex(sm.Get(false, @"?$Section"), "Display");
+            sm.Get(false, @"Visualiser\Table\GridStyle").AddVertex(sm.Get(false, @"?$Section"), "Layout");
+            sm.Get(false, @"Visualiser\Table\AlternatingRows").AddEdge(sm.Get(false, @"?$Section"), Table_display_section);
+            sm.Get(false, @"Visualiser\Table\IsAllVisualisersEdit").AddEdge(sm.Get(false, @"?$Section"), Table_display_section);
+
+            sm.Get(false, @"Visualiser\TableFast\ToShowEdgesMeta").AddVertex(sm.Get(false, @"?$Section"), "Data");
+            IVertex TableFast_display_section = sm.Get(false, @"Visualiser\TableFast\ShowHeader").AddVertex(sm.Get(false, @"?$Section"), "Display");
+            sm.Get(false, @"Visualiser\TableFast\AlternatingRows").AddEdge(sm.Get(false, @"?$Section"), TableFast_display_section);
+            sm.Get(false, @"Visualiser\TableFast\IsAllVisualisersEdit").AddEdge(sm.Get(false, @"?$Section"), TableFast_display_section);
+            sm.Get(false, @"Visualiser\TableFast\GridStyle").AddVertex(sm.Get(false, @"?$Section"), "Layout");
+
+            IVertex Tree_icons_section = sm.Get(false, @"Visualiser\Tree\ShowIcons").AddVertex(sm.Get(false, @"?$Section"), "Icons");
+
+            IVertex Graph_layout_section = sm.Get(false, @"Visualiser\Graph\VisualiserCircleSize").AddVertex(sm.Get(false, @"?$Section"), "Layout");
+            sm.Get(false, @"Visualiser\Graph\NumberOfCircles").AddEdge(sm.Get(false, @"?$Section"), Graph_layout_section);
+            sm.Get(false, @"Visualiser\Graph\MetaLabels").AddVertex(sm.Get(false, @"?$Section"), "Display");
+            IVertex Graph_edges_section = sm.Get(false, @"Visualiser\Graph\ShowOutEdges").AddVertex(sm.Get(false, @"?$Section"), "Edges");
+            sm.Get(false, @"Visualiser\Graph\ShowInEdges").AddEdge(sm.Get(false, @"?$Section"), Graph_edges_section);
+            sm.Get(false, @"Visualiser\Graph\AnimateEdges").AddEdge(sm.Get(false, @"?$Section"), Graph_edges_section);
+            sm.Get(false, @"Visualiser\Graph\ShowIcons").AddVertex(sm.Get(false, @"?$Section"), "Icons");
+            sm.Get(false, @"Visualiser\Graph\FastMode").AddVertex(sm.Get(false, @"?$Section"), "Performance");
+
+            IVertex Graph3D_layout_section = sm.Get(false, @"Visualiser\Graph3D\EdgeLength").AddVertex(sm.Get(false, @"?$Section"), "Layout");
+            sm.Get(false, @"Visualiser\Graph3D\NumberOfCircles").AddEdge(sm.Get(false, @"?$Section"), Graph3D_layout_section);
+            sm.Get(false, @"Visualiser\Graph3D\LayoutMode3D").AddEdge(sm.Get(false, @"?$Section"), Graph3D_layout_section);
+            IVertex Graph3D_display_section = sm.Get(false, @"Visualiser\Graph3D\MetaLabels").AddVertex(sm.Get(false, @"?$Section"), "Display");
+            sm.Get(false, @"Visualiser\Graph3D\ShowLabels3D").AddEdge(sm.Get(false, @"?$Section"), Graph3D_display_section);
+            IVertex Graph3D_edges_section = sm.Get(false, @"Visualiser\Graph3D\ShowOutEdges").AddVertex(sm.Get(false, @"?$Section"), "Edges");
+            sm.Get(false, @"Visualiser\Graph3D\ShowInEdges").AddEdge(sm.Get(false, @"?$Section"), Graph3D_edges_section);
+            sm.Get(false, @"Visualiser\Graph3D\AnimateEdges").AddEdge(sm.Get(false, @"?$Section"), Graph3D_edges_section);
+            IVertex Graph3D_icons_section = sm.Get(false, @"Visualiser\Graph3D\IconsOnVertexes").AddVertex(sm.Get(false, @"?$Section"), "Icons");
+            sm.Get(false, @"Visualiser\Graph3D\IconsOnLabels").AddEdge(sm.Get(false, @"?$Section"), Graph3D_icons_section);
+            IVertex Graph3D_appearance_section = sm.Get(false, @"Visualiser\Graph3D\SphereSize").AddVertex(sm.Get(false, @"?$Section"), "Appearance");
+            sm.Get(false, @"Visualiser\Graph3D\LabelSize").AddEdge(sm.Get(false, @"?$Section"), Graph3D_appearance_section);
+            IVertex Graph3D_animation_section = sm.Get(false, @"Visualiser\Graph3D\TransitionStyle").AddVertex(sm.Get(false, @"?$Section"), "Animation");
+            sm.Get(false, @"Visualiser\Graph3D\TransitionDurationMs").AddEdge(sm.Get(false, @"?$Section"), Graph3D_animation_section);
+            sm.Get(false, @"Visualiser\Graph3D\MaxVertices3D").AddVertex(sm.Get(false, @"?$Section"), "Performance");
+
+            IVertex Set2D_editing_section = sm.Get(false, @"Visualiser\Set2D\CanEdit").AddVertex(sm.Get(false, @"?$Section"), "Editing");
+            sm.Get(false, @"Visualiser\Set2D\ConnectPoints").AddEdge(sm.Get(false, @"?$Section"), Set2D_editing_section);
+            sm.Get(false, @"Visualiser\Set2D\ShowToolbarNames").AddVertex(sm.Get(false, @"?$Section"), "Display");
+            sm.Get(false, @"Visualiser\Set2D\ShowArrowLines").AddVertex(sm.Get(false, @"?$Section"), "Edges");
+            IVertex Set2D_layout_section = sm.Get(false, @"Visualiser\Set2D\ScaleLinesDensity").AddVertex(sm.Get(false, @"?$Section"), "Layout");
+            sm.Get(false, @"Visualiser\Set2D\HorizontalAxisMin").AddEdge(sm.Get(false, @"?$Section"), Set2D_layout_section);
+            sm.Get(false, @"Visualiser\Set2D\HorizontalAxisMax").AddEdge(sm.Get(false, @"?$Section"), Set2D_layout_section);
+            sm.Get(false, @"Visualiser\Set2D\VerticalAxisMin").AddEdge(sm.Get(false, @"?$Section"), Set2D_layout_section);
+            sm.Get(false, @"Visualiser\Set2D\VerticalAxisMax").AddEdge(sm.Get(false, @"?$Section"), Set2D_layout_section);
+
+            IVertex Sequence_display_section = sm.Get(false, @"Visualiser\Sequence\ShowLabel").AddVertex(sm.Get(false, @"?$Section"), "Display");
+            IVertex Sequence_edges_section = sm.Get(false, @"Visualiser\Sequence\ShowArrowLines").AddVertex(sm.Get(false, @"?$Section"), "Edges");
+            sm.Get(false, @"Visualiser\Sequence\ShowSnapLines").AddEdge(sm.Get(false, @"?$Section"), Sequence_edges_section);
+            sm.Get(false, @"Visualiser\Sequence\SnapToGrid").AddVertex(sm.Get(false, @"?$Section"), "Animation");
+            sm.Get(false, @"Visualiser\Sequence\ShowVelocity").AddEdge(sm.Get(false, @"?$Section"), Sequence_display_section);
+            sm.Get(false, @"Visualiser\Sequence\DefaultVelocity").AddEdge(sm.Get(false, @"?$Section"), Sequence_display_section);
+
+            IVertex MelodyFlow_display_section = sm.Get(false, @"Visualiser\MelodyFlow\ShowLabel").AddVertex(sm.Get(false, @"?$Section"), "Display");
+            sm.Get(false, @"Visualiser\MelodyFlow\ShowVelocity").AddEdge(sm.Get(false, @"?$Section"), MelodyFlow_display_section);
+            sm.Get(false, @"Visualiser\MelodyFlow\DefaultVelocity").AddEdge(sm.Get(false, @"?$Section"), MelodyFlow_display_section);
+            sm.Get(false, @"Visualiser\MelodyFlow\ShowArrowLines").AddVertex(sm.Get(false, @"?$Section"), "Edges");
+
+            IVertex TriggerSet_display_section = sm.Get(false, @"Visualiser\TriggerSet\ShowVelocity").AddVertex(sm.Get(false, @"?$Section"), "Display");
+            sm.Get(false, @"Visualiser\TriggerSet\DefaultVelocity").AddEdge(sm.Get(false, @"?$Section"), TriggerSet_display_section);
+            IVertex TriggerSet_animation_section = sm.Get(false, @"Visualiser\TriggerSet\SnapToGrid").AddVertex(sm.Get(false, @"?$Section"), "Animation");
+            sm.Get(false, @"Visualiser\TriggerSet\ShowSnapLines").AddEdge(sm.Get(false, @"?$Section"), TriggerSet_animation_section);
+
+            sm.Get(false, @"Visualiser\ChordProgression\ShowLabel").AddVertex(sm.Get(false, @"?$Section"), "Display");
+            sm.Get(false, @"Visualiser\ChordProgression\ShowArrowLines").AddVertex(sm.Get(false, @"?$Section"), "Edges");
+
+            IVertex Song_display_section = sm.Get(false, @"Visualiser\Song\ShowLabel").AddVertex(sm.Get(false, @"?$Section"), "Display");
+            sm.Get(false, @"Visualiser\Song\ShowToolbarNames").AddEdge(sm.Get(false, @"?$Section"), Song_display_section);
+            IVertex Song_edges_section = sm.Get(false, @"Visualiser\Song\ShowArrowLines").AddVertex(sm.Get(false, @"?$Section"), "Edges");
+            sm.Get(false, @"Visualiser\Song\ShowSnapLines").AddEdge(sm.Get(false, @"?$Section"), Song_edges_section);
+            sm.Get(false, @"Visualiser\Song\SnapToGrid").AddVertex(sm.Get(false, @"?$Section"), "Animation");
+
             sm.Get(false, @"Visualiser\UX").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\UX\UXContainer"));
             //sm.Get(false, @"Visualiser\UX").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.UIWpf.UX.UXVisualiser, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
 
