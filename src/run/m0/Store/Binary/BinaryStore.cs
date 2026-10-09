@@ -265,6 +265,9 @@ namespace m0.Store.Binary
 
         public override void CommitTransaction()
         {
+            if (ReadOnly)
+                return;
+
             string fileName = GetIdentifierToUse();
 
             if (MinusZero.Instance.CommandLineParameters == null || !MinusZero.Instance.CommandLineParameters.NoBackup)
@@ -430,6 +433,9 @@ namespace m0.Store.Binary
             Load();
 
             Attach();
+
+            if (MinusZero.Instance.IsSystemStoreFile(GetIdentifierToUse()))
+                ReadOnly = true;
         }
 
         public override void Backup()

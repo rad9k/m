@@ -96,6 +96,9 @@ namespace m0.Bootstrap
 
         public static void Execute()
         {
+            MinusZero.Instance.ClearSystemStoreFiles();
+            MinusZero.Instance.RegisterSystemStoreFile("_bootstrap.m0j");
+
             JsonSerializationStore bootstrapStore = new JsonSerializationStore("_bootstrap.m0j", MinusZero.Instance, new AccessLevelEnum[] { });
 
             IVertex root = MinusZero.Instance.root;
@@ -108,6 +111,8 @@ namespace m0.Bootstrap
             {
                 string importVertexPath = e.To.Value.ToString();
                 string importFilePath = e.To.OutEdges[0].To.Value.ToString();
+
+                MinusZero.Instance.RegisterSystemStoreFile(importFilePath);
 
                 IVertex importRoot = GraphUtil.DivideQueryAndGetByPart(root, importVertexPath);
 

@@ -12,6 +12,7 @@ using m0.Graph;
 using m0.Graph.ExecutionFlow;
 using m0.Util;
 using m0.Store.FileSystem;
+using m0.ZeroTypes;
 
 namespace m0.Store.Json
 {
@@ -373,12 +374,15 @@ namespace m0.Store.Json
 
         public override void CommitTransaction()
         {
+            if (ReadOnly)
+                return;
+
             string fileName = GetIdentifierToUse();
 
             if (MinusZero.Instance.CommandLineParameters == null || !MinusZero.Instance.CommandLineParameters.NoBackup)
                 File.Copy(fileName, fileName + ".backup", true);
 
-            CommitTransaction(GetIdentifierToUse(), true);            
+            CommitTransaction(fileName, true);            
         }
 
         public void CommitTransaction(string fileName, bool checkIfIsDetached)
@@ -532,9 +536,11 @@ namespace m0.Store.Json
 
             foreach (IVertex vertex in VertexIdentifiersDictionary.Values)
                 foreach (IEdge edge in vertex.OutEdgesRaw)
-                    if (edge is IDetachableEdge detachableEdge && graphChangeTriggerMetaIdentity.MatchesEdgeMeta(detachableEdge))
-                        if (excludedVertexIdentifiers.Add(detachableEdge.ToIdentifier))
-                            toProcess.Push(detachableEdge.ToIdentifier);
+                    if (edge is IDetachableEdge detachableEdge &&
+                        graphChangeTriggerMetaIdentity.MatchesEdgeMeta(detachableEdge) &&
+                        IsVertexInThisStore(detachableEdge) &&
+                        excludedVertexIdentifiers.Add(detachableEdge.ToIdentifier))
+                        toProcess.Push(detachableEdge.ToIdentifier);
 
             while (toProcess.Count > 0)
             {
@@ -544,12 +550,54 @@ namespace m0.Store.Json
                     continue;
 
                 foreach (IEdge edge in vertexToProcess.OutEdgesRaw)
-                    if (edge is IDetachableEdge detachableEdge)
-                        if (excludedVertexIdentifiers.Add(detachableEdge.ToIdentifier))
-                            toProcess.Push(detachableEdge.ToIdentifier);
+                    if (edge is IDetachableEdge detachableEdge &&
+                        IsOwnedSubgraphEdge(detachableEdge) &&
+                        excludedVertexIdentifiers.Add(detachableEdge.ToIdentifier))
+                        toProcess.Push(detachableEdge.ToIdentifier);
             }
 
             return excludedVertexIdentifiers;
+        }
+
+        // Trigger payload stays out of the file. Links and vertices that live in another store do not,
+        // even when their identifier number matches a vertex in this store.
+        private bool IsOwnedSubgraphEdge(IDetachableEdge edge)
+        {
+            if (!IsVertexInThisStore(edge))
+                return false;
+
+            IVertex meta = ResolveMetaVertex(edge);
+
+            if (meta == null || meta.Value == null)
+                return false;
+
+            return !VertexOperations.IsLink(meta);
+        }
+
+        private bool IsVertexInThisStore(IDetachableEdge edge)
+        {
+            return edge.ToStoreTypeName == TypeName &&
+                edge.ToStoreIdentifier == Identifier;
+        }
+
+        // Commit runs after Detach, so edge.Meta is often null. Meta coordinates still point at the live vertex.
+        private IVertex ResolveMetaVertex(IDetachableEdge edge)
+        {
+            if (edge.Meta != null)
+                return edge.Meta;
+
+            IStore metaStore = MinusZero.Instance.GetStore(
+                edge.MetaStoreTypeName,
+                edge.MetaStoreIdentifier);
+
+            if (!(metaStore is StoreBase storeBase))
+                return null;
+
+            storeBase.VertexIdentifiersDictionary.TryGetValue(
+                edge.MetaIdentifier,
+                out IVertex metaVertex);
+
+            return metaVertex;
         }
 
         private int GetStoreId(JsonSerializationData data,
@@ -629,6 +677,9 @@ namespace m0.Store.Json
             Load();
 
             Attach();
+
+            if (MinusZero.Instance.IsSystemStoreFile(GetIdentifierToUse()))
+                ReadOnly = true;
         }
 
         public override void Backup()

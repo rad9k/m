@@ -46,6 +46,10 @@ namespace m0
 
         public IList<IStore> Stores { get { return stores; } }
 
+        // Full paths of files listed by _bootstrap.m0j. Reopening one of them must not write it back.
+        readonly HashSet<string> systemStoreFilePaths =
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
 
         public IStore tempstore; // need this public hack for LegacySystem_m0 based generation in m0_SYSTEM_GENERATE
 
@@ -437,6 +441,59 @@ namespace m0
         public void RemoveStore(IStore store)
         {
             Stores.Remove(store);
+        }
+
+        public void ClearSystemStoreFiles()
+        {
+            systemStoreFilePaths.Clear();
+        }
+
+        public void RegisterSystemStoreFile(string storeFilePath)
+        {
+            string fullPath = NormalizeSystemStoreFilePath(storeFilePath);
+
+            if (fullPath != null)
+                systemStoreFilePaths.Add(fullPath);
+        }
+
+        public bool IsSystemStoreFile(string storeFilePath)
+        {
+            string fullPath = NormalizeSystemStoreFilePath(storeFilePath);
+
+            return fullPath != null && systemStoreFilePaths.Contains(fullPath);
+        }
+
+        string NormalizeSystemStoreFilePath(string storeFilePath)
+        {
+            if (string.IsNullOrWhiteSpace(storeFilePath))
+                return null;
+
+            try
+            {
+                string path = storeFilePath;
+
+                if (!Path.IsPathRooted(path))
+                {
+                    if (string.IsNullOrEmpty(ApplicationPath))
+                        return null;
+
+                    path = Path.Combine(ApplicationPath, path);
+                }
+
+                return Path.GetFullPath(path);
+            }
+            catch (ArgumentException)
+            {
+                return null;
+            }
+            catch (NotSupportedException)
+            {
+                return null;
+            }
+            catch (IOException)
+            {
+                return null;
+            }
         }
 
         void FillBootstrapVertexes()
