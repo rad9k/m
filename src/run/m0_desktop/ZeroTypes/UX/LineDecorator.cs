@@ -67,8 +67,8 @@ namespace m0.ZeroTypes.UX
                      @"BaseEdge:",
                      @"BaseEdge:\From:",
                      @"BaseEdge:\Meta:",
-                     @"BaseEdge:\Meta:\$MinCardinality:",
-                     @"BaseEdge:\Meta:\$MaxCardinality:",
+                     @"BaseEdge:\To:\$MinCardinality:",
+                     @"BaseEdge:\To:\$MaxCardinality:",
                      @"BaseEdge:\To:",
                      @"StartAnchor:",
                      @"EndAnchor:",
@@ -437,12 +437,12 @@ namespace m0.ZeroTypes.UX
 
             IVertex minCardinalityVertex =
                 GraphUtil.GetQueryOutFirst(
-                    baseEdge.Meta,
+                    baseEdge.To,
                     "$MinCardinality",
                     null);
             IVertex maxCardinalityVertex =
                 GraphUtil.GetQueryOutFirst(
-                    baseEdge.Meta,
+                    baseEdge.To,
                     "$MaxCardinality",
                     null);
 
@@ -478,6 +478,9 @@ namespace m0.ZeroTypes.UX
             {
                 return minCardinality.Value.ToString();
             }
+
+            if (maxCardinality.Value == -1)            
+                return minCardinality.Value.ToString() + "..*";            
 
             return minCardinality.Value +
                 ".." +
