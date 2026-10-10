@@ -1786,6 +1786,9 @@ namespace m0.UIWpf.Visualisers
 
         protected bool CorrectWidth(TabInfo i, bool allowUpdateLayout = true)
         {
+            if (!MetaOnLeft)
+                return true;
+
             if (i.ControlInfos.Count() == 0)
                 return true;
 
@@ -1814,7 +1817,7 @@ namespace m0.UIWpf.Visualisers
 
             if(i.Sections.Count()==0)
             foreach (KeyValuePair<IVertex, ControlInfo> ci in i.ControlInfos) // if there are no sections
-                    {                       
+                    {
                         ci.Value.MetaControl.Width = maxMetaWidthInColumn[ci.Value.Column];
                         ci.Value.GapControl.Width = 0;
 
@@ -2022,6 +2025,9 @@ namespace m0.UIWpf.Visualisers
 
         private void FormVisualiser_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+
+            if (!MetaOnLeft)
+                return;
 
             if (!e.WidthChanged)
                 return;
@@ -2303,7 +2309,6 @@ namespace m0.UIWpf.Visualisers
                 
                 place.Children.Add(dataControl);
             }
-
 
             Border b = new Border();
 

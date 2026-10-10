@@ -4,10 +4,15 @@
 	package "UseCase"
 		"UseCase"
 			<@$InstanceCreationPriority :: "">
-			"Relation"
-				<@$EdgeTarget :: @UseCase\Actor>
+		"Actor"
+			<@$InstanceCreationPriority :: "">
+			"Use"
+				<@$EdgeTarget :: @UseCase\UseCase>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
 				"Straight"
-		"Actor"
-			<@$InstanceCreationPriority :: "">
+			"Use"
+				<@$EdgeTarget :: @System\Meta\ZeroUML\Structure\Component>
+				<@$MinCardinality :: "0">
+				<@$MaxCardinality :: "-1">
+				"Straight"

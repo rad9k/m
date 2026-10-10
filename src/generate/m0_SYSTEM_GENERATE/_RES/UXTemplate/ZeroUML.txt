@@ -1147,14 +1147,7 @@
 			<@InstanceCreation :: @InstanceCreationEnum\InstanceAndDirect>
 			<@DoNotShowInherited :: "True">
 			<@ItemVertex :: "">
-				<@$Inherits :: @ZeroUML\UseCaseItemVertex>		
-			<@UXDecoratorTemplate :: "Relation">
-				<@$Is :: @UXDecoratorTemplate>
-				<@EdgeTestQuery :: "$Is:\Relation">
-				<@ToDiagramItemTestQuery :: "Actor">
-				<@DecoratorClass :: @LineDecorator>
-				<@DecoratorVertex :: "">					
-					<@LineDecorator\HideLabel :: "True">
+				<@$Inherits :: @ZeroUML\UseCaseItemVertex>					
 			<@UXDecoratorTemplate :: "Inherits">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "$Inherits">
@@ -1185,6 +1178,13 @@
 				<@DecoratorClass :: @LineDecorator>
 				<@DecoratorVertex :: "">
 					<@LineDecorator\EndAnchor :: @LineEndEnum\Triangle>
+					<@LineDecorator\HideLabel :: "True">
+			<@UXDecoratorTemplate :: "Relation">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:\Use">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @LineDecorator>
+				<@DecoratorVertex :: "">					
 					<@LineDecorator\HideLabel :: "True">
 					
 		<@UXTemplate :: "Model">
