@@ -33,7 +33,7 @@ namespace m0.UIWpf.Visualisers
         public double Margin { get; set; } // do not want to expose those as PlatformClass.Vertex 
 
         private const string UnsectionedSectionName = "Other";
-        private const double SectionCornerInset = 4;
+        private const double SectionCornerInset = 0;
         private const double SectionGroupSpacing = 2;
         private static ControlTemplate sectionGroupTemplate;
         private readonly Dictionary<string, WrapPanel> sectionPanels =
