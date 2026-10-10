@@ -121,19 +121,16 @@ namespace m0.UIWpf.Visualisers
             return sectionName;
         }
 
-        private Border CreateSectionCard(string sectionName, out WrapPanel sectionPanel)
+        private GroupBox CreateSectionGroup(string sectionName, out WrapPanel sectionPanel)
         {
-            Border sectionCard = new Border
+            GroupBox sectionGroup = new GroupBox
             {
                 Background = (Brush)FindResource("0BackgroundBrush"),
                 BorderBrush = (Brush)FindResource("0VeryVeryLightForegroundBrush"),
                 BorderThickness = new Thickness(1),
-                CornerRadius = new CornerRadius(4),
-                Margin = new Thickness(1),
-                Padding = new Thickness(2)
+                Margin = new Thickness(0),
+                Padding = new Thickness(0)
             };
-
-            StackPanel sectionContent = new StackPanel();
 
             TextBlock sectionHeader = new TextBlock
             {
@@ -141,9 +138,7 @@ namespace m0.UIWpf.Visualisers
                 Background = (Brush)FindResource("0ForegroundBrush"),
                 Foreground = (Brush)FindResource("0BackgroundBrush"),
                 FontWeight = FontWeights.Bold,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                Margin = new Thickness(0, 0, 0, 1),
-                Padding = new Thickness(2, 1, 2, 1),
+                Padding = new Thickness(1, 0, 1, 0),
                 LayoutTransform = new ScaleTransform(Scale, Scale)
             };
 
@@ -152,22 +147,21 @@ namespace m0.UIWpf.Visualisers
                 Orientation = Orientation.Horizontal
             };
 
-            sectionContent.Children.Add(sectionHeader);
-            sectionContent.Children.Add(sectionPanel);
-            sectionCard.Child = sectionContent;
+            sectionGroup.Header = sectionHeader;
+            sectionGroup.Content = sectionPanel;
 
-            return sectionCard;
+            return sectionGroup;
         }
 
         protected void AddEdge(IEdge e, Panel sectionPanel)
         {
             StackPanel p = new StackPanel();
 
-            p.Margin = new Thickness(1);   
+            p.Margin = new Thickness(0);
             
             if(!GeneralUtil.CompareStrings(e.Meta.Value,"$Empty")){
                 TextBlock label=new TextBlock();
-                label.Foreground = (Brush)FindResource("0GrayBrush");
+                label.Foreground = (Brush)FindResource("0ForegroundBrush");
                 label.Text=e.Meta.Value.ToString();
                 label.LayoutTransform = new ScaleTransform(Scale, Scale);
                 
@@ -215,9 +209,9 @@ namespace m0.UIWpf.Visualisers
 
                             if (!sectionPanels.TryGetValue(sectionName, out sectionPanel))
                             {
-                                Border sectionCard = CreateSectionCard(sectionName, out sectionPanel);
+                                GroupBox sectionGroup = CreateSectionGroup(sectionName, out sectionPanel);
                                 sectionPanels.Add(sectionName, sectionPanel);
-                                Children.Add(sectionCard);
+                                Children.Add(sectionGroup);
                             }
 
                             AddEdge(ee, sectionPanel);
