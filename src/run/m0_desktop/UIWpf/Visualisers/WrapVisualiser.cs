@@ -12,6 +12,7 @@ using m0.ZeroTypes;
 using m0.Util;
 using System.Windows.Media;
 using System.Windows;
+using System.Windows.Markup;
 using m0.UIWpf.Foundation;
 using m0.UIWpf.Controls;
 using m0.UIWpf.Visualisers.Helper;
@@ -32,6 +33,9 @@ namespace m0.UIWpf.Visualisers
         public double Margin { get; set; } // do not want to expose those as PlatformClass.Vertex 
 
         private const string UnsectionedSectionName = "Other";
+        private const double SectionCornerInset = 4;
+        private const double SectionGroupSpacing = 2;
+        private static ControlTemplate sectionGroupTemplate;
         private readonly Dictionary<string, WrapPanel> sectionPanels =
             new Dictionary<string, WrapPanel>();
 
@@ -68,7 +72,7 @@ namespace m0.UIWpf.Visualisers
 
             Margin = 3;
         
-            this.Background = (Brush)FindResource("0BackgroundBrush");
+            this.Background = (Brush)FindResource("0LightBackgroundBrush");
 
             this.Orientation = Orientation.Horizontal;            
 
@@ -121,6 +125,31 @@ namespace m0.UIWpf.Visualisers
             return sectionName;
         }
 
+        private static ControlTemplate GetSectionGroupTemplate()
+        {
+            if (sectionGroupTemplate != null)
+                return sectionGroupTemplate;
+
+            string cornerRadius = SectionCornerInset.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            string xaml =
+                "<ControlTemplate xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\" TargetType=\"GroupBox\">" +
+                "<Grid SnapsToDevicePixels=\"True\">" +
+                "<Grid.RowDefinitions>" +
+                "<RowDefinition Height=\"Auto\"/>" +
+                "<RowDefinition Height=\"*\"/>" +
+                "</Grid.RowDefinitions>" +
+                "<Border Grid.RowSpan=\"2\" Background=\"{TemplateBinding Background}\" BorderBrush=\"{TemplateBinding BorderBrush}\" BorderThickness=\"{TemplateBinding BorderThickness}\" CornerRadius=\"" + cornerRadius + "\"/>" +
+                "<Border x:Name=\"Header\" Grid.Row=\"0\" Margin=\"0\" HorizontalAlignment=\"Stretch\" VerticalAlignment=\"Stretch\" Background=\"{DynamicResource 0ForegroundBrush}\" CornerRadius=\"" + cornerRadius + "," + cornerRadius + ",0,0\" Padding=\"2,0,2,0\">" +
+                "<ContentPresenter ContentSource=\"Header\" HorizontalAlignment=\"Stretch\" VerticalAlignment=\"Center\" RecognizesAccessKey=\"True\"/>" +
+                "</Border>" +
+                "<ContentPresenter Grid.Row=\"1\" Margin=\"{TemplateBinding Padding}\" HorizontalAlignment=\"{TemplateBinding HorizontalContentAlignment}\" VerticalAlignment=\"{TemplateBinding VerticalContentAlignment}\"/>" +
+                "</Grid>" +
+                "</ControlTemplate>";
+
+            sectionGroupTemplate = (ControlTemplate)XamlReader.Parse(xaml);
+            return sectionGroupTemplate;
+        }
+
         private GroupBox CreateSectionGroup(string sectionName, out WrapPanel sectionPanel)
         {
             GroupBox sectionGroup = new GroupBox
@@ -128,17 +157,22 @@ namespace m0.UIWpf.Visualisers
                 Background = (Brush)FindResource("0BackgroundBrush"),
                 BorderBrush = (Brush)FindResource("0VeryVeryLightForegroundBrush"),
                 BorderThickness = new Thickness(1),
-                Margin = new Thickness(0),
-                Padding = new Thickness(0)
+                Margin = new Thickness(SectionGroupSpacing),
+                Padding = new Thickness(1),
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                VerticalContentAlignment = VerticalAlignment.Stretch,
+                Template = GetSectionGroupTemplate()
             };
 
             TextBlock sectionHeader = new TextBlock
             {
                 Text = sectionName,
-                Background = (Brush)FindResource("0ForegroundBrush"),
                 Foreground = (Brush)FindResource("0BackgroundBrush"),
                 FontWeight = FontWeights.Bold,
-                Padding = new Thickness(1, 0, 1, 0),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(4, -1, 0, 0),
+                Padding = new Thickness(0),
                 LayoutTransform = new ScaleTransform(Scale, Scale)
             };
 
@@ -157,7 +191,7 @@ namespace m0.UIWpf.Visualisers
         {
             StackPanel p = new StackPanel();
 
-            p.Margin = new Thickness(0);
+            p.Margin = new Thickness(2, 0, 2, 0);
             
             if(!GeneralUtil.CompareStrings(e.Meta.Value,"$Empty")){
                 TextBlock label=new TextBlock();
