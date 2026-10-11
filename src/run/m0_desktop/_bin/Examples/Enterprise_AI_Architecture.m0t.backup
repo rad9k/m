@@ -5,7 +5,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			<@$Is :: @UX\UXContainer>
 			<@IsExpanded :: "True">
 			<@HasMiniatures :: "True">
-			<@Scale :: "30">
+			<@Scale :: "40">
 			<@BaseEdge :: "">
 				<@$Is :: @Edge>
 				<@From :: @'net10.0-windows7.0'\Examples\'Enterprise_AI_Architecture.m0t'>
@@ -2754,6 +2754,110 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@From :: @'Enterprise AI Architecture'\'Prompt DB'>
 						<@Meta :: @Structure\StaticComponent\Contain>
 						<@To :: @'Enterprise AI Architecture'\'Prompt DB'\'Environment reference'>
+			<@Item :: "">
+				<@$Is :: @UX\ImageItem>
+				<@Filename :: "ZeroUML\UseCase\actor.png">
+				<@Scale :: "100">
+				<@ShowIcons :: "False">
+				<@FontSize :: "14">
+				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+				<@Position :: "">
+					<@$Is :: @UX\Position>
+					<@X :: "2119.451111111103">
+					<@Y :: "475.0302134778342">
+				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Actor>
+				<@UX\Size :: "">
+					<@Width :: "72.93939393939377">
+					<@Height :: "153.37999999999994">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @$CodeRoot>
+					<@Meta :: @UseCase\Actor>
+					<@To :: @'Business User'>
+				<@Decorator :: "">
+					<@$Is :: @UX\LineDecorator>
+					<@Scale :: "100">
+					<@BaseEdge :: "">
+						<@From :: @'Business User'>
+						<@Meta :: @UseCase\Actor\Use<<"2">>>
+						<@To :: @'Enterprise AI Architecture'\'Reporting Front-end'>
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Actor\Relation>
+					<@HideLabel :: "True">
+
+					<@ToItem :: @'Enterprise AI Architecture'\'Component diagram'\Item:<<"6">>>
+				<@Decorator :: "">
+					<@$Is :: @UX\LineDecorator>
+					<@Scale :: "100">
+					<@BaseEdge :: "">
+						<@From :: @'Business User'>
+						<@Meta :: @UseCase\Actor\Use<<"2">>>
+						<@To :: @'Enterprise AI Architecture'\'Frontend systems'>
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Actor\Relation>
+					<@HideLabel :: "True">
+
+					<@ToItem :: @'Enterprise AI Architecture'\'Component diagram'\Item:<<"13">>>
+			<@Item :: "">
+				<@$Is :: @UX\ImageItem>
+				<@Filename :: "ZeroUML\UseCase\actor.png">
+				<@Scale :: "100">
+				<@ShowIcons :: "False">
+				<@FontSize :: "14">
+				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+				<@Position :: "">
+					<@$Is :: @UX\Position>
+					<@X :: "1755.3744444444449">
+					<@Y :: "475.0302134778342">
+				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Actor>
+				<@UX\Size :: "">
+					<@Width :: "72.93939393939365">
+					<@Height :: "126.36363636363643">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @$CodeRoot>
+					<@Meta :: @UseCase\Actor>
+					<@To :: @Customer>
+				<@Decorator :: "">
+					<@$Is :: @UX\LineDecorator>
+					<@Scale :: "100">
+					<@BaseEdge :: "">
+						<@From :: @Customer>
+						<@Meta :: @UseCase\Actor\Use<<"2">>>
+						<@To :: @'Enterprise AI Architecture'\'Frontend systems'>
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Actor\Relation>
+					<@HideLabel :: "True">
+
+					<@ToItem :: @'Enterprise AI Architecture'\'Component diagram'\Item:<<"13">>>
+			<@Item :: "">
+				<@$Is :: @UX\ImageItem>
+				<@Filename :: "ZeroUML\UseCase\actor.png">
+				<@Scale :: "100">
+				<@ShowIcons :: "False">
+				<@FontSize :: "14">
+				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+				<@Position :: "">
+					<@$Is :: @UX\Position>
+					<@X :: "1514.3332842532432">
+					<@Y :: "475.0302134778342">
+				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Actor>
+				<@UX\Size :: "">
+					<@Width :: "72.58111111110645">
+					<@Height :: "153.38">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @$CodeRoot>
+					<@Meta :: @UseCase\Actor>
+					<@To :: @'KPI Owner'>
+				<@Decorator :: "">
+					<@$Is :: @UX\LineDecorator>
+					<@Scale :: "100">
+					<@BaseEdge :: "">
+						<@From :: @'KPI Owner'>
+						<@Meta :: @UseCase\Actor\Use<<"2">>>
+						<@To :: @'Enterprise AI Architecture'\'KPI Governance'>
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Actor\Relation>
+					<@HideLabel :: "True">
+
+					<@ToItem :: @'Enterprise AI Architecture'\'Component diagram'\Item:<<"12">>>
 		<@Structure\Database :: "AI lakehouse">
 			<@$Is :: @Structure\Database>
 			<@Contain :: "Relational">
@@ -2968,3 +3072,13 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			<@Write :: @'Enterprise AI Architecture'\'AI lakehouse'\'Data lake'>
 		<@UseCase\Actor :: "Internal Buiness User">
 			<@$Is :: @UseCase\Actor>
+	<@UseCase\Actor :: "Business User">
+		<@$Is :: @UseCase\Actor>
+		<@Use :: @'Enterprise AI Architecture'\'Reporting Front-end'>
+		<@Use :: @'Enterprise AI Architecture'\'Frontend systems'>
+	<@UseCase\Actor :: "Customer">
+		<@$Is :: @UseCase\Actor>
+		<@Use :: @'Enterprise AI Architecture'\'Frontend systems'>
+	<@UseCase\Actor :: "KPI Owner">
+		<@$Is :: @UseCase\Actor>
+		<@Use :: @'Enterprise AI Architecture'\'KPI Governance'>
