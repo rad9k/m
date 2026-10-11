@@ -280,7 +280,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			<@$Is :: @UX\UXContainer>
 			<@IsExpanded :: "True">
 			<@HasMiniatures :: "True">
-			<@Scale :: "90">
+			<@Scale :: "70">
 			<@BaseEdge :: "">
 				<@$Is :: @Edge>
 				<@From :: @$CodeRoot>

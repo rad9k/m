@@ -623,6 +623,33 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Width :: "890.8962557678869">
 						<@Height :: "62.34727272727241">
 					<@BackgroundColor :: @Start\'Use cases scope'\'Use cases scope'\Item:<<"15">>\VeryVeryVeryLightAzure>
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "773.4900799600209">
+						<@Y :: "367.04834221334215">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Vertex>
+					<@ShowMeta :: "False">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Start\'Use cases scope'\'Domain Specyfic Laguage'\container>
+						<@Meta :: @$Empty>
+						<@To :: @Start\'Use cases scope'\'Domain Specyfic Laguage'\container\<<"4">>>
+					<@BackgroundColor :: "VeryVeryVeryLightBlue">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "237">
+						<@Blue :: "255">
+						<@Opacity :: "255">
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "60.276666666666756">
+						<@Height :: "62.34727272727241">
 			"Use case analysis"
 			"Requirements analysis"
 			"Domain model creation"
@@ -648,6 +675,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					""
 			package "Domain Specyfic Laguage"
 				"container"
+					""
 					""
 					""
 					""
