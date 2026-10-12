@@ -411,6 +411,7 @@ namespace m0.UIWpf
         // DOWN BEG
 
         bool ExpanderVisible_Down = false;
+        double? rememberedDownHeight;
 
         private void MouseEnter_Down(object sender, MouseEventArgs e) //
         {
@@ -479,6 +480,9 @@ namespace m0.UIWpf
                     Expander_Down.IsExpanded = false;
 
                 Content_Down.Height = contentElementHeight;
+
+                if (contentElementHeight > 0)
+                    rememberedDownHeight = contentElementHeight;
             }
         }
 
@@ -491,8 +495,13 @@ namespace m0.UIWpf
 
                 EnsureContentReady_Down();
 
-                if (Double.IsNaN(Content_Down.Height))
+                if (rememberedDownHeight.HasValue)
+                    Content_Down.Height = rememberedDownHeight.Value;
+                else if (Double.IsNaN(Content_Down.Height))
                     Content_Down.Height = this.ActualHeight / 5;
+
+                if (!Double.IsNaN(Content_Down.Height) && Content_Down.Height > 0)
+                    rememberedDownHeight = Content_Down.Height;
             }
         }
 
@@ -507,6 +516,7 @@ namespace m0.UIWpf
         // RIGHT BEG
 
         bool ExpanderVisible_Right = false;
+        double? rememberedRightWidth;
 
         private void MouseEnter_Right(object sender, MouseEventArgs e) //
         {
@@ -569,6 +579,9 @@ namespace m0.UIWpf
                     Expander_Right.IsExpanded = false;
 
                 Content_Right.Width = contentElementWidth;
+
+                if (contentElementWidth > 0)
+                    rememberedRightWidth = contentElementWidth;
             }
         }
 
@@ -581,12 +594,17 @@ namespace m0.UIWpf
 
                 EnsureContentReady_Right();
 
-                if (Double.IsNaN(Content_Right.Height)) {
+                if (rememberedRightWidth.HasValue)
+                    Content_Right.Width = rememberedRightWidth.Value;
+                else if (Double.IsNaN(Content_Right.Width)) {
                     if (this.ActualWidth < 300)
                         Content_Right.Width = this.ActualWidth - 50;
                     else
                         Content_Right.Width = 230;
                 }
+
+                if (!Double.IsNaN(Content_Right.Width) && Content_Right.Width > 0)
+                    rememberedRightWidth = Content_Right.Width;
             }
         }
 
