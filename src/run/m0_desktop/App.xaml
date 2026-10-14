@@ -8,6 +8,9 @@
                 <ResourceDictionary Source="ResourceDictionaryWhite.xaml"/>
                 <ResourceDictionary Source="iOSStyleTogglebutton.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <Style TargetType="Window">
+                <Setter Property="Icon" Value="pack://application:,,,/m0_desktop;component/Images/m0.ico"/>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

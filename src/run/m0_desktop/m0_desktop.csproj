@@ -3,6 +3,7 @@
     <TargetFramework>net10.0-windows7.0</TargetFramework>
     <LangVersion>8.0</LangVersion>
     <OutputType>WinExe</OutputType>
+    <ApplicationIcon>Images\m0.ico</ApplicationIcon>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
@@ -39,7 +40,7 @@
     <ProjectReference Include="..\m0\m0.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\Untitled1.png" />
+    <Resource Include="Images\m0.ico" />
     <Resource Include="UIWpf\Controls\AnimatedHideArea.txt" />
   </ItemGroup>
   <ItemGroup>
