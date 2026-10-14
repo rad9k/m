@@ -12,9 +12,11 @@ using m0.ZeroTypes;
 using m0.ZeroTypes.UX;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -25,6 +27,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using Xceed.Wpf.AvalonDock.Controls;
 using Xceed.Wpf.AvalonDock.Layout;
 
@@ -41,6 +44,32 @@ namespace m0
 
         public static TreeVisualiser mainTree;
 
+        private const double DefaultTreePaneWidth = 250;
+        private const double MinimumTreePaneWidth = 180;
+        private const double MaximumTreePaneWidth = 450;
+        private readonly string treePaneSettingsPath = System.IO.Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "m0",
+            "m0Main.layout.json");
+
+        private double rememberedTreePaneWidth = DefaultTreePaneWidth;
+        private bool rememberedTreePaneExpanded = true;
+        private const double CollapsedTreePaneWidth = 1;
+        private const double TreePaneAnimationDurationMilliseconds = 220;
+
+        private DispatcherTimer treePaneAnimationTimer;
+        private System.DateTime treePaneAnimationStartTime;
+        private double treePaneAnimationStartWidth;
+        private double treePaneAnimationTargetWidth;
+        private bool treePaneAnimationExpanding;
+        private bool treePaneAnimationInProgress;
+
+        private sealed class TreePaneSettings
+        {
+            public double Width { get; set; } = DefaultTreePaneWidth;
+            public bool IsExpanded { get; set; } = true;
+        }
+
         public PlatformTypeEnum GetPlatformType()
         {
             return PlatformTypeEnum.Desktop;
@@ -52,6 +81,8 @@ namespace m0
 
             InitializeComponent();
 
+            LoadTreePaneSettings();
+            root.IsVisibleChanged += Root_IsVisibleChanged;
             this.Loaded += new RoutedEventHandler(m0Main_Loaded);            
 
             this_static = this;            
@@ -120,7 +151,214 @@ namespace m0
             HwndSource source = HwndSource.FromHwnd(this.Handle);
             source.AddHook(new HwndSourceHook(WndProc));
 
+            RestoreTreePaneState();
             HasBeenShown = true;
+        }
+
+        private void TreePaneToggle_Click(object sender, RoutedEventArgs e)
+        {
+            if (TreePaneToggle.IsChecked == true)
+                ExpandTreePane();
+            else
+                CollapseTreePane();
+        }
+
+        private void CollapseTreePane()
+        {
+            RememberTreePaneWidth();
+            StartTreePaneAnimation(false);
+        }
+
+        private void ExpandTreePane()
+        {
+            StartTreePaneAnimation(true);
+        }
+
+        private void Root_IsVisibleChanged(object sender, EventArgs e)
+        {
+            if (treePaneAnimationInProgress)
+                return;
+
+            bool isExpanded = !root.IsHidden;
+
+            if (!isExpanded)
+                RememberTreePaneWidth();
+
+            rememberedTreePaneExpanded = isExpanded;
+            TreePaneToggle.IsChecked = isExpanded;
+        }
+
+        private void StartTreePaneAnimation(bool expand)
+        {
+            StopTreePaneAnimation();
+
+            treePaneAnimationExpanding = expand;
+            treePaneAnimationInProgress = true;
+            treePaneAnimationStartTime = System.DateTime.UtcNow;
+            treePaneAnimationStartWidth = GetCurrentTreePaneWidth();
+            treePaneAnimationTargetWidth = expand
+                ? ClampTreePaneWidth(rememberedTreePaneWidth)
+                : CollapsedTreePaneWidth;
+
+            if (expand)
+            {
+                root.Show();
+
+                if (treePaneAnimationStartWidth > treePaneAnimationTargetWidth)
+                    treePaneAnimationStartWidth = CollapsedTreePaneWidth;
+            }
+            else if (treePaneAnimationStartWidth <= CollapsedTreePaneWidth)
+            {
+                FinishTreePaneAnimation();
+                return;
+            }
+
+            treePaneAnimationTimer = new DispatcherTimer(
+                TimeSpan.FromMilliseconds(16),
+                DispatcherPriority.Render,
+                TreePaneAnimationTimer_Tick,
+                Dispatcher);
+        }
+
+        private void TreePaneAnimationTimer_Tick(object sender, EventArgs e)
+        {
+            double elapsed = (System.DateTime.UtcNow - treePaneAnimationStartTime).TotalMilliseconds;
+            double progress = Math.Min(1, elapsed / TreePaneAnimationDurationMilliseconds);
+            double easedProgress = progress * progress * (3 - (2 * progress));
+            double width = treePaneAnimationStartWidth
+                + ((treePaneAnimationTargetWidth - treePaneAnimationStartWidth) * easedProgress);
+
+            SetTreePaneWidth(width);
+
+            if (progress >= 1)
+                FinishTreePaneAnimation();
+        }
+
+        private void FinishTreePaneAnimation()
+        {
+            StopTreePaneAnimation();
+            SetTreePaneWidth(treePaneAnimationTargetWidth);
+
+            if (treePaneAnimationExpanding)
+            {
+                rememberedTreePaneExpanded = true;
+                TreePaneToggle.IsChecked = true;
+            }
+            else
+            {
+                // Keep the narrow handle outside AvalonDock, but remove the
+                // anchorable after the width animation has visually completed.
+                root.Hide();
+                rememberedTreePaneExpanded = false;
+                TreePaneToggle.IsChecked = false;
+            }
+
+            treePaneAnimationInProgress = false;
+            SaveTreePaneSettings();
+        }
+
+        private void StopTreePaneAnimation()
+        {
+            if (treePaneAnimationTimer == null)
+                return;
+
+            treePaneAnimationTimer.Stop();
+            treePaneAnimationTimer = null;
+        }
+
+        private double GetCurrentTreePaneWidth()
+        {
+            if (TreePane.DockWidth.IsAbsolute && TreePane.DockWidth.Value > 0)
+                return TreePane.DockWidth.Value;
+
+            return rememberedTreePaneWidth;
+        }
+
+        private void SetTreePaneWidth(double width)
+        {
+            TreePane.DockWidth = new GridLength(
+                Math.Max(CollapsedTreePaneWidth, width),
+                GridUnitType.Pixel);
+        }
+
+        private void RestoreTreePaneState()
+        {
+            if (rememberedTreePaneExpanded)
+            {
+                SetTreePaneWidth(ClampTreePaneWidth(rememberedTreePaneWidth));
+                TreePaneToggle.IsChecked = true;
+            }
+            else
+            {
+                SetTreePaneWidth(CollapsedTreePaneWidth);
+                TreePaneToggle.IsChecked = false;
+                root.Hide();
+            }
+        }
+
+        private void RememberTreePaneWidth()
+        {
+            if (!TreePane.DockWidth.IsAbsolute)
+                return;
+
+            double width = TreePane.DockWidth.Value;
+
+            if (Double.IsNaN(width) || Double.IsInfinity(width) || width <= 0)
+                return;
+
+            rememberedTreePaneWidth = ClampTreePaneWidth(width);
+        }
+
+        private static double ClampTreePaneWidth(double width)
+        {
+            if (Double.IsNaN(width) || Double.IsInfinity(width))
+                return DefaultTreePaneWidth;
+
+            return Math.Max(MinimumTreePaneWidth, Math.Min(MaximumTreePaneWidth, width));
+        }
+
+        private void LoadTreePaneSettings()
+        {
+            try
+            {
+                if (!File.Exists(treePaneSettingsPath))
+                    return;
+
+                TreePaneSettings settings = JsonSerializer.Deserialize<TreePaneSettings>(
+                    File.ReadAllText(treePaneSettingsPath));
+
+                if (settings == null)
+                    return;
+
+                rememberedTreePaneWidth = ClampTreePaneWidth(settings.Width);
+                rememberedTreePaneExpanded = settings.IsExpanded;
+            }
+            catch
+            {
+                rememberedTreePaneWidth = DefaultTreePaneWidth;
+                rememberedTreePaneExpanded = true;
+            }
+        }
+
+        private void SaveTreePaneSettings()
+        {
+            try
+            {
+                string directory = System.IO.Path.GetDirectoryName(treePaneSettingsPath);
+                Directory.CreateDirectory(directory);
+
+                File.WriteAllText(
+                    treePaneSettingsPath,
+                    JsonSerializer.Serialize(new TreePaneSettings
+                    {
+                        Width = rememberedTreePaneWidth,
+                        IsExpanded = rememberedTreePaneExpanded
+                    }));
+            }
+            catch
+            {
+                // Layout persistence must never prevent the main window from working.
+            }
         }
 
         static m0Main this_static;
@@ -408,6 +646,8 @@ namespace m0
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            RememberTreePaneWidth();
+            SaveTreePaneSettings();
             m0.MinusZero.Instance.Dispose();
         }
     }

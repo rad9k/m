@@ -12,7 +12,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@Meta :: @$Empty>
 				<@To :: @'Online retail model'>
 			<@SelectedEdges :: "">
-			<@ShowSelectedEdgesBaseEdge :: "False">
+			<@ShowSelectedEdgesBaseEdge :: "True">
 			<@Size :: "">
 				<@$Is :: @UX\Size>
 				<@Width :: "5000">
@@ -51,33 +51,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 				<@Position :: "">
 					<@$Is :: @UX\Position>
-					<@X :: "809.2">
-					<@Y :: "228.84000000000003">
-				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
-				<@ShowMeta :: "False">
-				<@ConstantLabel :: "class">
-				<@VisualiserClass :: @System\Meta\Visualiser\Class>
-				<@BackgroundColor :: "VeryVeryVeryLightGreen">
-					<@$Is :: @UX\Color>
-					<@Red :: "237">
-					<@Green :: "255">
-					<@Blue :: "237">
-					<@Opacity :: "255">
-				<@BaseEdge :: "">
-					<@$Is :: @Edge>
-					<@From :: @'Online retail model'>
-					<@Meta :: @Class>
-					<@To :: @'Online retail model'\Basket>
-			<@Item :: "">
-				<@$Is :: @UX\RectangleVisualiserItem>
-				<@Scale :: "100">
-				<@ShowIcons :: "True">
-				<@FontSize :: "14">
-				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
-				<@Position :: "">
-					<@$Is :: @UX\Position>
-					<@X :: "857.2">
-					<@Y :: "164.04">
+					<@X :: "634.36">
+					<@Y :: "329.06000000000006">
 				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
 				<@ShowMeta :: "False">
 				<@ConstantLabel :: "class">
@@ -93,6 +68,33 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@From :: @'Online retail model'>
 					<@Meta :: @Class>
 					<@To :: @'Online retail model'\Order>
+				<@Decorator :: "">
+					<@$Is :: @UX\LineDecorator>
+					<@Scale :: "100">
+					<@BaseEdge :: "">
+						<@From :: @'Online retail model'\Order>
+						<@Meta :: @Class\Association>
+						<@To :: @'Online retail model'\Order\User>
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Association>
+					<@ToItem :: @'Online retail model'\'Online retail model'\Item:<<"3">>>
+				<@Decorator :: "">
+					<@$Is :: @UX\LineDecorator>
+					<@Scale :: "100">
+					<@BaseEdge :: "">
+						<@From :: @'Online retail model'\Order>
+						<@Meta :: @Class\Association>
+						<@To :: @'Online retail model'\Order\Product>
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Association>
+					<@ToItem :: @'Online retail model'\'Online retail model'\Item:<<"1">>>
+				<@Decorator :: "">
+					<@$Is :: @UX\LineDecorator>
+					<@Scale :: "100">
+					<@BaseEdge :: "">
+						<@From :: @'Online retail model'\Order>
+						<@Meta :: @Class\Association>
+						<@To :: @'Online retail model'\Order\Payment>
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Association>
+					<@ToItem :: @'Online retail model'\'Online retail model'\Item:<<"8">>>
 			<@Item :: "">
 				<@$Is :: @UX\RectangleVisualiserItem>
 				<@Scale :: "100">
@@ -101,8 +103,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 				<@Position :: "">
 					<@$Is :: @UX\Position>
-					<@X :: "364.4">
-					<@Y :: "212.04">
+					<@X :: "458.79999999999995">
+					<@Y :: "113.63999999999999">
 				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
 				<@ShowMeta :: "False">
 				<@ConstantLabel :: "class">
@@ -118,6 +120,26 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@From :: @'Online retail model'>
 					<@Meta :: @Class>
 					<@To :: @'Online retail model'\User>
+				<@Decorator :: "">
+					<@$Is :: @UX\LineDecorator>
+					<@Scale :: "100">
+					<@BaseEdge :: "">
+						<@From :: @'Online retail model'\User>
+						<@Meta :: @Class\Aggregation>
+						<@To :: @'Online retail model'\User\Address>
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Aggregation>
+					<@StartAnchor :: @UX\LineEndEnum\Diamond>
+					<@ToItem :: @'Online retail model'\'Online retail model'\Item:<<"5">>>
+				<@Decorator :: "">
+					<@$Is :: @UX\LineDecorator>
+					<@Scale :: "100">
+					<@BaseEdge :: "">
+						<@From :: @'Online retail model'\User>
+						<@Meta :: @Class\Aggregation>
+						<@To :: @'Online retail model'\User\PaymentMethod>
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Aggregation>
+					<@StartAnchor :: @UX\LineEndEnum\Diamond>
+					<@ToItem :: @'Online retail model'\'Online retail model'\Item:<<"4">>>
 			<@Item :: "">
 				<@$Is :: @UX\RectangleVisualiserItem>
 				<@Scale :: "100">
@@ -126,8 +148,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 				<@Position :: "">
 					<@$Is :: @UX\Position>
-					<@X :: "127.60000000000005">
-					<@Y :: "289.64000000000004">
+					<@X :: "130.80000000000004">
+					<@Y :: "228.84">
 				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
 				<@ShowMeta :: "False">
 				<@ConstantLabel :: "class">
@@ -151,8 +173,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 				<@Position :: "">
 					<@$Is :: @UX\Position>
-					<@X :: "180.40000000000003">
-					<@Y :: "144.84">
+					<@X :: "198.80000000000007">
+					<@Y :: "84.04000000000002">
 				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
 				<@ShowMeta :: "False">
 				<@ConstantLabel :: "class">
@@ -168,6 +190,10 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@From :: @'Online retail model'>
 					<@Meta :: @Class>
 					<@To :: @'Online retail model'\Address>
+				<@Size :: "">
+					<@$Is :: @UX\Size>
+					<@Width :: "136.5266666666667">
+					<@Height :: "106.61999999999998">
 			<@Item :: "">
 				<@$Is :: @UX\RectangleVisualiserItem>
 				<@Scale :: "100">
@@ -176,8 +202,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 				<@Position :: "">
 					<@$Is :: @UX\Position>
-					<@X :: "92.39999999999998">
-					<@Y :: "376.8400000000001">
+					<@X :: "81.47666666666662">
+					<@Y :: "329.06000000000006">
 				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
 				<@ShowMeta :: "False">
 				<@ConstantLabel :: "class">
@@ -203,7 +229,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Inherits>
 					<@EndAnchor :: @UX\LineEndEnum\Triangle>
 					<@HideLabel :: "True">
-					<@ToItem :: @'Online retail model'\'Online retail model'\Item:<<"5">>>
+					<@ToItem :: @'Online retail model'\'Online retail model'\Item:<<"4">>>
 			<@Item :: "">
 				<@$Is :: @UX\RectangleVisualiserItem>
 				<@Scale :: "100">
@@ -212,8 +238,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 				<@Position :: "">
 					<@$Is :: @UX\Position>
-					<@X :: "228.4000000000001">
-					<@Y :: "380.04">
+					<@X :: "239.60000000000008">
+					<@Y :: "376.9400000000001">
 				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
 				<@ShowMeta :: "False">
 				<@ConstantLabel :: "class">
@@ -239,7 +265,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Inherits>
 					<@EndAnchor :: @UX\LineEndEnum\Triangle>
 					<@HideLabel :: "True">
-					<@ToItem :: @'Online retail model'\'Online retail model'\Item:<<"5">>>
+					<@ToItem :: @'Online retail model'\'Online retail model'\Item:<<"4">>>
 			<@Item :: "">
 				<@$Is :: @UX\RectangleVisualiserItem>
 				<@Scale :: "100">
@@ -248,8 +274,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 				<@Position :: "">
 					<@$Is :: @UX\Position>
-					<@X :: "666">
-					<@Y :: "353.64000000000004">
+					<@X :: "384.40000000000003">
+					<@Y :: "316.26000000000005">
 				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
 				<@ShowMeta :: "False">
 				<@ConstantLabel :: "class">
@@ -265,17 +291,181 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@From :: @'Online retail model'>
 					<@Meta :: @Class>
 					<@To :: @'Online retail model'\Payment>
+			<@Item :: "">
+				<@$Is :: @UX\ContainerItem>
+				<@IsExpanded :: "True">
+				<@HasMiniatures :: "True">
+				<@Scale :: "100">
+				<@SelectedEdges :: "">
+				<@ShowSelectedEdgesBaseEdge :: "False">
+				<@ShowIcons :: "True">
+				<@FontSize :: "14">
+				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+				<@Position :: "">
+					<@$Is :: @UX\Position>
+					<@X :: "81.47666666666662">
+					<@Y :: "480.04000000000013">
+				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Enum CONTAINER'>
+				<@ShowMeta :: "True">
+				<@BackgroundColor :: "VeryVeryVeryVeryLightGreen">
+					<@$Is :: @UX\Color>
+					<@Red :: "248">
+					<@Green :: "255">
+					<@Blue :: "248">
+					<@Opacity :: "255">
+				<@UX\MultiContainerItem\SubBackgroundColor :: "VeryVeryLightGreen">
+					<@$Is :: @UX\Color>
+					<@Red :: "210">
+					<@Green :: "255">
+					<@Blue :: "210">
+					<@Opacity :: "255">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @'Online retail model'>
+					<@Meta :: @Enum>
+					<@To :: @'Online retail model'\CardBrand>
+				<@Size :: "">
+					<@$Is :: @UX\Size>
+					<@Width :: "206.2133333333332">
+					<@Height :: "97.02000000000004">
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "10.523333333333355">
+						<@Y :: "10.180000000000064">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\EnumValue>
+					<@ShowMeta :: "True">
+
+					<@BackgroundColor :: "VeryVeryVeryLightGreen">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "255">
+						<@Blue :: "237">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @'Online retail model'\CardBrand>
+						<@Meta :: @Enum\EnumValue>
+						<@To :: @'Online retail model'\CardBrand\Visa>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "179.29000000000002">
+						<@Height :: "21.62">
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "10.993333333333382">
+						<@Y :: "41.98000000000002">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\EnumValue>
+					<@ShowMeta :: "True">
+
+					<@BackgroundColor :: "VeryVeryVeryLightGreen">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "255">
+						<@Blue :: "237">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @'Online retail model'\CardBrand>
+						<@Meta :: @Enum\EnumValue>
+						<@To :: @'Online retail model'\CardBrand\Mastercard>
 		class "Product"
-		class "Basket"
+			<@Attribute :: "Name">
+				<@$Is :: @Class\Attribute>
+				<@$EdgeTarget :: @String>
+			<@Attribute :: "Price">
+				<@$Is :: @Class\Attribute>
+				<@$EdgeTarget :: @Decimal>
+			<@Attribute :: "Description">
+				<@$Is :: @Class\Attribute>
+				<@$EdgeTarget :: @String>
 		class "Order"
+			association "User" @$Empty
+			association "Product" @$Empty
+			association "Payment" @$Empty
+			<@Attribute :: "Status">
+				<@$Is :: @Class\Attribute>
+				<@$EdgeTarget :: @'Online retail model'\Automata:'Order state'>
 		class "User"
+			<@Attribute :: "Name">
+				<@$Is :: @Class\Attribute>
+				<@$EdgeTarget :: @String>
+			<@Attribute :: "Surname">
+				<@$Is :: @Class\Attribute>
+				<@$EdgeTarget :: @String>
+			<@Attribute :: "Email">
+				<@$Is :: @Class\Attribute>
+				<@$EdgeTarget :: @String>
+			<@Attribute :: "Password">
+				<@$Is :: @Class\Attribute>
+				<@$EdgeTarget :: @String>
+			aggregation "Address" @$Empty
+			aggregation "PaymentMethod" @$Empty
 		class "PaymentMethod"
+			<@Attribute :: "BusinessID">
+				<@$Is :: @Class\Attribute>
+				<@$EdgeTarget :: @String>
 		class "Address"
+			<@Attribute :: "Address line 1">
+				<@$Is :: @Class\Attribute>
+				<@$EdgeTarget :: @String>
+			<@Attribute :: "Address line 2">
+				<@$Is :: @Class\Attribute>
+				<@$EdgeTarget :: @String>
+			<@Attribute :: "Postal code">
+				<@$Is :: @Class\Attribute>
+				<@$EdgeTarget :: @String>
+			<@Attribute :: "City">
+				<@$Is :: @Class\Attribute>
+				<@$EdgeTarget :: @String>
+			<@Attribute :: "Country">
+				<@$Is :: @Class\Attribute>
+				<@$EdgeTarget :: @String>
 		class "Card"
 			inherits @$Empty
+			inherits @'Online retail model'\PaymentMethod
+			<@Attribute :: "Owner">
+				<@$Is :: @Class\Attribute>
+				<@$EdgeTarget :: @String>
+			<@Attribute :: "NumberLast4">
+				<@$Is :: @Class\Attribute>
+				<@$EdgeTarget :: @String>
+			<@Attribute :: "ExpiryMonth">
+				<@$Is :: @Class\Attribute>
+				<@$EdgeTarget :: @Integer>
+			<@Attribute :: "ExpiryYear">
+				<@$Is :: @Class\Attribute>
+				<@$EdgeTarget :: @Integer>
+			<@Attribute :: "Brand">
+				<@$Is :: @Class\Attribute>
+				<@$EdgeTarget :: @'Online retail model'\CardBrand>
 		class "PayPal"
 			inherits @$Empty
+			inherits @'Online retail model'\PaymentMethod
+			<@Attribute :: "Email">
+				<@$Is :: @Class\Attribute>
+				<@$EdgeTarget :: @String>
+			<@Attribute :: "PayerId">
+				<@$Is :: @Class\Attribute>
+				<@$EdgeTarget :: @String>
 		class "Payment"
+			<@Attribute :: "LastActionTimestamp">
+				<@$Is :: @Class\Attribute>
+				<@$EdgeTarget :: @DateTime>
+			<@Attribute :: "Ammount">
+				<@$Is :: @Class\Attribute>
+				<@$EdgeTarget :: @Decimal>
 		<@UX\UXContainer :: "Order state">
 			<@$Is :: @UX\UXContainer>
 			<@IsExpanded :: "True">
@@ -1003,3 +1193,4 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			state "ReturnDelivered"
 				transition @'Online retail model'\Automata:'Order state'\ReturnConfirmed
 				transition @'Online retail model'\Automata:'Order state'\ReturnDisputed
+		enum "CardBrand" ("Visa", "Mastercard")

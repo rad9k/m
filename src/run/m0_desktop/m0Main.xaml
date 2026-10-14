@@ -3,18 +3,84 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="-0 // version 1.0" Height="600" Width="800"  xmlns:avalonDock="http://schemas.xceed.com/wpf/xaml/avalondock"  WindowStartupLocation="CenterScreen" Closing="Window_Closing" Closed="Window_Closed"
         Icon="pack://application:,,,/m0_desktop;component/Images/m0.ico">
-    <avalonDock:DockingManager x:Name="dockingManager" >
-        <avalonDock:DockingManager.Theme>
-            <avalonDock:MetroTheme/>
-        </avalonDock:DockingManager.Theme>
-        <avalonDock:LayoutRoot >
+    <Grid>
+        <Grid.Resources>
+            <ControlTemplate x:Key="TreePaneArrowToggleTemplate"
+                             TargetType="{x:Type ToggleButton}">
+                <Border Background="Transparent">
+                    <Path x:Name="Arrow"
+                          Data="M 1,1.5 L 4.5,5 8,1.5"
+                          Stroke="#FF666666"
+                          StrokeThickness="2"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          RenderTransformOrigin="0.5,0.5">
+                        <Path.RenderTransform>
+                            <RotateTransform Angle="90"/>
+                        </Path.RenderTransform>
+                    </Path>
+                </Border>
+                <ControlTemplate.Triggers>
+                    <Trigger Property="IsChecked" Value="True">
+                        <Trigger.EnterActions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetName="Arrow"
+                                                     Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
+                                                     To="270"
+                                                     Duration="0:0:0.2"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </Trigger.EnterActions>
+                        <Trigger.ExitActions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetName="Arrow"
+                                                     Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
+                                                     To="90"
+                                                     Duration="0:0:0.2"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </Trigger.ExitActions>
+                    </Trigger>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter TargetName="Arrow" Property="Stroke" Value="#FF222222"/>
+                    </Trigger>
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter TargetName="Arrow" Property="Stroke" Value="#FF003366"/>
+                    </Trigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+        </Grid.Resources>
+
+        <avalonDock:DockingManager x:Name="dockingManager" >
+            <avalonDock:DockingManager.Theme>
+                <avalonDock:MetroTheme/>
+            </avalonDock:DockingManager.Theme>
+            <avalonDock:LayoutRoot >
                 <avalonDock:LayoutPanel Orientation="Horizontal" >
-                <avalonDock:LayoutDocumentPane x:Name="Pane"/>
-                    <avalonDock:LayoutAnchorablePane DockWidth="250">
-                        <avalonDock:LayoutAnchorable Title="" x:Name="root" CanClose="False" CanHide="False" CanAutoHide="False" CanDockAsTabbedDocument="False" CanFloat="True" />
-                            
+                    <avalonDock:LayoutDocumentPane x:Name="Pane"/>
+                    <avalonDock:LayoutAnchorablePane x:Name="TreePane" DockWidth="250">
+                        <avalonDock:LayoutAnchorable Title="" x:Name="root" CanClose="False" CanHide="True" CanAutoHide="False" CanDockAsTabbedDocument="False" CanFloat="True" />
                     </avalonDock:LayoutAnchorablePane>
-                </avalonDock:LayoutPanel>                
+                </avalonDock:LayoutPanel>
             </avalonDock:LayoutRoot>
-        </avalonDock:DockingManager>     
+        </avalonDock:DockingManager>
+
+        <!-- This control is deliberately outside AvalonDock's layout. It remains
+             available when the tree anchorable is hidden and consumes no layout
+             column or row. -->
+        <ToggleButton x:Name="TreePaneToggle"
+                      Width="20"
+                      Height="44"
+                      HorizontalAlignment="Right"
+                      VerticalAlignment="Center"
+                      Margin="0,0,2,0"
+                      Panel.ZIndex="10"
+                      IsChecked="True"
+                      Click="TreePaneToggle_Click"
+                      ToolTip="Pokaż/ukryj drzewo"
+                      FocusVisualStyle="{x:Null}"
+                      Template="{StaticResource TreePaneArrowToggleTemplate}"/>
+    </Grid>
 </Window>
