@@ -24,8 +24,14 @@ namespace m0.UIWpf.Forms
         AxisAngleRotation3D _groupYaw;
         TranslateTransform3D _barMove;
         PointLight _point;
+        PointLight _glint;
+        PerspectiveCamera _camera;
         PieceSpin _ringSpin;
         PieceSpin _barSpin;
+        double _heartAt = 3.4;
+        bool _heartOn;
+        double _heartStart;
+        double _punchUntil = -1;
         double _pointerX = 0.5;
         double _pointerY = 0.34;
         double _yaw;
@@ -91,12 +97,20 @@ namespace m0.UIWpf.Forms
                 LinearAttenuation = 0.05
             };
 
+            _glint = new PointLight(Color.FromRgb(210, 236, 255), new Point3D(1.6, 0.3, 0.8))
+            {
+                Range = 8,
+                ConstantAttenuation = 0.85,
+                LinearAttenuation = 0.22
+            };
+
             var lights = new Model3DGroup();
             lights.Children.Add(new AmbientLight(Color.FromRgb(72, 92, 124)));
             lights.Children.Add(new DirectionalLight(Color.FromRgb(150, 176, 214), new Vector3D(0.35, -0.55, -1)));
             lights.Children.Add(_point);
+            lights.Children.Add(_glint);
 
-            view.Camera = new PerspectiveCamera
+            _camera = new PerspectiveCamera
             {
                 Position = new Point3D(0, 0.2, 5.25),
                 LookDirection = new Vector3D(0, 0, -1),
@@ -105,6 +119,7 @@ namespace m0.UIWpf.Forms
                 NearPlaneDistance = 0.05,
                 FarPlaneDistance = 30
             };
+            view.Camera = _camera;
             view.Children.Clear();
             view.Children.Add(new ModelVisual3D { Content = lights });
             view.Children.Add(new ModelVisual3D { Content = mark });
@@ -150,14 +165,59 @@ namespace m0.UIWpf.Forms
             _groupPitch.Angle = _pitch;
 
             _barMove.OffsetY = BarRestY + Math.Sin(t * 1.15) * 0.02;
-            Advance(_ringSpin, t);
-            Advance(_barSpin, t);
+            if (Advance(_ringSpin, t) || Advance(_barSpin, t))
+                _punchUntil = t + 0.42;
+            UpdateHeart(t);
 
             double targetX = (_pointerX - 0.5) * 3.6;
             double targetY = (0.4 - _pointerY) * 2.8 + 0.35;
             _lightX += (targetX - _lightX) * 0.16;
             _lightY += (targetY - _lightY) * 0.16;
             _point.Position = new Point3D(_lightX, _lightY, 2.05);
+
+            double glint = t * 1.15;
+            _glint.Position = new Point3D(
+                Math.Cos(glint) * 1.65,
+                0.28 + Math.Sin(glint * 2) * 0.55,
+                Math.Sin(glint) * 1.25 + 0.55);
+
+            double punch = 0;
+            if (t < _punchUntil)
+                punch = Math.Sin(Clamp01(1 - (_punchUntil - t) / 0.42) * Math.PI);
+            _camera.Position = new Point3D(0, 0.2, 5.25 - punch * 0.55);
+        }
+
+        void UpdateHeart(double t)
+        {
+            if (_ringSpin.Going)
+            {
+                _heartOn = false;
+                if (t >= _heartAt)
+                    _heartAt = t + 0.5;
+                return;
+            }
+
+            if (!_heartOn)
+            {
+                if (t < _heartAt)
+                    return;
+                _heartOn = true;
+                _heartStart = t;
+            }
+
+            double u = (t - _heartStart) / 0.64;
+            if (u >= 1)
+            {
+                _heartOn = false;
+                _heartAt = t + 6 + _random.NextDouble() * 6;
+                _ringSpin.Scale.ScaleX = _ringSpin.Scale.ScaleY = _ringSpin.Scale.ScaleZ = 1;
+                return;
+            }
+
+            double lub = Math.Exp(-Math.Pow((u - 0.22) / 0.09, 2));
+            double dub = Math.Exp(-Math.Pow((u - 0.48) / 0.07, 2));
+            double scale = 1 + 0.12 * lub + 0.07 * dub;
+            _ringSpin.Scale.ScaleX = _ringSpin.Scale.ScaleY = _ringSpin.Scale.ScaleZ = scale;
         }
 
         static PieceSpin CreatePieceSpin()
@@ -193,12 +253,12 @@ namespace m0.UIWpf.Forms
             spin.NextAt = now + wait;
         }
 
-        void Advance(PieceSpin spin, double t)
+        bool Advance(PieceSpin spin, double t)
         {
             if (!spin.Going)
             {
                 if (t < spin.NextAt)
-                    return;
+                    return false;
 
                 spin.Going = true;
                 spin.StartedAt = t;
@@ -213,7 +273,7 @@ namespace m0.UIWpf.Forms
             if (u >= 1)
             {
                 Arm(spin, t, false);
-                return;
+                return true;
             }
 
             double eased = EaseInOut(Clamp01(u));
@@ -222,6 +282,7 @@ namespace m0.UIWpf.Forms
             double scale = 1 + pulse * 0.16;
             spin.Scale.ScaleX = spin.Scale.ScaleY = spin.Scale.ScaleZ = scale;
             spin.Emissive.Color = LerpColor(RestGlow, SpinGlow, pulse);
+            return false;
         }
 
         Vector3D RandomAxis()
