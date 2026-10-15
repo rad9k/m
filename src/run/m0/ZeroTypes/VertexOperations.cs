@@ -845,45 +845,152 @@ namespace m0.ZeroTypes
         public static bool IsLink_OldVersion(IVertex e_Meta) // not handling IsAssiciation. and now: yes IsLink_OldVersion and IsLink needs to be aligned
                                                              // BUT: to align them we migh need to have conistent "link" theory and for now it seems that there are holes in in (at least need two different versions)
         {
-            if (e_Meta.Value.ToString() == "FormalTextLanguageProcessing")
-            {
-                int x = 0;
-            }
+            bool isEdgeTargetMeta = GeneralUtil.CompareStrings(e_Meta.Value, "$EdgeTarget");
+            bool hasEdgeTarget = GraphUtil.ExistQueryOut(e_Meta, "$EdgeTarget", null);
+            bool hasVertexTarget = GraphUtil.ExistQueryOut(e_Meta, "$VertexTarget", null);
+            bool hasIsAggregation = GraphUtil.ExistQueryOut(e_Meta, "$IsAggregation", null);
+            bool hasExplicitIsLink = GraphUtil.GetQueryOutFirst(e_Meta, "$IsLink", null) != null;
 
-            if (GeneralUtil.CompareStrings(e_Meta.Value, "$EdgeTarget"))
-                return true;            
+            if (isEdgeTargetMeta)
+                return LogIsLinkDecision(
+                    "IsLink_OldVersion",
+                    e_Meta,
+                    true,
+                    "$EdgeTargetMeta",
+                    hasEdgeTarget,
+                    hasVertexTarget,
+                    hasIsAggregation,
+                    hasExplicitIsLink);
 
-            if (GraphUtil.ExistQueryOut(e_Meta, "$EdgeTarget", null) && !GraphUtil.ExistQueryOut(e_Meta, "$IsAggregation", null))
-                return true;
+            if (hasEdgeTarget && !hasIsAggregation)
+                return LogIsLinkDecision(
+                    "IsLink_OldVersion",
+                    e_Meta,
+                    true,
+                    "EdgeTargetWithoutIsAggregation",
+                    hasEdgeTarget,
+                    hasVertexTarget,
+                    hasIsAggregation,
+                    hasExplicitIsLink);
 
-            if (GraphUtil.GetQueryOutFirst(e_Meta, "$IsLink", null) != null)
-                return true;
+            if (hasExplicitIsLink)
+                return LogIsLinkDecision(
+                    "IsLink_OldVersion",
+                    e_Meta,
+                    true,
+                    "ExplicitIsLink",
+                    hasEdgeTarget,
+                    hasVertexTarget,
+                    hasIsAggregation,
+                    hasExplicitIsLink);
 
-            return false;
+            return LogIsLinkDecision(
+                "IsLink_OldVersion",
+                e_Meta,
+                false,
+                "NoLinkRule",
+                hasEdgeTarget,
+                hasVertexTarget,
+                hasIsAggregation,
+                hasExplicitIsLink);
         }
 
         public static bool IsLink(IVertex e_Meta)
         {
-            if (e_Meta.Value.ToString() == "FormalTextLanguageProcessing")
+            bool isEdgeTargetMeta = GeneralUtil.CompareStrings(e_Meta.Value, "$EdgeTarget");
+            bool isAssociationNameHack = GeneralUtil.CompareStrings(e_Meta.Value, "Association");
+            bool hasEdgeTarget = GraphUtil.ExistQueryOut(e_Meta, "$EdgeTarget", null);
+            bool hasVertexTarget = GraphUtil.ExistQueryOut(e_Meta, "$VertexTarget", null);
+            bool hasIsAggregation = GraphUtil.ExistQueryOut(e_Meta, "$IsAggregation", null);
+            bool hasExplicitIsLink = GraphUtil.GetQueryOutFirst(e_Meta, "$IsLink", null) != null;
+
+            if (isEdgeTargetMeta)
+                return LogIsLinkDecision(
+                    "IsLink",
+                    e_Meta,
+                    true,
+                    "$EdgeTargetMeta",
+                    hasEdgeTarget,
+                    hasVertexTarget,
+                    hasIsAggregation,
+                    hasExplicitIsLink);
+
+            if (isAssociationNameHack)
+                return LogIsLinkDecision(
+                    "IsLink",
+                    e_Meta,
+                    true,
+                    "AssociationNameHack",
+                    hasEdgeTarget,
+                    hasVertexTarget,
+                    hasIsAggregation,
+                    hasExplicitIsLink);
+
+            if (hasEdgeTarget && !hasIsAggregation)
+                return LogIsLinkDecision(
+                    "IsLink",
+                    e_Meta,
+                    true,
+                    "EdgeTargetWithoutIsAggregation",
+                    hasEdgeTarget,
+                    hasVertexTarget,
+                    hasIsAggregation,
+                    hasExplicitIsLink);
+
+            if (hasExplicitIsLink)
+                return LogIsLinkDecision(
+                    "IsLink",
+                    e_Meta,
+                    true,
+                    "ExplicitIsLink",
+                    hasEdgeTarget,
+                    hasVertexTarget,
+                    hasIsAggregation,
+                    hasExplicitIsLink);
+
+            return LogIsLinkDecision(
+                "IsLink",
+                e_Meta,
+                false,
+                "NoLinkRule",
+                hasEdgeTarget,
+                hasVertexTarget,
+                hasIsAggregation,
+                hasExplicitIsLink);
+        }
+
+        private static bool LogIsLinkDecision(
+            string method,
+            IVertex metaVertex,
+            bool result,
+            string rule,
+            bool hasEdgeTarget,
+            bool hasVertexTarget,
+            bool hasIsAggregation,
+            bool hasExplicitIsLink)
+        {
+            if (hasEdgeTarget ||
+                hasVertexTarget ||
+                hasIsAggregation ||
+                hasExplicitIsLink ||
+                GeneralUtil.CompareStrings(metaVertex.Value, "Association"))
             {
-                int x = 0;
+                MinusZero.Instance.Log(
+                    1,
+                    "IsAggregation.IsLink",
+                    "method=" + method +
+                    " result=" + result +
+                    " rule=" + rule +
+                    " metaValue=" + Convert.ToString(metaVertex.Value) +
+                    " metaId=" + Convert.ToString(metaVertex.Identifier) +
+                    " hasEdgeTarget=" + hasEdgeTarget +
+                    " hasVertexTarget=" + hasVertexTarget +
+                    " hasIsAggregation=" + hasIsAggregation +
+                    " hasExplicitIsLink=" + hasExplicitIsLink +
+                    " genericVertexTargetRuleWouldLink=" + (hasVertexTarget && !hasIsAggregation));
             }
 
-            if (GeneralUtil.CompareStrings(e_Meta.Value, "$EdgeTarget"))
-                return true;
-
-            if (GeneralUtil.CompareStrings(e_Meta.Value, "Association")) // THIS IS A HACK. as 
-            // if (GraphUtil.ExistQueryOut(e_Meta, "$VertexTarget", null) && !GraphUtil.ExistQueryOut(e_Meta, "$IsAggregation", null)) return true;
-            // causes problems in graph2vertex at least
-                return true;
-
-            if (GraphUtil.ExistQueryOut(e_Meta, "$EdgeTarget", null) && !GraphUtil.ExistQueryOut(e_Meta, "$IsAggregation", null))
-                return true;            
-
-            if (GraphUtil.GetQueryOutFirst(e_Meta, "$IsLink", null) != null)
-                return true;
-
-            return false;
+            return result;
         }
 
         public static bool IsLink(IEdge e)
@@ -1201,7 +1308,25 @@ namespace m0.ZeroTypes
 
         public static IEdge AddEdgeOrVertexByMeta(IVertex baseVertex, IVertex metaVertex, IVertex toVertex, bool CreateEdgeOnly, bool ForceShowEditForm)
         {
-            if (GraphUtil.ExistQueryOut(metaVertex,"$VertexTarget", null)
+            bool hasVertexTarget = GraphUtil.ExistQueryOut(metaVertex, "$VertexTarget", null);
+            bool hasIsAggregation = GraphUtil.ExistQueryOut(metaVertex, "$IsAggregation", null);
+
+            MinusZero.Instance.Log(
+                1,
+                "IsAggregation.AddEdgeOrVertexByMeta",
+                "baseValue=" + Convert.ToString(baseVertex?.Value) +
+                " baseId=" + Convert.ToString(baseVertex?.Identifier) +
+                " metaValue=" + Convert.ToString(metaVertex?.Value) +
+                " metaId=" + Convert.ToString(metaVertex?.Identifier) +
+                " toValue=" + Convert.ToString(toVertex?.Value) +
+                " toId=" + Convert.ToString(toVertex?.Identifier) +
+                " createEdgeOnly=" + CreateEdgeOnly +
+                " forceShowEditForm=" + ForceShowEditForm +
+                " hasVertexTarget=" + hasVertexTarget +
+                " hasIsAggregation=" + hasIsAggregation +
+                " selectedPath=" + ((hasVertexTarget && !CreateEdgeOnly) ? "RelationVertex" : "DirectEdge"));
+
+            if (hasVertexTarget
                 && !CreateEdgeOnly
                 )
             {                
@@ -1210,6 +1335,15 @@ namespace m0.ZeroTypes
                 IEdge e = new EasyEdge(baseVertex, metaVertex, n);
 
                 n.AddEdge(MinusZero.Instance.EdgeTarget, toVertex);
+
+                MinusZero.Instance.Log(
+                    1,
+                    "IsAggregation.AddEdgeOrVertexByMeta",
+                    "createdRelationValue=" + Convert.ToString(n.Value) +
+                    " createdRelationId=" + Convert.ToString(n.Identifier) +
+                    " relationHasIsAggregation=" + GraphUtil.ExistQueryOut(n, "$IsAggregation", null) +
+                    " edgeTargetValue=" + Convert.ToString(toVertex?.Value) +
+                    " edgeTargetId=" + Convert.ToString(toVertex?.Identifier));
 
                 if (ForceShowEditForm == true)
                     MinusZero.Instance.UserInteraction.EditEdge(e.To);
@@ -1236,6 +1370,57 @@ namespace m0.ZeroTypes
         {
             IEdge ne = null;
             IVertex nv;
+            bool metaHasEdgeTarget = GraphUtil.ExistQueryOut(metaVertex, "$EdgeTarget", null);
+            bool metaHasVertexTarget = GraphUtil.ExistQueryOut(metaVertex, "$VertexTarget", null);
+            bool metaHasIsAggregation = GraphUtil.ExistQueryOut(metaVertex, "$IsAggregation", null);
+            bool metaHasExplicitIsLink = GraphUtil.ExistQueryOut(metaVertex, "$IsLink", null);
+            bool edgeMetaHasEdgeTarget =
+                edgeVertex != null &&
+                GraphUtil.ExistQueryOut(edgeVertex, "$EdgeTarget", null);
+            bool edgeMetaHasVertexTarget =
+                edgeVertex != null &&
+                GraphUtil.ExistQueryOut(edgeVertex, "$VertexTarget", null);
+            bool edgeMetaHasIsAggregation =
+                edgeVertex != null &&
+                GraphUtil.ExistQueryOut(edgeVertex, "$IsAggregation", null);
+            bool edgeMetaHasExplicitIsLink =
+                edgeVertex != null &&
+                GraphUtil.ExistQueryOut(edgeVertex, "$IsLink", null);
+            bool shouldLogIsAggregationDiagnostics =
+                metaHasEdgeTarget ||
+                metaHasVertexTarget ||
+                metaHasIsAggregation ||
+                metaHasExplicitIsLink ||
+                GeneralUtil.CompareStrings(metaVertex.Value, "Association") ||
+                edgeMetaHasEdgeTarget ||
+                edgeMetaHasVertexTarget ||
+                edgeMetaHasIsAggregation ||
+                edgeMetaHasExplicitIsLink ||
+                (edgeVertex != null && GeneralUtil.CompareStrings(edgeVertex.Value, "Association"));
+
+            if (shouldLogIsAggregationDiagnostics)
+            {
+                MinusZero.Instance.Log(
+                    1,
+                    "IsAggregation.AddInstance",
+                    "phase=BeforeCreate" +
+                    " baseValue=" + Convert.ToString(baseVertex?.Value) +
+                    " baseId=" + Convert.ToString(baseVertex?.Identifier) +
+                    " metaValue=" + Convert.ToString(metaVertex.Value) +
+                    " metaId=" + Convert.ToString(metaVertex.Identifier) +
+                    " edgeMetaValue=" + Convert.ToString(edgeVertex?.Value) +
+                    " edgeMetaId=" + Convert.ToString(edgeVertex?.Identifier) +
+                    " isRelationMeta=" + isRelationMeta +
+                    " metaHasEdgeTarget=" + metaHasEdgeTarget +
+                    " metaHasVertexTarget=" + metaHasVertexTarget +
+                    " metaHasIsAggregation=" + metaHasIsAggregation +
+                    " metaHasExplicitIsLink=" + metaHasExplicitIsLink +
+                    " edgeMetaHasEdgeTarget=" + edgeMetaHasEdgeTarget +
+                    " edgeMetaHasVertexTarget=" + edgeMetaHasVertexTarget +
+                    " edgeMetaHasIsAggregation=" + edgeMetaHasIsAggregation +
+                    " edgeMetaHasExplicitIsLink=" + edgeMetaHasExplicitIsLink +
+                    " currentRuleWillAddIsAggregation=" + (isRelationMeta && metaHasIsAggregation));
+            }
 
             if (baseVertex != null)
             {
@@ -1259,7 +1444,7 @@ namespace m0.ZeroTypes
 
             // Base vertex of a relation keeps $IsAggregation from its meta.
             // UX item instances and decorator vertices do not.
-            if (isRelationMeta && GraphUtil.ExistQueryOut(metaVertex, "$IsAggregation", null))
+            if (isRelationMeta && metaHasIsAggregation)
                 nv.AddEdge(MinusZero.Instance.IsAggregation, MinusZero.Instance.Empty);
 
             ///
@@ -1305,6 +1490,19 @@ namespace m0.ZeroTypes
                         nv.AddVertex(child.To, null); // ? XXX
             }
 
+            if (shouldLogIsAggregationDiagnostics)
+            {
+                MinusZero.Instance.Log(
+                    1,
+                    "IsAggregation.AddInstance",
+                    "phase=AfterCreate" +
+                    " createdValue=" + Convert.ToString(nv.Value) +
+                    " createdId=" + Convert.ToString(nv.Identifier) +
+                    " actualHasIsAggregation=" + GraphUtil.ExistQueryOut(nv, "$IsAggregation", null) +
+                    " incomingEdgeMetaValue=" + Convert.ToString(ne.Meta?.Value) +
+                    " incomingEdgeMetaId=" + Convert.ToString(ne.Meta?.Identifier));
+            }
+
             return ne;
         }
 
@@ -1324,19 +1522,49 @@ namespace m0.ZeroTypes
             IVertex edgeVertexEdgeTarget = GraphUtil.GetQueryOutFirst(edgeVertex,"$EdgeTarget",null);
 
             if (edgeVertexEdgeTarget != null)
+            {
+                MinusZero.Instance.Log(
+                    1,
+                    "IsAggregation.AddInstanceByEdgeVertex",
+                    "selectedPath=EdgeTarget" +
+                    " edgeVertexValue=" + Convert.ToString(edgeVertex.Value) +
+                    " edgeVertexId=" + Convert.ToString(edgeVertex.Identifier) +
+                    " targetValue=" + Convert.ToString(edgeVertexEdgeTarget.Value) +
+                    " targetId=" + Convert.ToString(edgeVertexEdgeTarget.Identifier) +
+                    " edgeVertexHasIsAggregation=" + GraphUtil.ExistQueryOut(edgeVertex, "$IsAggregation", null));
+
                 return AddInstance(baseVertex, edgeVertexEdgeTarget, edgeVertex);
+            }
 
             // $VertexTarget
             IVertex edgeVertexVertexTarget = GraphUtil.GetQueryOutFirst(edgeVertex, "$VertexTarget", null);
 
             if (edgeVertexVertexTarget != null)
             {
+                MinusZero.Instance.Log(
+                    1,
+                    "IsAggregation.AddInstanceByEdgeVertex",
+                    "selectedPath=VertexTarget" +
+                    " edgeVertexValue=" + Convert.ToString(edgeVertex.Value) +
+                    " edgeVertexId=" + Convert.ToString(edgeVertex.Identifier) +
+                    " targetValue=" + Convert.ToString(edgeVertexVertexTarget.Value) +
+                    " targetId=" + Convert.ToString(edgeVertexVertexTarget.Identifier) +
+                    " edgeVertexHasIsAggregation=" + GraphUtil.ExistQueryOut(edgeVertex, "$IsAggregation", null));
+
                 IVertex ret = AddInstance(baseVertex, edgeVertex, edgeVertex);
 
                 return ret;
             }
 
             // EMPTY (edge+vertex one)
+            MinusZero.Instance.Log(
+                1,
+                "IsAggregation.AddInstanceByEdgeVertex",
+                "selectedPath=DirectMeta" +
+                " edgeVertexValue=" + Convert.ToString(edgeVertex.Value) +
+                " edgeVertexId=" + Convert.ToString(edgeVertex.Identifier) +
+                " edgeVertexHasIsAggregation=" + GraphUtil.ExistQueryOut(edgeVertex, "$IsAggregation", null));
+
             AddInstance(baseVertex, edgeVertex, edgeVertex);
 
             return null;

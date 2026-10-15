@@ -5,19 +5,28 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:m0.UIWpf.Forms"
         mc:Ignorable="d"
-        Title="about" Height="271.291" Width="340.282" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" ShowInTaskbar="False" WindowStyle="ToolWindow">
+        Title="about" Height="280" Width="530" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" ShowInTaskbar="False" WindowStyle="ToolWindow">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="184*"/>
-            <ColumnDefinition Width="145*"/>
+            <ColumnDefinition Width="148"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Label Content="minus zero 1.0" HorizontalAlignment="Left" Margin="32,44,0,0" VerticalAlignment="Top" FontSize="24" Grid.ColumnSpan="2" Height="42" Width="205"/>
-        <Label Content="PUBLIC DOMAIN software by Radosław Tereszczuk" HorizontalAlignment="Left" Margin="32,86,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
-        <TextBlock HorizontalAlignment="Left" Margin="36,125,0,0" VerticalAlignment="Top">
-            <Hyperlink NavigateUri="http://tereszczuk.com" RequestNavigate="WebsiteHyperlink_RequestNavigate">tereszczuk.com</Hyperlink>
-        </TextBlock>
-        <Label Content="you will die. someday. remember" HorizontalAlignment="Left" Margin="32,155,0,0" VerticalAlignment="Top" FontStyle="Italic" Grid.ColumnSpan="2" Width="197"/>
-        <Button Content="OK" Grid.Column="1" HorizontalAlignment="Left" Height="26" Margin="38.667,197,0,0" VerticalAlignment="Top" Width="83" Click="Button_Click"/>
-
+        <Image Grid.Column="0"
+               Width="124"
+               Height="124"
+               Margin="12,20,0,0"
+               Stretch="Uniform"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Top"
+               Source="pack://application:,,,/m0_desktop;component/Images/minus_zero_logo.png"/>
+        <Grid Grid.Column="1" Margin="8,0,16,0">
+            <Label Content="minus zero 1.0" HorizontalAlignment="Left" Margin="8,36,0,0" VerticalAlignment="Top" FontSize="24" Height="42"/>
+            <Label Content="PUBLIC DOMAIN software by Radosław Tereszczuk" HorizontalAlignment="Left" Margin="8,78,0,0" VerticalAlignment="Top"/>
+            <TextBlock HorizontalAlignment="Left" Margin="12,120,0,0" VerticalAlignment="Top">
+                <Hyperlink NavigateUri="http://tereszczuk.com" RequestNavigate="WebsiteHyperlink_RequestNavigate">tereszczuk.com</Hyperlink>
+            </TextBlock>
+            <Label Content="you will die. someday. remember" HorizontalAlignment="Left" Margin="8,150,0,0" VerticalAlignment="Top" FontStyle="Italic"/>
+            <Button Content="OK" HorizontalAlignment="Right" Height="26" Margin="0,0,4,16" VerticalAlignment="Bottom" Width="83" Click="Button_Click"/>
+        </Grid>
     </Grid>
 </Window>

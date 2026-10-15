@@ -1450,13 +1450,34 @@ namespace m0.ZeroCode
                 && KeywordMatchedSubGraphEdges[e].BaseEdgePath == path)
                 return true;
 
-            if (VertexOperations.IsLink_OldVersion(e)) // XXX should work
-                return false; // 20260413. that was oposite but ...should be that way obviously. now lets check what it breakes (needed for BaseEdge g2t bug)
+            bool isLink = VertexOperations.IsLink_OldVersion(e);
 
-            if (SubGraphVerticesDictionary.ContainsKey(e.To) && SubGraphVerticesDictionary[e.To].LinkString == path)
-                return true;
-            else
-                return false;
+            if (isLink) // XXX should work
+            {
+                LogIsAggregationGraph2TextDecision(
+                    "ShouldAppendKeywordHere",
+                    e,
+                    "SkipLink",
+                    true,
+                    false,
+                    path);
+
+                return false; // 20260413. that was oposite but ...should be that way obviously. now lets check what it breakes (needed for BaseEdge g2t bug)
+            }
+
+            bool shouldAppend =
+                SubGraphVerticesDictionary.ContainsKey(e.To) &&
+                SubGraphVerticesDictionary[e.To].LinkString == path;
+
+            LogIsAggregationGraph2TextDecision(
+                "ShouldAppendKeywordHere",
+                e,
+                shouldAppend ? "AppendKeywordHere" : "SkipDifferentPath",
+                false,
+                false,
+                path);
+
+            return shouldAppend;
         }
 
         bool ommitOnce_AppendEdge_Meta = false;
@@ -1513,8 +1534,18 @@ namespace m0.ZeroCode
             if (keywordSubVertex != null && GraphUtil.ExistQueryOut(keywordSubVertex, "$$ForceNewVertex", null))
                 forceNewVertex = true;
 
-            if (VertexOperations.IsLink_OldVersion(e) && !forceNewVertex)
+            bool isLink = VertexOperations.IsLink_OldVersion(e);
+
+            if (isLink && !forceNewVertex)
             {
+                LogIsAggregationGraph2TextDecision(
+                    "AppendVertex",
+                    e,
+                    "AppendAsLinkByIsLinkOldVersion",
+                    true,
+                    false,
+                    path);
+
                 AppendAsLink(e.To, null, hideLinkPrefix);
 
                 if (appendSuffix)
@@ -1528,6 +1559,14 @@ namespace m0.ZeroCode
 
                 if (vertexIsNew || forceNewVertex)
                 {
+                    LogIsAggregationGraph2TextDecision(
+                        "AppendVertex",
+                        e,
+                        forceNewVertex ? "AppendAsNewByForceNewVertex" : "AppendAsNew",
+                        isLink,
+                        forceNewVertex,
+                        path);
+
                     AppendAsNew(e.To);
 
                     if (appendSuffix && prefixAppended)
@@ -1537,6 +1576,14 @@ namespace m0.ZeroCode
                 }
                 else
                 {
+                    LogIsAggregationGraph2TextDecision(
+                        "AppendVertex",
+                        e,
+                        "AppendAsLinkBecauseVertexAlreadySeen",
+                        isLink,
+                        forceNewVertex,
+                        path);
+
                     if (!prefixAppended && appendSuffix)
                         AppendPrefix();
 
@@ -1548,6 +1595,47 @@ namespace m0.ZeroCode
                     return false;
                 }
             }
+        }
+
+        private static void LogIsAggregationGraph2TextDecision(
+            string method,
+            IEdge edge,
+            string action,
+            bool isLinkOldVersion,
+            bool forceNewVertex,
+            string path)
+        {
+            IVertex metaVertex = edge.Meta;
+            bool hasEdgeTarget = GraphUtil.ExistQueryOut(metaVertex, "$EdgeTarget", null);
+            bool hasVertexTarget = GraphUtil.ExistQueryOut(metaVertex, "$VertexTarget", null);
+            bool hasIsAggregation = GraphUtil.ExistQueryOut(metaVertex, "$IsAggregation", null);
+            bool hasExplicitIsLink = GraphUtil.ExistQueryOut(metaVertex, "$IsLink", null);
+
+            if (!hasEdgeTarget &&
+                !hasVertexTarget &&
+                !hasIsAggregation &&
+                !hasExplicitIsLink &&
+                !GeneralUtil.CompareStrings(metaVertex.Value, "Association"))
+                return;
+
+            MinusZero.Instance.Log(
+                1,
+                "IsAggregation.Graph2Text",
+                "method=" + method +
+                " action=" + action +
+                " isLinkOldVersion=" + isLinkOldVersion +
+                " forceNewVertex=" + forceNewVertex +
+                " fromValue=" + Convert.ToString(edge.From?.Value) +
+                " fromId=" + Convert.ToString(edge.From?.Identifier) +
+                " metaValue=" + Convert.ToString(metaVertex.Value) +
+                " metaId=" + Convert.ToString(metaVertex.Identifier) +
+                " toValue=" + Convert.ToString(edge.To?.Value) +
+                " toId=" + Convert.ToString(edge.To?.Identifier) +
+                " hasEdgeTarget=" + hasEdgeTarget +
+                " hasVertexTarget=" + hasVertexTarget +
+                " hasIsAggregation=" + hasIsAggregation +
+                " hasExplicitIsLink=" + hasExplicitIsLink +
+                " path=" + path);
         }
 
         bool ommitOnce_checkIfSubGraphVerticesDictionaryContainsVertex = false;

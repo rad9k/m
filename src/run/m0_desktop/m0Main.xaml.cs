@@ -12,11 +12,9 @@ using m0.ZeroTypes;
 using m0.ZeroTypes.UX;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -47,10 +45,6 @@ namespace m0
         private const double DefaultTreePaneWidth = 250;
         private const double MinimumTreePaneWidth = 180;
         private const double MaximumTreePaneWidth = 450;
-        private readonly string treePaneSettingsPath = System.IO.Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "m0",
-            "m0Main.layout.json");
 
         private double rememberedTreePaneWidth = DefaultTreePaneWidth;
         private bool rememberedTreePaneExpanded = true;
@@ -64,12 +58,6 @@ namespace m0
         private bool treePaneAnimationExpanding;
         private bool treePaneAnimationInProgress;
 
-        private sealed class TreePaneSettings
-        {
-            public double Width { get; set; } = DefaultTreePaneWidth;
-            public bool IsExpanded { get; set; } = true;
-        }
-
         public PlatformTypeEnum GetPlatformType()
         {
             return PlatformTypeEnum.Desktop;
@@ -81,7 +69,6 @@ namespace m0
 
             InitializeComponent();
 
-            LoadTreePaneSettings();
             root.IsVisibleChanged += Root_IsVisibleChanged;
             this.Loaded += new RoutedEventHandler(m0Main_Loaded);            
 
@@ -254,7 +241,6 @@ namespace m0
             }
 
             treePaneAnimationInProgress = false;
-            SaveTreePaneSettings();
         }
 
         private void StopTreePaneAnimation()
@@ -315,50 +301,6 @@ namespace m0
                 return DefaultTreePaneWidth;
 
             return Math.Max(MinimumTreePaneWidth, Math.Min(MaximumTreePaneWidth, width));
-        }
-
-        private void LoadTreePaneSettings()
-        {
-            try
-            {
-                if (!File.Exists(treePaneSettingsPath))
-                    return;
-
-                TreePaneSettings settings = JsonSerializer.Deserialize<TreePaneSettings>(
-                    File.ReadAllText(treePaneSettingsPath));
-
-                if (settings == null)
-                    return;
-
-                rememberedTreePaneWidth = ClampTreePaneWidth(settings.Width);
-                rememberedTreePaneExpanded = settings.IsExpanded;
-            }
-            catch
-            {
-                rememberedTreePaneWidth = DefaultTreePaneWidth;
-                rememberedTreePaneExpanded = true;
-            }
-        }
-
-        private void SaveTreePaneSettings()
-        {
-            try
-            {
-                string directory = System.IO.Path.GetDirectoryName(treePaneSettingsPath);
-                Directory.CreateDirectory(directory);
-
-                File.WriteAllText(
-                    treePaneSettingsPath,
-                    JsonSerializer.Serialize(new TreePaneSettings
-                    {
-                        Width = rememberedTreePaneWidth,
-                        IsExpanded = rememberedTreePaneExpanded
-                    }));
-            }
-            catch
-            {
-                // Layout persistence must never prevent the main window from working.
-            }
         }
 
         static m0Main this_static;
@@ -647,7 +589,6 @@ namespace m0
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             RememberTreePaneWidth();
-            SaveTreePaneSettings();
             m0.MinusZero.Instance.Dispose();
         }
     }

@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\m0.ico" />
+    <Resource Include="Images\minus_zero_logo.png" />
     <Resource Include="UIWpf\Controls\AnimatedHideArea.txt" />
   </ItemGroup>
   <ItemGroup>
