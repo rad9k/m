@@ -5,28 +5,23 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:m0.UIWpf.Forms"
         mc:Ignorable="d"
-        Title="about" Height="280" Width="530" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" ShowInTaskbar="False" WindowStyle="ToolWindow">
-    <Grid>
+        Title="about" Height="188" Width="488" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" ShowInTaskbar="False" WindowStyle="ToolWindow">
+    <Grid Margin="4,2,8,4">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="148"/>
+            <ColumnDefinition Width="132"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Image Grid.Column="0"
-               Width="124"
-               Height="124"
-               Margin="12,20,0,0"
-               Stretch="Uniform"
-               HorizontalAlignment="Center"
-               VerticalAlignment="Top"
-               Source="pack://application:,,,/m0_desktop;component/Images/minus_zero_logo.png"/>
-        <Grid Grid.Column="1" Margin="8,0,16,0">
-            <Label Content="minus zero 1.0" HorizontalAlignment="Left" Margin="8,36,0,0" VerticalAlignment="Top" FontSize="24" Height="42"/>
-            <Label Content="PUBLIC DOMAIN software by Radosław Tereszczuk" HorizontalAlignment="Left" Margin="8,78,0,0" VerticalAlignment="Top"/>
-            <TextBlock HorizontalAlignment="Left" Margin="12,120,0,0" VerticalAlignment="Top">
-                <Hyperlink NavigateUri="http://tereszczuk.com" RequestNavigate="WebsiteHyperlink_RequestNavigate">tereszczuk.com</Hyperlink>
-            </TextBlock>
-            <Label Content="you will die. someday. remember" HorizontalAlignment="Left" Margin="8,150,0,0" VerticalAlignment="Top" FontStyle="Italic"/>
-            <Button Content="OK" HorizontalAlignment="Right" Height="26" Margin="0,0,4,16" VerticalAlignment="Bottom" Width="83" Click="Button_Click"/>
-        </Grid>
+        <Viewport3D x:Name="LogoView" Grid.Column="0" Margin="0,0,4,0" ClipToBounds="True"/>
+        <DockPanel Grid.Column="1" Margin="6,2,0,0">
+            <Button DockPanel.Dock="Bottom" Content="OK" HorizontalAlignment="Right" Height="24" Width="72" Margin="0,6,0,0" Click="Button_Click"/>
+            <StackPanel>
+                <TextBlock Text="minus zero 1.0" FontSize="20" Margin="0,0,0,1"/>
+                <TextBlock Text="PUBLIC DOMAIN software by Radosław Tereszczuk" FontSize="12"/>
+                <TextBlock FontSize="12" Margin="0,2,0,0">
+                    <Hyperlink NavigateUri="http://tereszczuk.com" RequestNavigate="WebsiteHyperlink_RequestNavigate">tereszczuk.com</Hyperlink>
+                </TextBlock>
+                <TextBlock Text="you will die. someday. remember" FontSize="12" FontStyle="Italic" Margin="0,6,0,0"/>
+            </StackPanel>
+        </DockPanel>
     </Grid>
 </Window>
