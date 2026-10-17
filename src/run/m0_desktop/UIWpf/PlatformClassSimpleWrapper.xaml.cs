@@ -59,9 +59,10 @@ namespace m0.UIWpf
         private void PlatformClassSimpleWrapper_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
             if (Content != null && Content is IMouseWheelHandler)
+            {
                 ((IMouseWheelHandler)Content).MouseWheelAction(e);
-
-            e.Handled = true;
+                e.Handled = true;
+            }
         }
 
         private void ListViewScrollViewer_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
