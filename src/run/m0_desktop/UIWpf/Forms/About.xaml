@@ -11,7 +11,7 @@
             <ColumnDefinition Width="132"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Viewport3D x:Name="LogoView" Grid.Column="0" Margin="0,0,4,0" ClipToBounds="True"/>
+        <Viewport3D x:Name="LogoView" Grid.Column="0" Margin="0,0,4,0" ClipToBounds="True" Cursor="Hand"/>
         <DockPanel Grid.Column="1" Margin="6,2,0,0">
             <Button DockPanel.Dock="Bottom" Content="OK" HorizontalAlignment="Right" Height="24" Width="72" Margin="0,6,0,0" Click="Button_Click"/>
             <StackPanel>

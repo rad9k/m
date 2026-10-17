@@ -14,9 +14,6 @@ namespace m0.ZeroCode
 {
     public class Text2GraphProcessing 
     {
-        static readonly object isAggregationText2GraphLogLock = new object();
-        static readonly HashSet<string> loggedIsAggregationText2GraphSignatures = new HashSet<string>();
-
         public class TextRange
         {
             public int begLine;
@@ -2761,15 +2758,7 @@ namespace m0.ZeroCode
                         e = new EasyEdge(e.From, meta, e.To);
                     }
 
-                    bool isLinkOldVersion = VertexOperations.IsLink_OldVersion(e);
-
-                    LogIsAggregationText2GraphDecision(
-                        "AddKeywordVertex",
-                        e,
-                        isLinkOldVersion ? "UseLinkBranch" : "UseNewVertexBranch",
-                        isLinkOldVersion);
-
-                    if (isLinkOldVersion)
+                    if (VertexOperations.IsLink_OldVersion(e))
                     {
                         if (ZeroCodeUtil.TryStringMatch((string)e.To.Value, 0, "(?<"))
                         {
@@ -3259,19 +3248,7 @@ namespace m0.ZeroCode
             IList<IEdge> OutEdgesRaw = iterationRoot.OutEdgesRaw.ToList();
 
             foreach (IEdge e in OutEdgesRaw)
-            {
-                if (e.To == parseRoot || visited.Contains(e.To))
-                    continue;
-
-                bool isLink = VertexOperations.IsLink(e);
-
-                LogIsAggregationText2GraphDecision(
-                    "MoveInEdgesComingFromOutsideOfSubGraphToParseRoot",
-                    e,
-                    isLink ? "StopAtLink" : "RecurseIntoOwnedVertex",
-                    isLink);
-
-                if (!isLink)
+                if (e.To != parseRoot && !visited.Contains(e.To) && !VertexOperations.IsLink(e))
                 {
                     visited.Add(e.To);
 
@@ -3284,61 +3261,6 @@ namespace m0.ZeroCode
                             MoveInEdgesComingFromOutsideOfSubGraphToParseRoot_Reccurent(e.To, foundInParsed.To, visited);
                         }
                 }
-            }
-        }
-
-        private static void LogIsAggregationText2GraphDecision(
-            string method,
-            IEdge edge,
-            string action,
-            bool isLink)
-        {
-            IVertex metaVertex = edge.Meta;
-            bool hasEdgeTarget = GraphUtil.ExistQueryOut(metaVertex, "$EdgeTarget", null);
-            bool hasVertexTarget = GraphUtil.ExistQueryOut(metaVertex, "$VertexTarget", null);
-            bool hasIsAggregation = GraphUtil.ExistQueryOut(metaVertex, "$IsAggregation", null);
-            bool hasExplicitIsLink = GraphUtil.ExistQueryOut(metaVertex, "$IsLink", null);
-
-            if (!hasEdgeTarget &&
-                !hasVertexTarget &&
-                !hasIsAggregation &&
-                !hasExplicitIsLink &&
-                !GeneralUtil.CompareStrings(metaVertex.Value, "Association"))
-                return;
-
-            string signature =
-                method + "|" +
-                action + "|" +
-                isLink + "|" +
-                Convert.ToString(metaVertex.Store?.Identifier) + "|" +
-                Convert.ToString(metaVertex.Identifier) + "|" +
-                hasEdgeTarget + "|" +
-                hasVertexTarget + "|" +
-                hasIsAggregation + "|" +
-                hasExplicitIsLink;
-
-            lock (isAggregationText2GraphLogLock)
-            {
-                if (!loggedIsAggregationText2GraphSignatures.Add(signature))
-                    return;
-            }
-
-            MinusZero.Instance.Log(
-                1,
-                "IsAggregation.Text2Graph",
-                "method=" + method +
-                " action=" + action +
-                " isLink=" + isLink +
-                " fromValue=" + Convert.ToString(edge.From?.Value) +
-                " fromId=" + Convert.ToString(edge.From?.Identifier) +
-                " metaValue=" + Convert.ToString(metaVertex.Value) +
-                " metaId=" + Convert.ToString(metaVertex.Identifier) +
-                " toValue=" + Convert.ToString(edge.To?.Value) +
-                " toId=" + Convert.ToString(edge.To?.Identifier) +
-                " hasEdgeTarget=" + hasEdgeTarget +
-                " hasVertexTarget=" + hasVertexTarget +
-                " hasIsAggregation=" + hasIsAggregation +
-                " hasExplicitIsLink=" + hasExplicitIsLink);
         }
 
         IEdge FindSimilarEdge(IVertex findHere, IEdge toFind)

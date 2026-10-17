@@ -199,7 +199,7 @@ namespace m0
         {
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
 
-            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, null, "{Base{$,Vertex{$IsLink,$Inherits,$NoInherit,$NoCopy,$DndAlwaysCopy,$StackFrameInherits,$Is,$EdgeTarget,$VertexTarget,$IsAggregation,$MinCardinality,$MaxCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,$Name,$ExecutableEndPoint,$GraphChangeTrigger,$VertexEval,$InstanceCreationPriority,$EmptyValueInstance,$EmptyMetaInstance,MetaEdge,Author,Dependency,$TargetQuery,UserCommand,HelpURL},$Import,$ImportMeta,$Keyword,$KeywordGroupDefinition,$$KeywordGroup,$$KeywordManyRoot,$$LocalRoot,$$StartInLocalRoot,$$EmptyKeyword,$$NewVertexKeyword,$$ForceNewVertex,$$LinkKeyword,$$NonSelfRecursiveParameters,$$Import,$$ImportDirect,$$ImportMeta,$$ImportDirectMeta,$$NoSequentialExecution,$$NextAtomRoot,$NewLine,$ParseRoot,$ParseArtefacts,Link,Contains,Home}}");
+            m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, null, "{Base{$,Vertex{$IsLink,$Inherits,$NoInherit,$NoCopy,$DndAlwaysCopy,$StackFrameInherits,$Is,$EdgeTarget,$VertexTarget,$AddIsAggregationInInstance,$IsAggregation,$MinCardinality,$MaxCardinality,$MaxTargetCardinality,$DefaultValue,$DefaultViewVisualiser,$DefaultEditVisualiser,$DefaultOpenVisualiser,$Group,$Section,$Description,$Name,$ExecutableEndPoint,$GraphChangeTrigger,$VertexEval,$InstanceCreationPriority,$EmptyValueInstance,$EmptyMetaInstance,MetaEdge,Author,Dependency,$TargetQuery,UserCommand,HelpURL},$Import,$ImportMeta,$Keyword,$KeywordGroupDefinition,$$KeywordGroup,$$KeywordManyRoot,$$LocalRoot,$$StartInLocalRoot,$$EmptyKeyword,$$NewVertexKeyword,$$ForceNewVertex,$$LinkKeyword,$$NonSelfRecursiveParameters,$$Import,$$ImportDirect,$$ImportMeta,$$ImportDirectMeta,$$NoSequentialExecution,$$NextAtomRoot,$NewLine,$ParseRoot,$ParseArtefacts,Link,Contains,Home}}");
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base").AddEdge(
                 null,
@@ -287,6 +287,10 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$IsAggregation").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex"));
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex\$AddIsAggregationInInstance").AddEdge(
+             LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+             LegacySystem.Graph.EasyVertex.Get(sm, false, @"Base\Vertex"));
         }
 
         void CreateSystemMetaBase_Part2()
@@ -420,6 +424,12 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class\Aggregation").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$IsAggregation"), empty);
 
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class\Attribute").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$AddIsAggregationInInstance"), empty);
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class\Aggregation").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$AddIsAggregationInInstance"), empty);
+
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Enum\EnumValue"), sm, "{$MinCardinality:0,$MaxCardinality:-1}");
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Enum\EnumValue").AddEdge(
@@ -513,6 +523,7 @@ namespace m0
             IVertex nse = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\$$NoSequentialExecution");
 
             IVertex isAggregation = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$IsAggregation");
+            IVertex addIsAggregationInInstance = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex\$AddIsAggregationInInstance");
 
             // enhance ZeroUML\Class with $InstanceCreationPriority:
 
@@ -1229,6 +1240,7 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"NextOut\Next").AddEdge(isAggregation, Empty);
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"Variable").AddEdge(isAggregation, Empty);
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"Variable").AddEdge(addIsAggregationInInstance, Empty);
             LegacySystem.Graph.EasyVertex.Get(smu, false, @"StackFrameCreator\Type").AddEdge(isAggregation, Empty);
             //  smu.Get(false, @"StackFrameCreatorWithInputOutput\Output").AddEdge(isAggregation, Empty); // this - no!            
 

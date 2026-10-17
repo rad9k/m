@@ -6,7 +6,7 @@ using System.Windows.Media.Media3D;
 
 namespace m0.UIWpf.Forms
 {
-    sealed class AboutLogoScene : IDisposable
+    sealed partial class AboutLogoScene : IDisposable
     {
         const double RingMajor = 1.0;
         const double RingMinor = 0.18;
@@ -22,10 +22,22 @@ namespace m0.UIWpf.Forms
         ScaleTransform3D _groupScale;
         AxisAngleRotation3D _groupPitch;
         AxisAngleRotation3D _groupYaw;
+        AxisAngleRotation3D _groupRoll;
+        TranslateTransform3D _groupMove;
         TranslateTransform3D _barMove;
+        ScaleTransform3D _ringHeroScale;
+        ScaleTransform3D _barHeroScale;
+        AxisAngleRotation3D _ringHeroRotation;
+        AxisAngleRotation3D _barHeroRotation;
+        TranslateTransform3D _ringHeroMove;
+        TranslateTransform3D _barHeroMove;
         PointLight _point;
         PointLight _glint;
         PerspectiveCamera _camera;
+        GeometryModel3D _ringModel;
+        GeometryModel3D _barModel;
+        MeshGeometry3D _baseRingGeometry;
+        Model3DGroup _heroRoot;
         PieceSpin _ringSpin;
         PieceSpin _barSpin;
         double _heartAt = 3.4;
@@ -55,17 +67,28 @@ namespace m0.UIWpf.Forms
             _groupScale = new ScaleTransform3D(0.9, 0.9, 0.9);
             _groupPitch = new AxisAngleRotation3D(new Vector3D(1, 0, 0), 16);
             _groupYaw = new AxisAngleRotation3D(new Vector3D(0, 1, 0), 0);
+            _groupRoll = new AxisAngleRotation3D(new Vector3D(0, 0, 1), 0);
+            _groupMove = new TranslateTransform3D();
             var markTransform = new Transform3DGroup();
             markTransform.Children.Add(_groupScale);
             markTransform.Children.Add(new RotateTransform3D(_groupPitch));
             markTransform.Children.Add(new RotateTransform3D(_groupYaw));
+            markTransform.Children.Add(new RotateTransform3D(_groupRoll));
+            markTransform.Children.Add(_groupMove);
 
             _ringSpin = CreatePieceSpin();
             var ringMaterial = PieceMaterial(diffuse, specular, _ringSpin.Emissive);
+            _ringHeroScale = new ScaleTransform3D(1, 1, 1);
+            _ringHeroRotation = new AxisAngleRotation3D(new Vector3D(0, 1, 0), 0);
+            _ringHeroMove = new TranslateTransform3D();
             var ringTransform = new Transform3DGroup();
             ringTransform.Children.Add(_ringSpin.Scale);
             ringTransform.Children.Add(new RotateTransform3D(_ringSpin.Rotation));
-            var ring = new GeometryModel3D(CreateTorus(RingMajor, RingMinor, 96, 32), ringMaterial)
+            ringTransform.Children.Add(_ringHeroScale);
+            ringTransform.Children.Add(new RotateTransform3D(_ringHeroRotation));
+            ringTransform.Children.Add(_ringHeroMove);
+            _baseRingGeometry = CreateTorus(RingMajor, RingMinor, 96, 32);
+            _ringModel = new GeometryModel3D(_baseRingGeometry, ringMaterial)
             {
                 BackMaterial = ringMaterial,
                 Transform = ringTransform
@@ -74,12 +97,18 @@ namespace m0.UIWpf.Forms
 
             _barSpin = CreatePieceSpin();
             var barMaterial = PieceMaterial(diffuse, specular, _barSpin.Emissive);
+            _barHeroScale = new ScaleTransform3D(1, 1, 1);
+            _barHeroRotation = new AxisAngleRotation3D(new Vector3D(0, 1, 0), 0);
+            _barHeroMove = new TranslateTransform3D();
             _barMove = new TranslateTransform3D(0, BarRestY, 0);
             var barTransform = new Transform3DGroup();
             barTransform.Children.Add(_barSpin.Scale);
             barTransform.Children.Add(new RotateTransform3D(_barSpin.Rotation));
+            barTransform.Children.Add(_barHeroScale);
+            barTransform.Children.Add(new RotateTransform3D(_barHeroRotation));
+            barTransform.Children.Add(_barHeroMove);
             barTransform.Children.Add(_barMove);
-            var bar = new GeometryModel3D(CreateCapsule(BarRadius, BarCylinderLength, 28, 8), barMaterial)
+            _barModel = new GeometryModel3D(CreateCapsule(BarRadius, BarCylinderLength, 28, 8), barMaterial)
             {
                 BackMaterial = barMaterial,
                 Transform = barTransform
@@ -87,8 +116,10 @@ namespace m0.UIWpf.Forms
             Arm(_barSpin, 0, true);
 
             var mark = new Model3DGroup { Transform = markTransform };
-            mark.Children.Add(ring);
-            mark.Children.Add(bar);
+            mark.Children.Add(_ringModel);
+            mark.Children.Add(_barModel);
+            _heroRoot = new Model3DGroup();
+            mark.Children.Add(_heroRoot);
 
             _point = new PointLight(Color.FromRgb(176, 198, 228), new Point3D(0, 0.7, 2.15))
             {
@@ -124,6 +155,7 @@ namespace m0.UIWpf.Forms
             view.Children.Add(new ModelVisual3D { Content = lights });
             view.Children.Add(new ModelVisual3D { Content = mark });
 
+            InitializeHeroDirector();
             Apply(0);
             _clock.Start();
             CompositionTarget.Rendering += OnRendering;
@@ -137,6 +169,7 @@ namespace m0.UIWpf.Forms
             _disposed = true;
             CompositionTarget.Rendering -= OnRendering;
             _clock.Stop();
+            DisposeHeroDirector();
         }
 
         void OnRendering(object sender, EventArgs e)
@@ -165,9 +198,16 @@ namespace m0.UIWpf.Forms
             _groupPitch.Angle = _pitch;
 
             _barMove.OffsetY = BarRestY + Math.Sin(t * 1.15) * 0.02;
-            if (Advance(_ringSpin, t) || Advance(_barSpin, t))
-                _punchUntil = t + 0.42;
-            UpdateHeart(t);
+            if (!HeroEffectActive)
+            {
+                if (Advance(_ringSpin, t) || Advance(_barSpin, t))
+                    _punchUntil = t + 0.42;
+                UpdateHeart(t);
+            }
+            else
+            {
+                _heartOn = false;
+            }
 
             double targetX = (_pointerX - 0.5) * 3.6;
             double targetY = (0.4 - _pointerY) * 2.8 + 0.35;
@@ -185,6 +225,11 @@ namespace m0.UIWpf.Forms
             if (t < _punchUntil)
                 punch = Math.Sin(Clamp01(1 - (_punchUntil - t) / 0.42) * Math.PI);
             _camera.Position = new Point3D(0, 0.2, 5.25 - punch * 0.55);
+            _camera.LookDirection = new Vector3D(0, 0, -1);
+            _camera.UpDirection = new Vector3D(0, 1, 0);
+            _camera.FieldOfView = 30;
+
+            UpdateHeroDirector(t);
         }
 
         void UpdateHeart(double t)

@@ -29,11 +29,18 @@ namespace m0.UIWpf.Forms
             InitializeComponent();
             _logo = new AboutLogoScene();
             _logo.Attach(LogoView);
+            LogoView.MouseLeftButtonDown += LogoView_MouseLeftButtonDown;
             MouseMove += About_MouseMove;
             MouseLeave += About_MouseLeave;
             Closed += About_Closed;
 
             ShowDialog();
+        }
+
+        void LogoView_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            _logo.TriggerNextEffect();
+            e.Handled = true;
         }
 
         void About_MouseMove(object sender, MouseEventArgs e)

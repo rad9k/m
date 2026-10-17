@@ -18,7 +18,7 @@ namespace m0.ZeroUML.Instructions
 
             nv = baseVertex.AddVertex(metaVertex, null);
                         
-            nv.AddEdge(MinusZero.Instance.Is, metaVertex);
+            nv.AddEdge(MinusZero.Instance.Is, metaVertex);            
 
             IVertex children = metaVertex; // can use VertexOperations.GetChildEdges, but $DefaultValue: should be OK
 
