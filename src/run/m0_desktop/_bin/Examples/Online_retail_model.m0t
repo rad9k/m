@@ -2,25 +2,28 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 "Online retail model"
 	"Online retail model"
 		class "Product"
+			attribute "BusinessID" @String
 			attribute "Name" @String
 			attribute "Price" @Decimal
 			attribute "Description" @String
 		class "Order"
+			attribute "BusinessID" @String
 			association "User" @'Online retail model'\User
 			association "Product" @'Online retail model'\Product
 			association "Payment" @'Online retail model'\Payment
-			attribute "Status" @'Online retail model'\Automata:'Order state'
+			attribute "Status" @'Online retail model'\Automata:'Order state'			
 		class "User"
+			attribute "BusinessID" @String
 			attribute "Name" @String
 			attribute "Surname" @String
 			attribute "Email" @String
 			attribute "Password" @String
 			aggregation "Address" @'Online retail model'\Address
-			aggregation "PaymentMethod" @'Online retail model'\PaymentMethod
-			attribute "BusinessID" @String
+			aggregation "PaymentMethod" @'Online retail model'\PaymentMethod			
 		class "PaymentMethod"
 			attribute "BusinessID" @String
 		class "Address"
+			attribute "BusinessID" @String
 			attribute "AddressLine1" @String
 			attribute "AddressLine2" @String
 			attribute "Postal code" @String
@@ -38,7 +41,10 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			attribute "Email" @String
 			attribute "PayerId" @String
 		class "Payment"
-			attribute "LastActionTimestamp" @DateTime
+			attribute "BusinessID" @String
+			attribute "PaymentStartedTimestamp" @DateTime "0":"1"
+			attribute "PaymentFailedTimestamp" @DateTime "0":"1"
+			attribute "PaymentSuccededTimestamp" @DateTime "0":"1"
 			attribute "Ammount" @Decimal
 			association "PaymentMethod" @'Online retail model'\PaymentMethod
 		<@UX\UXContainer :: "Order state">
@@ -820,7 +826,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@Position :: "">
 					<@$Is :: @UX\Position>
 					<@X :: "2442.6516666666666">
-					<@Y :: "58.71">
+					<@Y :: "58.71000000000001">
 				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
 				<@ShowMeta :: "False">
 				<@ConstantLabel :: "class">
