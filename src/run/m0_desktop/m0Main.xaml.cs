@@ -346,11 +346,21 @@ namespace m0
 
         int MaxTitleLength = 30;
 
+        private const string EmptyWindowTitle = "[]";
+
         private string TrimTitle(string title)
         {
             string titleWithoutLineBreaks = title.Replace("\r", "").Replace("\n", "");
 
             return titleWithoutLineBreaks.Substring(0, Math.Min(titleWithoutLineBreaks.Length, MaxTitleLength));
+        }
+
+        private string TitleOrEmptyPlaceholder(string title)
+        {
+            if (string.IsNullOrWhiteSpace(title))
+                return EmptyWindowTitle;
+
+            return TrimTitle(title);
         }
 
         protected LayoutAnchorable _ShowContent(object obj)
@@ -366,10 +376,14 @@ namespace m0
                 if (pc.Vertex == null)
                     return null;
 
+                string title = null;
+
                 if (pc.Vertex.Get(false, @"BaseEdge:\To:")!=null&&pc.Vertex.Get(false, @"BaseEdge:\To:").Value != null&&(!GeneralUtil.CompareStrings(pc.Vertex.Get(false, @"BaseEdge:\To:").Value,"")))
-                    a.Title = TrimTitle(pc.Vertex.Get(false, @"BaseEdge:\To:").Value.ToString());
-                else
-                    a.Title = TrimTitle((string)pc.Vertex.Value); ;
+                    title = pc.Vertex.Get(false, @"BaseEdge:\To:").Value.ToString();
+                else if (pc.Vertex.Value != null)
+                    title = pc.Vertex.Value.ToString();
+
+                a.Title = TitleOrEmptyPlaceholder(title);
 
                 PlatformClassSimpleWrapper pcsw = new PlatformClassSimpleWrapper();
 
@@ -402,7 +416,7 @@ namespace m0
 
                 pcsw.IsIntialising = false;
             }else{
-                a.Title = TrimTitle(obj.ToString()); 
+                a.Title = TitleOrEmptyPlaceholder(obj != null ? obj.ToString() : null); 
                 a.Content = obj;
 
                 this.Pane.Children.Add(a);
