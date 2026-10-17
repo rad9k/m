@@ -18,6 +18,8 @@ namespace m0.ZeroTypes
         static string[] NoPassAsExecutionResult_MetaValue = { "$GraphChangeTrigger" };
         static string[] NoCopy_MetaValue = {"$GraphChangeTrigger"};
         static string[] NoCopy_VertexIsValue = { "GraphChangeTrigger" };
+        static readonly object isAggregationIsLinkLogLock = new object();
+        static readonly HashSet<string> loggedIsAggregationIsLinkSignatures = new HashSet<string>();
 
         // Copy/Move-and-replace similarity tuning (static, tunable). Cutoff is the minimum similarity
         // score [0..1] for an old/new pair to be considered a match.
@@ -975,6 +977,23 @@ namespace m0.ZeroTypes
                 hasExplicitIsLink ||
                 GeneralUtil.CompareStrings(metaVertex.Value, "Association"))
             {
+                string signature =
+                    method + "|" +
+                    result + "|" +
+                    rule + "|" +
+                    Convert.ToString(metaVertex.Store?.Identifier) + "|" +
+                    Convert.ToString(metaVertex.Identifier) + "|" +
+                    hasEdgeTarget + "|" +
+                    hasVertexTarget + "|" +
+                    hasIsAggregation + "|" +
+                    hasExplicitIsLink;
+
+                lock (isAggregationIsLinkLogLock)
+                {
+                    if (!loggedIsAggregationIsLinkSignatures.Add(signature))
+                        return result;
+                }
+
                 MinusZero.Instance.Log(
                     1,
                     "IsAggregation.IsLink",

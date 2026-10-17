@@ -14,6 +14,9 @@ namespace m0.ZeroCode
 {
     public class Text2GraphProcessing 
     {
+        static readonly object isAggregationText2GraphLogLock = new object();
+        static readonly HashSet<string> loggedIsAggregationText2GraphSignatures = new HashSet<string>();
+
         public class TextRange
         {
             public int begLine;
@@ -3302,6 +3305,23 @@ namespace m0.ZeroCode
                 !hasExplicitIsLink &&
                 !GeneralUtil.CompareStrings(metaVertex.Value, "Association"))
                 return;
+
+            string signature =
+                method + "|" +
+                action + "|" +
+                isLink + "|" +
+                Convert.ToString(metaVertex.Store?.Identifier) + "|" +
+                Convert.ToString(metaVertex.Identifier) + "|" +
+                hasEdgeTarget + "|" +
+                hasVertexTarget + "|" +
+                hasIsAggregation + "|" +
+                hasExplicitIsLink;
+
+            lock (isAggregationText2GraphLogLock)
+            {
+                if (!loggedIsAggregationText2GraphSignatures.Add(signature))
+                    return;
+            }
 
             MinusZero.Instance.Log(
                 1,

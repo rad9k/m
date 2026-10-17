@@ -14,8 +14,8 @@ namespace m0.UIWpf.Forms
         const double BarCylinderLength = 1.72;
         const double BarRestY = 1.43;
 
-        static readonly Color RestGlow = Color.FromRgb(16, 58, 120);
-        static readonly Color SpinGlow = Color.FromRgb(78, 160, 240);
+        static readonly Color RestGlow = Color.FromRgb(10, 24, 48);
+        static readonly Color SpinGlow = Color.FromRgb(32, 72, 128);
 
         readonly Stopwatch _clock = new Stopwatch();
         readonly Random _random = new Random();
@@ -48,9 +48,9 @@ namespace m0.UIWpf.Forms
 
         public void Attach(Viewport3D view)
         {
-            var blue = Color.FromRgb(80, 165, 255);
+            var blue = Color.FromRgb(68, 132, 200);
             var diffuse = new DiffuseMaterial(new SolidColorBrush(blue));
-            var specular = new SpecularMaterial(new SolidColorBrush(Color.FromRgb(255, 255, 255)), 72);
+            var specular = new SpecularMaterial(new SolidColorBrush(Color.FromRgb(210, 228, 245)), 88);
 
             _groupScale = new ScaleTransform3D(0.9, 0.9, 0.9);
             _groupPitch = new AxisAngleRotation3D(new Vector3D(1, 0, 0), 16);
@@ -90,23 +90,23 @@ namespace m0.UIWpf.Forms
             mark.Children.Add(ring);
             mark.Children.Add(bar);
 
-            _point = new PointLight(Color.FromRgb(255, 255, 255), new Point3D(0, 0.7, 2.15))
+            _point = new PointLight(Color.FromRgb(176, 198, 228), new Point3D(0, 0.7, 2.15))
             {
-                Range = 14,
-                ConstantAttenuation = 0.25,
-                LinearAttenuation = 0.05
+                Range = 12,
+                ConstantAttenuation = 0.58,
+                LinearAttenuation = 0.11
             };
 
-            _glint = new PointLight(Color.FromRgb(210, 236, 255), new Point3D(1.6, 0.3, 0.8))
+            _glint = new PointLight(Color.FromRgb(88, 155, 210), new Point3D(1.6, 0.3, 0.8))
             {
-                Range = 8,
-                ConstantAttenuation = 0.85,
-                LinearAttenuation = 0.22
+                Range = 7,
+                ConstantAttenuation = 1.0,
+                LinearAttenuation = 0.3
             };
 
             var lights = new Model3DGroup();
-            lights.Children.Add(new AmbientLight(Color.FromRgb(72, 92, 124)));
-            lights.Children.Add(new DirectionalLight(Color.FromRgb(150, 176, 214), new Vector3D(0.35, -0.55, -1)));
+            lights.Children.Add(new AmbientLight(Color.FromRgb(36, 44, 58)));
+            lights.Children.Add(new DirectionalLight(Color.FromRgb(98, 116, 142), new Vector3D(0.35, -0.55, -1)));
             lights.Children.Add(_point);
             lights.Children.Add(_glint);
 

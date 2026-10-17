@@ -489,6 +489,8 @@ namespace m0.ZeroCode
     {
         static readonly Regex KeywordSentencePlaceholderRegex =
             new Regex(@"\(\?(A)?(V)?<[a-zA-Z0-9_]+>\)");
+        static readonly object isAggregationGraph2TextLogLock = new object();
+        static readonly HashSet<string> loggedIsAggregationGraph2TextSignatures = new HashSet<string>();
 
         public IEdge BaseEdge;
 
@@ -1617,6 +1619,24 @@ namespace m0.ZeroCode
                 !hasExplicitIsLink &&
                 !GeneralUtil.CompareStrings(metaVertex.Value, "Association"))
                 return;
+
+            string signature =
+                method + "|" +
+                action + "|" +
+                isLinkOldVersion + "|" +
+                forceNewVertex + "|" +
+                Convert.ToString(metaVertex.Store?.Identifier) + "|" +
+                Convert.ToString(metaVertex.Identifier) + "|" +
+                hasEdgeTarget + "|" +
+                hasVertexTarget + "|" +
+                hasIsAggregation + "|" +
+                hasExplicitIsLink;
+
+            lock (isAggregationGraph2TextLogLock)
+            {
+                if (!loggedIsAggregationGraph2TextSignatures.Add(signature))
+                    return;
+            }
 
             MinusZero.Instance.Log(
                 1,
