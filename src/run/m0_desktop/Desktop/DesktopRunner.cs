@@ -45,7 +45,7 @@ namespace m0.Desktop
 
             mainWindow.Show();
 
-            m0Main.mainTree.BaseEdgeToUpdated();
+            m0Main.UpdateStartupTrees();
 
             mainWindow.Dispatcher.BeginInvoke(
                 DispatcherPriority.ContextIdle,
@@ -56,8 +56,7 @@ namespace m0.Desktop
         {
             MinusZero.Instance.RunDeferredStartup();
 
-            if (m0Main.mainTree != null)
-                m0Main.mainTree.BaseEdgeToUpdated();
+            m0Main.UpdateStartupTrees();
         }
 
         //

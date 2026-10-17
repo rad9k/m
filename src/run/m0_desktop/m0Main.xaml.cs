@@ -42,6 +42,12 @@ namespace m0
 
         public static TreeVisualiser mainTree;
 
+        public static TreeVisualiser quickTree;
+
+        private bool isQuickTreeAvailable;
+        private bool startupTreeAnchorableVisibilityUpdateInProgress;
+        private bool quickWasSelectedBeforeCollapse;
+
         private const double DefaultTreePaneWidth = 250;
         private const double MinimumTreePaneWidth = 180;
         private const double MaximumTreePaneWidth = 450;
@@ -84,6 +90,31 @@ namespace m0
             mainTree.Background = (Brush)FindResource("0VeryLightGrayBrush");
 
             this.root.Content = mainTree;
+
+            IVertex quickVertex = GraphUtil.GetQueryOutFirst(MinusZero.Instance.Root, null, "Quick");
+
+            if (quickVertex == null)
+            {
+                TreePane.Children.Remove(quick);
+                return;
+            }
+
+            IVertex quickBaseEdgeVertex = EdgeHelper.CreateTempEdgeVertex(null, null, quickVertex);
+
+            quickTree = new TreeVisualiser(quickBaseEdgeVertex, null, false);
+            quickTree.Background = (Brush)FindResource("0VeryLightGrayBrush");
+            quick.Content = quickTree;
+            isQuickTreeAvailable = true;
+            root.IsSelected = true;
+        }
+
+        public static void UpdateStartupTrees()
+        {
+            if (mainTree != null)
+                mainTree.BaseEdgeToUpdated();
+
+            if (quickTree != null)
+                quickTree.BaseEdgeToUpdated();
         }
 
 
@@ -161,9 +192,37 @@ namespace m0
             StartTreePaneAnimation(true);
         }
 
+        private void SetStartupTreeAnchorablesVisible(bool isVisible)
+        {
+            startupTreeAnchorableVisibilityUpdateInProgress = true;
+
+            if (isVisible)
+            {
+                if (isQuickTreeAvailable)
+                    quick.Show();
+
+                root.Show();
+
+                if (isQuickTreeAvailable && quickWasSelectedBeforeCollapse)
+                    quick.IsSelected = true;
+            }
+            else
+            {
+                if (isQuickTreeAvailable)
+                    quickWasSelectedBeforeCollapse = quick.IsSelected;
+
+                root.Hide();
+
+                if (isQuickTreeAvailable)
+                    quick.Hide();
+            }
+
+            startupTreeAnchorableVisibilityUpdateInProgress = false;
+        }
+
         private void Root_IsVisibleChanged(object sender, EventArgs e)
         {
-            if (treePaneAnimationInProgress)
+            if (treePaneAnimationInProgress || startupTreeAnchorableVisibilityUpdateInProgress)
                 return;
 
             bool isExpanded = !root.IsHidden;
@@ -189,7 +248,7 @@ namespace m0
 
             if (expand)
             {
-                root.Show();
+                SetStartupTreeAnchorablesVisible(true);
 
                 if (treePaneAnimationStartWidth > treePaneAnimationTargetWidth)
                     treePaneAnimationStartWidth = CollapsedTreePaneWidth;
@@ -234,8 +293,8 @@ namespace m0
             else
             {
                 // Keep the narrow handle outside AvalonDock, but remove the
-                // anchorable after the width animation has visually completed.
-                root.Hide();
+                // anchorables after the width animation has visually completed.
+                SetStartupTreeAnchorablesVisible(false);
                 rememberedTreePaneExpanded = false;
                 TreePaneToggle.IsChecked = false;
             }
@@ -278,7 +337,7 @@ namespace m0
             {
                 SetTreePaneWidth(CollapsedTreePaneWidth);
                 TreePaneToggle.IsChecked = false;
-                root.Hide();
+                SetStartupTreeAnchorablesVisible(false);
             }
         }
 

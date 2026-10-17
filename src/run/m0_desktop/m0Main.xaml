@@ -62,6 +62,7 @@
                     <avalonDock:LayoutDocumentPane x:Name="Pane"/>
                     <avalonDock:LayoutAnchorablePane x:Name="TreePane" DockWidth="250">
                         <avalonDock:LayoutAnchorable Title="-0" x:Name="root" CanClose="False" CanHide="True" CanAutoHide="False" CanDockAsTabbedDocument="False" CanFloat="True" />
+                        <avalonDock:LayoutAnchorable Title="Quick" x:Name="quick" CanClose="False" CanHide="True" CanAutoHide="False" CanDockAsTabbedDocument="False" CanFloat="True" />
                     </avalonDock:LayoutAnchorablePane>
                 </avalonDock:LayoutPanel>
             </avalonDock:LayoutRoot>
