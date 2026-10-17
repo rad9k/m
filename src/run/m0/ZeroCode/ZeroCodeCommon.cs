@@ -166,11 +166,18 @@ namespace m0.ZeroCode
                 {
                     sPos++;
 
+                    if (sPos >= text.Length)
+                    {
+                        shallProceed = false;
+                        break;
+                    }
+
                     if (!isInEscape
                         && testIfIsKeywordSubstring(sPos, text, allKeywordsSubstringsDictionary, null))
                         shallProceed = false;
 
-                    if (sPos == endPos)
+                    // endPos can fall on a space inside '...' because the caller matches afterParameterString before the link is scanned
+                    if (!isInEscape && sPos == endPos)
                         shallProceed = false;
 
                     if (text[sPos] == '\n' || text[sPos] == '\r')

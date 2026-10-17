@@ -771,7 +771,9 @@ namespace m0.ZeroCode
 
             // try from local root
 
-            tryIf = queryMetaImport(baseVertex, @"$ParseRoot" + dict.MetaSeparator + @"\\" + link);
+            string parseRootQuery = @"$ParseRoot" + dict.MetaSeparator + @"\\" + link;
+
+            tryIf = queryMetaImport(baseVertex, parseRootQuery);
 
             if (tryIf != null && !(tryIf is ToVertexMock))
                 return tryIf;
@@ -1825,6 +1827,7 @@ namespace m0.ZeroCode
                     // ( sPos == endPos_forAtomParts || (isPrevStartPosSameAsStartPos /*&& isPrevStartPosSameAsStartPosThisCount > 1*/)) ) // !!!
                 {             
                    // MinusZero.Instance.Log(0, "_tryIfKeyword", LOGPREFIX + "conditions 0: ENTER");
+
                     link = tryLink;
 
                     newPos = sPos;
