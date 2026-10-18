@@ -1,6 +1,6 @@
 System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 "Online retail model"
-	"Online retail model"
+	"OnlineRetail model"
 		class "Product"
 			attribute "BusinessID" @String
 			attribute "Name" @String
@@ -8,18 +8,18 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			attribute "Description" @String
 		class "Order"
 			attribute "BusinessID" @String
-			association "User" @'Online retail model'\User
-			association "Product" @'Online retail model'\Product
-			association "Payment" @'Online retail model'\Payment
-			attribute "Status" @'Online retail model'\Automata:'Order state'			
+			association "User" @'OnlineRetail model'\User
+			association "Product" @'OnlineRetail model'\Product
+			association "Payment" @'OnlineRetail model'\Payment
+			attribute "Status" @'OnlineRetail model'\Automata:'Order state'
 		class "User"
 			attribute "BusinessID" @String
 			attribute "Name" @String
 			attribute "Surname" @String
 			attribute "Email" @String
 			attribute "Password" @String
-			aggregation "Address" @'Online retail model'\Address
-			aggregation "PaymentMethod" @'Online retail model'\PaymentMethod			
+			aggregation "Address" @'OnlineRetail model'\Address
+			aggregation "PaymentMethod" @'OnlineRetail model'\PaymentMethod
 		class "PaymentMethod"
 			attribute "BusinessID" @String
 		class "Address"
@@ -30,14 +30,14 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			attribute "City" @String
 			attribute "Country" @String
 		class "Card"
-			inherits @'Online retail model'\PaymentMethod
+			inherits @'OnlineRetail model'\PaymentMethod
 			attribute "Owner" @String
 			attribute "NumberLast4" @String
 			attribute "ExpiryMonth" @Integer
 			attribute "ExpiryYear" @Integer
-			attribute "Brand" @'Online retail model'\CardBrand
+			attribute "Brand" @'OnlineRetail model'\CardBrand
 		class "PayPal"
-			inherits @'Online retail model'\PaymentMethod
+			inherits @'OnlineRetail model'\PaymentMethod
 			attribute "Email" @String
 			attribute "PayerId" @String
 		class "Payment"
@@ -46,7 +46,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			attribute "PaymentFailedTimestamp" @DateTime "0":"1"
 			attribute "PaymentSuccededTimestamp" @DateTime "0":"1"
 			attribute "Ammount" @Decimal
-			association "PaymentMethod" @'Online retail model'\PaymentMethod
+			association "PaymentMethod" @'OnlineRetail model'\PaymentMethod
 		<@UX\UXContainer :: "Order state">
 			<@$Is :: @UX\UXContainer>
 			<@IsExpanded :: "True">
@@ -56,7 +56,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@$Is :: @Edge>
 				<@From :: @$CodeRoot>
 				<@Meta :: @$Empty>
-				<@To :: @'Online retail model'>
+				<@To :: @'OnlineRetail model'>
 			<@SelectedEdges :: "">
 			<@ShowSelectedEdgesBaseEdge :: "False">
 			<@Size :: "">
@@ -94,9 +94,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@Opacity :: "255">
 				<@BaseEdge :: "">
 					<@$Is :: @Edge>
-					<@From :: @'Online retail model'>
+					<@From :: @'OnlineRetail model'>
 					<@Meta :: @Automata>
-					<@To :: @'Online retail model'\Automata:'Order state'>
+					<@To :: @'OnlineRetail model'\Automata:'Order state'>
 				<@Size :: "">
 					<@$Is :: @UX\Size>
 					<@Width :: "1050.6137037037042">
@@ -122,21 +122,21 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Opacity :: "255">
 					<@BaseEdge :: "">
 						<@$Is :: @Edge>
-						<@From :: @'Online retail model'\Automata:'Order state'>
+						<@From :: @'OnlineRetail model'\Automata:'Order state'>
 						<@Meta :: @Automata\State>
-						<@To :: @'Online retail model'\Automata:'Order state'\CompletingOrder>
+						<@To :: @'OnlineRetail model'\Automata:'Order state'\CompletingOrder>
 					<@Decorator :: "">
 						<@$Is :: @UX\LineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@From :: @'Online retail model'\Automata:'Order state'\CompletingOrder>
+							<@From :: @'OnlineRetail model'\Automata:'Order state'\CompletingOrder>
 							<@Meta :: @Automata\State\Transition>
-							<@To :: @'Online retail model'\Automata:'Order state'\OrderCompleted>
+							<@To :: @'OnlineRetail model'\Automata:'Order state'\OrderCompleted>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@HideLabel :: "True">
 
-						<@ToItem :: @'Online retail model'\UXContainer:'Order state'\Item:\Item:<<"2">>>
+						<@ToItem :: @'OnlineRetail model'\UXContainer:'Order state'\Item:\Item:<<"2">>>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -158,33 +158,33 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Opacity :: "255">
 					<@BaseEdge :: "">
 						<@$Is :: @Edge>
-						<@From :: @'Online retail model'\Automata:'Order state'>
+						<@From :: @'OnlineRetail model'\Automata:'Order state'>
 						<@Meta :: @Automata\State>
-						<@To :: @'Online retail model'\Automata:'Order state'\OrderCompleted>
+						<@To :: @'OnlineRetail model'\Automata:'Order state'\OrderCompleted>
 					<@Decorator :: "">
 						<@$Is :: @UX\LineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@From :: @'Online retail model'\Automata:'Order state'\OrderCompleted>
+							<@From :: @'OnlineRetail model'\Automata:'Order state'\OrderCompleted>
 							<@Meta :: @Automata\State\Transition>
-							<@To :: @'Online retail model'\Automata:'Order state'\ShippingAdressAndMethodDefined>
+							<@To :: @'OnlineRetail model'\Automata:'Order state'\ShippingAdressAndMethodDefined>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@HideLabel :: "True">
 
-						<@ToItem :: @'Online retail model'\UXContainer:'Order state'\Item:\Item:<<"6">>>
+						<@ToItem :: @'OnlineRetail model'\UXContainer:'Order state'\Item:\Item:<<"6">>>
 					<@Decorator :: "">
 						<@$Is :: @UX\LineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@From :: @'Online retail model'\Automata:'Order state'\OrderCompleted>
+							<@From :: @'OnlineRetail model'\Automata:'Order state'\OrderCompleted>
 							<@Meta :: @Automata\State\Transition>
-							<@To :: @'Online retail model'\Automata:'Order state'\CompletingOrder>
+							<@To :: @'OnlineRetail model'\Automata:'Order state'\CompletingOrder>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@HideLabel :: "True">
 
-						<@ToItem :: @'Online retail model'\UXContainer:'Order state'\Item:\Item:<<"1">>>
+						<@ToItem :: @'OnlineRetail model'\UXContainer:'Order state'\Item:\Item:<<"1">>>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -206,33 +206,33 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Opacity :: "255">
 					<@BaseEdge :: "">
 						<@$Is :: @Edge>
-						<@From :: @'Online retail model'\Automata:'Order state'>
+						<@From :: @'OnlineRetail model'\Automata:'Order state'>
 						<@Meta :: @Automata\State>
-						<@To :: @'Online retail model'\Automata:'Order state'\PaymentStarted>
+						<@To :: @'OnlineRetail model'\Automata:'Order state'\PaymentStarted>
 					<@Decorator :: "">
 						<@$Is :: @UX\LineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@From :: @'Online retail model'\Automata:'Order state'\PaymentStarted>
+							<@From :: @'OnlineRetail model'\Automata:'Order state'\PaymentStarted>
 							<@Meta :: @Automata\State\Transition>
-							<@To :: @'Online retail model'\Automata:'Order state'\PaymentFailed>
+							<@To :: @'OnlineRetail model'\Automata:'Order state'\PaymentFailed>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@HideLabel :: "True">
 
-						<@ToItem :: @'Online retail model'\UXContainer:'Order state'\Item:\Item:<<"5">>>
+						<@ToItem :: @'OnlineRetail model'\UXContainer:'Order state'\Item:\Item:<<"5">>>
 					<@Decorator :: "">
 						<@$Is :: @UX\LineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@From :: @'Online retail model'\Automata:'Order state'\PaymentStarted>
+							<@From :: @'OnlineRetail model'\Automata:'Order state'\PaymentStarted>
 							<@Meta :: @Automata\State\Transition>
-							<@To :: @'Online retail model'\Automata:'Order state'\PaymentCompleted>
+							<@To :: @'OnlineRetail model'\Automata:'Order state'\PaymentCompleted>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@HideLabel :: "True">
 
-						<@ToItem :: @'Online retail model'\UXContainer:'Order state'\Item:\Item:<<"4">>>
+						<@ToItem :: @'OnlineRetail model'\UXContainer:'Order state'\Item:\Item:<<"4">>>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -254,21 +254,21 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Opacity :: "255">
 					<@BaseEdge :: "">
 						<@$Is :: @Edge>
-						<@From :: @'Online retail model'\Automata:'Order state'>
+						<@From :: @'OnlineRetail model'\Automata:'Order state'>
 						<@Meta :: @Automata\State>
-						<@To :: @'Online retail model'\Automata:'Order state'\PaymentCompleted>
+						<@To :: @'OnlineRetail model'\Automata:'Order state'\PaymentCompleted>
 					<@Decorator :: "">
 						<@$Is :: @UX\LineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@From :: @'Online retail model'\Automata:'Order state'\PaymentCompleted>
+							<@From :: @'OnlineRetail model'\Automata:'Order state'\PaymentCompleted>
 							<@Meta :: @Automata\State\Transition>
-							<@To :: @'Online retail model'\Automata:'Order state'\CollectingOrder>
+							<@To :: @'OnlineRetail model'\Automata:'Order state'\CollectingOrder>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@HideLabel :: "True">
 
-						<@ToItem :: @'Online retail model'\UXContainer:'Order state'\Item:\Item:<<"7">>>
+						<@ToItem :: @'OnlineRetail model'\UXContainer:'Order state'\Item:\Item:<<"7">>>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -290,21 +290,21 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Opacity :: "255">
 					<@BaseEdge :: "">
 						<@$Is :: @Edge>
-						<@From :: @'Online retail model'\Automata:'Order state'>
+						<@From :: @'OnlineRetail model'\Automata:'Order state'>
 						<@Meta :: @Automata\State>
-						<@To :: @'Online retail model'\Automata:'Order state'\PaymentFailed>
+						<@To :: @'OnlineRetail model'\Automata:'Order state'\PaymentFailed>
 					<@Decorator :: "">
 						<@$Is :: @UX\LineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@From :: @'Online retail model'\Automata:'Order state'\PaymentFailed>
+							<@From :: @'OnlineRetail model'\Automata:'Order state'\PaymentFailed>
 							<@Meta :: @Automata\State\Transition>
-							<@To :: @'Online retail model'\Automata:'Order state'\ShippingAdressAndMethodDefined>
+							<@To :: @'OnlineRetail model'\Automata:'Order state'\ShippingAdressAndMethodDefined>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@HideLabel :: "True">
 
-						<@ToItem :: @'Online retail model'\UXContainer:'Order state'\Item:\Item:<<"6">>>
+						<@ToItem :: @'OnlineRetail model'\UXContainer:'Order state'\Item:\Item:<<"6">>>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -326,33 +326,33 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Opacity :: "255">
 					<@BaseEdge :: "">
 						<@$Is :: @Edge>
-						<@From :: @'Online retail model'\Automata:'Order state'>
+						<@From :: @'OnlineRetail model'\Automata:'Order state'>
 						<@Meta :: @Automata\State>
-						<@To :: @'Online retail model'\Automata:'Order state'\ShippingAdressAndMethodDefined>
+						<@To :: @'OnlineRetail model'\Automata:'Order state'\ShippingAdressAndMethodDefined>
 					<@Decorator :: "">
 						<@$Is :: @UX\LineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@From :: @'Online retail model'\Automata:'Order state'\ShippingAdressAndMethodDefined>
+							<@From :: @'OnlineRetail model'\Automata:'Order state'\ShippingAdressAndMethodDefined>
 							<@Meta :: @Automata\State\Transition>
-							<@To :: @'Online retail model'\Automata:'Order state'\OrderCompleted>
+							<@To :: @'OnlineRetail model'\Automata:'Order state'\OrderCompleted>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@HideLabel :: "True">
 
-						<@ToItem :: @'Online retail model'\UXContainer:'Order state'\Item:\Item:<<"2">>>
+						<@ToItem :: @'OnlineRetail model'\UXContainer:'Order state'\Item:\Item:<<"2">>>
 					<@Decorator :: "">
 						<@$Is :: @UX\LineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@From :: @'Online retail model'\Automata:'Order state'\ShippingAdressAndMethodDefined>
+							<@From :: @'OnlineRetail model'\Automata:'Order state'\ShippingAdressAndMethodDefined>
 							<@Meta :: @Automata\State\Transition>
-							<@To :: @'Online retail model'\Automata:'Order state'\PaymentStarted>
+							<@To :: @'OnlineRetail model'\Automata:'Order state'\PaymentStarted>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@HideLabel :: "True">
 
-						<@ToItem :: @'Online retail model'\UXContainer:'Order state'\Item:\Item:<<"3">>>
+						<@ToItem :: @'OnlineRetail model'\UXContainer:'Order state'\Item:\Item:<<"3">>>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -374,21 +374,21 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Opacity :: "255">
 					<@BaseEdge :: "">
 						<@$Is :: @Edge>
-						<@From :: @'Online retail model'\Automata:'Order state'>
+						<@From :: @'OnlineRetail model'\Automata:'Order state'>
 						<@Meta :: @Automata\State>
-						<@To :: @'Online retail model'\Automata:'Order state'\CollectingOrder>
+						<@To :: @'OnlineRetail model'\Automata:'Order state'\CollectingOrder>
 					<@Decorator :: "">
 						<@$Is :: @UX\LineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@From :: @'Online retail model'\Automata:'Order state'\CollectingOrder>
+							<@From :: @'OnlineRetail model'\Automata:'Order state'\CollectingOrder>
 							<@Meta :: @Automata\State\Transition>
-							<@To :: @'Online retail model'\Automata:'Order state'\OrderCollected>
+							<@To :: @'OnlineRetail model'\Automata:'Order state'\OrderCollected>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@HideLabel :: "True">
 
-						<@ToItem :: @'Online retail model'\UXContainer:'Order state'\Item:\Item:<<"8">>>
+						<@ToItem :: @'OnlineRetail model'\UXContainer:'Order state'\Item:\Item:<<"8">>>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -410,21 +410,21 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Opacity :: "255">
 					<@BaseEdge :: "">
 						<@$Is :: @Edge>
-						<@From :: @'Online retail model'\Automata:'Order state'>
+						<@From :: @'OnlineRetail model'\Automata:'Order state'>
 						<@Meta :: @Automata\State>
-						<@To :: @'Online retail model'\Automata:'Order state'\OrderCollected>
+						<@To :: @'OnlineRetail model'\Automata:'Order state'\OrderCollected>
 					<@Decorator :: "">
 						<@$Is :: @UX\LineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@From :: @'Online retail model'\Automata:'Order state'\OrderCollected>
+							<@From :: @'OnlineRetail model'\Automata:'Order state'\OrderCollected>
 							<@Meta :: @Automata\State\Transition>
-							<@To :: @'Online retail model'\Automata:'Order state'\OrderSent>
+							<@To :: @'OnlineRetail model'\Automata:'Order state'\OrderSent>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@HideLabel :: "True">
 
-						<@ToItem :: @'Online retail model'\UXContainer:'Order state'\Item:\Item:<<"9">>>
+						<@ToItem :: @'OnlineRetail model'\UXContainer:'Order state'\Item:\Item:<<"9">>>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -446,33 +446,33 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Opacity :: "255">
 					<@BaseEdge :: "">
 						<@$Is :: @Edge>
-						<@From :: @'Online retail model'\Automata:'Order state'>
+						<@From :: @'OnlineRetail model'\Automata:'Order state'>
 						<@Meta :: @Automata\State>
-						<@To :: @'Online retail model'\Automata:'Order state'\OrderSent>
+						<@To :: @'OnlineRetail model'\Automata:'Order state'\OrderSent>
 					<@Decorator :: "">
 						<@$Is :: @UX\LineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@From :: @'Online retail model'\Automata:'Order state'\OrderSent>
+							<@From :: @'OnlineRetail model'\Automata:'Order state'\OrderSent>
 							<@Meta :: @Automata\State\Transition>
-							<@To :: @'Online retail model'\Automata:'Order state'\OrderDelivered>
+							<@To :: @'OnlineRetail model'\Automata:'Order state'\OrderDelivered>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@HideLabel :: "True">
 
-						<@ToItem :: @'Online retail model'\UXContainer:'Order state'\Item:\Item:<<"10">>>
+						<@ToItem :: @'OnlineRetail model'\UXContainer:'Order state'\Item:\Item:<<"10">>>
 					<@Decorator :: "">
 						<@$Is :: @UX\LineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@From :: @'Online retail model'\Automata:'Order state'\OrderSent>
+							<@From :: @'OnlineRetail model'\Automata:'Order state'\OrderSent>
 							<@Meta :: @Automata\State\Transition>
-							<@To :: @'Online retail model'\Automata:'Order state'\DeliveryFailed>
+							<@To :: @'OnlineRetail model'\Automata:'Order state'\DeliveryFailed>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@HideLabel :: "True">
 
-						<@ToItem :: @'Online retail model'\UXContainer:'Order state'\Item:\Item:<<"11">>>
+						<@ToItem :: @'OnlineRetail model'\UXContainer:'Order state'\Item:\Item:<<"11">>>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -494,21 +494,21 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Opacity :: "255">
 					<@BaseEdge :: "">
 						<@$Is :: @Edge>
-						<@From :: @'Online retail model'\Automata:'Order state'>
+						<@From :: @'OnlineRetail model'\Automata:'Order state'>
 						<@Meta :: @Automata\State>
-						<@To :: @'Online retail model'\Automata:'Order state'\OrderDelivered>
+						<@To :: @'OnlineRetail model'\Automata:'Order state'\OrderDelivered>
 					<@Decorator :: "">
 						<@$Is :: @UX\LineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@From :: @'Online retail model'\Automata:'Order state'\OrderDelivered>
+							<@From :: @'OnlineRetail model'\Automata:'Order state'\OrderDelivered>
 							<@Meta :: @Automata\State\Transition>
-							<@To :: @'Online retail model'\Automata:'Order state'\ReturnCreated>
+							<@To :: @'OnlineRetail model'\Automata:'Order state'\ReturnCreated>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@HideLabel :: "True">
 
-						<@ToItem :: @'Online retail model'\UXContainer:'Order state'\Item:\Item:<<"12">>>
+						<@ToItem :: @'OnlineRetail model'\UXContainer:'Order state'\Item:\Item:<<"12">>>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -530,9 +530,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Opacity :: "255">
 					<@BaseEdge :: "">
 						<@$Is :: @Edge>
-						<@From :: @'Online retail model'\Automata:'Order state'>
+						<@From :: @'OnlineRetail model'\Automata:'Order state'>
 						<@Meta :: @Automata\State>
-						<@To :: @'Online retail model'\Automata:'Order state'\DeliveryFailed>
+						<@To :: @'OnlineRetail model'\Automata:'Order state'\DeliveryFailed>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -554,21 +554,21 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Opacity :: "255">
 					<@BaseEdge :: "">
 						<@$Is :: @Edge>
-						<@From :: @'Online retail model'\Automata:'Order state'>
+						<@From :: @'OnlineRetail model'\Automata:'Order state'>
 						<@Meta :: @Automata\State>
-						<@To :: @'Online retail model'\Automata:'Order state'\ReturnCreated>
+						<@To :: @'OnlineRetail model'\Automata:'Order state'\ReturnCreated>
 					<@Decorator :: "">
 						<@$Is :: @UX\LineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@From :: @'Online retail model'\Automata:'Order state'\ReturnCreated>
+							<@From :: @'OnlineRetail model'\Automata:'Order state'\ReturnCreated>
 							<@Meta :: @Automata\State\Transition>
-							<@To :: @'Online retail model'\Automata:'Order state'\ReturnSent>
+							<@To :: @'OnlineRetail model'\Automata:'Order state'\ReturnSent>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@HideLabel :: "True">
 
-						<@ToItem :: @'Online retail model'\UXContainer:'Order state'\Item:\Item:<<"13">>>
+						<@ToItem :: @'OnlineRetail model'\UXContainer:'Order state'\Item:\Item:<<"13">>>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -590,21 +590,21 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Opacity :: "255">
 					<@BaseEdge :: "">
 						<@$Is :: @Edge>
-						<@From :: @'Online retail model'\Automata:'Order state'>
+						<@From :: @'OnlineRetail model'\Automata:'Order state'>
 						<@Meta :: @Automata\State>
-						<@To :: @'Online retail model'\Automata:'Order state'\ReturnSent>
+						<@To :: @'OnlineRetail model'\Automata:'Order state'\ReturnSent>
 					<@Decorator :: "">
 						<@$Is :: @UX\LineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@From :: @'Online retail model'\Automata:'Order state'\ReturnSent>
+							<@From :: @'OnlineRetail model'\Automata:'Order state'\ReturnSent>
 							<@Meta :: @Automata\State\Transition>
-							<@To :: @'Online retail model'\Automata:'Order state'\ReturnDelivered>
+							<@To :: @'OnlineRetail model'\Automata:'Order state'\ReturnDelivered>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@HideLabel :: "True">
 
-						<@ToItem :: @'Online retail model'\UXContainer:'Order state'\Item:\Item:<<"14">>>
+						<@ToItem :: @'OnlineRetail model'\UXContainer:'Order state'\Item:\Item:<<"14">>>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -626,33 +626,33 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Opacity :: "255">
 					<@BaseEdge :: "">
 						<@$Is :: @Edge>
-						<@From :: @'Online retail model'\Automata:'Order state'>
+						<@From :: @'OnlineRetail model'\Automata:'Order state'>
 						<@Meta :: @Automata\State>
-						<@To :: @'Online retail model'\Automata:'Order state'\ReturnDelivered>
+						<@To :: @'OnlineRetail model'\Automata:'Order state'\ReturnDelivered>
 					<@Decorator :: "">
 						<@$Is :: @UX\LineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@From :: @'Online retail model'\Automata:'Order state'\ReturnDelivered>
+							<@From :: @'OnlineRetail model'\Automata:'Order state'\ReturnDelivered>
 							<@Meta :: @Automata\State\Transition>
-							<@To :: @'Online retail model'\Automata:'Order state'\ReturnConfirmed>
+							<@To :: @'OnlineRetail model'\Automata:'Order state'\ReturnConfirmed>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@HideLabel :: "True">
 
-						<@ToItem :: @'Online retail model'\UXContainer:'Order state'\Item:\Item:<<"15">>>
+						<@ToItem :: @'OnlineRetail model'\UXContainer:'Order state'\Item:\Item:<<"15">>>
 					<@Decorator :: "">
 						<@$Is :: @UX\LineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@From :: @'Online retail model'\Automata:'Order state'\ReturnDelivered>
+							<@From :: @'OnlineRetail model'\Automata:'Order state'\ReturnDelivered>
 							<@Meta :: @Automata\State\Transition>
-							<@To :: @'Online retail model'\Automata:'Order state'\ReturnDisputed>
+							<@To :: @'OnlineRetail model'\Automata:'Order state'\ReturnDisputed>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@HideLabel :: "True">
 
-						<@ToItem :: @'Online retail model'\UXContainer:'Order state'\Item:\Item:<<"17">>>
+						<@ToItem :: @'OnlineRetail model'\UXContainer:'Order state'\Item:\Item:<<"17">>>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -674,21 +674,21 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Opacity :: "255">
 					<@BaseEdge :: "">
 						<@$Is :: @Edge>
-						<@From :: @'Online retail model'\Automata:'Order state'>
+						<@From :: @'OnlineRetail model'\Automata:'Order state'>
 						<@Meta :: @Automata\State>
-						<@To :: @'Online retail model'\Automata:'Order state'\ReturnConfirmed>
+						<@To :: @'OnlineRetail model'\Automata:'Order state'\ReturnConfirmed>
 					<@Decorator :: "">
 						<@$Is :: @UX\LineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@From :: @'Online retail model'\Automata:'Order state'\ReturnConfirmed>
+							<@From :: @'OnlineRetail model'\Automata:'Order state'\ReturnConfirmed>
 							<@Meta :: @Automata\State\Transition>
-							<@To :: @'Online retail model'\Automata:'Order state'\ReturnRefundPaid>
+							<@To :: @'OnlineRetail model'\Automata:'Order state'\ReturnRefundPaid>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@HideLabel :: "True">
 
-						<@ToItem :: @'Online retail model'\UXContainer:'Order state'\Item:\Item:<<"16">>>
+						<@ToItem :: @'OnlineRetail model'\UXContainer:'Order state'\Item:\Item:<<"16">>>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -710,9 +710,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Opacity :: "255">
 					<@BaseEdge :: "">
 						<@$Is :: @Edge>
-						<@From :: @'Online retail model'\Automata:'Order state'>
+						<@From :: @'OnlineRetail model'\Automata:'Order state'>
 						<@Meta :: @Automata\State>
-						<@To :: @'Online retail model'\Automata:'Order state'\ReturnRefundPaid>
+						<@To :: @'OnlineRetail model'\Automata:'Order state'\ReturnRefundPaid>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -734,46 +734,46 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Opacity :: "255">
 					<@BaseEdge :: "">
 						<@$Is :: @Edge>
-						<@From :: @'Online retail model'\Automata:'Order state'>
+						<@From :: @'OnlineRetail model'\Automata:'Order state'>
 						<@Meta :: @Automata\State>
-						<@To :: @'Online retail model'\Automata:'Order state'\ReturnDisputed>
+						<@To :: @'OnlineRetail model'\Automata:'Order state'\ReturnDisputed>
 		automata "Order state"
 			state "CompletingOrder"
-				transition @'Online retail model'\Automata:'Order state'\OrderCompleted
+				transition @'OnlineRetail model'\Automata:'Order state'\OrderCompleted
 			state "OrderCompleted"
-				transition @'Online retail model'\Automata:'Order state'\ShippingAdressAndMethodDefined
-				transition @'Online retail model'\Automata:'Order state'\CompletingOrder
+				transition @'OnlineRetail model'\Automata:'Order state'\ShippingAdressAndMethodDefined
+				transition @'OnlineRetail model'\Automata:'Order state'\CompletingOrder
 			state "PaymentStarted"
-				transition @'Online retail model'\Automata:'Order state'\PaymentFailed
-				transition @'Online retail model'\Automata:'Order state'\PaymentCompleted
+				transition @'OnlineRetail model'\Automata:'Order state'\PaymentFailed
+				transition @'OnlineRetail model'\Automata:'Order state'\PaymentCompleted
 			state "PaymentCompleted"
-				transition @'Online retail model'\Automata:'Order state'\CollectingOrder
+				transition @'OnlineRetail model'\Automata:'Order state'\CollectingOrder
 			state "PaymentFailed"
-				transition @'Online retail model'\Automata:'Order state'\ShippingAdressAndMethodDefined
+				transition @'OnlineRetail model'\Automata:'Order state'\ShippingAdressAndMethodDefined
 			state "ShippingAdressAndMethodDefined"
-				transition @'Online retail model'\Automata:'Order state'\OrderCompleted
-				transition @'Online retail model'\Automata:'Order state'\PaymentStarted
+				transition @'OnlineRetail model'\Automata:'Order state'\OrderCompleted
+				transition @'OnlineRetail model'\Automata:'Order state'\PaymentStarted
 			state "CollectingOrder"
-				transition @'Online retail model'\Automata:'Order state'\OrderCollected
+				transition @'OnlineRetail model'\Automata:'Order state'\OrderCollected
 			state "OrderCollected"
-				transition @'Online retail model'\Automata:'Order state'\OrderSent
+				transition @'OnlineRetail model'\Automata:'Order state'\OrderSent
 			state "OrderSent"
-				transition @'Online retail model'\Automata:'Order state'\OrderDelivered
-				transition @'Online retail model'\Automata:'Order state'\DeliveryFailed
+				transition @'OnlineRetail model'\Automata:'Order state'\OrderDelivered
+				transition @'OnlineRetail model'\Automata:'Order state'\DeliveryFailed
 			state "OrderDelivered"
-				transition @'Online retail model'\Automata:'Order state'\ReturnCreated
+				transition @'OnlineRetail model'\Automata:'Order state'\ReturnCreated
 			state "DeliveryFailed"
 			state "ReturnCreated"
-				transition @'Online retail model'\Automata:'Order state'\ReturnSent
+				transition @'OnlineRetail model'\Automata:'Order state'\ReturnSent
 			state "ReturnSent"
-				transition @'Online retail model'\Automata:'Order state'\ReturnDelivered
+				transition @'OnlineRetail model'\Automata:'Order state'\ReturnDelivered
 			state "ReturnConfirmed"
-				transition @'Online retail model'\Automata:'Order state'\ReturnRefundPaid
+				transition @'OnlineRetail model'\Automata:'Order state'\ReturnRefundPaid
 			state "ReturnRefundPaid"
 			state "ReturnDisputed"
 			state "ReturnDelivered"
-				transition @'Online retail model'\Automata:'Order state'\ReturnConfirmed
-				transition @'Online retail model'\Automata:'Order state'\ReturnDisputed
+				transition @'OnlineRetail model'\Automata:'Order state'\ReturnConfirmed
+				transition @'OnlineRetail model'\Automata:'Order state'\ReturnDisputed
 		enum "CardBrand" ("Visa", "Mastercard")
 		<@UX\UXContainer :: "Data model">
 			<@$Is :: @UX\UXContainer>
@@ -784,7 +784,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@$Is :: @Edge>
 				<@From :: @$CodeRoot>
 				<@Meta :: @$Empty>
-				<@To :: @'Online retail model'>
+				<@To :: @'OnlineRetail model'>
 			<@SelectedEdges :: "">
 			<@ShowSelectedEdgesBaseEdge :: "True">
 			<@Size :: "">
@@ -814,9 +814,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@Opacity :: "255">
 				<@BaseEdge :: "">
 					<@$Is :: @Edge>
-					<@From :: @'Online retail model'>
+					<@From :: @'OnlineRetail model'>
 					<@Meta :: @Class>
-					<@To :: @'Online retail model'\Product>
+					<@To :: @'OnlineRetail model'\Product>
 			<@Item :: "">
 				<@$Is :: @UX\RectangleVisualiserItem>
 				<@Scale :: "100">
@@ -839,36 +839,36 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@Opacity :: "255">
 				<@BaseEdge :: "">
 					<@$Is :: @Edge>
-					<@From :: @'Online retail model'>
+					<@From :: @'OnlineRetail model'>
 					<@Meta :: @Class>
-					<@To :: @'Online retail model'\Order>
+					<@To :: @'OnlineRetail model'\Order>
 				<@Decorator :: "">
 					<@$Is :: @UX\LineDecorator>
 					<@Scale :: "100">
 					<@BaseEdge :: "">
-						<@From :: @'Online retail model'\Order>
+						<@From :: @'OnlineRetail model'\Order>
 						<@Meta :: @Class\Association>
-						<@To :: @'Online retail model'\Order\User>
+						<@To :: @'OnlineRetail model'\Order\User>
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Association>
-					<@ToItem :: @'Online retail model'\'Data model'\Item:<<"3">>>
+					<@ToItem :: @'OnlineRetail model'\'Data model'\Item:<<"3">>>
 				<@Decorator :: "">
 					<@$Is :: @UX\LineDecorator>
 					<@Scale :: "100">
 					<@BaseEdge :: "">
-						<@From :: @'Online retail model'\Order>
+						<@From :: @'OnlineRetail model'\Order>
 						<@Meta :: @Class\Association>
-						<@To :: @'Online retail model'\Order\Product>
+						<@To :: @'OnlineRetail model'\Order\Product>
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Association>
-					<@ToItem :: @'Online retail model'\'Data model'\Item:<<"1">>>
+					<@ToItem :: @'OnlineRetail model'\'Data model'\Item:<<"1">>>
 				<@Decorator :: "">
 					<@$Is :: @UX\LineDecorator>
 					<@Scale :: "100">
 					<@BaseEdge :: "">
-						<@From :: @'Online retail model'\Order>
+						<@From :: @'OnlineRetail model'\Order>
 						<@Meta :: @Class\Association>
-						<@To :: @'Online retail model'\Order\Payment>
+						<@To :: @'OnlineRetail model'\Order\Payment>
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Association>
-					<@ToItem :: @'Online retail model'\'Data model'\Item:<<"7">>>
+					<@ToItem :: @'OnlineRetail model'\'Data model'\Item:<<"7">>>
 			<@Item :: "">
 				<@$Is :: @UX\RectangleVisualiserItem>
 				<@Scale :: "100">
@@ -891,29 +891,29 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@Opacity :: "255">
 				<@BaseEdge :: "">
 					<@$Is :: @Edge>
-					<@From :: @'Online retail model'>
+					<@From :: @'OnlineRetail model'>
 					<@Meta :: @Class>
-					<@To :: @'Online retail model'\User>
+					<@To :: @'OnlineRetail model'\User>
 				<@Decorator :: "">
 					<@$Is :: @UX\LineDecorator>
 					<@Scale :: "100">
 					<@BaseEdge :: "">
-						<@From :: @'Online retail model'\User>
+						<@From :: @'OnlineRetail model'\User>
 						<@Meta :: @Class\Aggregation>
-						<@To :: @'Online retail model'\User\Address>
+						<@To :: @'OnlineRetail model'\User\Address>
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Aggregation>
 					<@StartAnchor :: @UX\LineEndEnum\Diamond>
-					<@ToItem :: @'Online retail model'\'Data model'\Item:<<"8">>>
+					<@ToItem :: @'OnlineRetail model'\'Data model'\Item:<<"8">>>
 				<@Decorator :: "">
 					<@$Is :: @UX\LineDecorator>
 					<@Scale :: "100">
 					<@BaseEdge :: "">
-						<@From :: @'Online retail model'\User>
+						<@From :: @'OnlineRetail model'\User>
 						<@Meta :: @Class\Aggregation>
-						<@To :: @'Online retail model'\User\PaymentMethod>
+						<@To :: @'OnlineRetail model'\User\PaymentMethod>
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Aggregation>
 					<@StartAnchor :: @UX\LineEndEnum\Diamond>
-					<@ToItem :: @'Online retail model'\'Data model'\Item:<<"4">>>
+					<@ToItem :: @'OnlineRetail model'\'Data model'\Item:<<"4">>>
 			<@Item :: "">
 				<@$Is :: @UX\RectangleVisualiserItem>
 				<@Scale :: "100">
@@ -936,9 +936,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@Opacity :: "255">
 				<@BaseEdge :: "">
 					<@$Is :: @Edge>
-					<@From :: @'Online retail model'>
+					<@From :: @'OnlineRetail model'>
 					<@Meta :: @Class>
-					<@To :: @'Online retail model'\PaymentMethod>
+					<@To :: @'OnlineRetail model'\PaymentMethod>
 			<@Item :: "">
 				<@$Is :: @UX\RectangleVisualiserItem>
 				<@Scale :: "100">
@@ -961,20 +961,20 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@Opacity :: "255">
 				<@BaseEdge :: "">
 					<@$Is :: @Edge>
-					<@From :: @'Online retail model'>
+					<@From :: @'OnlineRetail model'>
 					<@Meta :: @Class>
-					<@To :: @'Online retail model'\Card>
+					<@To :: @'OnlineRetail model'\Card>
 				<@Decorator :: "">
 					<@$Is :: @UX\LineDecorator>
 					<@Scale :: "100">
 					<@BaseEdge :: "">
-						<@From :: @'Online retail model'\Card>
+						<@From :: @'OnlineRetail model'\Card>
 						<@Meta :: @$Inherits>
-						<@To :: @'Online retail model'\PaymentMethod>
+						<@To :: @'OnlineRetail model'\PaymentMethod>
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Inherits>
 					<@EndAnchor :: @UX\LineEndEnum\Triangle>
 					<@HideLabel :: "True">
-					<@ToItem :: @'Online retail model'\'Data model'\Item:<<"4">>>
+					<@ToItem :: @'OnlineRetail model'\'Data model'\Item:<<"4">>>
 			<@Item :: "">
 				<@$Is :: @UX\RectangleVisualiserItem>
 				<@Scale :: "100">
@@ -997,20 +997,20 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@Opacity :: "255">
 				<@BaseEdge :: "">
 					<@$Is :: @Edge>
-					<@From :: @'Online retail model'>
+					<@From :: @'OnlineRetail model'>
 					<@Meta :: @Class>
-					<@To :: @'Online retail model'\PayPal>
+					<@To :: @'OnlineRetail model'\PayPal>
 				<@Decorator :: "">
 					<@$Is :: @UX\LineDecorator>
 					<@Scale :: "100">
 					<@BaseEdge :: "">
-						<@From :: @'Online retail model'\PayPal>
+						<@From :: @'OnlineRetail model'\PayPal>
 						<@Meta :: @$Inherits>
-						<@To :: @'Online retail model'\PaymentMethod>
+						<@To :: @'OnlineRetail model'\PaymentMethod>
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Inherits>
 					<@EndAnchor :: @UX\LineEndEnum\Triangle>
 					<@HideLabel :: "True">
-					<@ToItem :: @'Online retail model'\'Data model'\Item:<<"4">>>
+					<@ToItem :: @'OnlineRetail model'\'Data model'\Item:<<"4">>>
 			<@Item :: "">
 				<@$Is :: @UX\RectangleVisualiserItem>
 				<@Scale :: "100">
@@ -1033,18 +1033,18 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@Opacity :: "255">
 				<@BaseEdge :: "">
 					<@$Is :: @Edge>
-					<@From :: @'Online retail model'>
+					<@From :: @'OnlineRetail model'>
 					<@Meta :: @Class>
-					<@To :: @'Online retail model'\Payment>
+					<@To :: @'OnlineRetail model'\Payment>
 				<@Decorator :: "">
 					<@$Is :: @UX\LineDecorator>
 					<@Scale :: "100">
 					<@BaseEdge :: "">
-						<@From :: @'Online retail model'\Payment>
+						<@From :: @'OnlineRetail model'\Payment>
 						<@Meta :: @Class\Association>
-						<@To :: @'Online retail model'\Payment\PaymentMethod>
+						<@To :: @'OnlineRetail model'\Payment\PaymentMethod>
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Association>
-					<@ToItem :: @'Online retail model'\'Data model'\Item:<<"4">>>
+					<@ToItem :: @'OnlineRetail model'\'Data model'\Item:<<"4">>>
 			<@Item :: "">
 				<@$Is :: @UX\RectangleVisualiserItem>
 				<@Scale :: "100">
@@ -1067,6 +1067,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@Opacity :: "255">
 				<@BaseEdge :: "">
 					<@$Is :: @Edge>
-					<@From :: @'Online retail model'>
+					<@From :: @'OnlineRetail model'>
 					<@Meta :: @Class>
-					<@To :: @'Online retail model'\Address>
+					<@To :: @'OnlineRetail model'\Address>
+	"OnlineRetail backend"
+		"Database"
