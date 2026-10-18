@@ -14,37 +14,48 @@
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
 				"ToArrow"
+				inherits @Structure\StaticComponent\Relation
 			"Contain"
 				<@$IsAggregation :: @$Empty>
 				<@$EdgeTarget :: @Structure\StaticComponent>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
 				"ToDiamond"
+				inherits @Structure\StaticComponent\Relation
 			"Deploy"
 				<@$EdgeTarget :: @Structure\Machine>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
 				"ToArrow"
+				inherits @Structure\StaticComponent\Relation
 			"Implements"
 				<@$EdgeTarget :: @Structure\Interface>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
 				"ToArrow"
+				inherits @Structure\StaticComponent\Relation
 			"Read"
 				<@$EdgeTarget :: @Structure\StaticComponent>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
 				"FromFilledTriangle"
+				inherits @Structure\StaticComponent\Depend
+				inherits @Structure\StaticComponent\Relation
 			"Write"
 				<@$EdgeTarget :: @Structure\StaticComponent>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
 				"ToFilledTriangle"
+				inherits @Structure\StaticComponent\Relation
 			"ReadWrite"
 				<@$EdgeTarget :: @Structure\StaticComponent>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
-				"FromToFilledTriangle"			
+				"FromToFilledTriangle"
+				inherits @Structure\StaticComponent\Depend
+				inherits @Structure\StaticComponent\Relation
+				inherits @Structure\StaticComponent\Read
+				inherits @Structure\StaticComponent\Write
 		"Component"
 			<@$InstanceCreationPriority :: "">
 			inherits @Structure\StaticComponent
@@ -53,11 +64,14 @@
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
 				"ToArrow"
+				inherits @Structure\StaticComponent\Use
 			"Use"
 				<@$EdgeTarget :: @Structure\StaticComponent>
 				<@$MinCardinality :: "0">
 				<@$MaxCardinality :: "-1">
 				"ToArrow"
+				inherits @Structure\StaticComponent\Depend
+				inherits @Structure\StaticComponent\Relation
 		"Workstation"
 			<@$InstanceCreationPriority :: "">
 			inherits @Structure\Machine

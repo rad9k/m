@@ -6080,16 +6080,42 @@ namespace m0.UIWpf.UX
 
         private void SaveDiagram()
         {
-            string path = GraphUtil.GetQueryBetweenVertexes_byInEdges(this.Vertex, MinusZero.Instance.Root);
-            string pathEncoded = Lib.StdView.Html.DiagramQueryToDiagramId_internal(path);
+            IVertex diagramVertex = this.Vertex;
+
+            if (diagramVertex == null)
+            {
+                MinusZero.Instance.Log(1, "UXVisualiser.SaveDiagram",
+                    "Diagram vertex is null. Diagram not saved.");
+                return;
+            }
+
+            string diagramId = Lib.StdView.Html.DiagramVertexToDiagramId(diagramVertex);
+
+            if (diagramId == null)
+            {
+                MinusZero.Instance.Log(1, "UXVisualiser.SaveDiagram",
+                    "No in-edge path from diagram to root. Diagram not saved.");
+                return;
+            }
+
+            string[] pathParts = diagramId.Split('/');
 
             string startFullFilename = GraphUtil.GetStringValue(MinusZero.Instance.Root.Get(false, @"Start:\FullFilename:"));
-            string diagramsDirectoryPath = System.IO.Path.Combine(startFullFilename, "diagrams");
-            string diagramFilePath = System.IO.Path.Combine(diagramsDirectoryPath, pathEncoded + ".png");
+            string diagramDirectoryPath = System.IO.Path.Combine(startFullFilename, "diagrams");
+
+            for (int pathPartIndex = 0; pathPartIndex < pathParts.Length - 1; pathPartIndex++)
+                diagramDirectoryPath = System.IO.Path.Combine(diagramDirectoryPath, pathParts[pathPartIndex]);
+
+            string diagramFilePath = System.IO.Path.Combine(
+                diagramDirectoryPath,
+                pathParts[pathParts.Length - 1] + ".png");
 
             try
             {
-                System.IO.Directory.CreateDirectory(diagramsDirectoryPath);
+                MinusZero.Instance.Log(1, "UXVisualiser.SaveDiagram",
+                    "Saving diagram to " + diagramFilePath);
+
+                System.IO.Directory.CreateDirectory(diagramDirectoryPath);
                 CanvasToPng.SaveCanvasToPng(Canvas, diagramFilePath);
             }
             catch (Exception ex)

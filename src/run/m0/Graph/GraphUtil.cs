@@ -1846,64 +1846,76 @@ namespace m0.Graph
 
         public static string GetQueryBetweenVertexes_byInEdges(IVertex from, IVertex to)
         {
-            if (from == null || to == null)
-                throw new ArgumentNullException();
+            List<IEdge> edges = GetEdgesBetweenVertexes_byInEdges(from, to);
 
-            if (from == to)
-                return "";
-
-            var visited = new HashSet<IVertex>();
-            var parentEdge = new Dictionary<IVertex, IEdge>();
-
-            var queue = new Queue<IVertex>();
-
-            visited.Add(from);
-            parentEdge[from] = null;
-            queue.Enqueue(from);
-
-            // --- BFS ---
-            while (queue.Count > 0)
-            {
-                var v = queue.Dequeue();
-
-                if (v == to)
-                    break;
-
-                foreach (IEdge e in v.InEdgesRaw)
-                {
-                    IVertex eFrom = e.From;
-
-                    if (!visited.Contains(eFrom))
-                    {
-                        visited.Add(eFrom);
-                        parentEdge[eFrom] = e;
-                        queue.Enqueue(eFrom);
-                    }
-                }
-
-                int x = 0;
-            }
-
-            if (!parentEdge.ContainsKey(to))
+            if (edges == null)
                 return null;
 
             StringBuilder sb = new StringBuilder();
             bool isFirst = true;
 
-            for (IEdge e = parentEdge[to]; e != null; e = parentEdge[e.To])
+            foreach (IEdge edge in edges)
             {
                 if (isFirst)
                     isFirst = false;
                 else
                     sb.Append(@"\");
 
-                if (e.Meta != MinusZero.Instance.Empty)
-                    sb.Append(e.Meta.ToString() + ":" + e.To.ToString());
+                if (edge.Meta != MinusZero.Instance.Empty)
+                    sb.Append(edge.Meta.ToString() + ":" + edge.To.ToString());
                 else
-                    sb.Append(":" + e.To.ToString());
+                    sb.Append(":" + edge.To.ToString());
             }
 
             return sb.ToString();
+        }
+
+        // Edges are ordered from `to` toward `from`. BFS starts at `from` and walks InEdges.
+        public static List<IEdge> GetEdgesBetweenVertexes_byInEdges(IVertex from, IVertex to)
+        {
+            if (from == null || to == null)
+                throw new ArgumentNullException();
+
+            if (from == to)
+                return new List<IEdge>();
+
+            HashSet<IVertex> visited = new HashSet<IVertex>();
+            Dictionary<IVertex, IEdge> parentEdge = new Dictionary<IVertex, IEdge>();
+            Queue<IVertex> queue = new Queue<IVertex>();
+
+            visited.Add(from);
+            parentEdge[from] = null;
+            queue.Enqueue(from);
+
+            while (queue.Count > 0)
+            {
+                IVertex current = queue.Dequeue();
+
+                if (current == to)
+                    break;
+
+                foreach (IEdge edge in current.InEdgesRaw)
+                {
+                    IVertex edgeFrom = edge.From;
+
+                    if (!visited.Contains(edgeFrom))
+                    {
+                        visited.Add(edgeFrom);
+                        parentEdge[edgeFrom] = edge;
+                        queue.Enqueue(edgeFrom);
+                    }
+                }
+            }
+
+            if (!parentEdge.ContainsKey(to))
+                return null;
+
+            List<IEdge> pathFromTo = new List<IEdge>();
+
+            for (IEdge edge = parentEdge[to]; edge != null; edge = parentEdge[edge.To])
+                pathFromTo.Add(edge);
+
+            return pathFromTo;
         }
     }
 }

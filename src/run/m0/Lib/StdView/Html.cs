@@ -48,13 +48,117 @@ namespace m0.Lib.StdView
 
         public static string DiagramQueryToDiagramId_internal(string query)
         {
-            query = query.Replace(@"\", "-");
-            query = query.Replace(@"{", "-");
-            query = query.Replace(@"}", "-");
-            query = query.Replace(@"'", "-");
-            query = query.Replace(@":", "-");
+            if (query == null)
+            {
+                MinusZero.Instance.Log(1, "Html.DiagramQueryToDiagramId",
+                    "Query is null.");
+                return "";
+            }
 
-            return query;
+            IVertex diagramVertex;
+
+            try
+            {
+                diagramVertex = MinusZero.Instance.Root.Get(false, query);
+            }
+            catch (Exception ex)
+            {
+                MinusZero.Instance.Log(1, "Html.DiagramQueryToDiagramId",
+                    "Failed to resolve query \"" + query + "\". " + ex);
+                return "";
+            }
+
+            if (diagramVertex == null)
+            {
+                MinusZero.Instance.Log(1, "Html.DiagramQueryToDiagramId",
+                    "Query did not resolve to a vertex: " + query);
+                return "";
+            }
+
+            string diagramId = DiagramVertexToDiagramId(diagramVertex);
+
+            if (diagramId == null)
+            {
+                MinusZero.Instance.Log(1, "Html.DiagramQueryToDiagramId",
+                    "No in-edge path from resolved vertex to root. Query: " + query);
+                return "";
+            }
+
+            MinusZero.Instance.Log(1, "Html.DiagramQueryToDiagramId",
+                "Query \"" + query + "\" -> " + diagramId);
+
+            return diagramId;
+        }
+
+        public static string DiagramVertexToDiagramId(IVertex diagramVertex)
+        {
+            if (diagramVertex == null)
+                return null;
+
+            List<IEdge> pathFromRoot = GraphUtil.GetEdgesBetweenVertexes_byInEdges(
+                diagramVertex,
+                MinusZero.Instance.Root);
+
+            if (pathFromRoot == null)
+                return null;
+
+            StringBuilder diagramId = new StringBuilder();
+
+            foreach (IEdge edge in pathFromRoot)
+            {
+                if (diagramId.Length > 0)
+                    diagramId.Append('/');
+
+                diagramId.Append(EdgeToDirectoryName(edge));
+            }
+
+            string diagramFileName = SanitizeDiagramPathPart(GraphUtil.GetStringValue(diagramVertex));
+
+            if (diagramFileName.Length == 0)
+                diagramFileName = "diagram";
+
+            if (diagramId.Length > 0)
+                diagramId.Append('/');
+
+            diagramId.Append(diagramFileName);
+
+            return diagramId.ToString();
+        }
+
+        private static string EdgeToDirectoryName(IEdge edge)
+        {
+            string meta = "";
+
+            if (edge.Meta != null && edge.Meta != MinusZero.Instance.Empty)
+                meta = edge.Meta.ToString();
+
+            string value = "";
+
+            if (edge.To != null)
+                value = edge.To.ToString();
+
+            return SanitizeDiagramPathPart(meta) + "." + SanitizeDiagramPathPart(value);
+        }
+
+        private static string SanitizeDiagramPathPart(string text)
+        {
+            if (text == null)
+                return "";
+
+            text = text.Replace(@"\", "-");
+            text = text.Replace(@"{", "-");
+            text = text.Replace(@"}", "-");
+            text = text.Replace(@"'", "-");
+            text = text.Replace(@":", "-");
+            text = text.Replace(@"/", "-");
+            text = text.Replace(@"*", "-");
+            text = text.Replace(@"?", "-");
+            text = text.Replace("\"", "-");
+            text = text.Replace(@"<", "-");
+            text = text.Replace(@">", "-");
+            text = text.Replace(@"|", "-");
+
+            return text;
         }
 
         public static INoInEdgeInOutVertexVertex DiagramQueryToDiagramId(IExecution exe)
