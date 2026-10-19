@@ -3,11 +3,13 @@ using m0.Graph;
 using m0.Graph.ExecutionFlow;
 using m0.Lib;
 using m0.Util;
+using Microsoft.SqlServer.Server;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static m0_SYSTEM_GENERATE.Program;
 using static m0_SYSTEM_GENERATE.Util.GenerateUtil;
@@ -81,7 +83,21 @@ namespace m0_SYSTEM_GENERATE.Lib
             AddFunction(LibStd, "Sequence", type, "Sequence", "Integer", new TypeName[] { new TypeName("min", "Integer", 1, 1), new TypeName("max", "Integer", 1, 1) });
             AddFunction(LibStd, "StepSequence", type, "StepSequence", "Integer", new TypeName[] { new TypeName("min", "Float", 1, 1), new TypeName("max", "Float", 1, 1), new TypeName("step", "Float", 1, 1) });
 
-            AddFunction(LibStd, "Sleep", type, "Sleep", null, new TypeName[] {new TypeName("miliseconds", "Integer", 1, 1) });            
+            AddFunction(LibStd, "Sleep", type, "Sleep", null, new TypeName[] {new TypeName("miliseconds", "Integer", 1, 1) });
+
+            AddFunction(LibStd, "CreateUUID", type, "CreateUUID", null, new TypeName[] { });
+
+            AddFunction(LibStd, "CreateURN", type, "CreateURN", null, new TypeName[] { new TypeName("attribute", "Vertex", 1, 1) });
+
+            AddFunction(LibStd, "DateTime_ParseByFormat", type, "DateTime_Parse", "DateTime", new TypeName[] {
+                new TypeName("date", "String", 1, 1) ,
+                new TypeName("format", "String", 1, 1)
+            });
+
+            AddFunction(LibStd, "DateTime_ParseByCulture", type, "DateTime_TryParse", "DateTime", new TypeName[] {
+                new TypeName("date", "String", 1, 1) ,
+                new TypeName("culture", "String", 1, 1) 
+            });
         }
 
         public static void CreateLibSys()

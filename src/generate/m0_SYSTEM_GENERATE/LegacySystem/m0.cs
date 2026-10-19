@@ -3367,7 +3367,7 @@ namespace m0
             atr.AddEdge(LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"), edgeTarget);
         }
 
-        void CreateSystemMetaZeroTypes()
+        void CreateSystemMetaZeroTypes_Part1()
         {
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
 
@@ -3375,16 +3375,16 @@ namespace m0
             m0.LegacySystem.Util.GeneralUtil.ParseAndExcute(sm, sm, "{ZeroTypes{AtomType:String{$DndAlwaysCopy:},AtomType:Integer{$DndAlwaysCopy:},AtomType:Decimal{$DndAlwaysCopy:},AtomType:Float{$DndAlwaysCopy:}," +
                 "AtomType:Boolean{$DndAlwaysCopy:},Type:VertexType{$DndAlwaysCopy:}," +
                 "Class:Edge{$DndAlwaysCopy:,Association:From{$MinCardinality:0,$MaxCardinality:1}," +
-                "Association:Meta{$MinCardinality:1,$MaxCardinality:1},Association:To{$MinCardinality:1,$MaxCardinality:1}},"+
+                "Association:Meta{$MinCardinality:1,$MaxCardinality:1},Association:To{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:DateTime{$DndAlwaysCopy:,Attribute:Year{$MinCardinality:1,$MaxCardinality:1},Attribute:Month{$MinCardinality:1,$MaxCardinality:1},Attribute:Day{$MinCardinality:1,$MaxCardinality:1},Attribute:Hour{$MinCardinality:1,$MaxCardinality:1},Attribute:Minute{$MinCardinality:1,$MaxCardinality:1},Attribute:Second{$MinCardinality:1,$MaxCardinality:1},Attribute:Millisecond{$MinCardinality:0,$MaxCardinality:1}}," +
                 "Class:FormalTextLanguage," +
                 "Enum:EnumBase{$DndAlwaysCopy:,}," +
-                "Class:HasBaseEdge{Attribute:BaseEdge{$MinCardinality:1,$MaxCardinality:1}},"+
-                "Class:HasSelectedEdges{Attribute:SelectedEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:},Attribute:ShowSelectedEdgesBaseEdge{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False}},"+
-                "Class:HasFilter{Attribute:FilterQuery{$MinCardinality:0,$MaxCardinality:1}},"+
-                "Class:HasExecutableVertex{Attribute:ExecutableVertex{$MinCardinality:1,$MaxCardinality:1}},"+
+                "Class:HasBaseEdge{Attribute:BaseEdge{$MinCardinality:1,$MaxCardinality:1}}," +
+                "Class:HasSelectedEdges{Attribute:SelectedEdges{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:},Attribute:ShowSelectedEdgesBaseEdge{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False}}," +
+                "Class:HasFilter{Attribute:FilterQuery{$MinCardinality:0,$MaxCardinality:1}}," +
+                "Class:HasExecutableVertex{Attribute:ExecutableVertex{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:Exception{$DndAlwaysCopy:,Attribute:CodeEdge{$MinCardinality:0,$MaxCardinality:1},Attribute:DataEdge{$MinCardinality:0,$MaxCardinality:-1},Attribute:Where{$MinCardinality:0,$MaxCardinality:1},Attribute:Type{$MinCardinality:0,$MaxCardinality:1},Attribute:What{$MinCardinality:1,$MaxCardinality:1}}," +
-                "Class:FormalTextLanguageProcessing{Attribute:ParserHandler{$MinCardinality:0,$MaxCardinality:1},Attribute:GeneratorHandler{$MinCardinality:0,$MaxCardinality:1},Aggregation:LanguageParameterFirst{$MinCardinality:0,$MaxCardinality:1},Aggregation:LanguageParameterSecond{$MinCardinality:0,$MaxCardinality:1}},"+
+                "Class:FormalTextLanguageProcessing{Attribute:ParserHandler{$MinCardinality:0,$MaxCardinality:1},Attribute:GeneratorHandler{$MinCardinality:0,$MaxCardinality:1},Aggregation:LanguageParameterFirst{$MinCardinality:0,$MaxCardinality:1},Aggregation:LanguageParameterSecond{$MinCardinality:0,$MaxCardinality:1}}," +
                 "Class:TextToken{Attribute:IsBold,Attribute:IsItalic}," +
                 "Enum:ExceptionLevelEnum{EnumValue:Trace,EnumValue:Debug,EnumValue:Info,EnumValue:Warning,EnumValue:Error,EnumValue:Fatal}," +
                 "Enum:CodeRepresentationEnum{EnumValue:EdgeOneLine,EnumValue:LinearizedManyLines,EnumValue:ManyLinesExcludingParent,EnumValue:VertexAndManyLines,EnumValue:EdgeAndManyLines}}}");
@@ -3603,6 +3603,30 @@ namespace m0
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\CodeRepresentationEnum").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\EnumBase"));
+        }
+
+        void CreateSystemMetaZeroTypes_Part2() {
+            // DateTime
+
+            IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
+
+            string type = "m0.ZeroTypes.DateTime, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+
+            IVertex DateTime_class = LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\DateTime");
+
+            AddMethod(DateTime_class, "DateTime", type, "DateTime_constructor", null, new TypeName[] {
+                new TypeName("year", "Integer", 1, 1),
+                new TypeName("month", "Integer", 1, 1),
+                new TypeName("day", "Integer", 1, 1),
+                new TypeName("hour", "Integer", 1, 1),
+                new TypeName("minute", "Integer", 1, 1),
+                new TypeName("second", "Integer", 1, 1),
+                new TypeName("milisecond", "Integer", 1, 1),
+            });
+            AddMethod(DateTime_class, "IsLaterThan", type, "IsLaterThan", "Boolean", new TypeName[] { new TypeName("dateTime", "DateTime", 1, 1) });
+            AddMethod(DateTime_class, "IsEarlierThan", type, "IsEarlierThan", "Boolean", new TypeName[] { new TypeName("dateTime", "DateTime", 1, 1) });
+            AddMethod(DateTime_class, "Add", type, "Add", "Boolean", new TypeName[] { new TypeName("dateTime", "DateTime", 1, 1) });
+            AddMethod(DateTime_class, "Substract", type, "Substract", "Boolean", new TypeName[] { new TypeName("dateTime", "DateTime", 1, 1) });
         }
 
         void CreateSystemMetaZeroTypes_UX()
@@ -7332,13 +7356,15 @@ namespace m0
 
             CreateSystemMetaZeroUML();
 
-            CreateSystemMetaZeroTypes();
+            CreateSystemMetaZeroTypes_Part1();
 
             CreateSystemMetaZeroTypes_UX();
 
             CreateSystemMetaZeroTypesExecutionFlow_Part1();
 
-            CreateSystemMetaZeroUML_ZeroCode_part();            
+            CreateSystemMetaZeroUML_ZeroCode_part();
+
+            
 
             CreateSystemMetaZeroTypesExecutionFlow_Part2();
 
@@ -7358,7 +7384,7 @@ namespace m0
         {
             Init_AfterZeroCodeDefintionCreated();
 
-
+            CreateSystemMetaZeroTypes_Part2();
 
             CreateSystemMetaZeroTypes_UX_Additional();
 
