@@ -915,5 +915,18 @@ namespace m0.Lib
 
             return stack;
         }
+
+        public static INoInEdgeInOutVertexVertex CreateUUID(IExecution exe)
+        {
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
+
+            string uuid = Guid.CreateVersion7().ToString();
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+            
+            newStack.AddVertex(null, uuid);
+
+            return stack;
+        }
     }
 }

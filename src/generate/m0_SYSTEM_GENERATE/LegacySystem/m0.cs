@@ -7384,7 +7384,7 @@ namespace m0
         {
             Init_AfterZeroCodeDefintionCreated();
 
-            CreateSystemMetaZeroTypes_Part2();
+            
 
             CreateSystemMetaZeroTypes_UX_Additional();
 
@@ -7444,6 +7444,8 @@ namespace m0
             CheckAndCorrecIsClass();
 
             //////////////////////////
+            
+            CreateSystemMetaZeroTypes_Part2();
 
             CreateQuick();
 

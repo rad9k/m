@@ -85,9 +85,9 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             AddFunction(LibStd, "Sleep", type, "Sleep", null, new TypeName[] {new TypeName("miliseconds", "Integer", 1, 1) });
 
-            AddFunction(LibStd, "CreateUUID", type, "CreateUUID", null, new TypeName[] { });
+            AddFunction(LibStd, "CreateUUID", type, "CreateUUID", "String", new TypeName[] { });
 
-            AddFunction(LibStd, "CreateURN", type, "CreateURN", null, new TypeName[] { new TypeName("attribute", "Vertex", 1, 1) });
+            AddFunction(LibStd, "CreateURN", type, "CreateURN", "String", new TypeName[] { new TypeName("attribute", "Vertex", 1, 1) });
 
             AddFunction(LibStd, "DateTime_ParseByFormat", type, "DateTime_Parse", "DateTime", new TypeName[] {
                 new TypeName("date", "String", 1, 1) ,
