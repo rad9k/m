@@ -158,7 +158,7 @@ namespace m0.Bootstrap
         public void CommandLineExecute_BeforeInitialisation()
         {            
             if (CreateUser != null)
-                CommandLineExecution.CreateUser_BeforeInitialisation(CreateUser);
+                User.CreateUser_BeforeInitialisation(CreateUser);
 
             if (RunUser != null)
                 CommandLineExecution.RunUser_BeforeInitialisation(RunUser);
@@ -169,7 +169,7 @@ namespace m0.Bootstrap
         public void CommandLineExecute_AfterInitialisation()
         {        
             if (CreateUser != null)
-                CommandLineExecution.CreateUser(CreateUser);
+                User.CreateUser(CreateUser);
 
             if (RunUser != null)
                 CommandLineExecution.RunUser(RunUser, false);

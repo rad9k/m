@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace m0.Lib
 {
     public class QueryStringEdgeComparer : IComparer<IEdge>
-    {
+    {        
         string queryString;
         bool isAlphabetical;
 
@@ -111,6 +111,8 @@ namespace m0.Lib
 
     public class Std
     {
+        static IVertex root = MinusZero.Instance.Root;
+
         public static INoInEdgeInOutVertexVertex AlphabeticalSortByQuery(IExecution exe)
         {
             INoInEdgeInOutVertexVertex stack = exe.Stack;
@@ -926,7 +928,30 @@ namespace m0.Lib
             
             newStack.AddVertex(null, uuid);
 
-            return stack;
+            return newStack;
+        }
+
+        public static INoInEdgeInOutVertexVertex CreateURN(IExecution exe)
+        {
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
+
+            IVertex attributeVertex = GraphUtil.GetQueryOutFirst(stack, "attribute", null);
+
+            //
+
+            string orgName = GraphUtil.GetStringValueOrNull(root.Get(false, @"Home\CurrentUser:\MainOrganisation:\ShortName"));
+
+            string atrName = GraphUtil.GetStringValueOrNull(attributeVertex.Get(false, @"$ShortName:"));
+
+            string uuid = Guid.CreateVersion7().ToString();
+
+            string urn = $"urn:{orgName}:{atrName}:{uuid}";
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            newStack.AddVertex(null, urn);
+
+            return newStack;
         }
     }
 }
