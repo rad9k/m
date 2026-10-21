@@ -156,6 +156,10 @@ namespace m0_SYSTEM_GENERATE
 
             Lib.CreateLib.CreateLibNet();
 
+            print("* filling Lib::Cryptography");
+
+            Lib.CreateLib.CreateLibCryptography();
+
             print("* filling Lib::Music");
             Music.CreateMusic.CreateLibMusic();
 

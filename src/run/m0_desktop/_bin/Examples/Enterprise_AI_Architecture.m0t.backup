@@ -2773,13 +2773,13 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@$Is :: @Edge>
 					<@From :: @$CodeRoot>
 					<@Meta :: @UseCase\Actor>
-					<@To :: @'Business User'>
+					<@To :: @'Enterprise AI Architecture'\'Business User'>
 				<@Decorator :: "">
 					<@$Is :: @UX\LineDecorator>
 					<@Scale :: "100">
 					<@BaseEdge :: "">
-						<@From :: @'Business User'>
-						<@Meta :: @UseCase\Actor\Use<<"2">>>
+						<@From :: @'Enterprise AI Architecture'\'Business User'>
+						<@Meta :: @UseCase\Actor\Use<<"1">>>
 						<@To :: @'Enterprise AI Architecture'\'Reporting Front-end'>
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Actor\Relation>
 					<@HideLabel :: "True">
@@ -2789,8 +2789,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@$Is :: @UX\LineDecorator>
 					<@Scale :: "100">
 					<@BaseEdge :: "">
-						<@From :: @'Business User'>
-						<@Meta :: @UseCase\Actor\Use<<"2">>>
+						<@From :: @'Enterprise AI Architecture'\'Business User'>
+						<@Meta :: @UseCase\Actor\Use<<"1">>>
 						<@To :: @'Enterprise AI Architecture'\'Frontend systems'>
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Actor\Relation>
 					<@HideLabel :: "True">
@@ -2815,13 +2815,13 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@$Is :: @Edge>
 					<@From :: @$CodeRoot>
 					<@Meta :: @UseCase\Actor>
-					<@To :: @Customer>
+					<@To :: @'Enterprise AI Architecture'\Customer>
 				<@Decorator :: "">
 					<@$Is :: @UX\LineDecorator>
 					<@Scale :: "100">
 					<@BaseEdge :: "">
-						<@From :: @Customer>
-						<@Meta :: @UseCase\Actor\Use<<"2">>>
+						<@From :: @'Enterprise AI Architecture'\Customer>
+						<@Meta :: @UseCase\Actor\Use<<"1">>>
 						<@To :: @'Enterprise AI Architecture'\'Frontend systems'>
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Actor\Relation>
 					<@HideLabel :: "True">
@@ -2846,13 +2846,13 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@$Is :: @Edge>
 					<@From :: @$CodeRoot>
 					<@Meta :: @UseCase\Actor>
-					<@To :: @'KPI Owner'>
+					<@To :: @'Enterprise AI Architecture'\'KPI Owner'>
 				<@Decorator :: "">
 					<@$Is :: @UX\LineDecorator>
 					<@Scale :: "100">
 					<@BaseEdge :: "">
-						<@From :: @'KPI Owner'>
-						<@Meta :: @UseCase\Actor\Use<<"2">>>
+						<@From :: @'Enterprise AI Architecture'\'KPI Owner'>
+						<@Meta :: @UseCase\Actor\Use<<"1">>>
 						<@To :: @'Enterprise AI Architecture'\'KPI Governance'>
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Actor\Relation>
 					<@HideLabel :: "True">
@@ -3072,13 +3072,13 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			<@Write :: @'Enterprise AI Architecture'\'AI lakehouse'\'Data lake'>
 		<@UseCase\Actor :: "Internal Buiness User">
 			<@$Is :: @UseCase\Actor>
-	<@UseCase\Actor :: "Business User">
-		<@$Is :: @UseCase\Actor>
-		<@Use :: @'Enterprise AI Architecture'\'Reporting Front-end'>
-		<@Use :: @'Enterprise AI Architecture'\'Frontend systems'>
-	<@UseCase\Actor :: "Customer">
-		<@$Is :: @UseCase\Actor>
-		<@Use :: @'Enterprise AI Architecture'\'Frontend systems'>
-	<@UseCase\Actor :: "KPI Owner">
-		<@$Is :: @UseCase\Actor>
-		<@Use :: @'Enterprise AI Architecture'\'KPI Governance'>
+		<@UseCase\Actor :: "Business User">
+			<@$Is :: @UseCase\Actor>
+			<@Use :: @'Enterprise AI Architecture'\'Reporting Front-end'>
+			<@Use :: @'Enterprise AI Architecture'\'Frontend systems'>
+		<@UseCase\Actor :: "Customer">
+			<@$Is :: @UseCase\Actor>
+			<@Use :: @'Enterprise AI Architecture'\'Frontend systems'>
+		<@UseCase\Actor :: "KPI Owner">
+			<@$Is :: @UseCase\Actor>
+			<@Use :: @'Enterprise AI Architecture'\'KPI Governance'>

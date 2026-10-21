@@ -6532,6 +6532,7 @@ namespace m0
 
             IVertex m0o = Root.Get(false, @"User").AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\User\Organisation"), "MinusZero");
 
+            m0o.AddEdge(root.Get(false, @"System\Meta\Base\Vertex\$Is"), root.Get(false, @"System\Meta\ZeroTypes\User\Organisation"));
             m0o.AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\User\Organisation\Name"), "MinusZero");
             m0o.AddVertex(Root.Get(false, @"System\Meta\ZeroTypes\User\Organisation\ShortName"), "m0");
 

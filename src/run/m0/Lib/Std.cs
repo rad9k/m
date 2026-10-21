@@ -121,8 +121,10 @@ namespace m0.Lib
 
             IVertex sortVertexQueryString = GraphUtil.GetQueryOutFirst(stack, "sortVertexQueryString", null);
 
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
             if (toSortList == null || sortVertexQueryString == null)
-                return exe.Stack;
+                return newStack;
 
             string queryString = sortVertexQueryString.Value.ToString();
 
@@ -130,9 +132,7 @@ namespace m0.Lib
 
             List<IEdge> edgesList = toSortList.ToList<IEdge>();
             edgesList.Sort(qsec);
-
-            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
-
+            
             foreach (IEdge e in edgesList)            
                 newStack.AddEdge(e.Meta, e.To);            
 
@@ -147,17 +147,17 @@ namespace m0.Lib
 
             IVertex sortVertexQueryString = GraphUtil.GetQueryOutFirst(stack, "sortVertexQueryString", null);
 
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
             if (toSortList == null || sortVertexQueryString == null)
-                return exe.Stack;
+                return newStack;
 
             string queryString = sortVertexQueryString.Value.ToString();
 
             QueryStringEdgeComparer qsec = new QueryStringEdgeComparer(queryString, false);
 
             List<IEdge> edgesList = toSortList.ToList<IEdge>();
-            edgesList.Sort(qsec);
-
-            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+            edgesList.Sort(qsec);            
 
             foreach (IEdge e in edgesList)
                 newStack.AddEdge(e.Meta, e.To);
@@ -171,15 +171,15 @@ namespace m0.Lib
 
             IList<IEdge> toSortList = GraphUtil.GetQueryOut(stack, "toSortVertex", null);
 
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
             if (toSortList == null)
-                return exe.Stack;
+                return newStack;
 
             EdgeComparer ec = new EdgeComparer(true);
 
             List<IEdge> edgesList = toSortList.ToList<IEdge>();
-            edgesList.Sort(ec);
-
-            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+            edgesList.Sort(ec);            
 
             foreach (IEdge e in edgesList)
                 newStack.AddEdge(e.Meta, e.To);
@@ -193,15 +193,15 @@ namespace m0.Lib
 
             IList<IEdge> toSortList = GraphUtil.GetQueryOut(stack, "toSortVertex", null);
 
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
             if (toSortList == null)
-                return exe.Stack;
+                return newStack;
 
             EdgeComparer ec = new EdgeComparer(false);
 
             List<IEdge> edgesList = toSortList.ToList<IEdge>();
-            edgesList.Sort(ec);
-
-            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+            edgesList.Sort(ec);            
 
             foreach (IEdge e in edgesList)
                 newStack.AddEdge(e.Meta, e.To);
@@ -285,13 +285,13 @@ namespace m0.Lib
             IVertex fromVertex = GraphUtil.GetQueryOutFirst(stack, "from", null);
             IVertex toVertex = GraphUtil.GetQueryOutFirst(stack, "to", null);
 
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
             if (fromVertex == null || toVertex == null)
-                return exe.Stack;
+                return newStack;
 
             string from = fromVertex.Value.ToString();
-            string to = toVertex.Value.ToString();
-
-            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+            string to = toVertex.Value.ToString();            
 
             foreach (IEdge e in inputList)
             {
@@ -313,12 +313,12 @@ namespace m0.Lib
 
             IVertex testVertex = GraphUtil.GetQueryOutFirst(stack, "test", null);
 
-            if (testVertex == null)
-                return exe.Stack;
-
-            string test = testVertex.Value.ToString();
-
             INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            if (testVertex == null)
+                return newStack;
+
+            string test = testVertex.Value.ToString();            
 
             foreach (IEdge e in inputList)
             {
@@ -337,28 +337,16 @@ namespace m0.Lib
             INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             IList<IEdge> inputList = GraphUtil.GetQueryOut(stack, "input", null);
-
-            /*IVertex fromVertex = GraphUtil.GetQueryOutFirst(stack, "from", null);
-            IVertex toVertex = GraphUtil.GetQueryOutFirst(stack, "to", null);
-
-            if (fromVertex == null || toVertex == null)
-                return exe.stack;
-
-            int? _from = GraphUtil.GetIntegerValue(fromVertex);
-            int? _to = GraphUtil.GetIntegerValue(toVertex);
-
-            if (_from == null || _to == null)
-                return exe.stack;
-                */
-            bool isNull=false;
+            
+            bool isNull = false;
 
             int from = LibUtil.GetIntFromVertex(stack, "from", ref isNull);
             int to = LibUtil.GetIntFromVertex(stack, "to", ref isNull);
 
-            if (isNull)
-                return exe.Stack;
-
             INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            if (isNull)
+                return newStack;            
 
             foreach (IEdge e in inputList)
             {
@@ -436,8 +424,10 @@ namespace m0.Lib
 
             double? _powerValue = GraphUtil.GetDoubleValue(powerVertex);
 
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
             if (_powerValue == null)
-                return null;
+                return newStack;
 
             double powerValue = (double)_powerValue;
 
@@ -447,9 +437,7 @@ namespace m0.Lib
             InstructionHelpers.NumericTypeEnum resType;
 
             IList<object> numericList = InstructionHelpers.GetNumberList(inputList, out resType);
-
-
-            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+            
 
             foreach (object o in numericList)
             {
@@ -937,9 +925,14 @@ namespace m0.Lib
 
             IVertex attributeVertex = GraphUtil.GetQueryOutFirst(stack, "attribute", null);
 
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            if (attributeVertex == null)
+                return newStack;
+
             //
 
-            string orgName = GraphUtil.GetStringValueOrNull(root.Get(false, @"Home\CurrentUser:\MainOrganisation:\ShortName"));
+            string orgName = GraphUtil.GetStringValueOrNull(root.Get(false, @"Home:\CurrentUser:\MainOrganisation:\ShortName:"));
 
             string atrName = GraphUtil.GetStringValueOrNull(attributeVertex.Get(false, @"$ShortName:"));
 
@@ -947,7 +940,7 @@ namespace m0.Lib
 
             string urn = $"urn:{orgName}:{atrName}:{uuid}";
 
-            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+            
 
             newStack.AddVertex(null, urn);
 

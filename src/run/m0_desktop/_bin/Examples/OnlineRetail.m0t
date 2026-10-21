@@ -6,17 +6,20 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			<@$Is :: @Structure\Model>
 			class "Product"
 				attribute "BusinessID" @String
+					<@$ShortName :: "product">
 				attribute "Name" @String
 				attribute "Price" @Decimal
 				attribute "Description" @String
 			class "Order"
 				attribute "BusinessID" @String
-				association "User" @OnlineRetail\Model\User
+					<@$ShortName :: "order">
+				association "User" @User
 				association "Product" @OnlineRetail\Model\Product
 				association "Payment" @OnlineRetail\Model\Payment
 				attribute "Status" @OnlineRetail\Model\Automata:'Order state'
 			class "User"
 				attribute "BusinessID" @String
+					<@$ShortName :: "user">
 				attribute "Name" @String
 				attribute "Surname" @String
 				attribute "Email" @String
@@ -25,8 +28,10 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				aggregation "PaymentMethod" @OnlineRetail\Model\PaymentMethod
 			class "PaymentMethod"
 				attribute "BusinessID" @String
+					<@$ShortName :: "pay_method">
 			class "Address"
 				attribute "BusinessID" @String
+					<@$ShortName :: "address">
 				attribute "AddressLine1" @String
 				attribute "AddressLine2" @String
 				attribute "Postal code" @String
@@ -45,6 +50,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				attribute "PayerId" @String
 			class "Payment"
 				attribute "BusinessID" @String
+					<@$ShortName :: "payment">
 				attribute "PaymentStartedTimestamp" @DateTime "0":"1"
 				attribute "PaymentFailedTimestamp" @DateTime "0":"1"
 				attribute "PaymentSuccededTimestamp" @DateTime "0":"1"
@@ -846,7 +852,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@BaseEdge :: "">
 							<@From :: @OnlineRetail\Model\Order>
 							<@Meta :: @Class\Association>
-							<@To :: @OnlineRetail\Model\Order\User>
+							<@To :: @User>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Association>
 						<@ToItem :: @OnlineRetail\Model\'Data model'\Item:<<"3">>>
 					<@Decorator :: "">
@@ -855,7 +861,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@BaseEdge :: "">
 							<@From :: @OnlineRetail\Model\Order>
 							<@Meta :: @Class\Association>
-							<@To :: @OnlineRetail\Model\Order\Product>
+							<@To :: @OnlineRetail\Model\Product>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Association>
 						<@ToItem :: @OnlineRetail\Model\'Data model'\Item:<<"1">>>
 					<@Decorator :: "">
@@ -864,7 +870,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@BaseEdge :: "">
 							<@From :: @OnlineRetail\Model\Order>
 							<@Meta :: @Class\Association>
-							<@To :: @OnlineRetail\Model\Order\Payment>
+							<@To :: @OnlineRetail\Model\Payment>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Association>
 						<@ToItem :: @OnlineRetail\Model\'Data model'\Item:<<"7">>>
 				<@Item :: "">
@@ -890,14 +896,14 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@BaseEdge :: "">
 						<@$Is :: @Edge>
 						<@Meta :: @Class>
-						<@To :: @OnlineRetail\Model\User>
+						<@To :: @User>
 					<@Decorator :: "">
 						<@$Is :: @UX\LineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@From :: @OnlineRetail\Model\User>
+							<@From :: @User>
 							<@Meta :: @Class\Aggregation>
-							<@To :: @OnlineRetail\Model\User\Address>
+							<@To :: @OnlineRetail\Model\Address>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Aggregation>
 						<@StartAnchor :: @UX\LineEndEnum\Diamond>
 						<@ToItem :: @OnlineRetail\Model\'Data model'\Item:<<"8">>>
@@ -905,9 +911,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @UX\LineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@From :: @OnlineRetail\Model\User>
+							<@From :: @User>
 							<@Meta :: @Class\Aggregation>
-							<@To :: @OnlineRetail\Model\User\PaymentMethod>
+							<@To :: @OnlineRetail\Model\PaymentMethod>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Aggregation>
 						<@StartAnchor :: @UX\LineEndEnum\Diamond>
 						<@ToItem :: @OnlineRetail\Model\'Data model'\Item:<<"4">>>
@@ -1035,7 +1041,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@BaseEdge :: "">
 							<@From :: @OnlineRetail\Model\Payment>
 							<@Meta :: @Class\Association>
-							<@To :: @OnlineRetail\Model\Payment\PaymentMethod>
+							<@To :: @OnlineRetail\Model\PaymentMethod>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Association>
 						<@ToItem :: @OnlineRetail\Model\'Data model'\Item:<<"4">>>
 				<@Item :: "">

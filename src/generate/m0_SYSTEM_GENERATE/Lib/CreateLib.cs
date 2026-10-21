@@ -31,7 +31,7 @@ namespace m0_SYSTEM_GENERATE.Lib
 
         static IVertex LibStd;
         static IVertex LibSys;
-        static IVertex LibStdUI;
+        static IVertex LibCryptography;
         static IVertex LibStdView;
         static IVertex LibNet;
 
@@ -129,18 +129,18 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             //IVertex lib = root.Get(false, "System").AddVertex(null, "Lib");
 
-            LibStdUI = Lib.AddVertex(null, "StdUI");
+            LibCryptography = Lib.AddVertex(null, "StdUI");
 
             string type = "m0.Lib.StdUI, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
-            AddFunction(LibStdUI, "InteractionOutput", type, "InteractionOutput", null, new TypeName[] { new TypeName("output", "String", 1, 1) });
-            AddFunction(LibStdUI, "InteractionInput", type, "InteractionInput", "String", new TypeName[] { new TypeName("output", "String", 1, 1) });
-            AddFunction(LibStdUI, "InteractionSelect", type, "InteractionSelect", "VertexType", new TypeName[] { new TypeName("output", "String", 0, 1), new TypeName("option", "VertexType", 0, -1) });
-            AddFunction(LibStdUI, "InteractionSelectButton", type, "InteractionSelectButton", "VertexType", new TypeName[] { new TypeName("output", "String", 0, 1), new TypeName("option", "VertexType", 0, -1) });
-            AddFunction(LibStdUI, "OpenDefaultVisualiser", type, "OpenDefaultVisualiser", null, new TypeName[] { new TypeName("baseEdge", "Edge", 0, 1) });
-            AddFunction(LibStdUI, "OpenVisualiser", type, "OpenVisualiser", null, new TypeName[] { new TypeName("baseEdge", "Edge", 1, 1), new TypeName("visualiser", "VertexType", 1, 1) });
-            AddFunction(LibStdUI, "OpenFormVisualiser", type, "OpenFormVisualiser", null, new TypeName[] { new TypeName("baseEdge", "Edge", 1, 1) });
-            AddFunction(LibStdUI, "OpenCodeVisualiser", type, "OpenCodeVisualiser", null, new TypeName[] { new TypeName("baseEdge", "Edge", 1, 1) });
+            AddFunction(LibCryptography, "InteractionOutput", type, "InteractionOutput", null, new TypeName[] { new TypeName("output", "String", 1, 1) });
+            AddFunction(LibCryptography, "InteractionInput", type, "InteractionInput", "String", new TypeName[] { new TypeName("output", "String", 1, 1) });
+            AddFunction(LibCryptography, "InteractionSelect", type, "InteractionSelect", "VertexType", new TypeName[] { new TypeName("output", "String", 0, 1), new TypeName("option", "VertexType", 0, -1) });
+            AddFunction(LibCryptography, "InteractionSelectButton", type, "InteractionSelectButton", "VertexType", new TypeName[] { new TypeName("output", "String", 0, 1), new TypeName("option", "VertexType", 0, -1) });
+            AddFunction(LibCryptography, "OpenDefaultVisualiser", type, "OpenDefaultVisualiser", null, new TypeName[] { new TypeName("baseEdge", "Edge", 0, 1) });
+            AddFunction(LibCryptography, "OpenVisualiser", type, "OpenVisualiser", null, new TypeName[] { new TypeName("baseEdge", "Edge", 1, 1), new TypeName("visualiser", "VertexType", 1, 1) });
+            AddFunction(LibCryptography, "OpenFormVisualiser", type, "OpenFormVisualiser", null, new TypeName[] { new TypeName("baseEdge", "Edge", 1, 1) });
+            AddFunction(LibCryptography, "OpenCodeVisualiser", type, "OpenCodeVisualiser", null, new TypeName[] { new TypeName("baseEdge", "Edge", 1, 1) });
         }
 
         public static void CreateLibStdView()
@@ -286,6 +286,22 @@ namespace m0_SYSTEM_GENERATE.Lib
             restVertex.AddVertex(null, "RemoteEndpointParameters");
         }
 
+        public static void CreateLibCryptography() 
+        {
+            print("* creating Lib\\Cryptography");
+
+            IVertex root = m0.MinusZero.Instance.root;
+
+            //IVertex lib = root.Get(false, "System").AddVertex(null, "Lib");
+
+            LibCryptography = Lib.AddVertex(null, "Cryptography");
+
+            string type = "m0.Lib.Cryptography, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+
+            AddFunction(LibCryptography, "HashPassword", type, "HashPassword", "String", new TypeName[] { new TypeName("password", "String", 1, 1) });
+            AddFunction(LibCryptography, "VerifyPassword", type, "VerifyPassword", "String", new TypeName[] { new TypeName("passwordToCheck", "String", 1, 1), new TypeName("passwordStored", "String", 1, 1) });
+        }
+
         public static void Save(IEnumerable<IVertex> systemSubGraphWithLinks, Dictionary<string, StoreId> storeOverride)
         {
             print("* saving Lib\\Std");
@@ -304,7 +320,7 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             print("* saving Lib\\StdUI");
 
-            GeneralUtil.CreateM0JAndMoveEdgesIntoIt_IncludeEverythingBesidesList("lib_stdui.m0j", LibStdUI, new HashSet<IVertex>(systemSubGraphWithLinks), storeOverride);
+            GeneralUtil.CreateM0JAndMoveEdgesIntoIt_IncludeEverythingBesidesList("lib_stdui.m0j", LibCryptography, new HashSet<IVertex>(systemSubGraphWithLinks), storeOverride);
 
             print("* saving Lib\\StdView");
 

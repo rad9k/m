@@ -288,19 +288,19 @@ Stack algebra: remove from left set every edge matching a right template.
 ### Notes
 
 #### `=` vs `+=`
-- **`=`** — replaces targets: removes old edges in each `(From, Meta)` group, then points to right `To` vertices.
-- **`+=`** — appends new edges; existing left edges are kept.
+- **`=`** - replaces targets: removes old edges in each `(From, Meta)` group, then points to right `To` vertices.
+- **`+=`** - appends new edges; existing left edges are kept.
 
 #### `~=` vs `-<` vs `~<`
-- **`~=`** — deletes the **left edges themselves** that point to vertices appearing on the right.
-- **`-<`** — deletes **out-edges from** each `left.To` that match right `(Meta, To)` pairs.
-- **`~<`** — deletes **out-edges from** each `left.To` whose `To` equals any right `To` (by vertex identity).
+- **`~=`** - deletes the **left edges themselves** that point to vertices appearing on the right.
+- **`-<`** - deletes **out-edges from** each `left.To` that match right `(Meta, To)` pairs.
+- **`~<`** - deletes **out-edges from** each `left.To` whose `To` equals any right `To` (by vertex identity).
 
 #### `<<copy<<` vs `<<move<<` vs `<<copy&replace<<` vs `<<move&replace<<`
-- **`<<copy<<`** — copy only; source subgraph unchanged.
-- **`<<move<<`** — copy + consume source (delete input roots + repin external referrers).
-- **`<<copy&replace<<`** — copy + reconcile with similar existing subgraph under destination (fuzzy match, repin, delete old connectors).
-- **`<<move&replace<<`** — same as copy&replace, but source is also consumed.
+- **`<<copy<<`** - copy only; source subgraph unchanged.
+- **`<<move<<`** - copy + consume source (delete input roots + repin external referrers).
+- **`<<copy&replace<<`** - copy + reconcile with similar existing subgraph under destination (fuzzy match, repin, delete old connectors).
+- **`<<move&replace<<`** - same as copy&replace, but source is also consumed.
 Copy scope traverses **non-link** out-edges (`IsLink` stops traversal); link targets remain references to original vertices.
 For **`<<move<<`**, the right operand should be an edge set with a proper `From` on root edges (e.g. `$\:A`) so the anchor edge can be deleted from its real `From` vertex.
 

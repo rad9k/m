@@ -88,6 +88,8 @@ The `IVertex` structure represents _vertex_. The most important attributes and m
 
      IList<IEdge> InEdgesRaw { get; } // without $Inherits
 
+     IList<IEdge> InEdges { get; }        
+
      IList<IEdge> MetaInEdgesRaw { get; } // without $Inherits
 
      INoInEdgeInOutVertexVertex Execute(IExecution exe);
@@ -124,7 +126,9 @@ comments:
 
 - `OutEdges` provides access to all of the _outgoing edges_. The `OutEdges` provides _outgoing edges_ that are _logically_ attached to the _vertex_ - it means that the additional _outgoing edges_ that are added by the presence of the `$Inherits` _meta edge_ are included here.
 
-- `InEdgesRaw` provides access to all of the _incoming edges_ that are physically attached to the _vertex_. Incoming edges are not inherited through `$Inherits`; an edge belongs to this collection only when its `To` endpoint is the vertex itself.
+- `InEdgesRaw` provides access to all of the _incoming edges_. The `InEdgesRaw` provides _incoming edges_ that are _physically_ attached to the _vertex_ - it means that the additional _outgoing edges_ that are added by the presence of the `$Inherits` _meta edge_ are not included here.
+
+- `InEdges` provides access to all of the _incoming edges_. The `InEdges` provides _incoming edges_ that are _logically_ attached to the _vertex_ - it means that the additional _outgoing edges_ that are added by the presence of the `$Inherits` _meta edge_ are included here.
 
 - `MetaInEdgesRaw` provides access to all of the _meta incoming edges_ - this is a situation when given _vertex_ is used as _meta vertex_ in some _edge_. The `MetaInEdgesRaw` provides _meta incoming edges_ that are _physically_ attached to the _vertex_.
 
