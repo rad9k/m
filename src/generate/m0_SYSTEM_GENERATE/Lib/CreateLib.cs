@@ -98,6 +98,8 @@ namespace m0_SYSTEM_GENERATE.Lib
                 new TypeName("date", "String", 1, 1) ,
                 new TypeName("culture", "String", 1, 1) 
             });
+
+            AddFunction(LibStd, "DateTime_Now", type, "DateTime_Now", "DateTime", new TypeName[] { });
         }
 
         public static void CreateLibSys()

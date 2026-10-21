@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.Graph.ExecutionFlow;
 using m0.ZeroCode.Helpers;
 using System;
 using System.Collections.Generic;
@@ -42,7 +43,46 @@ namespace m0.ZeroTypes
             Minute = sm.Get(false, @"ZeroTypes\DateTime\Minute");
             Second = sm.Get(false, @"ZeroTypes\DateTime\Second");
             Millisecond = sm.Get(false, @"ZeroTypes\DateTime\Millisecond"); 
-        }        
+        }
+
+        public static void CopyDtToVertex(System.DateTime dt, IVertex dtVertex)
+        {
+            IVertex YearVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Year", null);
+            IVertex MonthVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Month", null);
+            IVertex DayVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Day", null);
+            IVertex HourVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Hour", null);
+            IVertex MinuteVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Minute", null);
+            IVertex SecondVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Second", null);
+            IVertex MillisecondVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Millisecond", null);
+
+            YearVertex.Value = dt.Year;
+            MonthVertex.Value = dt.Month;
+            DayVertex.Value = dt.Day;
+            HourVertex.Value = dt.Hour;
+            MinuteVertex.Value = dt.Minute;
+            SecondVertex.Value = dt.Second;
+            MillisecondVertex.Value = dt.Millisecond;
+        }
+
+        public static System.DateTime VertexToDateTime(IVertex dtVertex)
+        {
+            IVertex YearVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Year", null);
+            IVertex MonthVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Month", null);
+            IVertex DayVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Day", null);
+            IVertex HourVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Hour", null);
+            IVertex MinuteVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Minute", null);
+            IVertex SecondVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Second", null);
+            IVertex MillisecondVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Millisecond", null);
+            int yearValue = GraphUtil.GetIntegerValueOr0(YearVertex);
+            int monthValue = GraphUtil.GetIntegerValueOr0(MonthVertex);
+            int dayValue = GraphUtil.GetIntegerValueOr0(DayVertex);
+            int hourValue = GraphUtil.GetIntegerValueOr0(HourVertex);
+            int minuteValue = GraphUtil.GetIntegerValueOr0(MinuteVertex);
+            int secondValue = GraphUtil.GetIntegerValueOr0(SecondVertex);
+            int millisecondValue = GraphUtil.GetIntegerValueOr0(MillisecondVertex);
+
+            return new System.DateTime(yearValue, monthValue, dayValue, hourValue, minuteValue, secondValue, millisecondValue);
+        }
 
         public static INoInEdgeInOutVertexVertex DateTime_constructor(IExecution exe)
         {
@@ -89,56 +129,89 @@ namespace m0.ZeroTypes
 
             // date
 
-            IVertex dateVertex = GraphUtil.GetQueryOutFirst(stack, "date", null);
+            IVertex dateTimeVertex = GraphUtil.GetQueryOutFirst(stack, "dateTime", null);
 
             INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
 
-            if (dateVertex == null)
+            if (dateTimeVertex == null)
                 return newStack;
 
-            System.DateTime 
+            System.DateTime thisDate = VertexToDateTime(stack);
+            System.DateTime compareDate = VertexToDateTime(dateTimeVertex);
 
+            if (thisDate > compareDate)
+                newStack.AddVertex(null, "True");
+            else
+                newStack.AddVertex(null, "False");
 
-
-            return stack;
+            return newStack;
         }
 
         public static INoInEdgeInOutVertexVertex IsEarlierThan(IExecution exe)
         {
             INoInEdgeInOutVertexVertex stack = exe.Stack;
 
-            // miliseconds
+            // date
 
-            IVertex milisecondsVertex = GraphUtil.GetQueryOutFirst(stack, "miliseconds", null);
+            IVertex dateTimeVertex = GraphUtil.GetQueryOutFirst(stack, "dateTime", null);
 
-            int? _milisecondsValue = GraphUtil.GetIntegerValue(milisecondsVertex);
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
 
-            if (_milisecondsValue == null)
-                return null;
+            if (dateTimeVertex == null)
+                return newStack;
 
-            int milisecondsValue = (int)_milisecondsValue;
+            System.DateTime thisDate = VertexToDateTime(stack);
+            System.DateTime compareDate = VertexToDateTime(dateTimeVertex);
 
-            Thread.Sleep(milisecondsValue);
+            if (thisDate < compareDate)
+                newStack.AddVertex(null, "True");
+            else
+                newStack.AddVertex(null, "False");
 
-            return stack;
+            return newStack;
+        }
+
+        public static INoInEdgeInOutVertexVertex IsEqual(IExecution exe)
+        {
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
+
+            // date
+
+            IVertex dateTimeVertex = GraphUtil.GetQueryOutFirst(stack, "dateTime", null);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            if (dateTimeVertex == null)
+                return newStack;
+
+            System.DateTime thisDate = VertexToDateTime(stack);
+            System.DateTime compareDate = VertexToDateTime(dateTimeVertex);
+
+            if (thisDate == compareDate)
+                newStack.AddVertex(null, "True");
+            else
+                newStack.AddVertex(null, "False");
+
+            return newStack;
         }
 
         public static INoInEdgeInOutVertexVertex Add(IExecution exe)
         {
             INoInEdgeInOutVertexVertex stack = exe.Stack;
 
-            // miliseconds
+            // date
 
-            IVertex milisecondsVertex = GraphUtil.GetQueryOutFirst(stack, "miliseconds", null);
+            IVertex dateTimeVertex = GraphUtil.GetQueryOutFirst(stack, "dateTime", null);            
 
-            int? _milisecondsValue = GraphUtil.GetIntegerValue(milisecondsVertex);
+            if (dateTimeVertex == null)
+                return stack;
 
-            if (_milisecondsValue == null)
-                return null;
+            System.DateTime thisDate = VertexToDateTime(stack);
+            System.DateTime compareDate = VertexToDateTime(dateTimeVertex);
 
-            int milisecondsValue = (int)_milisecondsValue;
+            thisDate = thisDate.Add(new TimeSpan(compareDate.Ticks));
 
-            Thread.Sleep(milisecondsValue);
+            CopyDtToVertex(thisDate, stack);
 
             return stack;
         }
@@ -147,18 +220,19 @@ namespace m0.ZeroTypes
         {
             INoInEdgeInOutVertexVertex stack = exe.Stack;
 
-            // miliseconds
+            // date
 
-            IVertex milisecondsVertex = GraphUtil.GetQueryOutFirst(stack, "miliseconds", null);
+            IVertex dateTimeVertex = GraphUtil.GetQueryOutFirst(stack, "dateTime", null);
 
-            int? _milisecondsValue = GraphUtil.GetIntegerValue(milisecondsVertex);
+            if (dateTimeVertex == null)
+                return stack;
 
-            if (_milisecondsValue == null)
-                return null;
+            System.DateTime thisDate = VertexToDateTime(stack);
+            System.DateTime compareDate = VertexToDateTime(dateTimeVertex);
 
-            int milisecondsValue = (int)_milisecondsValue;
+            thisDate = thisDate.Subtract(new TimeSpan(compareDate.Ticks));
 
-            Thread.Sleep(milisecondsValue);
+            CopyDtToVertex(thisDate, stack);
 
             return stack;
         }

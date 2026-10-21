@@ -979,48 +979,9 @@ namespace m0.Lib
 
             IVertex dtVertex = VertexOperations.AddInstance(newStack, DateTime_meta);
 
-            CopyDtToVertex(dt, dtVertex);
+            m0.ZeroTypes.DateTime.CopyDtToVertex(dt, dtVertex);
 
             return newStack;
-        }
-
-        public static void CopyDtToVertex(System.DateTime dt, IVertex dtVertex)
-        {
-            IVertex YearVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Year", null);
-            IVertex MonthVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Month", null);
-            IVertex DayVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Day", null);
-            IVertex HourVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Hour", null);
-            IVertex MinuteVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Minute", null);
-            IVertex SecondVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Second", null);
-            IVertex MillisecondVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Millisecond", null);
-
-            YearVertex.Value = dt.Year;
-            MonthVertex.Value = dt.Month;
-            DayVertex.Value = dt.Day;
-            HourVertex.Value = dt.Hour;
-            MinuteVertex.Value = dt.Minute;
-            SecondVertex.Value = dt.Second;
-            MillisecondVertex.Value = dt.Millisecond;
-        }
-
-        public static System.DateTime VertexToDateTime(IVertex dtVertex)
-        {
-            IVertex YearVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Year", null);
-            IVertex MonthVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Month", null);
-            IVertex DayVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Day", null);
-            IVertex HourVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Hour", null);
-            IVertex MinuteVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Minute", null);
-            IVertex SecondVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Second", null);
-            IVertex MillisecondVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Millisecond", null);
-            int yearValue = (int)YearVertex.Value;
-            int monthValue = (int)MonthVertex.Value;
-            int dayValue = (int)DayVertex.Value;
-            int hourValue = (int)HourVertex.Value;
-            int minuteValue = (int)MinuteVertex.Value;
-            int secondValue = (int)SecondVertex.Value;
-            int millisecondValue = (int)MillisecondVertex.Value;
-
-            return new System.DateTime(yearValue, monthValue, dayValue, hourValue, minuteValue, secondValue, millisecondValue);
         }
 
         public static INoInEdgeInOutVertexVertex DateTime_ParseByCulture(IExecution exe)
@@ -1050,7 +1011,20 @@ namespace m0.Lib
 
             IVertex dtVertex = VertexOperations.AddInstance(newStack, DateTime_meta);
 
-            CopyDtToVertex(parsedDate, dtVertex);
+            m0.ZeroTypes.DateTime.CopyDtToVertex(parsedDate, dtVertex);
+
+            return newStack;
+        }
+
+        public static INoInEdgeInOutVertexVertex DateTime_Now(IExecution exe)
+        {
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            IVertex dtVertex = VertexOperations.AddInstance(newStack, DateTime_meta);
+
+            m0.ZeroTypes.DateTime.CopyDtToVertex(System.DateTime.Now, dtVertex);
 
             return newStack;
         }

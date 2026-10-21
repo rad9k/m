@@ -3625,6 +3625,7 @@ namespace m0
             });
             AddMethod(DateTime_class, "IsLaterThan", type, "IsLaterThan", "Boolean", new TypeName[] { new TypeName("dateTime", "DateTime", 1, 1) });
             AddMethod(DateTime_class, "IsEarlierThan", type, "IsEarlierThan", "Boolean", new TypeName[] { new TypeName("dateTime", "DateTime", 1, 1) });
+            AddMethod(DateTime_class, "IsEqual", type, "IsEqual", "Boolean", new TypeName[] { new TypeName("dateTime", "DateTime", 1, 1) });            
             AddMethod(DateTime_class, "Add", type, "Add", "Boolean", new TypeName[] { new TypeName("dateTime", "DateTime", 1, 1) });
             AddMethod(DateTime_class, "Substract", type, "Substract", "Boolean", new TypeName[] { new TypeName("dateTime", "DateTime", 1, 1) });
         }
