@@ -89,12 +89,12 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             AddFunction(LibStd, "CreateURN", type, "CreateURN", "String", new TypeName[] { new TypeName("attribute", "Vertex", 1, 1) });
 
-            AddFunction(LibStd, "DateTime_ParseByFormat", type, "DateTime_Parse", "DateTime", new TypeName[] {
+            AddFunction(LibStd, "DateTime_ParseByFormat", type, "DateTime_ParseByFormat", "DateTime", new TypeName[] {
                 new TypeName("date", "String", 1, 1) ,
                 new TypeName("format", "String", 1, 1)
             });
 
-            AddFunction(LibStd, "DateTime_ParseByCulture", type, "DateTime_TryParse", "DateTime", new TypeName[] {
+            AddFunction(LibStd, "DateTime_ParseByCulture", type, "DateTime_ParseByCulture", "DateTime", new TypeName[] {
                 new TypeName("date", "String", 1, 1) ,
                 new TypeName("culture", "String", 1, 1) 
             });

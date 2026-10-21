@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.ZeroCode.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -86,18 +87,18 @@ namespace m0.ZeroTypes
         {
             INoInEdgeInOutVertexVertex stack = exe.Stack;
 
-            // miliseconds
+            // date
 
-            IVertex milisecondsVertex = GraphUtil.GetQueryOutFirst(stack, "miliseconds", null);
+            IVertex dateVertex = GraphUtil.GetQueryOutFirst(stack, "date", null);
 
-            int? _milisecondsValue = GraphUtil.GetIntegerValue(milisecondsVertex);
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
 
-            if (_milisecondsValue == null)
-                return null;
+            if (dateVertex == null)
+                return newStack;
 
-            int milisecondsValue = (int)_milisecondsValue;
+            System.DateTime 
 
-            Thread.Sleep(milisecondsValue);
+
 
             return stack;
         }
