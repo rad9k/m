@@ -3376,7 +3376,7 @@ namespace m0
                 "AtomType:Boolean{$DndAlwaysCopy:},Type:VertexType{$DndAlwaysCopy:}," +
                 "Class:Edge{$DndAlwaysCopy:,Association:From{$MinCardinality:0,$MaxCardinality:1}," +
                 "Association:Meta{$MinCardinality:1,$MaxCardinality:1},Association:To{$MinCardinality:1,$MaxCardinality:1}}," +
-                "Class:DateTime{$DndAlwaysCopy:,Attribute:Year{$MinCardinality:1,$MaxCardinality:1},Attribute:Month{$MinCardinality:1,$MaxCardinality:1},Attribute:Day{$MinCardinality:1,$MaxCardinality:1},Attribute:Hour{$MinCardinality:1,$MaxCardinality:1},Attribute:Minute{$MinCardinality:1,$MaxCardinality:1},Attribute:Second{$MinCardinality:1,$MaxCardinality:1},Attribute:Millisecond{$MinCardinality:0,$MaxCardinality:1}}," +
+                "Class:DateTime{$DndAlwaysCopy:,Attribute:Year{$MinCardinality:1,$MaxCardinality:1},Attribute:Month{$MinCardinality:1,$MaxCardinality:1},Attribute:Day{$MinCardinality:1,$MaxCardinality:1},Attribute:Hour{$MinCardinality:1,$MaxCardinality:1},Attribute:Minute{$MinCardinality:1,$MaxCardinality:1},Attribute:Second{$MinCardinality:1,$MaxCardinality:1},Attribute:Millisecond{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:FormalTextLanguage," +
                 "Enum:EnumBase{$DndAlwaysCopy:,}," +
                 "Class:HasBaseEdge{Attribute:BaseEdge{$MinCardinality:1,$MaxCardinality:1}}," +

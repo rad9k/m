@@ -756,7 +756,7 @@ namespace m0.Lib
             int? _valueValue = GraphUtil.GetIntegerValue(valueVertex);
 
             if (_valueValue == null)
-                return null;
+                return stack;
 
             int valueValue = (int)_valueValue;
 
@@ -791,6 +791,8 @@ namespace m0.Lib
         {
             INoInEdgeInOutVertexVertex stack = exe.Stack;
 
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
             // min
 
             IVertex minVertex = GraphUtil.GetQueryOutFirst(stack, "min", null);
@@ -798,7 +800,7 @@ namespace m0.Lib
             int? _minValue = GraphUtil.GetIntegerValue(minVertex);
 
             if (_minValue == null)
-                return null;
+                return newStack;
 
             int minValue = (int)_minValue;
 
@@ -809,13 +811,11 @@ namespace m0.Lib
             int? _maxValue = GraphUtil.GetIntegerValue(maxVertex);
 
             if (_maxValue == null)
-                return null;
+                return newStack;
 
             int maxValue = (int)_maxValue;
 
-            //
-
-            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+            //            
 
             if (maxValue > minValue)
             {
@@ -835,6 +835,8 @@ namespace m0.Lib
         {
             INoInEdgeInOutVertexVertex stack = exe.Stack;
 
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
             // min
 
             IVertex minVertex = GraphUtil.GetQueryOutFirst(stack, "min", null);
@@ -842,7 +844,7 @@ namespace m0.Lib
             double? _minValue = GraphUtil.GetDoubleValue(minVertex);
 
             if (_minValue == null)
-                return null;
+                return newStack;
 
             double minValue = (double)_minValue;
 
@@ -853,7 +855,7 @@ namespace m0.Lib
             double? _maxValue = GraphUtil.GetDoubleValue(maxVertex);
 
             if (_maxValue == null)
-                return null;
+                return newStack;
 
             double maxValue = (double)_maxValue;
 
@@ -868,9 +870,7 @@ namespace m0.Lib
 
             double stepValue = (double)_stepValue;
 
-            //
-
-            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+            //            
 
             if (maxValue > minValue)
             {
@@ -945,6 +945,56 @@ namespace m0.Lib
             newStack.AddVertex(null, urn);
 
             return newStack;
+        }
+
+        public static INoInEdgeInOutVertexVertex DateTime_Parse(IExecution exe)
+        {
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
+
+            // date
+
+            IVertex dateVertex = GraphUtil.GetQueryOutFirst(stack, "date", null);
+
+            string dateValue = GraphUtil.GetStringValueOrNull(dateVertex);
+
+            // format
+
+            IVertex formatVertex = GraphUtil.GetQueryOutFirst(stack, "format", null);
+
+            string formatValue = GraphUtil.GetStringValueOrNull(formatVertex);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            if (dateValue == null || formatValue == null)
+                return newStack;
+
+            
+
+            return newStack;
+        }
+
+        public static INoInEdgeInOutVertexVertex DateTime_ParseWithCulture(IExecution exe)
+        {
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
+
+            // date
+
+            IVertex dateVertex = GraphUtil.GetQueryOutFirst(stack, "date", null);
+
+            string dateValue = GraphUtil.GetStringValueOrNull(dateVertex);
+
+            // culture
+
+            IVertex cultureVertex = GraphUtil.GetQueryOutFirst(stack, "culture", null);
+
+            string cultureValue = GraphUtil.GetStringValueOrNull(cultureVertex);
+
+            INoInEdgeInOutVertexVertex newStack = InstructionHelpers.CreateStack();
+
+            if (dateValue == null || cultureValue == null)
+                return newStack;
+
+            return newStack ;
         }
     }
 }
