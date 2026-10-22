@@ -13,7 +13,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			class "Order"
 				attribute "BusinessID" @String
 					<@$ShortName :: "order">
-				association "User" @User
+				association "User" @OnlineRetail\Model\User
 				association "Product" @OnlineRetail\Model\Product
 				association "Payment" @OnlineRetail\Model\Payment
 				attribute "Status" @OnlineRetail\Model\Automata:'Order state'
@@ -789,10 +789,11 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@Scale :: "100">
 				<@BaseEdge :: "">
 					<@$Is :: @Edge>
-					<@From :: @$CodeRoot>
-					<@Meta :: @$Empty>
+					<@From :: @OnlineRetail>
+					<@Meta :: @Structure\Model>
+					<@To :: @OnlineRetail\Model>
 				<@SelectedEdges :: "">
-				<@ShowSelectedEdgesBaseEdge :: "True">
+				<@ShowSelectedEdgesBaseEdge :: "False">
 				<@Size :: "">
 					<@$Is :: @UX\Size>
 					<@Width :: "5000">
@@ -806,8 +807,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 					<@Position :: "">
 						<@$Is :: @UX\Position>
-						<@X :: "2081.7116666666666">
-						<@Y :: "202.75">
+						<@X :: "2189.6833333333334">
+						<@Y :: "186.35999999999999">
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
 					<@ShowMeta :: "False">
 					<@ConstantLabel :: "class">
@@ -820,6 +821,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Opacity :: "255">
 					<@BaseEdge :: "">
 						<@$Is :: @Edge>
+						<@From :: @OnlineRetail\Model>
 						<@Meta :: @Class>
 						<@To :: @OnlineRetail\Model\Product>
 				<@Item :: "">
@@ -830,8 +832,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 					<@Position :: "">
 						<@$Is :: @UX\Position>
-						<@X :: "2442.6516666666666">
-						<@Y :: "58.71000000000001">
+						<@X :: "2305.76">
+						<@Y :: "71.12000000000003">
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
 					<@ShowMeta :: "False">
 					<@ConstantLabel :: "class">
@@ -844,6 +846,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Opacity :: "255">
 					<@BaseEdge :: "">
 						<@$Is :: @Edge>
+						<@From :: @OnlineRetail\Model>
 						<@Meta :: @Class>
 						<@To :: @OnlineRetail\Model\Order>
 					<@Decorator :: "">
@@ -852,7 +855,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@BaseEdge :: "">
 							<@From :: @OnlineRetail\Model\Order>
 							<@Meta :: @Class\Association>
-							<@To :: @User>
+							<@To :: @OnlineRetail\Model\Order\User>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Association>
 						<@ToItem :: @OnlineRetail\Model\'Data model'\Item:<<"3">>>
 					<@Decorator :: "">
@@ -861,7 +864,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@BaseEdge :: "">
 							<@From :: @OnlineRetail\Model\Order>
 							<@Meta :: @Class\Association>
-							<@To :: @OnlineRetail\Model\Product>
+							<@To :: @OnlineRetail\Model\Order\Product>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Association>
 						<@ToItem :: @OnlineRetail\Model\'Data model'\Item:<<"1">>>
 					<@Decorator :: "">
@@ -870,9 +873,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@BaseEdge :: "">
 							<@From :: @OnlineRetail\Model\Order>
 							<@Meta :: @Class\Association>
-							<@To :: @OnlineRetail\Model\Payment>
+							<@To :: @OnlineRetail\Model\Order\Payment>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Association>
-						<@ToItem :: @OnlineRetail\Model\'Data model'\Item:<<"7">>>
+						<@ToItem :: @OnlineRetail\Model\'Data model'\Item:<<"8">>>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -881,8 +884,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 					<@Position :: "">
 						<@$Is :: @UX\Position>
-						<@X :: "2405.3816666666667">
-						<@Y :: "186.79">
+						<@X :: "2366.176666666667">
+						<@Y :: "199.16000000000005">
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
 					<@ShowMeta :: "False">
 					<@ConstantLabel :: "class">
@@ -895,25 +898,26 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Opacity :: "255">
 					<@BaseEdge :: "">
 						<@$Is :: @Edge>
+						<@From :: @OnlineRetail\Model>
 						<@Meta :: @Class>
-						<@To :: @User>
+						<@To :: @OnlineRetail\Model\User>
 					<@Decorator :: "">
 						<@$Is :: @UX\LineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@From :: @User>
+							<@From :: @OnlineRetail\Model\User>
 							<@Meta :: @Class\Aggregation>
-							<@To :: @OnlineRetail\Model\Address>
+							<@To :: @OnlineRetail\Model\User\Address>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Aggregation>
 						<@StartAnchor :: @UX\LineEndEnum\Diamond>
-						<@ToItem :: @OnlineRetail\Model\'Data model'\Item:<<"8">>>
+						<@ToItem :: @OnlineRetail\Model\'Data model'\Item:<<"5">>>
 					<@Decorator :: "">
 						<@$Is :: @UX\LineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@From :: @User>
+							<@From :: @OnlineRetail\Model\User>
 							<@Meta :: @Class\Aggregation>
-							<@To :: @OnlineRetail\Model\PaymentMethod>
+							<@To :: @OnlineRetail\Model\User\PaymentMethod>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Aggregation>
 						<@StartAnchor :: @UX\LineEndEnum\Diamond>
 						<@ToItem :: @OnlineRetail\Model\'Data model'\Item:<<"4">>>
@@ -925,8 +929,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 					<@Position :: "">
 						<@$Is :: @UX\Position>
-						<@X :: "2483.0466666666666">
-						<@Y :: "357.90999999999997">
+						<@X :: "2601.5550000000003">
+						<@Y :: "210.29999999999995">
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
 					<@ShowMeta :: "False">
 					<@ConstantLabel :: "class">
@@ -939,6 +943,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Opacity :: "255">
 					<@BaseEdge :: "">
 						<@$Is :: @Edge>
+						<@From :: @OnlineRetail\Model>
 						<@Meta :: @Class>
 						<@To :: @OnlineRetail\Model\PaymentMethod>
 				<@Item :: "">
@@ -949,8 +954,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 					<@Position :: "">
 						<@$Is :: @UX\Position>
-						<@X :: "2420.9883333333337">
-						<@Y :: "452.39">
+						<@X :: "2366.176666666667">
+						<@Y :: "368.06">
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
 					<@ShowMeta :: "False">
 					<@ConstantLabel :: "class">
@@ -963,6 +968,32 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Opacity :: "255">
 					<@BaseEdge :: "">
 						<@$Is :: @Edge>
+						<@From :: @OnlineRetail\Model>
+						<@Meta :: @Class>
+						<@To :: @OnlineRetail\Model\Address>
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "2589.143333333333">
+						<@Y :: "305.58000000000004">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
+					<@ShowMeta :: "False">
+					<@ConstantLabel :: "class">
+					<@VisualiserClass :: @System\Meta\Visualiser\Class>
+					<@BackgroundColor :: "VeryVeryVeryLightGreen">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "255">
+						<@Blue :: "237">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @OnlineRetail\Model>
 						<@Meta :: @Class>
 						<@To :: @OnlineRetail\Model\Card>
 					<@Decorator :: "">
@@ -984,8 +1015,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 					<@Position :: "">
 						<@$Is :: @UX\Position>
-						<@X :: "2581.0783333333334">
-						<@Y :: "461.93000000000006">
+						<@X :: "2756.7000000000003">
+						<@Y :: "309.52">
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
 					<@ShowMeta :: "False">
 					<@ConstantLabel :: "class">
@@ -998,6 +1029,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Opacity :: "255">
 					<@BaseEdge :: "">
 						<@$Is :: @Edge>
+						<@From :: @OnlineRetail\Model>
 						<@Meta :: @Class>
 						<@To :: @OnlineRetail\Model\PayPal>
 					<@Decorator :: "">
@@ -1019,8 +1051,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 					<@Position :: "">
 						<@$Is :: @UX\Position>
-						<@X :: "2723.911666666667">
-						<@Y :: "210.73">
+						<@X :: "2492.3133333333335">
+						<@Y :: "62.37999999999994">
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
 					<@ShowMeta :: "False">
 					<@ConstantLabel :: "class">
@@ -1033,6 +1065,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Opacity :: "255">
 					<@BaseEdge :: "">
 						<@$Is :: @Edge>
+						<@From :: @OnlineRetail\Model>
 						<@Meta :: @Class>
 						<@To :: @OnlineRetail\Model\Payment>
 					<@Decorator :: "">
@@ -1041,37 +1074,23 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@BaseEdge :: "">
 							<@From :: @OnlineRetail\Model\Payment>
 							<@Meta :: @Class\Association>
-							<@To :: @OnlineRetail\Model\PaymentMethod>
+							<@To :: @OnlineRetail\Model\Payment\PaymentMethod>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Association>
 						<@ToItem :: @OnlineRetail\Model\'Data model'\Item:<<"4">>>
-				<@Item :: "">
-					<@$Is :: @UX\RectangleVisualiserItem>
-					<@Scale :: "100">
-					<@ShowIcons :: "True">
-					<@FontSize :: "14">
-					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
-					<@Position :: "">
-						<@$Is :: @UX\Position>
-						<@X :: "2230.4050000000007">
-						<@Y :: "349.98999999999995">
-					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
-					<@ShowMeta :: "False">
-					<@ConstantLabel :: "class">
-					<@VisualiserClass :: @System\Meta\Visualiser\Class>
-					<@BackgroundColor :: "VeryVeryVeryLightGreen">
-						<@$Is :: @UX\Color>
-						<@Red :: "237">
-						<@Green :: "255">
-						<@Blue :: "237">
-						<@Opacity :: "255">
-					<@BaseEdge :: "">
-						<@$Is :: @Edge>
-						<@Meta :: @Class>
-						<@To :: @OnlineRetail\Model\Address>
-			<@Instance :: @OnlineRetail\Data>
 		<@Component :: "BackendService">
 			<@$Is :: @Structure\Component>
 			<@ReadWrite :: @OnlineRetail\Data>
+			package "test"
+				import @System\Lib\Std direct meta
+
+				variable "Model" @Vertex
+				variable "Data" @Vertex
+				variable "x" @String
+
+				Model = $#Package:#Component:\Model:
+				Data = $#Package:#Component:\Database:
+
+				x = Model\:User\:BusinessID
 		<@UX\UXContainer :: "OnlineRetail">
 			<@$Is :: @UX\UXContainer>
 			<@IsExpanded :: "True">
