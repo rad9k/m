@@ -302,6 +302,9 @@ namespace m0_SYSTEM_GENERATE.Lib
 
             AddFunction(LibCryptography, "HashPassword", type, "HashPassword", "String", new TypeName[] { new TypeName("password", "String", 1, 1) });
             AddFunction(LibCryptography, "VerifyPassword", type, "VerifyPassword", "String", new TypeName[] { new TypeName("passwordToCheck", "String", 1, 1), new TypeName("passwordStored", "String", 1, 1) });
+
+            AddFunction(LibCryptography, "GenerateToken", type, "GenerateToken", "String", new TypeName[] {});
+            AddFunction(LibCryptography, "HashToken", type, "HashToken", "String", new TypeName[] { new TypeName("token", "String", 1, 1)});
         }
 
         public static void Save(IEnumerable<IVertex> systemSubGraphWithLinks, Dictionary<string, StoreId> storeOverride)
