@@ -23,9 +23,10 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				attribute "Name" @String
 				attribute "Surname" @String
 				attribute "Email" @String
-				attribute "Password" @String
+				attribute "PasswordHash" @String
 				aggregation "Address" @OnlineRetail\Model\Address
 				aggregation "PaymentMethod" @OnlineRetail\Model\PaymentMethod
+				association "Token" @OnlineRetail\Model\Token "0":"-1"
 			class "PaymentMethod"
 				attribute "BusinessID" @String
 					<@$ShortName :: "pay_method">
@@ -793,7 +794,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@Meta :: @Structure\Model>
 					<@To :: @OnlineRetail\Model>
 				<@SelectedEdges :: "">
-				<@ShowSelectedEdgesBaseEdge :: "False">
+				<@ShowSelectedEdgesBaseEdge :: "True">
 				<@Size :: "">
 					<@$Is :: @UX\Size>
 					<@Width :: "5000">
@@ -807,8 +808,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 					<@Position :: "">
 						<@$Is :: @UX\Position>
-						<@X :: "2189.6833333333334">
-						<@Y :: "186.35999999999999">
+						<@X :: "2130.429611">
+						<@Y :: "62.37999999999994">
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
 					<@ShowMeta :: "False">
 					<@ConstantLabel :: "class">
@@ -832,8 +833,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 					<@Position :: "">
 						<@$Is :: @UX\Position>
-						<@X :: "2305.76">
-						<@Y :: "71.12000000000003">
+						<@X :: "2315.3599999999997">
+						<@Y :: "62.37999999999994">
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
 					<@ShowMeta :: "False">
 					<@ConstantLabel :: "class">
@@ -884,8 +885,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 					<@Position :: "">
 						<@$Is :: @UX\Position>
-						<@X :: "2366.176666666667">
-						<@Y :: "199.16000000000005">
+						<@X :: "2308.16">
+						<@Y :: "188.76000000000005">
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
 					<@ShowMeta :: "False">
 					<@ConstantLabel :: "class">
@@ -921,6 +922,15 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Aggregation>
 						<@StartAnchor :: @UX\LineEndEnum\Diamond>
 						<@ToItem :: @OnlineRetail\Model\'Data model'\Item:<<"4">>>
+					<@Decorator :: "">
+						<@$Is :: @UX\LineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@From :: @OnlineRetail\Model\User>
+							<@Meta :: @Class\Association>
+							<@To :: @OnlineRetail\Model\User\Token>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Association>
+						<@ToItem :: @OnlineRetail\Model\'Data model'\Item:<<"9">>>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -929,8 +939,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 					<@Position :: "">
 						<@$Is :: @UX\Position>
-						<@X :: "2601.5550000000003">
-						<@Y :: "210.29999999999995">
+						<@X :: "2553.143333333333">
+						<@Y :: "219.79579999999993">
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
 					<@ShowMeta :: "False">
 					<@ConstantLabel :: "class">
@@ -954,8 +964,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 					<@Position :: "">
 						<@$Is :: @UX\Position>
-						<@X :: "2366.176666666667">
-						<@Y :: "368.06">
+						<@X :: "2314.1299999999997">
+						<@Y :: "371.25999999999993">
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
 					<@ShowMeta :: "False">
 					<@ConstantLabel :: "class">
@@ -979,8 +989,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 					<@Position :: "">
 						<@$Is :: @UX\Position>
-						<@X :: "2589.143333333333">
-						<@Y :: "305.58000000000004">
+						<@X :: "2507.543333333333">
+						<@Y :: "327.18000000000006">
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
 					<@ShowMeta :: "False">
 					<@ConstantLabel :: "class">
@@ -1015,8 +1025,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 					<@Position :: "">
 						<@$Is :: @UX\Position>
-						<@X :: "2756.7000000000003">
-						<@Y :: "309.52">
+						<@X :: "2663.9">
+						<@Y :: "327.18000000000006">
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
 					<@ShowMeta :: "False">
 					<@ConstantLabel :: "class">
@@ -1077,6 +1087,34 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 							<@To :: @OnlineRetail\Model\Payment\PaymentMethod>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Association>
 						<@ToItem :: @OnlineRetail\Model\'Data model'\Item:<<"4">>>
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "2128.5729443333335">
+						<@Y :: "193.25579999999994">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
+					<@ShowMeta :: "False">
+					<@ConstantLabel :: "class">
+					<@VisualiserClass :: @System\Meta\Visualiser\Class>
+					<@BackgroundColor :: "VeryVeryVeryLightGreen">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "255">
+						<@Blue :: "237">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @OnlineRetail\Model>
+						<@Meta :: @Class>
+						<@To :: @OnlineRetail\Model\Token>
+			class "Token"
+				attribute "TokenString" @String
+				attribute "Expiry" @DateTime
 		<@Component :: "BackendService">
 			<@$Is :: @Structure\Component>
 			<@ReadWrite :: @OnlineRetail\Data>
