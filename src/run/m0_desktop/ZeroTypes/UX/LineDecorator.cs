@@ -538,6 +538,7 @@ namespace m0.ZeroTypes.UX
                 ToY = CurrentRoute.EndPoint.Y;
             }
 
+            UpdateCardinalityLabel();
             UpdateRenderedRoute();
             UpdateLabelPosition();
             UpdateCardinalityLabelPosition();
