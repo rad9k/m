@@ -666,6 +666,8 @@ namespace m0.ZeroCode
         {
             StringBuilder sb = new StringBuilder();
 
+            int rememberBeforeFlush = AppendNewLines_remember;
+
             if (AppendNewLines_remember > 0)
                 while (AppendNewLines_remember > 0)
                 {
@@ -678,6 +680,12 @@ namespace m0.ZeroCode
             for (int i = 0; i < tabTimes; i++)
                 sb.Append(Tab);
 
+            if (rememberBeforeFlush > 0)
+                MinusZero.Instance.Log(0, "G2T_NewLine",
+                    "FLUSH getNewLineAndTabsString rememberWas=" + rememberBeforeFlush
+                    + " tabTimes=" + tabTimes
+                    + " extraBlankLines=" + rememberBeforeFlush);
+
             return sb.ToString();
         }
 
@@ -688,7 +696,14 @@ namespace m0.ZeroCode
             // SourceAppend(getNewLineAndTabsString()); << no as SourceAppend adds getNewLineAndTabsString() on its own
 
             if (!ommitOnce_AppendNewLineAndTabs)
+            {
+                if (AppendNewLines_remember > 0)
+                    MinusZero.Instance.Log(0, "G2T_NewLine",
+                        "AppendNewLineAndTabs remember=" + AppendNewLines_remember
+                        + " tabTimes=" + tabTimes);
+
                 Source.Append(getNewLineAndTabsString());
+            }
 
             ommitOnce_AppendNewLineAndTabs = false;
         }
@@ -696,15 +711,107 @@ namespace m0.ZeroCode
 
         int AppendNewLines_remember = 0;
 
+        string EdgeMetaForLog(IEdge e)
+        {
+            if (e == null || e.Meta == null || e.Meta.Value == null)
+                return "(null)";
+            return e.Meta.Value.ToString();
+        }
+
+        string VertexValueForLog(IVertex v)
+        {
+            if (v == null || v.Value == null)
+                return "";
+            return v.Value.ToString();
+        }
+
+        int CountNewLineEdgesInSubGraph(IVertex root)
+        {
+            if (root == null)
+                return 0;
+
+            int count = 0;
+            HashSet<IVertex> visited = new HashSet<IVertex>();
+            Stack<IVertex> pending = new Stack<IVertex>();
+            pending.Push(root);
+
+            while (pending.Count > 0)
+            {
+                IVertex current = pending.Pop();
+                if (!visited.Add(current))
+                    continue;
+
+                foreach (IEdge e in current.OutEdgesRaw)
+                {
+                    if (EdgeMetaForLog(e) == "$NewLine")
+                        count++;
+
+                    if (e.To != null && !VertexOperations.IsLink_OldVersion(e))
+                        pending.Push(e.To);
+                }
+            }
+
+            return count;
+        }
+
+        void LogNewLineEdgesInSubGraph(string where, IVertex root)
+        {
+            int count = CountNewLineEdgesInSubGraph(root);
+
+            MinusZero.Instance.Log(0, "G2T_NewLine",
+                where + " $NewLine count=" + count
+                + " rootValue=" + VertexValueForLog(root));
+
+            if (count == 0)
+                return;
+
+            HashSet<IVertex> visited = new HashSet<IVertex>();
+            Stack<IVertex> pending = new Stack<IVertex>();
+            pending.Push(root);
+
+            while (pending.Count > 0)
+            {
+                IVertex current = pending.Pop();
+                if (!visited.Add(current))
+                    continue;
+
+                foreach (IEdge e in current.OutEdgesRaw)
+                {
+                    if (EdgeMetaForLog(e) == "$NewLine")
+                        MinusZero.Instance.Log(0, "G2T_NewLine",
+                            where + " FOUND $NewLine under parentValue=" + VertexValueForLog(current)
+                            + " parentOutCount=" + current.OutEdgesRaw.Count);
+
+                    if (e.To != null && !VertexOperations.IsLink_OldVersion(e))
+                        pending.Push(e.To);
+                }
+            }
+        }
+
         bool AppendNewLines_onlyRemember(IEdge e)
         {
-            if (e.Meta.Value.ToString() == "$NewLine" && !newLinesBeenList.Contains(e))
+            string meta = EdgeMetaForLog(e);
+
+            if (meta == "$NewLine")
             {
-                AppendNewLines_remember++;
+                bool already = newLinesBeenList.Contains(e);
 
-                newLinesBeenList.Add(e);
+                if (!already)
+                {
+                    AppendNewLines_remember++;
+                    newLinesBeenList.Add(e);
 
-                return true;
+                    MinusZero.Instance.Log(0, "G2T_NewLine",
+                        "onlyRemember HIT remember=" + AppendNewLines_remember
+                        + " to=" + (e.To != null && e.To.Value != null ? e.To.Value.ToString() : ""));
+
+                    return true;
+                }
+
+                MinusZero.Instance.Log(0, "G2T_NewLine",
+                    "onlyRemember ALREADY_IN_BEEN remember=" + AppendNewLines_remember);
+
+                return false;
             }
 
             return false;
@@ -712,13 +819,28 @@ namespace m0.ZeroCode
 
         bool AppendNewLines(IEdge e)
         {
-            if (e.Meta.Value.ToString() == "$NewLine" && !newLinesBeenList.Contains(e))
+            string meta = EdgeMetaForLog(e);
+
+            if (meta == "$NewLine")
             {
-                AppendNewLines_remember++;
+                bool already = newLinesBeenList.Contains(e);
 
-                newLinesBeenList.Add(e);
+                if (!already)
+                {
+                    AppendNewLines_remember++;
+                    newLinesBeenList.Add(e);
 
-                return true;
+                    MinusZero.Instance.Log(0, "G2T_NewLine",
+                        "AppendNewLines HIT remember=" + AppendNewLines_remember
+                        + " to=" + (e.To != null && e.To.Value != null ? e.To.Value.ToString() : ""));
+
+                    return true;
+                }
+
+                MinusZero.Instance.Log(0, "G2T_NewLine",
+                    "AppendNewLines ALREADY_IN_BEEN remember=" + AppendNewLines_remember);
+
+                return false;
             }
 
             return false;
@@ -1087,28 +1209,48 @@ namespace m0.ZeroCode
                             AppendSubVertices(km, be, path);
                     }
 
-                    if (!VertexOperations.IsLink_OldVersion(be)) // XXX 2020
-                                                                 //foreach (IEdge e in ZeroCodeView.Linearize(be.To))
+                    bool beIsLink = VertexOperations.IsLink_OldVersion(be);
+
+                    MinusZero.Instance.Log(0, "G2T_NewLine",
+                        "AppendKeyword unmatchedWalk keyword=" + VertexValueForLog(km.KeywordDefinition)
+                        + " beMeta=" + EdgeMetaForLog(be)
+                        + " beTo=" + VertexValueForLog(be.To)
+                        + " isLink=" + beIsLink
+                        + " outCount=" + (be.To != null ? be.To.OutEdgesRaw.Count : -1)
+                        + " matchedCount=" + km.MatchedEdges.Count);
+
+                    if (!beIsLink) // XXX 2020
+                                   //foreach (IEdge e in ZeroCodeView.Linearize(be.To))
                         foreach (IEdge e in be.To.OutEdgesRaw)
-                            if (!km.MatchedEdges.Contains(e))
-                            {
-                                bool shouldSkip = ShouldSkipOutboundUnderLinearizedUxBaseEdge(be, e);
+                        {
+                            bool inMatched = km.MatchedEdges.Contains(e);
+                            bool shouldSkip = ShouldSkipOutboundUnderLinearizedUxBaseEdge(be, e);
 
-                                if (shouldSkip)
-                                    continue;
+                            MinusZero.Instance.Log(0, "G2T_NewLine",
+                                "AppendKeyword child meta=" + EdgeMetaForLog(e)
+                                + " to=" + VertexValueForLog(e.To)
+                                + " inMatched=" + inMatched
+                                + " shouldSkip=" + shouldSkip
+                                + " keyword=" + VertexValueForLog(km.KeywordDefinition));
 
-                                int tabTimes_copy = tabTimes;
+                            if (inMatched)
+                                continue;
 
-                                //if(log)
-                                //  MinusZero.Instance.Log(0, "AppendKeyword", "BEG " + keywordEdge.Meta.ToString() + " :: " + keywordEdge.To.ToString());
+                            if (shouldSkip)
+                                continue;
 
-                                ZeroCodeGraph2String_Reccurent(e, tabTimes + 1, be, path); // XXX NEW
+                            int tabTimes_copy = tabTimes;
 
-                                //if(log)
-                                //  MinusZero.Instance.Log(0, "AppendKeyword", "END " + keywordEdge.Meta.ToString() + " :: " + keywordEdge.To.ToString());
+                            //if(log)
+                            //  MinusZero.Instance.Log(0, "AppendKeyword", "BEG " + keywordEdge.Meta.ToString() + " :: " + keywordEdge.To.ToString());
 
-                                tabTimes = tabTimes_copy;
-                            }
+                            ZeroCodeGraph2String_Reccurent(e, tabTimes + 1, be, path); // XXX NEW
+
+                            //if(log)
+                            //  MinusZero.Instance.Log(0, "AppendKeyword", "END " + keywordEdge.Meta.ToString() + " :: " + keywordEdge.To.ToString());
+
+                            tabTimes = tabTimes_copy;
+                        }
 
                     if (sentence.Contains("(?<SUB>)"))
                         whatToReturn = false;
@@ -1395,9 +1537,18 @@ namespace m0.ZeroCode
 
             foreach (IEdge e in baseEdge.To.OutEdgesRaw)
             {
+                string meta = EdgeMetaForLog(e);
+                bool isNewLineMeta = meta == "$NewLine";
+
                 if (km.BaseEdge != baseEdge && !km.MatchedEdges.Contains(e))
                 {
                     bool shouldSkip = ShouldSkipOutboundUnderLinearizedUxBaseEdge(baseEdge, e);
+
+                    if (isNewLineMeta)
+                        MinusZero.Instance.Log(0, "G2T_NewLine",
+                            "AppendSubVertices unmatched meta=$NewLine shouldSkip=" + shouldSkip
+                            + " inMatched=" + km.MatchedEdges.Contains(e)
+                            + " remember=" + AppendNewLines_remember);
 
                     if (shouldSkip)
                     {
@@ -1420,10 +1571,22 @@ namespace m0.ZeroCode
                     }
                     AppendEdge(e, null, basePath + "\\" + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(dict, e), km.WasHereTabAddingOmmit);
                 }
+                else if (isNewLineMeta)
+                {
+                    MinusZero.Instance.Log(0, "G2T_NewLine",
+                        "AppendSubVertices SKIP_BRANCH1 baseEdge==km.BaseEdge=" + (km.BaseEdge == baseEdge)
+                        + " inMatched=" + km.MatchedEdges.Contains(e)
+                        + " remember=" + AppendNewLines_remember);
+                }
 
                 if (km.DoKeywordDefinitionContainLocalRoot && km.MatchedEdges.Contains(e) && KeywordMatchedSubGraphEdges[e] != km)
                 {
                     bool shouldSkip = ShouldSkipOutboundUnderLinearizedUxBaseEdge(baseEdge, e);
+
+                    if (isNewLineMeta)
+                        MinusZero.Instance.Log(0, "G2T_NewLine",
+                            "AppendSubVertices matchedLocalRoot meta=$NewLine shouldSkip=" + shouldSkip
+                            + " remember=" + AppendNewLines_remember);
 
                     if (shouldSkip)
                     {
@@ -1466,7 +1629,17 @@ namespace m0.ZeroCode
             if (!ZeroCodeUtil.FilterEdgeForGraph2TextProcessing(e))
                 return false;
 
+            string meta = EdgeMetaForLog(e);
+            bool isNewLineMeta = meta == "$NewLine";
+
             if (KeywordMatchedSubGraphEdges.ContainsKey(e))
+            {
+                if (isNewLineMeta)
+                    MinusZero.Instance.Log(0, "G2T_NewLine",
+                        "AppendEdge $NewLine IN KeywordMatchedSubGraphEdges path=" + path
+                        + " ShouldAppend=" + ShouldAppendKeywordHere(e, path)
+                        + " remember=" + AppendNewLines_remember);
+
                 if (ShouldAppendKeywordHere(e, path) || e.Meta.Value.ToString() == "NextExpression")
                     return AppendKeyword(e, false, ParentKmHasTabAddingOmmit);
                 else
@@ -1474,9 +1647,14 @@ namespace m0.ZeroCode
                     {
                         return true; // ?????????????????????? or true?
                     }
+            }
 
             if (AppendNewLines_onlyRemember(e))
                 return false;
+
+            if (isNewLineMeta)
+                MinusZero.Instance.Log(0, "G2T_NewLine",
+                    "AppendEdge $NewLine fell through onlyRemember (unexpected) remember=" + AppendNewLines_remember);
 
             AppendNewLineAndTabs();
 
@@ -2002,18 +2180,65 @@ namespace m0.ZeroCode
             //if (log)
             //  m0.MinusZero.Instance.Log(1, level, "ZeroCodeGraph2String_Reccurent", baseEdge.Meta.ToString() + "::" + baseEdge.To.ToString());
 
-            if (BeenList.Contains(baseEdge) /*&& baseEdge.Meta.Value.ToString() != "NextExpression"*/)
+            string meta = EdgeMetaForLog(baseEdge);
+            bool isNewLineMeta = meta == "$NewLine";
+            bool inBeen = BeenList.Contains(baseEdge);
+
+            MinusZero.Instance.Log(0, "G2T_NewLine",
+                "Reccurent ENTER level=" + level
+                + " meta=" + meta
+                + " to=" + VertexValueForLog(baseEdge != null ? baseEdge.To : null)
+                + " inBeen=" + inBeen
+                + " isKeyword=" + (baseEdge != null && KeywordMatchedSubGraphEdges.ContainsKey(baseEdge))
+                + " remember=" + AppendNewLines_remember);
+
+            if (inBeen /*&& baseEdge.Meta.Value.ToString() != "NextExpression"*/)
+            {
+                if (isNewLineMeta)
+                    MinusZero.Instance.Log(0, "G2T_NewLine",
+                        "Reccurent $NewLine already in BeenList level=" + level
+                        + " remember=" + AppendNewLines_remember);
+
+                // Matched keyword edges are added to BeenList before their To children are walked.
+                // $NewLine hung under a matched leaf (e.g. Expression:OK) would otherwise be skipped.
+                if (baseEdge.To != null && !VertexOperations.IsLink_OldVersion(baseEdge))
+                {
+                    foreach (IEdge childEdge in baseEdge.To.OutEdgesRaw)
+                    {
+                        if (EdgeMetaForLog(childEdge) != "$NewLine")
+                            continue;
+
+                        MinusZero.Instance.Log(0, "G2T_NewLine",
+                            "Reccurent inBeen still walk $NewLine under meta=" + meta
+                            + " to=" + VertexValueForLog(baseEdge.To)
+                            + " remember=" + AppendNewLines_remember);
+
+                        ZeroCodeGraph2String_Reccurent(childEdge, level, baseEdge, path);
+                    }
+                }
+
                 return;
+            }
 
             if (!ZeroCodeUtil.FilterEdgeForGraph2TextProcessing(baseEdge))
+            {
+                MinusZero.Instance.Log(0, "G2T_NewLine",
+                    "Reccurent FILTERED_OUT meta=" + meta + " level=" + level);
                 return;
+            }
 
             tabTimes = level;
 
             AppendNewLines(baseEdge);
 
             if (!ShallProcess(baseEdge))
+            {
+                MinusZero.Instance.Log(0, "G2T_NewLine",
+                    "Reccurent ShallProcess=false meta=" + meta
+                    + " level=" + level
+                    + " remember=" + AppendNewLines_remember);
                 return;
+            }
 
             if (ommitOnce_baseEdgePath)
             {
@@ -2098,16 +2323,31 @@ namespace m0.ZeroCode
 
         public void prepareBaseEdge(IEdge _graphBaseEdge)
         {
+            int newLineBefore = CountNewLineEdgesInSubGraph(_graphBaseEdge != null ? _graphBaseEdge.To : null);
+
+            MinusZero.Instance.Log(0, "G2T_NewLine",
+                "prepareBaseEdge BEFORE linearize $NewLine count=" + newLineBefore
+                + " rootValue=" + VertexValueForLog(_graphBaseEdge != null ? _graphBaseEdge.To : null));
+
             IVertex v = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(_graphBaseEdge.To);
 
             BaseEdge = new EasyEdge(_graphBaseEdge.From, _graphBaseEdge.Meta, v); // this is some crazy hybrid. this is non consistent and might not work!
+
+            LogNewLineEdgesInSubGraph("prepareBaseEdge AFTER linearize", v);
 
             //BaseEdge = _graphBaseEdge;
         }
 
         public void prepareBaseEdge_EdgeAndManyLines(IEdge _graphBaseEdge)
         {
+            int newLineBefore = CountNewLineEdgesInSubGraph(_graphBaseEdge != null ? _graphBaseEdge.To : null);
+
+            MinusZero.Instance.Log(0, "G2T_NewLine",
+                "prepareBaseEdge_EdgeAndManyLines BEFORE linearize $NewLine count=" + newLineBefore);
+
             IVertex linearized = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(_graphBaseEdge.To);
+
+            LogNewLineEdgesInSubGraph("prepareBaseEdge_EdgeAndManyLines AFTER linearize", linearized);
 
             IVertex startingVertex = MinusZero.Instance.CreateTempVertex();
 
@@ -2134,6 +2374,8 @@ namespace m0.ZeroCode
 
         public string Process_EdgeAndManyLines_Inner(IEdge _graphBaseEdge)
         {
+            MinusZero.Instance.Log(0, "G2T_NewLine", "START Process_EdgeAndManyLines_Inner");
+
             shouldUseCurrentPathForFirstVertexAppend = false;
             ommitOnce_AppendNewLineAndTabs = true;
             ommitOnce_baseEdgePath = true;
@@ -2225,6 +2467,8 @@ namespace m0.ZeroCode
 
         public string Process_LinearizedManyLines_Inner(IEdge _graphBaseEdge)
         {
+            MinusZero.Instance.Log(0, "G2T_NewLine", "START Process_LinearizedManyLines_Inner");
+
             shouldUseCurrentPathForFirstVertexAppend = false;
             ommitOnce_AppendNewLineAndTabs = true;
 
@@ -2274,6 +2518,8 @@ namespace m0.ZeroCode
 
         public string Process_VertexAndManyLines(IEdge _graphBaseEdge)
         {
+            MinusZero.Instance.Log(0, "G2T_NewLine", "START Process_VertexAndManyLines");
+
             shouldUseCurrentPathForFirstVertexAppend = true;
 
             prepareBaseEdge(_graphBaseEdge);

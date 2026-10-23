@@ -207,6 +207,26 @@ namespace m0.ZeroTypes
                 return stack;
 
             System.DateTime thisDate = VertexToDateTime(stack);
+
+            //
+
+            IVertex YearVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Year", null);
+            IVertex MonthVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Month", null);
+            IVertex DayVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Day", null);
+            IVertex HourVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Hour", null);
+            IVertex MinuteVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Minute", null);
+            IVertex SecondVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Second", null);
+            IVertex MillisecondVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Millisecond", null);
+            int yearValue = GraphUtil.GetIntegerValueOr0(YearVertex);
+            int monthValue = GraphUtil.GetIntegerValueOr0(MonthVertex);
+            int dayValue = GraphUtil.GetIntegerValueOr0(DayVertex);
+            int hourValue = GraphUtil.GetIntegerValueOr0(HourVertex);
+            int minuteValue = GraphUtil.GetIntegerValueOr0(MinuteVertex);
+            int secondValue = GraphUtil.GetIntegerValueOr0(SecondVertex);
+            int millisecondValue = GraphUtil.GetIntegerValueOr0(MillisecondVertex);
+
+            //
+
             System.DateTime compareDate = VertexToDateTime(dateTimeVertex);
 
             thisDate = thisDate.Add(new TimeSpan(compareDate.Ticks));

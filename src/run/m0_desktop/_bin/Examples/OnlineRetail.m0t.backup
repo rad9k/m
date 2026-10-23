@@ -57,6 +57,14 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				attribute "PaymentSuccededTimestamp" @DateTime "0":"1"
 				attribute "Ammount" @Decimal
 				association "PaymentMethod" @OnlineRetail\Model\PaymentMethod
+			class "Token"
+				attribute "TokenString" @String
+				attribute "Expiry" @DateTime
+			class "Category"
+				attribute "BusinessID" @String
+					<@$ShortName :: "category">
+				attribute "Name" @String
+				aggregation "Product" @OnlineRetail\Model\Product "0":"-1"
 			<@UX\UXContainer :: "Order state">
 				<@$Is :: @UX\UXContainer>
 				<@IsExpanded :: "True">
@@ -825,15 +833,6 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@From :: @OnlineRetail\Model>
 						<@Meta :: @Class>
 						<@To :: @OnlineRetail\Model\Product>
-					<@VolatileItem :: "ClassVisualiser29067503">
-						<@$Is :: @System\Meta\Visualiser\Class>
-						<@Scale :: "100">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @OnlineRetail\Model>
-							<@Meta :: @Class>
-							<@To :: @OnlineRetail\Model\Product>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -886,15 +885,6 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 							<@To :: @OnlineRetail\Model\Order\Payment>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Association>
 						<@ToItem :: @OnlineRetail\Model\'Data model'\Item:<<"8">>>
-					<@VolatileItem :: "ClassVisualiser50334386">
-						<@$Is :: @System\Meta\Visualiser\Class>
-						<@Scale :: "100">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @OnlineRetail\Model>
-							<@Meta :: @Class>
-							<@To :: @OnlineRetail\Model\Order>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -949,15 +939,6 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 							<@To :: @OnlineRetail\Model\User\Token>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Association>
 						<@ToItem :: @OnlineRetail\Model\'Data model'\Item:<<"9">>>
-					<@VolatileItem :: "ClassVisualiser20350308">
-						<@$Is :: @System\Meta\Visualiser\Class>
-						<@Scale :: "100">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @OnlineRetail\Model>
-							<@Meta :: @Class>
-							<@To :: @OnlineRetail\Model\User>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -983,15 +964,6 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@From :: @OnlineRetail\Model>
 						<@Meta :: @Class>
 						<@To :: @OnlineRetail\Model\PaymentMethod>
-					<@VolatileItem :: "ClassVisualiser37676702">
-						<@$Is :: @System\Meta\Visualiser\Class>
-						<@Scale :: "100">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @OnlineRetail\Model>
-							<@Meta :: @Class>
-							<@To :: @OnlineRetail\Model\PaymentMethod>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -1017,15 +989,6 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@From :: @OnlineRetail\Model>
 						<@Meta :: @Class>
 						<@To :: @OnlineRetail\Model\Address>
-					<@VolatileItem :: "ClassVisualiser34769732">
-						<@$Is :: @System\Meta\Visualiser\Class>
-						<@Scale :: "100">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @OnlineRetail\Model>
-							<@Meta :: @Class>
-							<@To :: @OnlineRetail\Model\Address>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -1062,15 +1025,6 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@EndAnchor :: @UX\LineEndEnum\Triangle>
 						<@HideLabel :: "True">
 						<@ToItem :: @OnlineRetail\Model\'Data model'\Item:<<"4">>>
-					<@VolatileItem :: "ClassVisualiser30244761">
-						<@$Is :: @System\Meta\Visualiser\Class>
-						<@Scale :: "100">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @OnlineRetail\Model>
-							<@Meta :: @Class>
-							<@To :: @OnlineRetail\Model\Card>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -1107,15 +1061,6 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@EndAnchor :: @UX\LineEndEnum\Triangle>
 						<@HideLabel :: "True">
 						<@ToItem :: @OnlineRetail\Model\'Data model'\Item:<<"4">>>
-					<@VolatileItem :: "ClassVisualiser23296516">
-						<@$Is :: @System\Meta\Visualiser\Class>
-						<@Scale :: "100">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @OnlineRetail\Model>
-							<@Meta :: @Class>
-							<@To :: @OnlineRetail\Model\PayPal>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -1150,15 +1095,6 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 							<@To :: @OnlineRetail\Model\Payment\PaymentMethod>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Association>
 						<@ToItem :: @OnlineRetail\Model\'Data model'\Item:<<"4">>>
-					<@VolatileItem :: "ClassVisualiser28309954">
-						<@$Is :: @System\Meta\Visualiser\Class>
-						<@Scale :: "100">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @OnlineRetail\Model>
-							<@Meta :: @Class>
-							<@To :: @OnlineRetail\Model\Payment>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -1184,15 +1120,6 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@From :: @OnlineRetail\Model>
 						<@Meta :: @Class>
 						<@To :: @OnlineRetail\Model\Token>
-					<@VolatileItem :: "ClassVisualiser25492939">
-						<@$Is :: @System\Meta\Visualiser\Class>
-						<@Scale :: "100">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @OnlineRetail\Model>
-							<@Meta :: @Class>
-							<@To :: @OnlineRetail\Model\Token>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -1218,15 +1145,6 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@From :: @OnlineRetail\Model>
 						<@Meta :: @Class>
 						<@To :: @OnlineRetail\Model\Category>
-					<@VolatileItem :: "ClassVisualiser55371559">
-						<@$Is :: @System\Meta\Visualiser\Class>
-						<@Scale :: "100">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @OnlineRetail\Model>
-							<@Meta :: @Class>
-							<@To :: @OnlineRetail\Model\Category>
 					<@Decorator :: "">
 						<@$Is :: @UX\LineDecorator>
 						<@Scale :: "100">
@@ -1237,931 +1155,6 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Aggregation>
 						<@StartAnchor :: @UX\LineEndEnum\Diamond>
 						<@ToItem :: @OnlineRetail\Model\'Data model'\Item:<<"1">>>
-				<@VolatileItem :: "WrapVisualiser51077294">
-					<@$Is :: @System\Meta\Visualiser\Wrap>
-					<@Scale :: "100">
-					<@UXTemplate :: @LINK NOT FOUND>
-					<@BaseEdge :: "">
-						<@$Is :: @Edge>
-						<@From :: @$Empty>
-						<@Meta :: @$Empty>
-						<@To :: @OnlineRetail\Model\'Data model'>
-					<@UX\Item :: "VertexVisualiser23391971">
-						<@$Is :: @System\Meta\Visualiser\Vertex>
-						<@Scale :: "100">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @OnlineRetail\Model\'Data model'>
-							<@Meta :: @UX\UXContainer\NewItemUXTemplate>
-							<@To :: @System\Data\UX\Templates\ZeroUML>
-					<@UX\Item :: "BooleanVisualiser65487785">
-						<@$Is :: @System\Meta\Visualiser\Boolean>
-						<@Scale :: "100">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @OnlineRetail\Model\'Data model'>
-							<@Meta :: @UX\UXContainer\IsExpanded>
-							<@To :: @OnlineRetail\Model\'Data model'\IsExpanded:True>
-					<@UX\Item :: "BooleanVisualiser34648122">
-						<@$Is :: @System\Meta\Visualiser\Boolean>
-						<@Scale :: "100">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @OnlineRetail\Model\'Data model'>
-							<@Meta :: @UX\UXContainer\HasMiniatures>
-							<@To :: @OnlineRetail\Model\'Data model'\HasMiniatures:True>
-					<@UX\Item :: "IntegerVisualiser56632621">
-						<@$Is :: @System\Meta\Visualiser\Integer>
-						<@Scale :: "100">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @OnlineRetail\Model\'Data model'>
-							<@Meta :: @UX\UXItem\Scale>
-							<@To :: @OnlineRetail\Model\'Data model'\100>
-					<@UX\Item :: "VertexVisualiser38756639">
-						<@$Is :: @System\Meta\Visualiser\Vertex>
-						<@Scale :: "100">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @OnlineRetail\Model\'Data model'>
-							<@Meta :: @UX\UXItem\Size>
-							<@To :: @OnlineRetail\Model\'Data model'\Size:>
-					<@UX\Item :: "VertexVisualiser3464192">
-						<@$Is :: @System\Meta\Visualiser\Vertex>
-						<@Scale :: "100">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @OnlineRetail\Model\'Data model'>
-							<@Meta :: @UX\Item\Item>
-							<@To :: @OnlineRetail\Model\'Data model'\Item:<<"1">>>
-					<@UX\Item :: "VertexVisualiser912703">
-						<@$Is :: @System\Meta\Visualiser\Vertex>
-						<@Scale :: "100">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @OnlineRetail\Model\'Data model'>
-							<@Meta :: @UX\Item\VolatileItem>
-							<@To :: @OnlineRetail\Model\'Data model'\WrapVisualiser51077294>
-					<@UX\Item :: "EdgeVisualiser47736536">
-						<@$Is :: @System\Meta\Visualiser\Edge>
-						<@Scale :: "100">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @OnlineRetail\Model\'Data model'>
-							<@Meta :: @HasBaseEdge\BaseEdge>
-							<@To :: @OnlineRetail\Model\'Data model'\BaseEdge:>
-					<@UX\Item :: "VertexVisualiser60542314">
-						<@$Is :: @System\Meta\Visualiser\Vertex>
-						<@Scale :: "100">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @OnlineRetail\Model\'Data model'>
-							<@Meta :: @HasSelectedEdges\SelectedEdges>
-							<@To :: @OnlineRetail\Model\'Data model'\SelectedEdges:>
-					<@UX\Item :: "BooleanVisualiser65728627">
-						<@$Is :: @System\Meta\Visualiser\Boolean>
-						<@Scale :: "100">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @OnlineRetail\Model\'Data model'>
-							<@Meta :: @HasSelectedEdges\ShowSelectedEdgesBaseEdge>
-							<@To :: @OnlineRetail\Model\'Data model'\ShowSelectedEdgesBaseEdge:True>
-				<@VolatileItem :: "FormVisualiser52275864">
-					<@$Is :: @System\Meta\Visualiser\Form>
-					<@ExpertMode :: "False">
-					<@ColumnNumber :: "1">
-					<@MetaOnLeft :: "True">
-					<@MetaAlignRight :: "False">
-					<@SectionsAsTabs :: "False">
-					<@Scale :: "80">
-					<@SelectedEdges :: "">
-					<@ShowSelectedEdgesBaseEdge :: "False">
-					<@UXTemplate :: @LINK NOT FOUND>
-					<@UX\Item :: "StringVisualiser52027857">
-						<@$Is :: @System\Meta\Visualiser\String>
-						<@Scale :: "100">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @OnlineRetail\Model\'Data model'\Item:<<"10">>\BaseEdge:>
-							<@Meta :: @Edge\To>
-							<@To :: @OnlineRetail\Model\Category>
-					<@UX\Item :: "TableVisualiser13624289">
-						<@$Is :: @System\Meta\Visualiser\Table>
-						<@ExpertMode :: "False">
-						<@IsAllVisualisersEdit :: "False">
-						<@ShowHeader :: "True">
-						<@AlternatingRows :: "True">
-						<@Scale :: "100">
-						<@SelectedEdges :: "">
-						<@ShowSelectedEdgesBaseEdge :: "False">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @$Empty>
-							<@Meta :: @$Empty>
-							<@To :: @OnlineRetail\Model\Category>
-						<@ToShowEdgesMeta :: "">
-							<@Meta :: @Class\Attribute>
-						<@GridStyle :: @System\Meta\Visualiser\GridStyleEnum\Round>
-						<@FilterQuery :: "Attribute:">
-						<@UX\Item :: "StringViewVisualiser400984">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category>
-								<@Meta :: @Class\Attribute>
-								<@To :: @OnlineRetail\Model\Category\BusinessID>
-						<@UX\Item :: "StringViewVisualiser38624044">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\BusinessID>
-								<@Meta :: @Class\Attribute\MinValue>
-								<@To :: @$Empty>
-						<@UX\Item :: "StringViewVisualiser38207816">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\BusinessID>
-								<@Meta :: @Class\Attribute\MaxValue>
-								<@To :: @$Empty>
-						<@UX\Item :: "VertexVisualiser54089932">
-							<@$Is :: @System\Meta\Visualiser\Vertex>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\BusinessID>
-								<@Meta :: @$EdgeTarget>
-								<@To :: @String>
-						<@UX\Item :: "StringViewVisualiser50377344">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\BusinessID>
-								<@Meta :: @$MinCardinality>
-								<@To :: @$Empty>
-						<@UX\Item :: "StringViewVisualiser29673748">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\BusinessID>
-								<@Meta :: @$MaxCardinality>
-								<@To :: @$Empty>
-						<@UX\Item :: "StringViewVisualiser37212526">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category>
-								<@Meta :: @Class\Attribute>
-								<@To :: @OnlineRetail\Model\Category\BusinessID>
-						<@UX\Item :: "StringViewVisualiser20548899">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\BusinessID>
-								<@Meta :: @Class\Attribute\MinValue>
-								<@To :: @$Empty>
-						<@UX\Item :: "StringViewVisualiser65759370">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\BusinessID>
-								<@Meta :: @Class\Attribute\MaxValue>
-								<@To :: @$Empty>
-						<@UX\Item :: "VertexVisualiser14405831">
-							<@$Is :: @System\Meta\Visualiser\Vertex>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\BusinessID>
-								<@Meta :: @$EdgeTarget>
-								<@To :: @String>
-						<@UX\Item :: "StringViewVisualiser49989143">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\BusinessID>
-								<@Meta :: @$MinCardinality>
-								<@To :: @$Empty>
-						<@UX\Item :: "StringViewVisualiser50385790">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\BusinessID>
-								<@Meta :: @$MaxCardinality>
-								<@To :: @$Empty>
-						<@UX\Item :: "StringViewVisualiser11108711">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category>
-								<@Meta :: @Class\Attribute>
-								<@To :: @LINK NOT FOUND>
-						<@UX\Item :: "StringViewVisualiser63329569">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @LINK NOT FOUND>
-								<@Meta :: @Class\Attribute\MinValue>
-								<@To :: @$Empty>
-						<@UX\Item :: "StringViewVisualiser45297150">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @LINK NOT FOUND>
-								<@Meta :: @Class\Attribute\MaxValue>
-								<@To :: @$Empty>
-						<@UX\Item :: "VertexVisualiser65908650">
-							<@$Is :: @System\Meta\Visualiser\Vertex>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @LINK NOT FOUND>
-								<@Meta :: @$EdgeTarget>
-								<@To :: @$Empty>
-						<@UX\Item :: "StringViewVisualiser39465514">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @LINK NOT FOUND>
-								<@Meta :: @$MinCardinality>
-								<@To :: @$Empty>
-						<@UX\Item :: "StringViewVisualiser25553243">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @LINK NOT FOUND>
-								<@Meta :: @$MaxCardinality>
-								<@To :: @$Empty>
-						<@UX\Item :: "StringVisualiser37484252">
-							<@$Is :: @System\Meta\Visualiser\String>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category>
-								<@Meta :: @Class\Attribute>
-								<@To :: @LINK NOT FOUND>
-						<@UX\Item :: "StringViewVisualiser60767086">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category>
-								<@Meta :: @Class\Attribute>
-								<@To :: @LINK NOT FOUND>
-						<@UX\Item :: "StringViewVisualiser21285772">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category>
-								<@Meta :: @Class\Attribute>
-								<@To :: @OnlineRetail\Model\Category\BusinessID>
-						<@UX\Item :: "StringViewVisualiser16849389">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\BusinessID>
-								<@Meta :: @Class\Attribute\MinValue>
-								<@To :: @$Empty>
-						<@UX\Item :: "StringViewVisualiser5159922">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\BusinessID>
-								<@Meta :: @Class\Attribute\MaxValue>
-								<@To :: @$Empty>
-						<@UX\Item :: "VertexVisualiser29111333">
-							<@$Is :: @System\Meta\Visualiser\Vertex>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\BusinessID>
-								<@Meta :: @$EdgeTarget>
-								<@To :: @String>
-						<@UX\Item :: "StringViewVisualiser56380377">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\BusinessID>
-								<@Meta :: @$MinCardinality>
-								<@To :: @$Empty>
-						<@UX\Item :: "StringViewVisualiser43278026">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\BusinessID>
-								<@Meta :: @$MaxCardinality>
-								<@To :: @$Empty>
-						<@UX\Item :: "StringViewVisualiser13051226">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category>
-								<@Meta :: @Class\Attribute>
-								<@To :: @OnlineRetail\Model\Category\BusinessID>
-						<@UX\Item :: "StringViewVisualiser35113244">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\BusinessID>
-								<@Meta :: @Class\Attribute\MinValue>
-								<@To :: @$Empty>
-						<@UX\Item :: "StringViewVisualiser23686893">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\BusinessID>
-								<@Meta :: @Class\Attribute\MaxValue>
-								<@To :: @$Empty>
-						<@UX\Item :: "VertexVisualiser28652312">
-							<@$Is :: @System\Meta\Visualiser\Vertex>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\BusinessID>
-								<@Meta :: @$EdgeTarget>
-								<@To :: @String>
-						<@UX\Item :: "StringViewVisualiser129224">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\BusinessID>
-								<@Meta :: @$MinCardinality>
-								<@To :: @$Empty>
-						<@UX\Item :: "StringViewVisualiser45434636">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\BusinessID>
-								<@Meta :: @$MaxCardinality>
-								<@To :: @$Empty>
-						<@UX\Item :: "StringViewVisualiser66022918">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category>
-								<@Meta :: @Class\Attribute>
-								<@To :: @OnlineRetail\Model\Category\Name>
-						<@UX\Item :: "StringViewVisualiser34663340">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\Name>
-								<@Meta :: @Class\Attribute\MinValue>
-								<@To :: @$Empty>
-						<@UX\Item :: "StringViewVisualiser53663528">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\Name>
-								<@Meta :: @Class\Attribute\MaxValue>
-								<@To :: @$Empty>
-						<@UX\Item :: "VertexVisualiser32999895">
-							<@$Is :: @System\Meta\Visualiser\Vertex>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\Name>
-								<@Meta :: @$EdgeTarget>
-								<@To :: @String>
-						<@UX\Item :: "StringViewVisualiser10167630">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\Name>
-								<@Meta :: @$MinCardinality>
-								<@To :: @$Empty>
-						<@UX\Item :: "StringViewVisualiser34088150">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\Name>
-								<@Meta :: @$MaxCardinality>
-								<@To :: @$Empty>
-						<@UX\Item :: "StringVisualiser37400232">
-							<@$Is :: @System\Meta\Visualiser\String>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category>
-								<@Meta :: @Class\Attribute>
-								<@To :: @OnlineRetail\Model\Category\Name>
-						<@UX\Item :: "StringViewVisualiser56328613">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category>
-								<@Meta :: @Class\Attribute>
-								<@To :: @OnlineRetail\Model\Category\Name>
-						<@UX\Item :: "StringViewVisualiser65345554">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category>
-								<@Meta :: @Class\Attribute>
-								<@To :: @OnlineRetail\Model\Category\BusinessID>
-						<@UX\Item :: "StringViewVisualiser1813982">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\BusinessID>
-								<@Meta :: @Class\Attribute\MinValue>
-								<@To :: @$Empty>
-						<@UX\Item :: "StringViewVisualiser27374341">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\BusinessID>
-								<@Meta :: @Class\Attribute\MaxValue>
-								<@To :: @$Empty>
-						<@UX\Item :: "VertexVisualiser58759357">
-							<@$Is :: @System\Meta\Visualiser\Vertex>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\BusinessID>
-								<@Meta :: @$EdgeTarget>
-								<@To :: @String>
-						<@UX\Item :: "StringViewVisualiser19926111">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\BusinessID>
-								<@Meta :: @$MinCardinality>
-								<@To :: @$Empty>
-						<@UX\Item :: "StringViewVisualiser28163096">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\BusinessID>
-								<@Meta :: @$MaxCardinality>
-								<@To :: @$Empty>
-						<@UX\Item :: "StringViewVisualiser29232496">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category>
-								<@Meta :: @Class\Attribute>
-								<@To :: @OnlineRetail\Model\Category\Name>
-						<@UX\Item :: "StringViewVisualiser3263182">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\Name>
-								<@Meta :: @Class\Attribute\MinValue>
-								<@To :: @$Empty>
-						<@UX\Item :: "StringViewVisualiser50568679">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\Name>
-								<@Meta :: @Class\Attribute\MaxValue>
-								<@To :: @$Empty>
-						<@UX\Item :: "VertexVisualiser40731560">
-							<@$Is :: @System\Meta\Visualiser\Vertex>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\Name>
-								<@Meta :: @$EdgeTarget>
-								<@To :: @String>
-						<@UX\Item :: "StringViewVisualiser59147525">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\Name>
-								<@Meta :: @$MinCardinality>
-								<@To :: @$Empty>
-						<@UX\Item :: "StringViewVisualiser12164776">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\Name>
-								<@Meta :: @$MaxCardinality>
-								<@To :: @$Empty>
-					<@UX\Item :: "TableVisualiser1623416">
-						<@$Is :: @System\Meta\Visualiser\Table>
-						<@ExpertMode :: "False">
-						<@IsAllVisualisersEdit :: "False">
-						<@ShowHeader :: "True">
-						<@AlternatingRows :: "True">
-						<@Scale :: "100">
-						<@SelectedEdges :: "">
-						<@ShowSelectedEdgesBaseEdge :: "False">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @$Empty>
-							<@Meta :: @$Empty>
-							<@To :: @OnlineRetail\Model\Category>
-						<@ToShowEdgesMeta :: "">
-							<@Meta :: @Class\Association>
-						<@GridStyle :: @System\Meta\Visualiser\GridStyleEnum\Round>
-						<@FilterQuery :: "Association:">
-					<@UX\Item :: "TableVisualiser2382115">
-						<@$Is :: @System\Meta\Visualiser\Table>
-						<@ExpertMode :: "False">
-						<@IsAllVisualisersEdit :: "False">
-						<@ShowHeader :: "True">
-						<@AlternatingRows :: "True">
-						<@Scale :: "100">
-						<@SelectedEdges :: "">
-						<@ShowSelectedEdgesBaseEdge :: "False">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @$Empty>
-							<@Meta :: @$Empty>
-							<@To :: @OnlineRetail\Model\Category>
-						<@ToShowEdgesMeta :: "">
-							<@Meta :: @Class\Aggregation>
-						<@GridStyle :: @System\Meta\Visualiser\GridStyleEnum\Round>
-						<@FilterQuery :: "Aggregation:">
-						<@UX\Item :: "StringViewVisualiser53315508">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category>
-								<@Meta :: @Class\Aggregation>
-								<@To :: @OnlineRetail\Model\Category\Product>
-						<@UX\Item :: "VertexVisualiser41160703">
-							<@$Is :: @System\Meta\Visualiser\Vertex>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\Product>
-								<@Meta :: @$EdgeTarget>
-								<@To :: @OnlineRetail\Model\Product>
-						<@UX\Item :: "StringViewVisualiser15878869">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\Product>
-								<@Meta :: @$MinCardinality>
-								<@To :: @$Empty>
-						<@UX\Item :: "StringViewVisualiser49532900">
-							<@$Is :: @System\Meta\Visualiser\StringView>
-							<@Scale :: "100">
-							<@UXTemplate :: @LINK NOT FOUND>
-							<@BaseEdge :: "">
-								<@$Is :: @Edge>
-								<@From :: @OnlineRetail\Model\Category\Product>
-								<@Meta :: @$MaxCardinality>
-								<@To :: @$Empty>
-					<@UX\Item :: "StringVisualiser825041">
-						<@$Is :: @System\Meta\Visualiser\String>
-						<@Scale :: "100">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @OnlineRetail\Model\Category>
-							<@Meta :: @Class\$PlatformClassName>
-							<@To :: @$Empty>
-					<@UX\Item :: "TableVisualiser61856659">
-						<@$Is :: @System\Meta\Visualiser\Table>
-						<@ExpertMode :: "False">
-						<@IsAllVisualisersEdit :: "False">
-						<@ShowHeader :: "True">
-						<@AlternatingRows :: "True">
-						<@Scale :: "100">
-						<@SelectedEdges :: "">
-						<@ShowSelectedEdgesBaseEdge :: "False">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @$Empty>
-							<@Meta :: @$Empty>
-							<@To :: @OnlineRetail\Model\Category>
-						<@ToShowEdgesMeta :: "">
-							<@Meta :: @$Inherits>
-						<@GridStyle :: @System\Meta\Visualiser\GridStyleEnum\Round>
-						<@FilterQuery :: "$Inherits:">
-					<@UX\Item :: "TableVisualiser48028195">
-						<@$Is :: @System\Meta\Visualiser\Table>
-						<@ExpertMode :: "False">
-						<@IsAllVisualisersEdit :: "False">
-						<@ShowHeader :: "True">
-						<@AlternatingRows :: "True">
-						<@Scale :: "100">
-						<@SelectedEdges :: "">
-						<@ShowSelectedEdgesBaseEdge :: "False">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @$Empty>
-							<@Meta :: @$Empty>
-							<@To :: @OnlineRetail\Model\Category>
-						<@ToShowEdgesMeta :: "">
-							<@Meta :: @Class\Method>
-						<@GridStyle :: @System\Meta\Visualiser\GridStyleEnum\Round>
-						<@FilterQuery :: "Method:">
-					<@UX\Item :: "TableVisualiser30234559">
-						<@$Is :: @System\Meta\Visualiser\Table>
-						<@ExpertMode :: "False">
-						<@IsAllVisualisersEdit :: "False">
-						<@ShowHeader :: "True">
-						<@AlternatingRows :: "True">
-						<@Scale :: "100">
-						<@SelectedEdges :: "">
-						<@ShowSelectedEdgesBaseEdge :: "False">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @$Empty>
-							<@Meta :: @$Empty>
-							<@To :: @OnlineRetail\Model\Category>
-						<@ToShowEdgesMeta :: "">
-							<@Meta :: @Structure\Component\Create>
-						<@GridStyle :: @System\Meta\Visualiser\GridStyleEnum\Round>
-						<@FilterQuery :: "Create:">
-					<@UX\Item :: "TableVisualiser18206967">
-						<@$Is :: @System\Meta\Visualiser\Table>
-						<@ExpertMode :: "False">
-						<@IsAllVisualisersEdit :: "False">
-						<@ShowHeader :: "True">
-						<@AlternatingRows :: "True">
-						<@Scale :: "100">
-						<@SelectedEdges :: "">
-						<@ShowSelectedEdgesBaseEdge :: "False">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @$Empty>
-							<@Meta :: @$Empty>
-							<@To :: @OnlineRetail\Model\Category>
-						<@ToShowEdgesMeta :: "">
-							<@Meta :: @Structure\Component\Use>
-						<@GridStyle :: @System\Meta\Visualiser\GridStyleEnum\Round>
-						<@FilterQuery :: "Use:">
-					<@UX\Item :: "TableVisualiser3762379">
-						<@$Is :: @System\Meta\Visualiser\Table>
-						<@ExpertMode :: "False">
-						<@IsAllVisualisersEdit :: "False">
-						<@ShowHeader :: "True">
-						<@AlternatingRows :: "True">
-						<@Scale :: "100">
-						<@SelectedEdges :: "">
-						<@ShowSelectedEdgesBaseEdge :: "False">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @$Empty>
-							<@Meta :: @$Empty>
-							<@To :: @OnlineRetail\Model\Category>
-						<@ToShowEdgesMeta :: "">
-							<@Meta :: @Structure\StaticComponent\Relation>
-						<@GridStyle :: @System\Meta\Visualiser\GridStyleEnum\Round>
-						<@FilterQuery :: "Relation:">
-					<@UX\Item :: "TableVisualiser16569948">
-						<@$Is :: @System\Meta\Visualiser\Table>
-						<@ExpertMode :: "False">
-						<@IsAllVisualisersEdit :: "False">
-						<@ShowHeader :: "True">
-						<@AlternatingRows :: "True">
-						<@Scale :: "100">
-						<@SelectedEdges :: "">
-						<@ShowSelectedEdgesBaseEdge :: "False">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @$Empty>
-							<@Meta :: @$Empty>
-							<@To :: @OnlineRetail\Model\Category>
-						<@ToShowEdgesMeta :: "">
-							<@Meta :: @Structure\StaticComponent\Depend>
-						<@GridStyle :: @System\Meta\Visualiser\GridStyleEnum\Round>
-						<@FilterQuery :: "Depend:">
-					<@UX\Item :: "TableVisualiser49956039">
-						<@$Is :: @System\Meta\Visualiser\Table>
-						<@ExpertMode :: "False">
-						<@IsAllVisualisersEdit :: "False">
-						<@ShowHeader :: "True">
-						<@AlternatingRows :: "True">
-						<@Scale :: "100">
-						<@SelectedEdges :: "">
-						<@ShowSelectedEdgesBaseEdge :: "False">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @$Empty>
-							<@Meta :: @$Empty>
-							<@To :: @OnlineRetail\Model\Category>
-						<@ToShowEdgesMeta :: "">
-							<@Meta :: @Structure\StaticComponent\Contain>
-						<@GridStyle :: @System\Meta\Visualiser\GridStyleEnum\Round>
-						<@FilterQuery :: "Contain:">
-					<@UX\Item :: "TableVisualiser12717037">
-						<@$Is :: @System\Meta\Visualiser\Table>
-						<@ExpertMode :: "False">
-						<@IsAllVisualisersEdit :: "False">
-						<@ShowHeader :: "True">
-						<@AlternatingRows :: "True">
-						<@Scale :: "100">
-						<@SelectedEdges :: "">
-						<@ShowSelectedEdgesBaseEdge :: "False">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @$Empty>
-							<@Meta :: @$Empty>
-							<@To :: @OnlineRetail\Model\Category>
-						<@ToShowEdgesMeta :: "">
-							<@Meta :: @Structure\StaticComponent\Deploy>
-						<@GridStyle :: @System\Meta\Visualiser\GridStyleEnum\Round>
-						<@FilterQuery :: "Deploy:">
-					<@UX\Item :: "TableVisualiser11467766">
-						<@$Is :: @System\Meta\Visualiser\Table>
-						<@ExpertMode :: "False">
-						<@IsAllVisualisersEdit :: "False">
-						<@ShowHeader :: "True">
-						<@AlternatingRows :: "True">
-						<@Scale :: "100">
-						<@SelectedEdges :: "">
-						<@ShowSelectedEdgesBaseEdge :: "False">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @$Empty>
-							<@Meta :: @$Empty>
-							<@To :: @OnlineRetail\Model\Category>
-						<@ToShowEdgesMeta :: "">
-							<@Meta :: @Structure\StaticComponent\Implements>
-						<@GridStyle :: @System\Meta\Visualiser\GridStyleEnum\Round>
-						<@FilterQuery :: "Implements:">
-					<@UX\Item :: "TableVisualiser40563764">
-						<@$Is :: @System\Meta\Visualiser\Table>
-						<@ExpertMode :: "False">
-						<@IsAllVisualisersEdit :: "False">
-						<@ShowHeader :: "True">
-						<@AlternatingRows :: "True">
-						<@Scale :: "100">
-						<@SelectedEdges :: "">
-						<@ShowSelectedEdgesBaseEdge :: "False">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @$Empty>
-							<@Meta :: @$Empty>
-							<@To :: @OnlineRetail\Model\Category>
-						<@ToShowEdgesMeta :: "">
-							<@Meta :: @Structure\StaticComponent\Read>
-						<@GridStyle :: @System\Meta\Visualiser\GridStyleEnum\Round>
-						<@FilterQuery :: "Read:">
-					<@UX\Item :: "TableVisualiser42588489">
-						<@$Is :: @System\Meta\Visualiser\Table>
-						<@ExpertMode :: "False">
-						<@IsAllVisualisersEdit :: "False">
-						<@ShowHeader :: "True">
-						<@AlternatingRows :: "True">
-						<@Scale :: "100">
-						<@SelectedEdges :: "">
-						<@ShowSelectedEdgesBaseEdge :: "False">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @$Empty>
-							<@Meta :: @$Empty>
-							<@To :: @OnlineRetail\Model\Category>
-						<@ToShowEdgesMeta :: "">
-							<@Meta :: @Structure\StaticComponent\Write>
-						<@GridStyle :: @System\Meta\Visualiser\GridStyleEnum\Round>
-						<@FilterQuery :: "Write:">
-					<@UX\Item :: "TableVisualiser24421675">
-						<@$Is :: @System\Meta\Visualiser\Table>
-						<@ExpertMode :: "False">
-						<@IsAllVisualisersEdit :: "False">
-						<@ShowHeader :: "True">
-						<@AlternatingRows :: "True">
-						<@Scale :: "100">
-						<@SelectedEdges :: "">
-						<@ShowSelectedEdgesBaseEdge :: "False">
-						<@UXTemplate :: @LINK NOT FOUND>
-						<@BaseEdge :: "">
-							<@$Is :: @Edge>
-							<@From :: @$Empty>
-							<@Meta :: @$Empty>
-							<@To :: @OnlineRetail\Model\Category>
-						<@ToShowEdgesMeta :: "">
-							<@Meta :: @Structure\StaticComponent\ReadWrite>
-						<@GridStyle :: @System\Meta\Visualiser\GridStyleEnum\Round>
-						<@FilterQuery :: "ReadWrite:">
-					<@BaseEdge :: @OnlineRetail\Model\'Data model'\Item:<<"10">>\BaseEdge:>
-			class "Token"
-				attribute "TokenString" @String
-				attribute "Expiry" @DateTime
-			class "Category"
-				attribute "BusinessID" @String
-				attribute "Name" @String
-				aggregation "Product" @OnlineRetail\Model\Product "0":"-1"
 		<@Component :: "BackendService">
 			<@$Is :: @Structure\Component>
 			<@ReadWrite :: @OnlineRetail\Data>
@@ -2175,7 +1168,41 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				Model = $#Package:#Component:\Model:
 				Data = $#Package:#Component:\Database:
 
-				x = Model\:User\:BusinessID
+				x = new Model\:User[]
+			package "Service"
+				import @System\Lib\Std direct meta
+				import @System\Lib\Cryptography direct meta
+
+				variable "Model" @Vertex
+				variable "Data" @Vertex
+				variable "x" @Vertex
+
+				function "Init" ()
+					Model = $#Package:#Component:\Model:
+					Data = $#Package:#Component:\Database:
+
+				function "CreateUser" @String(@String "Name", @String "Surname", @String "Email", @String "Password")
+					variable "user" @Vertex
+					@@OnlineRetail\BackendService\Service\Init[]
+					if Data\user{Email:'(Email)'}<> > "0"
+						return "USER EXIST"
+					user = new Model\:User[]
+					Data +< user
+					user\Name = Name
+					user\Surname = Surname
+					user\Email = Email
+					user\PasswordHash = @@System\Lib\Cryptography\HashPassword[Password]
+					return "OK"
+				function "Login" @String(@String "Email", @String "Password")
+					variable "token" @String
+					variable "PasswordHash" @String
+					variable "user" @Vertex
+					@@OnlineRetail\BackendService\Service\Init[]
+					user = Data\user{Email:'(Email)'}
+					if user<> == "1"
+						return "yes"
+					return "ERROR"
+				x = @@OnlineRetail\BackendService\Service\CreateUser["R", "T", "e", "pwd"]
 		<@UX\UXContainer :: "OnlineRetail">
 			<@$Is :: @UX\UXContainer>
 			<@IsExpanded :: "True">
@@ -2282,3 +1309,57 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@To :: @OnlineRetail\Data>
 		<@Structure\Database :: "Data">
 			<@$Is :: @Structure\Database>
+			<@OnlineRetail\BackendService\Service\CreateUser\user :: "">
+				<@$Is :: @OnlineRetail\Model\User>
+				<@BusinessID :: "">
+				<@Name :: "">
+				<@Surname :: "">
+				<@Email :: "">
+				<@PasswordHash :: "">
+				<@Address :: "">
+				<@PaymentMethod :: "">
+			<@OnlineRetail\BackendService\Service\CreateUser\user :: "">
+				<@$Is :: @OnlineRetail\Model\User>
+				<@BusinessID :: "">
+				<@Surname :: "">
+				<@Email :: "">
+				<@PasswordHash :: "">
+				<@Address :: "">
+				<@PaymentMethod :: "">
+				<@Name :: "Radek">
+			<@OnlineRetail\BackendService\Service\CreateUser\user :: "">
+				<@$Is :: @OnlineRetail\Model\User>
+				<@BusinessID :: "">
+				<@Address :: "">
+				<@PaymentMethod :: "">
+				<@Name :: @OnlineRetail\Data\user:<<"2">>\Radek>
+				<@Surname :: "Kotek">
+				<@Email :: "ter@gmail.com">
+				<@PasswordHash :: "pbkdf2-sha256$600000$gkXHvfifpaS8Np3QzFi4eg==$o+y8l3ctvUGzf8DS0aKVJPcNfmybWiO+JQo7wI+I7NI=">
+			<@OnlineRetail\BackendService\Service\CreateUser\user :: "">
+				<@$Is :: @OnlineRetail\Model\User>
+				<@BusinessID :: "">
+				<@Address :: "">
+				<@PaymentMethod :: "">
+				<@Name :: @OnlineRetail\Data\user:<<"2">>\Radek>
+				<@Surname :: @OnlineRetail\Data\user:<<"3">>\Kotek>
+				<@Email :: @OnlineRetail\Data\user:<<"3">>\'ter@gmail.com'>
+				<@PasswordHash :: "pbkdf2-sha256$600000$6sV8Z8gMEozHFxYvvCneIQ==$tMSIc4/Yv2i8rWxXxAAhw2sw9VWEnGSM7w8nN8p6yiY=">
+			<@OnlineRetail\BackendService\Service\CreateUser\user :: "">
+				<@$Is :: @OnlineRetail\Model\User>
+				<@BusinessID :: "">
+				<@Address :: "">
+				<@PaymentMethod :: "">
+				<@Name :: "R">
+				<@Surname :: "T">
+				<@Email :: "e">
+				<@PasswordHash :: "pbkdf2-sha256$600000$LfzQjpLi7VvPUCL/DMnbPA==$AeaSXghINeMd7Df28RAc9a/al08yNmvSDjwubGB6Rdw=">
+			<@OnlineRetail\BackendService\Service\CreateUser\user :: "">
+				<@$Is :: @OnlineRetail\Model\User>
+				<@BusinessID :: "">
+				<@Address :: "">
+				<@PaymentMethod :: "">
+				<@Name :: @OnlineRetail\Data\user:<<"5">>\R>
+				<@Surname :: @OnlineRetail\Data\user:<<"5">>\T>
+				<@Email :: @OnlineRetail\Data\user:<<"5">>\e>
+				<@PasswordHash :: "pbkdf2-sha256$600000$r3yj92tayoEgs/P/FcvviQ==$EdPcYzwnoDfXdISlcYWCeRoKnXDz9llJQ8GIqdeEDdU=">

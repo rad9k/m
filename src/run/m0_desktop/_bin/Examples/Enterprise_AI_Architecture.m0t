@@ -5,7 +5,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			<@$Is :: @UX\UXContainer>
 			<@IsExpanded :: "True">
 			<@HasMiniatures :: "True">
-			<@Scale :: "40">
+			<@Scale :: "71">
 			<@BaseEdge :: "">
 				<@$Is :: @Edge>
 				<@From :: @'net10.0-windows7.0'\Examples\'Enterprise_AI_Architecture.m0t'>
