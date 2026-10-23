@@ -86,6 +86,7 @@
 	  <Word>automata</Word>
 	  <Word>state</Word>
       <Word>transition</Word>
+	  <Word>txt</Word>
 	</Keywords>
     
     <Rule color="Operator">
