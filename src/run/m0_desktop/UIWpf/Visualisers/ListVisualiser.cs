@@ -367,6 +367,8 @@ namespace m0.UIWpf.Visualisers
 
         private void OnDataGridPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            LogTableDeleteGridState("ListVisualiser.OnDataGridPreviewMouseLeftButtonDown", null);
+
             dataGridDndStartPoint = e.GetPosition(this);
             dataGridDndStartPointInDataGrid = e.GetPosition(ThisDataGrid);
             dataGridMouseDownFullRowItem = GetDataGridItemByFullRowPoint(dataGridDndStartPoint);
@@ -1453,6 +1455,42 @@ namespace m0.UIWpf.Visualisers
             ScrollViewer.SetCanContentScroll(ThisDataGrid, IsDataGridRowVirtualizationEnabled);
             ThisDataGrid.EnableRowVirtualization = IsDataGridRowVirtualizationEnabled;
             ThisDataGrid.EnableColumnVirtualization = IsDataGridColumnVirtualizationEnabled;
+        }
+
+        protected void LogTableDeleteGridState(string where, string detail)
+        {
+            if (!(this is TableVisualiser))
+                return;
+
+            int visualRowCount = 0;
+            string generatorStatus = "noGrid";
+            int itemsCount = -1;
+            int selectedCount = -1;
+            string currentItem = "null";
+
+            if (ThisDataGrid != null)
+            {
+                generatorStatus = ThisDataGrid.ItemContainerGenerator.Status.ToString();
+                itemsCount = ThisDataGrid.Items != null ? ThisDataGrid.Items.Count : -1;
+                selectedCount = ThisDataGrid.SelectedItems != null ? ThisDataGrid.SelectedItems.Count : -1;
+
+                if (ThisDataGrid.CurrentItem != null)
+                    currentItem = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(ThisDataGrid.CurrentItem).ToString();
+
+                foreach (DataGridRow row in FindVisualChildren<DataGridRow>(ThisDataGrid))
+                    visualRowCount++;
+            }
+
+            string message = "items=" + itemsCount
+                + " visualRows=" + visualRowCount
+                + " generator=" + generatorStatus
+                + " selected=" + selectedCount
+                + " currentItem=" + currentItem;
+
+            if (detail != null)
+                message += " " + detail;
+
+            MinusZero.Instance.Log(0, where, message);
         }
 
         private void RefreshVisualStatesAfterItemsChanged()
