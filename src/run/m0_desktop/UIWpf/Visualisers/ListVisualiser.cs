@@ -310,6 +310,16 @@ namespace m0.UIWpf.Visualisers
 
         private void OnDataGridPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            // DeleteButton needs MouseUp to raise Click; do not mark Handled for that gesture.
+            if (IsDeleteButtonMouseGesture(e))
+            {
+                ClearPendingMouseGesture();
+                dataGridDndHasButtonBeenDown = false;
+                preserveSelectedEdgesVisualStateUntilMouseUp = false;
+                selectedItemsGraphSyncPendingUntilMouseUp = false;
+                return;
+            }
+
             DataGridRow rowAtPoint = GetDataGridRowFromPoint(e.GetPosition(this));
 
             dataGridDndHasButtonBeenDown = false;
@@ -367,8 +377,6 @@ namespace m0.UIWpf.Visualisers
 
         private void OnDataGridPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            LogTableDeleteGridState("ListVisualiser.OnDataGridPreviewMouseLeftButtonDown", null);
-
             dataGridDndStartPoint = e.GetPosition(this);
             dataGridDndStartPointInDataGrid = e.GetPosition(ThisDataGrid);
             dataGridMouseDownFullRowItem = GetDataGridItemByFullRowPoint(dataGridDndStartPoint);
@@ -1097,6 +1105,27 @@ namespace m0.UIWpf.Visualisers
             return null;
         }
 
+        static bool IsDeleteButtonMouseGesture(MouseButtonEventArgs e)
+        {
+            if (Mouse.Captured is Controls.DeleteButton)
+                return true;
+
+            DependencyObject source = e.OriginalSource as DependencyObject;
+
+            while (source != null)
+            {
+                if (source is Controls.DeleteButton)
+                    return true;
+
+                if (source is Visual || source is System.Windows.Media.Media3D.Visual3D)
+                    source = VisualTreeHelper.GetParent(source);
+                else
+                    source = LogicalTreeHelper.GetParent(source);
+            }
+
+            return false;
+        }
+
         private bool IsEditableValueColumnClick(DependencyObject source)
         {
             if (editableValueColumn == null || source == null)
@@ -1455,42 +1484,6 @@ namespace m0.UIWpf.Visualisers
             ScrollViewer.SetCanContentScroll(ThisDataGrid, IsDataGridRowVirtualizationEnabled);
             ThisDataGrid.EnableRowVirtualization = IsDataGridRowVirtualizationEnabled;
             ThisDataGrid.EnableColumnVirtualization = IsDataGridColumnVirtualizationEnabled;
-        }
-
-        protected void LogTableDeleteGridState(string where, string detail)
-        {
-            if (!(this is TableVisualiser))
-                return;
-
-            int visualRowCount = 0;
-            string generatorStatus = "noGrid";
-            int itemsCount = -1;
-            int selectedCount = -1;
-            string currentItem = "null";
-
-            if (ThisDataGrid != null)
-            {
-                generatorStatus = ThisDataGrid.ItemContainerGenerator.Status.ToString();
-                itemsCount = ThisDataGrid.Items != null ? ThisDataGrid.Items.Count : -1;
-                selectedCount = ThisDataGrid.SelectedItems != null ? ThisDataGrid.SelectedItems.Count : -1;
-
-                if (ThisDataGrid.CurrentItem != null)
-                    currentItem = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(ThisDataGrid.CurrentItem).ToString();
-
-                foreach (DataGridRow row in FindVisualChildren<DataGridRow>(ThisDataGrid))
-                    visualRowCount++;
-            }
-
-            string message = "items=" + itemsCount
-                + " visualRows=" + visualRowCount
-                + " generator=" + generatorStatus
-                + " selected=" + selectedCount
-                + " currentItem=" + currentItem;
-
-            if (detail != null)
-                message += " " + detail;
-
-            MinusZero.Instance.Log(0, where, message);
         }
 
         private void RefreshVisualStatesAfterItemsChanged()

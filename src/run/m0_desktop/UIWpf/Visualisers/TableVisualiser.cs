@@ -210,9 +210,6 @@ namespace m0.UIWpf.Visualisers
         IVertex ToShowEdgesMeta;
 
         public override void BaseEdgeToUpdated(){
-            MinusZero.Instance.Log(0, "TableVisualiser.BaseEdgeToUpdated", "enter");
-            LogTableDeleteGridState("TableVisualiser.BaseEdgeToUpdated.enter", null);
-
             UnselectAllSelectedEdges();
             ClearPendingMouseGesture();
 
@@ -220,10 +217,7 @@ namespace m0.UIWpf.Visualisers
 
             if (Vertex.Get(false, @"ToShowEdgesMeta:\Meta:") == null) // check if we are in the middle of ToShowEdgesMeta sub Vertices switching
                 if (Vertex.Get(false, @"ToShowEdgesMeta:\To:") != null)
-                {
-                    MinusZero.Instance.Log(0, "TableVisualiser.BaseEdgeToUpdated", "earlyReturn ToShowEdgesMeta Meta=null To!=null");
                     return;
-                }
 
             if (bas != null)
             {                
@@ -261,34 +255,17 @@ namespace m0.UIWpf.Visualisers
                 }
 
 
-                int shownEdgeCount = 0;
-                string sourceKind;
-
                 if (Vertex.Get(false, @"FilterQuery:") != null && Vertex.Get(false, @"FilterQuery:").Value != null) // do the filtering
                 {
-                    sourceKind = "filter";
                     IVertex data = VertexOperations.DoFilter(bas, Vertex.Get(false, @"FilterQuery:"));
 
                     if (data != null)
-                    {
-                        List<IEdge> shownEdges = data.ToList();
-                        shownEdgeCount = shownEdges.Count;
-                        ThisDataGrid.ItemsSource = shownEdges;
-                    }
+                        ThisDataGrid.ItemsSource = data.ToList();
                     else
                         ThisDataGrid.ItemsSource = null;
                 }
                 else
-                {
-                    sourceKind = "base";
-                    List<IEdge> shownEdges = bas.ToList(); // if there is no .ToList DataGrid can not edit
-                    shownEdgeCount = shownEdges.Count;
-                    ThisDataGrid.ItemsSource = shownEdges;
-                }
-
-                LogTableDeleteGridState(
-                    "TableVisualiser.BaseEdgeToUpdated.afterItemsSource",
-                    "source=" + sourceKind + " shownEdges=" + shownEdgeCount);
+                    ThisDataGrid.ItemsSource = bas.ToList(); // if there is no .ToList DataGrid can not edit
 
                 if (GraphUtil.GetValueAndCompareStrings(Vertex.Get(false, "ExpertMode:"), "True"))
                     ExpertMode = true;
@@ -296,13 +273,7 @@ namespace m0.UIWpf.Visualisers
                     ExpertMode = false;
 
                 ResetView();
-
-                LogTableDeleteGridState(
-                    "TableVisualiser.BaseEdgeToUpdated.afterResetView",
-                    "source=" + sourceKind + " shownEdges=" + shownEdgeCount);
             }
-            else
-                MinusZero.Instance.Log(0, "TableVisualiser.BaseEdgeToUpdated", "baseEdgeTo=null");
         }
     }
 }

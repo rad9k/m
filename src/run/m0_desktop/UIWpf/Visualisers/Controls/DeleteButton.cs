@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Windows.Controls;
 using System.Windows;
 using m0.Foundation;
-using m0.UIWpf.Visualisers;
 using m0.Graph;
 using m0.ZeroTypes;
 using System.Windows.Media;
@@ -53,11 +48,6 @@ namespace m0.UIWpf.Visualisers.Controls
         }
 
         protected override void OnClick(){
-            IEdge edge = BaseEdge;
-
-            MinusZero.Instance.Log(0, "DeleteButton.OnClick",
-                "before " + DescribeEdge(edge) + " fromCount=" + CountOutEdges(edge != null ? edge.From : null));
-
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             ////////////////////////////////////////
@@ -67,45 +57,6 @@ namespace m0.UIWpf.Visualisers.Controls
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             ////////////////////////////////////////
-
-            bool edgeStillPresent = edge != null
-                && edge.From != null
-                && GraphUtil.FindEdge(edge.From, edge.Meta, edge.To) != null;
-
-            MinusZero.Instance.Log(0, "DeleteButton.OnClick",
-                "after fromCount=" + CountOutEdges(edge != null ? edge.From : null)
-                + " edgeStillPresent=" + edgeStillPresent);
-        }
-
-        static string DescribeEdge(IEdge edge)
-        {
-            if (edge == null)
-                return "edge=null";
-
-            return "from=" + DescribeVertex(edge.From)
-                + " meta=" + DescribeVertex(edge.Meta)
-                + " to=" + DescribeVertex(edge.To);
-        }
-
-        static string DescribeVertex(IVertex vertex)
-        {
-            if (vertex == null)
-                return "null";
-
-            return RuntimeHelpers.GetHashCode(vertex) + "/" + vertex.Value;
-        }
-
-        static int CountOutEdges(IVertex vertex)
-        {
-            if (vertex == null)
-                return -1;
-
-            int count = 0;
-
-            foreach (IEdge edge in vertex)
-                count++;
-
-            return count;
         }
     }
 }

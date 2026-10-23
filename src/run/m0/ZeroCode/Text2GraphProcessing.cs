@@ -3620,20 +3620,32 @@ namespace m0.ZeroCode
             rootEdge_new = null;
             processBaseEdgeTo = _baseEdge.To;
 
-            switch (codeRepresentation)
+            try
             {
-                case CodeRepresentationEnum.EdgeOneLine: return Process_EdgeOneLine(_baseEdge, _text, out rootEdge_new);
+                switch (codeRepresentation)
+                {
+                    case CodeRepresentationEnum.EdgeOneLine: return Process_EdgeOneLine(_baseEdge, _text, out rootEdge_new);
 
-                case CodeRepresentationEnum.EdgeAndManyLines: return Process_EdgeAndManyLines(_baseEdge, _text, out rootEdge_new);
+                    case CodeRepresentationEnum.EdgeAndManyLines: return Process_EdgeAndManyLines(_baseEdge, _text, out rootEdge_new);
 
-                case CodeRepresentationEnum.VertexAndManyLines: return Process_VertexAndManyLines(_baseEdge, _text);
+                    case CodeRepresentationEnum.VertexAndManyLines: return Process_VertexAndManyLines(_baseEdge, _text);
 
-                case CodeRepresentationEnum.LinearizedManyLines: return Process_LinearizedManyLines(_baseEdge, _text, out rootEdge_new);
+                    case CodeRepresentationEnum.LinearizedManyLines: return Process_LinearizedManyLines(_baseEdge, _text, out rootEdge_new);
 
-                case CodeRepresentationEnum.ManyLinesExcludingParent: return Process_ManyLinesExcludingParent(_baseEdge, _text);
+                    case CodeRepresentationEnum.ManyLinesExcludingParent: return Process_ManyLinesExcludingParent(_baseEdge, _text);
+                }
+
+                return null;
             }
+            catch (Exception ex)
+            {
+                UserInteractionUtil.ShowException(
+                    "Text2GraphProcessing.Process",
+                    ex.GetType().ToString() + " : " + ex.Message + "\n" + ex.StackTrace,
+                    ExceptionLevelEnum.Error);
 
-            return null;
+                return null;
+            }
         }
 
         public void DisposeImportList()

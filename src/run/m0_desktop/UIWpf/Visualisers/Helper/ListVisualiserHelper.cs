@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows.Controls;
 using m0.Foundation;
 using m0.ZeroUML;
@@ -128,27 +127,18 @@ namespace m0.UIWpf.Visualisers.Helper
 
         protected override INoInEdgeInOutVertexVertex VertexChange(IExecution exe)
         {
-            LogTableVertexChange(exe);
-
             if (ForceVertexChangeOff ||
                 SuppressVertexChangeDuringDiagramCommit)
-            {
-                LogTableVertexChangeBranch("suppressed");
                 return exe.Stack;
-            }
 
             if (!firstVertexChangeExecuted && updateBaseEdgeCallSchema == UpdateBaseEdgeCallSchemeEnum.OmmitSecond)
             {
                 firstVertexChangeExecuted = true;
-                LogTableVertexChangeBranch("ommitSecond");
                 return exe.Stack;
             }
 
             if (CustomVertexChangeEvent != null)
-            {
-                LogTableVertexChangeBranch("customHandler");
                 return CustomVertexChangeEvent(exe);
-            }
 
             return VertexChangeLogic(exe);
         }
@@ -156,23 +146,16 @@ namespace m0.UIWpf.Visualisers.Helper
         public INoInEdgeInOutVertexVertex VertexChangeLogic(IExecution exe)
         {            
             if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Visualiser.Vertex, "Scale"))
-            {
-                LogTableVertexChangeBranch("ScaleChange");
                 listVisualiser.ScaleChange();
-            }
 
             if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Visualiser.Vertex, "SelectedEdges")
                 || IsEdgeAddedRemovedDiscardedFrom(exe.Stack, Vertex.Get(false, @"SelectedEdges:")))
-            {
-                LogTableVertexChangeBranch("SelectedVerticesUpdated");
                 listVisualiser.SelectedVerticesUpdated();
-            }
 
             if (BaseEdgeToEventTriggeringUpdateVertex && (
                 IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:"))
                 || IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, Vertex.Get(false, @"BaseEdge:\To:"))))
             {
-                LogTableVertexChangeBranch("BaseEdgeToUpdated");
                 listVisualiser.BaseEdgeToUpdated();
             }
             else
@@ -184,10 +167,7 @@ namespace m0.UIWpf.Visualisers.Helper
                         needToUpdateBaseEdge = true;
 
                 if (needToUpdateBaseEdge)
-                {
-                    LogTableVertexChangeBranch("MetaTriggeringUpdateVertex");
                     listVisualiser.BaseEdgeToUpdated();
-                }
 
                 bool needToUpdateView = false;
 
@@ -196,69 +176,10 @@ namespace m0.UIWpf.Visualisers.Helper
                         needToUpdateView = true;
 
                 if (needToUpdateView)
-                {
-                    LogTableVertexChangeBranch("ViewAttributesUpdated");
                     listVisualiser.ViewAttributesUpdated();
-                }
-
-                if (!needToUpdateBaseEdge && !needToUpdateView)
-                    LogTableVertexChangeBranch("none");
             }
 
             return exe.Stack;
-        }
-
-        void LogTableVertexChange(IExecution exe)
-        {
-            if (!(listVisualiser is TableVisualiser))
-                return;
-
-            IVertex baseEdgeTo = Vertex.Get(false, @"BaseEdge:\To:");
-            StringBuilder events = new StringBuilder();
-            int eventCount = 0;
-            int loggedEvents = 0;
-
-            if (exe != null && exe.Stack != null)
-            {
-                foreach (IEdge eventEdge in exe.Stack.GetAll(false, @"event:"))
-                {
-                    eventCount++;
-
-                    if (loggedEvents >= 8)
-                        continue;
-
-                    loggedEvents++;
-
-                    IVertex eventType = eventEdge.To.Get(false, @"Type:");
-                    IVertex eventFrom = eventEdge.To.Get(false, @"Edge:\From:");
-
-                    events.Append(" [");
-                    events.Append(eventCount);
-                    events.Append(" type=");
-                    events.Append(eventType != null ? eventType.Value : "null");
-                    events.Append(" fromIsBaseEdgeTo=");
-                    events.Append(eventFrom != null && ReferenceEquals(eventFrom, baseEdgeTo));
-                    events.Append("]");
-                }
-            }
-
-            if (eventCount > loggedEvents)
-                events.Append(" ...");
-
-            MinusZero.Instance.Log(0, "ListVisualiserHelper.VertexChange",
-                "forceOff=" + ForceVertexChangeOff
-                + " suppressDiagram=" + SuppressVertexChangeDuringDiagramCommit
-                + " customHandler=" + (CustomVertexChangeEvent != null)
-                + " events=" + eventCount
-                + events);
-        }
-
-        void LogTableVertexChangeBranch(string branch)
-        {
-            if (!(listVisualiser is TableVisualiser))
-                return;
-
-            MinusZero.Instance.Log(0, "ListVisualiserHelper.VertexChangeLogic", "branch=" + branch);
         }
 
         // DRAG AND DROP

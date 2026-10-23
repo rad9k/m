@@ -2337,20 +2337,32 @@ namespace m0.ZeroCode
 
         public string Process(IEdge _graphBaseEdge, CodeRepresentationEnum codeRepresentation)
         {
-            switch (codeRepresentation)
+            try
             {
-                case CodeRepresentationEnum.EdgeOneLine: return Process_EdgeOneLine(_graphBaseEdge);
+                switch (codeRepresentation)
+                {
+                    case CodeRepresentationEnum.EdgeOneLine: return Process_EdgeOneLine(_graphBaseEdge);
 
-                case CodeRepresentationEnum.EdgeAndManyLines: return Process_EdgeAndManyLines(_graphBaseEdge);
+                    case CodeRepresentationEnum.EdgeAndManyLines: return Process_EdgeAndManyLines(_graphBaseEdge);
 
-                case CodeRepresentationEnum.VertexAndManyLines: return Process_VertexAndManyLines(_graphBaseEdge);
+                    case CodeRepresentationEnum.VertexAndManyLines: return Process_VertexAndManyLines(_graphBaseEdge);
 
-                case CodeRepresentationEnum.LinearizedManyLines: return Process_LinearizedManyLines(_graphBaseEdge);
+                    case CodeRepresentationEnum.LinearizedManyLines: return Process_LinearizedManyLines(_graphBaseEdge);
 
-                case CodeRepresentationEnum.ManyLinesExcludingParent: return Process_ManyLinesExcludingParent(_graphBaseEdge);
+                    case CodeRepresentationEnum.ManyLinesExcludingParent: return Process_ManyLinesExcludingParent(_graphBaseEdge);
+                }
+
+                return null;
             }
+            catch (Exception ex)
+            {
+                UserInteractionUtil.ShowException(
+                    "Graph2TextProcessing.Process",
+                    ex.GetType().ToString() + " : " + ex.Message + "\n" + ex.StackTrace,
+                    ExceptionLevelEnum.Error);
 
-            return null;
+                return null;
+            }
         }
     }
 }

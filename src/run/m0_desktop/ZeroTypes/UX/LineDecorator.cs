@@ -189,11 +189,11 @@ namespace m0.ZeroTypes.UX
                    baseEdgeDefinitionChanged
                 || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(
                     exe.Stack,
-                    baseEdgeMeta,
+                    baseEdgeTo,
                     "$MinCardinality")
                 || IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(
                     exe.Stack,
-                    baseEdgeMeta,
+                    baseEdgeTo,
                     "$MaxCardinality");
 
             if (cardinalityChanged)
