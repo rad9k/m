@@ -563,6 +563,12 @@ namespace m0
 
         public void InteractionOutputException(IVertex exception)
         {
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke(() => InteractionOutputException(exception));
+                return;
+            }
+
             m0.UIWpf.Dialog.ExceptionInfoWindow i = new UIWpf.Dialog.ExceptionInfoWindow();
 
             if (IsLoaded)

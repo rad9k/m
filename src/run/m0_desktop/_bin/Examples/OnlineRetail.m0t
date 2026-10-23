@@ -13,7 +13,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			class "Order"
 				attribute "BusinessID" @String
 					<@$ShortName :: "order">
-				association "User" @User
+				association "User" @OnlineRetail\Model\User
 				association "Product" @OnlineRetail\Model\Product "0":"-1"
 				association "Payment" @OnlineRetail\Model\Payment "0":"-1"
 				attribute "Status" @OnlineRetail\Model\Automata:'Order state'
@@ -909,7 +909,36 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @Edge>
 						<@From :: @OnlineRetail\Model>
 						<@Meta :: @Class>
-						<@To :: @User>
+						<@To :: @OnlineRetail\Model\User>
+					<@Decorator :: "">
+						<@$Is :: @UX\LineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@From :: @OnlineRetail\Model\User>
+							<@Meta :: @Class\Aggregation>
+							<@To :: @OnlineRetail\Model\User\Address>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Aggregation>
+						<@StartAnchor :: @UX\LineEndEnum\Diamond>
+						<@ToItem :: @OnlineRetail\Model\'Data model'\Item:<<"5">>>
+					<@Decorator :: "">
+						<@$Is :: @UX\LineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@From :: @OnlineRetail\Model\User>
+							<@Meta :: @Class\Aggregation>
+							<@To :: @OnlineRetail\Model\User\PaymentMethod>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Aggregation>
+						<@StartAnchor :: @UX\LineEndEnum\Diamond>
+						<@ToItem :: @OnlineRetail\Model\'Data model'\Item:<<"4">>>
+					<@Decorator :: "">
+						<@$Is :: @UX\LineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@From :: @OnlineRetail\Model\User>
+							<@Meta :: @Class\Association>
+							<@To :: @OnlineRetail\Model\User\Token>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Association>
+						<@ToItem :: @OnlineRetail\Model\'Data model'\Item:<<"9">>>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -1130,7 +1159,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			<@$Is :: @Structure\Component>
 			<@ReadWrite :: @OnlineRetail\Data>
 			package "test"
-				import @'net10.0-windows7.0'\Examples\'Enterprise_AI_Architecture.m0t'\'Enterprise AI Architecture'\'Enterprise AI Architecture'\'Component diagram'\ZeroUML\Actor\ImageItem\LabeledItem\CodeView\FormalTextLanguageProcessing\ZeroCode_VertexAndManyLines\ZeroCode\DefaultImports:\System:System\Lib\StdView\Std direct meta
+				import @System\Lib\Std direct meta
 
 				variable "Model" @Vertex
 				variable "Data" @Vertex
@@ -1139,7 +1168,29 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				Model = $#Package:#Component:\Model:
 				Data = $#Package:#Component:\Database:
 
-				x = Model\:User\:BusinessID
+				x = new Model\:User[]
+			package "Service"
+				import @System\Lib\Std direct meta
+				import @System\Lib\Cryptography direct meta
+
+				variable "Model" @Vertex
+				variable "Data" @Vertex
+
+				function "Init" ()
+					Model = $#Package:#Component:\Model:
+					Data = $#Package:#Component:\Database:
+
+				function "CreateUser" (@String "Name", @String "Surname", @String "Email", @String "Password")
+					variable "user" @Vertex
+					@@OnlineRetail\BackendService\Service\Init[]
+					user = new Model\:User[]
+					Data +< user
+					user\Name = Name
+					user\Surname = Surname
+					user\Email = Email
+					user\PasswordHash = @@System\Lib\Cryptography\HashPassword[Password]
+
+				@@OnlineRetail\BackendService\Service\CreateUser["Radek", "Kotek", "ter@gmail.com", "pswd"]
 		<@UX\UXContainer :: "OnlineRetail">
 			<@$Is :: @UX\UXContainer>
 			<@IsExpanded :: "True">
@@ -1246,3 +1297,30 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@To :: @OnlineRetail\Data>
 		<@Structure\Database :: "Data">
 			<@$Is :: @Structure\Database>
+			<@OnlineRetail\BackendService\Service\CreateUser\user :: "">
+				<@$Is :: @OnlineRetail\Model\User>
+				<@BusinessID :: "">
+				<@Name :: "">
+				<@Surname :: "">
+				<@Email :: "">
+				<@PasswordHash :: "">
+				<@Address :: "">
+				<@PaymentMethod :: "">
+			<@OnlineRetail\BackendService\Service\CreateUser\user :: "">
+				<@$Is :: @OnlineRetail\Model\User>
+				<@BusinessID :: "">
+				<@Surname :: "">
+				<@Email :: "">
+				<@PasswordHash :: "">
+				<@Address :: "">
+				<@PaymentMethod :: "">
+				<@Name :: @OnlineRetail\BackendService\Service\\Radek>
+			<@OnlineRetail\BackendService\Service\CreateUser\user :: "">
+				<@$Is :: @OnlineRetail\Model\User>
+				<@BusinessID :: "">
+				<@Address :: "">
+				<@PaymentMethod :: "">
+				<@Name :: @OnlineRetail\BackendService\Service\\Radek>
+				<@Surname :: @OnlineRetail\BackendService\Service\\Kotek>
+				<@Email :: @OnlineRetail\BackendService\Service\\'ter@gmail.com'>
+				<@PasswordHash :: "pbkdf2-sha256$600000$gkXHvfifpaS8Np3QzFi4eg==$o+y8l3ctvUGzf8DS0aKVJPcNfmybWiO+JQo7wI+I7NI=">
