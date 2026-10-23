@@ -7284,7 +7284,8 @@ namespace m0
               "enum",
               "automata",
               "state",
-              "transition"
+              "transition",
+              "txt"
             };
 
             string[] operators =
