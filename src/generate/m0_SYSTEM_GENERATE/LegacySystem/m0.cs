@@ -3660,8 +3660,8 @@ namespace m0
             AddMethod(DateTime_class, "IsLaterThan", typeDateTime, "IsLaterThan", "Boolean", new TypeName[] { new TypeName("dateTime", "DateTime", 1, 1) });
             AddMethod(DateTime_class, "IsEarlierThan", typeDateTime, "IsEarlierThan", "Boolean", new TypeName[] { new TypeName("dateTime", "DateTime", 1, 1) });
             AddMethod(DateTime_class, "IsEqual", typeDateTime, "IsEqual", "Boolean", new TypeName[] { new TypeName("dateTime", "DateTime", 1, 1) });            
-            AddMethod(DateTime_class, "Add", typeDateTime, "Add", "Boolean", new TypeName[] { new TypeName("dateTime", "DateTime", 1, 1) });
-            AddMethod(DateTime_class, "Substract", typeDateTime, "Substract", "Boolean", new TypeName[] { new TypeName("dateTime", "DateTime", 1, 1) });
+            AddMethod(DateTime_class, "Add", typeDateTime, "Add", "Boolean", new TypeName[] { new TypeName("timeSpan", "TimeSpan", 1, 1) });
+            AddMethod(DateTime_class, "Subtract", typeDateTime, "Subtract", "Boolean", new TypeName[] { new TypeName("timeSpan", "TimeSpan", 1, 1) });
 
             // TimeSpan
 

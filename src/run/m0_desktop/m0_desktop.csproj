@@ -9,6 +9,9 @@
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
 	<EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>
+	<PropertyGroup>
+		<SatelliteResourceLanguages>en;pl</SatelliteResourceLanguages>
+    </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <OutputPath>bin\x64\Debug\</OutputPath>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>

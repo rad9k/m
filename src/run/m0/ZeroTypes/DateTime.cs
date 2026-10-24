@@ -190,22 +190,22 @@ namespace m0.ZeroTypes
 
             // date
 
-            IVertex dtVertex = GraphUtil.GetQueryOutFirst(stack, "dateTime", null);            
+            IVertex tsVertex = GraphUtil.GetQueryOutFirst(stack, "timeSpan", null);            
 
-            if (dtVertex == null)
+            if (tsVertex == null)
                 return stack;
 
             System.DateTime thisDate = VertexToDateTime(stack);
 
             //
 
-            IVertex YearVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Year", null);
-            IVertex MonthVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Month", null);
-            IVertex DayVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Day", null);
-            IVertex HourVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Hour", null);
-            IVertex MinuteVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Minute", null);
-            IVertex SecondVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Second", null);
-            IVertex MillisecondVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Millisecond", null);
+            IVertex YearVertex = GraphUtil.GetQueryOutFirst(tsVertex, "Year", null);
+            IVertex MonthVertex = GraphUtil.GetQueryOutFirst(tsVertex, "Month", null);
+            IVertex DayVertex = GraphUtil.GetQueryOutFirst(tsVertex, "Day", null);
+            IVertex HourVertex = GraphUtil.GetQueryOutFirst(tsVertex, "Hour", null);
+            IVertex MinuteVertex = GraphUtil.GetQueryOutFirst(tsVertex, "Minute", null);
+            IVertex SecondVertex = GraphUtil.GetQueryOutFirst(tsVertex, "Second", null);
+            IVertex MillisecondVertex = GraphUtil.GetQueryOutFirst(tsVertex, "Millisecond", null);
             int yearValue = GraphUtil.GetIntegerValueOr0(YearVertex);
             int monthValue = GraphUtil.GetIntegerValueOr0(MonthVertex);
             int dayValue = GraphUtil.GetIntegerValueOr0(DayVertex);
@@ -214,32 +214,56 @@ namespace m0.ZeroTypes
             int secondValue = GraphUtil.GetIntegerValueOr0(SecondVertex);
             int millisecondValue = GraphUtil.GetIntegerValueOr0(MillisecondVertex);
 
-            //
-
-            //System.DateTime compareDate = VertexToDateTime(dateTimeVertex);
-
-            //thisDate = thisDate.Add(new TimeSpan(compareDate.Ticks));
+            thisDate = thisDate.AddYears(yearValue);
+            thisDate = thisDate.AddMonths(monthValue);
+            thisDate = thisDate.AddDays(dayValue);
+            thisDate = thisDate.AddHours(hourValue);
+            thisDate = thisDate.AddMinutes(minuteValue);
+            thisDate = thisDate.AddSeconds(secondValue);
+            thisDate = thisDate.AddMilliseconds(millisecondValue);
 
             CopyDtToVertex(thisDate, stack);
 
             return stack;
         }
 
-        public static INoInEdgeInOutVertexVertex Substract(IExecution exe)
+        public static INoInEdgeInOutVertexVertex Subtract(IExecution exe)
         {
             INoInEdgeInOutVertexVertex stack = exe.Stack;
 
             // date
 
-            IVertex dateTimeVertex = GraphUtil.GetQueryOutFirst(stack, "dateTime", null);
+            IVertex tsVertex = GraphUtil.GetQueryOutFirst(stack, "timeSpan", null);
 
-            if (dateTimeVertex == null)
+            if (tsVertex == null)
                 return stack;
 
             System.DateTime thisDate = VertexToDateTime(stack);
-            System.DateTime compareDate = VertexToDateTime(dateTimeVertex);
 
-            //thisDate = thisDate.Subtract(new TimeSpan(compareDate.Ticks));
+            //
+
+            IVertex YearVertex = GraphUtil.GetQueryOutFirst(tsVertex, "Year", null);
+            IVertex MonthVertex = GraphUtil.GetQueryOutFirst(tsVertex, "Month", null);
+            IVertex DayVertex = GraphUtil.GetQueryOutFirst(tsVertex, "Day", null);
+            IVertex HourVertex = GraphUtil.GetQueryOutFirst(tsVertex, "Hour", null);
+            IVertex MinuteVertex = GraphUtil.GetQueryOutFirst(tsVertex, "Minute", null);
+            IVertex SecondVertex = GraphUtil.GetQueryOutFirst(tsVertex, "Second", null);
+            IVertex MillisecondVertex = GraphUtil.GetQueryOutFirst(tsVertex, "Millisecond", null);
+            int yearValue = GraphUtil.GetIntegerValueOr0(YearVertex);
+            int monthValue = GraphUtil.GetIntegerValueOr0(MonthVertex);
+            int dayValue = GraphUtil.GetIntegerValueOr0(DayVertex);
+            int hourValue = GraphUtil.GetIntegerValueOr0(HourVertex);
+            int minuteValue = GraphUtil.GetIntegerValueOr0(MinuteVertex);
+            int secondValue = GraphUtil.GetIntegerValueOr0(SecondVertex);
+            int millisecondValue = GraphUtil.GetIntegerValueOr0(MillisecondVertex);
+
+            thisDate = thisDate.AddYears(-yearValue);
+            thisDate = thisDate.AddMonths(-monthValue);
+            thisDate = thisDate.AddDays(-dayValue);
+            thisDate = thisDate.AddHours(-hourValue);
+            thisDate = thisDate.AddMinutes(-minuteValue);
+            thisDate = thisDate.AddSeconds(-secondValue);
+            thisDate = thisDate.AddMilliseconds(-millisecondValue);
 
             CopyDtToVertex(thisDate, stack);
 
