@@ -14,6 +14,236 @@ namespace m0.Store.FileSystem
 {
     public class FileSystemUtil
     {
+        public const string StartIdentifierPrefix = "Start:/";
+
+        public static bool IsStartIdentifier(string identifier)
+        {
+            return !string.IsNullOrEmpty(identifier) &&
+                identifier.StartsWith("Start:", StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static string GetCanonicalFileIdentifier(string identifier)
+        {
+            if (string.IsNullOrWhiteSpace(identifier))
+                return identifier;
+
+            if (IsForeignWindowsAbsolutePath(identifier))
+                return identifier.Replace('\\', '/');
+
+            string physicalFileName = GetPhysicalFileName(identifier);
+            string applicationPath = GetNormalizedApplicationPath();
+
+            if (applicationPath != null &&
+                IsPathInsideOrEqualTo(physicalFileName, applicationPath))
+            {
+                string relativePath = Path.GetRelativePath(
+                    applicationPath,
+                    physicalFileName);
+
+                if (relativePath == ".")
+                    return StartIdentifierPrefix;
+
+                return StartIdentifierPrefix +
+                    relativePath
+                        .Replace(Path.DirectorySeparatorChar, '/')
+                        .Replace(Path.AltDirectorySeparatorChar, '/')
+                        .TrimStart('/');
+            }
+
+            return NormalizeFileSystemIdentifier(physicalFileName);
+        }
+
+        public static string GetPhysicalFileName(string identifier)
+        {
+            if (string.IsNullOrWhiteSpace(identifier))
+                return identifier;
+
+            if (IsStartIdentifier(identifier))
+            {
+                string applicationPath = GetNormalizedApplicationPath();
+
+                if (applicationPath == null)
+                    throw new InvalidOperationException(
+                        "ApplicationPath must be initialized before resolving a Start:/ identifier.");
+
+                string relativePortablePath =
+                    identifier.Substring("Start:".Length)
+                        .Replace('\\', '/')
+                        .TrimStart('/');
+
+                string relativePhysicalPath =
+                    relativePortablePath.Replace(
+                        '/',
+                        Path.DirectorySeparatorChar);
+
+                string physicalFileName = Path.GetFullPath(
+                    Path.Combine(
+                        applicationPath,
+                        relativePhysicalPath));
+
+                if (!IsPathInsideOrEqualTo(
+                    physicalFileName,
+                    applicationPath))
+                {
+                    throw new ArgumentException(
+                        "A Start:/ identifier cannot point outside ApplicationPath.",
+                        nameof(identifier));
+                }
+
+                return NormalizeFileSystemIdentifier(
+                    physicalFileName);
+            }
+
+            if (IsForeignWindowsAbsolutePath(identifier))
+                return identifier;
+
+            if (Path.IsPathRooted(identifier))
+                return NormalizeFileSystemIdentifier(identifier);
+
+            string basePath = GetNormalizedApplicationPath();
+
+            if (basePath == null)
+                return NormalizeFileSystemIdentifier(identifier);
+
+            return NormalizeFileSystemIdentifier(
+                Path.Combine(basePath, identifier));
+        }
+
+        public static IStore GetFileStore(
+            IStoreUniverse storeUniverse,
+            string storeTypeName,
+            string identifier)
+        {
+            if (storeUniverse == null)
+                throw new ArgumentNullException(nameof(storeUniverse));
+
+            Type storeType = Type.GetType(storeTypeName);
+
+            if (storeType == null ||
+                !typeof(IFileSystemIdentifiedStore)
+                    .IsAssignableFrom(storeType))
+            {
+                throw new ArgumentException(
+                    "The requested store type is not file-system identified.",
+                    nameof(storeTypeName));
+            }
+
+            return storeUniverse.GetStore(
+                storeTypeName,
+                GetCanonicalFileIdentifier(identifier));
+        }
+
+        public static bool IsFileSystemIdentifiedStoreType(
+            string storeTypeName)
+        {
+            Type storeType = Type.GetType(storeTypeName);
+
+            return storeType != null &&
+                typeof(IFileSystemIdentifiedStore)
+                    .IsAssignableFrom(storeType);
+        }
+
+        public static bool IsFileSystemStoreType(
+            string storeTypeName)
+        {
+            Type storeType = Type.GetType(storeTypeName);
+
+            return storeType != null &&
+                typeof(FileSystemStore).IsAssignableFrom(storeType);
+        }
+
+        public static void GetCanonicalStoreReference(
+            string storeTypeName,
+            string storeIdentifier,
+            object vertexIdentifier,
+            out string canonicalStoreIdentifier,
+            out object canonicalVertexIdentifier)
+        {
+            canonicalStoreIdentifier = storeIdentifier;
+            canonicalVertexIdentifier = vertexIdentifier;
+
+            if (!IsFileSystemIdentifiedStoreType(storeTypeName))
+                return;
+
+            if (IsFileSystemStoreType(storeTypeName) &&
+                vertexIdentifier is string fileSystemVertexIdentifier)
+            {
+                string canonicalFileSystemVertexIdentifier =
+                    GetCanonicalFileIdentifier(
+                        fileSystemVertexIdentifier);
+
+                canonicalVertexIdentifier =
+                    canonicalFileSystemVertexIdentifier;
+
+                if (IsStartIdentifier(
+                    canonicalFileSystemVertexIdentifier))
+                {
+                    canonicalStoreIdentifier =
+                        StartIdentifierPrefix;
+                    return;
+                }
+            }
+
+            canonicalStoreIdentifier =
+                GetCanonicalFileIdentifier(storeIdentifier);
+        }
+
+        private static string GetNormalizedApplicationPath()
+        {
+            string applicationPath =
+                MinusZero.Instance?.ApplicationPath;
+
+            if (string.IsNullOrWhiteSpace(applicationPath))
+                return null;
+
+            return NormalizeFileSystemIdentifier(applicationPath);
+        }
+
+        private static bool IsPathInsideOrEqualTo(
+            string path,
+            string parentPath)
+        {
+            string normalizedPath =
+                NormalizeFileSystemIdentifier(path);
+            string normalizedParentPath =
+                NormalizeFileSystemIdentifier(parentPath);
+
+            StringComparison comparison =
+                OperatingSystem.IsWindows()
+                    ? StringComparison.OrdinalIgnoreCase
+                    : StringComparison.Ordinal;
+
+            if (string.Equals(
+                normalizedPath,
+                normalizedParentPath,
+                comparison))
+            {
+                return true;
+            }
+
+            string parentWithSeparator =
+                normalizedParentPath.EndsWith(
+                    Path.DirectorySeparatorChar)
+                    ? normalizedParentPath
+                    : normalizedParentPath +
+                        Path.DirectorySeparatorChar;
+
+            return normalizedPath.StartsWith(
+                parentWithSeparator,
+                comparison);
+        }
+
+        private static bool IsForeignWindowsAbsolutePath(
+            string path)
+        {
+            return !OperatingSystem.IsWindows() &&
+                !string.IsNullOrEmpty(path) &&
+                path.Length >= 3 &&
+                char.IsLetter(path[0]) &&
+                path[1] == ':' &&
+                (path[2] == '\\' || path[2] == '/');
+        }
+
         public static string NormalizeFileSystemIdentifier(string path)
         {
             if (string.IsNullOrWhiteSpace(path))
@@ -52,10 +282,14 @@ namespace m0.Store.FileSystem
 
         public static IVertex GetDirectoryFromFileSystem(string path)
         {
-            if (string.IsNullOrWhiteSpace(path) || !Directory.Exists(path))
+            string physicalPath = GetPhysicalFileName(path);
+
+            if (string.IsNullOrWhiteSpace(physicalPath) ||
+                !Directory.Exists(physicalPath))
                 return null;
 
-            string fullPath = NormalizeFileSystemIdentifier(path);
+            string fullPath =
+                NormalizeFileSystemIdentifier(physicalPath);
 
             IStore bestStore = FindBestMatchingFileSystemStore(fullPath);
 
@@ -72,7 +306,10 @@ namespace m0.Store.FileSystem
             if (vertex == null)
                 return null;
 
-            string storeId = bestStore.Identifier.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            string storeId = GetPhysicalFileName(
+                bestStore.Identifier).TrimEnd(
+                    Path.DirectorySeparatorChar,
+                    Path.AltDirectorySeparatorChar);
             string pathTrimmed = fullPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 
             string relativePath = pathTrimmed.Length > storeId.Length
@@ -102,7 +339,24 @@ namespace m0.Store.FileSystem
             return vertex;
         }
 
-        private static IStore FindBestMatchingFileSystemStore(string fullPath)
+        public static IVertex GetFileSystemVertex(
+            string path)
+        {
+            string physicalPath = GetPhysicalFileName(path);
+
+            if (string.IsNullOrWhiteSpace(physicalPath))
+                return null;
+
+            string fullPath =
+                NormalizeFileSystemIdentifier(physicalPath);
+            IStore bestStore =
+                FindBestMatchingFileSystemStore(fullPath);
+
+            return bestStore?.GetVertexByIdentifier(
+                GetCanonicalFileIdentifier(fullPath));
+        }
+
+        internal static IStore FindBestMatchingFileSystemStore(string fullPath)
         {
             string fullPathNormalized = fullPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
             StringComparison comparison = IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
@@ -115,7 +369,11 @@ namespace m0.Store.FileSystem
                 if (!(store is FileSystemStore))
                     continue;
 
-                string storeId = store.Identifier.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                string physicalStoreIdentifier =
+                    GetPhysicalFileName(store.Identifier);
+                string storeId = physicalStoreIdentifier.TrimEnd(
+                        Path.DirectorySeparatorChar,
+                        Path.AltDirectorySeparatorChar);
 
                 bool isMatch = fullPathNormalized.Equals(storeId, comparison)
                     || (fullPathNormalized.StartsWith(storeId, comparison)
@@ -123,7 +381,8 @@ namespace m0.Store.FileSystem
                         && (fullPathNormalized[storeId.Length] == Path.DirectorySeparatorChar
                             || fullPathNormalized[storeId.Length] == Path.AltDirectorySeparatorChar));
 
-                if (storeId.Length == 0 && store.Identifier == "/")
+                if (storeId.Length == 0 &&
+                    physicalStoreIdentifier == "/")
                     isMatch = fullPathNormalized.StartsWith("/");
 
                 if (isMatch && storeId.Length > bestLength)

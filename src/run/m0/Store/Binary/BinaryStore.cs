@@ -96,7 +96,9 @@ namespace m0.Store.Binary
         public long ToIdLong { get; set; }
     }
 
-    public class BinaryStore : StoreBase
+    public class BinaryStore :
+        StoreBase,
+        IFileSystemIdentifiedStore
     {
         bool canWrite = true;
 
@@ -106,10 +108,8 @@ namespace m0.Store.Binary
 
         string GetIdentifierToUse()
         {
-            if (Identifier.Contains(System.IO.Path.DirectorySeparatorChar))
-                return Identifier;
-            else
-                return MinusZero.Instance.ApplicationPath + System.IO.Path.DirectorySeparatorChar + Identifier;
+            return FileSystemUtil.GetPhysicalFileName(
+                Identifier);
         }
 
         void Load()
@@ -223,6 +223,18 @@ namespace m0.Store.Binary
                         return;
                     }
 
+                    FileSystemUtil.GetCanonicalStoreReference(
+                        MetaStoreId.TypeName,
+                        MetaStoreId.Identifier,
+                        MetaId,
+                        out string canonicalMetaStoreIdentifier,
+                        out object canonicalMetaIdentifier);
+
+                    MetaStoreId = new StoreId(
+                        MetaStoreId.TypeName,
+                        canonicalMetaStoreIdentifier);
+                    MetaId = canonicalMetaIdentifier;
+
                     StoreId ToStoreId;
 
                     if (pe.ToStoreId == 0)
@@ -240,6 +252,18 @@ namespace m0.Store.Binary
                             ZeroTypes.ExceptionLevelEnum.Error);
                         return;
                     }
+
+                    FileSystemUtil.GetCanonicalStoreReference(
+                        ToStoreId.TypeName,
+                        ToStoreId.Identifier,
+                        ToId,
+                        out string canonicalToStoreIdentifier,
+                        out object canonicalToIdentifier);
+
+                    ToStoreId = new StoreId(
+                        ToStoreId.TypeName,
+                        canonicalToStoreIdentifier);
+                    ToId = canonicalToIdentifier;
 
                     EasyEdge e = new EasyEdge(MetaStoreId.TypeName, MetaStoreId.Identifier, MetaId,
                         ToStoreId.TypeName, ToStoreId.Identifier, ToId);
@@ -349,21 +373,35 @@ namespace m0.Store.Binary
                     {
                         ProtoEdge pe = new ProtoEdge();
 
-                        pe.MetaStoreId = GetStoreId(storeIdDict, storeIdLookup, de.MetaStoreTypeName, de.MetaStoreIdentifier, de.MetaIdentifier);
+                        FileSystemUtil.GetCanonicalStoreReference(
+                            de.MetaStoreTypeName,
+                            de.MetaStoreIdentifier,
+                            de.MetaIdentifier,
+                            out string metaStoreIdentifier,
+                            out object metaIdentifier);
 
-                        if (de.MetaIdentifier == null)
+                        pe.MetaStoreId = GetStoreId(storeIdDict, storeIdLookup, de.MetaStoreTypeName, metaStoreIdentifier, metaIdentifier);
+
+                        if (metaIdentifier == null)
                             pe.MetaIdType = 0;
-                        else if (de.MetaIdentifier is string ms)
+                        else if (metaIdentifier is string ms)
                         { pe.MetaIdType = 2; pe.MetaIdString = ms; }
                         else
-                        { pe.MetaIdType = 1; pe.MetaIdLong = (long)de.MetaIdentifier; }
+                        { pe.MetaIdType = 1; pe.MetaIdLong = (long)metaIdentifier; }
 
-                        pe.ToStoreId = GetStoreId(storeIdDict, storeIdLookup, de.ToStoreTypeName, de.ToStoreIdentifier, de.ToIdentifier);
+                        FileSystemUtil.GetCanonicalStoreReference(
+                            de.ToStoreTypeName,
+                            de.ToStoreIdentifier,
+                            de.ToIdentifier,
+                            out string toStoreIdentifier,
+                            out object toIdentifier);
 
-                        if (de.ToIdentifier is string ts)
+                        pe.ToStoreId = GetStoreId(storeIdDict, storeIdLookup, de.ToStoreTypeName, toStoreIdentifier, toIdentifier);
+
+                        if (toIdentifier is string ts)
                         { pe.ToIdType = 1; pe.ToIdString = ts; }
                         else
-                        { pe.ToIdType = 0; pe.ToIdLong = (long)de.ToIdentifier; }
+                        { pe.ToIdType = 0; pe.ToIdLong = (long)toIdentifier; }
 
                         if (pv.Edges == null)
                             pv.Edges = new List<ProtoEdge>();
@@ -426,7 +464,10 @@ namespace m0.Store.Binary
         }
 
         public BinaryStore(String identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList)
-            : base(identifier, storeUniverse, accessLeveList)
+            : base(
+                FileSystemUtil.GetCanonicalFileIdentifier(identifier),
+                storeUniverse,
+                accessLeveList)
         {
             RootStore = new StoreId(MinusZero.Instance.root.Store.TypeName, MinusZero.Instance.root.Store.Identifier);
 
@@ -447,9 +488,12 @@ namespace m0.Store.Binary
             {
                 UpdateDetachStateData();
 
-                string fileName = FileSystemUtil.GetFileName(Identifier);
-                string extension = FileSystemUtil.GetExtension(Identifier);
-                string pathPart = FileSystemUtil.GetPathPart(Identifier);
+                string physicalIdentifier =
+                    FileSystemUtil.GetPhysicalFileName(Identifier);
+
+                string fileName = FileSystemUtil.GetFileName(physicalIdentifier);
+                string extension = FileSystemUtil.GetExtension(physicalIdentifier);
+                string pathPart = FileSystemUtil.GetPathPart(physicalIdentifier);
                 string backupFileName = pathPart + fileName + "." + extension + ".backup";
 
                 CommitTransaction(backupFileName, false);

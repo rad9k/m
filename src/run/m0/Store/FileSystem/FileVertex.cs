@@ -40,7 +40,8 @@ namespace m0.Store.FileSystem
                 }
 
                 object oldValue = Value;
-                string oldIdentifier = FI.FullName;
+                string oldIdentifier = Identifier.ToString();
+                string oldPhysicalFileName = FI.FullName;
                 string newFileName =
                     FileSystemUtil.GetFileNamePart(valueString);
 
@@ -73,7 +74,7 @@ namespace m0.Store.FileSystem
                     oldIdentifier,
                     finalNewFileName,
                     () => FI.MoveTo(finalNewFileName),
-                    () => FI.MoveTo(oldIdentifier));
+                    () => FI.MoveTo(oldPhysicalFileName));
 
                 _Value = FI.Name;
                 ValueChanged();
@@ -95,7 +96,7 @@ namespace m0.Store.FileSystem
             string identifier)
         {
             _Identifier =
-                FileSystemUtil.NormalizeFileSystemIdentifier(identifier);
+                FileSystemUtil.GetCanonicalFileIdentifier(identifier);
         }
 
         public override void Refresh()
@@ -114,7 +115,9 @@ namespace m0.Store.FileSystem
             if (FI.Extension.Length > 1)
                 AddVertexToFileSystemVertex(FileSystemStore.File_Extension, FI.Extension.Substring(1));
 
-            AddVertexToFileSystemVertex(FileSystemStore.File_FullFilename, FI.FullName);
+            AddVertexToFileSystemVertex(
+                FileSystemStore.File_FullFilename,
+                Identifier.ToString());
 
             if (FI.Name.Contains("."))
                 AddVertexToFileSystemVertex(FileSystemStore.File_Basename, FI.Name.Substring(0, FI.Name.LastIndexOf(".")));
@@ -128,7 +131,11 @@ namespace m0.Store.FileSystem
             AddVertexToFileSystemVertex(FileSystemStore.File_ReadDateTime, FI.LastAccessTime.ToString());                        
 
             if (((FileSystemStore)this.Store).IncludeFileContent)
-                AddEdge(FileSystemStore.File_Content, new FileContentVertex(FI.FullName, this.Store));
+                AddEdge(
+                    FileSystemStore.File_Content,
+                    new FileContentVertex(
+                        Identifier.ToString(),
+                        this.Store));
 
             string extension_lower = FI.Extension.ToLower();
 
@@ -136,21 +143,34 @@ namespace m0.Store.FileSystem
 
             if (extension_lower == ".m0j")
             {
-                JsonStore = (JsonSerializationStore)Store.StoreUniverse.GetStore("m0.Store.Json.JsonSerializationStore, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", Identifier.ToString());
+                JsonStore = (JsonSerializationStore)
+                    FileSystemUtil.GetFileStore(
+                        Store.StoreUniverse,
+                        typeof(JsonSerializationStore)
+                            .AssemblyQualifiedName,
+                        Identifier.ToString());
 
                 AddEdge(FileSystemStore.Store, JsonStore.Root);
             }
 
             if (extension_lower == ".m0t")
             {
-                TextStore = (TextStore)Store.StoreUniverse.GetStore("m0.Store.Text.TextStore, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", Identifier.ToString());
+                TextStore = (TextStore)
+                    FileSystemUtil.GetFileStore(
+                        Store.StoreUniverse,
+                        typeof(TextStore).AssemblyQualifiedName,
+                        Identifier.ToString());
 
                 AddEdge(FileSystemStore.Store, TextStore.Root);
             }
 
             if (extension_lower == ".m0x")
             {
-                BinaryStore = (BinaryStore)Store.StoreUniverse.GetStore("m0.Store.Binary.BinaryStore, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", Identifier.ToString());
+                BinaryStore = (BinaryStore)
+                    FileSystemUtil.GetFileStore(
+                        Store.StoreUniverse,
+                        typeof(BinaryStore).AssemblyQualifiedName,
+                        Identifier.ToString());
 
                 AddEdge(FileSystemStore.Store, BinaryStore.Root);
             }
@@ -158,7 +178,11 @@ namespace m0.Store.FileSystem
             if (TextFileExensions.Contains(extension_lower))
             {
                 //AddEdge(FileSystemStore.File_Content, new FileContentVertex(FI.FullName, this.Store));
-                AddEdge(FileSystemStore.File_Content, new FileContentVertex(FI.FullName, MinusZero.Instance.TempStore));
+                AddEdge(
+                    FileSystemStore.File_Content,
+                    new FileContentVertex(
+                        Identifier.ToString(),
+                        MinusZero.Instance.TempStore));
             }
         }
 
@@ -172,9 +196,11 @@ namespace m0.Store.FileSystem
         public FileVertex(IStore store, string identifier)
             : base(
                 store,
-                FileSystemUtil.NormalizeFileSystemIdentifier(identifier))
+                FileSystemUtil.GetCanonicalFileIdentifier(identifier))
         {
-            FI = new FileInfo(Identifier.ToString());
+            FI = new FileInfo(
+                FileSystemUtil.GetPhysicalFileName(
+                    Identifier.ToString()));
         }
     }
 }

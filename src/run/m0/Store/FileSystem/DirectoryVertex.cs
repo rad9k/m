@@ -77,7 +77,9 @@ namespace m0.Store.FileSystem
 
             AddVertexToFileSystemVertex(FileSystemStore.Directory_Extension, extension);
 
-            AddVertexToFileSystemVertex(FileSystemStore.Directory_FullFilename, DI.FullName);
+            AddVertexToFileSystemVertex(
+                FileSystemStore.Directory_FullFilename,
+                Identifier.ToString());
 
             AddVertexToFileSystemVertex(FileSystemStore.Directory_Basename, basename);
 
@@ -123,7 +125,8 @@ namespace m0.Store.FileSystem
             try
             {
                 IVertex childVertex =
-                    this.Store.GetVertexByIdentifier(childPath);
+                    FileSystemUtil.GetFileSystemVertex(
+                        childPath);
 
                 if (childVertex == null)
                     return;
@@ -176,9 +179,10 @@ namespace m0.Store.FileSystem
                 DI.CreateSubdirectory(name);
 
                 string childDirectoryPath =
-                    Path.Combine(Identifier.ToString(), name);
+                    Path.Combine(DI.FullName, name);
                 IVertex childDirectoryVertex =
-                    this.Store.GetVertexByIdentifier(childDirectoryPath);
+                    FileSystemUtil.GetFileSystemVertex(
+                        childDirectoryPath);
 
                 if (childDirectoryVertex == null)
                     return null;
@@ -189,13 +193,14 @@ namespace m0.Store.FileSystem
             if (GraphUtil.GetValueAndCompareStrings(metaVertex, "File"))
             {
                 string childFilePath =
-                    Path.Combine(Identifier.ToString(), name);
+                    Path.Combine(DI.FullName, name);
                 FileInfo fi = new FileInfo(childFilePath);
 
                 fi.Create().Dispose();
 
                 IVertex childFileVertex =
-                    this.Store.GetVertexByIdentifier(childFilePath);
+                    FileSystemUtil.GetFileSystemVertex(
+                        childFilePath);
 
                 if (childFileVertex == null)
                     return null;
@@ -214,7 +219,10 @@ namespace m0.Store.FileSystem
                 UserInteractionUtil.ShowException(Identifier + " file", "tried to delete file", ZeroTypes.ExceptionLevelEnum.Warning);
                 return;// not sure if there will be not unwanted file deletion
 
-                FileInfo fi= new FileInfo(Identifier.ToString() + Path.DirectorySeparatorChar + edge.To.Value);
+                FileInfo fi = new FileInfo(
+                    Path.Combine(
+                        DI.FullName,
+                        edge.To.Value.ToString()));
 
                 fi.Delete();
             }
@@ -224,7 +232,10 @@ namespace m0.Store.FileSystem
                 UserInteractionUtil.ShowException(Identifier + " directory", "tried to delete directory", ZeroTypes.ExceptionLevelEnum.Warning);
                 return;// not sure if there will be not unwanted file deletion
 
-                DirectoryInfo di = new DirectoryInfo(Identifier.ToString() + Path.DirectorySeparatorChar + edge.To.Value);
+                DirectoryInfo di = new DirectoryInfo(
+                    Path.Combine(
+                        DI.FullName,
+                        edge.To.Value.ToString()));
 
                 di.Delete();
             }
@@ -243,9 +254,11 @@ namespace m0.Store.FileSystem
         public DirectoryVertex(IStore store, string identifier)
             : base(
                 store,
-                FileSystemUtil.NormalizeFileSystemIdentifier(identifier))
+                FileSystemUtil.GetCanonicalFileIdentifier(identifier))
         {
-            DI = new DirectoryInfo(Identifier.ToString());
+            DI = new DirectoryInfo(
+                FileSystemUtil.GetPhysicalFileName(
+                    Identifier.ToString()));
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Store;
+using m0.Store.FileSystem;
 using m0.Store.Text;
 using m0.Util;
 using m0.ZeroCode;
@@ -144,7 +145,8 @@ namespace m0.Graph
 
         public static void LoadTXTAndParse(string fileName, IVertex baseVertex)
         {
-            string text = System.IO.File.ReadAllText(fileName);
+            string text = System.IO.File.ReadAllText(
+                FileSystemUtil.GetPhysicalFileName(fileName));
 
             IEdge baseEdge_new;
             MinusZero.Instance.DefaultFormalTextParser.Parse(new EdgeBase(null, null, baseVertex), text, CodeRepresentationEnum.VertexAndManyLines, out baseEdge_new);
@@ -152,7 +154,11 @@ namespace m0.Graph
 
         public static void LoadAndParse(string fileName, IVertex baseVertex, bool ReadOnly)
         {
-            TextStore TextStore = (TextStore)baseVertex.Store.StoreUniverse.GetStore("m0.Store.Text.TextStore, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", fileName);
+            TextStore TextStore = (TextStore)
+                FileSystemUtil.GetFileStore(
+                    baseVertex.Store.StoreUniverse,
+                    typeof(TextStore).AssemblyQualifiedName,
+                    fileName);
 
             TextStore.ReadOnly = ReadOnly;
 

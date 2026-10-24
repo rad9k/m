@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Collections;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using m0.Store.FileSystem;
 using m0.Store.Json;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -67,9 +68,16 @@ namespace m0.Util
 
         public static IVertex CreateM0JAndMoveEdgesIntoIt(string fileName, IVertex baseVertex, int vertexIdentifierCompensate)
         {
-            File.Delete(fileName);
+            File.Delete(
+                FileSystemUtil.GetPhysicalFileName(fileName));
 
-            JsonSerializationStore s = new JsonSerializationStore(fileName, MinusZero.Instance, new AccessLevelEnum[] { });
+            JsonSerializationStore s =
+                (JsonSerializationStore)
+                    FileSystemUtil.GetFileStore(
+                        MinusZero.Instance,
+                        typeof(JsonSerializationStore)
+                            .AssemblyQualifiedName,
+                        fileName);
 
             s.VertexIdentifierCompensate(vertexIdentifierCompensate);
 
@@ -84,9 +92,16 @@ namespace m0.Util
 
         public static void CreateM0JAndMoveEdgesIntoIt_IncludeEverythingBesidesList(string fileName, IVertex baseVertex, HashSet<IVertex> vertexToLeave, Dictionary<string, StoreId> storeOverride)
         {
-            File.Delete(fileName);
+            File.Delete(
+                FileSystemUtil.GetPhysicalFileName(fileName));
 
-            JsonSerializationStore s = new JsonSerializationStore(fileName, MinusZero.Instance, new AccessLevelEnum[] { });
+            JsonSerializationStore s =
+                (JsonSerializationStore)
+                    FileSystemUtil.GetFileStore(
+                        MinusZero.Instance,
+                        typeof(JsonSerializationStore)
+                            .AssemblyQualifiedName,
+                        fileName);
 
             ZeroUML.Instructions.ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_IncludeEverythingBesidesList(baseVertex, s.Root, vertexToLeave);
 

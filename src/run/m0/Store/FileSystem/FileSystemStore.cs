@@ -8,7 +8,9 @@ using m0.Util;
 
 namespace m0.Store.FileSystem
 {
-    public class FileSystemStore : IStore
+    public class FileSystemStore :
+        IStore,
+        IFileSystemIdentifiedStore
     {
         static public Dictionary<string, IVertex> FileVertexDictionary;
         static public Dictionary<string, IVertex> DirectoryVertexDictionary;
@@ -143,12 +145,33 @@ namespace m0.Store.FileSystem
 
             string rawFileName = (string)VertexIdentifier;
             string fileName =
-                FileSystemUtil.NormalizeFileSystemIdentifier(rawFileName);
+                FileSystemUtil.GetCanonicalFileIdentifier(
+                    rawFileName);
+            string physicalFileName =
+                FileSystemUtil.GetPhysicalFileName(fileName);
 
-            bool fileExists = System.IO.File.Exists(fileName);
-            bool directoryExists = System.IO.Directory.Exists(fileName);
+            if (FileSystemUtil.IsStartIdentifier(fileName) &&
+                !FileSystemUtil.IsStartIdentifier(Identifier))
+            {
+                IStore startStore =
+                    StoreUniverse.Stores.FirstOrDefault(store =>
+                        store is FileSystemStore &&
+                        FileSystemUtil.IsStartIdentifier(
+                            store.Identifier));
+
+                if (startStore == null)
+                    startStore = FileSystemUtil.GetFileStore(
+                        StoreUniverse,
+                        typeof(FileSystemStore).AssemblyQualifiedName,
+                        FileSystemUtil.StartIdentifierPrefix);
+
+                return startStore.GetVertexByIdentifier(fileName);
+            }
+
+            bool fileExists = System.IO.File.Exists(physicalFileName);
+            bool directoryExists = System.IO.Directory.Exists(physicalFileName);
             bool looksLikeDriveRoot =
-                FileSystemUtil.IsWindowsDriveRoot(fileName);
+                FileSystemUtil.IsWindowsDriveRoot(physicalFileName);
 
             lock (vertexRegistrySynchronizationRoot)
             {
@@ -199,10 +222,10 @@ namespace m0.Store.FileSystem
                     "Cannot rename a vertex owned by another store.");
 
             oldIdentifier =
-                FileSystemUtil.NormalizeFileSystemIdentifier(
+                FileSystemUtil.GetCanonicalFileIdentifier(
                     oldIdentifier);
             newIdentifier =
-                FileSystemUtil.NormalizeFileSystemIdentifier(
+                FileSystemUtil.GetCanonicalFileIdentifier(
                     newIdentifier);
 
             lock (vertexRegistrySynchronizationRoot)
@@ -584,7 +607,7 @@ namespace m0.Store.FileSystem
                 IntializeStaticVariables();
 
             _Identifier =
-                FileSystemUtil.NormalizeFileSystemIdentifier(identifier);
+                FileSystemUtil.GetCanonicalFileIdentifier(identifier);
 
             _StoreUniverse = storeUniverse;
 

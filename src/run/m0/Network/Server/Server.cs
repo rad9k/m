@@ -400,7 +400,9 @@ namespace m0.Network.Server {
                     return Results.StatusCode(404); // Not Found
 
                 IVertex fullFilepathVertex = GraphUtil.GetQueryOutFirst(fileVertex, "FullFilename", null);
-                filePath = GraphUtil.GetStringValue(fullFilepathVertex);
+                filePath = FileSystemUtil.GetPhysicalFileName(
+                    GraphUtil.GetStringValue(
+                        fullFilepathVertex));
             }
 
             if (!File.Exists(filePath))

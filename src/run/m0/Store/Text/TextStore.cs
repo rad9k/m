@@ -16,7 +16,10 @@ using m0.FormalTextLanguage;
 
 namespace m0.Store.Text
 {
-    public class TextStore : StoreBase, ICommitBeforeGlobalDetachStore
+    public class TextStore :
+        StoreBase,
+        ICommitBeforeGlobalDetachStore,
+        IFileSystemIdentifiedStore
     {
         bool properlyLoaded = true;
 
@@ -28,9 +31,12 @@ namespace m0.Store.Text
 
         void Load()
         {
-            if (System.IO.File.Exists(Identifier))
+            string physicalFileName =
+                FileSystemUtil.GetPhysicalFileName(Identifier);
+
+            if (System.IO.File.Exists(physicalFileName))
             {            
-                using (StreamReader readStream = new StreamReader(Identifier))
+                using (StreamReader readStream = new StreamReader(physicalFileName))
                 {
                     if (readStream.EndOfStream)
                     { // create new sub graph
@@ -90,7 +96,8 @@ namespace m0.Store.Text
 
         public override void CommitTransaction()
         {
-            CommitTransaction(Identifier);
+            CommitTransaction(
+                FileSystemUtil.GetPhysicalFileName(Identifier));
 
             //System.IO.File.Copy(Identifier, Identifier + ".backup", true);
         }
@@ -150,7 +157,10 @@ namespace m0.Store.Text
         }
 
         public TextStore(String identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList)
-            : base(identifier, storeUniverse, accessLeveList)
+            : base(
+                FileSystemUtil.GetCanonicalFileIdentifier(identifier),
+                storeUniverse,
+                accessLeveList)
         {
             Load();
 
@@ -166,12 +176,14 @@ namespace m0.Store.Text
             {
                 UpdateDetachStateData();
 
+                string physicalIdentifier =
+                    FileSystemUtil.GetPhysicalFileName(Identifier);
 
-                string fileName = FileSystemUtil.GetFileName(Identifier);
+                string fileName = FileSystemUtil.GetFileName(physicalIdentifier);
 
-                string extension = FileSystemUtil.GetExtension(Identifier);
+                string extension = FileSystemUtil.GetExtension(physicalIdentifier);
 
-                string pathPart = FileSystemUtil.GetPathPart(Identifier);
+                string pathPart = FileSystemUtil.GetPathPart(physicalIdentifier);
 
                 string backupFileName = pathPart + fileName + "." + extension + ".backup";
 

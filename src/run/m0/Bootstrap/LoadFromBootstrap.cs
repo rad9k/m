@@ -3,6 +3,7 @@ using m0.Graph;
 using m0.Graph.ExecutionFlow;
 using m0.Store;
 using m0.Store.Binary;
+using m0.Store.FileSystem;
 using m0.Store.Json;
 using m0.Util;
 using m0.ZeroUML.Instructions;
@@ -83,13 +84,18 @@ namespace m0.Bootstrap
 
         static StoreBase OpenImportStore(string importFilePath)
         {
-            AccessLevelEnum[] accessLevelList = new AccessLevelEnum[] { };
-
             if (importFilePath.EndsWith(".m0j"))
-                return new JsonSerializationStore(importFilePath, MinusZero.Instance, accessLevelList);
+                return (StoreBase)FileSystemUtil.GetFileStore(
+                    MinusZero.Instance,
+                    typeof(JsonSerializationStore)
+                        .AssemblyQualifiedName,
+                    importFilePath);
 
             if (importFilePath.EndsWith(".m0x"))
-                return new BinaryStore(importFilePath, MinusZero.Instance, accessLevelList);
+                return (StoreBase)FileSystemUtil.GetFileStore(
+                    MinusZero.Instance,
+                    typeof(BinaryStore).AssemblyQualifiedName,
+                    importFilePath);
 
             return null;
         }
@@ -99,7 +105,13 @@ namespace m0.Bootstrap
             MinusZero.Instance.ClearSystemStoreFiles();
             MinusZero.Instance.RegisterSystemStoreFile("_bootstrap.m0j");
 
-            JsonSerializationStore bootstrapStore = new JsonSerializationStore("_bootstrap.m0j", MinusZero.Instance, new AccessLevelEnum[] { });
+            JsonSerializationStore bootstrapStore =
+                (JsonSerializationStore)
+                    FileSystemUtil.GetFileStore(
+                        MinusZero.Instance,
+                        typeof(JsonSerializationStore)
+                            .AssemblyQualifiedName,
+                        "_bootstrap.m0j");
 
             IVertex root = MinusZero.Instance.root;
 
@@ -135,7 +147,12 @@ namespace m0.Bootstrap
                 }
                 else if (isSystem)
                 {
-                    loadedStore = new JsonSerializationStore(importFilePath, MinusZero.Instance, new AccessLevelEnum[] { });
+                    loadedStore = (StoreBase)
+                        FileSystemUtil.GetFileStore(
+                            MinusZero.Instance,
+                            typeof(JsonSerializationStore)
+                                .AssemblyQualifiedName,
+                            importFilePath);
 
                     ZeroUMLInstructionHelpers.MoveEdgesIntoVertex(loadedStore.Root, importRoot);
 
@@ -149,14 +166,24 @@ namespace m0.Bootstrap
                 {
                     if (importFilePath.EndsWith(".m0j"))
                     {
-                        loadedStore = new JsonSerializationStore(importFilePath, MinusZero.Instance, new AccessLevelEnum[] { });
+                        loadedStore = (StoreBase)
+                            FileSystemUtil.GetFileStore(
+                                MinusZero.Instance,
+                                typeof(JsonSerializationStore)
+                                    .AssemblyQualifiedName,
+                                importFilePath);
 
                         ZeroUMLInstructionHelpers.MoveEdgesIntoVertex_IncludeEverythingBesidesList(loadedStore.Root, importRoot, new HashSet<IVertex>(system));
                     }
 
                     if (importFilePath.EndsWith(".m0x"))
                     {
-                        loadedStore = new BinaryStore(importFilePath, MinusZero.Instance, new AccessLevelEnum[] { });
+                        loadedStore = (StoreBase)
+                            FileSystemUtil.GetFileStore(
+                                MinusZero.Instance,
+                                typeof(BinaryStore)
+                                    .AssemblyQualifiedName,
+                                importFilePath);
 
                         object mountName = importRoot.Value;
 

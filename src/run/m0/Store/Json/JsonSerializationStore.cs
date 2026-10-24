@@ -193,7 +193,9 @@ namespace m0.Store.Json
         public object ToId { get; set; }
     }
 
-    public class JsonSerializationStore : StoreBase
+    public class JsonSerializationStore :
+        StoreBase,
+        IFileSystemIdentifiedStore
     {
         bool canWrite = true;
 
@@ -204,11 +206,10 @@ namespace m0.Store.Json
 
         private const int FileStreamBufferSize = 64 * 1024;
 
-        string GetIdentifierToUse(){
-            if (Identifier.Contains(System.IO.Path.DirectorySeparatorChar))
-                return Identifier;
-            else
-                return MinusZero.Instance.ApplicationPath + System.IO.Path.DirectorySeparatorChar + Identifier;
+        string GetIdentifierToUse()
+        {
+            return FileSystemUtil.GetPhysicalFileName(
+                Identifier);
         }
 
         void Load()
@@ -324,6 +325,18 @@ namespace m0.Store.Json
                         return;
                     }
 
+                    FileSystemUtil.GetCanonicalStoreReference(
+                        MetaStoreId.TypeName,
+                        MetaStoreId.Identifier,
+                        MetaId,
+                        out string canonicalMetaStoreIdentifier,
+                        out object canonicalMetaIdentifier);
+
+                    MetaStoreId = new StoreId(
+                        MetaStoreId.TypeName,
+                        canonicalMetaStoreIdentifier);
+                    MetaId = canonicalMetaIdentifier;
+
                     StoreId ToStoreId;
 
                     if (je.ToStoreId == 0)
@@ -341,6 +354,18 @@ namespace m0.Store.Json
                             + " not found in StoreIdDictionary", ZeroTypes.ExceptionLevelEnum.Error);
                         return;
                     }
+
+                    FileSystemUtil.GetCanonicalStoreReference(
+                        ToStoreId.TypeName,
+                        ToStoreId.Identifier,
+                        ToId,
+                        out string canonicalToStoreIdentifier,
+                        out object canonicalToIdentifier);
+
+                    ToStoreId = new StoreId(
+                        ToStoreId.TypeName,
+                        canonicalToStoreIdentifier);
+                    ToId = canonicalToIdentifier;
 
                     EasyEdge e = new EasyEdge(MetaStoreId.TypeName, MetaStoreId.Identifier, MetaId,
                         ToStoreId.TypeName, ToStoreId.Identifier, ToId);
@@ -406,11 +431,35 @@ namespace m0.Store.Json
             if (storeOverride != null)
                 foreach (StoreId storeId in data.StoreIdDictionary.Values)
                     foreach (KeyValuePair<string, StoreId> kvp in storeOverride)
-                        if (kvp.Key == storeId.Identifier)
+                    {
+                        bool identifiersMatch =
+                            kvp.Key == storeId.Identifier;
+
+                        if (!identifiersMatch &&
+                            FileSystemUtil
+                                .IsFileSystemIdentifiedStoreType(
+                                    storeId.TypeName))
                         {
-                            storeId.Identifier = kvp.Value.Identifier;
-                            storeId.TypeName = kvp.Value.TypeName;
+                            identifiersMatch =
+                                FileSystemUtil
+                                    .GetCanonicalFileIdentifier(
+                                        kvp.Key) ==
+                                storeId.Identifier;
                         }
+
+                        if (identifiersMatch)
+                        {
+                            storeId.TypeName = kvp.Value.TypeName;
+                            storeId.Identifier =
+                                FileSystemUtil
+                                    .IsFileSystemIdentifiedStoreType(
+                                        kvp.Value.TypeName)
+                                    ? FileSystemUtil
+                                        .GetCanonicalFileIdentifier(
+                                            kvp.Value.Identifier)
+                                    : kvp.Value.Identifier;
+                        }
+                    }
 
             // Use source generation and write through a buffered stream, so the whole document
             // is not allocated as an intermediate byte array
@@ -505,13 +554,27 @@ namespace m0.Store.Json
 
                         JsonEdge je = new JsonEdge();
 
-                        je.MetaStoreId = GetStoreId(data, storeIdLookup, de.MetaStoreTypeName, de.MetaStoreIdentifier, de.MetaIdentifier);
+                        FileSystemUtil.GetCanonicalStoreReference(
+                            de.MetaStoreTypeName,
+                            de.MetaStoreIdentifier,
+                            de.MetaIdentifier,
+                            out string metaStoreIdentifier,
+                            out object metaIdentifier);
 
-                        je.MetaId = de.MetaIdentifier;
+                        je.MetaStoreId = GetStoreId(data, storeIdLookup, de.MetaStoreTypeName, metaStoreIdentifier, metaIdentifier);
 
-                        je.ToStoreId = GetStoreId(data, storeIdLookup, de.ToStoreTypeName, de.ToStoreIdentifier, de.ToIdentifier);
+                        je.MetaId = metaIdentifier;
 
-                        je.ToId = de.ToIdentifier;
+                        FileSystemUtil.GetCanonicalStoreReference(
+                            de.ToStoreTypeName,
+                            de.ToStoreIdentifier,
+                            de.ToIdentifier,
+                            out string toStoreIdentifier,
+                            out object toIdentifier);
+
+                        je.ToStoreId = GetStoreId(data, storeIdLookup, de.ToStoreTypeName, toStoreIdentifier, toIdentifier);
+
+                        je.ToId = toIdentifier;
 
                         if (edges == null)
                             edges = new List<JsonEdge>();
@@ -668,7 +731,10 @@ namespace m0.Store.Json
         }
 
         public JsonSerializationStore(String identifier, IStoreUniverse storeUniverse, AccessLevelEnum[] accessLeveList)
-            : base(identifier, storeUniverse, accessLeveList)
+            : base(
+                FileSystemUtil.GetCanonicalFileIdentifier(identifier),
+                storeUniverse,
+                accessLeveList)
         {
             RootStore = new StoreId(MinusZero.Instance.root.Store.TypeName, MinusZero.Instance.root.Store.Identifier);
 
@@ -691,11 +757,14 @@ namespace m0.Store.Json
             {
                 UpdateDetachStateData();
 
-                string fileName = FileSystemUtil.GetFileName(Identifier);
+                string physicalIdentifier =
+                    FileSystemUtil.GetPhysicalFileName(Identifier);
 
-                string extension = FileSystemUtil.GetExtension(Identifier);
+                string fileName = FileSystemUtil.GetFileName(physicalIdentifier);
 
-                string pathPart = FileSystemUtil.GetPathPart(Identifier);
+                string extension = FileSystemUtil.GetExtension(physicalIdentifier);
+
+                string pathPart = FileSystemUtil.GetPathPart(physicalIdentifier);
 
                 string backupFileName = pathPart + fileName + "." + extension + ".backup";
 

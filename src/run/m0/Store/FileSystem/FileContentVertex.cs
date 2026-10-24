@@ -33,7 +33,8 @@ namespace m0.Store.FileSystem
                 {
                     string content =
                         System.IO.File.ReadAllText(
-                            fileName);
+                            FileSystemUtil.GetPhysicalFileName(
+                                fileName));
                     return content;
                 }
                 catch (Exception e) { }

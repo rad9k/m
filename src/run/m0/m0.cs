@@ -470,17 +470,8 @@ namespace m0
 
             try
             {
-                string path = storeFilePath;
-
-                if (!Path.IsPathRooted(path))
-                {
-                    if (string.IsNullOrEmpty(ApplicationPath))
-                        return null;
-
-                    path = Path.Combine(ApplicationPath, path);
-                }
-
-                return Path.GetFullPath(path);
+                return FileSystemUtil.GetPhysicalFileName(
+                    storeFilePath);
             }
             catch (ArgumentException)
             {
@@ -543,10 +534,18 @@ namespace m0
 
         void CreateStart()
         {
-            IVertex startVertex = FileSystemUtil.GetDirectoryFromFileSystem(ApplicationPath);
+            FileSystemStore startStore =
+                (FileSystemStore)FileSystemUtil.GetFileStore(
+                    this,
+                    typeof(FileSystemStore).AssemblyQualifiedName,
+                    FileSystemUtil.StartIdentifierPrefix);
 
-            if (startVertex != null)  
-                root.AddEdge(root.Get(false, @"System\Meta\Store\FileSystem\Start"), startVertex);            
+            if (startStore?.Root != null)
+                root.AddEdge(
+                    root.Get(
+                        false,
+                        @"System\Meta\Store\FileSystem\Start"),
+                    startStore.Root);
         }
 
         void CreateTempAndWorkAndServer()
