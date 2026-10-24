@@ -680,7 +680,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 {
                     AutoBackupTimer = new DispatcherTimer();
                     AutoBackupTimer.Tick += AutoBackupTimer_Elapsed;
-                    AutoBackupTimer.Interval = new TimeSpan(0, AutoBackupMinutes, 0);
+                    AutoBackupTimer.Interval = new System.TimeSpan(0, AutoBackupMinutes, 0);
                 }
 
                 if (!AutoBackupTimer.IsEnabled)
