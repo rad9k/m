@@ -1184,8 +1184,10 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				function "CreateUser" @String(@String "Name", @String "Surname", @String "Email", @String "Password")
 					variable "user" @Vertex
 					@@OnlineRetail\BackendService\Service\Init[]
+
 					if Data\user{Email:'(Email)'}<> > "0"
 						return "USER EXIST"
+
 					user = new Model\:User[]
 					Data +< user
 					user\Name = Name
@@ -1193,16 +1195,27 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					user\Email = Email
 					user\PasswordHash = @@System\Lib\Cryptography\HashPassword[Password]
 					return "OK"
+
 				function "Login" @String(@String "Email", @String "Password")
-					variable "token" @String
+					variable "token" @Vertex
 					variable "PasswordHash" @String
 					variable "user" @Vertex
 					@@OnlineRetail\BackendService\Service\Init[]
+
 					user = Data\user{Email:'(Email)'}
+
 					if user<> == "1"
-						return "yes"
+						if @@System\Lib\Cryptography\'VerifyPassword'[Password, user\PasswordHash]
+							token = new Model\:Token[]
+							user +< Model\:User\:Token ::> token
+							token\TokenString = @@System\Lib\Cryptography\GenerateToken[]
+							token\Expiry = @@System\Lib\Std\DateTime_Now[]
+							token\Expiry.Add[new @@TimeSpan["0", "0", "0", "1"]]
+							return token\TokenString
+
 					return "ERROR"
-				x = @@OnlineRetail\BackendService\Service\CreateUser["R", "T", "e", "pwd"]
+
+				x = @@OnlineRetail\BackendService\Service\Login["ee", "pwd"]
 		<@UX\UXContainer :: "OnlineRetail">
 			<@$Is :: @UX\UXContainer>
 			<@IsExpanded :: "True">
@@ -1312,54 +1325,51 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			<@OnlineRetail\BackendService\Service\CreateUser\user :: "">
 				<@$Is :: @OnlineRetail\Model\User>
 				<@BusinessID :: "">
-				<@Name :: "">
-				<@Surname :: "">
-				<@Email :: "">
-				<@PasswordHash :: "">
 				<@Address :: "">
 				<@PaymentMethod :: "">
-			<@OnlineRetail\BackendService\Service\CreateUser\user :: "">
-				<@$Is :: @OnlineRetail\Model\User>
-				<@BusinessID :: "">
-				<@Surname :: "">
-				<@Email :: "">
-				<@PasswordHash :: "">
-				<@Address :: "">
-				<@PaymentMethod :: "">
-				<@Name :: "Radek">
-			<@OnlineRetail\BackendService\Service\CreateUser\user :: "">
-				<@$Is :: @OnlineRetail\Model\User>
-				<@BusinessID :: "">
-				<@Address :: "">
-				<@PaymentMethod :: "">
-				<@Name :: @OnlineRetail\Data\user:<<"2">>\Radek>
-				<@Surname :: "Kotek">
-				<@Email :: "ter@gmail.com">
-				<@PasswordHash :: "pbkdf2-sha256$600000$gkXHvfifpaS8Np3QzFi4eg==$o+y8l3ctvUGzf8DS0aKVJPcNfmybWiO+JQo7wI+I7NI=">
-			<@OnlineRetail\BackendService\Service\CreateUser\user :: "">
-				<@$Is :: @OnlineRetail\Model\User>
-				<@BusinessID :: "">
-				<@Address :: "">
-				<@PaymentMethod :: "">
-				<@Name :: @OnlineRetail\Data\user:<<"2">>\Radek>
-				<@Surname :: @OnlineRetail\Data\user:<<"3">>\Kotek>
-				<@Email :: @OnlineRetail\Data\user:<<"3">>\'ter@gmail.com'>
-				<@PasswordHash :: "pbkdf2-sha256$600000$6sV8Z8gMEozHFxYvvCneIQ==$tMSIc4/Yv2i8rWxXxAAhw2sw9VWEnGSM7w8nN8p6yiY=">
-			<@OnlineRetail\BackendService\Service\CreateUser\user :: "">
-				<@$Is :: @OnlineRetail\Model\User>
-				<@BusinessID :: "">
-				<@Address :: "">
-				<@PaymentMethod :: "">
-				<@Name :: "R">
-				<@Surname :: "T">
-				<@Email :: "e">
-				<@PasswordHash :: "pbkdf2-sha256$600000$LfzQjpLi7VvPUCL/DMnbPA==$AeaSXghINeMd7Df28RAc9a/al08yNmvSDjwubGB6Rdw=">
-			<@OnlineRetail\BackendService\Service\CreateUser\user :: "">
-				<@$Is :: @OnlineRetail\Model\User>
-				<@BusinessID :: "">
-				<@Address :: "">
-				<@PaymentMethod :: "">
-				<@Name :: @OnlineRetail\Data\user:<<"5">>\R>
-				<@Surname :: @OnlineRetail\Data\user:<<"5">>\T>
-				<@Email :: @OnlineRetail\Data\user:<<"5">>\e>
-				<@PasswordHash :: "pbkdf2-sha256$600000$r3yj92tayoEgs/P/FcvviQ==$EdPcYzwnoDfXdISlcYWCeRoKnXDz9llJQ8GIqdeEDdU=">
+				<@Name :: "r">
+				<@Surname :: "t">
+				<@Email :: "ee">
+				<@PasswordHash :: "pbkdf2-sha256$600000$e4TXzhH7HES8uVx/eNe+gQ==$syctPsoIxN05VPl2hYraITmXrxU0f1GUV0t/pKcb++c=">
+				<@Token :: @$Empty>
+				<@Token :: @$Empty>
+				<@OnlineRetail\Model :: "">
+				""
+				<@System :: "">
+				<@System :: "">
+					<@$Is :: @OnlineRetail\Model\Token>
+					<@TokenString :: "token_XY4YZygVl5n8KjxS_E2nRaSNintMRvW1Wokwt9my16w">
+					<@Expiry :: "">
+						<@$Is :: @DateTime>
+						<@Year :: "2026">
+						<@Month :: "10">
+						<@Day :: "24">
+						<@Hour :: "16">
+						<@Minute :: "59">
+						<@Second :: "5">
+						<@Millisecond :: "278">
+				<@OnlineRetail\Model\User :: "">
+					<@$Is :: @OnlineRetail\Model\Token>
+					<@TokenString :: "token_Wd0fXtxzcKqch_6ZgNGWBsmQZ7psZkPM7FQehbsAjBU">
+					<@Expiry :: "">
+						<@$Is :: @DateTime>
+						<@Year :: "2026">
+						<@Month :: "10">
+						<@Day :: "24">
+						<@Hour :: "16">
+						<@Minute :: "59">
+						<@Second :: "33">
+						<@Millisecond :: "554">
+				<@OnlineRetail\BackendService\Service\Login\token :: "">
+					<@$Is :: @OnlineRetail\Model\Token>
+					<@TokenString :: "token_AQAth08T0tyahOkIYL-h_BMjEs50ivjmNuEWckcB59Q">
+					<@Expiry :: "">
+						<@$Is :: @DateTime>
+						<@Year :: "2026">
+						<@Month :: "10">
+						<@Day :: "24">
+						<@Hour :: "16">
+						<@Minute :: "49">
+						<@Second :: "19">
+						<@Millisecond :: "891">
+				<@Token :: @$Empty>

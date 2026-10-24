@@ -90,7 +90,7 @@
 	</Keywords>
     
     <Rule color="Operator">
-		&lt;&lt;copy&lt;&lt;|&lt;&lt;move&lt;&lt;|&lt;&lt;copy&amp;replace&lt;&lt;|&lt;&lt;move&amp;replace&lt;&lt;|\#|&lt;&gt;|&lt;\+&gt;|&lt;-&gt;|&lt;-|\+&lt;|=|\+=|~=|-&lt;|~&lt;|&lt;-|&lt;&lt;|&gt;&gt;|~00|\+|-|\*|/|==|===|====|!=|!|\&amp;|\||&gt;=|&lt;=|::|:|%|`|\[|\]|\(|\)|\\|\?|\{|\}|\.|,
+		&lt;|&gt;|&lt;&lt;copy&lt;&lt;|&lt;&lt;move&lt;&lt;|&lt;&lt;copy&amp;replace&lt;&lt;|&lt;&lt;move&amp;replace&lt;&lt;|\#|&lt;&gt;|&lt;\+&gt;|&lt;-&gt;|&lt;-|\+&lt;|=|\+=|~=|-&lt;|~&lt;|&lt;-|&lt;&lt;|&gt;&gt;|~00|\+|-|\*|/|==|===|====|!=|!|\&amp;|\||&gt;=|&lt;=|::|:|%|`|\[|\]|\(|\)|\\|\?|\{|\}|\.|,
 </Rule>
 
 

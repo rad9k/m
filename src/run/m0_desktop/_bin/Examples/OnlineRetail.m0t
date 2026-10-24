@@ -24,8 +24,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				attribute "Surname" @String
 				attribute "Email" @String
 				attribute "PasswordHash" @String
-				aggregation "Address" @OnlineRetail\Model\Address
-				aggregation "PaymentMethod" @OnlineRetail\Model\PaymentMethod
+				aggregation "Address" @OnlineRetail\Model\Address "0":"-1"
+				aggregation "PaymentMethod" @OnlineRetail\Model\PaymentMethod "0":"-1"
 				association "Token" @OnlineRetail\Model\Token "0":"-1"
 			class "PaymentMethod"
 				attribute "BusinessID" @String
@@ -45,6 +45,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				attribute "ExpiryMonth" @Integer
 				attribute "ExpiryYear" @Integer
 				attribute "Brand" @OnlineRetail\Model\CardBrand
+				attribute "ProviderToken" @String
+				attribute "ProviderCustomerId" @String
 			class "PayPal"
 				inherits @OnlineRetail\Model\PaymentMethod
 				attribute "Email" @String
@@ -997,7 +999,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 					<@Position :: "">
 						<@$Is :: @UX\Position>
-						<@X :: "2507.543333333333">
+						<@X :: "2479.543333333333">
 						<@Y :: "327.18000000000006">
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
 					<@ShowMeta :: "False">
@@ -1025,6 +1027,10 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@EndAnchor :: @UX\LineEndEnum\Triangle>
 						<@HideLabel :: "True">
 						<@ToItem :: @OnlineRetail\Model\'Data model'\Item:<<"4">>>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "167.2900000000002">
+						<@Height :: "148.81999999999988">
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -1207,10 +1213,10 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					if user<> == "1"
 						if @@System\Lib\Cryptography\'VerifyPassword'[Password, user\PasswordHash]
 							token = new Model\:Token[]
-							Data +< token
+							user +< Model\:User\:Token ::> token
 							token\TokenString = @@System\Lib\Cryptography\GenerateToken[]
 							token\Expiry = @@System\Lib\Std\DateTime_Now[]
-
+							token\Expiry.Add[new @@TimeSpan["0", "0", "0", "1"]]
 							return token\TokenString
 
 					return "ERROR"
@@ -1325,63 +1331,51 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			<@OnlineRetail\BackendService\Service\CreateUser\user :: "">
 				<@$Is :: @OnlineRetail\Model\User>
 				<@BusinessID :: "">
-				<@Name :: "">
-				<@Surname :: "">
-				<@Email :: "">
-				<@PasswordHash :: "">
 				<@Address :: "">
 				<@PaymentMethod :: "">
-			<@OnlineRetail\BackendService\Service\CreateUser\user :: "">
-				<@$Is :: @OnlineRetail\Model\User>
-				<@BusinessID :: "">
-				<@Surname :: "">
-				<@Email :: "">
-				<@PasswordHash :: "">
-				<@Address :: "">
-				<@PaymentMethod :: "">
-				<@Name :: "Radek">
-			<@OnlineRetail\BackendService\Service\CreateUser\user :: "">
-				<@$Is :: @OnlineRetail\Model\User>
-				<@BusinessID :: "">
-				<@Address :: "">
-				<@PaymentMethod :: "">
-				<@Name :: @OnlineRetail\Data\user:<<"2">>\Radek>
-				<@Surname :: "Kotek">
-				<@Email :: "ter@gmail.com">
-				<@PasswordHash :: "pbkdf2-sha256$600000$gkXHvfifpaS8Np3QzFi4eg==$o+y8l3ctvUGzf8DS0aKVJPcNfmybWiO+JQo7wI+I7NI=">
-			<@OnlineRetail\BackendService\Service\CreateUser\user :: "">
-				<@$Is :: @OnlineRetail\Model\User>
-				<@BusinessID :: "">
-				<@Address :: "">
-				<@PaymentMethod :: "">
-				<@Name :: @OnlineRetail\Data\user:<<"2">>\Radek>
-				<@Surname :: @OnlineRetail\Data\user:<<"3">>\Kotek>
-				<@Email :: @OnlineRetail\Data\user:<<"3">>\'ter@gmail.com'>
-				<@PasswordHash :: "pbkdf2-sha256$600000$6sV8Z8gMEozHFxYvvCneIQ==$tMSIc4/Yv2i8rWxXxAAhw2sw9VWEnGSM7w8nN8p6yiY=">
-			<@OnlineRetail\BackendService\Service\CreateUser\user :: "">
-				<@$Is :: @OnlineRetail\Model\User>
-				<@BusinessID :: "">
-				<@Address :: "">
-				<@PaymentMethod :: "">
-				<@Name :: "R">
-				<@Surname :: "T">
-				<@Email :: "e">
-				<@PasswordHash :: "pbkdf2-sha256$600000$LfzQjpLi7VvPUCL/DMnbPA==$AeaSXghINeMd7Df28RAc9a/al08yNmvSDjwubGB6Rdw=">
-			<@OnlineRetail\BackendService\Service\CreateUser\user :: "">
-				<@$Is :: @OnlineRetail\Model\User>
-				<@BusinessID :: "">
-				<@Address :: "">
-				<@PaymentMethod :: "">
-				<@Name :: @OnlineRetail\Data\user:<<"5">>\R>
-				<@Surname :: @OnlineRetail\Data\user:<<"5">>\T>
-				<@Email :: @OnlineRetail\Data\user:<<"5">>\e>
-				<@PasswordHash :: "pbkdf2-sha256$600000$r3yj92tayoEgs/P/FcvviQ==$EdPcYzwnoDfXdISlcYWCeRoKnXDz9llJQ8GIqdeEDdU=">
-			<@OnlineRetail\BackendService\Service\CreateUser\user :: "">
-				<@$Is :: @OnlineRetail\Model\User>
-				<@BusinessID :: "">
-				<@Address :: "">
-				<@PaymentMethod :: "">
-				<@PasswordHash :: "pbkdf2-sha256$600000$T6ANivFr6jd63UlWMObPEA==$34WXR01mq9+JSl3H27B5jGk8l2hEt/Mj6W/G8f300w8=">
-				<@Name :: "R">
-				<@Surname :: "T">
-				<@Email :: @OnlineRetail\BackendService\Service\\RightExpression:\ee>
+				<@Name :: "r">
+				<@Surname :: "t">
+				<@Email :: "ee">
+				<@PasswordHash :: "pbkdf2-sha256$600000$e4TXzhH7HES8uVx/eNe+gQ==$syctPsoIxN05VPl2hYraITmXrxU0f1GUV0t/pKcb++c=">
+				<@Token :: @$Empty>
+				<@Token :: @$Empty>
+				<@OnlineRetail\Model :: "">
+				""
+				<@System :: "">
+				<@System :: "">
+					<@$Is :: @OnlineRetail\Model\Token>
+					<@TokenString :: "token_XY4YZygVl5n8KjxS_E2nRaSNintMRvW1Wokwt9my16w">
+					<@Expiry :: "">
+						<@$Is :: @DateTime>
+						<@Year :: "2026">
+						<@Month :: "10">
+						<@Day :: "24">
+						<@Hour :: "16">
+						<@Minute :: "59">
+						<@Second :: "5">
+						<@Millisecond :: "278">
+				<@OnlineRetail\Model\User :: "">
+					<@$Is :: @OnlineRetail\Model\Token>
+					<@TokenString :: "token_Wd0fXtxzcKqch_6ZgNGWBsmQZ7psZkPM7FQehbsAjBU">
+					<@Expiry :: "">
+						<@$Is :: @DateTime>
+						<@Year :: "2026">
+						<@Month :: "10">
+						<@Day :: "24">
+						<@Hour :: "16">
+						<@Minute :: "59">
+						<@Second :: "33">
+						<@Millisecond :: "554">
+				<@OnlineRetail\BackendService\Service\Login\token :: "">
+					<@$Is :: @OnlineRetail\Model\Token>
+					<@TokenString :: "token_AQAth08T0tyahOkIYL-h_BMjEs50ivjmNuEWckcB59Q">
+					<@Expiry :: "">
+						<@$Is :: @DateTime>
+						<@Year :: "2026">
+						<@Month :: "10">
+						<@Day :: "24">
+						<@Hour :: "16">
+						<@Minute :: "49">
+						<@Second :: "19">
+						<@Millisecond :: "891">
+				<@Token :: @$Empty>
