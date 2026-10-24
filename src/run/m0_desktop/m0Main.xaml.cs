@@ -260,7 +260,7 @@ namespace m0
             }
 
             treePaneAnimationTimer = new DispatcherTimer(
-                TimeSpan.FromMilliseconds(16),
+                System.TimeSpan.FromMilliseconds(16),
                 DispatcherPriority.Render,
                 TreePaneAnimationTimer_Tick,
                 Dispatcher);

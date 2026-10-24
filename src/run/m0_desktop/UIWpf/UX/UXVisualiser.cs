@@ -139,8 +139,8 @@ namespace m0.UIWpf.UX
         {
             const double InactiveOpacity = 0.5;
             const double ActiveOpacity = 1;
-            static readonly TimeSpan OpacityTransitionDuration =
-                TimeSpan.FromSeconds(0.3);
+            static readonly System.TimeSpan OpacityTransitionDuration =
+                System.TimeSpan.FromSeconds(0.3);
 
             readonly UXVisualiser owner;
             readonly ScrollViewer scrollViewer;
@@ -4120,7 +4120,7 @@ namespace m0.UIWpf.UX
                 keyboardNudgeAlignmentGuideHideTimer =
                     new System.Windows.Threading.DispatcherTimer();
                 keyboardNudgeAlignmentGuideHideTimer.Interval =
-                    TimeSpan.FromMilliseconds(
+                    System.TimeSpan.FromMilliseconds(
                         KeyboardNudgeAlignmentGuideHideMilliseconds);
                 keyboardNudgeAlignmentGuideHideTimer.Tick +=
                     KeyboardNudgeAlignmentGuideHideTimer_Tick;

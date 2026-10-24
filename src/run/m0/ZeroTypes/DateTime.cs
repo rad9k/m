@@ -13,6 +13,16 @@ namespace m0.ZeroTypes
 {
     public class DateTime
     {
+        static IVertex sm = MinusZero.Instance.Root.Get(false, @"System\Meta");
+
+        static IVertex Year = sm.Get(false, @"ZeroTypes\DateTime\Year");
+        static IVertex Month = sm.Get(false, @"ZeroTypes\DateTime\Month");
+        static IVertex Day = sm.Get(false, @"ZeroTypes\DateTime\Day");
+        static IVertex Hour = sm.Get(false, @"ZeroTypes\DateTime\Hour");
+        static IVertex Minute = sm.Get(false, @"ZeroTypes\DateTime\Minute");
+        static IVertex Second = sm.Get(false, @"ZeroTypes\DateTime\Second");
+        static IVertex Millisecond = sm.Get(false, @"ZeroTypes\DateTime\Millisecond");
+
         public static void FillDateTime(IVertex basevertex, System.DateTime datetime)
         {
             basevertex.AddVertex(Year, datetime.Year);            
@@ -23,28 +33,7 @@ namespace m0.ZeroTypes
             basevertex.AddVertex(Second, datetime.Second);
             basevertex.AddVertex(Millisecond, datetime.Millisecond);
         }
-
-        static IVertex Year;
-        static IVertex Month;
-        static IVertex Day;
-        static IVertex Hour;
-        static IVertex Minute;
-        static IVertex Second;
-        static IVertex Millisecond;
-
-        public DateTime()
-        {
-            IVertex sm = MinusZero.Instance.Root.Get(false, @"System\Meta");
-
-            Year = sm.Get(false, @"ZeroTypes\DateTime\Year");
-            Month = sm.Get(false, @"ZeroTypes\DateTime\Month");
-            Day = sm.Get(false, @"ZeroTypes\DateTime\Day");
-            Hour = sm.Get(false, @"ZeroTypes\DateTime\Hour");
-            Minute = sm.Get(false, @"ZeroTypes\DateTime\Minute");
-            Second = sm.Get(false, @"ZeroTypes\DateTime\Second");
-            Millisecond = sm.Get(false, @"ZeroTypes\DateTime\Millisecond"); 
-        }
-
+                
         public static void CopyDtToVertex(System.DateTime dt, IVertex dtVertex)
         {
             IVertex YearVertex = GraphUtil.GetQueryOutFirst(dtVertex, "Year", null);
@@ -201,9 +190,9 @@ namespace m0.ZeroTypes
 
             // date
 
-            IVertex dateTimeVertex = GraphUtil.GetQueryOutFirst(stack, "dateTime", null);            
+            IVertex dtVertex = GraphUtil.GetQueryOutFirst(stack, "dateTime", null);            
 
-            if (dateTimeVertex == null)
+            if (dtVertex == null)
                 return stack;
 
             System.DateTime thisDate = VertexToDateTime(stack);
@@ -227,9 +216,9 @@ namespace m0.ZeroTypes
 
             //
 
-            System.DateTime compareDate = VertexToDateTime(dateTimeVertex);
+            //System.DateTime compareDate = VertexToDateTime(dateTimeVertex);
 
-            thisDate = thisDate.Add(new TimeSpan(compareDate.Ticks));
+            //thisDate = thisDate.Add(new TimeSpan(compareDate.Ticks));
 
             CopyDtToVertex(thisDate, stack);
 
@@ -250,7 +239,7 @@ namespace m0.ZeroTypes
             System.DateTime thisDate = VertexToDateTime(stack);
             System.DateTime compareDate = VertexToDateTime(dateTimeVertex);
 
-            thisDate = thisDate.Subtract(new TimeSpan(compareDate.Ticks));
+            //thisDate = thisDate.Subtract(new TimeSpan(compareDate.Ticks));
 
             CopyDtToVertex(thisDate, stack);
 

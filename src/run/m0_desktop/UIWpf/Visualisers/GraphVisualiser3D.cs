@@ -488,7 +488,7 @@ namespace m0.UIWpf.Visualisers
             transform.Children.Add(translate);
             brush.RelativeTransform = transform;
 
-            DoubleAnimation flow = new DoubleAnimation(0, -1, TimeSpan.FromSeconds(highlighted ? 2.4 : 4.2))
+            DoubleAnimation flow = new DoubleAnimation(0, -1, System.TimeSpan.FromSeconds(highlighted ? 2.4 : 4.2))
             {
                 RepeatBehavior = RepeatBehavior.Forever
             };
@@ -2087,7 +2087,7 @@ namespace m0.UIWpf.Visualisers
             axis.Normalize();
             sceneRotation.Axis = axis;
 
-            DoubleAnimation rotate = new DoubleAnimation(0, 90, TimeSpan.FromMilliseconds(durationMs))
+            DoubleAnimation rotate = new DoubleAnimation(0, 90, System.TimeSpan.FromMilliseconds(durationMs))
             {
                 EasingFunction = new CubicEase { EasingMode = EasingMode.EaseInOut }
             };
@@ -2160,7 +2160,7 @@ namespace m0.UIWpf.Visualisers
 
         private DoubleAnimation CreateSceneMoveAnimation(double from, double to, int durationMs)
         {
-            return new DoubleAnimation(from, to, TimeSpan.FromMilliseconds(Math.Max(1, durationMs)))
+            return new DoubleAnimation(from, to, System.TimeSpan.FromMilliseconds(Math.Max(1, durationMs)))
             {
                 EasingFunction = new CubicEase { EasingMode = EasingMode.EaseInOut }
             };
@@ -2223,7 +2223,7 @@ namespace m0.UIWpf.Visualisers
         private void RunWarpTransition(int durationMs)
         {
             animationInProgress = true;
-            DoubleAnimation scaleDown = new DoubleAnimation(1, 0.02, TimeSpan.FromMilliseconds(durationMs / 2))
+            DoubleAnimation scaleDown = new DoubleAnimation(1, 0.02, System.TimeSpan.FromMilliseconds(durationMs / 2))
             {
                 EasingFunction = new QuinticEase { EasingMode = EasingMode.EaseInOut }
             };
@@ -2232,7 +2232,7 @@ namespace m0.UIWpf.Visualisers
             {
                 PaintGraph();
 
-                DoubleAnimation scaleUp = new DoubleAnimation(0.02, 1, TimeSpan.FromMilliseconds(durationMs / 2))
+                DoubleAnimation scaleUp = new DoubleAnimation(0.02, 1, System.TimeSpan.FromMilliseconds(durationMs / 2))
                 {
                     EasingFunction = new QuinticEase { EasingMode = EasingMode.EaseInOut }
                 };

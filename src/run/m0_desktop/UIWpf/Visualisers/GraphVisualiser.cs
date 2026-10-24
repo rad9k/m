@@ -751,7 +751,7 @@ namespace m0.UIWpf.Visualisers
                 edge.StrokeDashArray = new DoubleCollection { 8, 5 };
                 edge.StrokeDashCap = PenLineCap.Flat;
 
-                DoubleAnimation dashAnimation = new DoubleAnimation(0, -13, TimeSpan.FromSeconds(highlighted ? 0.9 : 1.8))
+                DoubleAnimation dashAnimation = new DoubleAnimation(0, -13, System.TimeSpan.FromSeconds(highlighted ? 0.9 : 1.8))
                 {
                     RepeatBehavior = RepeatBehavior.Forever
                 };

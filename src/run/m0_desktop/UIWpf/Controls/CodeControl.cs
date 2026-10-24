@@ -422,7 +422,7 @@ namespace m0.UIWpf.Controls
 
                 if (foldingUpdateTimer == null)
                     foldingUpdateTimer = new DispatcherTimer();
-                foldingUpdateTimer.Interval = TimeSpan.FromSeconds(2);
+                foldingUpdateTimer.Interval = System.TimeSpan.FromSeconds(2);
                 foldingUpdateTimer.Tick += delegate { UpdateFoldings(); };
                 foldingUpdateTimer.Start();
             }

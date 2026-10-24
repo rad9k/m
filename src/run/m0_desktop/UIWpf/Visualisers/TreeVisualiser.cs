@@ -515,7 +515,7 @@ namespace m0.UIWpf.Visualisers
                 return;
             }
 
-            TimeSpan duration = TimeSpan.FromMilliseconds(expand ? 85 : 65);
+            System.TimeSpan duration = System.TimeSpan.FromMilliseconds(expand ? 85 : 65);
             IEasingFunction easingFunction = new QuadraticEase { EasingMode = expand ? EasingMode.EaseOut : EasingMode.EaseIn };
             double startOpacity = expand ? 0.65 : 1;
             double endOpacity = expand ? 1 : 0;
@@ -1472,13 +1472,13 @@ namespace m0.UIWpf.Visualisers
 
         private static Storyboard CreateTriangleRotationStoryboard(double angle, double translateX)
         {
-            DoubleAnimation rotationAnimation = new DoubleAnimation(angle, new Duration(TimeSpan.FromMilliseconds(80)));
+            DoubleAnimation rotationAnimation = new DoubleAnimation(angle, new Duration(System.TimeSpan.FromMilliseconds(80)));
             rotationAnimation.EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut };
 
             Storyboard.SetTargetName(rotationAnimation, "ExpandPath");
             Storyboard.SetTargetProperty(rotationAnimation, new PropertyPath("(UIElement.RenderTransform).(TransformGroup.Children)[0].(RotateTransform.Angle)"));
 
-            DoubleAnimation translateAnimation = new DoubleAnimation(translateX, new Duration(TimeSpan.FromMilliseconds(80)));
+            DoubleAnimation translateAnimation = new DoubleAnimation(translateX, new Duration(System.TimeSpan.FromMilliseconds(80)));
             translateAnimation.EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut };
 
             Storyboard.SetTargetName(translateAnimation, "ExpandPath");

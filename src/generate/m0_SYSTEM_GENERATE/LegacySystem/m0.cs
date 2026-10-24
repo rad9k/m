@@ -3377,6 +3377,7 @@ namespace m0
                 "Class:Edge{$DndAlwaysCopy:,Association:From{$MinCardinality:0,$MaxCardinality:1}," +
                 "Association:Meta{$MinCardinality:1,$MaxCardinality:1},Association:To{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:DateTime{$DndAlwaysCopy:,Attribute:Year{$MinCardinality:1,$MaxCardinality:1},Attribute:Month{$MinCardinality:1,$MaxCardinality:1},Attribute:Day{$MinCardinality:1,$MaxCardinality:1},Attribute:Hour{$MinCardinality:1,$MaxCardinality:1},Attribute:Minute{$MinCardinality:1,$MaxCardinality:1},Attribute:Second{$MinCardinality:1,$MaxCardinality:1},Attribute:Millisecond{$MinCardinality:1,$MaxCardinality:1}}," +
+                "Class:TimeSpan{$DndAlwaysCopy:,Attribute:Year{$MinCardinality:1,$MaxCardinality:1},Attribute:Month{$MinCardinality:1,$MaxCardinality:1},Attribute:Day{$MinCardinality:1,$MaxCardinality:1},Attribute:Hour{$MinCardinality:1,$MaxCardinality:1},Attribute:Minute{$MinCardinality:1,$MaxCardinality:1},Attribute:Second{$MinCardinality:1,$MaxCardinality:1},Attribute:Millisecond{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:FormalTextLanguage," +
                 "Enum:EnumBase{$DndAlwaysCopy:,}," +
                 "Class:HasBaseEdge{Attribute:BaseEdge{$MinCardinality:1,$MaxCardinality:1}}," +
@@ -3469,6 +3470,10 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$Is"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class"));
 
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\TimeSpan").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$Is"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class"));
+
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\HasBaseEdge").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$Is"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroUML\Class"));
@@ -3514,6 +3519,34 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Integer"));
 
             LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\DateTime\Millisecond").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Integer"));
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\TimeSpan\Year").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Integer"));
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\TimeSpan\Month").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Integer"));
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\TimeSpan\Day").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Integer"));
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\TimeSpan\Hour").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Integer"));
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\TimeSpan\Minute").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Integer"));
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\TimeSpan\Second").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
+                LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Integer"));
+
+            LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\TimeSpan\Millisecond").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"*$EdgeTarget"),
                 LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\Integer"));
 
@@ -3606,15 +3639,16 @@ namespace m0
         }
 
         void CreateSystemMetaZeroTypes_Part2() {
+
             // DateTime
 
             IVertex sm = LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta");
 
-            string type = "m0.ZeroTypes.DateTime, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+            string typeDateTime = "m0.ZeroTypes.DateTime, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
             IVertex DateTime_class = LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\DateTime");
 
-            AddMethod(DateTime_class, "DateTime", type, "DateTime_constructor", null, new TypeName[] {
+            AddMethod(DateTime_class, "DateTime", typeDateTime, "DateTime_constructor", null, new TypeName[] {
                 new TypeName("year", "Integer", 1, 1),
                 new TypeName("month", "Integer", 1, 1),
                 new TypeName("day", "Integer", 1, 1),
@@ -3623,11 +3657,27 @@ namespace m0
                 new TypeName("second", "Integer", 1, 1),
                 new TypeName("milisecond", "Integer", 1, 1),
             });
-            AddMethod(DateTime_class, "IsLaterThan", type, "IsLaterThan", "Boolean", new TypeName[] { new TypeName("dateTime", "DateTime", 1, 1) });
-            AddMethod(DateTime_class, "IsEarlierThan", type, "IsEarlierThan", "Boolean", new TypeName[] { new TypeName("dateTime", "DateTime", 1, 1) });
-            AddMethod(DateTime_class, "IsEqual", type, "IsEqual", "Boolean", new TypeName[] { new TypeName("dateTime", "DateTime", 1, 1) });            
-            AddMethod(DateTime_class, "Add", type, "Add", "Boolean", new TypeName[] { new TypeName("dateTime", "DateTime", 1, 1) });
-            AddMethod(DateTime_class, "Substract", type, "Substract", "Boolean", new TypeName[] { new TypeName("dateTime", "DateTime", 1, 1) });
+            AddMethod(DateTime_class, "IsLaterThan", typeDateTime, "IsLaterThan", "Boolean", new TypeName[] { new TypeName("dateTime", "DateTime", 1, 1) });
+            AddMethod(DateTime_class, "IsEarlierThan", typeDateTime, "IsEarlierThan", "Boolean", new TypeName[] { new TypeName("dateTime", "DateTime", 1, 1) });
+            AddMethod(DateTime_class, "IsEqual", typeDateTime, "IsEqual", "Boolean", new TypeName[] { new TypeName("dateTime", "DateTime", 1, 1) });            
+            AddMethod(DateTime_class, "Add", typeDateTime, "Add", "Boolean", new TypeName[] { new TypeName("dateTime", "DateTime", 1, 1) });
+            AddMethod(DateTime_class, "Substract", typeDateTime, "Substract", "Boolean", new TypeName[] { new TypeName("dateTime", "DateTime", 1, 1) });
+
+            // TimeSpan
+
+            string typeTimeSpan = "m0.ZeroTypes.TimeSpan, m0, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+
+            IVertex TimeSpan_class = LegacySystem.Graph.EasyVertex.Get(sm, false, @"ZeroTypes\TimeSpan");
+
+            AddMethod(TimeSpan_class, "TimeSpan", typeTimeSpan, "TimeSpan_constructor", null, new TypeName[] {
+                new TypeName("year", "Integer", 1, 1),
+                new TypeName("month", "Integer", 1, 1),
+                new TypeName("day", "Integer", 1, 1),
+                new TypeName("hour", "Integer", 1, 1),
+                new TypeName("minute", "Integer", 1, 1),
+                new TypeName("second", "Integer", 1, 1),
+                new TypeName("milisecond", "Integer", 1, 1),
+            });
         }
 
         void CreateSystemMetaZeroTypes_UX()
