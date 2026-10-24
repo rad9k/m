@@ -2748,6 +2748,9 @@ namespace m0.UIWpf.UX
 
             foreach (IUXItem ui in Items_all)
             {
+                if (!HasLiveBaseEdgeTo(ui))
+                    continue;
+
                 IVertex ui_BaseEdgeTo = ui.BaseEdgeTo;
 
                 if (ItemsDictionaryByBaseEdgeTo.ContainsKey(ui_BaseEdgeTo))
@@ -2802,6 +2805,13 @@ namespace m0.UIWpf.UX
 
         public void RemoveUXItem(IUXItem item)
         {
+            if (item == null)
+                return;
+
+            bool itemIsHosted =
+                itemsAllSet.Contains(item) ||
+                object.ReferenceEquals(item.OwningVisualiser, this);
+
             if (item is IUXContainer)
             {
                 IUXContainer itemContainer = (IUXContainer)item;
@@ -2817,7 +2827,8 @@ namespace m0.UIWpf.UX
             // while ToItem still resolves to this instance (not a TypedEdge reincarnation).
             RemoveIncomingDiagramLines(item);
 
-            item.ParentItem.RemoveItem(item);
+            if (item.ParentItem != null)
+                item.ParentItem.RemoveItem(item);
 
             Items_all.Remove(item);
             itemsAllSet.Remove(item);
@@ -2828,10 +2839,45 @@ namespace m0.UIWpf.UX
             needRebuildItemsDictionary();
             RequestMiniaturesUpdate(true);
 
-            item.RemoveFromCanvas();
+            if (itemIsHosted)
+                item.RemoveFromCanvas();
 
             item.Dispose(); // check if will not cause problems
             RequestAllDiagramLineGeometryUpdate("remove-item");
+        }
+
+        private static bool HasLiveBaseEdgeTo(IUXItem item)
+        {
+            if (item == null)
+                return false;
+
+            Edge baseEdge = item.BaseEdge;
+            if (baseEdge == null)
+                return false;
+
+            IVertex baseEdgeTo = baseEdge.To;
+            return baseEdgeTo != null &&
+                baseEdgeTo.DisposedState == DisposeStateEnum.Live;
+        }
+
+        private void RemoveInvalidDecorators(IUXItem host)
+        {
+            if (host == null)
+                return;
+
+            foreach (IUXItem decorator in host.Decorators.ToList())
+            {
+                if (HasLiveBaseEdgeTo(decorator))
+                    continue;
+
+                if (decorator is ILineDecoratorBase lineDecorator)
+                    host.RemoveDiagramLine(lineDecorator);
+                else
+                {
+                    host.RemoveDecorator(decorator);
+                    decorator.Dispose();
+                }
+            }
         }
 
         private void RemoveIncomingDiagramLines(IUXItem item)
@@ -2897,9 +2943,14 @@ namespace m0.UIWpf.UX
         // TOO
         protected List<IUXItem> GetItemsByBaseEdge(IVertex edgeVertex)
         {
+            if (edgeVertex == null)
+                return new List<IUXItem>();
+
             Dictionary<IVertex, List<IUXItem>> dict = GetItemsDictionaryByBaseEdgeTo();
 
             IVertex to = GraphUtil.GetQueryOutFirst(edgeVertex, "To", null);
+            if (to == null)
+                return new List<IUXItem>();
 
             if (dict.ContainsKey(to))
                 return dict[to];
@@ -2909,9 +2960,14 @@ namespace m0.UIWpf.UX
 
         protected List<IUXItem> GetItemsByVertex(IVertex edgeVertex)
         {
+            if (edgeVertex == null)
+                return new List<IUXItem>();
+
             Dictionary<IVertex, IUXItem> dict = GetItemsDictionaryByVertex();
 
             IVertex to = GraphUtil.GetQueryOutFirst(edgeVertex, "To", null);
+            if (to == null)
+                return new List<IUXItem>();
 
             if (dict.ContainsKey(to))
             {
@@ -2960,6 +3016,11 @@ namespace m0.UIWpf.UX
             if (!(item is UIElement))
                 return;
 
+            if (!HasLiveBaseEdgeTo(item))
+            {
+                RemoveUXItem(item);
+                return;
+            }
 
             Items_all.Add(item);
             itemsAllSet.Add(item);
@@ -2980,6 +3041,12 @@ namespace m0.UIWpf.UX
 
                         if (i == null)
                             continue;
+
+                        if (!HasLiveBaseEdgeTo(i))
+                        {
+                            RemoveUXItem(i);
+                            continue;
+                        }
 
                         HostItem(item_multiContainerSubItem, i, newItemCreation);
                     }
@@ -3038,6 +3105,12 @@ namespace m0.UIWpf.UX
                     if (i == null)
                         continue;
 
+                    if (!HasLiveBaseEdgeTo(i))
+                    {
+                        RemoveUXItem(i);
+                        continue;
+                    }
+
                     HostItem(container, i, newItemCreation);
                 }
             }
@@ -3063,6 +3136,12 @@ namespace m0.UIWpf.UX
             IVertex itemBaseEdgeTo = item.BaseEdgeTo;
 
             IVertex itemParentItemBaseEdgeTo = item.ParentItem.BaseEdgeTo;
+
+            if (itemBaseEdgeTo == null ||
+                itemParentItemBaseEdgeTo == null)
+            {
+                return;
+            }
 
             item.ContainerEdge = null;
 
@@ -3110,6 +3189,7 @@ namespace m0.UIWpf.UX
                 if (item == null)
                     continue;
 
+                RemoveInvalidDecorators(item);
                 List<IUXItem> decorators = item.Decorators.ToList();
                 Dictionary<(IVertex Meta, IVertex To), int> remainingEdgeCounts =
                     GetEdgesForDiagramLineDecorators(item)
@@ -3129,9 +3209,19 @@ namespace m0.UIWpf.UX
                         hostedItems);
 
                     if (hostedToItem == null)
+                    {
+                        item.RemoveDiagramLine(lineDecorator);
                         continue;
+                    }
 
                     Edge decoratorBaseEdge = decorator.BaseEdge;
+                    if (decoratorBaseEdge == null ||
+                        decoratorBaseEdge.To == null)
+                    {
+                        item.RemoveDiagramLine(lineDecorator);
+                        continue;
+                    }
+
                     var key = (
                         decoratorBaseEdge.Meta,
                         decoratorBaseEdge.To);
@@ -3179,7 +3269,7 @@ namespace m0.UIWpf.UX
                 return resolvedToItem;
 
             Edge baseEdge = lineDecorator.BaseEdge;
-            if (baseEdge != null)
+            if (baseEdge != null && baseEdge.To != null)
             {
                 List<IUXItem> itemsByBaseEdgeTo =
                     GetItemsByBaseEdgeTo_ForLines(baseEdge);
@@ -3200,10 +3290,12 @@ namespace m0.UIWpf.UX
             IVertex toFind = null;
 
             Edge lineDecorator_BaseEdge = lineDecorator.BaseEdge;
-            if (lineDecorator_BaseEdge == null)
+            if (lineDecorator_BaseEdge == null ||
+                lineDecorator_BaseEdge.To == null)
                 return null;
 
-            if (GraphUtil.ExistQueryOut(lineDecorator_BaseEdge.Meta, "$VertexTarget", null)
+            if (lineDecorator_BaseEdge.Meta != null &&
+                GraphUtil.ExistQueryOut(lineDecorator_BaseEdge.Meta, "$VertexTarget", null)
             //&& !((UXDecoratorTemplate)lineDecorator.UXTemplate).CreateEdgeOnly // ???? ZZZ added ! hope this is ok
             )
                 toFind = GraphUtil.GetQueryOutFirst(lineDecorator_BaseEdge.To, "$EdgeTarget", null);
@@ -4744,9 +4836,9 @@ namespace m0.UIWpf.UX
 
         private bool CheckIfItemIsValidAndRemoveIfInvalid(IUXItem item)
         {
-            if (item.BaseEdgeTo == null)
+            if (!HasLiveBaseEdgeTo(item))
             {
-                item.ParentItem.RemoveItem(item);
+                RemoveUXItem(item);
                 return false;
             }
 
@@ -6029,8 +6121,16 @@ namespace m0.UIWpf.UX
             IVertex sv = Vertex.GetAll(false, @"SelectedEdges:\{$Is:Edge}");
 
             foreach (IEdge e in sv)
-                if (GetItemsDictionaryByVertex().ContainsKey(e.To.Get(false, "To:")))
-                    GetItemsDictionaryByVertex()[e.To.Get(false, "To:")].Select();
+            {
+                IVertex selectedEdgeTo =
+                    e.To == null
+                        ? null
+                        : e.To.Get(false, "To:");
+
+                if (selectedEdgeTo != null &&
+                    GetItemsDictionaryByVertex().ContainsKey(selectedEdgeTo))
+                    GetItemsDictionaryByVertex()[selectedEdgeTo].Select();
+            }
         }
 
         public bool IsDisposed = false;
@@ -7082,6 +7182,8 @@ namespace m0.UIWpf.UX
             if (item == this)
                 return;
 
+            RemoveInvalidDecorators(item);
+
             List<IEdge> edges = GetEdgesForDiagramLineDecorators(item).ToList();
 
             RemoveDiagramLineDecoratorsWithoutMatchingEdges(
@@ -7255,6 +7357,9 @@ namespace m0.UIWpf.UX
 
         protected List<IUXItem> GetItemsByBaseEdgeTo_ForLines(IEdge toEdge)
         {
+            if (toEdge == null || toEdge.To == null)
+                return new List<IUXItem>();
+
             Dictionary<IVertex, List<IUXItem>> itemsByBaseEdgeTo =
                 GetItemsDictionaryByBaseEdgeTo();
 
@@ -7271,9 +7376,14 @@ namespace m0.UIWpf.UX
         protected List<IUXItem> GetItemsByBaseEdgeTo_ForLines_EdgeTargetInEdgePointingToTargetItemBaseEdgeTo(IEdge toEdge)
         // in order Associations to work 
         {
+            if (toEdge == null || toEdge.To == null)
+                return new List<IUXItem>();
+
             IVertex toEdgeToEdgeTarget = GraphUtil.GetQueryOutFirst(toEdge.To, "$EdgeTarget", null);
 
-            if (toEdgeToEdgeTarget != null && GraphUtil.ExistQueryOut(toEdge.Meta, "$VertexTarget", null)) // toEdgeToEdgeTarget is instance of GraphUtil.GetQueryOut(toEdge.Meta, "$VertexTarget", null)  ??
+            if (toEdgeToEdgeTarget != null &&
+                toEdge.Meta != null &&
+                GraphUtil.ExistQueryOut(toEdge.Meta, "$VertexTarget", null)) // toEdgeToEdgeTarget is instance of GraphUtil.GetQueryOut(toEdge.Meta, "$VertexTarget", null)  ??
             {
                 Dictionary<IVertex, List<IUXItem>> itemsByBaseEdgeTo =
                     GetItemsDictionaryByBaseEdgeTo();

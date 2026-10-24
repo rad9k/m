@@ -24,8 +24,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				attribute "Surname" @String
 				attribute "Email" @String
 				attribute "PasswordHash" @String
-				aggregation "Address" @OnlineRetail\Model\Address
-				aggregation "PaymentMethod" @OnlineRetail\Model\PaymentMethod
+				aggregation "Address" @OnlineRetail\Model\Address "0":"-1"
+				aggregation "PaymentMethod" @OnlineRetail\Model\PaymentMethod "0":"-1"
 				association "Token" @OnlineRetail\Model\Token "0":"-1"
 			class "PaymentMethod"
 				attribute "BusinessID" @String
@@ -45,6 +45,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				attribute "ExpiryMonth" @Integer
 				attribute "ExpiryYear" @Integer
 				attribute "Brand" @OnlineRetail\Model\CardBrand
+				attribute "ProviderToken" @String
+				attribute "ProviderCustomerId" @String
 			class "PayPal"
 				inherits @OnlineRetail\Model\PaymentMethod
 				attribute "Email" @String
@@ -997,7 +999,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 					<@Position :: "">
 						<@$Is :: @UX\Position>
-						<@X :: "2507.543333333333">
+						<@X :: "2479.543333333333">
 						<@Y :: "327.18000000000006">
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
 					<@ShowMeta :: "False">
@@ -1025,6 +1027,10 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@EndAnchor :: @UX\LineEndEnum\Triangle>
 						<@HideLabel :: "True">
 						<@ToItem :: @OnlineRetail\Model\'Data model'\Item:<<"4">>>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "167.2900000000002">
+						<@Height :: "148.81999999999988">
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
