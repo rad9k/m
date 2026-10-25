@@ -429,9 +429,10 @@ namespace m0.ZeroTypes.UX
         {
             needRebuildDiagramLinesDictionary = true;
 
+            IUXItem previousToItem = line.ToItem;
             DiagramFromLines.Remove(line);
-            if (line.ToItem != null)
-                line.ToItem.DiagramToLines.Remove(line);
+            if (previousToItem != null)
+                previousToItem.DiagramToLines.Remove(line);
 
             if (line.OwningVisualiser != null)
                 line.RemoveFromCanvas();
@@ -439,6 +440,12 @@ namespace m0.ZeroTypes.UX
             IEdge decoratorEdge = line.Edge;
             line.Dispose();
             Vertex.DeleteEdge(decoratorEdge);
+
+            if (previousToItem != null &&
+                !object.ReferenceEquals(this, previousToItem))
+            {
+                UpdateIncidentDiagramLinePorts(previousToItem);
+            }
         }
 
         public virtual void Select()
@@ -994,17 +1001,13 @@ namespace m0.ZeroTypes.UX
 
         protected void UpdateDiagramLines(IUXItem toItem)
         {
-            if (toItem.OwningVisualiser == null)
+            if (toItem == null ||
+                toItem.OwningVisualiser == null)
                 return;
 
-            UXItem concreteToItem = toItem as UXItem;
-            if (!object.ReferenceEquals(this, toItem) &&
-                concreteToItem != null &&
-                CompareDiagramRoutingItemOrder(
-                    this,
-                    concreteToItem) > 0)
+            if (!object.ReferenceEquals(this, toItem))
             {
-                concreteToItem.UpdateDiagramLines(this);
+                UpdateIncidentDiagramLinePorts(toItem);
                 return;
             }
 
@@ -1100,35 +1103,303 @@ namespace m0.ZeroTypes.UX
             }
         }
 
-        static int CompareDiagramRoutingItemOrder(
-            IUXItem first,
-            IUXItem second)
+        enum DiagramLinePortSide
         {
-            string firstKey =
-                first == null || first.Vertex == null
-                    ? string.Empty
-                    : GraphUtil.GetVertexIdString(
-                        first.Vertex);
-            string secondKey =
-                second == null || second.Vertex == null
-                    ? string.Empty
-                    : GraphUtil.GetVertexIdString(
-                        second.Vertex);
-            int keyComparison =
-                string.CompareOrdinal(
-                    firstKey,
-                    secondKey);
-
-            if (keyComparison != 0)
-                return keyComparison;
-
-            return System.Runtime.CompilerServices.RuntimeHelpers
-                .GetHashCode(first)
-                .CompareTo(
-                    System.Runtime.CompilerServices.RuntimeHelpers
-                        .GetHashCode(second));
+            Left,
+            Right,
+            Top,
+            Bottom
         }
 
+        void UpdateIncidentDiagramLinePorts(IUXItem relatedItem)
+        {
+            HashSet<ILineDecoratorBase> lines =
+                new HashSet<ILineDecoratorBase>();
+
+            AddNonSelfIncidentDiagramLines(this, lines);
+            AddNonSelfIncidentDiagramLines(relatedItem, lines);
+
+            foreach (ILineDecoratorBase line in lines)
+            {
+                IUXItem fromItem = line.FromDiagramItem;
+                IUXItem toItem = line.ToItem;
+
+                if (fromItem == null ||
+                    toItem == null ||
+                    object.ReferenceEquals(fromItem, toItem))
+                {
+                    continue;
+                }
+
+                Point start = GetAllocatedDiagramLinePort(
+                    fromItem,
+                    toItem,
+                    line);
+                Point end = GetAllocatedDiagramLinePort(
+                    toItem,
+                    fromItem,
+                    line);
+
+                line.SetPosition(
+                    start.X,
+                    start.Y,
+                    end.X,
+                    end.Y,
+                    false,
+                    0,
+                    0);
+            }
+        }
+
+        internal static int GetDiagramLinePortGroupCount(
+            IUXItem endpointItem,
+            ILineDecoratorBase line)
+        {
+            if (endpointItem == null ||
+                line == null ||
+                line.FromDiagramItem == null ||
+                line.ToItem == null)
+            {
+                return 0;
+            }
+
+            if (object.ReferenceEquals(
+                    line.FromDiagramItem,
+                    line.ToItem))
+            {
+                UXItem concreteEndpointItem =
+                    endpointItem as UXItem;
+                if (concreteEndpointItem == null)
+                    return 0;
+
+                return concreteEndpointItem.DiagramFromLines.Count(
+                    candidate => candidate != null &&
+                        object.ReferenceEquals(
+                            candidate.FromDiagramItem,
+                            endpointItem) &&
+                        object.ReferenceEquals(
+                            candidate.ToItem,
+                            endpointItem));
+            }
+
+            IUXItem peerItem = object.ReferenceEquals(
+                line.FromDiagramItem,
+                endpointItem)
+                ? line.ToItem
+                : line.FromDiagramItem;
+
+            if (peerItem == null)
+                return 0;
+
+            DiagramLinePortSide side = GetDiagramLinePortSide(
+                endpointItem,
+                peerItem);
+
+            return GetDiagramLinePortGroup(
+                endpointItem,
+                side).Count;
+        }
+
+        static void AddNonSelfIncidentDiagramLines(
+            IUXItem item,
+            ISet<ILineDecoratorBase> lines)
+        {
+            UXItem concreteItem = item as UXItem;
+            if (concreteItem == null ||
+                lines == null)
+            {
+                return;
+            }
+
+            foreach (ILineDecoratorBase line in
+                concreteItem.DiagramFromLines)
+            {
+                AddNonSelfDiagramLine(line, lines);
+            }
+
+            foreach (ILineDecoratorBase line in
+                concreteItem.DiagramToLines)
+            {
+                AddNonSelfDiagramLine(line, lines);
+            }
+        }
+
+        static void AddNonSelfDiagramLine(
+            ILineDecoratorBase line,
+            ISet<ILineDecoratorBase> lines)
+        {
+            if (line == null ||
+                line.FromDiagramItem == null ||
+                line.ToItem == null ||
+                object.ReferenceEquals(
+                    line.FromDiagramItem,
+                    line.ToItem))
+            {
+                return;
+            }
+
+            lines.Add(line);
+        }
+
+        static Point GetAllocatedDiagramLinePort(
+            IUXItem endpointItem,
+            IUXItem peerItem,
+            ILineDecoratorBase line)
+        {
+            DiagramLinePortSide side = GetDiagramLinePortSide(
+                endpointItem,
+                peerItem);
+            List<ILineDecoratorBase> portGroup =
+                GetDiagramLinePortGroup(endpointItem, side);
+            int lineIndex = portGroup.IndexOf(line);
+
+            if (lineIndex < 0)
+            {
+                lineIndex = 0;
+                portGroup = new List<ILineDecoratorBase>
+                {
+                    line
+                };
+            }
+
+            return endpointItem.GetLineAnchorLocation(
+                peerItem,
+                false,
+                new Point(),
+                portGroup.Count,
+                lineIndex,
+                false);
+        }
+
+        static List<ILineDecoratorBase> GetDiagramLinePortGroup(
+            IUXItem endpointItem,
+            DiagramLinePortSide requiredSide)
+        {
+            HashSet<ILineDecoratorBase> allLines =
+                new HashSet<ILineDecoratorBase>();
+            AddNonSelfIncidentDiagramLines(endpointItem, allLines);
+
+            List<ILineDecoratorBase> result =
+                new List<ILineDecoratorBase>();
+
+            foreach (ILineDecoratorBase line in allLines)
+            {
+                IUXItem peerItem = object.ReferenceEquals(
+                    line.FromDiagramItem,
+                    endpointItem)
+                    ? line.ToItem
+                    : line.FromDiagramItem;
+
+                if (peerItem == null ||
+                    GetDiagramLinePortSide(
+                        endpointItem,
+                        peerItem) != requiredSide)
+                {
+                    continue;
+                }
+
+                result.Add(line);
+            }
+
+            result.Sort(
+                (first, second) => CompareDiagramLinePortOrder(
+                    endpointItem,
+                    first,
+                    second));
+            return result;
+        }
+
+        static int CompareDiagramLinePortOrder(
+            IUXItem endpointItem,
+            ILineDecoratorBase first,
+            ILineDecoratorBase second)
+        {
+            string firstRemoteVertexId =
+                GetDiagramLineRemoteVertexId(
+                    endpointItem,
+                    first);
+            string secondRemoteVertexId =
+                GetDiagramLineRemoteVertexId(
+                    endpointItem,
+                    second);
+            int comparison = string.CompareOrdinal(
+                firstRemoteVertexId,
+                secondRemoteVertexId);
+
+            if (comparison != 0)
+                return comparison;
+
+            return string.CompareOrdinal(
+                GetDiagramLineVertexId(first),
+                GetDiagramLineVertexId(second));
+        }
+
+        static string GetDiagramLineRemoteVertexId(
+            IUXItem endpointItem,
+            ILineDecoratorBase line)
+        {
+            if (line == null)
+                return string.Empty;
+
+            IUXItem remoteItem = object.ReferenceEquals(
+                line.FromDiagramItem,
+                endpointItem)
+                ? line.ToItem
+                : line.FromDiagramItem;
+
+            return remoteItem == null || remoteItem.Vertex == null
+                ? string.Empty
+                : GraphUtil.GetVertexIdString(remoteItem.Vertex);
+        }
+
+        static string GetDiagramLineVertexId(
+            ILineDecoratorBase line)
+        {
+            return line == null || line.Vertex == null
+                ? string.Empty
+                : GraphUtil.GetVertexIdString(line.Vertex);
+        }
+
+        static DiagramLinePortSide GetDiagramLinePortSide(
+            IUXItem endpointItem,
+            IUXItem peerItem)
+        {
+            Point anchor = endpointItem.GetLineAnchorLocation(
+                peerItem,
+                false,
+                new Point(),
+                1,
+                0,
+                false);
+
+            Rect bounds;
+            if (endpointItem.OwningVisualiser == null ||
+                endpointItem.OwningVisualiser.Canvas == null ||
+                !DiagramLineRouter.TryGetVisibleBounds(
+                    endpointItem,
+                    endpointItem.OwningVisualiser.Canvas,
+                    out bounds))
+            {
+                return DiagramLinePortSide.Top;
+            }
+
+            double leftDistance = Math.Abs(anchor.X - bounds.Left);
+            double rightDistance = Math.Abs(anchor.X - bounds.Right);
+            double topDistance = Math.Abs(anchor.Y - bounds.Top);
+            double bottomDistance = Math.Abs(anchor.Y - bounds.Bottom);
+            double minimumDistance = Math.Min(
+                Math.Min(leftDistance, rightDistance),
+                Math.Min(topDistance, bottomDistance));
+
+            if (topDistance == minimumDistance)
+                return DiagramLinePortSide.Top;
+            if (bottomDistance == minimumDistance)
+                return DiagramLinePortSide.Bottom;
+            if (leftDistance == minimumDistance)
+                return DiagramLinePortSide.Left;
+
+            return DiagramLinePortSide.Right;
+        }
         Point GetTimedLineAnchorLocation(
             IUXItem fromItem,
             IUXItem toItem,

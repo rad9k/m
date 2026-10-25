@@ -510,10 +510,14 @@ namespace m0.ZeroTypes.UX
             currentSelfRelationY = selfRelationY;
 
             DiagramLineRoute previousRoute = CurrentRoute;
-            int relatedDiagramLineCount =
-                GetRelatedDiagramLineCount();
-            bool preserveRequestedEndpoints =
-                relatedDiagramLineCount > 1;
+            bool preserveRequestedStartEndpoint =
+                UXItem.GetDiagramLinePortGroupCount(
+                    FromDiagramItem,
+                    this) > 1;
+            bool preserveRequestedEndEndpoint =
+                UXItem.GetDiagramLinePortGroupCount(
+                    ToItem,
+                    this) > 1;
 
             CurrentRoute = DiagramLineRouter.CreateRoute(
                 FromDiagramItem,
@@ -527,7 +531,8 @@ namespace m0.ZeroTypes.UX
                 LineWidth,
                 GetEndingRequiredLength(StartAnchor),
                 GetEndingRequiredLength(EndAnchor),
-                preserveRequestedEndpoints,
+                preserveRequestedStartEndpoint,
+                preserveRequestedEndEndpoint,
                 previousRoute);
 
             if (CurrentRoute != null)
@@ -542,54 +547,6 @@ namespace m0.ZeroTypes.UX
             UpdateRenderedRoute();
             UpdateLabelPosition();
             UpdateCardinalityLabelPosition();
-        }
-
-        int GetRelatedDiagramLineCount()
-        {
-            if (FromDiagramItem == null ||
-                ToItem == null)
-            {
-                return 0;
-            }
-
-            int forwardLineCount = 0;
-            List<ILineDecoratorBase> relatedLines;
-
-            if (FromDiagramItem
-                .GetDiagramLinesToDiagramItemDictionary()
-                .TryGetValue(ToItem, out relatedLines))
-            {
-                forwardLineCount = relatedLines.Count;
-            }
-
-            int reverseLineCount = 0;
-            if (ToItem
-                .GetDiagramLinesToDiagramItemDictionary()
-                .TryGetValue(FromDiagramItem, out relatedLines))
-            {
-                reverseLineCount = relatedLines.Count;
-            }
-
-            int directlyObservedReverseLineCount =
-                FromDiagramItem.DiagramToLines.Count(
-                    line => line != null &&
-                        object.ReferenceEquals(
-                            line.FromDiagramItem,
-                            ToItem));
-
-            if (object.ReferenceEquals(
-                    FromDiagramItem,
-                    ToItem))
-            {
-                return Math.Max(
-                    forwardLineCount,
-                    directlyObservedReverseLineCount);
-            }
-
-            return Math.Max(
-                forwardLineCount + reverseLineCount,
-                forwardLineCount +
-                    directlyObservedReverseLineCount);
         }
 
         protected virtual void UpdateRenderedRoute()

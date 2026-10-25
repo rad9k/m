@@ -2398,7 +2398,10 @@ namespace m0.UIWpf.Visualisers
         {
             TabInfo t = getActiveTabInfo();
 
-            foreach(KeyValuePair<IVertex,ControlInfo> kvp in t.ControlInfos)
+            if (t == null)
+                return null;
+
+            foreach (KeyValuePair<IVertex,ControlInfo> kvp in t.ControlInfos)
                 if (VisualTreeHelper.HitTest(kvp.Value.MetaControl, TranslatePoint(p, kvp.Value.MetaControl)) != null)
                 {
                     IVertex v = MinusZero.Instance.CreateTempVertex();

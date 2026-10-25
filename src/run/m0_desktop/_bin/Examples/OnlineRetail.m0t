@@ -1211,6 +1211,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				aggregation "User" @OnlineRetail\OnlineRetailModel\User "0":"-1"
 		<@Component :: "BackendService">
 			<@$Is :: @Structure\Component>
+			<@ReadWrite :: @Start:\Examples\'OnlineRetailDB.m0j'\$Store:\OnlineRetailDB>
 			package "test"
 				import @System\Lib\Std direct meta
 
@@ -1222,9 +1223,12 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				Data = $#Package:#Component:\Database:
 
 				x = new Model\:User[]
-			package "Service"
+			<@OnlineRetail\BackendService\Service\Package :: "Service">
+				<@Structure\Database :: "Package">
 				import @System\Lib\Std direct meta
 				import @System\Lib\Cryptography direct meta
+				import @System\Meta\Store\FileSystem\Drive\PathSeparator\$Empty direct meta
+				import @Start:\Examples\'OnlineRetailDB.m0j'\$Store:\OnlineRetailDB direct meta
 
 				variable "Model" @Vertex
 				variable "Data" @Vertex
@@ -1232,7 +1236,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 
 				function "Init" ()
 					Model = $#Package:#Component:\Model:
-					Data = @@Start:\Examples\'OnlineRetailDB.m0j'\$Store:\OnlineRetailDB
+					Data = @@Start:\Examples\'OnlineRetailDB.m0j'\$Store:\OnlineRetailDB\Shop
 
 				function "CreateUser" @String(@String "Name", @String "Surname", @String "Email", @String "Password")
 					variable "user" @Vertex
@@ -1247,7 +1251,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					user\Surname = Surname
 					user\Email = Email
 					user\PasswordHash = @@System\Lib\Cryptography\HashPassword[Password]
-					Data <<copy<< user
+					@@Start:\Examples\'OnlineRetailDB.m0j'\$Store:\OnlineRetailDB\Shop <<copy<< user
 					return "OK"
 
 				function "Login" @String(@String "Email", @String "Password")
@@ -1270,7 +1274,6 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					return "ERROR"
 
 				x = @@OnlineRetail\BackendService\Service\CreateUser["n", "s", "ee", "pwd"]
-			<@ReadWrite :: @Start:\Examples\'OnlineRetailDB.m0j'\$Store:\OnlineRetailDB>
 		<@UX\UXContainer :: "OnlineRetail">
 			<@$Is :: @UX\UXContainer>
 			<@IsExpanded :: "True">

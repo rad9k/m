@@ -629,9 +629,14 @@ namespace m0.ZeroTypes.UX
             double lineWidth,
             double startMarkerExtent,
             double endMarkerExtent,
-            bool preserveRequestedEndpoints,
+            bool preserveRequestedStartEndpoint,
+            bool preserveRequestedEndEndpoint,
             DiagramLineRoute previousRoute)
         {
+            bool preserveRequestedEndpoints =
+                preserveRequestedStartEndpoint ||
+                preserveRequestedEndEndpoint;
+
             if (sourceItem == null ||
                 targetItem == null ||
                 owningVisualiser == null ||
@@ -761,11 +766,15 @@ namespace m0.ZeroTypes.UX
                 "T",
                 UsesRectangularLinePorts(targetItem));
 
-            if (preserveRequestedEndpoints)
+            if (preserveRequestedStartEndpoint)
             {
                 sourcePorts = sourcePorts
                     .Where(port => port.Id == "SD")
                     .ToList();
+            }
+
+            if (preserveRequestedEndEndpoint)
+            {
                 targetPorts = targetPorts
                     .Where(port => port.Id == "TD")
                     .ToList();
