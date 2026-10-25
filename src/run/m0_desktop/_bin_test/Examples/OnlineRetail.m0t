@@ -1221,7 +1221,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					return "ERROR"
 
 				x = @@OnlineRetail\BackendService\Service\Login["ee", "pwd"]
-			<@ReadWrite :: @'net10.0-windows7.0'\Examples\'OnlineRetailDB.m0j'\$Store:\OnlineRetailDB>
+			<@ReadWrite :: @$Empty>
+			<@ReadWrite :: @Start:\Examples\'OnlineRetailDB.m0j'\$Store:\OnlineRetailDB>
 		<@UX\UXContainer :: "OnlineRetail">
 			<@$Is :: @UX\UXContainer>
 			<@IsExpanded :: "True">
@@ -1289,7 +1290,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@BaseEdge :: "">
 						<@From :: @OnlineRetail\BackendService>
 						<@Meta :: @Structure\StaticComponent\ReadWrite>
-						<@To :: @'net10.0-windows7.0'\Examples\'OnlineRetailDB.m0j'\$Store:\OnlineRetailDB>
+						<@To :: @Start:\Examples\'OnlineRetailDB.m0j'\$Store:\OnlineRetailDB>
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - FromToFilledTriangle'>
 					<@StartAnchor :: @UX\LineEndEnum\FilledTriangle>
 					<@EndAnchor :: @UX\LineEndEnum\FilledTriangle>
@@ -1302,8 +1303,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 				<@Position :: "">
 					<@$Is :: @UX\Position>
-					<@X :: "580.4000000000001">
-					<@Y :: "388.03999999999996">
+					<@X :: "565.2">
+					<@Y :: "372.84000000000003">
 				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Database>
 				<@BackgroundColor :: "VeryVeryVeryLightCyan">
 					<@$Is :: @UX\Color>
@@ -1313,14 +1314,14 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@Opacity :: "255">
 				<@BaseEdge :: "">
 					<@$Is :: @Edge>
-					<@From :: @'net10.0-windows7.0'\Examples\'OnlineRetailDB.m0j'\$Store:>
+					<@From :: @Start:\Examples\'OnlineRetailDB.m0j'\$Store:>
 					<@Meta :: @Structure\Database>
-					<@To :: @'net10.0-windows7.0'\Examples\'OnlineRetailDB.m0j'\$Store:\OnlineRetailDB>
+					<@To :: @Start:\Examples\'OnlineRetailDB.m0j'\$Store:\OnlineRetailDB>
 				<@Decorator :: "">
 					<@$Is :: @UX\LineDecorator>
 					<@Scale :: "100">
 					<@BaseEdge :: "">
-						<@From :: @'net10.0-windows7.0'\Examples\'OnlineRetailDB.m0j'\$Store:\OnlineRetailDB>
+						<@From :: @Start:\Examples\'OnlineRetailDB.m0j'\$Store:\OnlineRetailDB>
 						<@Meta :: @Structure\Data\Model>
 						<@To :: @OnlineRetail\OnlineRetailModel>
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToArrow'>
