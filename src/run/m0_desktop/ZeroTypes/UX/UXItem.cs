@@ -1304,6 +1304,7 @@ namespace m0.ZeroTypes.UX
             result.Sort(
                 (first, second) => CompareDiagramLinePortOrder(
                     endpointItem,
+                    requiredSide,
                     first,
                     second));
             return result;
@@ -1311,9 +1312,24 @@ namespace m0.ZeroTypes.UX
 
         static int CompareDiagramLinePortOrder(
             IUXItem endpointItem,
+            DiagramLinePortSide side,
             ILineDecoratorBase first,
             ILineDecoratorBase second)
         {
+            double firstProjection = GetDiagramLinePeerProjection(
+                endpointItem,
+                side,
+                first);
+            double secondProjection = GetDiagramLinePeerProjection(
+                endpointItem,
+                side,
+                second);
+            int projectionComparison = firstProjection.CompareTo(
+                secondProjection);
+
+            if (projectionComparison != 0)
+                return projectionComparison;
+
             string firstRemoteVertexId =
                 GetDiagramLineRemoteVertexId(
                     endpointItem,
@@ -1334,22 +1350,62 @@ namespace m0.ZeroTypes.UX
                 GetDiagramLineVertexId(second));
         }
 
+        static double GetDiagramLinePeerProjection(
+            IUXItem endpointItem,
+            DiagramLinePortSide side,
+            ILineDecoratorBase line)
+        {
+            IUXItem peerItem = GetDiagramLinePeerItem(
+                endpointItem,
+                line);
+            Rect peerBounds;
+
+            if (endpointItem == null ||
+                endpointItem.OwningVisualiser == null ||
+                endpointItem.OwningVisualiser.Canvas == null ||
+                peerItem == null ||
+                !DiagramLineRouter.TryGetVisibleBounds(
+                    peerItem,
+                    endpointItem.OwningVisualiser.Canvas,
+                    out peerBounds))
+            {
+                return 0;
+            }
+
+            if (side == DiagramLinePortSide.Top ||
+                side == DiagramLinePortSide.Bottom)
+            {
+                return peerBounds.Left + peerBounds.Width / 2;
+            }
+
+            return peerBounds.Top + peerBounds.Height / 2;
+        }
+
         static string GetDiagramLineRemoteVertexId(
             IUXItem endpointItem,
             ILineDecoratorBase line)
         {
-            if (line == null)
-                return string.Empty;
-
-            IUXItem remoteItem = object.ReferenceEquals(
-                line.FromDiagramItem,
-                endpointItem)
-                ? line.ToItem
-                : line.FromDiagramItem;
+            IUXItem remoteItem = GetDiagramLinePeerItem(
+                endpointItem,
+                line);
 
             return remoteItem == null || remoteItem.Vertex == null
                 ? string.Empty
                 : GraphUtil.GetVertexIdString(remoteItem.Vertex);
+        }
+
+        static IUXItem GetDiagramLinePeerItem(
+            IUXItem endpointItem,
+            ILineDecoratorBase line)
+        {
+            if (line == null)
+                return null;
+
+            return object.ReferenceEquals(
+                line.FromDiagramItem,
+                endpointItem)
+                ? line.ToItem
+                : line.FromDiagramItem;
         }
 
         static string GetDiagramLineVertexId(
