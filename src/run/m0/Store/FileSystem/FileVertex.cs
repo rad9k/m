@@ -11,6 +11,7 @@ using m0.Store.Binary;
 using m0.ZeroTypes;
 using m0.Util;
 using m0.Graph.ExecutionFlow;
+using System.Runtime.CompilerServices;
 
 namespace m0.Store.FileSystem
 {
@@ -24,6 +25,113 @@ namespace m0.Store.FileSystem
         public JsonSerializationStore JsonStore;
         public TextStore TextStore;
         public BinaryStore BinaryStore;
+
+        bool IsStoreBackedFile()
+        {
+            string extension = FI?.Extension?.ToLower();
+
+            return extension == ".m0j" ||
+                extension == ".m0t" ||
+                extension == ".m0x";
+        }
+
+        string DescribeStoreDiagnosticVertex(IVertex vertex)
+        {
+            if (vertex == null)
+                return "<null>";
+
+            IStore store = vertex.Store;
+
+            return
+                "storeId='" + (store?.Identifier ?? "<null>") +
+                "', vertexId='" + vertex.Identifier +
+                "', value='" + (vertex.Value ?? "<null>") +
+                "', objectId='" +
+                RuntimeHelpers.GetHashCode(vertex) +
+                "'";
+        }
+
+        void LogCurrentStoreEdges(string phase)
+        {
+            if (!IsStoreBackedFile())
+                return;
+
+            int count = 0;
+
+            foreach (IEdge edge in OutEdgesRaw)
+            {
+                if (edge.Meta == null ||
+                    !GeneralUtil.CompareStrings(
+                        edge.Meta.Value,
+                        "$Store"))
+                    continue;
+
+                count++;
+
+                MinusZero.Instance.Log(
+                    0,
+                    "StoreEdgeTrace",
+                    phase +
+                    " file='" + Identifier +
+                    "' edgeIndex='" + count +
+                    "' from={" +
+                    DescribeStoreDiagnosticVertex(edge.From) +
+                    "} meta={" +
+                    DescribeStoreDiagnosticVertex(edge.Meta) +
+                    "} to={" +
+                    DescribeStoreDiagnosticVertex(edge.To) +
+                    "}");
+            }
+
+            MinusZero.Instance.Log(
+                0,
+                "StoreEdgeTrace",
+                phase +
+                " file='" + Identifier +
+                "' storeEdgeCount='" + count + "'");
+        }
+
+        void AddStoreEdgeIfMissing(
+            string storeTypeName,
+            IVertex storeRoot)
+        {
+            foreach (IEdge edge in OutEdgesRaw)
+            {
+                if (edge.Meta == FileSystemStore.Store &&
+                    ReferenceEquals(edge.To, storeRoot))
+                {
+                    MinusZero.Instance.Log(
+                        0,
+                        "StoreEdgeTrace",
+                        "FileVertex.Refresh skipped duplicate " +
+                        storeTypeName +
+                        " store edge " +
+                        "file='" + Identifier +
+                        "' meta={" +
+                        DescribeStoreDiagnosticVertex(
+                            FileSystemStore.Store) +
+                        "} to={" +
+                        DescribeStoreDiagnosticVertex(storeRoot) +
+                        "}");
+                    return;
+                }
+            }
+
+            MinusZero.Instance.Log(
+                0,
+                "StoreEdgeTrace",
+                "FileVertex.Refresh adding " +
+                storeTypeName +
+                " store edge " +
+                "file='" + Identifier +
+                "' meta={" +
+                DescribeStoreDiagnosticVertex(FileSystemStore.Store) +
+                "} to={" +
+                DescribeStoreDiagnosticVertex(storeRoot) +
+                "}");
+
+            AddEdge(FileSystemStore.Store, storeRoot);
+        }
 
         public override object Value
         {
@@ -101,6 +209,8 @@ namespace m0.Store.FileSystem
 
         public override void Refresh()
         {
+            LogCurrentStoreEdges("FileVertex.Refresh BEFORE");
+
             OutEdgesDictionariesNeedsRebuild = true;
             GraphUtil.RemoveAllEdges(FileSystemVertex);
 
@@ -140,6 +250,7 @@ namespace m0.Store.FileSystem
             string extension_lower = FI.Extension.ToLower();
 
             DeleteStoreEdges();
+            LogCurrentStoreEdges("FileVertex.Refresh AFTER DeleteStoreEdges");
 
             if (extension_lower == ".m0j")
             {
@@ -150,7 +261,7 @@ namespace m0.Store.FileSystem
                             .AssemblyQualifiedName,
                         Identifier.ToString());
 
-                AddEdge(FileSystemStore.Store, JsonStore.Root);
+                AddStoreEdgeIfMissing("JSON", JsonStore.Root);
             }
 
             if (extension_lower == ".m0t")
@@ -161,7 +272,7 @@ namespace m0.Store.FileSystem
                         typeof(TextStore).AssemblyQualifiedName,
                         Identifier.ToString());
 
-                AddEdge(FileSystemStore.Store, TextStore.Root);
+                AddStoreEdgeIfMissing("text", TextStore.Root);
             }
 
             if (extension_lower == ".m0x")
@@ -172,7 +283,7 @@ namespace m0.Store.FileSystem
                         typeof(BinaryStore).AssemblyQualifiedName,
                         Identifier.ToString());
 
-                AddEdge(FileSystemStore.Store, BinaryStore.Root);
+                AddStoreEdgeIfMissing("binary", BinaryStore.Root);
             }
 
             if (TextFileExensions.Contains(extension_lower))

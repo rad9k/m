@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 using m0.Foundation;
 using m0.Graph;
 using m0.Graph.ExecutionFlow;
@@ -206,6 +207,60 @@ namespace m0.Store.Json
 
         private const int FileStreamBufferSize = 64 * 1024;
 
+        private string DescribeStoreDiagnosticVertex(IVertex vertex)
+        {
+            if (vertex == null)
+                return "<null>";
+
+            IStore store = vertex.Store;
+
+            return
+                "storeId='" + (store?.Identifier ?? "<null>") +
+                "', vertexId='" + vertex.Identifier +
+                "', value='" + (vertex.Value ?? "<null>") +
+                "', objectId='" +
+                RuntimeHelpers.GetHashCode(vertex) +
+                "'";
+        }
+
+        private void LogLoadedStoreEdges(string phase)
+        {
+            int count = 0;
+
+            foreach (IVertex vertex in VertexIdentifiersDictionary.Values)
+                foreach (IEdge edge in vertex.OutEdgesRaw)
+                {
+                    if (edge.Meta == null ||
+                        !GeneralUtil.CompareStrings(
+                            edge.Meta.Value,
+                            "$Store"))
+                        continue;
+
+                    count++;
+
+                    MinusZero.Instance.Log(
+                        0,
+                        "StoreEdgeTrace",
+                        phase +
+                        " jsonStore='" + Identifier +
+                        "' edgeIndex='" + count +
+                        "' from={" +
+                        DescribeStoreDiagnosticVertex(edge.From) +
+                        "} meta={" +
+                        DescribeStoreDiagnosticVertex(edge.Meta) +
+                        "} to={" +
+                        DescribeStoreDiagnosticVertex(edge.To) +
+                        "}");
+                }
+
+            MinusZero.Instance.Log(
+                0,
+                "StoreEdgeTrace",
+                phase +
+                " jsonStore='" + Identifier +
+                "' storeEdgeCount='" + count + "'");
+        }
+
         string GetIdentifierToUse()
         {
             return FileSystemUtil.GetPhysicalFileName(
@@ -240,6 +295,8 @@ namespace m0.Store.Json
                         root.IsRoot = true;
 
                         Attach();
+                        LogLoadedStoreEdges(
+                            "JsonSerializationStore.Load AFTER Attach");
                     }
                 }
                 catch (Exception ex)

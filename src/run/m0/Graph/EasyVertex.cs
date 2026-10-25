@@ -2343,6 +2343,50 @@ namespace m0.Graph
                 destVertex);
         }
 
+        private static bool IsStoreDiagnosticEdge(
+            IVertex metaVertex,
+            IVertex destVertex)
+        {
+            return metaVertex != null &&
+                GeneralUtil.CompareStrings(
+                    metaVertex.Value,
+                    "$Store");
+        }
+
+        private static string DescribeStoreDiagnosticVertex(
+            IVertex vertex)
+        {
+            if (vertex == null)
+                return "<null>";
+
+            IStore store = vertex.Store;
+
+            return
+                "storeType='" + (store?.TypeName ?? "<null>") +
+                "', storeId='" + (store?.Identifier ?? "<null>") +
+                "', vertexId='" + vertex.Identifier +
+                "', value='" + (vertex.Value ?? "<null>") +
+                "', objectId='" +
+                RuntimeHelpers.GetHashCode(vertex) +
+                "'";
+        }
+
+        private static void LogStoreDiagnosticEdge(
+            string phase,
+            IVertex from,
+            IVertex meta,
+            IVertex to)
+        {
+            MinusZero.Instance.Log(
+                0,
+                "StoreEdgeTrace",
+                phase +
+                " from={" + DescribeStoreDiagnosticVertex(from) +
+                "} meta={" + DescribeStoreDiagnosticVertex(meta) +
+                "} to={" + DescribeStoreDiagnosticVertex(to) +
+                "} stack=" + Environment.StackTrace);
+        }
+
         public override IEdge AddEdge(IVertex metaVertex, IVertex destVertex)
         {
            /* if (
@@ -2364,6 +2408,13 @@ namespace m0.Graph
 
             ValidateInheritanceEdge(metaVertex, destVertex);
 
+            if (IsStoreDiagnosticEdge(metaVertex, destVertex))
+                LogStoreDiagnosticEdge(
+                    "AddEdge BEFORE",
+                    this,
+                    metaVertex,
+                    destVertex);
+
             if (!IdentifierRegistrationDeferred)
             {
                 EnsureIdentifierRegistered(
@@ -2377,6 +2428,13 @@ namespace m0.Graph
                 destVertex);
 
             OutEdgesRaw.Add(ne);
+
+            if (IsStoreDiagnosticEdge(metaVertex, destVertex))
+                LogStoreDiagnosticEdge(
+                    "AddEdge AFTER",
+                    this,
+                    metaVertex,
+                    destVertex);
 
             AttachEdge(ne);
             destVertex.AttachInEdge(ne);

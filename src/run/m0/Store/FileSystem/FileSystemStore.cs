@@ -606,6 +606,59 @@ namespace m0.Store.FileSystem
             if (!staticVariablesInitialisationMade)
                 IntializeStaticVariables();
 
+            if (FileSystem != null)
+            {
+                IList<IEdge> storeMetaEdges =
+                    GraphUtil.GetQueryOut(
+                        FileSystem,
+                        null,
+                        "$Store");
+
+                MinusZero.Instance.Log(
+                    0,
+                    "StoreEdgeTrace",
+                    "FileSystemStore static $Store candidates " +
+                    "count='" + storeMetaEdges.Count +
+                    "' selected={" +
+                    (Store == null
+                        ? "<null>"
+                        : "storeId='" +
+                          (Store.Store?.Identifier ?? "<null>") +
+                          "', vertexId='" +
+                          Store.Identifier +
+                          "', value='" +
+                          (Store.Value ?? "<null>") +
+                          "'") +
+                    "}");
+
+                int candidateIndex = 0;
+
+                foreach (IEdge storeMetaEdge in storeMetaEdges)
+                {
+                    candidateIndex++;
+
+                    MinusZero.Instance.Log(
+                        0,
+                        "StoreEdgeTrace",
+                        "FileSystemStore $Store candidate " +
+                        "index='" + candidateIndex +
+                        "' fromId='" +
+                        storeMetaEdge.From.Identifier +
+                        "' to={" +
+                        (storeMetaEdge.To == null
+                            ? "<null>"
+                            : "storeId='" +
+                              (storeMetaEdge.To.Store?.Identifier ??
+                               "<null>") +
+                              "', vertexId='" +
+                              storeMetaEdge.To.Identifier +
+                              "', value='" +
+                              (storeMetaEdge.To.Value ?? "<null>") +
+                              "'") +
+                        "}");
+                }
+            }
+
             _Identifier =
                 FileSystemUtil.GetCanonicalFileIdentifier(identifier);
 

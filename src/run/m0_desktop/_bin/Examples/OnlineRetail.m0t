@@ -1227,8 +1227,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			<@OnlineRetail\BackendService\Service\Package :: "Service">
 				<@Structure\Database :: "Package">
 				import @System\Lib\Std direct meta
-				import @System\Lib\Cryptography direct meta				
-				import @Start:\Examples\'OnlineRetail.m0t'\$Store:\Model:OnlineRetailModel direct meta
+				import @System\Lib\Cryptography direct meta
+				import @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\Model:OnlineRetailModel direct meta				
 				import @Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB direct meta
 
 				variable "Model" @Vertex

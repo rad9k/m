@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.Store.FileSystem;
 using m0.Util;
 using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
@@ -357,12 +358,23 @@ namespace m0.ZeroCode
         IVertex importDirectList;
         IVertex importDirectMetaList;
 
+        class PendingImportResolution
+        {
+            public string Link;
+            public string ImportType;
+            public IEdge ImportListEdge;
+        }
+
+        List<PendingImportResolution> pendingImportResolutions;
+
         void prepareImportList()
         {
             importList = MinusZero.Instance.CreateTempVertex();
             importMetaList = MinusZero.Instance.CreateTempVertex();
             importDirectList = MinusZero.Instance.CreateTempVertex();
             importDirectMetaList = MinusZero.Instance.CreateTempVertex();
+            pendingImportResolutions =
+                new List<PendingImportResolution>();
 
             importList.AddExternalReference();
             importMetaList.AddExternalReference();
@@ -370,6 +382,338 @@ namespace m0.ZeroCode
             importDirectMetaList.AddExternalReference();
 
             prepareImportList_FromString();
+        }
+
+        void AddPreparedImport(
+            IVertex targetList,
+            IVertex meta,
+            string link,
+            string importType,
+            IVertex target)
+        {
+            IEdge importListEdge = targetList.AddEdge(
+                meta,
+                target ?? MinusZero.Instance.Empty);
+
+            if (target != null &&
+                target != MinusZero.Instance.Empty)
+                return;
+
+            pendingImportResolutions.Add(
+                new PendingImportResolution
+                {
+                    Link = link,
+                    ImportType = importType,
+                    ImportListEdge = importListEdge
+                });
+        }
+
+        bool TryGetCurrentStoreRelativeImportLink(
+            string link,
+            out string relativeLink)
+        {
+            relativeLink = null;
+
+            const string storeSegment = "$Store:";
+            int storeSegmentPosition = link.IndexOf(
+                storeSegment,
+                StringComparison.Ordinal);
+
+            if (storeSegmentPosition < 0)
+                return false;
+
+            string fileLink = link
+                .Substring(0, storeSegmentPosition)
+                .TrimEnd('\\')
+                .Replace("'", "");
+
+            if (baseVertex?.Store == null)
+                return false;
+
+            string normalizedImportedFileIdentifier =
+                fileLink.Replace('/', '\\');
+            string normalizedCurrentStoreIdentifier =
+                baseVertex.Store.Identifier.Replace(
+                    '/',
+                    '\\');
+            StringComparison fileIdentifierComparison =
+                OperatingSystem.IsWindows()
+                    ? StringComparison.OrdinalIgnoreCase
+                    : StringComparison.Ordinal;
+
+            if (string.Equals(
+                normalizedImportedFileIdentifier,
+                normalizedCurrentStoreIdentifier,
+                fileIdentifierComparison))
+            {
+                relativeLink = link.Substring(
+                    storeSegmentPosition +
+                    storeSegment.Length);
+                return true;
+            }
+
+            string importedFileIdentifier;
+
+            try
+            {
+                importedFileIdentifier =
+                    FileSystemUtil.GetCanonicalFileIdentifier(
+                        fileLink);
+            }
+            catch
+            {
+                return false;
+            }
+
+            if (!GeneralUtil.CompareStrings(
+                importedFileIdentifier,
+                baseVertex.Store.Identifier))
+            {
+                return false;
+            }
+
+            relativeLink = link.Substring(
+                storeSegmentPosition +
+                storeSegment.Length);
+            return true;
+        }
+
+        void ResolvePendingImportsAfterParse()
+        {
+            foreach (PendingImportResolution pendingImport
+                in pendingImportResolutions)
+            {
+                IVertex target;
+
+                if (TryGetCurrentStoreRelativeImportLink(
+                    pendingImport.Link,
+                    out string relativeLink))
+                {
+                    target = null;
+                    string localQuery =
+                        relativeLink.TrimStart('\\');
+                    IEnumerable<IVertex> localVertices =
+                        new[] { parseRoot }.Concat(
+                            GraphUtil
+                                .GetSubGraphWithoutLinksAsList(
+                                    parseRoot));
+
+                    foreach (IVertex localVertex
+                        in localVertices.Distinct())
+                    {
+                        target = localVertex.Get(
+                            false,
+                            localQuery);
+
+                        if (target != null)
+                            break;
+                    }
+
+                    if (target == null)
+                    {
+                        target =
+                            ResolveSimpleRecursiveLocalImport(
+                                localQuery);
+                    }
+                }
+                else
+                {
+                    target = r.Get(
+                        false,
+                        pendingImport.Link);
+                }
+
+                LogStoreImportResolution(
+                    "resolve pending " +
+                    pendingImport.ImportType +
+                    " import",
+                    pendingImport.Link,
+                    target);
+
+                if (target == null ||
+                    target == MinusZero.Instance.Empty)
+                    continue;
+
+                pendingImport.ImportListEdge =
+                    GraphUtil.ReplaceEdge(
+                        pendingImport.ImportListEdge.From,
+                        pendingImport.ImportListEdge,
+                        target);
+
+                ReplacePendingImportMocks(
+                    pendingImport.Link,
+                    target);
+            }
+        }
+
+        void ReplacePendingImportMocks(
+            string link,
+            IVertex target)
+        {
+            IEnumerable<IVertex> localVertices =
+                new[] { parseRoot }.Concat(
+                    GraphUtil.GetSubGraphWithoutLinksAsList(
+                        parseRoot));
+
+            foreach (IVertex localVertex
+                in localVertices.Distinct().ToList())
+            {
+                foreach (IEdge edge
+                    in localVertex.OutEdgesRaw.ToList())
+                {
+                    if (!(edge.To is ToVertexMock mock) ||
+                        !AreEquivalentImportLinks(
+                            mock.mockData?.ToString(),
+                            link))
+                    {
+                        continue;
+                    }
+
+                    IEdge newEdge = localVertex.AddEdge(
+                        edge.Meta,
+                        target);
+                    ReplaceRememberedTextualChildEdge(
+                        localVertex,
+                        edge,
+                        newEdge);
+                    localVertex.DeleteEdge(edge);
+                    RestoreOutgoingEdgesToTextualOrder(
+                        localVertex);
+                }
+            }
+        }
+
+        static bool AreEquivalentImportLinks(
+            string firstLink,
+            string secondLink)
+        {
+            if (string.Equals(
+                firstLink,
+                secondLink,
+                StringComparison.Ordinal))
+            {
+                return true;
+            }
+
+            if (firstLink == null || secondLink == null)
+                return false;
+
+            string normalizedFirstLink = firstLink
+                .Replace('/', '\\')
+                .Replace("'", "")
+                .Trim();
+            string normalizedSecondLink = secondLink
+                .Replace('/', '\\')
+                .Replace("'", "")
+                .Trim();
+
+            return string.Equals(
+                normalizedFirstLink,
+                normalizedSecondLink,
+                OperatingSystem.IsWindows()
+                    ? StringComparison.OrdinalIgnoreCase
+                    : StringComparison.Ordinal);
+        }
+
+        IVertex ResolveSimpleRecursiveLocalImport(
+            string localQuery)
+        {
+            if (string.IsNullOrWhiteSpace(localQuery) ||
+                string.IsNullOrEmpty(dict.MetaSeparator))
+            {
+                return null;
+            }
+
+            int separatorPosition = localQuery.IndexOf(
+                dict.MetaSeparator,
+                StringComparison.Ordinal);
+
+            if (separatorPosition <= 0 ||
+                localQuery.IndexOf(
+                    '\\',
+                    separatorPosition +
+                    dict.MetaSeparator.Length) >= 0)
+            {
+                return null;
+            }
+
+            string meta = DecodeSimpleImportQueryPart(
+                localQuery.Substring(0, separatorPosition));
+            string value = DecodeSimpleImportQueryPart(
+                localQuery.Substring(
+                    separatorPosition +
+                    dict.MetaSeparator.Length));
+            IEnumerable<IVertex> localVertices =
+                new[] { parseRoot }.Concat(
+                    GraphUtil.GetSubGraphWithoutLinksAsList(
+                        parseRoot));
+
+            foreach (IVertex localVertex
+                in localVertices.Distinct())
+            {
+                IVertex target = GraphUtil.GetQueryOutFirst(
+                    localVertex,
+                    meta,
+                    value);
+
+                if (target != null)
+                    return target;
+            }
+
+            return GraphUtil.DeepIterator(
+                parseRoot,
+                edge =>
+                    edge.Meta != null &&
+                    DoesImportMetaMatch(
+                        edge.Meta.Value,
+                        meta) &&
+                    GeneralUtil.CompareStrings(
+                        edge.To.Value,
+                        value),
+                true,
+                false,
+                false).FirstOrDefault();
+        }
+
+        static bool DoesImportMetaMatch(
+            object metaValue,
+            string requestedMeta)
+        {
+            if (GeneralUtil.CompareStrings(
+                metaValue,
+                requestedMeta))
+            {
+                return true;
+            }
+
+            string metaString = metaValue?.ToString();
+
+            return metaString != null &&
+                metaString.EndsWith(
+                    "\\" + requestedMeta,
+                    StringComparison.Ordinal);
+        }
+
+        string DecodeSimpleImportQueryPart(
+            string queryPart)
+        {
+            string trimmedQueryPart = queryPart.Trim();
+
+            if (trimmedQueryPart.Length == 0 ||
+                trimmedQueryPart[0] !=
+                    dict.EscapedSequencePrefix)
+            {
+                return trimmedQueryPart;
+            }
+
+            int position = 0;
+            string decoded =
+                ZeroCodeCommon.tryEscapedLinkStringAndDeescape(
+                    dict,
+                    trimmedQueryPart,
+                    ref position);
+
+            return decoded ?? trimmedQueryPart;
         }
 
         
@@ -392,6 +736,46 @@ namespace m0.ZeroCode
             prepareImportList_FromString_importDirectMeta();
         }
 
+        void LogStoreImportResolution(
+            string phase,
+            string link,
+            IVertex target)
+        {
+            if (string.IsNullOrEmpty(link) ||
+                !link.Contains(
+                    "$Store",
+                    StringComparison.Ordinal))
+                return;
+
+            string targetDescription = "<null>";
+
+            if (target != null)
+            {
+                IStore targetStore = target.Store;
+
+                targetDescription =
+                    "storeType='" +
+                    (targetStore?.TypeName ?? "<null>") +
+                    "', storeId='" +
+                    (targetStore?.Identifier ?? "<null>") +
+                    "', vertexId='" +
+                    target.Identifier +
+                    "', value='" +
+                    (target.Value ?? "<null>") +
+                    "', objectId='" +
+                    RuntimeHelpers.GetHashCode(target) +
+                    "'";
+            }
+
+            MinusZero.Instance.Log(
+                0,
+                "StoreImportTrace",
+                phase +
+                " link='" + link +
+                "' target={" + targetDescription +
+                "} stack=" + Environment.StackTrace);
+        }
+
         void prepareImportList_FromString_import()
         {
             //Regex rgx = new Regex("import[ ]+\"(?<name>.*)\"[ ]+@(?<link>.*[^ ])[ ]*\\r");
@@ -410,10 +794,12 @@ namespace m0.ZeroCode
 
                 IVertex target=r.Get(false, link); // YYY huston..... we assume that this get will not go into infinite reccursion as link variable is simple run time query
 
-                if (target != null)
-                    importList.AddEdge(namev, target);
-                else
-                    importList.AddEdge(namev, MinusZero.Instance.Empty);
+                AddPreparedImport(
+                    importList,
+                    namev,
+                    link,
+                    "named",
+                    target);
             }
         }
 
@@ -437,10 +823,12 @@ namespace m0.ZeroCode
 
                 IVertex target = r.Get(false, link); // YYY huston..... we assume that this get will not go into infinite reccursion as link variable is simple run time query
 
-                if (target != null)
-                    importMetaList.AddEdge(namev, target);
-                else
-                    importMetaList.AddEdge(namev, MinusZero.Instance.Empty);
+                AddPreparedImport(
+                    importMetaList,
+                    namev,
+                    link,
+                    "named meta",
+                    target);
             }
         }
 
@@ -482,10 +870,17 @@ namespace m0.ZeroCode
 
                 IVertex target = r.Get(false, link); // YYY huston..... we assume that this get will not go into infinite reccursion as link variable is simple run time query
 
-                if (target != null)
-                    importDirectList.AddEdge(Direct_meta, target);
-                else
-                    importDirectList.AddEdge(Direct_meta, MinusZero.Instance.Empty);
+                LogStoreImportResolution(
+                    "prepare direct import",
+                    link,
+                    target);
+
+                AddPreparedImport(
+                    importDirectList,
+                    Direct_meta,
+                    link,
+                    "direct",
+                    target);
             }
         }
 
@@ -501,10 +896,17 @@ namespace m0.ZeroCode
 
                 IVertex target = r.Get(false, link); // YYY huston..... we assume that this get will not go into infinite reccursion as link variable is simple run time query
 
-                if (target != null)
-                    importDirectMetaList.AddEdge(DirectMeta_meta, target);
-                else
-                    importDirectMetaList.AddEdge(DirectMeta_meta, MinusZero.Instance.Empty);
+                LogStoreImportResolution(
+                    "prepare direct meta import",
+                    link,
+                    target);
+
+                AddPreparedImport(
+                    importDirectMetaList,
+                    DirectMeta_meta,
+                    link,
+                    "direct meta",
+                    target);
             }
         }
 
@@ -3552,6 +3954,8 @@ namespace m0.ZeroCode
                     CodeViewProcess();
 
                 RestoreOutgoingEdgesToTextualOrder();
+
+                ResolvePendingImportsAfterParse();
 
                 ProcessToVertexMocksToLinks();
 

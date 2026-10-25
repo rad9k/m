@@ -2,13 +2,40 @@
 using m0.Graph;
 using m0.Util;
 using m0.ZeroCode.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace m0.ZeroUML.Instructions
 {
     public class ZeroUMLInstructionHelpers
     {
+        static bool IsStoreDiagnosticEdge(IEdge edge)
+        {
+            return edge != null &&
+                edge.Meta != null &&
+                GeneralUtil.CompareStrings(
+                    edge.Meta.Value,
+                    "$Store");
+        }
+
+        static string DescribeStoreDiagnosticVertex(IVertex vertex)
+        {
+            if (vertex == null)
+                return "<null>";
+
+            IStore store = vertex.Store;
+
+            return
+                "storeId='" + (store?.Identifier ?? "<null>") +
+                "', vertexId='" + vertex.Identifier +
+                "', value='" + (vertex.Value ?? "<null>") +
+                "', objectId='" +
+                RuntimeHelpers.GetHashCode(vertex) +
+                "'";
+        }
+
         public static IVertex AddInstance(IVertex baseVertex, IVertex metaVertex)
         {
             IVertex nv;
@@ -176,6 +203,25 @@ namespace m0.ZeroUML.Instructions
                         targetTo = source2targetDictionary[sourceEdge.To];
                     else
                         targetTo = sourceEdge.To;
+
+                    if (IsStoreDiagnosticEdge(sourceEdge))
+                        MinusZero.Instance.Log(
+                            0,
+                            "StoreImportTrace",
+                            "MoveEdgesIntoVertex copy " +
+                            "sourceFrom={" +
+                            DescribeStoreDiagnosticVertex(sourceVertex) +
+                            "} sourceMeta={" +
+                            DescribeStoreDiagnosticVertex(sourceEdge.Meta) +
+                            "} sourceTo={" +
+                            DescribeStoreDiagnosticVertex(sourceEdge.To) +
+                            "} targetFrom={" +
+                            DescribeStoreDiagnosticVertex(targetFrom) +
+                            "} targetMeta={" +
+                            DescribeStoreDiagnosticVertex(targetMeta) +
+                            "} targetTo={" +
+                            DescribeStoreDiagnosticVertex(targetTo) +
+                            "} stack=" + Environment.StackTrace);
 
                     targetFrom.AddEdge(targetMeta, targetTo);
                 }
