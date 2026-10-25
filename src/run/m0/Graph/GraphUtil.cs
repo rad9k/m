@@ -702,12 +702,72 @@ namespace m0.Graph
                 return ZeroCodeCommon.stringToPossiblyEscapedString(dict, meta.ToString()) + dict.MetaSeparator + ZeroCodeCommon.stringToPossiblyEscapedString(dict, to.ToString());
         }
 
+        public static bool HasForceMetaInLinkMarker(IVertex meta)
+        {
+            return meta != null &&
+                ExistQueryOut(meta, "$ForceMetaInLink", null);
+        }
+
+        public static bool IsMetaOnlyEnoughToIdentifyEdge(IEdge edge)
+        {
+            if (edge?.From == null ||
+                edge.Meta == null)
+                return false;
+
+            IList<IEdge> matchingEdges =
+                GetQueryOut(
+                    edge.From,
+                    edge.Meta.Value,
+                    null);
+
+            return matchingEdges.Count == 1 &&
+                ReferenceEquals(matchingEdges[0], edge);
+        }
+
         public static string GetIdentyfyingQuerySubString_MetaMode(FormalTextLanguageDictinaries dict, IEdge e) // this is used in String2Graph, so we need to reference ZeroCodeCommon.MetaSeparator
         {
+            bool forceMetaInLink =
+                HasForceMetaInLinkMarker(e.Meta);
+            bool useMetaOnly =
+                forceMetaInLink &&
+                IsMetaOnlyEnoughToIdentifyEdge(e);
             bool isToEnough = VertexOperations.IsToVertexEnoughToIdentifyEdge(e.From, e.To);
             bool isMetaAndToEnough = VertexOperations.IsMetaAndToVertexEnoughToIdentifyEdge(e.From, e.Meta, e.To);
 
-            if (isToEnough)
+            if (useMetaOnly)
+            {
+                return ZeroCodeCommon.stringToPossiblyEscapedString(
+                    dict,
+                    e.Meta.ToString()) +
+                    dict.MetaSeparator;
+            }
+            else if (forceMetaInLink)
+            {
+                if (isMetaAndToEnough)
+                    return GetQueryStringPart_MetaMode(dict, e.Meta, e.To);
+
+                int pos = 0;
+                EdgeQueryResult q =
+                    GraphUtil.GetQueryOutResult(
+                        e.From,
+                        e.Meta.Value,
+                        e.To.Value);
+
+                IVertex tv;
+                do
+                {
+                    tv = q[pos].To;
+                    pos++;
+                } while (tv != e.To && pos < q.Count);
+
+                return GetQueryStringPart_MetaMode(dict, e.Meta, e.To) +
+                    dict.SetIndexPrefix +
+                    "\"" +
+                    pos +
+                    "\"" +
+                    dict.SetIndexPostfix;
+            }
+            else if (isToEnough)
             {
                 string result = ZeroCodeCommon.stringToPossiblyEscapedString(dict, e.To.ToString() + ""); // there was no ToString. might cause problems. XXX why this "" as we do not have null To?
 

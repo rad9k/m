@@ -120,9 +120,28 @@ namespace m0.ZeroCode
 
                 if (e.To != null)
                 {
-                    if (isImportMeta)
+                    bool forceMetaInLink =
+                        GraphUtil.HasForceMetaInLinkMarker(e.Meta);
+                    bool useMetaOnly =
+                        forceMetaInLink &&
+                        GraphUtil.IsMetaOnlyEnoughToIdentifyEdge(e);
+                    bool forceMetaAndTo =
+                        forceMetaInLink &&
+                        !useMetaOnly &&
+                        !Graph2TextProcessing.IsNullOrEmpty(e.Meta);
+
+                    if (useMetaOnly)
                     {
-                        if (!VertexOperations.IsToVertexEnoughToIdentifyEdge(e.From, e.To)
+                        Append(dict, toAppend, e.Meta);
+                    }
+                    else if (isImportMeta)
+                    {
+                        if (forceMetaAndTo)
+                        {
+                            Append(dict, toAppend, e.Meta);
+                            toAppend.Append(dict.MetaSeparator);
+                        }
+                        else if (!VertexOperations.IsToVertexEnoughToIdentifyEdge(e.From, e.To)
                             && !Graph2TextProcessing.IsNullOrEmpty(e.Meta))
                         {
                             Append(dict, toAppend, e.Meta);
@@ -143,7 +162,12 @@ namespace m0.ZeroCode
                         }
                         else
                         {
-                            if (!VertexOperations.IsToVertexEnoughToIdentifyEdge(e.From, e.To))
+                            if (forceMetaAndTo)
+                            {
+                                Append(dict, toAppend, e.Meta);
+                                toAppend.Append(dict.MetaSeparator);
+                            }
+                            else if (!VertexOperations.IsToVertexEnoughToIdentifyEdge(e.From, e.To))
                             {
                                 Append(dict, toAppend, e.Meta);
 
@@ -164,7 +188,9 @@ namespace m0.ZeroCode
                     bool isToEnough = VertexOperations.IsToVertexEnoughToIdentifyEdge(e.From, e.To);
                     bool isMetaAndToEnough = VertexOperations.IsMetaAndToVertexEnoughToIdentifyEdge(e.From, e.Meta, e.To);
 
-                    if (isMetaAndToEnough)
+                    if (useMetaOnly)
+                        s.Append(possibleMetaSeparator + toAppend.ToString() + dict.MetaSeparator);
+                    else if (isMetaAndToEnough)
                         s.Append(possibleMetaSeparator + toAppend.ToString());
                     else
                     {
