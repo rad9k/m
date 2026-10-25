@@ -2855,9 +2855,17 @@ namespace m0.UIWpf.UX
             if (baseEdge == null)
                 return false;
 
+            IVertex baseEdgeFrom = baseEdge.From;
             IVertex baseEdgeTo = baseEdge.To;
-            return baseEdgeTo != null &&
-                baseEdgeTo.DisposedState == DisposeStateEnum.Live;
+            return IsLiveBaseEdgeEndpoint(baseEdgeFrom) &&
+                IsLiveBaseEdgeEndpoint(baseEdgeTo);
+        }
+
+        private static bool IsLiveBaseEdgeEndpoint(IVertex endpoint)
+        {
+            return endpoint != null &&
+                !GeneralUtil.CompareStrings(endpoint.Value, "$Empty") &&
+                endpoint.DisposedState == DisposeStateEnum.Live;
         }
 
         private void RemoveInvalidDecorators(IUXItem host)
@@ -2878,6 +2886,26 @@ namespace m0.UIWpf.UX
                     decorator.Dispose();
                 }
             }
+        }
+
+        private static string GetInvalidBaseEdgeEndpointNames(IUXItem item)
+        {
+            if (item == null)
+                return "BaseEdge";
+
+            Edge baseEdge = item.BaseEdge;
+            if (baseEdge == null)
+                return "BaseEdge";
+
+            List<string> invalidEndpointNames = new List<string>();
+
+            if (!IsLiveBaseEdgeEndpoint(baseEdge.From))
+                invalidEndpointNames.Add("From");
+
+            if (!IsLiveBaseEdgeEndpoint(baseEdge.To))
+                invalidEndpointNames.Add("To");
+
+            return string.Join(" and ", invalidEndpointNames);
         }
 
         private void RemoveIncomingDiagramLines(IUXItem item)
@@ -4842,6 +4870,7 @@ namespace m0.UIWpf.UX
                 return false;
             }
 
+            RemoveInvalidDecorators(item);
             return true;
         }
 
@@ -5193,6 +5222,36 @@ namespace m0.UIWpf.UX
             if (selectedEdges.Count() == 0)
                 return;
 
+            IList<IEdge> selectedEdges_copy = GeneralUtil.CreateAndCopyList<IEdge>(selectedEdges);
+            Dictionary<IVertex, IUXItem> itemsByVertex = GetItemsDictionaryByVertex();
+            List<IUXItem> selectedItems = new List<IUXItem>();
+            List<IUXItem> invalidItems = new List<IUXItem>();
+
+            foreach (IEdge selectedEdge in selectedEdges_copy)
+            {
+                IVertex itemVertex = selectedEdge.To.Get(false, "To:");
+
+                if (itemVertex == null ||
+                    !itemsByVertex.TryGetValue(itemVertex, out IUXItem item) ||
+                    item == null)
+                    continue;
+
+                if (!selectedItems.Contains(item))
+                    selectedItems.Add(item);
+
+                if (!HasLiveBaseEdgeTo(item) && !invalidItems.Contains(item))
+                    invalidItems.Add(item);
+            }
+
+            if (selectedItems.Count == 0)
+                return;
+
+            if (invalidItems.Count > 0)
+            {
+                DeleteInvalidSelectedItemsOnly(invalidItems);
+                return;
+            }
+
             IVertex info = m0.MinusZero.Instance.CreateTempVertex();
             info.Value = "DELETE UX item / underlying vertex?";
 
@@ -5208,18 +5267,14 @@ namespace m0.UIWpf.UX
             if (option == null || option == optionCancel)
                 return;
 
-            IList<IEdge> selectedEdges_copy = GeneralUtil.CreateAndCopyList<IEdge>(selectedEdges);
-
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
             //////////////////////////////////////// 
 
             UnselectAllSelectedEdges();
 
-            foreach (IEdge e in selectedEdges_copy)
+            foreach (IUXItem i in selectedItems)
             {  // what about multiple items for same BaseEdge:\To: ?
-
-                IUXItem i = GetItemsDictionaryByVertex()[e.To.Get(false, "To:")];
 
                 if (option == optionUXItemDelete)
                 {
@@ -5251,6 +5306,53 @@ namespace m0.UIWpf.UX
             ////////////////////////////////////////
             Interaction.EndInteractionWithGraph();
             //////////////////////////////////////// 
+        }
+
+        private void DeleteInvalidSelectedItemsOnly(IList<IUXItem> invalidItems)
+        {
+            IVertex info = m0.MinusZero.Instance.CreateTempVertex();
+            string invalidEndpointNames = string.Join(
+                " and ",
+                invalidItems
+                    .Select(GetInvalidBaseEdgeEndpointNames)
+                    .Distinct()
+                    .Select(name => "BaseEdge." + name));
+            info.Value =
+                invalidEndpointNames +
+                (invalidEndpointNames.Contains(" and ")
+                    ? " are $Empty or unavailable. Delete UX Item only?"
+                    : " is $Empty or unavailable. Delete UX Item only?");
+
+            IVertex options = m0.MinusZero.Instance.CreateTempVertex();
+            IVertex optionUXItemDelete = options.AddVertex(null, "UX Item only delete");
+            IVertex optionCancel = options.AddVertex(null, "Cancel");
+
+            IVertex option =
+                MinusZero.Instance.UserInteraction.InteractionSelectButton(
+                    info,
+                    options.OutEdges);
+
+            if (option == null || option == optionCancel)
+                return;
+
+            if (option != optionUXItemDelete)
+                return;
+
+            ////////////////////////////////////////
+            Interaction.BeginInteractionWithGraph();
+            ////////////////////////////////////////
+
+            UnselectAllSelectedEdges();
+
+            foreach (IUXItem item in invalidItems)
+            {
+                GraphUtil.DeleteEdgeByToVertex(item.Edge.From, item.Vertex);
+                RemoveUXItem(item);
+            }
+
+            ////////////////////////////////////////
+            Interaction.EndInteractionWithGraph();
+            ////////////////////////////////////////
         }
 
         private void DeleteLine()
