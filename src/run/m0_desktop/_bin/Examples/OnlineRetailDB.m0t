@@ -1,0 +1,6 @@
+System\FormalTextLanguage\ZeroCode_VertexAndManyLines
+""
+	<@Structure\Database :: "OnlineRetailDB">
+		<@$Is :: @Structure\Database>
+		<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Shop :: "Shop">
+			<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Shop>

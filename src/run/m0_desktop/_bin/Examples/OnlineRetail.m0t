@@ -1,5 +1,5 @@
 System\FormalTextLanguage\ZeroCode_VertexAndManyLines
-"OnlineRetail"
+""
 	<@Structure\System :: "OnlineRetail">
 		<@$Is :: @Structure\System>
 		<@Structure\Model :: "OnlineRetailModel">
@@ -67,6 +67,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@$ShortName :: "category">
 				attribute "Name" @String
 				aggregation "Product" @OnlineRetail\OnlineRetailModel\Product "0":"-1"
+			class "Shop"
+				aggregation "User" @OnlineRetail\OnlineRetailModel\User "0":"-1"
+				aggregation "Category" @OnlineRetail\OnlineRetailModel\Category "0":"-1"
 			<@UX\UXContainer :: "Order state">
 				<@$Is :: @UX\UXContainer>
 				<@IsExpanded :: "True">
@@ -797,7 +800,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@$Is :: @UX\UXContainer>
 				<@IsExpanded :: "True">
 				<@HasMiniatures :: "True">
-				<@Scale :: "100">
+				<@Scale :: "90">
 				<@BaseEdge :: "">
 					<@$Is :: @Edge>
 					<@From :: @OnlineRetail>
@@ -1135,8 +1138,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 					<@Position :: "">
 						<@$Is :: @UX\Position>
-						<@X :: "1920.1998055000004">
-						<@Y :: "225.63999999999996">
+						<@X :: "1936.1998055000001">
+						<@Y :: "259.90000000000003">
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
 					<@ShowMeta :: "False">
 					<@ConstantLabel :: "class">
@@ -1170,8 +1173,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 					<@Position :: "">
 						<@$Is :: @UX\Position>
-						<@X :: "2326.4433333333327">
-						<@Y :: "58.44">
+						<@X :: "2296.9599999999996">
+						<@Y :: "121.35579999999995">
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
 					<@ShowMeta :: "False">
 					<@ConstantLabel :: "class">
@@ -1192,26 +1195,24 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Scale :: "100">
 						<@BaseEdge :: "">
 							<@From :: @OnlineRetail\OnlineRetailModel\Shop>
-							<@Meta :: @Class\Association>
-							<@To :: @OnlineRetail\OnlineRetailModel\Shop\Category>
-						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Association>
-						<@ToItem :: @OnlineRetail\OnlineRetailModel\'Data model'\Item:<<"10">>>
+							<@Meta :: @Class\Aggregation>
+							<@To :: @OnlineRetail\OnlineRetailModel\Shop\User>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Aggregation>
+						<@StartAnchor :: @UX\LineEndEnum\Diamond>
+						<@ToItem :: @OnlineRetail\OnlineRetailModel\'Data model'\Item:<<"3">>>
 					<@Decorator :: "">
 						<@$Is :: @UX\LineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
 							<@From :: @OnlineRetail\OnlineRetailModel\Shop>
 							<@Meta :: @Class\Aggregation>
-							<@To :: @OnlineRetail\OnlineRetailModel\Shop\User>
+							<@To :: @OnlineRetail\OnlineRetailModel\Shop\Category>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Aggregation>
 						<@StartAnchor :: @UX\LineEndEnum\Diamond>
-						<@ToItem :: @OnlineRetail\OnlineRetailModel\'Data model'\Item:<<"3">>>
-			class "Shop"
-				association "Category" @OnlineRetail\OnlineRetailModel\Category "0":"-1"
-				aggregation "User" @OnlineRetail\OnlineRetailModel\User "0":"-1"
+						<@ToItem :: @OnlineRetail\OnlineRetailModel\'Data model'\Item:<<"10">>>
 		<@Component :: "BackendService">
 			<@$Is :: @Structure\Component>
-			<@ReadWrite :: @Start:\Examples\'OnlineRetailDB.m0j'\$Store:\OnlineRetailDB>
+			<@ReadWrite :: @$Empty>
 			package "test"
 				import @System\Lib\Std direct meta
 
@@ -1227,8 +1228,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@Structure\Database :: "Package">
 				import @System\Lib\Std direct meta
 				import @System\Lib\Cryptography direct meta
-				import @System\Meta\Store\FileSystem\Drive\PathSeparator\$Empty direct meta
-				import @Start:\Examples\'OnlineRetailDB.m0j'\$Store:\OnlineRetailDB direct meta
+				import @### LINK NOT FOUND ### direct meta
+				import @Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB direct meta
 
 				variable "Model" @Vertex
 				variable "Data" @Vertex
@@ -1236,7 +1237,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 
 				function "Init" ()
 					Model = $#Package:#Component:\Model:
-					Data = @@Start:\Examples\'OnlineRetailDB.m0j'\$Store:\OnlineRetailDB\Shop
+					Data = @@$Empty
 
 				function "CreateUser" @String(@String "Name", @String "Surname", @String "Email", @String "Password")
 					variable "user" @Vertex
@@ -1251,7 +1252,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					user\Surname = Surname
 					user\Email = Email
 					user\PasswordHash = @@System\Lib\Cryptography\HashPassword[Password]
-					@@Start:\Examples\'OnlineRetailDB.m0j'\$Store:\OnlineRetailDB\Shop <<copy<< user
+					@@OnlineRetail\OnlineRetailModel\Shop <<copy<< user
 					return "OK"
 
 				function "Login" @String(@String "Email", @String "Password")
@@ -1341,7 +1342,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@BaseEdge :: "">
 						<@From :: @OnlineRetail\BackendService>
 						<@Meta :: @Structure\StaticComponent\ReadWrite>
-						<@To :: @Start:\Examples\'OnlineRetailDB.m0j'\$Store:\OnlineRetailDB>
+						<@To :: @$Empty>
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - FromToFilledTriangle'>
 					<@StartAnchor :: @UX\LineEndEnum\FilledTriangle>
 					<@EndAnchor :: @UX\LineEndEnum\FilledTriangle>
@@ -1365,14 +1366,14 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@Opacity :: "255">
 				<@BaseEdge :: "">
 					<@$Is :: @Edge>
-					<@From :: @Start:\Examples\'OnlineRetailDB.m0j'\$Store:>
+					<@From :: @$Empty>
 					<@Meta :: @Structure\Database>
-					<@To :: @Start:\Examples\'OnlineRetailDB.m0j'\$Store:\OnlineRetailDB>
+					<@To :: @$Empty>
 				<@Decorator :: "">
 					<@$Is :: @UX\LineDecorator>
 					<@Scale :: "100">
 					<@BaseEdge :: "">
-						<@From :: @Start:\Examples\'OnlineRetailDB.m0j'\$Store:\OnlineRetailDB>
+						<@From :: @$Empty>
 						<@Meta :: @Structure\Data\Model>
 						<@To :: @OnlineRetail\OnlineRetailModel>
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToArrow'>
