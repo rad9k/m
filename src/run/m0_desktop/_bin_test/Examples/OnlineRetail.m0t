@@ -1184,7 +1184,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 
 				function "Init" ()
 					Model = $#Package:#Component:\Model:
-					Data = $#Package:#Component:\Database:
+					Data = @@Start:\Examples\'OnlineRetailDB.m0j'\$Store:\OnlineRetailDB
 
 				function "CreateUser" @String(@String "Name", @String "Surname", @String "Email", @String "Password")
 					variable "user" @Vertex
@@ -1195,6 +1195,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 
 					user = new Model\:User[]
 					Data +< user
+					user\BusinessID = @@System\Lib\Std\CreateURN[Model\:User\:BusinessID]
 					user\Name = Name
 					user\Surname = Surname
 					user\Email = Email
@@ -1220,8 +1221,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 
 					return "ERROR"
 
-				x = @@OnlineRetail\BackendService\Service\Login["ee", "pwd"]
-			<@ReadWrite :: @$Empty>
+				x = @@OnlineRetail\BackendService\Service\CreateUser["n", "s", "ee", "pwd"]
 			<@ReadWrite :: @Start:\Examples\'OnlineRetailDB.m0j'\$Store:\OnlineRetailDB>
 		<@UX\UXContainer :: "OnlineRetail">
 			<@$Is :: @UX\UXContainer>
