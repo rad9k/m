@@ -580,7 +580,7 @@ namespace m0
                 ",CreateView{CreateViewInner},CreateViewInner{FromTriggerQuery{Query},FromTriggerFilter{Value},FromToTransformFunction{Target},ToTriggerQuery{Query},ToTriggerFilter{Value},ToFromTransformFunction{Target}}" +
                 ",CreateTrigger{Name,CreateTriggerInner},CreateTriggerInner{ScopeQuery{Query},ChangeTypeFilter{Value},Listener{Target}}" +
                 ",CreateHttpMapping{Name,CreateHttpMappingInner},CreateHttpMappingInner{HttpMappingEntry{Action,PathMask,Handler}}" +
-                ",this,Package{$InstanceCreationPriority:}" +
+                ",this,Stack,Package{$InstanceCreationPriority:}" +
                 "}");
 
             // Link
@@ -692,6 +692,8 @@ namespace m0
             // create http mapping
 
             AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "CreateHttpMapping"), "CreateHttpMapping");
+
+            AddDotNetStaticMethodAsExecutableEndpoint(LegacySystem.Graph.EasyVertex.Get(smu, false, "Stack"), "Stack");
 
 
             ////////////////////////////////////////////////////////////////////////
@@ -912,6 +914,10 @@ namespace m0
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "MultiOperator"));
 
             LegacySystem.Graph.EasyVertex.Get(smu, false, "CreateHttpMapping").AddEdge(
+                LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "ZeroOperator"));
+
+            LegacySystem.Graph.EasyVertex.Get(smu, false, @"Stack").AddEdge(
                 LegacySystem.Graph.EasyVertex.Get(sm, false, "*$Inherits"),
                 LegacySystem.Graph.EasyVertex.Get(smu, false, "ZeroOperator"));
 
@@ -1338,7 +1344,7 @@ namespace m0
             IVertex keywordGroupDefinition = LegacySystem.Graph.EasyVertex.Get(smb, false, @"$KeywordGroupDefinition");
 
             IVertex kgd_ColonEmptyInner2SlashMarkIndexMethodNewLink = k.AddVertex(keywordGroupDefinition, "ColonEmptyInner2SlashMarkIndexMethodNewLink");
-            IVertex kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall = k.AddVertex(keywordGroupDefinition, "ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall");
+            IVertex kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall = k.AddVertex(keywordGroupDefinition, "ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall"); // stack is here also
             IVertex kgd_ColonEmptyInner2SlashMarkIndexMethod = k.AddVertex(keywordGroupDefinition, "ColonEmptyInner2SlashMarkIndexMethod");
             IVertex kgd_Empty2Inner = k.AddVertex(keywordGroupDefinition, "Empty2Inner");
             IVertex kgd_InnerCreation = k.AddVertex(keywordGroupDefinition, "InnerCreation");
@@ -3041,6 +3047,26 @@ namespace m0
             o_http_mapping_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMappingEntry\PathMask"), "(?<pathmask>)");
 
             o_http_mapping_base.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"CreateHttpMappingInner\HttpMappingEntry\Handler"), "(?<handler>)");
+
+            // $stack
+            //
+            // $stack
+
+            IVertex stack = k.AddVertex(keyword, "$stack");
+
+            stack.AddEdge(keywordGroup, kgd_ColonEmptyInner2SlashMarkIndexMethodNewLinkBracketCopyFunctionCall);
+
+            IVertex stack_any = stack.AddVertex(any, "");
+
+            stack_any.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, @"Vertex\$Is"),
+                LegacySystem.Graph.EasyVertex.Get(smu, false, "Stack"));
+            
+            // next expression
+
+            IVertex stack_any_targetExpr = stack_any.AddVertex(LegacySystem.Graph.EasyVertex.Get(smu, false, @"ExpressionAtom\NextExpression"), "");
+
+            stack_any_targetExpr.AddEdge(LegacySystem.Graph.EasyVertex.Get(smb, false, "$$LocalRoot"), kgd_SlashMarkIndexMethod);
+
 
             // ENUM
 

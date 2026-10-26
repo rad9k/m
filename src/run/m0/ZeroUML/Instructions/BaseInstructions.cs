@@ -4278,6 +4278,27 @@ namespace m0.ZeroUML.Instructions
 
         #region StackOperators
 
+        public static INoInEdgeInOutVertexVertex Stack(
+            ZeroCodeExecution exe,
+            IVertex inputStack,
+            IVertex instructionVertex,
+            out bool isStackFrameReturn)
+        {
+            isStackFrameReturn = false;
+
+            INoInEdgeInOutVertexVertex result = CreateStack();
+            result.AddEdgeForNoInEdgeInOutVertexVertex_BAD_BEHAVIOR_IEdge_MANY_TIMES(
+                GraphUtil.CreateArtificialEdge(
+                    null,
+                    exe.Stack));
+
+            return NextExpressionHandle(
+                exe,
+                result,
+                instructionVertex,
+                out isStackFrameReturn);
+        }
+
         public static INoInEdgeInOutVertexVertex CreateStackEdge(ZeroCodeExecution exe, IVertex inputStack, IVertex instructionVertex, out bool isStackFrameReturn)
         {
             isStackFrameReturn = false;
