@@ -77,7 +77,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@Scale :: "70">
 				<@BaseEdge :: "">
 					<@$Is :: @Edge>
-					<@From :: @$CodeRoot>
+					<@From :: @Start:\Examples\'OnlineRetail.m0t'\$Store:>
 					<@Meta :: @$Empty>
 				<@SelectedEdges :: "">
 				<@ShowSelectedEdgesBaseEdge :: "False">
@@ -1228,38 +1228,30 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@Structure\Database :: "Package">
 				import @System\Lib\Std direct meta
 				import @System\Lib\Cryptography direct meta
-				import @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\Model:OnlineRetailModel direct meta  		  
-				import @Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB direct meta  		 
+				import @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel direct meta
+				import @Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB direct meta
 
-				variable "Model" @Vertex
-				variable "Data" @Vertex
 				variable "x" @Vertex
-
-				function "Init" ()
-					Model = $#Package:#Component:\Model:
-					Data = @@$Empty
 
 				function "CreateUser" @String(@String "Name", @String "Surname", @String "Email", @String "Password")
 					variable "user" @Vertex
-					@@OnlineRetail\BackendService\Service\Init[]
 
 					if Data\user{Email:'(Email)'}<> > "0"
 						return "USER EXIST"
 
-					user = new Model\:User[]
+					user = new @@OnlineRetail\OnlineRetailModel\User[]
 					user\BusinessID = @@System\Lib\Std\CreateURN[Model\:User\:BusinessID]
 					user\Name = Name
 					user\Surname = Surname
 					user\Email = Email
 					user\PasswordHash = @@System\Lib\Cryptography\HashPassword[Password]
-					@@OnlineRetail\OnlineRetailModel\Shop <<copy<< user
+					@@Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB\MyShop <<copy<< user
 					return "OK"
 
 				function "Login" @String(@String "Email", @String "Password")
 					variable "token" @Vertex
 					variable "PasswordHash" @String
 					variable "user" @Vertex
-					@@OnlineRetail\BackendService\Service\Init[]
 
 					user = Data\user{Email:'(Email)'}
 
@@ -1282,7 +1274,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			<@Scale :: "100">
 			<@BaseEdge :: "">
 				<@$Is :: @Edge>
-				<@From :: @$CodeRoot>
+				<@From :: @Start:\Examples\'OnlineRetail.m0t'\$Store:>
 				<@Meta :: @Structure\System>
 				<@To :: @OnlineRetail>
 			<@SelectedEdges :: "">
