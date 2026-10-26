@@ -1,5 +1,6 @@
 ﻿using m0.Foundation;
 using m0.Graph;
+using m0.Util;
 using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
 using System;
@@ -163,14 +164,23 @@ namespace m0.ZeroCode
                         linearizedMeta = e.Meta;
                 }
 
+                bool preserveImportedTarget =
+                    GeneralUtil.CompareStrings(
+                        e.Meta,
+                        "$ImportDirect") ||
+                    GeneralUtil.CompareStrings(
+                        e.Meta,
+                        "$ImportDirectMeta");
+
                 IVertex linearizedTo;
 
-                if (sourceLinerizedDict.ContainsKey(e.To))
-                    linearizedTo = sourceLinerizedDict[e.To];
-                else
+                if (preserveImportedTarget ||
+                    !sourceLinerizedDict.ContainsKey(e.To))
                     linearizedTo = e.To;
+                else
+                    linearizedTo = sourceLinerizedDict[e.To];
 
-               if (VertexOperations.CanCopy_ByMeta(linearizedMeta))
+                if (VertexOperations.CanCopy_ByMeta(linearizedMeta))
                     linearizedVertex.AddEdge(linearizedMeta, linearizedTo);
 
                 LinearizeGraph_Reccurent(e.To, sourceLinerizedDict, beenList);

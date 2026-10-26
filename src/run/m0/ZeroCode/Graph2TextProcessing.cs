@@ -399,6 +399,34 @@ namespace m0.ZeroCode
 
             find_reccurent(new List<IEdge>(), v);
 
+            if (shortestLinkLength == 99999)
+            {
+                MinusZero.Instance.Log(
+                    0,
+                    "Graph2TextRootTraversalTrace",
+                    "result='not found'" +
+                    " vertexObjectId='" +
+                    System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(
+                        v) +
+                    "' vertexValue='" +
+                    (v.Value?.ToString() ?? "<null>") +
+                    "' vertexStore='" +
+                    (v.Store?.Identifier?.ToString() ?? "<null>") +
+                    "' vertexIncomingCount='" +
+                    v.InEdgesRaw.Count +
+                    "' visitedCount='" +
+                    linkBeenList.Count +
+                    "' reachedGlobalRoot='" +
+                    linkBeenList.Contains(MinusZero.Instance.Root) +
+                    "' globalRootObjectId='" +
+                    System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(
+                        MinusZero.Instance.Root) +
+                    "' globalRootStore='" +
+                    (MinusZero.Instance.Root.Store?.Identifier?.ToString() ??
+                        "<null>") +
+                    "'");
+            }
+
             return shortestLink;
         }
 
@@ -557,6 +585,36 @@ namespace m0.ZeroCode
             emptyKeywordVertexList = ZeroCodeUtil.GetFilteredKeywordList(FormalTextLanguage, "$$EmptyKeyword");
 
             dict = DictionariesForFormalTextLanguageFactory.Get(formalTextLanguage);
+        }
+
+        void LogGraph2TextRootTrace(
+            string phase,
+            IVertex vertex)
+        {
+            MinusZero.Instance.Log(
+                0,
+                "Graph2TextRootTrace",
+                "phase='" + phase +
+                "' vertexObjectId='" +
+                (vertex == null
+                    ? "<null>"
+                    : System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(
+                        vertex).ToString()) +
+                "' vertexValue='" +
+                (vertex?.Value?.ToString() ?? "<null>") +
+                "' vertexStore='" +
+                (vertex?.Store?.Identifier?.ToString() ?? "<null>") +
+                "' incomingCount='" +
+                (vertex?.InEdgesRaw.Count ?? 0) +
+                "' isGlobalRoot='" +
+                ReferenceEquals(vertex, MinusZero.Instance.Root) +
+                "' globalRootObjectId='" +
+                System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(
+                    MinusZero.Instance.Root) +
+                "' globalRootStore='" +
+                (MinusZero.Instance.Root.Store?.Identifier?.ToString() ??
+                    "<null>") +
+                "'");
         }
 
         internal bool TryGetImportMetas(
@@ -1090,6 +1148,36 @@ namespace m0.ZeroCode
             return null;
         }
 
+        void LogUnresolvedImportSerialization(
+            IVertex linkVertex,
+            string generatedLink)
+        {
+            string incomingEdges =
+                string.Join(
+                    " | ",
+                    linkVertex.InEdgesRaw.Select(
+                        edge =>
+                            "from='" +
+                            (edge.From?.Value?.ToString() ?? "<null>") +
+                            "' meta='" +
+                            (edge.Meta?.Value?.ToString() ?? "<null>") +
+                            "' to='" +
+                            (edge.To?.Value?.ToString() ?? "<null>") +
+                            "'"));
+
+            MinusZero.Instance.Log(
+                0,
+                "StoreImportSerializationTrace",
+                "generatedLink='" + generatedLink +
+                "' vertexValue='" +
+                (linkVertex.Value?.ToString() ?? "<null>") +
+                "' vertexStore='" +
+                (linkVertex.Store?.Identifier?.ToString() ?? "<null>") +
+                "' incomingEdgeCount='" +
+                linkVertex.InEdgesRaw.Count +
+                "' incomingEdges={" + incomingEdges + "}");
+        }
+
         bool AppendImportKeyword(IEdge keywordEdge, bool isDirect, bool isMeta)
         {
             KeywordMatch km = KeywordMatchedSubGraphEdges[keywordEdge];
@@ -1128,9 +1216,38 @@ namespace m0.ZeroCode
             if (!isDirect)
                 name = ZeroCodeCommon.stringToNewVertexString(dict, importEdge.To.ToString());
 
+            if (isDirect && isMeta)
+            {
+                MinusZero.Instance.Log(
+                    0,
+                    "StoreImportSerializationEdgeTrace",
+                    "edgeId='" +
+                    System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(importEdge) +
+                    "' edgeToObjectId='" +
+                    System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(importEdge.To) +
+                    "' edgeToValue='" +
+                    (importEdge.To.Value?.ToString() ?? "<null>") +
+                    "' edgeToStore='" +
+                    (importEdge.To.Store?.Identifier?.ToString() ?? "<null>") +
+                    "' linkVertexObjectId='" +
+                    System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(linkVertex) +
+                    "' linkVertexStore='" +
+                    (linkVertex.Store?.Identifier?.ToString() ?? "<null>") +
+                    "'");
+            }
+
             getLinkStringProcessing_FromRoot glsp = new getLinkStringProcessing_FromRoot();
 
             string link = dict.CodeGraphLinkPrefix + glsp.Process(dict, this, linkVertex);
+
+            if (link.Contains(
+                "### LINK NOT FOUND ###",
+                StringComparison.Ordinal))
+            {
+                LogUnresolvedImportSerialization(
+                    linkVertex,
+                    link);
+            }
 
             string keyword = km.KeywordDefinition.Value.ToString();
 
@@ -2349,6 +2466,10 @@ namespace m0.ZeroCode
 
         public void prepareBaseEdge(IEdge _graphBaseEdge)
         {
+            LogGraph2TextRootTrace(
+                "input before VertexAndManyLines linearization",
+                _graphBaseEdge?.To);
+
             int newLineBefore = CountNewLineEdgesInSubGraph(_graphBaseEdge != null ? _graphBaseEdge.To : null);
 
             MinusZero.Instance.Log(0, "G2T_NewLine",
@@ -2358,6 +2479,10 @@ namespace m0.ZeroCode
             IVertex v = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(_graphBaseEdge.To);
 
             BaseEdge = new EasyEdge(_graphBaseEdge.From, _graphBaseEdge.Meta, v); // this is some crazy hybrid. this is non consistent and might not work!
+
+            LogGraph2TextRootTrace(
+                "BaseEdge.To after VertexAndManyLines linearization",
+                BaseEdge.To);
 
             LogNewLineEdgesInSubGraph("prepareBaseEdge AFTER linearize", v);
 

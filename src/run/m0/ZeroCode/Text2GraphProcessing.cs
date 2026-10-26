@@ -399,16 +399,6 @@ namespace m0.ZeroCode
                 target == null ||
                 target == MinusZero.Instance.Empty;
 
-            LogStoreImportDiagnostic(
-                "prepared import decision",
-                link,
-                target,
-                "importType='" + importType +
-                "' targetRequiresPendingResolution='" +
-                targetRequiresPendingResolution +
-                "' isToVertexMock='" +
-                (target is ToVertexMock) + "'");
-
             IEdge importListEdge = targetList.AddEdge(
                 meta,
                 target ?? MinusZero.Instance.Empty);
@@ -497,23 +487,9 @@ namespace m0.ZeroCode
 
         void ResolvePendingImportsAfterParse()
         {
-            LogStoreImportDiagnostic(
-                "pending import resolution start",
-                null,
-                null,
-                "pendingCount=" +
-                pendingImportResolutions.Count);
-
             foreach (PendingImportResolution pendingImport
                 in pendingImportResolutions)
             {
-                LogStoreImportDiagnostic(
-                    "pending import resolution item",
-                    pendingImport.Link,
-                    null,
-                    "importType='" +
-                    pendingImport.ImportType + "'");
-
                 IVertex target;
 
                 if (TryGetCurrentStoreRelativeImportLink(
@@ -575,11 +551,24 @@ namespace m0.ZeroCode
                 if (IsUnresolvedImportTarget(target))
                     continue;
 
+                IEdge pendingImportEdgeBeforeReplace =
+                    pendingImport.ImportListEdge;
+
+                LogPendingImportEdgeTrace(
+                    "before pending import edge replace",
+                    pendingImport.Link,
+                    pendingImportEdgeBeforeReplace);
+
                 pendingImport.ImportListEdge =
                     GraphUtil.ReplaceEdge(
                         pendingImport.ImportListEdge.From,
                         pendingImport.ImportListEdge,
                         target);
+
+                LogPendingImportEdgeTrace(
+                    "after pending import edge replace",
+                    pendingImport.Link,
+                    pendingImport.ImportListEdge);
 
                 resolvedPendingImports[
                     NormalizeImportLink(pendingImport.Link)] =
@@ -778,26 +767,35 @@ namespace m0.ZeroCode
                 "} stack=" + Environment.StackTrace);
         }
 
-        void LogStoreImportDiagnostic(
+        void LogPendingImportEdgeTrace(
             string phase,
             string link,
-            IVertex target,
-            string details)
+            IEdge edge)
         {
-            string targetType =
-                target?.GetType().FullName ?? "<null>";
-            string targetValue =
-                target?.Value?.ToString() ?? "<null>";
+            IVertex edgeTarget = edge?.To;
 
             MinusZero.Instance.Log(
                 0,
-                "StoreImportDiagnostic",
+                "StoreImportEdgeTrace",
                 phase +
-                " link='" + (link ?? "<null>") +
-                "' targetType='" + targetType +
-                "' targetValue='" + targetValue +
-                "' " + details +
-                " stack=" + Environment.StackTrace);
+                " link='" + link +
+                "' edgeId='" +
+                (edge == null
+                    ? "<null>"
+                    : RuntimeHelpers.GetHashCode(edge).ToString()) +
+                "' fromValue='" +
+                (edge?.From?.Value?.ToString() ?? "<null>") +
+                "' metaValue='" +
+                (edge?.Meta?.Value?.ToString() ?? "<null>") +
+                "' toValue='" +
+                (edgeTarget?.Value?.ToString() ?? "<null>") +
+                "' toStore='" +
+                (edgeTarget?.Store?.Identifier?.ToString() ?? "<null>") +
+                "' toObjectId='" +
+                (edgeTarget == null
+                    ? "<null>"
+                    : RuntimeHelpers.GetHashCode(edgeTarget).ToString()) +
+                "'");
         }
 
         void prepareImportList_FromString_import()
@@ -892,12 +890,6 @@ namespace m0.ZeroCode
             {
                 string link = match.Groups["link"].Value;
 
-                LogStoreImportDiagnostic(
-                    "direct import regex match",
-                    link,
-                    null,
-                    "matchIndex=" + match.Index);
-
                 IVertex target = r.Get(false, link); // YYY huston..... we assume that this get will not go into infinite reccursion as link variable is simple run time query
 
                 LogStoreImportResolution(
@@ -923,12 +915,6 @@ namespace m0.ZeroCode
             foreach (Match match in rgx.Matches(text))
             {
                 string link = match.Groups["link"].Value;
-
-                LogStoreImportDiagnostic(
-                    "direct meta import regex match",
-                    link,
-                    null,
-                    "matchIndex=" + match.Index);
 
                 IVertex target = r.Get(false, link); // YYY huston..... we assume that this get will not go into infinite reccursion as link variable is simple run time query
 
@@ -1093,22 +1079,8 @@ namespace m0.ZeroCode
             if (mock.mockData != null)
                 link = mock.mockData.ToString();
 
-            LogStoreImportDiagnostic(
-                "mock link resolution start",
-                link,
-                null,
-                "parentType='" +
-                (mock.parentVertex?.GetType().FullName ?? "<null>") +
-                "' resolvedPendingCount=" +
-                (resolvedPendingImports?.Count ?? 0));
-
             if (link.Length == 0)
             {
-                LogStoreImportDiagnostic(
-                    "mock link resolution empty link",
-                    link,
-                    MinusZero.Instance.Root,
-                    "");
                 return MinusZero.Instance.Root;
             }
 
@@ -1119,21 +1091,8 @@ namespace m0.ZeroCode
                 link,
                 out IVertex resolvedImport))
             {
-                LogStoreImportDiagnostic(
-                    "mock link resolved from pending imports",
-                    link,
-                    resolvedImport,
-                    "normalizedLink='" +
-                    NormalizeImportLink(link) + "'");
                 return resolvedImport;
             }
-
-            LogStoreImportDiagnostic(
-                "mock link not found in pending imports",
-                link,
-                null,
-                "normalizedLink='" +
-                NormalizeImportLink(link) + "'");
 
             // $Is
 
@@ -1250,22 +1209,8 @@ namespace m0.ZeroCode
             tryIf = queryMetaImport(baseVertex, parseRootQuery);
 
             if (tryIf != null && !(tryIf is ToVertexMock))
-            {
-                LogStoreImportDiagnostic(
-                    "mock link resolved from parse root",
-                    link,
-                    tryIf,
-                    "parseRootQuery='" + parseRootQuery + "'");
                 return tryIf;
-            }
 
-            LogStoreImportDiagnostic(
-                "mock link resolution returned empty",
-                link,
-                MinusZero.Instance.Empty,
-                "parseRootQuery='" + parseRootQuery +
-                "' parseRootResultType='" +
-                (tryIf?.GetType().FullName ?? "<null>") + "'");
             return MinusZero.Instance.Empty;
         }
 
@@ -3672,34 +3617,11 @@ namespace m0.ZeroCode
 
                 IVertex toVertex = edge.To;
 
-                LogStoreImportDiagnostic(
-                    "processing mock edge",
-                    (edge.To as ToVertexMock)?.mockData?.ToString() ??
-                    (edge.Meta as ToVertexMock)?.mockData?.ToString(),
-                    null,
-                    "fromValue='" +
-                    (edge.From?.Value ?? "<null>") +
-                    "' metaType='" +
-                    (edge.Meta?.GetType().FullName ?? "<null>") +
-                    "' toType='" +
-                    (edge.To?.GetType().FullName ?? "<null>") + "'");
-
                 if(metaVertex is ToVertexMock)
                     metaVertex = ToVertexMock2VertexByLinkString((ToVertexMock)metaVertex);
 
                 if (toVertex is ToVertexMock)
                     toVertex = ToVertexMock2VertexByLinkString((ToVertexMock)toVertex);
-
-                LogStoreImportDiagnostic(
-                    "processed mock edge result",
-                    null,
-                    toVertex,
-                    "metaResultType='" +
-                    (metaVertex?.GetType().FullName ?? "<null>") +
-                    "' toResultType='" +
-                    (toVertex?.GetType().FullName ?? "<null>") +
-                    "' toIsEmpty='" +
-                    (toVertex == MinusZero.Instance.Empty) + "'");
 
                 IEdge newEdge = edge.From.AddEdge(metaVertex, toVertex);
                 ReplaceRememberedTextualChildEdge(edge.From, edge, newEdge);

@@ -27,6 +27,38 @@ namespace m0.FormalTextLanguage
         public static string Generate(IVertex formalTextLanguageProcessing, IEdge graphBaseEdge)
         {
             IVertex GeneratorHandler = GraphUtil.GetQueryOutFirst(formalTextLanguageProcessing, "GeneratorHandler", null);
+
+            MinusZero.Instance.Log(
+                0,
+                "TextSerializationInterfaceBoundary",
+                "formalLanguageObjectId='" +
+                System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(
+                    formalTextLanguageProcessing) +
+                "' formalLanguageStore='" +
+                (formalTextLanguageProcessing.Store?.Identifier?.ToString() ??
+                    "<null>") +
+                "' baseEdgeObjectId='" +
+                System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(
+                    graphBaseEdge) +
+                "' baseEdgeFromObjectId='" +
+                (graphBaseEdge.From == null
+                    ? "<null>"
+                    : System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(
+                        graphBaseEdge.From).ToString()) +
+                "' baseEdgeToObjectId='" +
+                (graphBaseEdge.To == null
+                    ? "<null>"
+                    : System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(
+                        graphBaseEdge.To).ToString()) +
+                "' baseEdgeToValue='" +
+                (graphBaseEdge.To?.Value?.ToString() ?? "<null>") +
+                "' baseEdgeToStore='" +
+                (graphBaseEdge.To?.Store?.Identifier?.ToString() ??
+                    "<null>") +
+                "' globalRootObjectId='" +
+                System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(
+                    MinusZero.Instance.Root) +
+                "'");
             
             //
 
