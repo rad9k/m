@@ -1234,18 +1234,20 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				variable "x" @Vertex
 
 				function "CreateUser" @String(@String "Name", @String "Surname", @String "Email", @String "Password")
-					variable "user" @Vertex
+					variable "myShop" @Vertex
+					myShop = @@Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB\MyShop
 
-					if Data\user{Email:'(Email)'}<> > "0"
+					if myShop\User{Email:'(Email)'}<> > "0"
 						return "USER EXIST"
 
-					user = new @@OnlineRetail\OnlineRetailModel\User[]
-					user\BusinessID = @@System\Lib\Std\CreateURN[Model\:User\:BusinessID]
-					user\Name = Name
-					user\Surname = Surname
-					user\Email = Email
-					user\PasswordHash = @@System\Lib\Cryptography\HashPassword[Password]
-					@@Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB\MyShop <<copy<< user
+					$stack +< @@OnlineRetail\OnlineRetailModel\Shop\User :: "user"
+					User = new @@OnlineRetail\OnlineRetailModel\User[]
+					User\BusinessID = @@System\Lib\Std\CreateURN[Model\:User\:BusinessID]
+					User\Name = Name
+					User\Surname = Surname
+					User\Email = Email
+					User\PasswordHash = @@System\Lib\Cryptography\HashPassword[Password]
+					@@Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB\MyShop <<copy<< User
 					return "OK"
 
 				function "Login" @String(@String "Email", @String "Password")

@@ -2,11 +2,17 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 ""
 	<@Structure\Database :: "OnlineRetailDB">
 		<@$Is :: @Structure\Database>
-		<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Shop :: "MyShop">
-			<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Shop>
-			<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\BackendService\Service\CreateUser\user :: "">
-				<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\User>
-				<@Name :: "n">
-				<@Surname :: "s">
-				<@Email :: "ee">
-				<@PasswordHash :: "pbkdf2-sha256$600000$kEXHNrn67asb+QdwgnBR7A==$i9KKhl1FRSYvJSjXqm3teQfv1QQgpk5kMBOX+Caouhs=">
+		"MyShop"
+			<@$Is :: @$Empty>
+			""
+				<@$Is :: @$Empty>
+				"n"
+				"s"
+				"ee"
+				"pbkdf2-sha256$600000$kEXHNrn67asb+QdwgnBR7A==$i9KKhl1FRSYvJSjXqm3teQfv1QQgpk5kMBOX+Caouhs="
+			""
+				<@$Is :: @$Empty>
+				"n"
+				"s"
+				"ee"
+				"pbkdf2-sha256$600000$Tl5H5BmvFTr591IMQK0Oeg==$t/QsDearE5oDNda9voy5lzeRuvzh71qZFZY04SFQcoU="
