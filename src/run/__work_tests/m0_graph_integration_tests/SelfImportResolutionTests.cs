@@ -34,18 +34,18 @@ public sealed class SelfImportResolutionTests
             "ZeroCode_VertexAndManyLines" +
             Environment.NewLine +
             "\"\"" + Environment.NewLine +
-            "\t<@Structure\\System :: \"SelfImportTest\">" +
+            "\t<@Structure\\System :: \"OnlineRetail\">" +
             Environment.NewLine +
             "\t\t<@$Is :: @Structure\\System>" +
             Environment.NewLine +
-            "\t\t<@Structure\\Model :: \"LocalModel\">" +
+            "\t\t<@Structure\\Model :: \"OnlineRetailModel\">" +
             Environment.NewLine +
             "\t\t\t<@$Is :: @Structure\\Model>" +
             Environment.NewLine +
             "\t\tpackage \"Consumer\"" +
             Environment.NewLine +
             "\t\t\timport @" + fileQuery +
-            "\\$Store:\\Model:LocalModel direct meta";
+            "\\$Store:\\OnlineRetail\\Model:OnlineRetailModel direct meta";
         File.WriteAllText(fileName, source);
 
         IVertex? fileVertex = null;
@@ -67,7 +67,7 @@ public sealed class SelfImportResolutionTests
             IVertex localModel = Assert.IsAssignableFrom<IVertex>(
                 GraphUtil.DeepFindOneByValue(
                     storeRoot,
-                    "LocalModel",
+                    "OnlineRetailModel",
                     false));
             IVertex consumer = Assert.IsAssignableFrom<IVertex>(
                 GraphUtil.DeepFindOneByValue(

@@ -366,6 +366,7 @@ namespace m0.ZeroCode
         }
 
         List<PendingImportResolution> pendingImportResolutions;
+        Dictionary<string, IVertex> resolvedPendingImports;
 
         void prepareImportList()
         {
@@ -375,6 +376,9 @@ namespace m0.ZeroCode
             importDirectMetaList = MinusZero.Instance.CreateTempVertex();
             pendingImportResolutions =
                 new List<PendingImportResolution>();
+            resolvedPendingImports =
+                new Dictionary<string, IVertex>(
+                    StringComparer.OrdinalIgnoreCase);
 
             importList.AddExternalReference();
             importMetaList.AddExternalReference();
@@ -391,12 +395,25 @@ namespace m0.ZeroCode
             string importType,
             IVertex target)
         {
+            bool targetRequiresPendingResolution =
+                target == null ||
+                target == MinusZero.Instance.Empty;
+
+            LogStoreImportDiagnostic(
+                "prepared import decision",
+                link,
+                target,
+                "importType='" + importType +
+                "' targetRequiresPendingResolution='" +
+                targetRequiresPendingResolution +
+                "' isToVertexMock='" +
+                (target is ToVertexMock) + "'");
+
             IEdge importListEdge = targetList.AddEdge(
                 meta,
                 target ?? MinusZero.Instance.Empty);
 
-            if (target != null &&
-                target != MinusZero.Instance.Empty)
+            if (!targetRequiresPendingResolution)
                 return;
 
             pendingImportResolutions.Add(
@@ -480,16 +497,38 @@ namespace m0.ZeroCode
 
         void ResolvePendingImportsAfterParse()
         {
+            LogStoreImportDiagnostic(
+                "pending import resolution start",
+                null,
+                null,
+                "pendingCount=" +
+                pendingImportResolutions.Count);
+
             foreach (PendingImportResolution pendingImport
                 in pendingImportResolutions)
             {
+                LogStoreImportDiagnostic(
+                    "pending import resolution item",
+                    pendingImport.Link,
+                    null,
+                    "importType='" +
+                    pendingImport.ImportType + "'");
+
                 IVertex target;
 
                 if (TryGetCurrentStoreRelativeImportLink(
                     pendingImport.Link,
                     out string relativeLink))
                 {
-                    target = null;
+                    target =
+                        ToVertexMock2VertexByLinkString(
+                            new ToVertexMock(
+                                pendingImport.Link,
+                                parseRoot));
+
+                    if (target == MinusZero.Instance.Empty)
+                        target = null;
+
                     string localQuery =
                         relativeLink.TrimStart('\\');
                     IEnumerable<IVertex> localVertices =
@@ -498,21 +537,24 @@ namespace m0.ZeroCode
                                 .GetSubGraphWithoutLinksAsList(
                                     parseRoot));
 
-                    foreach (IVertex localVertex
-                        in localVertices.Distinct())
+                    if (IsUnresolvedImportTarget(target))
                     {
-                        target = localVertex.Get(
-                            false,
-                            localQuery);
+                        foreach (IVertex localVertex
+                            in localVertices.Distinct())
+                        {
+                            target = localVertex.Get(
+                                false,
+                                localQuery);
 
-                        if (target != null)
-                            break;
+                            if (!IsUnresolvedImportTarget(target))
+                                break;
+                        }
                     }
 
-                    if (target == null)
+                    if (IsUnresolvedImportTarget(target))
                     {
                         target =
-                            ResolveSimpleRecursiveLocalImport(
+                            ResolveNestedLocalImportUsingGraphQueries(
                                 localQuery);
                     }
                 }
@@ -530,8 +572,7 @@ namespace m0.ZeroCode
                     pendingImport.Link,
                     target);
 
-                if (target == null ||
-                    target == MinusZero.Instance.Empty)
+                if (IsUnresolvedImportTarget(target))
                     continue;
 
                 pendingImport.ImportListEdge =
@@ -540,180 +581,141 @@ namespace m0.ZeroCode
                         pendingImport.ImportListEdge,
                         target);
 
-                ReplacePendingImportMocks(
+                resolvedPendingImports[
+                    NormalizeImportLink(pendingImport.Link)] =
+                    target;
+
+                if (TryGetCurrentStoreRelativeImportLink(
                     pendingImport.Link,
-                    target);
-            }
-        }
-
-        void ReplacePendingImportMocks(
-            string link,
-            IVertex target)
-        {
-            IEnumerable<IVertex> localVertices =
-                new[] { parseRoot }.Concat(
-                    GraphUtil.GetSubGraphWithoutLinksAsList(
-                        parseRoot));
-
-            foreach (IVertex localVertex
-                in localVertices.Distinct().ToList())
-            {
-                foreach (IEdge edge
-                    in localVertex.OutEdgesRaw.ToList())
+                    out string resolvedRelativeLink))
                 {
-                    if (!(edge.To is ToVertexMock mock) ||
-                        !AreEquivalentImportLinks(
-                            mock.mockData?.ToString(),
-                            link))
-                    {
-                        continue;
-                    }
-
-                    IEdge newEdge = localVertex.AddEdge(
-                        edge.Meta,
-                        target);
-                    ReplaceRememberedTextualChildEdge(
-                        localVertex,
-                        edge,
-                        newEdge);
-                    localVertex.DeleteEdge(edge);
-                    RestoreOutgoingEdgesToTextualOrder(
-                        localVertex);
+                    resolvedPendingImports[
+                        NormalizeImportLink(resolvedRelativeLink)] =
+                        target;
                 }
             }
         }
 
-        static bool AreEquivalentImportLinks(
-            string firstLink,
-            string secondLink)
+        static string NormalizeImportLink(string link)
         {
-            if (string.Equals(
-                firstLink,
-                secondLink,
-                StringComparison.Ordinal))
-            {
-                return true;
-            }
-
-            if (firstLink == null || secondLink == null)
-                return false;
-
-            string normalizedFirstLink = firstLink
+            return (link ?? "")
                 .Replace('/', '\\')
                 .Replace("'", "")
                 .Trim();
-            string normalizedSecondLink = secondLink
-                .Replace('/', '\\')
-                .Replace("'", "")
-                .Trim();
-
-            return string.Equals(
-                normalizedFirstLink,
-                normalizedSecondLink,
-                OperatingSystem.IsWindows()
-                    ? StringComparison.OrdinalIgnoreCase
-                    : StringComparison.Ordinal);
         }
 
-        IVertex ResolveSimpleRecursiveLocalImport(
+        bool TryGetResolvedPendingImport(
+            string link,
+            out IVertex target)
+        {
+            target = null;
+
+            if (resolvedPendingImports == null)
+                return false;
+
+            string normalizedLink = NormalizeImportLink(link);
+
+            if (resolvedPendingImports.TryGetValue(
+                normalizedLink,
+                out target))
+            {
+                return !IsUnresolvedImportTarget(target);
+            }
+
+            if (TryGetCurrentStoreRelativeImportLink(
+                link,
+                out string relativeLink) &&
+                resolvedPendingImports.TryGetValue(
+                    NormalizeImportLink(relativeLink),
+                    out target))
+            {
+                return !IsUnresolvedImportTarget(target);
+            }
+
+            target = null;
+            return false;
+        }
+
+        static bool IsUnresolvedImportTarget(IVertex target)
+        {
+            return target == null ||
+                target == MinusZero.Instance.Empty ||
+                GeneralUtil.CompareStrings(target.Value, "") ||
+                GeneralUtil.CompareStrings(target.Value, "$Empty");
+        }
+
+        IVertex ResolveNestedLocalImportUsingGraphQueries(
             string localQuery)
         {
-            if (string.IsNullOrWhiteSpace(localQuery) ||
-                string.IsNullOrEmpty(dict.MetaSeparator))
-            {
-                return null;
-            }
-
-            int separatorPosition = localQuery.IndexOf(
-                dict.MetaSeparator,
+            int pathSeparatorPosition = localQuery.IndexOf(
+                '\\',
                 StringComparison.Ordinal);
-
-            if (separatorPosition <= 0 ||
-                localQuery.IndexOf(
-                    '\\',
-                    separatorPosition +
-                    dict.MetaSeparator.Length) >= 0)
-            {
+            if (pathSeparatorPosition <= 0 ||
+                pathSeparatorPosition >= localQuery.Length - 1)
                 return null;
-            }
 
-            string meta = DecodeSimpleImportQueryPart(
-                localQuery.Substring(0, separatorPosition));
-            string value = DecodeSimpleImportQueryPart(
+            string nestedQuery =
                 localQuery.Substring(
-                    separatorPosition +
-                    dict.MetaSeparator.Length));
+                    pathSeparatorPosition + 1);
             IEnumerable<IVertex> localVertices =
                 new[] { parseRoot }.Concat(
                     GraphUtil.GetSubGraphWithoutLinksAsList(
                         parseRoot));
+            string nestedMeta;
+            string nestedValue;
+            ZeroCodeUtil.GetQueryFirstAndSecondPart(
+                dict,
+                nestedQuery,
+                out nestedMeta,
+                out nestedValue);
 
             foreach (IVertex localVertex
                 in localVertices.Distinct())
             {
-                IVertex target = GraphUtil.GetQueryOutFirst(
-                    localVertex,
-                    meta,
-                    value);
+                IVertex target = localVertex.Get(
+                    false,
+                    localQuery);
 
-                if (target != null)
+                if (IsUnresolvedImportTarget(target))
+                {
+                    target = localVertex.Get(
+                        false,
+                        nestedQuery);
+                }
+
+                if (!IsUnresolvedImportTarget(target) &&
+                    GeneralUtil.CompareStrings(
+                        target.Value,
+                        nestedValue))
+                    return target;
+
+                target = GraphUtil.GetQueryOutFirst(
+                    localVertex,
+                    null,
+                    nestedValue);
+
+                if (!IsUnresolvedImportTarget(target) &&
+                    GeneralUtil.CompareStrings(
+                        target.Value,
+                        nestedValue))
                     return target;
             }
 
-            return GraphUtil.DeepIterator(
+            if (string.IsNullOrWhiteSpace(nestedValue))
+            {
+                int valueSeparatorPosition =
+                    nestedQuery.LastIndexOf(
+                        ':');
+                if (valueSeparatorPosition >= 0)
+                    nestedValue =
+                        nestedQuery.Substring(
+                            valueSeparatorPosition + 1).Trim();
+            }
+
+            return GraphUtil.DeepFindOneByValue(
                 parseRoot,
-                edge =>
-                    edge.Meta != null &&
-                    DoesImportMetaMatch(
-                        edge.Meta.Value,
-                        meta) &&
-                    GeneralUtil.CompareStrings(
-                        edge.To.Value,
-                        value),
-                true,
-                false,
-                false).FirstOrDefault();
-        }
-
-        static bool DoesImportMetaMatch(
-            object metaValue,
-            string requestedMeta)
-        {
-            if (GeneralUtil.CompareStrings(
-                metaValue,
-                requestedMeta))
-            {
-                return true;
-            }
-
-            string metaString = metaValue?.ToString();
-
-            return metaString != null &&
-                metaString.EndsWith(
-                    "\\" + requestedMeta,
-                    StringComparison.Ordinal);
-        }
-
-        string DecodeSimpleImportQueryPart(
-            string queryPart)
-        {
-            string trimmedQueryPart = queryPart.Trim();
-
-            if (trimmedQueryPart.Length == 0 ||
-                trimmedQueryPart[0] !=
-                    dict.EscapedSequencePrefix)
-            {
-                return trimmedQueryPart;
-            }
-
-            int position = 0;
-            string decoded =
-                ZeroCodeCommon.tryEscapedLinkStringAndDeescape(
-                    dict,
-                    trimmedQueryPart,
-                    ref position);
-
-            return decoded ?? trimmedQueryPart;
+                nestedValue,
+                false);
         }
 
         
@@ -774,6 +776,28 @@ namespace m0.ZeroCode
                 " link='" + link +
                 "' target={" + targetDescription +
                 "} stack=" + Environment.StackTrace);
+        }
+
+        void LogStoreImportDiagnostic(
+            string phase,
+            string link,
+            IVertex target,
+            string details)
+        {
+            string targetType =
+                target?.GetType().FullName ?? "<null>";
+            string targetValue =
+                target?.Value?.ToString() ?? "<null>";
+
+            MinusZero.Instance.Log(
+                0,
+                "StoreImportDiagnostic",
+                phase +
+                " link='" + (link ?? "<null>") +
+                "' targetType='" + targetType +
+                "' targetValue='" + targetValue +
+                "' " + details +
+                " stack=" + Environment.StackTrace);
         }
 
         void prepareImportList_FromString_import()
@@ -868,6 +892,12 @@ namespace m0.ZeroCode
             {
                 string link = match.Groups["link"].Value;
 
+                LogStoreImportDiagnostic(
+                    "direct import regex match",
+                    link,
+                    null,
+                    "matchIndex=" + match.Index);
+
                 IVertex target = r.Get(false, link); // YYY huston..... we assume that this get will not go into infinite reccursion as link variable is simple run time query
 
                 LogStoreImportResolution(
@@ -893,6 +923,12 @@ namespace m0.ZeroCode
             foreach (Match match in rgx.Matches(text))
             {
                 string link = match.Groups["link"].Value;
+
+                LogStoreImportDiagnostic(
+                    "direct meta import regex match",
+                    link,
+                    null,
+                    "matchIndex=" + match.Index);
 
                 IVertex target = r.Get(false, link); // YYY huston..... we assume that this get will not go into infinite reccursion as link variable is simple run time query
 
@@ -1057,11 +1093,47 @@ namespace m0.ZeroCode
             if (mock.mockData != null)
                 link = mock.mockData.ToString();
 
+            LogStoreImportDiagnostic(
+                "mock link resolution start",
+                link,
+                null,
+                "parentType='" +
+                (mock.parentVertex?.GetType().FullName ?? "<null>") +
+                "' resolvedPendingCount=" +
+                (resolvedPendingImports?.Count ?? 0));
+
             if (link.Length == 0)
+            {
+                LogStoreImportDiagnostic(
+                    "mock link resolution empty link",
+                    link,
+                    MinusZero.Instance.Root,
+                    "");
                 return MinusZero.Instance.Root;
+            }
 
             if (GeneralUtil.CompareStrings(link, "$CodeRoot"))
                 return processBaseEdgeTo;
+
+            if (TryGetResolvedPendingImport(
+                link,
+                out IVertex resolvedImport))
+            {
+                LogStoreImportDiagnostic(
+                    "mock link resolved from pending imports",
+                    link,
+                    resolvedImport,
+                    "normalizedLink='" +
+                    NormalizeImportLink(link) + "'");
+                return resolvedImport;
+            }
+
+            LogStoreImportDiagnostic(
+                "mock link not found in pending imports",
+                link,
+                null,
+                "normalizedLink='" +
+                NormalizeImportLink(link) + "'");
 
             // $Is
 
@@ -1178,8 +1250,22 @@ namespace m0.ZeroCode
             tryIf = queryMetaImport(baseVertex, parseRootQuery);
 
             if (tryIf != null && !(tryIf is ToVertexMock))
+            {
+                LogStoreImportDiagnostic(
+                    "mock link resolved from parse root",
+                    link,
+                    tryIf,
+                    "parseRootQuery='" + parseRootQuery + "'");
                 return tryIf;
+            }
 
+            LogStoreImportDiagnostic(
+                "mock link resolution returned empty",
+                link,
+                MinusZero.Instance.Empty,
+                "parseRootQuery='" + parseRootQuery +
+                "' parseRootResultType='" +
+                (tryIf?.GetType().FullName ?? "<null>") + "'");
             return MinusZero.Instance.Empty;
         }
 
@@ -3586,11 +3672,35 @@ namespace m0.ZeroCode
 
                 IVertex toVertex = edge.To;
 
+                LogStoreImportDiagnostic(
+                    "processing mock edge",
+                    (edge.To as ToVertexMock)?.mockData?.ToString() ??
+                    (edge.Meta as ToVertexMock)?.mockData?.ToString(),
+                    null,
+                    "fromValue='" +
+                    (edge.From?.Value ?? "<null>") +
+                    "' metaType='" +
+                    (edge.Meta?.GetType().FullName ?? "<null>") +
+                    "' toType='" +
+                    (edge.To?.GetType().FullName ?? "<null>") + "'");
+
                 if(metaVertex is ToVertexMock)
                     metaVertex = ToVertexMock2VertexByLinkString((ToVertexMock)metaVertex);
 
                 if (toVertex is ToVertexMock)
                     toVertex = ToVertexMock2VertexByLinkString((ToVertexMock)toVertex);
+
+                LogStoreImportDiagnostic(
+                    "processed mock edge result",
+                    null,
+                    toVertex,
+                    "metaResultType='" +
+                    (metaVertex?.GetType().FullName ?? "<null>") +
+                    "' toResultType='" +
+                    (toVertex?.GetType().FullName ?? "<null>") +
+                    "' toIsEmpty='" +
+                    (toVertex == MinusZero.Instance.Empty) + "'");
+
                 IEdge newEdge = edge.From.AddEdge(metaVertex, toVertex);
                 ReplaceRememberedTextualChildEdge(edge.From, edge, newEdge);
                 edge.From.DeleteEdge(edge);
