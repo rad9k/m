@@ -124,7 +124,11 @@ namespace m0.ZeroCode
             IDictionary<IVertex, IVertex> sourceLinerizedDict = new Dictionary<IVertex, IVertex>();
             IList<IVertex> beenList = new List<IVertex>();
 
-            IEnumerable<IVertex> subGraph = GraphUtil.GetSubGraphWithoutLinksAsList(sourceBaseVertex);
+            IList<IVertex> subGraph =
+                GraphUtil.GetSubGraphWithoutLinksAsList(sourceBaseVertex)
+                    .ToList();
+            HashSet<IVertex> importedTargets =
+                GetImportedTargetsToPreserve(subGraph);
 
             foreach (IVertex v in subGraph) {
                 IVertex v_new = MinusZero.Instance.CreateTempVertex();
@@ -135,10 +139,57 @@ namespace m0.ZeroCode
             }
             
 
-            return LinearizeGraph_Reccurent(sourceBaseVertex, sourceLinerizedDict, beenList);
+            return LinearizeGraph_Reccurent(
+                sourceBaseVertex,
+                sourceLinerizedDict,
+                importedTargets,
+                beenList);
         }
 
-        static IVertex LinearizeGraph_Reccurent(IVertex sourceVertex, IDictionary<IVertex, IVertex> sourceLinerizedDict, IList<IVertex> beenList)
+        static HashSet<IVertex> GetImportedTargetsToPreserve(
+            IList<IVertex> sourceSubGraph)
+        {
+            HashSet<IVertex> importedTargets =
+                new HashSet<IVertex>();
+            HashSet<IVertex> namedImportVertices =
+                new HashSet<IVertex>();
+
+            foreach (IVertex vertex in sourceSubGraph)
+                foreach (IEdge edge in vertex.OutEdgesRaw)
+                {
+                    if (GeneralUtil.CompareStrings(
+                            edge.Meta,
+                            "$ImportDirect") ||
+                        GeneralUtil.CompareStrings(
+                            edge.Meta,
+                            "$ImportDirectMeta"))
+                    {
+                        importedTargets.Add(edge.To);
+                    }
+                    else if (GeneralUtil.CompareStrings(
+                                 edge.Meta,
+                                 "$Import") ||
+                             GeneralUtil.CompareStrings(
+                                 edge.Meta,
+                                 "$ImportMeta"))
+                    {
+                        namedImportVertices.Add(edge.To);
+                    }
+                }
+
+            foreach (IVertex vertex in sourceSubGraph)
+                foreach (IEdge edge in vertex.OutEdgesRaw)
+                    if (namedImportVertices.Contains(edge.Meta))
+                        importedTargets.Add(edge.To);
+
+            return importedTargets;
+        }
+
+        static IVertex LinearizeGraph_Reccurent(
+            IVertex sourceVertex,
+            IDictionary<IVertex, IVertex> sourceLinerizedDict,
+            ISet<IVertex> importedTargets,
+            IList<IVertex> beenList)
         {
             if (!sourceLinerizedDict.ContainsKey(sourceVertex))
                 return sourceVertex;
@@ -164,17 +215,10 @@ namespace m0.ZeroCode
                         linearizedMeta = e.Meta;
                 }
 
-                bool preserveImportedTarget =
-                    GeneralUtil.CompareStrings(
-                        e.Meta,
-                        "$ImportDirect") ||
-                    GeneralUtil.CompareStrings(
-                        e.Meta,
-                        "$ImportDirectMeta");
-
                 IVertex linearizedTo;
 
-                if (preserveImportedTarget ||
+                if (VertexOperations.IsLink_OldVersion(e) ||
+                    importedTargets.Contains(e.To) ||
                     !sourceLinerizedDict.ContainsKey(e.To))
                     linearizedTo = e.To;
                 else
@@ -183,7 +227,11 @@ namespace m0.ZeroCode
                 if (VertexOperations.CanCopy_ByMeta(linearizedMeta))
                     linearizedVertex.AddEdge(linearizedMeta, linearizedTo);
 
-                LinearizeGraph_Reccurent(e.To, sourceLinerizedDict, beenList);
+                LinearizeGraph_Reccurent(
+                    e.To,
+                    sourceLinerizedDict,
+                    importedTargets,
+                    beenList);
             }
 
             return linearizedVertex;
