@@ -28,53 +28,40 @@ namespace m0.ZeroCode
 
         FormalTextLanguageDictinaries dict;
 
-        internal static string DescribeVertex(IVertex vertex)
+        static bool TryGetParentIsContextualShortcut(
+            IVertex vertex,
+            IEdge parent,
+            out string shortcut,
+            out int matchingContextCount)
         {
-            if (vertex == null)
-                return "<null>";
+            shortcut = null;
+            matchingContextCount = 0;
 
-            return "objectId='" +
-                System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(vertex) +
-                "' value='" +
-                (vertex.Value?.ToString() ?? "<null>") +
-                "' store='" +
-                (vertex.Store?.Identifier?.ToString() ?? "<null>") +
-                "' incomingCount='" +
-                vertex.InEdgesRaw.Count +
-                "' outgoingCount='" +
-                vertex.OutEdgesRaw.Count +
-                "' isGlobalRoot='" +
-                ReferenceEquals(vertex, MinusZero.Instance.Root) +
-                "'";
-        }
-
-        internal static string DescribeEdge(IEdge edge)
-        {
-            if (edge == null)
-                return "<null>";
-
-            return "from={" +
-                DescribeVertex(edge.From) +
-                "} meta={" +
-                DescribeVertex(edge.Meta) +
-                "} to={" +
-                DescribeVertex(edge.To) +
-                "}";
-        }
-
-        static bool CanUseParentLocalShortcut(IVertex vertex, IEdge parent)
-        {
-            if (vertex == null || parent?.To == null)
+            if (vertex?.Value == null || parent?.To == null)
                 return false;
 
-            IStore vertexStore = vertex.Store;
-            IStore parentToStore = parent.To.Store;
+            foreach (IEdge isEdge in GraphUtil.GetQueryOut(parent.To, "$Is", null))
+            {
+                IVertex typeVertex = isEdge.To;
 
-            if (vertexStore == null || parentToStore == null)
-                return false;
+                if (ReferenceEquals(typeVertex, vertex))
+                {
+                    matchingContextCount++;
+                    shortcut = vertex.Value.ToString();
+                    continue;
+                }
 
-            return ReferenceEquals(vertexStore, parentToStore)
-                || Equals(vertexStore.Identifier, parentToStore.Identifier);
+                foreach (IEdge childEdge in
+                    GraphUtil.GetQueryOut(typeVertex, null, vertex.Value))
+                    if (ReferenceEquals(childEdge.To, vertex))
+                    {
+                        matchingContextCount++;
+                        shortcut = vertex.Value.ToString();
+                        break;
+                    }
+            }
+
+            return matchingContextCount == 1;
         }
 
         public string Process(FormalTextLanguageDictinaries _dict, Graph2TextProcessing _zcg2sp, IVertex v, IEdge _parent)
@@ -87,70 +74,19 @@ namespace m0.ZeroCode
 
             Vertex = v;
 
-            MinusZero.Instance.Log(
-                0,
-                "Graph2TextLinkResolutionTrace",
-                "phase='process-enter' vertex={" +
-                DescribeVertex(v) +
-                "} parent={" +
-                DescribeEdge(_parent) +
-                "}");
-
             if (_parent != null)
             {
-                bool canUseParentLocalShortcut =
-                    CanUseParentLocalShortcut(v, _parent);
+                string contextualShortcut;
+                int matchingContextCount;
+                bool hasContextualShortcut =
+                    TryGetParentIsContextualShortcut(
+                        v,
+                        _parent,
+                        out contextualShortcut,
+                        out matchingContextCount);
 
-                MinusZero.Instance.Log(
-                    0,
-                    "Graph2TextLinkResolutionTrace",
-                    "phase='parent-shortcut-eligibility' vertex={" +
-                    DescribeVertex(v) +
-                    "} parent={" +
-                    DescribeEdge(_parent) +
-                    "} canUseParentLocalShortcut='" +
-                    canUseParentLocalShortcut +
-                    "'");
-
-                //IVertex Is = _parent.To.Get(false, "$Is:");
-                IVertex Is = GraphUtil.GetQueryOutFirst(_parent.To, "$Is", null);
-
-                //if (Is != null && Is.Get(false, ZeroCodeCommon.stringToPossiblyEscapedString(dict, v.Value.ToString()) ) == v)
-                IVertex matchingVertex = canUseParentLocalShortcut &&
-                    Is != null &&
-                    v?.Value != null
-                    ? GraphUtil.GetQueryOutFirst(Is, null, v.Value.ToString())
-                    : null;
-
-                MinusZero.Instance.Log(
-                    0,
-                    "Graph2TextLinkResolutionTrace",
-                    "phase='parent-is-shortcut-check' vertex={" +
-                    DescribeVertex(v) +
-                    "} parent={" +
-                    DescribeEdge(_parent) +
-                    "} parentIs={" +
-                    DescribeVertex(Is) +
-                    "} queryResult={" +
-                    DescribeVertex(matchingVertex) +
-                    "} sameReference='" +
-                    ReferenceEquals(matchingVertex, v) +
-                    "'");
-
-                if (canUseParentLocalShortcut &&
-                    ReferenceEquals(matchingVertex, v))
+                if (hasContextualShortcut)
                 {
-                    MinusZero.Instance.Log(
-                        0,
-                        "Graph2TextLinkResolutionTrace",
-                        "phase='parent-is-shortcut-taken' returnedLink='" +
-                        (v.Value?.ToString() ?? "<null>") +
-                        "' vertex={" +
-                        DescribeVertex(v) +
-                        "} parent={" +
-                        DescribeEdge(_parent) +
-                        "}'");
-
                     return (v.Value.ToString());
                 }
             }
@@ -159,42 +95,20 @@ namespace m0.ZeroCode
             {
                 bool childShortcutMatches = false;
 
-                bool canUseParentLocalShortcut =
-                    CanUseParentLocalShortcut(v, _parent);
-
-                if (canUseParentLocalShortcut)
-                    foreach (IEdge e in VertexOperations.GetChildEdges(_parent.Meta))
+                if (v?.Value != null && _parent.Meta != null)
+                    foreach (IEdge e in
+                        GraphUtil.GetQueryOut(
+                            _parent.Meta,
+                            null,
+                            v.Value))
                         if (v == e.To)
                         {
                             childShortcutMatches = true;
                             break;
                         }
 
-                MinusZero.Instance.Log(
-                    0,
-                    "Graph2TextLinkResolutionTrace",
-                    "phase='parent-meta-child-shortcut-check' vertex={" +
-                    DescribeVertex(v) +
-                    "} parent={" +
-                    DescribeEdge(_parent) +
-                    "} matches='" +
-                    childShortcutMatches +
-                    "'");
-
-                if (canUseParentLocalShortcut &&
-                    childShortcutMatches)
+                if (childShortcutMatches)
                 {
-                    MinusZero.Instance.Log(
-                        0,
-                        "Graph2TextLinkResolutionTrace",
-                        "phase='parent-meta-child-shortcut-taken' returnedLink='" +
-                        (v.Value?.ToString() ?? "<null>") +
-                        "' vertex={" +
-                        DescribeVertex(v) +
-                        "} parent={" +
-                        DescribeEdge(_parent) +
-                        "}'");
-
                     return (v.Value.ToString());
                 }
             }
@@ -228,28 +142,8 @@ namespace m0.ZeroCode
                     v,
                     out VertexData subGraphVertex))
             {
-                MinusZero.Instance.Log(
-                    0,
-                    "Graph2TextLinkResolutionTrace",
-                    "phase='process-result-subgraph-link' returnedLink='" +
-                    subGraphVertex.LinkString +
-                    "' vertex={" +
-                    DescribeVertex(v) +
-                    "}'");
-
                 return subGraphVertex.LinkString;
             }
-
-            MinusZero.Instance.Log(
-                0,
-                "Graph2TextLinkResolutionTrace",
-                "phase='process-result' returnedLink='" +
-                shortestLink +
-                "' shortestLinkLength='" +
-                shortestLinkLength +
-                "' vertex={" +
-                DescribeVertex(v) +
-                "}'");
 
             return shortestLink;
         }
@@ -399,13 +293,17 @@ namespace m0.ZeroCode
             int currentPathLength = edgesList.Count;
 
             if (currentPathLength >= shortestLinkLength)
+            {
                 return;
+            }
 
             if (shortestPathToVertex.TryGetValue(
                     v,
                     out int previousPathLength) &&
                 previousPathLength < currentPathLength)
+            {
                 return;
+            }
 
             shortestPathToVertex[v] = currentPathLength;
 
@@ -564,34 +462,6 @@ namespace m0.ZeroCode
             shortestLinkLength = 99999;
 
             find_reccurent(new List<IEdge>(), v);
-
-            if (shortestLinkLength == 99999)
-            {
-                MinusZero.Instance.Log(
-                    0,
-                    "Graph2TextRootTraversalTrace",
-                    "result='not found'" +
-                    " vertexObjectId='" +
-                    System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(
-                        v) +
-                    "' vertexValue='" +
-                    (v.Value?.ToString() ?? "<null>") +
-                    "' vertexStore='" +
-                    (v.Store?.Identifier?.ToString() ?? "<null>") +
-                    "' vertexIncomingCount='" +
-                    v.InEdgesRaw.Count +
-                    "' visitedCount='" +
-                    linkBeenList.Count +
-                    "' reachedGlobalRoot='" +
-                    linkBeenList.Contains(MinusZero.Instance.Root) +
-                    "' globalRootObjectId='" +
-                    System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(
-                        MinusZero.Instance.Root) +
-                    "' globalRootStore='" +
-                    (MinusZero.Instance.Root.Store?.Identifier?.ToString() ??
-                        "<null>") +
-                    "'");
-            }
 
             return shortestLink;
         }
@@ -753,36 +623,6 @@ namespace m0.ZeroCode
             dict = DictionariesForFormalTextLanguageFactory.Get(formalTextLanguage);
         }
 
-        void LogGraph2TextRootTrace(
-            string phase,
-            IVertex vertex)
-        {
-            MinusZero.Instance.Log(
-                0,
-                "Graph2TextRootTrace",
-                "phase='" + phase +
-                "' vertexObjectId='" +
-                (vertex == null
-                    ? "<null>"
-                    : System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(
-                        vertex).ToString()) +
-                "' vertexValue='" +
-                (vertex?.Value?.ToString() ?? "<null>") +
-                "' vertexStore='" +
-                (vertex?.Store?.Identifier?.ToString() ?? "<null>") +
-                "' incomingCount='" +
-                (vertex?.InEdgesRaw.Count ?? 0) +
-                "' isGlobalRoot='" +
-                ReferenceEquals(vertex, MinusZero.Instance.Root) +
-                "' globalRootObjectId='" +
-                System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(
-                    MinusZero.Instance.Root) +
-                "' globalRootStore='" +
-                (MinusZero.Instance.Root.Store?.Identifier?.ToString() ??
-                    "<null>") +
-                "'");
-        }
-
         internal bool TryGetImportMetas(
             IVertex vertex,
             out IList<IVertex> importMetas)
@@ -916,8 +756,6 @@ namespace m0.ZeroCode
         {
             StringBuilder sb = new StringBuilder();
 
-            int rememberBeforeFlush = AppendNewLines_remember;
-
             if (AppendNewLines_remember > 0)
                 while (AppendNewLines_remember > 0)
                 {
@@ -930,12 +768,6 @@ namespace m0.ZeroCode
             for (int i = 0; i < tabTimes; i++)
                 sb.Append(Tab);
 
-            if (rememberBeforeFlush > 0)
-                MinusZero.Instance.Log(0, "G2T_NewLine",
-                    "FLUSH getNewLineAndTabsString rememberWas=" + rememberBeforeFlush
-                    + " tabTimes=" + tabTimes
-                    + " extraBlankLines=" + rememberBeforeFlush);
-
             return sb.ToString();
         }
 
@@ -947,11 +779,6 @@ namespace m0.ZeroCode
 
             if (!ommitOnce_AppendNewLineAndTabs)
             {
-                if (AppendNewLines_remember > 0)
-                    MinusZero.Instance.Log(0, "G2T_NewLine",
-                        "AppendNewLineAndTabs remember=" + AppendNewLines_remember
-                        + " tabTimes=" + tabTimes);
-
                 Source.Append(getNewLineAndTabsString());
             }
 
@@ -968,76 +795,6 @@ namespace m0.ZeroCode
             return e.Meta.Value.ToString();
         }
 
-        string VertexValueForLog(IVertex v)
-        {
-            if (v == null || v.Value == null)
-                return "";
-            return v.Value.ToString();
-        }
-
-        int CountNewLineEdgesInSubGraph(IVertex root)
-        {
-            if (root == null)
-                return 0;
-
-            int count = 0;
-            HashSet<IVertex> visited = new HashSet<IVertex>();
-            Stack<IVertex> pending = new Stack<IVertex>();
-            pending.Push(root);
-
-            while (pending.Count > 0)
-            {
-                IVertex current = pending.Pop();
-                if (!visited.Add(current))
-                    continue;
-
-                foreach (IEdge e in current.OutEdgesRaw)
-                {
-                    if (EdgeMetaForLog(e) == "$NewLine")
-                        count++;
-
-                    if (e.To != null && !VertexOperations.IsLink_OldVersion(e))
-                        pending.Push(e.To);
-                }
-            }
-
-            return count;
-        }
-
-        void LogNewLineEdgesInSubGraph(string where, IVertex root)
-        {
-            int count = CountNewLineEdgesInSubGraph(root);
-
-            MinusZero.Instance.Log(0, "G2T_NewLine",
-                where + " $NewLine count=" + count
-                + " rootValue=" + VertexValueForLog(root));
-
-            if (count == 0)
-                return;
-
-            HashSet<IVertex> visited = new HashSet<IVertex>();
-            Stack<IVertex> pending = new Stack<IVertex>();
-            pending.Push(root);
-
-            while (pending.Count > 0)
-            {
-                IVertex current = pending.Pop();
-                if (!visited.Add(current))
-                    continue;
-
-                foreach (IEdge e in current.OutEdgesRaw)
-                {
-                    if (EdgeMetaForLog(e) == "$NewLine")
-                        MinusZero.Instance.Log(0, "G2T_NewLine",
-                            where + " FOUND $NewLine under parentValue=" + VertexValueForLog(current)
-                            + " parentOutCount=" + current.OutEdgesRaw.Count);
-
-                    if (e.To != null && !VertexOperations.IsLink_OldVersion(e))
-                        pending.Push(e.To);
-                }
-            }
-        }
-
         bool AppendNewLines_onlyRemember(IEdge e)
         {
             string meta = EdgeMetaForLog(e);
@@ -1051,15 +808,8 @@ namespace m0.ZeroCode
                     AppendNewLines_remember++;
                     newLinesBeenList.Add(e);
 
-                    MinusZero.Instance.Log(0, "G2T_NewLine",
-                        "onlyRemember HIT remember=" + AppendNewLines_remember
-                        + " to=" + (e.To != null && e.To.Value != null ? e.To.Value.ToString() : ""));
-
                     return true;
                 }
-
-                MinusZero.Instance.Log(0, "G2T_NewLine",
-                    "onlyRemember ALREADY_IN_BEEN remember=" + AppendNewLines_remember);
 
                 return false;
             }
@@ -1080,15 +830,8 @@ namespace m0.ZeroCode
                     AppendNewLines_remember++;
                     newLinesBeenList.Add(e);
 
-                    MinusZero.Instance.Log(0, "G2T_NewLine",
-                        "AppendNewLines HIT remember=" + AppendNewLines_remember
-                        + " to=" + (e.To != null && e.To.Value != null ? e.To.Value.ToString() : ""));
-
                     return true;
                 }
-
-                MinusZero.Instance.Log(0, "G2T_NewLine",
-                    "AppendNewLines ALREADY_IN_BEEN remember=" + AppendNewLines_remember);
 
                 return false;
             }
@@ -1113,19 +856,6 @@ namespace m0.ZeroCode
 
             toAppend = TryConvertToCurrentBaseRelativeLink(toAppend, v);
 
-            MinusZero.Instance.Log(
-                0,
-                "Graph2TextLinkResolutionTrace",
-                "phase='append-as-link' vertex={" +
-                getLinkStringProcessing.DescribeVertex(v) +
-                "} parent={" +
-                getLinkStringProcessing.DescribeEdge(parent) +
-                "} generatedLink='" +
-                toAppend +
-                "' hideLinkPrefix='" +
-                hideLinkPrefix +
-                "'");
-
             if (hideLinkPrefix)
                 SourceAppend(ZeroCodeCommon.stringToLinkString(dict, toAppend, true));
             else
@@ -1143,7 +873,7 @@ namespace m0.ZeroCode
             SourceAppend("@$Is");
             AppendDoubleColon();
 
-            AppendAsLink(e.To, parent, false);
+            AppendAsLink(e.To, null, false);
         }
 
         void AppendDoubleColon()
@@ -1327,36 +1057,6 @@ namespace m0.ZeroCode
             return null;
         }
 
-        void LogUnresolvedImportSerialization(
-            IVertex linkVertex,
-            string generatedLink)
-        {
-            string incomingEdges =
-                string.Join(
-                    " | ",
-                    linkVertex.InEdgesRaw.Select(
-                        edge =>
-                            "from='" +
-                            (edge.From?.Value?.ToString() ?? "<null>") +
-                            "' meta='" +
-                            (edge.Meta?.Value?.ToString() ?? "<null>") +
-                            "' to='" +
-                            (edge.To?.Value?.ToString() ?? "<null>") +
-                            "'"));
-
-            MinusZero.Instance.Log(
-                0,
-                "StoreImportSerializationTrace",
-                "generatedLink='" + generatedLink +
-                "' vertexValue='" +
-                (linkVertex.Value?.ToString() ?? "<null>") +
-                "' vertexStore='" +
-                (linkVertex.Store?.Identifier?.ToString() ?? "<null>") +
-                "' incomingEdgeCount='" +
-                linkVertex.InEdgesRaw.Count +
-                "' incomingEdges={" + incomingEdges + "}");
-        }
-
         bool AppendImportKeyword(IEdge keywordEdge, bool isDirect, bool isMeta)
         {
             KeywordMatch km = KeywordMatchedSubGraphEdges[keywordEdge];
@@ -1395,38 +1095,9 @@ namespace m0.ZeroCode
             if (!isDirect)
                 name = ZeroCodeCommon.stringToNewVertexString(dict, importEdge.To.ToString());
 
-            if (isDirect && isMeta)
-            {
-                MinusZero.Instance.Log(
-                    0,
-                    "StoreImportSerializationEdgeTrace",
-                    "edgeId='" +
-                    System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(importEdge) +
-                    "' edgeToObjectId='" +
-                    System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(importEdge.To) +
-                    "' edgeToValue='" +
-                    (importEdge.To.Value?.ToString() ?? "<null>") +
-                    "' edgeToStore='" +
-                    (importEdge.To.Store?.Identifier?.ToString() ?? "<null>") +
-                    "' linkVertexObjectId='" +
-                    System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(linkVertex) +
-                    "' linkVertexStore='" +
-                    (linkVertex.Store?.Identifier?.ToString() ?? "<null>") +
-                    "'");
-            }
-
             getLinkStringProcessing_FromRoot glsp = new getLinkStringProcessing_FromRoot();
 
             string link = dict.CodeGraphLinkPrefix + glsp.Process(dict, this, linkVertex);
-
-            if (link.Contains(
-                "### LINK NOT FOUND ###",
-                StringComparison.Ordinal))
-            {
-                LogUnresolvedImportSerialization(
-                    linkVertex,
-                    link);
-            }
 
             string keyword = km.KeywordDefinition.Value.ToString();
 
@@ -1531,29 +1202,12 @@ namespace m0.ZeroCode
                             AppendSubVertices(km, be, path);
                     }
 
-                    bool beIsLink = VertexOperations.IsLink_OldVersion(be);
-
-                    MinusZero.Instance.Log(0, "G2T_NewLine",
-                        "AppendKeyword unmatchedWalk keyword=" + VertexValueForLog(km.KeywordDefinition)
-                        + " beMeta=" + EdgeMetaForLog(be)
-                        + " beTo=" + VertexValueForLog(be.To)
-                        + " isLink=" + beIsLink
-                        + " outCount=" + (be.To != null ? be.To.OutEdgesRaw.Count : -1)
-                        + " matchedCount=" + km.MatchedEdges.Count);
-
-                    if (!beIsLink) // XXX 2020
+                    if (!VertexOperations.IsLink_OldVersion(be)) // XXX 2020
                                    //foreach (IEdge e in ZeroCodeView.Linearize(be.To))
                         foreach (IEdge e in be.To.OutEdgesRaw)
                         {
                             bool inMatched = km.MatchedEdges.Contains(e);
                             bool shouldSkip = ShouldSkipOutboundUnderLinearizedUxBaseEdge(be, e);
-
-                            MinusZero.Instance.Log(0, "G2T_NewLine",
-                                "AppendKeyword child meta=" + EdgeMetaForLog(e)
-                                + " to=" + VertexValueForLog(e.To)
-                                + " inMatched=" + inMatched
-                                + " shouldSkip=" + shouldSkip
-                                + " keyword=" + VertexValueForLog(km.KeywordDefinition));
 
                             if (inMatched)
                                 continue;
@@ -1859,18 +1513,9 @@ namespace m0.ZeroCode
 
             foreach (IEdge e in baseEdge.To.OutEdgesRaw)
             {
-                string meta = EdgeMetaForLog(e);
-                bool isNewLineMeta = meta == "$NewLine";
-
                 if (km.BaseEdge != baseEdge && !km.MatchedEdges.Contains(e))
                 {
                     bool shouldSkip = ShouldSkipOutboundUnderLinearizedUxBaseEdge(baseEdge, e);
-
-                    if (isNewLineMeta)
-                        MinusZero.Instance.Log(0, "G2T_NewLine",
-                            "AppendSubVertices unmatched meta=$NewLine shouldSkip=" + shouldSkip
-                            + " inMatched=" + km.MatchedEdges.Contains(e)
-                            + " remember=" + AppendNewLines_remember);
 
                     if (shouldSkip)
                     {
@@ -1893,22 +1538,9 @@ namespace m0.ZeroCode
                     }
                     AppendEdge(e, null, basePath + "\\" + GraphUtil.GetIdentyfyingQuerySubString_MetaMode(dict, e), km.WasHereTabAddingOmmit);
                 }
-                else if (isNewLineMeta)
-                {
-                    MinusZero.Instance.Log(0, "G2T_NewLine",
-                        "AppendSubVertices SKIP_BRANCH1 baseEdge==km.BaseEdge=" + (km.BaseEdge == baseEdge)
-                        + " inMatched=" + km.MatchedEdges.Contains(e)
-                        + " remember=" + AppendNewLines_remember);
-                }
-
                 if (km.DoKeywordDefinitionContainLocalRoot && km.MatchedEdges.Contains(e) && KeywordMatchedSubGraphEdges[e] != km)
                 {
                     bool shouldSkip = ShouldSkipOutboundUnderLinearizedUxBaseEdge(baseEdge, e);
-
-                    if (isNewLineMeta)
-                        MinusZero.Instance.Log(0, "G2T_NewLine",
-                            "AppendSubVertices matchedLocalRoot meta=$NewLine shouldSkip=" + shouldSkip
-                            + " remember=" + AppendNewLines_remember);
 
                     if (shouldSkip)
                     {
@@ -1951,17 +1583,8 @@ namespace m0.ZeroCode
             if (!ZeroCodeUtil.FilterEdgeForGraph2TextProcessing(e))
                 return false;
 
-            string meta = EdgeMetaForLog(e);
-            bool isNewLineMeta = meta == "$NewLine";
-
             if (KeywordMatchedSubGraphEdges.ContainsKey(e))
             {
-                if (isNewLineMeta)
-                    MinusZero.Instance.Log(0, "G2T_NewLine",
-                        "AppendEdge $NewLine IN KeywordMatchedSubGraphEdges path=" + path
-                        + " ShouldAppend=" + ShouldAppendKeywordHere(e, path)
-                        + " remember=" + AppendNewLines_remember);
-
                 if (ShouldAppendKeywordHere(e, path) || e.Meta.Value.ToString() == "NextExpression")
                     return AppendKeyword(e, false, ParentKmHasTabAddingOmmit);
                 else
@@ -1973,10 +1596,6 @@ namespace m0.ZeroCode
 
             if (AppendNewLines_onlyRemember(e))
                 return false;
-
-            if (isNewLineMeta)
-                MinusZero.Instance.Log(0, "G2T_NewLine",
-                    "AppendEdge $NewLine fell through onlyRemember (unexpected) remember=" + AppendNewLines_remember);
 
             AppendNewLineAndTabs();
 
@@ -1993,15 +1612,6 @@ namespace m0.ZeroCode
                     AppendPrefix();
 
                     prefixAppended = true;
-
-                    MinusZero.Instance.Log(
-                        0,
-                        "Graph2TextLinkResolutionTrace",
-                        "phase='append-edge-meta' edge={" +
-                        getLinkStringProcessing.DescribeEdge(e) +
-                        "} parent={" +
-                        getLinkStringProcessing.DescribeEdge(parent) +
-                        "}'");
 
                     //AppendAsLink(e.Meta, parent, true);
 
@@ -2511,25 +2121,10 @@ namespace m0.ZeroCode
             //if (log)
             //  m0.MinusZero.Instance.Log(1, level, "ZeroCodeGraph2String_Reccurent", baseEdge.Meta.ToString() + "::" + baseEdge.To.ToString());
 
-            string meta = EdgeMetaForLog(baseEdge);
-            bool isNewLineMeta = meta == "$NewLine";
             bool inBeen = BeenList.Contains(baseEdge);
-
-            MinusZero.Instance.Log(0, "G2T_NewLine",
-                "Reccurent ENTER level=" + level
-                + " meta=" + meta
-                + " to=" + VertexValueForLog(baseEdge != null ? baseEdge.To : null)
-                + " inBeen=" + inBeen
-                + " isKeyword=" + (baseEdge != null && KeywordMatchedSubGraphEdges.ContainsKey(baseEdge))
-                + " remember=" + AppendNewLines_remember);
 
             if (inBeen /*&& baseEdge.Meta.Value.ToString() != "NextExpression"*/)
             {
-                if (isNewLineMeta)
-                    MinusZero.Instance.Log(0, "G2T_NewLine",
-                        "Reccurent $NewLine already in BeenList level=" + level
-                        + " remember=" + AppendNewLines_remember);
-
                 // Matched keyword edges are added to BeenList before their To children are walked.
                 // $NewLine hung under a matched leaf (e.g. Expression:OK) would otherwise be skipped.
                 if (baseEdge.To != null && !VertexOperations.IsLink_OldVersion(baseEdge))
@@ -2538,11 +2133,6 @@ namespace m0.ZeroCode
                     {
                         if (EdgeMetaForLog(childEdge) != "$NewLine")
                             continue;
-
-                        MinusZero.Instance.Log(0, "G2T_NewLine",
-                            "Reccurent inBeen still walk $NewLine under meta=" + meta
-                            + " to=" + VertexValueForLog(baseEdge.To)
-                            + " remember=" + AppendNewLines_remember);
 
                         ZeroCodeGraph2String_Reccurent(childEdge, level, baseEdge, path);
                     }
@@ -2553,8 +2143,6 @@ namespace m0.ZeroCode
 
             if (!ZeroCodeUtil.FilterEdgeForGraph2TextProcessing(baseEdge))
             {
-                MinusZero.Instance.Log(0, "G2T_NewLine",
-                    "Reccurent FILTERED_OUT meta=" + meta + " level=" + level);
                 return;
             }
 
@@ -2564,10 +2152,6 @@ namespace m0.ZeroCode
 
             if (!ShallProcess(baseEdge))
             {
-                MinusZero.Instance.Log(0, "G2T_NewLine",
-                    "Reccurent ShallProcess=false meta=" + meta
-                    + " level=" + level
-                    + " remember=" + AppendNewLines_remember);
                 return;
             }
 
@@ -2654,39 +2238,16 @@ namespace m0.ZeroCode
 
         public void prepareBaseEdge(IEdge _graphBaseEdge)
         {
-            LogGraph2TextRootTrace(
-                "input before VertexAndManyLines linearization",
-                _graphBaseEdge?.To);
-
-            int newLineBefore = CountNewLineEdgesInSubGraph(_graphBaseEdge != null ? _graphBaseEdge.To : null);
-
-            MinusZero.Instance.Log(0, "G2T_NewLine",
-                "prepareBaseEdge BEFORE linearize $NewLine count=" + newLineBefore
-                + " rootValue=" + VertexValueForLog(_graphBaseEdge != null ? _graphBaseEdge.To : null));
-
             IVertex v = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(_graphBaseEdge.To);
 
             BaseEdge = new EasyEdge(_graphBaseEdge.From, _graphBaseEdge.Meta, v); // this is some crazy hybrid. this is non consistent and might not work!
-
-            LogGraph2TextRootTrace(
-                "BaseEdge.To after VertexAndManyLines linearization",
-                BaseEdge.To);
-
-            LogNewLineEdgesInSubGraph("prepareBaseEdge AFTER linearize", v);
 
             //BaseEdge = _graphBaseEdge;
         }
 
         public void prepareBaseEdge_EdgeAndManyLines(IEdge _graphBaseEdge)
         {
-            int newLineBefore = CountNewLineEdgesInSubGraph(_graphBaseEdge != null ? _graphBaseEdge.To : null);
-
-            MinusZero.Instance.Log(0, "G2T_NewLine",
-                "prepareBaseEdge_EdgeAndManyLines BEFORE linearize $NewLine count=" + newLineBefore);
-
             IVertex linearized = ZeroCodeView.NextBasedExecutionForm_to_LinearExecutionForm_ProcessGraph(_graphBaseEdge.To);
-
-            LogNewLineEdgesInSubGraph("prepareBaseEdge_EdgeAndManyLines AFTER linearize", linearized);
 
             IVertex startingVertex = MinusZero.Instance.CreateTempVertex();
 
@@ -2713,8 +2274,6 @@ namespace m0.ZeroCode
 
         public string Process_EdgeAndManyLines_Inner(IEdge _graphBaseEdge)
         {
-            MinusZero.Instance.Log(0, "G2T_NewLine", "START Process_EdgeAndManyLines_Inner");
-
             shouldUseCurrentPathForFirstVertexAppend = false;
             ommitOnce_AppendNewLineAndTabs = true;
             ommitOnce_baseEdgePath = true;
@@ -2806,8 +2365,6 @@ namespace m0.ZeroCode
 
         public string Process_LinearizedManyLines_Inner(IEdge _graphBaseEdge)
         {
-            MinusZero.Instance.Log(0, "G2T_NewLine", "START Process_LinearizedManyLines_Inner");
-
             shouldUseCurrentPathForFirstVertexAppend = false;
             ommitOnce_AppendNewLineAndTabs = true;
 
@@ -2857,8 +2414,6 @@ namespace m0.ZeroCode
 
         public string Process_VertexAndManyLines(IEdge _graphBaseEdge)
         {
-            MinusZero.Instance.Log(0, "G2T_NewLine", "START Process_VertexAndManyLines");
-
             shouldUseCurrentPathForFirstVertexAppend = true;
 
             prepareBaseEdge(_graphBaseEdge);

@@ -2857,8 +2857,13 @@ namespace m0.UIWpf.UX
 
             IVertex baseEdgeFrom = baseEdge.From;
             IVertex baseEdgeTo = baseEdge.To;
-            return IsLiveBaseEdgeEndpoint(baseEdgeFrom) &&
-                IsLiveBaseEdgeEndpoint(baseEdgeTo);
+
+            // A container can visualize a vertex, not an edge. Such an item has
+            // BaseEdge.To and BaseEdge.Meta but intentionally no BaseEdge.From.
+            // Only a present From endpoint must be live.
+            return IsLiveBaseEdgeEndpoint(baseEdgeTo) &&
+                (baseEdgeFrom == null ||
+                    IsLiveBaseEdgeEndpoint(baseEdgeFrom));
         }
 
         private static bool IsLiveBaseEdgeEndpoint(IVertex endpoint)
@@ -6302,8 +6307,22 @@ namespace m0.UIWpf.UX
 
             string[] pathParts = diagramId.Split('/');
 
-            string startFullFilename = GraphUtil.GetStringValue(MinusZero.Instance.Root.Get(false, @"Start:\FullFilename:"));
-            string diagramDirectoryPath = System.IO.Path.Combine(startFullFilename, "diagrams");
+            string startFullFilename = GraphUtil.GetStringValue(
+                MinusZero.Instance.Root.Get(false, @"Start:\FullFilename:"));
+
+            if (string.IsNullOrWhiteSpace(startFullFilename))
+            {
+                MinusZero.Instance.Log(1, "UXVisualiser.SaveDiagram",
+                    "Start directory FullFilename is unavailable. Diagram not saved.");
+                return;
+            }
+
+            string startDirectoryPath =
+                m0.Store.FileSystem.FileSystemUtil.GetPhysicalFileName(
+                    startFullFilename);
+            string diagramDirectoryPath = System.IO.Path.Combine(
+                startDirectoryPath,
+                "diagrams");
 
             for (int pathPartIndex = 0; pathPartIndex < pathParts.Length - 1; pathPartIndex++)
                 diagramDirectoryPath = System.IO.Path.Combine(diagramDirectoryPath, pathParts[pathPartIndex]);

@@ -7,7 +7,6 @@ using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -557,34 +556,14 @@ namespace m0.ZeroCode
                         pendingImport.Link);
                 }
 
-                LogStoreImportResolution(
-                    "resolve pending " +
-                    pendingImport.ImportType +
-                    " import",
-                    pendingImport.Link,
-                    target);
-
                 if (IsUnresolvedImportTarget(target))
                     continue;
-
-                IEdge pendingImportEdgeBeforeReplace =
-                    pendingImport.ImportListEdge;
-
-                LogPendingImportEdgeTrace(
-                    "before pending import edge replace",
-                    pendingImport.Link,
-                    pendingImportEdgeBeforeReplace);
 
                 pendingImport.ImportListEdge =
                     GraphUtil.ReplaceEdge(
                         pendingImport.ImportListEdge.From,
                         pendingImport.ImportListEdge,
                         target);
-
-                LogPendingImportEdgeTrace(
-                    "after pending import edge replace",
-                    pendingImport.Link,
-                    pendingImport.ImportListEdge);
 
                 resolvedPendingImports[
                     NormalizeImportLink(pendingImport.Link)] =
@@ -680,8 +659,7 @@ namespace m0.ZeroCode
             if (placeholderEdge == null ||
                 string.IsNullOrEmpty(link) ||
                 (!IsStoreQualifiedLink(link) &&
-                    !(isMeta &&
-                        HasUnresolvedParentType(placeholderEdge.From))))
+                    !HasUnresolvedParentType(placeholderEdge.From)))
                 return;
 
             int occurrence = GetMatchingEdgeOccurrence(
@@ -733,18 +711,6 @@ namespace m0.ZeroCode
                     });
             }
 
-            MinusZero.Instance.Log(
-                0,
-                "VertexLinkResolutionTrace",
-                "deferred link='" +
-                link +
-                    "' isMeta='" +
-                    isMeta +
-                "' fromValue='" +
-                (placeholderEdge.From?.Value?.ToString() ?? "<null>") +
-                "' occurrence='" +
-                occurrence +
-                "'");
         }
 
         IEdge FindDeferredVertexLinkEdge(
@@ -814,6 +780,12 @@ namespace m0.ZeroCode
                 }
 
                 ResolvePendingImportsAfterParse();
+
+                if (!IsStoreQualifiedLink(pending.Link) &&
+                    HasUnresolvedParentType(pending.From))
+                {
+                    continue;
+                }
 
                 IVertex target =
                     ToVertexMock2VertexByLinkString(
@@ -894,16 +866,6 @@ namespace m0.ZeroCode
                 lock (deferredVertexLinkResolutions)
                     deferredVertexLinkResolutions.Remove(pending);
 
-                MinusZero.Instance.Log(
-                    0,
-                    "VertexLinkResolutionTrace",
-                    "resolved deferred link='" +
-                    pending.Link +
-                    "' edgeId='" +
-                    RuntimeHelpers.GetHashCode(resolvedEdge) +
-                    "' targetStore='" +
-                    (target.Store?.Identifier ?? "<null>") +
-                    "'");
             }
         }
 
@@ -929,13 +891,6 @@ namespace m0.ZeroCode
                         .Distinct()
                         .ToList();
             }
-
-            MinusZero.Instance.Log(
-                0,
-                "VertexLinkResolutionTrace",
-                "retry all deferred links owners='" +
-                owners.Count +
-                "'");
 
             try
             {
@@ -1043,176 +998,6 @@ namespace m0.ZeroCode
             prepareImportList_FromString_importDirectMeta();
         }
 
-        void LogStoreImportResolution(
-            string phase,
-            string link,
-            IVertex target)
-        {
-            if (string.IsNullOrEmpty(link) ||
-                !link.Contains(
-                    "$Store",
-                    StringComparison.Ordinal))
-                return;
-
-            string targetDescription = "<null>";
-
-            if (target != null)
-            {
-                IStore targetStore = target.Store;
-
-                targetDescription =
-                    "storeType='" +
-                    (targetStore?.TypeName ?? "<null>") +
-                    "', storeId='" +
-                    (targetStore?.Identifier ?? "<null>") +
-                    "', vertexId='" +
-                    target.Identifier +
-                    "', value='" +
-                    (target.Value ?? "<null>") +
-                    "', objectId='" +
-                    RuntimeHelpers.GetHashCode(target) +
-                    "'";
-            }
-
-            MinusZero.Instance.Log(
-                0,
-                "StoreImportTrace",
-                phase +
-                " link='" + link +
-                "' target={" + targetDescription +
-                "} stack=" + Environment.StackTrace);
-        }
-
-        void LogPendingImportEdgeTrace(
-            string phase,
-            string link,
-            IEdge edge)
-        {
-            IVertex edgeTarget = edge?.To;
-
-            MinusZero.Instance.Log(
-                0,
-                "StoreImportEdgeTrace",
-                phase +
-                " link='" + link +
-                "' edgeId='" +
-                (edge == null
-                    ? "<null>"
-                    : RuntimeHelpers.GetHashCode(edge).ToString()) +
-                "' fromValue='" +
-                (edge?.From?.Value?.ToString() ?? "<null>") +
-                "' metaValue='" +
-                (edge?.Meta?.Value?.ToString() ?? "<null>") +
-                "' toValue='" +
-                (edgeTarget?.Value?.ToString() ?? "<null>") +
-                "' toStore='" +
-                (edgeTarget?.Store?.Identifier?.ToString() ?? "<null>") +
-                "' toObjectId='" +
-                (edgeTarget == null
-                    ? "<null>"
-                    : RuntimeHelpers.GetHashCode(edgeTarget).ToString()) +
-                "'");
-        }
-
-        void LogVertexLinkResolution(
-            string phase,
-            string link,
-            IVertex parentVertex,
-            IVertex target)
-        {
-            bool isUserLink =
-                string.Equals(
-                    link,
-                    "User",
-                    StringComparison.Ordinal) ||
-                (link != null &&
-                    link.EndsWith(
-                        @"\User",
-                        StringComparison.Ordinal));
-
-            if (string.IsNullOrEmpty(link) ||
-                (!link.Contains(
-                    "$Store",
-                    StringComparison.Ordinal) &&
-                 !isUserLink))
-                return;
-
-            string targetDescription = "<null>";
-
-            if (target != null)
-            {
-                targetDescription =
-                    "storeId='" +
-                    (target.Store?.Identifier ?? "<null>") +
-                    "', vertexId='" +
-                    target.Identifier +
-                    "', value='" +
-                    (target.Value ?? "<null>") +
-                    "', objectId='" +
-                    RuntimeHelpers.GetHashCode(target) +
-                    "', isEmpty='" +
-                    (target == MinusZero.Instance.Empty) +
-                    "'";
-            }
-
-            StringBuilder parentIsDescription = new StringBuilder();
-            if (parentVertex != null)
-                foreach (IEdge isEdge in
-                    GraphUtil.GetQueryOut(parentVertex, "$Is", null))
-                {
-                    if (parentIsDescription.Length > 0)
-                        parentIsDescription.Append("; ");
-
-                    parentIsDescription.Append(
-                        "meta='" +
-                        (isEdge.Meta?.Value?.ToString() ?? "<null>") +
-                        "', to='" +
-                        (isEdge.To?.Value?.ToString() ?? "<null>") +
-                        "', toStore='" +
-                        (isEdge.To?.Store?.Identifier ?? "<null>") +
-                        "'");
-                }
-
-            StringBuilder parentIncomingDescription = new StringBuilder();
-            if (parentVertex != null)
-                foreach (IEdge incomingEdge in parentVertex.InEdgesRaw)
-                {
-                    if (parentIncomingDescription.Length > 0)
-                        parentIncomingDescription.Append("; ");
-
-                    parentIncomingDescription.Append(
-                        "from='" +
-                        (incomingEdge.From?.Value?.ToString() ?? "<null>") +
-                        "', meta='" +
-                        (incomingEdge.Meta?.Value?.ToString() ?? "<null>") +
-                        "', to='" +
-                        (incomingEdge.To?.Value?.ToString() ?? "<null>") +
-                        "'");
-                }
-
-            MinusZero.Instance.Log(
-                0,
-                "VertexLinkResolutionTrace",
-                phase +
-                " link='" +
-                (link ?? "<null>") +
-                "' parentValue='" +
-                (parentVertex?.Value?.ToString() ?? "<null>") +
-                "' parentStore='" +
-                (parentVertex?.Store?.Identifier ?? "<null>") +
-                "' parentObjectId='" +
-                (parentVertex == null
-                    ? "<null>"
-                    : RuntimeHelpers.GetHashCode(parentVertex).ToString()) +
-                "' target={" +
-                targetDescription +
-                "} parentIs=[" +
-                parentIsDescription +
-                "] parentIncoming=[" +
-                parentIncomingDescription +
-                "]");
-        }
-
         void prepareImportList_FromString_import()
         {
             //Regex rgx = new Regex("import[ ]+\"(?<name>.*)\"[ ]+@(?<link>.*[^ ])[ ]*\\r");
@@ -1307,11 +1092,6 @@ namespace m0.ZeroCode
 
                 IVertex target = r.Get(false, link); // YYY huston..... we assume that this get will not go into infinite reccursion as link variable is simple run time query
 
-                LogStoreImportResolution(
-                    "prepare direct import",
-                    link,
-                    target);
-
                 AddPreparedImport(
                     importDirectList,
                     Direct_meta,
@@ -1332,11 +1112,6 @@ namespace m0.ZeroCode
                 string link = match.Groups["link"].Value;
 
                 IVertex target = r.Get(false, link); // YYY huston..... we assume that this get will not go into infinite reccursion as link variable is simple run time query
-
-                LogStoreImportResolution(
-                    "prepare direct meta import",
-                    link,
-                    target);
 
                 AddPreparedImport(
                     importDirectMetaList,
@@ -1494,33 +1269,13 @@ namespace m0.ZeroCode
             if (mock.mockData != null)
                 link = mock.mockData.ToString();
 
-            LogVertexLinkResolution(
-                "start",
-                link,
-                mock.parentVertex,
-                null);
-
             if (link.Length == 0)
             {
-                IVertex emptyLinkTarget = MinusZero.Instance.Root;
-
-                LogVertexLinkResolution(
-                    "resolved empty link to root",
-                    link,
-                    mock.parentVertex,
-                    emptyLinkTarget);
-
-                return emptyLinkTarget;
+                return MinusZero.Instance.Root;
             }
 
             if (GeneralUtil.CompareStrings(link, "$CodeRoot"))
             {
-                LogVertexLinkResolution(
-                    "resolved code root",
-                    link,
-                    mock.parentVertex,
-                    processBaseEdgeTo);
-
                 return processBaseEdgeTo;
             }
 
@@ -1528,12 +1283,6 @@ namespace m0.ZeroCode
                 link,
                 out IVertex resolvedImport))
             {
-                LogVertexLinkResolution(
-                    "resolved from pending import cache",
-                    link,
-                    mock.parentVertex,
-                    resolvedImport);
-
                 return resolvedImport;
             }
 
@@ -1547,12 +1296,6 @@ namespace m0.ZeroCode
 
                     if (value != null)
                     {
-                        LogVertexLinkResolution(
-                            "resolved through parent Is edge",
-                            link,
-                            mock.parentVertex,
-                            value);
-
                         return value;
                     }
                 }
@@ -1563,12 +1306,6 @@ namespace m0.ZeroCode
 
                     if (value != null)
                     {
-                        LogVertexLinkResolution(
-                            "resolved through parent incoming edge",
-                            link,
-                            mock.parentVertex,
-                            value);
-
                         return value;
                     }
                 }
@@ -1597,12 +1334,6 @@ namespace m0.ZeroCode
 
                     if (tryIf != null)
                     {
-                        LogVertexLinkResolution(
-                            "resolved through named import",
-                            link,
-                            mock.parentVertex,
-                            tryIf);
-
                         return tryIf;
                     }
                 }
@@ -1616,12 +1347,6 @@ namespace m0.ZeroCode
 
                     if (tryIf != null)
                     {
-                        LogVertexLinkResolution(
-                            "resolved through dictionary named import",
-                            link,
-                            mock.parentVertex,
-                            tryIf);
-
                         return tryIf;
                     }
                 }
@@ -1635,12 +1360,6 @@ namespace m0.ZeroCode
 
                     if (tryIf != null)
                     {
-                        LogVertexLinkResolution(
-                            "resolved through named meta import",
-                            link,
-                            mock.parentVertex,
-                            tryIf);
-
                         return tryIf;
                     }
                 }
@@ -1654,12 +1373,6 @@ namespace m0.ZeroCode
 
                     if (tryIf != null)
                     {
-                        LogVertexLinkResolution(
-                            "resolved through dictionary named meta import",
-                            link,
-                            mock.parentVertex,
-                            tryIf);
-
                         return tryIf;
                     }
                 }
@@ -1671,12 +1384,6 @@ namespace m0.ZeroCode
 
             if (tryIf != null)
             {
-                LogVertexLinkResolution(
-                    "resolved through direct import",
-                    link,
-                    mock.parentVertex,
-                    tryIf);
-
                 return tryIf;
             }
 
@@ -1686,12 +1393,6 @@ namespace m0.ZeroCode
 
             if (tryIf != null)
             {
-                LogVertexLinkResolution(
-                    "resolved through dictionary direct import",
-                    link,
-                    mock.parentVertex,
-                    tryIf);
-
                 return tryIf;
             }
 
@@ -1701,12 +1402,6 @@ namespace m0.ZeroCode
 
             if (tryIf != null)
             {
-                LogVertexLinkResolution(
-                    "resolved through direct meta import",
-                    link,
-                    mock.parentVertex,
-                    tryIf);
-
                 return tryIf;
             }
 
@@ -1716,12 +1411,6 @@ namespace m0.ZeroCode
             
             if (tryIf != null)
             {
-                LogVertexLinkResolution(
-                    "resolved through dictionary direct meta import",
-                    link,
-                    mock.parentVertex,
-                    tryIf);
-
                 return tryIf;
             }
 
@@ -1733,20 +1422,8 @@ namespace m0.ZeroCode
 
             if (tryIf != null && !(tryIf is ToVertexMock))
             {
-                LogVertexLinkResolution(
-                    "resolved through parse root",
-                    link,
-                    mock.parentVertex,
-                    tryIf);
-
                 return tryIf;
             }
-
-            LogVertexLinkResolution(
-                "unresolved; returning Empty",
-                link,
-                mock.parentVertex,
-                MinusZero.Instance.Empty);
 
             return MinusZero.Instance.Empty;
         }
@@ -4159,49 +3836,22 @@ namespace m0.ZeroCode
                 string toLink =
                     (toVertex as ToVertexMock)?.mockData?.ToString();
 
-                MinusZero.Instance.Log(
-                    0,
-                    "VertexLinkEdgeTrace",
-                    "before edgeId='" +
-                    RuntimeHelpers.GetHashCode(edge) +
-                    "' fromValue='" +
-                    (edge.From?.Value?.ToString() ?? "<null>") +
-                    "' metaIsMock='" +
-                    (metaVertex is ToVertexMock) +
-                    "' metaLink='" +
-                    (metaLink ?? "<null>") +
-                    "' toIsMock='" +
-                    (toVertex is ToVertexMock) +
-                    "' toLink='" +
-                    (toLink ?? "<null>") +
-                    "'");
-
                 if (metaVertex is ToVertexMock)
                 {
-                    LogVertexLinkResolution(
-                        "resolving edge meta link",
-                        metaLink,
-                        edge.From,
-                        metaVertex);
-
                     metaVertex = ToVertexMock2VertexByLinkString((ToVertexMock)metaVertex);
                 }
 
                 if (toVertex is ToVertexMock)
                 {
-                    LogVertexLinkResolution(
-                        "resolving edge target link",
-                        toLink,
-                        edge.From,
-                        toVertex);
-
                     toVertex = ToVertexMock2VertexByLinkString((ToVertexMock)toVertex);
                 }
 
                 IEdge newEdge = edge.From.AddEdge(metaVertex, toVertex);
 
                 if (toVertex == MinusZero.Instance.Empty &&
-                    IsStoreQualifiedLink(toLink))
+                    !string.IsNullOrEmpty(toLink) &&
+                    (IsStoreQualifiedLink(toLink) ||
+                        HasUnresolvedParentType(edge.From)))
                     AddDeferredVertexLinkResolution(
                         newEdge,
                         toLink,
@@ -4221,23 +3871,6 @@ namespace m0.ZeroCode
                 ReplaceRememberedTextualChildEdge(edge.From, edge, newEdge);
                 edge.From.DeleteEdge(edge);
                 RestoreOutgoingEdgesToTextualOrder(edge.From);
-
-                MinusZero.Instance.Log(
-                    0,
-                    "VertexLinkEdgeTrace",
-                    "after edgeId='" +
-                    RuntimeHelpers.GetHashCode(newEdge) +
-                    "' fromValue='" +
-                    (newEdge.From?.Value?.ToString() ?? "<null>") +
-                    "' metaValue='" +
-                    (newEdge.Meta?.Value?.ToString() ?? "<null>") +
-                    "' metaStore='" +
-                    (newEdge.Meta?.Store?.Identifier ?? "<null>") +
-                    "' toValue='" +
-                    (newEdge.To?.Value?.ToString() ?? "<null>") +
-                    "' toStore='" +
-                    (newEdge.To?.Store?.Identifier ?? "<null>") +
-                    "'");
 
                 return true;
             }
