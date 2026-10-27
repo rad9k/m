@@ -1212,7 +1212,6 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@ToItem :: @OnlineRetail\OnlineRetailModel\'Data model'\Item:<<"10">>>
 		<@Component :: "BackendService">
 			<@$Is :: @Structure\Component>
-			<@ReadWrite :: @$Empty>
 			package "test"
 				import @System\Lib\Std direct meta
 
@@ -1224,6 +1223,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				Data = $#Package:#Component:\Database:
 
 				x = new Model\:User[]
+			<@ReadWrite :: @Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB>
 			<@OnlineRetail\BackendService\Service\Package :: "Service">
 				<@Structure\Database :: "Package">
 				import @System\Lib\Std direct meta
@@ -1240,35 +1240,41 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					if myShop\User{Email:'(Email)'}<> > "0"
 						return "USER EXIST"
 
-					$stack +< @@OnlineRetail\OnlineRetailModel\Shop\User :: "user"
+					$stack +< @@OnlineRetail\OnlineRetailModel\Shop\User :: ""
 					User = new @@OnlineRetail\OnlineRetailModel\User[]
 					User\BusinessID = @@System\Lib\Std\CreateURN[Model\:User\:BusinessID]
 					User\Name = Name
 					User\Surname = Surname
 					User\Email = Email
 					User\PasswordHash = @@System\Lib\Cryptography\HashPassword[Password]
+
 					@@Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB\MyShop <<copy<< User
+
 					return "OK"
 
 				function "Login" @String(@String "Email", @String "Password")
-					variable "token" @Vertex
 					variable "PasswordHash" @String
 					variable "user" @Vertex
+					variable "myShop" @Vertex
+					myShop = @@Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB\MyShop
 
-					user = Data\user{Email:'(Email)'}
+					user = myShop\User{Email:'(Email)'}
 
 					if user<> == "1"
 						if @@System\Lib\Cryptography\'VerifyPassword'[Password, user\PasswordHash]
-							token = new Model\:Token[]
-							user +< Model\:User\:Token ::> token
-							token\TokenString = @@System\Lib\Cryptography\GenerateToken[]
-							token\Expiry = @@System\Lib\Std\DateTime_Now[]
-							token\Expiry.Add[new @@TimeSpan["0", "0", "0", "1"]]
-							return token\TokenString
+							$stack +< @@OnlineRetail\OnlineRetailModel\Token :: ""
+							Token = new @@OnlineRetail\OnlineRetailModel\Token[]
+							Token\TokenString = @@System\Lib\Cryptography\GenerateToken[]
+							Token\Expiry = @@System\Lib\Std\DateTime_Now[]
+							Token\Expiry.Add[new @@TimeSpan["0", "0", "0", "1"]]
+							user <<copy<< Token
+
+							return Token\TokenString
 
 					return "ERROR"
 
-				x = @@OnlineRetail\BackendService\Service\CreateUser["n", "s", "ee", "pwd"]
+				@@OnlineRetail\BackendService\Service\CreateUser["n", "s", "ee", "pwd"]
+				x = @@OnlineRetail\BackendService\Service\Login["ee", "pwd"]
 		<@UX\UXContainer :: "OnlineRetail">
 			<@$Is :: @UX\UXContainer>
 			<@IsExpanded :: "True">
@@ -1280,6 +1286,11 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@Meta :: @Structure\System>
 				<@To :: @OnlineRetail>
 			<@SelectedEdges :: "">
+				<@Edge :: "">
+					<@$Is :: @Edge>
+					<@From :: @OnlineRetail>
+					<@Meta :: @UX\Item\Item>
+					<@To :: @OnlineRetail\OnlineRetail\Item:<<"2">>>
 			<@ShowSelectedEdgesBaseEdge :: "False">
 			<@Size :: "">
 				<@$Is :: @UX\Size>
@@ -1336,7 +1347,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@BaseEdge :: "">
 						<@From :: @OnlineRetail\BackendService>
 						<@Meta :: @Structure\StaticComponent\ReadWrite>
-						<@To :: @$Empty>
+						<@To :: @Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB>
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - FromToFilledTriangle'>
 					<@StartAnchor :: @UX\LineEndEnum\FilledTriangle>
 					<@EndAnchor :: @UX\LineEndEnum\FilledTriangle>
@@ -1349,8 +1360,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 				<@Position :: "">
 					<@$Is :: @UX\Position>
-					<@X :: "565.2">
-					<@Y :: "372.84000000000003">
+					<@X :: "577.7">
+					<@Y :: "363.24">
 				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Database>
 				<@BackgroundColor :: "VeryVeryVeryLightCyan">
 					<@$Is :: @UX\Color>
@@ -1360,14 +1371,14 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@Opacity :: "255">
 				<@BaseEdge :: "">
 					<@$Is :: @Edge>
-					<@From :: @$Empty>
+					<@From :: @Start:\Examples\'OnlineRetailDB.m0t'\$Store:>
 					<@Meta :: @Structure\Database>
-					<@To :: @$Empty>
+					<@To :: @Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB>
 				<@Decorator :: "">
 					<@$Is :: @UX\LineDecorator>
 					<@Scale :: "100">
 					<@BaseEdge :: "">
-						<@From :: @$Empty>
+						<@From :: @Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB>
 						<@Meta :: @Structure\Data\Model>
 						<@To :: @OnlineRetail\OnlineRetailModel>
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToArrow'>

@@ -13,6 +13,7 @@ using m0.Store.Json;
 using static System.Net.WebRequestMethods;
 using m0.ZeroTypes;
 using m0.FormalTextLanguage;
+using m0.ZeroCode;
 
 namespace m0.Store.Text
 {
@@ -91,7 +92,9 @@ namespace m0.Store.Text
                 root = __root;
 
                 root.IsRoot = true;                
-            }          
+            }
+
+            Text2GraphProcessing.RetryAllDeferredVertexLinks();
         }
 
         public override void CommitTransaction()

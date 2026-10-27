@@ -28,6 +28,55 @@ namespace m0.ZeroCode
 
         FormalTextLanguageDictinaries dict;
 
+        internal static string DescribeVertex(IVertex vertex)
+        {
+            if (vertex == null)
+                return "<null>";
+
+            return "objectId='" +
+                System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(vertex) +
+                "' value='" +
+                (vertex.Value?.ToString() ?? "<null>") +
+                "' store='" +
+                (vertex.Store?.Identifier?.ToString() ?? "<null>") +
+                "' incomingCount='" +
+                vertex.InEdgesRaw.Count +
+                "' outgoingCount='" +
+                vertex.OutEdgesRaw.Count +
+                "' isGlobalRoot='" +
+                ReferenceEquals(vertex, MinusZero.Instance.Root) +
+                "'";
+        }
+
+        internal static string DescribeEdge(IEdge edge)
+        {
+            if (edge == null)
+                return "<null>";
+
+            return "from={" +
+                DescribeVertex(edge.From) +
+                "} meta={" +
+                DescribeVertex(edge.Meta) +
+                "} to={" +
+                DescribeVertex(edge.To) +
+                "}";
+        }
+
+        static bool CanUseParentLocalShortcut(IVertex vertex, IEdge parent)
+        {
+            if (vertex == null || parent?.To == null)
+                return false;
+
+            IStore vertexStore = vertex.Store;
+            IStore parentToStore = parent.To.Store;
+
+            if (vertexStore == null || parentToStore == null)
+                return false;
+
+            return ReferenceEquals(vertexStore, parentToStore)
+                || Equals(vertexStore.Identifier, parentToStore.Identifier);
+        }
+
         public string Process(FormalTextLanguageDictinaries _dict, Graph2TextProcessing _zcg2sp, IVertex v, IEdge _parent)
         {
             dict = _dict;
@@ -38,21 +87,116 @@ namespace m0.ZeroCode
 
             Vertex = v;
 
+            MinusZero.Instance.Log(
+                0,
+                "Graph2TextLinkResolutionTrace",
+                "phase='process-enter' vertex={" +
+                DescribeVertex(v) +
+                "} parent={" +
+                DescribeEdge(_parent) +
+                "}");
+
             if (_parent != null)
             {
+                bool canUseParentLocalShortcut =
+                    CanUseParentLocalShortcut(v, _parent);
+
+                MinusZero.Instance.Log(
+                    0,
+                    "Graph2TextLinkResolutionTrace",
+                    "phase='parent-shortcut-eligibility' vertex={" +
+                    DescribeVertex(v) +
+                    "} parent={" +
+                    DescribeEdge(_parent) +
+                    "} canUseParentLocalShortcut='" +
+                    canUseParentLocalShortcut +
+                    "'");
+
                 //IVertex Is = _parent.To.Get(false, "$Is:");
                 IVertex Is = GraphUtil.GetQueryOutFirst(_parent.To, "$Is", null);
 
                 //if (Is != null && Is.Get(false, ZeroCodeCommon.stringToPossiblyEscapedString(dict, v.Value.ToString()) ) == v)
-                if (Is != null && GraphUtil.GetQueryOutFirst(Is, null, v.Value.ToString()) == v)
+                IVertex matchingVertex = canUseParentLocalShortcut &&
+                    Is != null &&
+                    v?.Value != null
+                    ? GraphUtil.GetQueryOutFirst(Is, null, v.Value.ToString())
+                    : null;
+
+                MinusZero.Instance.Log(
+                    0,
+                    "Graph2TextLinkResolutionTrace",
+                    "phase='parent-is-shortcut-check' vertex={" +
+                    DescribeVertex(v) +
+                    "} parent={" +
+                    DescribeEdge(_parent) +
+                    "} parentIs={" +
+                    DescribeVertex(Is) +
+                    "} queryResult={" +
+                    DescribeVertex(matchingVertex) +
+                    "} sameReference='" +
+                    ReferenceEquals(matchingVertex, v) +
+                    "'");
+
+                if (canUseParentLocalShortcut &&
+                    ReferenceEquals(matchingVertex, v))
+                {
+                    MinusZero.Instance.Log(
+                        0,
+                        "Graph2TextLinkResolutionTrace",
+                        "phase='parent-is-shortcut-taken' returnedLink='" +
+                        (v.Value?.ToString() ?? "<null>") +
+                        "' vertex={" +
+                        DescribeVertex(v) +
+                        "} parent={" +
+                        DescribeEdge(_parent) +
+                        "}'");
+
                     return (v.Value.ToString());
+                }
             }
 
             if (_parent != null)
             {
-                foreach (IEdge e in VertexOperations.GetChildEdges(_parent.Meta))
-                    if (v == e.To)
-                        return (v.Value.ToString());
+                bool childShortcutMatches = false;
+
+                bool canUseParentLocalShortcut =
+                    CanUseParentLocalShortcut(v, _parent);
+
+                if (canUseParentLocalShortcut)
+                    foreach (IEdge e in VertexOperations.GetChildEdges(_parent.Meta))
+                        if (v == e.To)
+                        {
+                            childShortcutMatches = true;
+                            break;
+                        }
+
+                MinusZero.Instance.Log(
+                    0,
+                    "Graph2TextLinkResolutionTrace",
+                    "phase='parent-meta-child-shortcut-check' vertex={" +
+                    DescribeVertex(v) +
+                    "} parent={" +
+                    DescribeEdge(_parent) +
+                    "} matches='" +
+                    childShortcutMatches +
+                    "'");
+
+                if (canUseParentLocalShortcut &&
+                    childShortcutMatches)
+                {
+                    MinusZero.Instance.Log(
+                        0,
+                        "Graph2TextLinkResolutionTrace",
+                        "phase='parent-meta-child-shortcut-taken' returnedLink='" +
+                        (v.Value?.ToString() ?? "<null>") +
+                        "' vertex={" +
+                        DescribeVertex(v) +
+                        "} parent={" +
+                        DescribeEdge(_parent) +
+                        "}'");
+
+                    return (v.Value.ToString());
+                }
             }
 
 
@@ -83,7 +227,29 @@ namespace m0.ZeroCode
                 zcg2sp.SubGraphVerticesDictionary.TryGetValue(
                     v,
                     out VertexData subGraphVertex))
+            {
+                MinusZero.Instance.Log(
+                    0,
+                    "Graph2TextLinkResolutionTrace",
+                    "phase='process-result-subgraph-link' returnedLink='" +
+                    subGraphVertex.LinkString +
+                    "' vertex={" +
+                    DescribeVertex(v) +
+                    "}'");
+
                 return subGraphVertex.LinkString;
+            }
+
+            MinusZero.Instance.Log(
+                0,
+                "Graph2TextLinkResolutionTrace",
+                "phase='process-result' returnedLink='" +
+                shortestLink +
+                "' shortestLinkLength='" +
+                shortestLinkLength +
+                "' vertex={" +
+                DescribeVertex(v) +
+                "}'");
 
             return shortestLink;
         }
@@ -946,6 +1112,19 @@ namespace m0.ZeroCode
             }
 
             toAppend = TryConvertToCurrentBaseRelativeLink(toAppend, v);
+
+            MinusZero.Instance.Log(
+                0,
+                "Graph2TextLinkResolutionTrace",
+                "phase='append-as-link' vertex={" +
+                getLinkStringProcessing.DescribeVertex(v) +
+                "} parent={" +
+                getLinkStringProcessing.DescribeEdge(parent) +
+                "} generatedLink='" +
+                toAppend +
+                "' hideLinkPrefix='" +
+                hideLinkPrefix +
+                "'");
 
             if (hideLinkPrefix)
                 SourceAppend(ZeroCodeCommon.stringToLinkString(dict, toAppend, true));
@@ -1814,6 +1993,15 @@ namespace m0.ZeroCode
                     AppendPrefix();
 
                     prefixAppended = true;
+
+                    MinusZero.Instance.Log(
+                        0,
+                        "Graph2TextLinkResolutionTrace",
+                        "phase='append-edge-meta' edge={" +
+                        getLinkStringProcessing.DescribeEdge(e) +
+                        "} parent={" +
+                        getLinkStringProcessing.DescribeEdge(parent) +
+                        "}'");
 
                     //AppendAsLink(e.Meta, parent, true);
 
