@@ -1,0 +1,1447 @@
+System\FormalTextLanguage\ZeroCode_VertexAndManyLines
+""
+	<@Structure\System :: "OnlineRetail">
+		<@$Is :: @Structure\System>
+		<@Structure\Model :: "OnlineRetailModel">
+			<@$Is :: @Structure\Model>
+			class "Product"
+				attribute "BusinessID" @String
+					<@$ShortName :: "product">
+				attribute "Name" @String
+				attribute "Price" @Decimal
+				attribute "Description" @String
+			class "Order"
+				attribute "BusinessID" @String
+					<@$ShortName :: "order">
+				association "Product" @OnlineRetail\OnlineRetailModel\Product "0":"-1"
+				association "Payment" @OnlineRetail\OnlineRetailModel\Payment "0":"-1"
+				attribute "Status" @OnlineRetail\OnlineRetailModel\Automata:'Order state'
+			class "User"
+				attribute "BusinessID" @String
+					<@$ShortName :: "user">
+				attribute "Name" @String
+				attribute "Surname" @String
+				attribute "Email" @String
+				attribute "PasswordHash" @String
+				aggregation "Address" @OnlineRetail\OnlineRetailModel\Address "0":"-1"
+				aggregation "PaymentMethod" @OnlineRetail\OnlineRetailModel\PaymentMethod "0":"-1"
+				aggregation "Order" @OnlineRetail\OnlineRetailModel\Order "0":"-1"
+				aggregation "Token" @OnlineRetail\OnlineRetailModel\Token "0":"-1"
+			class "PaymentMethod"
+				attribute "BusinessID" @String
+					<@$ShortName :: "pay_method">
+			class "Address"
+				attribute "BusinessID" @String
+					<@$ShortName :: "address">
+				attribute "AddressLine1" @String
+				attribute "AddressLine2" @String
+				attribute "Postal code" @String
+				attribute "City" @String
+				attribute "Country" @String
+			class "Card"
+				inherits @OnlineRetail\OnlineRetailModel\PaymentMethod
+				attribute "Owner" @String
+				attribute "NumberLast4" @String
+				attribute "ExpiryMonth" @Integer
+				attribute "ExpiryYear" @Integer
+				attribute "Brand" @OnlineRetail\OnlineRetailModel\CardBrand
+				attribute "ProviderToken" @String
+				attribute "ProviderCustomerId" @String
+			class "PayPal"
+				inherits @OnlineRetail\OnlineRetailModel\PaymentMethod
+				attribute "Email" @String
+				attribute "PayerId" @String
+			class "Payment"
+				attribute "BusinessID" @String
+					<@$ShortName :: "payment">
+				attribute "PaymentStartedTimestamp" @DateTime "0":"1"
+				attribute "PaymentFailedTimestamp" @DateTime "0":"1"
+				attribute "PaymentSuccededTimestamp" @DateTime "0":"1"
+				attribute "Ammount" @Decimal
+				association "PaymentMethod" @OnlineRetail\OnlineRetailModel\PaymentMethod
+			class "Token"
+				attribute "TokenString" @String
+				attribute "Expiry" @DateTime
+			class "Category"
+				attribute "BusinessID" @String
+					<@$ShortName :: "category">
+				attribute "Name" @String
+				aggregation "Product" @OnlineRetail\OnlineRetailModel\Product "0":"-1"
+			class "Shop"
+				aggregation "User" @OnlineRetail\OnlineRetailModel\User "0":"-1"
+				aggregation "Category" @OnlineRetail\OnlineRetailModel\Category "0":"-1"
+			<@UX\UXContainer :: "Order state">
+				<@$Is :: @UX\UXContainer>
+				<@IsExpanded :: "True">
+				<@HasMiniatures :: "True">
+				<@Scale :: "70">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @Start:\Examples\'OnlineRetail.m0t'\$Store:>
+					<@Meta :: @$Empty>
+				<@SelectedEdges :: "">
+				<@ShowSelectedEdgesBaseEdge :: "False">
+				<@Size :: "">
+					<@$Is :: @UX\Size>
+					<@Width :: "5000">
+					<@Height :: "5000">
+				<@NewItemUXTemplate :: @System\Data\UX\Templates\ZeroUML>
+				<@Item :: "">
+					<@$Is :: @UX\ContainerItem>
+					<@IsExpanded :: "True">
+					<@HasMiniatures :: "True">
+					<@Scale :: "100">
+					<@SelectedEdges :: "">
+					<@ShowSelectedEdgesBaseEdge :: "False">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "1364.0807045391268">
+						<@Y :: "330.5039376218322">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Automata CONTAINER'>
+					<@ShowMeta :: "True">
+					<@BackgroundColor :: "VeryVeryVeryVeryLightGreen">
+						<@$Is :: @UX\Color>
+						<@Red :: "248">
+						<@Green :: "255">
+						<@Blue :: "248">
+						<@Opacity :: "255">
+					<@UX\MultiContainerItem\SubBackgroundColor :: "VeryVeryLightGreen">
+						<@$Is :: @UX\Color>
+						<@Red :: "210">
+						<@Green :: "255">
+						<@Blue :: "210">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@Meta :: @Automata>
+						<@To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "1050.6137037037042">
+						<@Height :: "538.0274074074076">
+					<@Item :: "">
+						<@$Is :: @UX\RectangleVisualiserItem>
+						<@Scale :: "100">
+						<@ShowIcons :: "True">
+						<@FontSize :: "14">
+						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+						<@Position :: "">
+							<@$Is :: @UX\Position>
+							<@X :: "26.62166666666667">
+							<@Y :: "33.376666666666665">
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State>
+						<@ShowMeta :: "True">
+						<@RoundEdgeSize :: "8">
+						<@BackgroundColor :: "VeryVeryVeryLightGreen">
+							<@$Is :: @UX\Color>
+							<@Red :: "237">
+							<@Green :: "255">
+							<@Blue :: "237">
+							<@Opacity :: "255">
+						<@BaseEdge :: "">
+							<@$Is :: @Edge>
+							<@From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'>
+							<@Meta :: @Automata\State>
+							<@To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\CompletingOrder>
+						<@Decorator :: "">
+							<@$Is :: @UX\LineDecorator>
+							<@Scale :: "100">
+							<@BaseEdge :: "">
+								<@Edge\From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\CompletingOrder>
+								<@Edge\Meta :: @Automata\State\Transition>
+								<@Edge\To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\OrderCompleted>
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
+							<@EndAnchor :: @UX\LineEndEnum\Arrow>
+							<@HideLabel :: "True">
+
+							<@ToItem :: @OnlineRetail\OnlineRetailModel\UXContainer:'Order state'\Item:\Item:<<"2">>>
+					<@Item :: "">
+						<@$Is :: @UX\RectangleVisualiserItem>
+						<@Scale :: "100">
+						<@ShowIcons :: "True">
+						<@FontSize :: "14">
+						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+						<@Position :: "">
+							<@$Is :: @UX\Position>
+							<@X :: "323.0749999999998">
+							<@Y :: "33.376666666666665">
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State>
+						<@ShowMeta :: "True">
+						<@RoundEdgeSize :: "8">
+						<@BackgroundColor :: "VeryVeryVeryLightGreen">
+							<@$Is :: @UX\Color>
+							<@Red :: "237">
+							<@Green :: "255">
+							<@Blue :: "237">
+							<@Opacity :: "255">
+						<@BaseEdge :: "">
+							<@$Is :: @Edge>
+							<@From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'>
+							<@Meta :: @Automata\State>
+							<@To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\OrderCompleted>
+						<@Decorator :: "">
+							<@$Is :: @UX\LineDecorator>
+							<@Scale :: "100">
+							<@BaseEdge :: "">
+								<@Edge\From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\OrderCompleted>
+								<@Edge\Meta :: @Automata\State\Transition>
+								<@Edge\To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ShippingAdressAndMethodDefined>
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
+							<@EndAnchor :: @UX\LineEndEnum\Arrow>
+							<@HideLabel :: "True">
+
+							<@ToItem :: @OnlineRetail\OnlineRetailModel\UXContainer:'Order state'\Item:\Item:<<"6">>>
+						<@Decorator :: "">
+							<@$Is :: @UX\LineDecorator>
+							<@Scale :: "100">
+							<@BaseEdge :: "">
+								<@Edge\From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\OrderCompleted>
+								<@Edge\Meta :: @Automata\State\Transition>
+								<@Edge\To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\CompletingOrder>
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
+							<@EndAnchor :: @UX\LineEndEnum\Arrow>
+							<@HideLabel :: "True">
+
+							<@ToItem :: @OnlineRetail\OnlineRetailModel\UXContainer:'Order state'\Item:\Item:<<"1">>>
+					<@Item :: "">
+						<@$Is :: @UX\RectangleVisualiserItem>
+						<@Scale :: "100">
+						<@ShowIcons :: "True">
+						<@FontSize :: "14">
+						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+						<@Position :: "">
+							<@$Is :: @UX\Position>
+							<@X :: "318.6216666666662">
+							<@Y :: "158.04333333333344">
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State>
+						<@ShowMeta :: "True">
+						<@RoundEdgeSize :: "8">
+						<@BackgroundColor :: "VeryVeryVeryLightGreen">
+							<@$Is :: @UX\Color>
+							<@Red :: "237">
+							<@Green :: "255">
+							<@Blue :: "237">
+							<@Opacity :: "255">
+						<@BaseEdge :: "">
+							<@$Is :: @Edge>
+							<@From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'>
+							<@Meta :: @Automata\State>
+							<@To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\PaymentStarted>
+						<@Decorator :: "">
+							<@$Is :: @UX\LineDecorator>
+							<@Scale :: "100">
+							<@BaseEdge :: "">
+								<@Edge\From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\PaymentStarted>
+								<@Edge\Meta :: @Automata\State\Transition>
+								<@Edge\To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\PaymentFailed>
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
+							<@EndAnchor :: @UX\LineEndEnum\Arrow>
+							<@HideLabel :: "True">
+
+							<@ToItem :: @OnlineRetail\OnlineRetailModel\UXContainer:'Order state'\Item:\Item:<<"5">>>
+						<@Decorator :: "">
+							<@$Is :: @UX\LineDecorator>
+							<@Scale :: "100">
+							<@BaseEdge :: "">
+								<@Edge\From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\PaymentStarted>
+								<@Edge\Meta :: @Automata\State\Transition>
+								<@Edge\To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\PaymentCompleted>
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
+							<@EndAnchor :: @UX\LineEndEnum\Arrow>
+							<@HideLabel :: "True">
+
+							<@ToItem :: @OnlineRetail\OnlineRetailModel\UXContainer:'Order state'\Item:\Item:<<"4">>>
+					<@Item :: "">
+						<@$Is :: @UX\RectangleVisualiserItem>
+						<@Scale :: "100">
+						<@ShowIcons :: "True">
+						<@FontSize :: "14">
+						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+						<@Position :: "">
+							<@$Is :: @UX\Position>
+							<@X :: "305.6183333333329">
+							<@Y :: "218.0433333333332">
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State>
+						<@ShowMeta :: "True">
+						<@RoundEdgeSize :: "8">
+						<@BackgroundColor :: "VeryVeryVeryLightGreen">
+							<@$Is :: @UX\Color>
+							<@Red :: "237">
+							<@Green :: "255">
+							<@Blue :: "237">
+							<@Opacity :: "255">
+						<@BaseEdge :: "">
+							<@$Is :: @Edge>
+							<@From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'>
+							<@Meta :: @Automata\State>
+							<@To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\PaymentCompleted>
+						<@Decorator :: "">
+							<@$Is :: @UX\LineDecorator>
+							<@Scale :: "100">
+							<@BaseEdge :: "">
+								<@Edge\From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\PaymentCompleted>
+								<@Edge\Meta :: @Automata\State\Transition>
+								<@Edge\To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\CollectingOrder>
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
+							<@EndAnchor :: @UX\LineEndEnum\Arrow>
+							<@HideLabel :: "True">
+
+							<@ToItem :: @OnlineRetail\OnlineRetailModel\UXContainer:'Order state'\Item:\Item:<<"7">>>
+					<@Item :: "">
+						<@$Is :: @UX\RectangleVisualiserItem>
+						<@Scale :: "100">
+						<@ShowIcons :: "True">
+						<@FontSize :: "14">
+						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+						<@Position :: "">
+							<@$Is :: @UX\Position>
+							<@X :: "45.511666666666656">
+							<@Y :: "140.90047619047596">
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State>
+						<@ShowMeta :: "True">
+						<@RoundEdgeSize :: "8">
+						<@BackgroundColor :: "VeryVeryVeryLightGreen">
+							<@$Is :: @UX\Color>
+							<@Red :: "237">
+							<@Green :: "255">
+							<@Blue :: "237">
+							<@Opacity :: "255">
+						<@BaseEdge :: "">
+							<@$Is :: @Edge>
+							<@From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'>
+							<@Meta :: @Automata\State>
+							<@To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\PaymentFailed>
+						<@Decorator :: "">
+							<@$Is :: @UX\LineDecorator>
+							<@Scale :: "100">
+							<@BaseEdge :: "">
+								<@Edge\From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\PaymentFailed>
+								<@Edge\Meta :: @Automata\State\Transition>
+								<@Edge\To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ShippingAdressAndMethodDefined>
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
+							<@EndAnchor :: @UX\LineEndEnum\Arrow>
+							<@HideLabel :: "True">
+
+							<@ToItem :: @OnlineRetail\OnlineRetailModel\UXContainer:'Order state'\Item:\Item:<<"6">>>
+					<@Item :: "">
+						<@$Is :: @UX\RectangleVisualiserItem>
+						<@Scale :: "100">
+						<@ShowIcons :: "True">
+						<@FontSize :: "14">
+						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+						<@Position :: "">
+							<@$Is :: @UX\Position>
+							<@X :: "259.4016666666664">
+							<@Y :: "96.7099999999997">
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State>
+						<@ShowMeta :: "True">
+						<@RoundEdgeSize :: "8">
+						<@BackgroundColor :: "VeryVeryVeryLightGreen">
+							<@$Is :: @UX\Color>
+							<@Red :: "237">
+							<@Green :: "255">
+							<@Blue :: "237">
+							<@Opacity :: "255">
+						<@BaseEdge :: "">
+							<@$Is :: @Edge>
+							<@From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'>
+							<@Meta :: @Automata\State>
+							<@To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ShippingAdressAndMethodDefined>
+						<@Decorator :: "">
+							<@$Is :: @UX\LineDecorator>
+							<@Scale :: "100">
+							<@BaseEdge :: "">
+								<@Edge\From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ShippingAdressAndMethodDefined>
+								<@Edge\Meta :: @Automata\State\Transition>
+								<@Edge\To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\OrderCompleted>
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
+							<@EndAnchor :: @UX\LineEndEnum\Arrow>
+							<@HideLabel :: "True">
+
+							<@ToItem :: @OnlineRetail\OnlineRetailModel\UXContainer:'Order state'\Item:\Item:<<"2">>>
+						<@Decorator :: "">
+							<@$Is :: @UX\LineDecorator>
+							<@Scale :: "100">
+							<@BaseEdge :: "">
+								<@Edge\From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ShippingAdressAndMethodDefined>
+								<@Edge\Meta :: @Automata\State\Transition>
+								<@Edge\To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\PaymentStarted>
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
+							<@EndAnchor :: @UX\LineEndEnum\Arrow>
+							<@HideLabel :: "True">
+
+							<@ToItem :: @OnlineRetail\OnlineRetailModel\UXContainer:'Order state'\Item:\Item:<<"3">>>
+					<@Item :: "">
+						<@$Is :: @UX\RectangleVisualiserItem>
+						<@Scale :: "100">
+						<@ShowIcons :: "True">
+						<@FontSize :: "14">
+						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+						<@Position :: "">
+							<@$Is :: @UX\Position>
+							<@X :: "318.3683333333331">
+							<@Y :: "278.33000000000004">
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State>
+						<@ShowMeta :: "True">
+						<@RoundEdgeSize :: "8">
+						<@BackgroundColor :: "VeryVeryVeryLightGreen">
+							<@$Is :: @UX\Color>
+							<@Red :: "237">
+							<@Green :: "255">
+							<@Blue :: "237">
+							<@Opacity :: "255">
+						<@BaseEdge :: "">
+							<@$Is :: @Edge>
+							<@From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'>
+							<@Meta :: @Automata\State>
+							<@To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\CollectingOrder>
+						<@Decorator :: "">
+							<@$Is :: @UX\LineDecorator>
+							<@Scale :: "100">
+							<@BaseEdge :: "">
+								<@Edge\From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\CollectingOrder>
+								<@Edge\Meta :: @Automata\State\Transition>
+								<@Edge\To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\OrderCollected>
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
+							<@EndAnchor :: @UX\LineEndEnum\Arrow>
+							<@HideLabel :: "True">
+
+							<@ToItem :: @OnlineRetail\OnlineRetailModel\UXContainer:'Order state'\Item:\Item:<<"8">>>
+					<@Item :: "">
+						<@$Is :: @UX\RectangleVisualiserItem>
+						<@Scale :: "100">
+						<@ShowIcons :: "True">
+						<@FontSize :: "14">
+						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+						<@Position :: "">
+							<@$Is :: @UX\Position>
+							<@X :: "319.621666666666">
+							<@Y :: "332.3299999999999">
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State>
+						<@ShowMeta :: "True">
+						<@RoundEdgeSize :: "8">
+						<@BackgroundColor :: "VeryVeryVeryLightGreen">
+							<@$Is :: @UX\Color>
+							<@Red :: "237">
+							<@Green :: "255">
+							<@Blue :: "237">
+							<@Opacity :: "255">
+						<@BaseEdge :: "">
+							<@$Is :: @Edge>
+							<@From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'>
+							<@Meta :: @Automata\State>
+							<@To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\OrderCollected>
+						<@Decorator :: "">
+							<@$Is :: @UX\LineDecorator>
+							<@Scale :: "100">
+							<@BaseEdge :: "">
+								<@Edge\From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\OrderCollected>
+								<@Edge\Meta :: @Automata\State\Transition>
+								<@Edge\To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\OrderSent>
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
+							<@EndAnchor :: @UX\LineEndEnum\Arrow>
+							<@HideLabel :: "True">
+
+							<@ToItem :: @OnlineRetail\OnlineRetailModel\UXContainer:'Order state'\Item:\Item:<<"9">>>
+					<@Item :: "">
+						<@$Is :: @UX\RectangleVisualiserItem>
+						<@Scale :: "100">
+						<@ShowIcons :: "True">
+						<@FontSize :: "14">
+						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+						<@Position :: "">
+							<@$Is :: @UX\Position>
+							<@X :: "333.9549999999995">
+							<@Y :: "387.6633333333333">
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State>
+						<@ShowMeta :: "True">
+						<@RoundEdgeSize :: "8">
+						<@BackgroundColor :: "VeryVeryVeryLightGreen">
+							<@$Is :: @UX\Color>
+							<@Red :: "237">
+							<@Green :: "255">
+							<@Blue :: "237">
+							<@Opacity :: "255">
+						<@BaseEdge :: "">
+							<@$Is :: @Edge>
+							<@From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'>
+							<@Meta :: @Automata\State>
+							<@To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\OrderSent>
+						<@Decorator :: "">
+							<@$Is :: @UX\LineDecorator>
+							<@Scale :: "100">
+							<@BaseEdge :: "">
+								<@Edge\From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\OrderSent>
+								<@Edge\Meta :: @Automata\State\Transition>
+								<@Edge\To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\OrderDelivered>
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
+							<@EndAnchor :: @UX\LineEndEnum\Arrow>
+							<@HideLabel :: "True">
+
+							<@ToItem :: @OnlineRetail\OnlineRetailModel\UXContainer:'Order state'\Item:\Item:<<"10">>>
+						<@Decorator :: "">
+							<@$Is :: @UX\LineDecorator>
+							<@Scale :: "100">
+							<@BaseEdge :: "">
+								<@Edge\From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\OrderSent>
+								<@Edge\Meta :: @Automata\State\Transition>
+								<@Edge\To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\DeliveryFailed>
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
+							<@EndAnchor :: @UX\LineEndEnum\Arrow>
+							<@HideLabel :: "True">
+
+							<@ToItem :: @OnlineRetail\OnlineRetailModel\UXContainer:'Order state'\Item:\Item:<<"11">>>
+					<@Item :: "">
+						<@$Is :: @UX\RectangleVisualiserItem>
+						<@Scale :: "100">
+						<@ShowIcons :: "True">
+						<@FontSize :: "14">
+						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+						<@Position :: "">
+							<@$Is :: @UX\Position>
+							<@X :: "318.3683333333332">
+							<@Y :: "442.04333333333324">
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State>
+						<@ShowMeta :: "True">
+						<@RoundEdgeSize :: "8">
+						<@BackgroundColor :: "VeryVeryVeryLightGreen">
+							<@$Is :: @UX\Color>
+							<@Red :: "237">
+							<@Green :: "255">
+							<@Blue :: "237">
+							<@Opacity :: "255">
+						<@BaseEdge :: "">
+							<@$Is :: @Edge>
+							<@From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'>
+							<@Meta :: @Automata\State>
+							<@To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\OrderDelivered>
+						<@Decorator :: "">
+							<@$Is :: @UX\LineDecorator>
+							<@Scale :: "100">
+							<@BaseEdge :: "">
+								<@Edge\From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\OrderDelivered>
+								<@Edge\Meta :: @Automata\State\Transition>
+								<@Edge\To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnCreated>
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
+							<@EndAnchor :: @UX\LineEndEnum\Arrow>
+							<@HideLabel :: "True">
+
+							<@ToItem :: @OnlineRetail\OnlineRetailModel\UXContainer:'Order state'\Item:\Item:<<"12">>>
+					<@Item :: "">
+						<@$Is :: @UX\RectangleVisualiserItem>
+						<@Scale :: "100">
+						<@ShowIcons :: "True">
+						<@FontSize :: "14">
+						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+						<@Position :: "">
+							<@$Is :: @UX\Position>
+							<@X :: "67.56880952380925">
+							<@Y :: "442.04333333333324">
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State>
+						<@ShowMeta :: "True">
+						<@RoundEdgeSize :: "8">
+						<@BackgroundColor :: "VeryVeryVeryLightGreen">
+							<@$Is :: @UX\Color>
+							<@Red :: "237">
+							<@Green :: "255">
+							<@Blue :: "237">
+							<@Opacity :: "255">
+						<@BaseEdge :: "">
+							<@$Is :: @Edge>
+							<@From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'>
+							<@Meta :: @Automata\State>
+							<@To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\DeliveryFailed>
+					<@Item :: "">
+						<@$Is :: @UX\RectangleVisualiserItem>
+						<@Scale :: "100">
+						<@ShowIcons :: "True">
+						<@FontSize :: "14">
+						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+						<@Position :: "">
+							<@$Is :: @UX\Position>
+							<@X :: "604.9073809523807">
+							<@Y :: "442.04333333333324">
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State>
+						<@ShowMeta :: "True">
+						<@RoundEdgeSize :: "8">
+						<@BackgroundColor :: "VeryVeryVeryLightGreen">
+							<@$Is :: @UX\Color>
+							<@Red :: "237">
+							<@Green :: "255">
+							<@Blue :: "237">
+							<@Opacity :: "255">
+						<@BaseEdge :: "">
+							<@$Is :: @Edge>
+							<@From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'>
+							<@Meta :: @Automata\State>
+							<@To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnCreated>
+						<@Decorator :: "">
+							<@$Is :: @UX\LineDecorator>
+							<@Scale :: "100">
+							<@BaseEdge :: "">
+								<@Edge\From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnCreated>
+								<@Edge\Meta :: @Automata\State\Transition>
+								<@Edge\To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnSent>
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
+							<@EndAnchor :: @UX\LineEndEnum\Arrow>
+							<@HideLabel :: "True">
+
+							<@ToItem :: @OnlineRetail\OnlineRetailModel\UXContainer:'Order state'\Item:\Item:<<"13">>>
+					<@Item :: "">
+						<@$Is :: @UX\RectangleVisualiserItem>
+						<@Scale :: "100">
+						<@ShowIcons :: "True">
+						<@FontSize :: "14">
+						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+						<@Position :: "">
+							<@$Is :: @UX\Position>
+							<@X :: "616.1454761904747">
+							<@Y :: "387.6633333333332">
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State>
+						<@ShowMeta :: "True">
+						<@RoundEdgeSize :: "8">
+						<@BackgroundColor :: "VeryVeryVeryLightGreen">
+							<@$Is :: @UX\Color>
+							<@Red :: "237">
+							<@Green :: "255">
+							<@Blue :: "237">
+							<@Opacity :: "255">
+						<@BaseEdge :: "">
+							<@$Is :: @Edge>
+							<@From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'>
+							<@Meta :: @Automata\State>
+							<@To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnSent>
+						<@Decorator :: "">
+							<@$Is :: @UX\LineDecorator>
+							<@Scale :: "100">
+							<@BaseEdge :: "">
+								<@Edge\From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnSent>
+								<@Edge\Meta :: @Automata\State\Transition>
+								<@Edge\To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnDelivered>
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
+							<@EndAnchor :: @UX\LineEndEnum\Arrow>
+							<@HideLabel :: "True">
+
+							<@ToItem :: @OnlineRetail\OnlineRetailModel\UXContainer:'Order state'\Item:\Item:<<"14">>>
+					<@Item :: "">
+						<@$Is :: @UX\RectangleVisualiserItem>
+						<@Scale :: "100">
+						<@ShowIcons :: "True">
+						<@FontSize :: "14">
+						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+						<@Position :: "">
+							<@$Is :: @UX\Position>
+							<@X :: "601.4840476190469">
+							<@Y :: "332.32999999999987">
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State>
+						<@ShowMeta :: "True">
+						<@RoundEdgeSize :: "8">
+						<@BackgroundColor :: "VeryVeryVeryLightGreen">
+							<@$Is :: @UX\Color>
+							<@Red :: "237">
+							<@Green :: "255">
+							<@Blue :: "237">
+							<@Opacity :: "255">
+						<@BaseEdge :: "">
+							<@$Is :: @Edge>
+							<@From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'>
+							<@Meta :: @Automata\State>
+							<@To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnDelivered>
+						<@Decorator :: "">
+							<@$Is :: @UX\LineDecorator>
+							<@Scale :: "100">
+							<@BaseEdge :: "">
+								<@Edge\From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnDelivered>
+								<@Edge\Meta :: @Automata\State\Transition>
+								<@Edge\To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnConfirmed>
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
+							<@EndAnchor :: @UX\LineEndEnum\Arrow>
+							<@HideLabel :: "True">
+
+							<@ToItem :: @OnlineRetail\OnlineRetailModel\UXContainer:'Order state'\Item:\Item:<<"15">>>
+						<@Decorator :: "">
+							<@$Is :: @UX\LineDecorator>
+							<@Scale :: "100">
+							<@BaseEdge :: "">
+								<@Edge\From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnDelivered>
+								<@Edge\Meta :: @Automata\State\Transition>
+								<@Edge\To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnDisputed>
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
+							<@EndAnchor :: @UX\LineEndEnum\Arrow>
+							<@HideLabel :: "True">
+
+							<@ToItem :: @OnlineRetail\OnlineRetailModel\UXContainer:'Order state'\Item:\Item:<<"17">>>
+					<@Item :: "">
+						<@$Is :: @UX\RectangleVisualiserItem>
+						<@Scale :: "100">
+						<@ShowIcons :: "True">
+						<@FontSize :: "14">
+						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+						<@Position :: "">
+							<@$Is :: @UX\Position>
+							<@X :: "599.0579824561394">
+							<@Y :: "278.33000000000004">
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State>
+						<@ShowMeta :: "True">
+						<@RoundEdgeSize :: "8">
+						<@BackgroundColor :: "VeryVeryVeryLightGreen">
+							<@$Is :: @UX\Color>
+							<@Red :: "237">
+							<@Green :: "255">
+							<@Blue :: "237">
+							<@Opacity :: "255">
+						<@BaseEdge :: "">
+							<@$Is :: @Edge>
+							<@From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'>
+							<@Meta :: @Automata\State>
+							<@To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnConfirmed>
+						<@Decorator :: "">
+							<@$Is :: @UX\LineDecorator>
+							<@Scale :: "100">
+							<@BaseEdge :: "">
+								<@Edge\From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnConfirmed>
+								<@Edge\Meta :: @Automata\State\Transition>
+								<@Edge\To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnRefundPaid>
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
+							<@EndAnchor :: @UX\LineEndEnum\Arrow>
+							<@HideLabel :: "True">
+
+							<@ToItem :: @OnlineRetail\OnlineRetailModel\UXContainer:'Order state'\Item:\Item:<<"16">>>
+					<@Item :: "">
+						<@$Is :: @UX\RectangleVisualiserItem>
+						<@Scale :: "100">
+						<@ShowIcons :: "True">
+						<@FontSize :: "14">
+						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+						<@Position :: "">
+							<@$Is :: @UX\Position>
+							<@X :: "596.7620175438591">
+							<@Y :: "218.04333333333315">
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State>
+						<@ShowMeta :: "True">
+						<@RoundEdgeSize :: "8">
+						<@BackgroundColor :: "VeryVeryVeryLightGreen">
+							<@$Is :: @UX\Color>
+							<@Red :: "237">
+							<@Green :: "255">
+							<@Blue :: "237">
+							<@Opacity :: "255">
+						<@BaseEdge :: "">
+							<@$Is :: @Edge>
+							<@From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'>
+							<@Meta :: @Automata\State>
+							<@To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnRefundPaid>
+					<@Item :: "">
+						<@$Is :: @UX\RectangleVisualiserItem>
+						<@Scale :: "100">
+						<@ShowIcons :: "True">
+						<@FontSize :: "14">
+						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+						<@Position :: "">
+							<@$Is :: @UX\Position>
+							<@X :: "831.8497368421042">
+							<@Y :: "278.33">
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State>
+						<@ShowMeta :: "True">
+						<@RoundEdgeSize :: "8">
+						<@BackgroundColor :: "VeryVeryVeryLightGreen">
+							<@$Is :: @UX\Color>
+							<@Red :: "237">
+							<@Green :: "255">
+							<@Blue :: "237">
+							<@Opacity :: "255">
+						<@BaseEdge :: "">
+							<@$Is :: @Edge>
+							<@From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'>
+							<@Meta :: @Automata\State>
+							<@To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnDisputed>
+						<@Decorator :: "">
+							<@$Is :: @UX\LineDecorator>
+							<@Scale :: "100">
+							<@BaseEdge :: "">
+								<@Edge\From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnDisputed>
+								<@Edge\Meta :: @Automata\State\Transition>
+								<@Edge\To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnDeclined>
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
+							<@EndAnchor :: @UX\LineEndEnum\Arrow>
+							<@HideLabel :: "True">
+
+							<@ToItem :: @OnlineRetail\OnlineRetailModel\UXContainer:'Order state'\Item:\Item:<<"18">>>
+						<@Decorator :: "">
+							<@$Is :: @UX\LineDecorator>
+							<@Scale :: "100">
+							<@BaseEdge :: "">
+								<@Edge\From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnDisputed>
+								<@Edge\Meta :: @Automata\State\Transition>
+								<@Edge\To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnConfirmed>
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State\Transition>
+							<@EndAnchor :: @UX\LineEndEnum\Arrow>
+							<@HideLabel :: "True">
+
+							<@ToItem :: @OnlineRetail\OnlineRetailModel\UXContainer:'Order state'\Item:\Item:<<"15">>>
+					<@Item :: "">
+						<@$Is :: @UX\RectangleVisualiserItem>
+						<@Scale :: "100">
+						<@ShowIcons :: "True">
+						<@FontSize :: "14">
+						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+						<@Position :: "">
+							<@$Is :: @UX\Position>
+							<@X :: "831.8497368421049">
+							<@Y :: "218.04333333333324">
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State>
+						<@ShowMeta :: "True">
+						<@RoundEdgeSize :: "8">
+						<@BackgroundColor :: "VeryVeryVeryLightGreen">
+							<@$Is :: @UX\Color>
+							<@Red :: "237">
+							<@Green :: "255">
+							<@Blue :: "237">
+							<@Opacity :: "255">
+						<@BaseEdge :: "">
+							<@$Is :: @Edge>
+							<@From :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'>
+							<@Meta :: @Automata\State>
+							<@To :: @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnDeclined>
+						<@Size :: "">
+							<@$Is :: @UX\Size>
+							<@Width :: "185.40333333333274">
+							<@Height :: "37.620000000000005">
+			automata "Order state"
+				state "CompletingOrder"
+					transition @OnlineRetail\OnlineRetailModel\Automata:'Order state'\OrderCompleted
+				state "OrderCompleted"
+					transition @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ShippingAdressAndMethodDefined
+					transition @OnlineRetail\OnlineRetailModel\Automata:'Order state'\CompletingOrder
+				state "PaymentStarted"
+					transition @OnlineRetail\OnlineRetailModel\Automata:'Order state'\PaymentFailed
+					transition @OnlineRetail\OnlineRetailModel\Automata:'Order state'\PaymentCompleted
+				state "PaymentCompleted"
+					transition @OnlineRetail\OnlineRetailModel\Automata:'Order state'\CollectingOrder
+				state "PaymentFailed"
+					transition @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ShippingAdressAndMethodDefined
+				state "ShippingAdressAndMethodDefined"
+					transition @OnlineRetail\OnlineRetailModel\Automata:'Order state'\OrderCompleted
+					transition @OnlineRetail\OnlineRetailModel\Automata:'Order state'\PaymentStarted
+				state "CollectingOrder"
+					transition @OnlineRetail\OnlineRetailModel\Automata:'Order state'\OrderCollected
+				state "OrderCollected"
+					transition @OnlineRetail\OnlineRetailModel\Automata:'Order state'\OrderSent
+				state "OrderSent"
+					transition @OnlineRetail\OnlineRetailModel\Automata:'Order state'\OrderDelivered
+					transition @OnlineRetail\OnlineRetailModel\Automata:'Order state'\DeliveryFailed
+				state "OrderDelivered"
+					transition @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnCreated
+				state "DeliveryFailed"
+				state "ReturnCreated"
+					transition @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnSent
+				state "ReturnSent"
+					transition @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnDelivered
+				state "ReturnConfirmed"
+					transition @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnRefundPaid
+				state "ReturnRefundPaid"
+				state "ReturnDisputed"
+					transition @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnDeclined
+					transition @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnConfirmed
+				state "ReturnDelivered"
+					transition @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnConfirmed
+					transition @OnlineRetail\OnlineRetailModel\Automata:'Order state'\ReturnDisputed
+				state "ReturnDeclined"
+			enum "CardBrand" ("Visa", "Mastercard")
+			<@UX\UXContainer :: "Data model">
+				<@$Is :: @UX\UXContainer>
+				<@IsExpanded :: "True">
+				<@HasMiniatures :: "True">
+				<@Scale :: "90">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @OnlineRetail>
+					<@Meta :: @Structure\Model>
+					<@To :: @OnlineRetail\OnlineRetailModel>
+				<@SelectedEdges :: "">
+					<@Edge :: "">
+						<@$Is :: @Edge>
+						<@From :: @OnlineRetail\OnlineRetailModel\'Data model'>
+						<@Meta :: @UX\Item\Item>
+						<@To :: @OnlineRetail\OnlineRetailModel\'Data model'\Item:<<"3">>>
+				<@ShowSelectedEdgesBaseEdge :: "True">
+				<@Size :: "">
+					<@$Is :: @UX\Size>
+					<@Width :: "5000">
+					<@Height :: "5000">
+				<@NewItemUXTemplate :: @System\Data\UX\Templates\ZeroUML>
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "2129.629611">
+						<@Y :: "207.17999999999995">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
+					<@ShowMeta :: "False">
+					<@ConstantLabel :: "class">
+					<@VisualiserClass :: @System\Meta\Visualiser\Class>
+					<@BackgroundColor :: "VeryVeryVeryLightGreen">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "255">
+						<@Blue :: "237">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @OnlineRetail\OnlineRetailModel>
+						<@Meta :: @Class>
+						<@To :: @OnlineRetail\OnlineRetailModel\Product>
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "2313.3299999999995">
+						<@Y :: "207.17999999999995">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
+					<@ShowMeta :: "False">
+					<@ConstantLabel :: "class">
+					<@VisualiserClass :: @System\Meta\Visualiser\Class>
+					<@BackgroundColor :: "VeryVeryVeryLightGreen">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "255">
+						<@Blue :: "237">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @OnlineRetail\OnlineRetailModel>
+						<@Meta :: @Class>
+						<@To :: @OnlineRetail\OnlineRetailModel\Order>
+					<@Decorator :: "">
+						<@$Is :: @UX\LineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@Edge\From :: @OnlineRetail\OnlineRetailModel\Order>
+							<@Edge\Meta :: @Class\Association>
+							<@Edge\To :: @OnlineRetail\OnlineRetailModel\Order\Product>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Association>
+						<@ToItem :: @OnlineRetail\OnlineRetailModel\'Data model'\Item:<<"1">>>
+					<@Decorator :: "">
+						<@$Is :: @UX\LineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@Edge\From :: @OnlineRetail\OnlineRetailModel\Order>
+							<@Edge\Meta :: @Class\Association>
+							<@Edge\To :: @OnlineRetail\OnlineRetailModel\Order\Payment>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Association>
+						<@ToItem :: @OnlineRetail\OnlineRetailModel\'Data model'\Item:<<"8">>>
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "2307.3599999999997">
+						<@Y :: "338.0558">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
+					<@ShowMeta :: "False">
+					<@ConstantLabel :: "class">
+					<@VisualiserClass :: @System\Meta\Visualiser\Class>
+					<@BackgroundColor :: "VeryVeryVeryLightGreen">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "255">
+						<@Blue :: "237">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @OnlineRetail\OnlineRetailModel>
+						<@Meta :: @Class>
+						<@To :: @OnlineRetail\OnlineRetailModel\User>
+					<@Decorator :: "">
+						<@$Is :: @UX\LineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@Edge\From :: @OnlineRetail\OnlineRetailModel\User>
+							<@Edge\Meta :: @Class\Aggregation>
+							<@Edge\To :: @OnlineRetail\OnlineRetailModel\User\Address>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Aggregation>
+						<@StartAnchor :: @UX\LineEndEnum\Diamond>
+						<@ToItem :: @OnlineRetail\OnlineRetailModel\'Data model'\Item:<<"5">>>
+					<@Decorator :: "">
+						<@$Is :: @UX\LineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@Edge\From :: @OnlineRetail\OnlineRetailModel\User>
+							<@Edge\Meta :: @Class\Aggregation>
+							<@Edge\To :: @OnlineRetail\OnlineRetailModel\User\PaymentMethod>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Aggregation>
+						<@StartAnchor :: @UX\LineEndEnum\Diamond>
+						<@ToItem :: @OnlineRetail\OnlineRetailModel\'Data model'\Item:<<"4">>>
+					<@Decorator :: "">
+						<@$Is :: @UX\LineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@Edge\From :: @OnlineRetail\OnlineRetailModel\User>
+							<@Edge\Meta :: @Class\Aggregation>
+							<@Edge\To :: @OnlineRetail\OnlineRetailModel\User\Order>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Aggregation>
+						<@StartAnchor :: @UX\LineEndEnum\Diamond>
+						<@ToItem :: @OnlineRetail\OnlineRetailModel\'Data model'\Item:<<"2">>>
+					<@Decorator :: "">
+						<@$Is :: @UX\LineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@Edge\From :: @OnlineRetail\OnlineRetailModel\User>
+							<@Edge\Meta :: @Class\Aggregation>
+							<@Edge\To :: @OnlineRetail\OnlineRetailModel\User\Token>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Aggregation>
+						<@StartAnchor :: @UX\LineEndEnum\Diamond>
+						<@ToItem :: @OnlineRetail\OnlineRetailModel\'Data model'\Item:<<"9">>>
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "2552.343333333333">
+						<@Y :: "364.59579999999994">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
+					<@ShowMeta :: "False">
+					<@ConstantLabel :: "class">
+					<@VisualiserClass :: @System\Meta\Visualiser\Class>
+					<@BackgroundColor :: "VeryVeryVeryLightGreen">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "255">
+						<@Blue :: "237">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @OnlineRetail\OnlineRetailModel>
+						<@Meta :: @Class>
+						<@To :: @OnlineRetail\OnlineRetailModel\PaymentMethod>
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "2313.3299999999995">
+						<@Y :: "516.06">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
+					<@ShowMeta :: "False">
+					<@ConstantLabel :: "class">
+					<@VisualiserClass :: @System\Meta\Visualiser\Class>
+					<@BackgroundColor :: "VeryVeryVeryLightGreen">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "255">
+						<@Blue :: "237">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @OnlineRetail\OnlineRetailModel>
+						<@Meta :: @Class>
+						<@To :: @OnlineRetail\OnlineRetailModel\Address>
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "2478.743333333333">
+						<@Y :: "471.9800000000001">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
+					<@ShowMeta :: "False">
+					<@ConstantLabel :: "class">
+					<@VisualiserClass :: @System\Meta\Visualiser\Class>
+					<@BackgroundColor :: "VeryVeryVeryLightGreen">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "255">
+						<@Blue :: "237">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @OnlineRetail\OnlineRetailModel>
+						<@Meta :: @Class>
+						<@To :: @OnlineRetail\OnlineRetailModel\Card>
+					<@Decorator :: "">
+						<@$Is :: @UX\LineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@Edge\From :: @OnlineRetail\OnlineRetailModel\Card>
+							<@Edge\Meta :: @$Inherits>
+							<@Edge\To :: @OnlineRetail\OnlineRetailModel\PaymentMethod>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Inherits>
+						<@EndAnchor :: @UX\LineEndEnum\Triangle>
+						<@HideLabel :: "True">
+						<@ToItem :: @OnlineRetail\OnlineRetailModel\'Data model'\Item:<<"4">>>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "167.2900000000002">
+						<@Height :: "148.81999999999988">
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "2663.1">
+						<@Y :: "471.9800000000001">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
+					<@ShowMeta :: "False">
+					<@ConstantLabel :: "class">
+					<@VisualiserClass :: @System\Meta\Visualiser\Class>
+					<@BackgroundColor :: "VeryVeryVeryLightGreen">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "255">
+						<@Blue :: "237">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @OnlineRetail\OnlineRetailModel>
+						<@Meta :: @Class>
+						<@To :: @OnlineRetail\OnlineRetailModel\PayPal>
+					<@Decorator :: "">
+						<@$Is :: @UX\LineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@Edge\From :: @OnlineRetail\OnlineRetailModel\PayPal>
+							<@Edge\Meta :: @$Inherits>
+							<@Edge\To :: @OnlineRetail\OnlineRetailModel\PaymentMethod>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Inherits>
+						<@EndAnchor :: @UX\LineEndEnum\Triangle>
+						<@HideLabel :: "True">
+						<@ToItem :: @OnlineRetail\OnlineRetailModel\'Data model'\Item:<<"4">>>
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "2491.5133333333333">
+						<@Y :: "207.17999999999995">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
+					<@ShowMeta :: "False">
+					<@ConstantLabel :: "class">
+					<@VisualiserClass :: @System\Meta\Visualiser\Class>
+					<@BackgroundColor :: "VeryVeryVeryLightGreen">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "255">
+						<@Blue :: "237">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @OnlineRetail\OnlineRetailModel>
+						<@Meta :: @Class>
+						<@To :: @OnlineRetail\OnlineRetailModel\Payment>
+					<@Decorator :: "">
+						<@$Is :: @UX\LineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@Edge\From :: @OnlineRetail\OnlineRetailModel\Payment>
+							<@Edge\Meta :: @Class\Association>
+							<@Edge\To :: @OnlineRetail\OnlineRetailModel\Payment\PaymentMethod>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Association>
+						<@ToItem :: @OnlineRetail\OnlineRetailModel\'Data model'\Item:<<"4">>>
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "2127.7729443333333">
+						<@Y :: "338.0558">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
+					<@ShowMeta :: "False">
+					<@ConstantLabel :: "class">
+					<@VisualiserClass :: @System\Meta\Visualiser\Class>
+					<@BackgroundColor :: "VeryVeryVeryLightGreen">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "255">
+						<@Blue :: "237">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @OnlineRetail\OnlineRetailModel>
+						<@Meta :: @Class>
+						<@To :: @OnlineRetail\OnlineRetailModel\Token>
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "1936.1998055000001">
+						<@Y :: "259.90000000000003">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
+					<@ShowMeta :: "False">
+					<@ConstantLabel :: "class">
+					<@VisualiserClass :: @System\Meta\Visualiser\Class>
+					<@BackgroundColor :: "VeryVeryVeryLightGreen">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "255">
+						<@Blue :: "237">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @OnlineRetail\OnlineRetailModel>
+						<@Meta :: @Class>
+						<@To :: @OnlineRetail\OnlineRetailModel\Category>
+					<@Decorator :: "">
+						<@$Is :: @UX\LineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@Edge\From :: @OnlineRetail\OnlineRetailModel\Category>
+							<@Edge\Meta :: @Class\Aggregation>
+							<@Edge\To :: @OnlineRetail\OnlineRetailModel\Category\Product>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Aggregation>
+						<@StartAnchor :: @UX\LineEndEnum\Diamond>
+						<@ToItem :: @OnlineRetail\OnlineRetailModel\'Data model'\Item:<<"1">>>
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "2296.9599999999996">
+						<@Y :: "121.35579999999995">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class>
+					<@ShowMeta :: "False">
+					<@ConstantLabel :: "class">
+					<@VisualiserClass :: @System\Meta\Visualiser\Class>
+					<@BackgroundColor :: "VeryVeryVeryLightGreen">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "255">
+						<@Blue :: "237">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @OnlineRetail\OnlineRetailModel>
+						<@Meta :: @Class>
+						<@To :: @OnlineRetail\OnlineRetailModel\Shop>
+					<@Decorator :: "">
+						<@$Is :: @UX\LineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@Edge\From :: @OnlineRetail\OnlineRetailModel\Shop>
+							<@Edge\Meta :: @Class\Aggregation>
+							<@Edge\To :: @OnlineRetail\OnlineRetailModel\Shop\User>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Aggregation>
+						<@StartAnchor :: @UX\LineEndEnum\Diamond>
+						<@ToItem :: @OnlineRetail\OnlineRetailModel\'Data model'\Item:<<"3">>>
+					<@Decorator :: "">
+						<@$Is :: @UX\LineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@Edge\From :: @OnlineRetail\OnlineRetailModel\Shop>
+							<@Edge\Meta :: @Class\Aggregation>
+							<@Edge\To :: @OnlineRetail\OnlineRetailModel\Shop\Category>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Aggregation>
+						<@StartAnchor :: @UX\LineEndEnum\Diamond>
+						<@ToItem :: @OnlineRetail\OnlineRetailModel\'Data model'\Item:<<"10">>>
+		<@Component :: "BackendService">
+			<@$Is :: @Structure\Component>
+			package "test"
+				import @System\Lib\Std direct meta
+
+				variable "Model" @Vertex
+				variable "Data" @Vertex
+				variable "x" @String
+
+				Model = $#Package:#Component:\Model:
+				Data = $#Package:#Component:\Database:
+
+				x = new Model\:User[]
+			<@ReadWrite :: @Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB>
+			<@OnlineRetail\BackendService\Service\Package :: "Service">
+				<@Structure\Database :: "Package">
+				import @System\Lib\Std direct meta
+				import @System\Lib\Cryptography direct meta
+				import @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel direct meta
+				import @Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB direct meta
+
+				variable "x" @Vertex
+
+				function "CreateUser" @String(@String "Name", @String "Surname", @String "Email", @String "Password")
+					variable "myShop" @Vertex
+					myShop = @@Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB\MyShop
+
+					if myShop\User{Email:'(Email)'}<> > "0"
+						return "USER EXIST"
+
+					$stack +< @@OnlineRetail\OnlineRetailModel\Shop\User :: ""
+					User = new @@OnlineRetail\OnlineRetailModel\User[]
+					User\BusinessID = @@System\Lib\Std\CreateURN[Model\:User\:BusinessID]
+					User\Name = Name
+					User\Surname = Surname
+					User\Email = Email
+					User\PasswordHash = @@System\Lib\Cryptography\HashPassword[Password]
+
+					@@Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB\MyShop <<copy<< User
+
+					return "OK"
+
+				function "Login" @String(@String "Email", @String "Password")
+					variable "PasswordHash" @String
+					variable "user" @Vertex
+					variable "myShop" @Vertex
+					myShop = @@Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB\MyShop
+
+					user = myShop\User{Email:'(Email)'}
+
+					if user<> == "1"
+						if @@System\Lib\Cryptography\'VerifyPassword'[Password, user\PasswordHash]
+							$stack +< @@OnlineRetail\OnlineRetailModel\User\Token :: ""
+							Token = new @@OnlineRetail\OnlineRetailModel\Token[]
+							Token\TokenString = @@System\Lib\Cryptography\GenerateToken[]
+							Token\Expiry = @@System\Lib\Std\DateTime_Now[]
+							Token\Expiry.Add[new @@TimeSpan["0", "0", "0", "1"]]
+							user <<copy<< Token
+
+							return Token\TokenString
+
+					return "ERROR"
+
+				@@OnlineRetail\BackendService\Service\CreateUser["n", "s", "ee", "pwd"]
+				x = @@OnlineRetail\BackendService\Service\Login["ee", "pwd"]
+		<@UX\UXContainer :: "OnlineRetail">
+			<@$Is :: @UX\UXContainer>
+			<@IsExpanded :: "True">
+			<@HasMiniatures :: "True">
+			<@Scale :: "100">
+			<@BaseEdge :: "">
+				<@$Is :: @Edge>
+				<@From :: @Start:\Examples\'OnlineRetail.m0t'\$Store:>
+				<@Meta :: @Structure\System>
+				<@To :: @OnlineRetail>
+			<@SelectedEdges :: "">
+				<@Edge :: "">
+					<@$Is :: @Edge>
+					<@From :: @OnlineRetail>
+					<@Meta :: @UX\Item\Item>
+					<@To :: @OnlineRetail\OnlineRetail\Item:<<"2">>>
+			<@ShowSelectedEdgesBaseEdge :: "False">
+			<@Size :: "">
+				<@$Is :: @UX\Size>
+				<@Width :: "5000">
+				<@Height :: "5000">
+			<@NewItemUXTemplate :: @System\Data\UX\Templates\ZeroUML>
+			<@Item :: "">
+				<@$Is :: @UX\IconItem>
+				<@Scale :: "100">
+				<@ShowIcons :: "True">
+				<@FontSize :: "14">
+				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+				<@Position :: "">
+					<@$Is :: @UX\Position>
+					<@X :: "437.20000000000005">
+					<@Y :: "157.64">
+				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Model>
+				<@BackgroundColor :: "VeryVeryVeryLightCyan">
+					<@$Is :: @UX\Color>
+					<@Red :: "237">
+					<@Green :: "255">
+					<@Blue :: "255">
+					<@Opacity :: "255">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @OnlineRetail>
+					<@Meta :: @Structure\Model>
+					<@To :: @OnlineRetail\OnlineRetailModel>
+			<@Item :: "">
+				<@$Is :: @UX\IconItem>
+				<@Scale :: "100">
+				<@ShowIcons :: "True">
+				<@FontSize :: "14">
+				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+				<@Position :: "">
+					<@$Is :: @UX\Position>
+					<@X :: "690.8000000000001">
+					<@Y :: "157.64">
+				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Component>
+				<@BackgroundColor :: "VeryVeryVeryLightCyan">
+					<@$Is :: @UX\Color>
+					<@Red :: "237">
+					<@Green :: "255">
+					<@Blue :: "255">
+					<@Opacity :: "255">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @OnlineRetail>
+					<@Meta :: @Structure\Component>
+					<@To :: @OnlineRetail\BackendService>
+				<@Decorator :: "">
+					<@$Is :: @UX\LineDecorator>
+					<@Scale :: "100">
+					<@BaseEdge :: "">
+						<@Edge\From :: @OnlineRetail\BackendService>
+						<@Edge\Meta :: @Structure\StaticComponent\ReadWrite>
+						<@Edge\To :: @Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB>
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - FromToFilledTriangle'>
+					<@StartAnchor :: @UX\LineEndEnum\FilledTriangle>
+					<@EndAnchor :: @UX\LineEndEnum\FilledTriangle>
+					<@ToItem :: @OnlineRetail\OnlineRetail\Item:<<"3">>>
+			<@Item :: "">
+				<@$Is :: @UX\IconItem>
+				<@Scale :: "100">
+				<@ShowIcons :: "True">
+				<@FontSize :: "14">
+				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+				<@Position :: "">
+					<@$Is :: @UX\Position>
+					<@X :: "577.7">
+					<@Y :: "363.24">
+				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Database>
+				<@BackgroundColor :: "VeryVeryVeryLightCyan">
+					<@$Is :: @UX\Color>
+					<@Red :: "237">
+					<@Green :: "255">
+					<@Blue :: "255">
+					<@Opacity :: "255">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @Start:\Examples\'OnlineRetailDB.m0t'\$Store:>
+					<@Meta :: @Structure\Database>
+					<@To :: @Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB>
+				<@Decorator :: "">
+					<@$Is :: @UX\LineDecorator>
+					<@Scale :: "100">
+					<@BaseEdge :: "">
+						<@Edge\From :: @Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB>
+						<@Edge\Meta :: @Structure\Data\Model>
+						<@Edge\To :: @OnlineRetail\OnlineRetailModel>
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToArrow'>
+					<@EndAnchor :: @UX\LineEndEnum\Arrow>
+					<@ToItem :: @OnlineRetail\OnlineRetail\Item:<<"1">>>
