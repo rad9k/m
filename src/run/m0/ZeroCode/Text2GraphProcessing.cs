@@ -7,6 +7,7 @@ using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -711,6 +712,11 @@ namespace m0.ZeroCode
                     });
             }
 
+            LogTokenResolutionDiagnostic(
+                "deferred-added",
+                placeholderEdge.From,
+                placeholderEdge,
+                link);
         }
 
         IEdge FindDeferredVertexLinkEdge(
@@ -771,6 +777,12 @@ namespace m0.ZeroCode
                 IEdge placeholderEdge =
                     FindDeferredVertexLinkEdge(pending);
 
+                LogTokenResolutionDiagnostic(
+                    "deferred-lookup",
+                    pending.From,
+                    placeholderEdge ?? pending.PlaceholderEdge,
+                    pending.Link);
+
                 if (placeholderEdge == null)
                 {
                     lock (deferredVertexLinkResolutions)
@@ -792,6 +804,13 @@ namespace m0.ZeroCode
                         new ToVertexMock(
                             pending.Link,
                             pending.From));
+
+                LogTokenResolutionDiagnostic(
+                    "deferred-resolved-target",
+                    pending.From,
+                    placeholderEdge,
+                    pending.Link,
+                    target);
 
                 if (IsUnresolvedImportTarget(target))
                     continue;
@@ -866,6 +885,46 @@ namespace m0.ZeroCode
                 lock (deferredVertexLinkResolutions)
                     deferredVertexLinkResolutions.Remove(pending);
 
+            }
+        }
+
+        void UpdateDeferredVertexLinkEdges(
+            IVertex parent,
+            IDictionary<IEdge, IEdge> recreatedEdgeByOriginal)
+        {
+            if (parent == null ||
+                recreatedEdgeByOriginal == null ||
+                recreatedEdgeByOriginal.Count == 0)
+                return;
+
+            lock (deferredVertexLinkResolutions)
+            {
+                foreach (DeferredVertexLinkResolution pending
+                    in deferredVertexLinkResolutions)
+                {
+                    if (!object.ReferenceEquals(pending.Owner, this) ||
+                        !object.ReferenceEquals(pending.From, parent) ||
+                        pending.PlaceholderEdge == null)
+                        continue;
+
+                    IEdge recreatedEdge;
+                    if (!recreatedEdgeByOriginal.TryGetValue(
+                            pending.PlaceholderEdge,
+                            out recreatedEdge))
+                        continue;
+
+                    LogTokenResolutionDiagnostic(
+                        "restore-deferred-edge-update",
+                        parent,
+                        pending.PlaceholderEdge,
+                        pending.Link);
+
+                    pending.PlaceholderEdge = recreatedEdge;
+                    pending.Meta = recreatedEdge.Meta;
+                    pending.OtherEndpoint = pending.IsMeta
+                        ? recreatedEdge.To
+                        : recreatedEdge.Meta;
+                }
             }
         }
 
@@ -1155,6 +1214,94 @@ namespace m0.ZeroCode
             edges.Add(edge);
         }
 
+        static bool IsTokenResolutionDiagnosticValue(object value)
+        {
+            if (value == null)
+                return false;
+
+            string text = value.ToString();
+            return string.Equals(text, "User", StringComparison.Ordinal) ||
+                string.Equals(text, "Token", StringComparison.Ordinal);
+        }
+
+        static bool IsTokenResolutionDiagnosticEdge(IEdge edge)
+        {
+            return edge != null &&
+                (IsTokenResolutionDiagnosticValue(edge.Meta?.Value) ||
+                    IsTokenResolutionDiagnosticValue(edge.To?.Value));
+        }
+
+        void LogTokenResolutionDiagnostic(
+            string phase,
+            IVertex parent,
+            IEdge edge,
+            string link = null,
+            IVertex resolved = null)
+        {
+            if (parent == null ||
+                (!IsTokenResolutionDiagnosticValue(parent.Value) &&
+                    !IsTokenResolutionDiagnosticEdge(edge) &&
+                    !IsTokenResolutionDiagnosticValue(link)))
+                return;
+
+            string parentIs = string.Join(
+                ";",
+                GraphUtil.GetQueryOut(parent, "$Is", null)
+                    .Select(
+                        isEdge =>
+                            (isEdge.To?.Value?.ToString() ?? "<null>") +
+                            "#" +
+                            RuntimeHelpers.GetHashCode(isEdge.To)));
+
+            MinusZero.Instance.Log(
+                0,
+                "TokenResolutionTrace",
+                "phase='" + phase +
+                "' parentValue='" + (parent.Value?.ToString() ?? "<null>") +
+                "' parentObjectId='" + RuntimeHelpers.GetHashCode(parent) +
+                "' edgeObjectId='" +
+                (edge == null
+                    ? "<null>"
+                    : RuntimeHelpers.GetHashCode(edge).ToString()) +
+                "' meta='" + (edge?.Meta?.Value?.ToString() ?? "<null>") +
+                "' metaObjectId='" +
+                (edge?.Meta == null
+                    ? "<null>"
+                    : RuntimeHelpers.GetHashCode(edge.Meta).ToString()) +
+                "' to='" + (edge?.To?.Value?.ToString() ?? "<null>") +
+                "' toObjectId='" +
+                (edge?.To == null
+                    ? "<null>"
+                    : RuntimeHelpers.GetHashCode(edge.To).ToString()) +
+                "' metaIsMock='" + (edge?.Meta is ToVertexMock) +
+                "' toIsMock='" + (edge?.To is ToVertexMock) +
+                "' link='" + (link ?? "<null>") +
+                "' resolved='" + (resolved?.Value?.ToString() ?? "<null>") +
+                "' resolvedObjectId='" +
+                (resolved == null
+                    ? "<null>"
+                    : RuntimeHelpers.GetHashCode(resolved).ToString()) +
+                "' resolvedIsEmpty='" +
+                (resolved == MinusZero.Instance.Empty) +
+                "' parentIs='" + parentIs + "'");
+        }
+
+        void LogTokenResolutionDiagnosticChildren(
+            string phase,
+            IVertex parent)
+        {
+            if (parent == null ||
+                !IsTokenResolutionDiagnosticValue(parent.Value))
+                return;
+
+            IList<IEdge> edges = parent.OutEdgesRaw;
+            for (int index = 0; index < edges.Count; index++)
+                LogTokenResolutionDiagnostic(
+                    phase + "-child-" + index,
+                    parent,
+                    edges[index]);
+        }
+
         void ReplaceRememberedTextualChildEdge(IVertex parent, IEdge oldEdge, IEdge newEdge)
         {
             if (parent == null || oldEdge == null || newEdge == null || textualChildrenOrderByParent == null)
@@ -1168,6 +1315,10 @@ namespace m0.ZeroCode
                 if (object.ReferenceEquals(edges[i], oldEdge))
                 {
                     edges[i] = newEdge;
+                    LogTokenResolutionDiagnostic(
+                        "remembered-edge-replaced",
+                        parent,
+                        newEdge);
                     return;
                 }
         }
@@ -1231,14 +1382,32 @@ namespace m0.ZeroCode
                 if (HasSameEdgeReferencesInTheSameOrder(currentEdges, reorderedEdges))
                     continue;
 
+                LogTokenResolutionDiagnosticChildren(
+                    "restore-before",
+                    parent);
+
                 List<IEdge> recreatedEdges = new List<IEdge>();
+                Dictionary<IEdge, IEdge> recreatedEdgeByOriginal =
+                    new Dictionary<IEdge, IEdge>();
                 foreach (IEdge edge in reorderedEdges)
-                    recreatedEdges.Add(parent.AddEdge(edge.Meta, edge.To));
+                {
+                    IEdge recreatedEdge = parent.AddEdge(edge.Meta, edge.To);
+                    recreatedEdges.Add(recreatedEdge);
+                    recreatedEdgeByOriginal.Add(edge, recreatedEdge);
+                }
+
+                UpdateDeferredVertexLinkEdges(
+                    parent,
+                    recreatedEdgeByOriginal);
 
                 foreach (IEdge edge in currentEdges)
                     parent.DeleteEdge(edge);
 
                 textualChildrenOrderByParent[parent] = recreatedEdges;
+
+                LogTokenResolutionDiagnosticChildren(
+                    "restore-after",
+                    parent);
             }
         }
 
@@ -3661,6 +3830,10 @@ namespace m0.ZeroCode
 
             IEdge newEdge = baseVertex.AddVertexAndReturnEdge(meta, val);
             RememberTextualChildEdge(baseVertex, newEdge);
+            LogTokenResolutionDiagnostic(
+                "text-edge-created",
+                baseVertex,
+                newEdge);
 
             s.lastAddedVertex = newEdge.To;
 
@@ -3677,6 +3850,10 @@ namespace m0.ZeroCode
 
             IEdge newEdge = baseVertex.AddEdge(meta, to);
             RememberTextualChildEdge(baseVertex, newEdge);
+            LogTokenResolutionDiagnostic(
+                "text-edge-created",
+                baseVertex,
+                newEdge);
 
             return newEdge;
         }        
@@ -3836,14 +4013,32 @@ namespace m0.ZeroCode
                 string toLink =
                     (toVertex as ToVertexMock)?.mockData?.ToString();
 
+                LogTokenResolutionDiagnostic(
+                    "mock-before",
+                    edge.From,
+                    edge,
+                    metaLink ?? toLink);
+
                 if (metaVertex is ToVertexMock)
                 {
                     metaVertex = ToVertexMock2VertexByLinkString((ToVertexMock)metaVertex);
+                    LogTokenResolutionDiagnostic(
+                        "mock-meta-resolved",
+                        edge.From,
+                        edge,
+                        metaLink,
+                        metaVertex);
                 }
 
                 if (toVertex is ToVertexMock)
                 {
                     toVertex = ToVertexMock2VertexByLinkString((ToVertexMock)toVertex);
+                    LogTokenResolutionDiagnostic(
+                        "mock-to-resolved",
+                        edge.From,
+                        edge,
+                        toLink,
+                        toVertex);
                 }
 
                 IEdge newEdge = edge.From.AddEdge(metaVertex, toVertex);
@@ -3871,6 +4066,10 @@ namespace m0.ZeroCode
                 ReplaceRememberedTextualChildEdge(edge.From, edge, newEdge);
                 edge.From.DeleteEdge(edge);
                 RestoreOutgoingEdgesToTextualOrder(edge.From);
+
+                LogTokenResolutionDiagnosticChildren(
+                    "mock-after-parent",
+                    newEdge.From);
 
                 return true;
             }
@@ -4225,6 +4424,10 @@ namespace m0.ZeroCode
 
             ProcessTextPart(parseRoot, 0, lineInfoList.Count - 1, out stack);
 
+            LogTokenResolutionDiagnosticChildren(
+                "after-text-parse",
+                GraphUtil.GetQueryOutFirst(parseRoot, "User", null));
+
             if (errorList.Count() == 0)
             {
                 if (stack.lineNo > 0)
@@ -4237,6 +4440,10 @@ namespace m0.ZeroCode
                 ProcessToVertexMocksToLinks();
                 ResolveDeferredVertexLinks();
                 RestoreOutgoingEdgesToTextualOrder();
+
+                LogTokenResolutionDiagnosticChildren(
+                    "before-final-move",
+                    GraphUtil.GetQueryOutFirst(parseRoot, "User", null));
 
                 MoveInEdgesComingFromOutsideOfSubGraphToParseRoot();
 
