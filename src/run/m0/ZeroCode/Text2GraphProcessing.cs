@@ -755,9 +755,10 @@ namespace m0.ZeroCode
             return null;
         }
 
-        void ResolveDeferredVertexLinks()
+        int ResolveDeferredVertexLinks()
         {
             List<DeferredVertexLinkResolution> pendingResolutions;
+            int resolvedCount = 0;
 
             lock (deferredVertexLinkResolutions)
             {
@@ -788,6 +789,7 @@ namespace m0.ZeroCode
                     lock (deferredVertexLinkResolutions)
                         deferredVertexLinkResolutions.Remove(pending);
 
+                    resolvedCount++;
                     continue;
                 }
 
@@ -885,7 +887,10 @@ namespace m0.ZeroCode
                 lock (deferredVertexLinkResolutions)
                     deferredVertexLinkResolutions.Remove(pending);
 
+                resolvedCount++;
             }
+
+            return resolvedCount;
         }
 
         void UpdateDeferredVertexLinkEdges(
@@ -953,8 +958,20 @@ namespace m0.ZeroCode
 
             try
             {
-                foreach (Text2GraphProcessing owner in owners)
-                    owner.ResolveDeferredVertexLinks();
+                bool madeProgress;
+                int retryCount = 0;
+
+                do
+                {
+                    madeProgress = false;
+
+                    foreach (Text2GraphProcessing owner in owners)
+                        if (owner.ResolveDeferredVertexLinks() > 0)
+                            madeProgress = true;
+
+                    retryCount++;
+                }
+                while (madeProgress && retryCount < 100);
             }
             finally
             {
