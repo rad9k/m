@@ -652,23 +652,152 @@ namespace m0.ZeroCode
             return false;
         }
 
+        static string DescribeDeferredLinkEdge(IEdge edge)
+        {
+            if (edge == null)
+                return "<null>";
+
+            return
+                "edgeId='" +
+                RuntimeHelpers.GetHashCode(edge) +
+                "' meta='" +
+                (edge.Meta?.Value?.ToString() ?? "<null>") +
+                "' metaId='" +
+                (edge.Meta == null
+                    ? "<null>"
+                    : RuntimeHelpers.GetHashCode(edge.Meta).ToString()) +
+                "' to='" +
+                (edge.To?.Value?.ToString() ?? "<null>") +
+                "' toId='" +
+                (edge.To == null
+                    ? "<null>"
+                    : RuntimeHelpers.GetHashCode(edge.To).ToString()) +
+                "'";
+        }
+
+        static string DescribeDeferredLinkMatchingEdges(
+            IVertex parent,
+            IEdge referenceEdge)
+        {
+            if (parent == null || referenceEdge == null)
+                return "<unavailable>";
+
+            return string.Join(
+                "; ",
+                parent.OutEdgesRaw.Select(
+                    edge =>
+                        DescribeDeferredLinkEdge(edge) +
+                        " semanticMatch='" +
+                        (GeneralUtil.CompareStrings(
+                            edge.Meta,
+                            referenceEdge.Meta) &&
+                        GeneralUtil.CompareStrings(
+                            edge.To,
+                            referenceEdge.To)) +
+                        "' referenceMatch='" +
+                        object.ReferenceEquals(
+                            edge,
+                            referenceEdge) +
+                        "'"));
+        }
+
+        void LogDeferredLinkRegistration(
+            string phase,
+            IEdge placeholderEdge,
+            string link,
+            bool isMeta,
+            int occurrence,
+            string details = null)
+        {
+            IVertex parent = placeholderEdge?.From;
+
+            MinusZero.Instance.Log(
+                0,
+                "DeferredLinkRegistrationTrace",
+                "phase='" + phase +
+                "' link='" + (link ?? "<null>") +
+                "' isMeta='" + isMeta +
+                "' occurrence='" + occurrence +
+                "' parentId='" +
+                (parent == null
+                    ? "<null>"
+                    : RuntimeHelpers.GetHashCode(parent).ToString()) +
+                "' parentValue='" +
+                (parent?.Value?.ToString() ?? "<null>") +
+                "' parentHasUnresolvedType='" +
+                HasUnresolvedParentType(parent) +
+                "' placeholder={" +
+                DescribeDeferredLinkEdge(placeholderEdge) +
+                "} parentEdges={" +
+                DescribeDeferredLinkMatchingEdges(
+                    parent,
+                    placeholderEdge) +
+                "} details='" + (details ?? "<null>") + "'");
+        }
+
         void AddDeferredVertexLinkResolution(
             IEdge placeholderEdge,
             string link,
             bool isMeta)
         {
-            if (placeholderEdge == null ||
-                string.IsNullOrEmpty(link) ||
-                (!IsStoreQualifiedLink(link) &&
-                    !HasUnresolvedParentType(placeholderEdge.From)))
+            if (placeholderEdge == null)
+            {
+                LogDeferredLinkRegistration(
+                    "skipped-null-placeholder",
+                    null,
+                    link,
+                    isMeta,
+                    -1);
                 return;
+            }
+
+            if (string.IsNullOrEmpty(link))
+            {
+                LogDeferredLinkRegistration(
+                    "skipped-empty-link",
+                    placeholderEdge,
+                    link,
+                    isMeta,
+                    -1);
+                return;
+            }
+
+            bool isStoreQualifiedLink = IsStoreQualifiedLink(link);
+            bool parentHasUnresolvedType =
+                HasUnresolvedParentType(placeholderEdge.From);
+
+            if (!isStoreQualifiedLink && !parentHasUnresolvedType)
+            {
+                LogDeferredLinkRegistration(
+                    "skipped-resolved-parent-type",
+                    placeholderEdge,
+                    link,
+                    isMeta,
+                    -1);
+                return;
+            }
 
             int occurrence = GetMatchingEdgeOccurrence(
                 placeholderEdge.From,
                 placeholderEdge);
 
             if (occurrence < 0)
+            {
+                LogDeferredLinkRegistration(
+                    "skipped-occurrence-not-found",
+                    placeholderEdge,
+                    link,
+                    isMeta,
+                    occurrence);
                 return;
+            }
+
+            LogDeferredLinkRegistration(
+                "attempt",
+                placeholderEdge,
+                link,
+                isMeta,
+                occurrence);
 
             lock (deferredVertexLinkResolutions)
             {
@@ -679,21 +808,18 @@ namespace m0.ZeroCode
                             pending.PlaceholderEdge,
                             placeholderEdge) &&
                         pending.IsMeta == isMeta)
-                        return;
-
-                    if (object.ReferenceEquals(
-                            pending.From,
-                            placeholderEdge.From) &&
-                        object.ReferenceEquals(
-                            pending.Meta,
-                            placeholderEdge.Meta) &&
-                        pending.IsMeta == isMeta &&
-                        pending.PlaceholderOccurrence == occurrence &&
-                        string.Equals(
-                            pending.Link,
+                    {
+                        LogDeferredLinkRegistration(
+                            "skipped-duplicate-placeholder",
+                            placeholderEdge,
                             link,
-                            StringComparison.Ordinal))
+                            isMeta,
+                            occurrence,
+                            "pendingPlaceholder={" +
+                            DescribeDeferredLinkEdge(
+                                pending.PlaceholderEdge) + "}");
                         return;
+                    }
                 }
 
                 deferredVertexLinkResolutions.Add(
@@ -711,6 +837,13 @@ namespace m0.ZeroCode
                         IsMeta = isMeta
                     });
             }
+
+            LogDeferredLinkRegistration(
+                "added",
+                placeholderEdge,
+                link,
+                isMeta,
+                occurrence);
 
             LogTokenResolutionDiagnostic(
                 "deferred-added",
@@ -857,14 +990,7 @@ namespace m0.ZeroCode
                         bool refersToReplacedEdge =
                             object.ReferenceEquals(
                                 relatedPending.PlaceholderEdge,
-                                placeholderEdge) ||
-                            (relatedPending.IsMeta
-                                ? object.ReferenceEquals(
-                                    relatedPending.OtherEndpoint,
-                                    placeholderEdge.To)
-                                : object.ReferenceEquals(
-                                    relatedPending.Meta,
-                                    placeholderEdge.Meta));
+                                placeholderEdge);
 
                         if (!refersToReplacedEdge)
                             continue;
@@ -918,6 +1044,24 @@ namespace m0.ZeroCode
                             out recreatedEdge))
                         continue;
 
+                    int recreatedOccurrence =
+                        GetMatchingEdgeOccurrence(
+                            parent,
+                            recreatedEdge);
+
+                    LogDeferredLinkRegistration(
+                        "recreated-placeholder",
+                        recreatedEdge,
+                        pending.Link,
+                        pending.IsMeta,
+                        recreatedOccurrence,
+                        "originalPlaceholder={" +
+                        DescribeDeferredLinkEdge(
+                            pending.PlaceholderEdge) +
+                        "} previousOccurrence='" +
+                        pending.PlaceholderOccurrence +
+                        "'");
+
                     LogTokenResolutionDiagnostic(
                         "restore-deferred-edge-update",
                         parent,
@@ -929,6 +1073,7 @@ namespace m0.ZeroCode
                     pending.OtherEndpoint = pending.IsMeta
                         ? recreatedEdge.To
                         : recreatedEdge.Meta;
+                    pending.PlaceholderOccurrence = recreatedOccurrence;
                 }
             }
         }
