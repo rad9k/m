@@ -1120,8 +1120,17 @@ namespace m0.ZeroCode
             }
             finally
             {
-                lock (deferredVertexLinkResolutions)
-                    deferredVertexLinkRetryInProgress = false;
+                try
+                {
+                    foreach (Text2GraphProcessing owner in owners)
+                        owner.RestoreOutgoingEdgesToTextualOrder(
+                            "retry-after-resolution");
+                }
+                finally
+                {
+                    lock (deferredVertexLinkResolutions)
+                        deferredVertexLinkRetryInProgress = false;
+                }
             }
         }
 
@@ -1471,7 +1480,14 @@ namespace m0.ZeroCode
 
             List<IEdge> edges;
             if (!textualChildrenOrderByParent.TryGetValue(parent, out edges) || edges == null)
+            {
+                LogMissingRememberedTextualEdge(
+                    parent,
+                    oldEdge,
+                    newEdge,
+                    "parent-not-tracked");
                 return;
+            }
 
             for (int i = 0; i < edges.Count; i++)
                 if (object.ReferenceEquals(edges[i], oldEdge))
@@ -1483,6 +1499,103 @@ namespace m0.ZeroCode
                         newEdge);
                     return;
                 }
+
+            LogMissingRememberedTextualEdge(
+                parent,
+                oldEdge,
+                newEdge,
+                "edge-not-in-textual-order");
+        }
+
+        static bool ShouldLogRestoredTextualOrder(IVertex parent, IList<IEdge> edges)
+        {
+            if (IsTokenResolutionDiagnosticValue(parent?.Value))
+                return true;
+
+            if (edges == null)
+                return false;
+
+            foreach (IEdge edge in edges)
+                if (IsTokenResolutionDiagnosticEdge(edge))
+                    return true;
+
+            return false;
+        }
+
+        static string DescribeTextualEdgeOrder(IList<IEdge> edges)
+        {
+            if (edges == null)
+                return "<null>";
+
+            const int maximumLoggedEdges = 32;
+            List<string> parts = new List<string>();
+            int loggedEdgeCount = Math.Min(edges.Count, maximumLoggedEdges);
+
+            for (int index = 0; index < loggedEdgeCount; index++)
+            {
+                IEdge edge = edges[index];
+                parts.Add(
+                    index + ":" +
+                    (edge?.Meta?.Value?.ToString() ?? "<null>") +
+                    "=>" +
+                    (edge?.To?.Value?.ToString() ?? "<null>") +
+                    "#" +
+                    (edge == null
+                        ? "<null>"
+                        : RuntimeHelpers.GetHashCode(edge).ToString()));
+            }
+
+            if (edges.Count > maximumLoggedEdges)
+                parts.Add("...+" + (edges.Count - maximumLoggedEdges));
+
+            return string.Join(" | ", parts);
+        }
+
+        void LogTextualEdgeOrder(
+            string source,
+            string phase,
+            IVertex parent,
+            IList<IEdge> edges,
+            string details = null)
+        {
+            if (parent != null &&
+                !ShouldLogRestoredTextualOrder(parent, edges))
+                return;
+
+            MinusZero.Instance.Log(
+                0,
+                "TextualEdgeOrderTrace",
+                "source='" + (source ?? "<null>") +
+                "' phase='" + phase +
+                "' parentValue='" + (parent?.Value?.ToString() ?? "<null>") +
+                "' parentId='" +
+                (parent == null
+                    ? "<null>"
+                    : RuntimeHelpers.GetHashCode(parent).ToString()) +
+                "' edgeCount='" + (edges?.Count.ToString() ?? "<null>") +
+                "' order='" + DescribeTextualEdgeOrder(edges) +
+                "' details='" + (details ?? "<null>") + "'");
+        }
+
+        void LogMissingRememberedTextualEdge(
+            IVertex parent,
+            IEdge oldEdge,
+            IEdge newEdge,
+            string reason)
+        {
+            if (!ShouldLogRestoredTextualOrder(parent, null) &&
+                !IsTokenResolutionDiagnosticEdge(oldEdge) &&
+                !IsTokenResolutionDiagnosticEdge(newEdge))
+                return;
+
+            LogTextualEdgeOrder(
+                "remember",
+                "remembered-edge-missing",
+                parent,
+                parent?.OutEdgesRaw?.ToList(),
+                "reason='" + reason +
+                "' old={" + DescribeDeferredLinkEdge(oldEdge) +
+                "} new={" + DescribeDeferredLinkEdge(newEdge) + "}");
         }
 
         bool TryTakeEdgeByReference(List<IEdge> edges, IEdge edge, out IEdge matched)
@@ -1511,12 +1624,26 @@ namespace m0.ZeroCode
             return true;
         }
 
-        void RestoreOutgoingEdgesToTextualOrder(IVertex onlyParent = null)
+        int RestoreOutgoingEdgesToTextualOrder(
+            string source,
+            IVertex onlyParent = null)
         {
             if (textualChildrenOrderByParent == null || textualChildrenOrderByParent.Count == 0)
-                return;
+            {
+                LogTextualEdgeOrder(
+                    source,
+                    "finished",
+                    null,
+                    null,
+                    "parentsRebuilt='0'");
+                return 0;
+            }
 
-            foreach (KeyValuePair<IVertex, List<IEdge>> pair in textualChildrenOrderByParent)
+            int rebuiltParentCount = 0;
+            List<KeyValuePair<IVertex, List<IEdge>>> parentsInTextualOrder =
+                textualChildrenOrderByParent.ToList();
+
+            foreach (KeyValuePair<IVertex, List<IEdge>> pair in parentsInTextualOrder)
             {
                 IVertex parent = pair.Key;
 
@@ -1544,33 +1671,73 @@ namespace m0.ZeroCode
                 if (HasSameEdgeReferencesInTheSameOrder(currentEdges, reorderedEdges))
                     continue;
 
+                int firstMismatchIndex = 0;
+                while (firstMismatchIndex < currentEdges.Count &&
+                    object.ReferenceEquals(
+                        currentEdges[firstMismatchIndex],
+                        reorderedEdges[firstMismatchIndex]))
+                    firstMismatchIndex++;
+
                 LogTokenResolutionDiagnosticChildren(
                     "restore-before",
                     parent);
+                LogTextualEdgeOrder(
+                    source,
+                    "before",
+                    parent,
+                    currentEdges,
+                    "firstMismatchIndex='" + firstMismatchIndex + "'");
 
-                List<IEdge> recreatedEdges = new List<IEdge>();
+                List<IEdge> preservedPrefix = currentEdges.GetRange(
+                    0,
+                    firstMismatchIndex);
+                List<IEdge> suffixToRecreate = reorderedEdges.GetRange(
+                    firstMismatchIndex,
+                    reorderedEdges.Count - firstMismatchIndex);
+                List<IEdge> suffixToDelete = currentEdges.GetRange(
+                    firstMismatchIndex,
+                    currentEdges.Count - firstMismatchIndex);
+                List<IEdge> recreatedSuffix = new List<IEdge>();
                 Dictionary<IEdge, IEdge> recreatedEdgeByOriginal =
                     new Dictionary<IEdge, IEdge>();
-                foreach (IEdge edge in reorderedEdges)
+
+                foreach (IEdge edge in suffixToRecreate)
                 {
                     IEdge recreatedEdge = parent.AddEdge(edge.Meta, edge.To);
-                    recreatedEdges.Add(recreatedEdge);
+                    recreatedSuffix.Add(recreatedEdge);
                     recreatedEdgeByOriginal.Add(edge, recreatedEdge);
                 }
+
+                foreach (IEdge edge in suffixToDelete)
+                    parent.DeleteEdge(edge);
 
                 UpdateDeferredVertexLinkEdges(
                     parent,
                     recreatedEdgeByOriginal);
 
-                foreach (IEdge edge in currentEdges)
-                    parent.DeleteEdge(edge);
-
-                textualChildrenOrderByParent[parent] = recreatedEdges;
+                List<IEdge> restoredEdges = preservedPrefix;
+                restoredEdges.AddRange(recreatedSuffix);
+                textualChildrenOrderByParent[parent] = restoredEdges;
+                rebuiltParentCount++;
 
                 LogTokenResolutionDiagnosticChildren(
                     "restore-after",
                     parent);
+                LogTextualEdgeOrder(
+                    source,
+                    "restored",
+                    parent,
+                    parent.OutEdgesRaw.ToList());
             }
+
+            LogTextualEdgeOrder(
+                source,
+                "finished",
+                null,
+                null,
+                "parentsRebuilt='" + rebuiltParentCount + "'");
+
+            return rebuiltParentCount;
         }
 
         private static int GetMatchingEdgeOccurrence(IVertex parent, IEdge referenceEdge)
@@ -4227,7 +4394,6 @@ namespace m0.ZeroCode
 
                 ReplaceRememberedTextualChildEdge(edge.From, edge, newEdge);
                 edge.From.DeleteEdge(edge);
-                RestoreOutgoingEdgesToTextualOrder(edge.From);
 
                 LogTokenResolutionDiagnosticChildren(
                     "mock-after-parent",
@@ -4243,8 +4409,8 @@ namespace m0.ZeroCode
         {
             while (GraphUtil.DeepIterator_OldVersion(parseRoot, this.ProcessToVertexMocksToLinks_Delegate, true, true, false).FirstOrDefault() != null)
             {
-                // Restart traversal after each repin because restoring sibling order recreates
-                // the parent's edges and invalidates the iterator snapshot for remaining siblings.
+                // isSingleResult stops after the first repin, before its children are visited.
+                // Restart on the live graph. Textual order is restored once after the resolution round.
             }
         }
 
@@ -4595,13 +4761,15 @@ namespace m0.ZeroCode
                 if (stack.lineNo > 0)
                     CodeViewProcess();
 
-                RestoreOutgoingEdgesToTextualOrder();
+                RestoreOutgoingEdgesToTextualOrder(
+                    "parse-before-resolution");
 
                 ResolvePendingImportsAfterParse();
 
                 ProcessToVertexMocksToLinks();
                 ResolveDeferredVertexLinks();
-                RestoreOutgoingEdgesToTextualOrder();
+                RestoreOutgoingEdgesToTextualOrder(
+                    "parse-after-resolution");
 
                 LogTokenResolutionDiagnosticChildren(
                     "before-final-move",
