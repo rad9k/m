@@ -14,8 +14,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				attribute "BusinessID" @String
 					<@$ShortName :: "order">
 				association "Product" @OnlineRetail\OnlineRetailModel\Product "0":"-1"
-				association "Payment" @OnlineRetail\OnlineRetailModel\Payment "0":"-1"
 				attribute "Status" @OnlineRetail\OnlineRetailModel\Automata:'Order state'
+				aggregation "Payment" @OnlineRetail\OnlineRetailModel\Payment
 			class "User"
 				attribute "BusinessID" @String
 					<@$ShortName :: "user">
@@ -167,7 +167,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Position :: "">
 							<@$Is :: @UX\Position>
 							<@X :: "323.0749999999998">
-							<@Y :: "33.376666666666665">
+							<@Y :: "33.37666666666661">
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\State>
 						<@ShowMeta :: "True">
 						<@RoundEdgeSize :: "8">
@@ -862,11 +862,6 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@Meta :: @Structure\Model>
 					<@To :: @OnlineRetail\OnlineRetailModel>
 				<@SelectedEdges :: "">
-					<@Edge :: "">
-						<@$Is :: @Edge>
-						<@From :: @OnlineRetail\OnlineRetailModel\'Data model'>
-						<@Meta :: @UX\Item\Item>
-						<@To :: @OnlineRetail\OnlineRetailModel\'Data model'\Item:<<"3">>>
 				<@ShowSelectedEdgesBaseEdge :: "True">
 				<@Size :: "">
 					<@$Is :: @UX\Size>
@@ -937,9 +932,10 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Scale :: "100">
 						<@BaseEdge :: "">
 							<@Edge\From :: @OnlineRetail\OnlineRetailModel\Order>
-							<@Edge\Meta :: @Class\Association>
+							<@Edge\Meta :: @Class\Aggregation>
 							<@Edge\To :: @OnlineRetail\OnlineRetailModel\Order\Payment>
-						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Association>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Aggregation>
+						<@StartAnchor :: @UX\LineEndEnum\Diamond>
 						<@ToItem :: @OnlineRetail\OnlineRetailModel\'Data model'\Item:<<"8">>>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
@@ -1334,8 +1330,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 
 					return "ERROR"
 
-				@@OnlineRetail\BackendService\Service\CreateUser["n", "s", "ee", "pwd"]
-				x = @@OnlineRetail\BackendService\Service\Login["ee", "pwd"]
+				@@OnlineRetail\BackendService\Service\CreateUser["n", "s", "3eeeee", "pwd"]
+				x = @@OnlineRetail\BackendService\Service\Login["3eeeee", "pwd"]
 		<@UX\UXContainer :: "OnlineRetail">
 			<@$Is :: @UX\UXContainer>
 			<@IsExpanded :: "True">
@@ -1347,11 +1343,6 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@Meta :: @Structure\System>
 				<@To :: @OnlineRetail>
 			<@SelectedEdges :: "">
-				<@Edge :: "">
-					<@$Is :: @Edge>
-					<@From :: @OnlineRetail>
-					<@Meta :: @UX\Item\Item>
-					<@To :: @OnlineRetail\OnlineRetail\Item:<<"2">>>
 			<@ShowSelectedEdgesBaseEdge :: "False">
 			<@Size :: "">
 				<@$Is :: @UX\Size>
