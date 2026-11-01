@@ -1359,6 +1359,14 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					return ~00
 
 				function "GetOrders" @OnlineRetail\OnlineRetailModel\Order(@String "tokenString")
+					variable "user" @OnlineRetail\OnlineRetailModel\User
+
+					user = @@OnlineRetail\BackendService\Service\GetUserByToken[tokenString]
+
+					if user<> == "1"
+						return user\Order
+
+					return "ERROR"
 
 				function "CreateOrder" @OnlineRetail\OnlineRetailModel\Order(@String "tokenString")
 					variable "user" @OnlineRetail\OnlineRetailModel\User
@@ -1371,12 +1379,16 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						Order\BusinessID = @@System\Lib\Std\CreateURN[@@OnlineRetail\OnlineRetailModel\Order\BusinessID]
 						Order\State = @@OnlineRetail\OnlineRetailModel\OrderState\CollectingOrder
 
+						user <<copy<< Order
+
 						return Order
 
 					return "ERROR"
 
-
-				x = @@OnlineRetail\BackendService\Service\CreateOrder["token_hTDTdCQ-v6EAlN5OqID3B-UlnReqzkkisXjzmgkZ3Vw"]
+				@@OnlineRetail\BackendService\Service\CreateOrder["token_hTDTdCQ-v6EAlN5OqID3B-UlnReqzkkisXjzmgkZ3Vw"]
+				@@OnlineRetail\BackendService\Service\CreateOrder["token_hTDTdCQ-v6EAlN5OqID3B-UlnReqzkkisXjzmgkZ3Vw"]
+				@@OnlineRetail\BackendService\Service\CreateOrder["token_hTDTdCQ-v6EAlN5OqID3B-UlnReqzkkisXjzmgkZ3Vw"]
+				x = @@OnlineRetail\BackendService\Service\GetOrders["token_hTDTdCQ-v6EAlN5OqID3B-UlnReqzkkisXjzmgkZ3Vw"]
 		<@UX\UXContainer :: "OnlineRetail">
 			<@$Is :: @UX\UXContainer>
 			<@IsExpanded :: "True">
