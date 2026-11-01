@@ -1269,17 +1269,17 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@ToItem :: @OnlineRetail\OnlineRetailModel\'Data model'\Item:<<"10">>>
 		<@Component :: "BackendService">
 			<@$Is :: @Structure\Component>
-			package "test"
-				import @System\Lib\Std direct meta
+			package "Maintenance"
+				import @Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB direct meta
 
-				variable "Model" @Vertex
-				variable "Data" @Vertex
-				variable "x" @String
+				variable "x" @Vertex
 
-				Model = $#Package:#Component:\Model:
-				Data = $#Package:#Component:\Database:
+				function "DeleteAllUsers" ()
+					variable "myShop" @Vertex
+					myShop = @@Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB\MyShop
+					myShop -< myShop\User:
 
-				x = new Model\:User[]
+				@@OnlineRetail\BackendService\Maintenance\DeleteAllUsers[]
 			<@ReadWrite :: @Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB>
 			<@OnlineRetail\BackendService\Service\Package :: "Service">
 
@@ -1385,10 +1385,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 
 					return "ERROR"
 
-				@@OnlineRetail\BackendService\Service\CreateOrder["token_hTDTdCQ-v6EAlN5OqID3B-UlnReqzkkisXjzmgkZ3Vw"]
-				@@OnlineRetail\BackendService\Service\CreateOrder["token_hTDTdCQ-v6EAlN5OqID3B-UlnReqzkkisXjzmgkZ3Vw"]
-				@@OnlineRetail\BackendService\Service\CreateOrder["token_hTDTdCQ-v6EAlN5OqID3B-UlnReqzkkisXjzmgkZ3Vw"]
-				x = @@OnlineRetail\BackendService\Service\GetOrders["token_hTDTdCQ-v6EAlN5OqID3B-UlnReqzkkisXjzmgkZ3Vw"]
+				@@OnlineRetail\BackendService\Service\CreateUser["n", "s", "e", "pwd"]
+				x = @@OnlineRetail\BackendService\Service\Login["e", "pwd"]
+				@@OnlineRetail\BackendService\Service\CreateOrder[x]
 		<@UX\UXContainer :: "OnlineRetail">
 			<@$Is :: @UX\UXContainer>
 			<@IsExpanded :: "True">
