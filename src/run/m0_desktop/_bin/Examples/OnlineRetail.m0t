@@ -35,7 +35,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@$ShortName :: "address">
 				attribute "AddressLine1" @String
 				attribute "AddressLine2" @String
-				attribute "Postal code" @String
+				attribute "PostalCode" @String
 				attribute "City" @String
 				attribute "Country" @String
 			class "Card"
@@ -1283,6 +1283,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			<@ReadWrite :: @Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB>
 			<@OnlineRetail\BackendService\Service\Package :: "Service">
 
+
 				<@Structure\Database :: "Package">
 				import @System\Lib\Std direct meta
 				import @System\Lib\Cryptography direct meta
@@ -1346,7 +1347,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 
 					return product
 
-				function "GetUserByToken" @OnlineRetail\OnlineRetailModel\User(@String "tokenString")
+				function "GetUser" @OnlineRetail\OnlineRetailModel\User(@String "tokenString")
 					variable "myShop" @Vertex
 					variable "token" @OnlineRetail\OnlineRetailModel\Token
 					myShop = @@Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB\MyShop
@@ -1361,17 +1362,17 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				function "GetOrders" @OnlineRetail\OnlineRetailModel\Order(@String "tokenString")
 					variable "user" @OnlineRetail\OnlineRetailModel\User
 
-					user = @@OnlineRetail\BackendService\Service\GetUserByToken[tokenString]
+					user = @@OnlineRetail\BackendService\Service\GetUser[tokenString]
 
 					if user<> == "1"
 						return user\Order
 
 					return "ERROR"
 
-				function "CreateOrder" @OnlineRetail\OnlineRetailModel\Order(@String "tokenString")
+				function "CreateOrder" @String(@String "tokenString")
 					variable "user" @OnlineRetail\OnlineRetailModel\User
 
-					user = @@OnlineRetail\BackendService\Service\GetUserByToken[tokenString]
+					user = @@OnlineRetail\BackendService\Service\GetUser[tokenString]
 
 					if user<> == "1"
 						$stack +< @@OnlineRetail\OnlineRetailModel\User\Order :: ""
@@ -1381,13 +1382,35 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 
 						user <<copy<< Order
 
-						return Order
+						return Order\BusinessID
+
+					return "ERROR"
+
+				function "AddAddress" @String(@String "tokenString", @String "addressLine1", @String "addressLine2", @String "postalCode", @String "city", @String "country")
+					variable "user" @OnlineRetail\OnlineRetailModel\User
+
+					user = @@OnlineRetail\BackendService\Service\GetUser[tokenString]
+
+					if user<> == "1"
+						$stack +< @@OnlineRetail\OnlineRetailModel\User\Address :: ""
+						Address = new @@OnlineRetail\OnlineRetailModel\Address[]
+						Address\BusinessID = @@System\Lib\Std\CreateURN[@@OnlineRetail\OnlineRetailModel\Address\BusinessID]
+						Address\AddressLine1 = addressLine1
+						Address\AddressLine2 = addressLine2
+						Address\PostalCode = postalCode
+						Address\City = city
+						Address\Country = country
+
+						user <<copy<< Address
+
+						return Address\BusinessID
 
 					return "ERROR"
 
 				@@OnlineRetail\BackendService\Service\CreateUser["n", "s", "e", "pwd"]
 				x = @@OnlineRetail\BackendService\Service\Login["e", "pwd"]
-				@@OnlineRetail\BackendService\Service\CreateOrder[x]
+				@@OnlineRetail\BackendService\Service\AddAddress[x, "a1", "a2", "p", "ci", "ca"]
+				x = @@OnlineRetail\BackendService\Service\GetUser[x]
 		<@UX\UXContainer :: "OnlineRetail">
 			<@$Is :: @UX\UXContainer>
 			<@IsExpanded :: "True">
