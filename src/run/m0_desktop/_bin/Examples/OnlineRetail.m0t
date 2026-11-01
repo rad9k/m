@@ -1404,6 +1404,17 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 
 					return "ERROR"
 
+				function "DeleteAddress" (@String "tokenString", @String "addressBusinessID")
+					variable "user" @OnlineRetail\OnlineRetailModel\User
+					variable "address" @OnlineRetail\OnlineRetailModel\Address
+
+					user = @@OnlineRetail\BackendService\Service\GetUser[tokenString]
+
+					if user<> == "1"
+						address = user\Address{BusinessID:'(addressBusinessID)'}
+						if address<> == "1"
+							user ~< address
+
 				function "AddPayPalPayment" @String(@String "tokenString", @String "email", @String "payerId")
 					variable "user" @OnlineRetail\OnlineRetailModel\User
 
@@ -1447,10 +1458,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 
 				@@OnlineRetail\BackendService\Service\CreateUser["n", "s", "e", "pwd"]
 				x = @@OnlineRetail\BackendService\Service\Login["e", "pwd"]
-				@@OnlineRetail\BackendService\Service\AddAddress[x, "a1", "a2", "p", "ci", "ca"]
-				@@OnlineRetail\BackendService\Service\AddPayPalPayment[x, "e", "p"]
-				@@OnlineRetail\BackendService\Service\AddCardPayment[x, "o", "n", "1", "2", @@OnlineRetail\OnlineRetailModel\CardBrand\Visa, "pt", "pcid"]
-				x = @@OnlineRetail\BackendService\Service\GetUser[x]
+				@@OnlineRetail\BackendService\Service\DeleteAddress[x, "urn:m0:address:01a1992e-150e-7394-9241-7130a82d5971"]
 		<@UX\UXContainer :: "OnlineRetail">
 			<@$Is :: @UX\UXContainer>
 			<@IsExpanded :: "True">
