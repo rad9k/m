@@ -38,7 +38,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				attribute "PostalCode" @String
 				attribute "City" @String
 				attribute "Country" @String
-			class "Card"
+			class "CardPayment"
 				inherits @OnlineRetail\OnlineRetailModel\PaymentMethod
 				attribute "Owner" @String
 				attribute "NumberLast4" @String
@@ -47,7 +47,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				attribute "Brand" @OnlineRetail\OnlineRetailModel\CardBrand
 				attribute "ProviderToken" @String
 				attribute "ProviderCustomerId" @String
-			class "PayPal"
+			class "PayPalPayment"
 				inherits @OnlineRetail\OnlineRetailModel\PaymentMethod
 				attribute "Email" @String
 				attribute "PayerId" @String
@@ -1076,12 +1076,12 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @Edge>
 						<@From :: @OnlineRetail\OnlineRetailModel>
 						<@Meta :: @Class>
-						<@To :: @OnlineRetail\OnlineRetailModel\Card>
+						<@To :: @OnlineRetail\OnlineRetailModel\CardPayment>
 					<@Decorator :: "">
 						<@$Is :: @UX\LineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@Edge\From :: @OnlineRetail\OnlineRetailModel\Card>
+							<@Edge\From :: @OnlineRetail\OnlineRetailModel\CardPayment>
 							<@Edge\Meta :: @$Inherits>
 							<@Edge\To :: @OnlineRetail\OnlineRetailModel\PaymentMethod>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Inherits>
@@ -1116,12 +1116,12 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @Edge>
 						<@From :: @OnlineRetail\OnlineRetailModel>
 						<@Meta :: @Class>
-						<@To :: @OnlineRetail\OnlineRetailModel\PayPal>
+						<@To :: @OnlineRetail\OnlineRetailModel\PayPalPayment>
 					<@Decorator :: "">
 						<@$Is :: @UX\LineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@Edge\From :: @OnlineRetail\OnlineRetailModel\PayPal>
+							<@Edge\From :: @OnlineRetail\OnlineRetailModel\PayPalPayment>
 							<@Edge\Meta :: @$Inherits>
 							<@Edge\To :: @OnlineRetail\OnlineRetailModel\PaymentMethod>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Class\Inherits>
@@ -1281,10 +1281,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 
 				@@OnlineRetail\BackendService\Maintenance\DeleteAllUsers[]
 			<@ReadWrite :: @Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB>
-			<@OnlineRetail\BackendService\Service\Package :: "Service">
-
-
-				<@Structure\Database :: "Package">
+			package "Service"
 				import @System\Lib\Std direct meta
 				import @System\Lib\Cryptography direct meta
 				import @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel direct meta
@@ -1407,9 +1404,52 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 
 					return "ERROR"
 
+				function "AddPayPalPayment" @String(@String "tokenString", @String "email", @String "payerId")
+					variable "user" @OnlineRetail\OnlineRetailModel\User
+
+					user = @@OnlineRetail\BackendService\Service\GetUser[tokenString]
+
+					if user<> == "1"
+						$stack +< @@OnlineRetail\OnlineRetailModel\User\PaymentMethod :: ""
+						PaymentMethod = new @@OnlineRetail\OnlineRetailModel\PayPalPayment[]
+						PaymentMethod\BusinessID = @@System\Lib\Std\CreateURN[@@OnlineRetail\OnlineRetailModel\PaymentMethod\BusinessID]
+						PaymentMethod\Email = email
+						PaymentMethod\PayerId = payerId
+
+						user <<copy<< PaymentMethod
+
+						return PaymentMethod\BusinessID
+
+					return "ERROR"
+
+				function "AddCardPayment" @String(@String "tokenString", @String "owner", @String "numberLast4", @Integer "expiryMonth", @Integer "expiryYear", @OnlineRetail\OnlineRetailModel\CardBrand "brand", @String "providerToken", @String "providerCustomerId")
+					variable "user" @OnlineRetail\OnlineRetailModel\User
+
+					user = @@OnlineRetail\BackendService\Service\GetUser[tokenString]
+
+					if user<> == "1"
+						$stack +< @@OnlineRetail\OnlineRetailModel\User\PaymentMethod :: ""
+						PaymentMethod = new @@OnlineRetail\OnlineRetailModel\CardPayment[]
+						PaymentMethod\BusinessID = @@System\Lib\Std\CreateURN[@@OnlineRetail\OnlineRetailModel\PaymentMethod\BusinessID]
+						PaymentMethod\Owner = owner
+						PaymentMethod\NumberLast4 = numberLast4
+						PaymentMethod\ExpiryMonth = expiryMonth
+						PaymentMethod\ExpiryYear = expiryYear
+						PaymentMethod\Brand = brand
+						PaymentMethod\ProviderToken = providerToken
+						PaymentMethod\ProviderCustomerId = providerCustomerId
+
+						user <<copy<< PaymentMethod
+
+						return PaymentMethod\BusinessID
+
+					return "ERROR"
+
 				@@OnlineRetail\BackendService\Service\CreateUser["n", "s", "e", "pwd"]
 				x = @@OnlineRetail\BackendService\Service\Login["e", "pwd"]
 				@@OnlineRetail\BackendService\Service\AddAddress[x, "a1", "a2", "p", "ci", "ca"]
+				@@OnlineRetail\BackendService\Service\AddPayPalPayment[x, "e", "p"]
+				@@OnlineRetail\BackendService\Service\AddCardPayment[x, "o", "n", "1", "2", @@OnlineRetail\OnlineRetailModel\CardBrand\Visa, "pt", "pcid"]
 				x = @@OnlineRetail\BackendService\Service\GetUser[x]
 		<@UX\UXContainer :: "OnlineRetail">
 			<@$Is :: @UX\UXContainer>
