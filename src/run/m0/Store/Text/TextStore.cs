@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
@@ -146,39 +145,6 @@ namespace m0.Store.Text
             writeStream.WriteLine(formalTextLanguageProcessing_Query);
 
             EasyEdge e = new EasyEdge(MinusZero.Instance.Empty, null, root);
-
-            string incomingEdges =
-                string.Join(
-                    " | ",
-                    root.InEdgesRaw.Select(
-                        edge =>
-                            "from='" +
-                            (edge.From?.Value?.ToString() ?? "<null>") +
-                            "' meta='" +
-                            (edge.Meta?.Value?.ToString() ?? "<null>") +
-                            "' to='" +
-                            (edge.To?.Value?.ToString() ?? "<null>") +
-                            "'"));
-
-            MinusZero.Instance.Log(
-                0,
-                "TextStoreSerializationBoundary",
-                "file='" + fileName +
-                "' localRootObjectId='" +
-                System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(root) +
-                "' localRootStore='" +
-                (root.Store?.Identifier?.ToString() ?? "<null>") +
-                "' localRootIncomingCount='" +
-                root.InEdgesRaw.Count +
-                "' localRootIncomingEdges={" +
-                incomingEdges +
-                "} globalRootObjectId='" +
-                System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(
-                    MinusZero.Instance.Root) +
-                "' globalRootStore='" +
-                (MinusZero.Instance.Root.Store?.Identifier?.ToString() ??
-                    "<null>") +
-                "'");
 
             string generated = ZeroCodeProcessingHelper.Generate(formalTextLanguageProcessing_Vertex, e);
 

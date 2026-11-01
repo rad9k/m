@@ -19,7 +19,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Year :: "2026">
 						<@Month :: "11">
 						<@Day :: "1">
-						<@Hour :: "1">
+						<@Hour :: "10">
 						<@Minute :: "4">
 						<@Second :: "6">
 						<@Millisecond :: "583">
@@ -226,12 +226,164 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@PasswordHash :: "pbkdf2-sha256$600000$H1u8hYxctLjRDomVWMfw4w==$t7mbYoUnMtZPhBSLvw8Gc609I+Tq6QeNmlGGoz6tgSc=">
 			<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Category :: "">
 				<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Category>
-				<@BusinessID :: "">
-				<@Name :: "">
+				<@BusinessID :: "urn:m0:category:01a19434-b955-776a-9c48-fb0e287dc49e">
+				<@Name :: "Electronics">
 				<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product :: "">
 					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product>
-					<@BusinessID :: "">
-					<@Name :: "">
-					<@Price :: "">
-					<@Description :: "">
+					<@BusinessID :: "urn:m0:product:01a19436-2ef9-743c-bca7-89f939ecba92">
+					<@Name :: "Wireless Mouse">
+					<@Price :: "79">
+					<@Description :: "Compact wireless mouse with silent clicks and a long-lasting battery.">
+				<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product>
+					<@BusinessID :: "urn:m0:product:01a19436-30a2-7344-a837-885bd929b550">
+					<@Name :: "USB-C Cable 1m">
+					<@Price :: "25">
+					<@Description :: "Braided 1 meter USB-C cable for fast charging and data transfer.">
+				<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product>
+					<@BusinessID :: "urn:m0:product:01a19436-3246-7f2a-b98a-5c2909830421">
+					<@Name :: "Bluetooth Speaker">
+					<@Price :: "149">
+					<@Description :: "Portable waterproof speaker with clear sound and 12 hours of playback.">
+				<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product>
+					<@BusinessID :: "urn:m0:product:01a19436-33ea-7c15-b677-679aa51f0677">
+					<@Name :: "Wired Headphones">
+					<@Price :: "99">
+					<@Description :: "Comfortable over-ear headphones with a built-in microphone.">
+				<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product>
+					<@BusinessID :: "urn:m0:product:01a19436-358f-7dad-9063-2ecc230f9645">
+					<@Name :: "Power Bank 10000 mAh">
+					<@Price :: "119">
+					<@Description :: "Slim power bank that charges two devices at once.">
+				<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product>
+					<@BusinessID :: "urn:m0:product:01a19436-3733-7494-84b3-e8e9de6e10d7">
+					<@Name :: "HD Webcam">
+					<@Price :: "129">
+					<@Description :: "1080p webcam with autofocus and a built-in microphone.">
+				<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product>
+					<@BusinessID :: "urn:m0:product:01a19436-38d9-70c0-a7e9-669740f3c03d">
+					<@Name :: "Phone Stand">
+					<@Price :: "39">
+					<@Description :: "Adjustable aluminum stand for phones and small tablets.">
+				<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product>
+					<@BusinessID :: "urn:m0:product:01a19436-3a7c-71b6-84c3-275b79231280">
+					<@Name :: "Mechanical Keyboard">
+					<@Price :: "299">
+					<@Description :: "Full-size mechanical keyboard with tactile switches and backlight.">
+				<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product>
+					<@BusinessID :: "urn:m0:product:01a19436-3c20-77e1-b8e2-eac2606c3c97">
+					<@Name :: "USB Flash Drive 64 GB">
+					<@Price :: "35">
+					<@Description :: "Compact USB 3.0 flash drive with 64 GB of storage.">
+			<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Category :: "">
+				<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Category>
+				<@BusinessID :: "urn:m0:category:01a19436-2bae-7e14-8bb8-fb6392714d71">
+				<@Name :: "Home and Kitchen">
+				<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product>
+					<@BusinessID :: "urn:m0:product:01a19436-3dc4-7da7-b2aa-31f91ee115b2">
+					<@Name :: "Ceramic Mug">
+					<@Price :: "29">
+					<@Description :: "Classic 350 ml ceramic mug, dishwasher safe.">
+				<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product>
+					<@BusinessID :: "urn:m0:product:01a19436-3f69-76b9-ace9-ace24ff02e32">
+					<@Name :: "Steel Water Bottle">
+					<@Price :: "59">
+					<@Description :: "Insulated stainless steel bottle that keeps drinks cold for 24 hours.">
+				<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product>
+					<@BusinessID :: "urn:m0:product:01a19436-410e-7637-854d-a30c1c940aa4">
+					<@Name :: "Bamboo Cutting Board">
+					<@Price :: "45">
+					<@Description :: "Sturdy bamboo cutting board with a juice groove.">
+				<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product>
+					<@BusinessID :: "urn:m0:product:01a19436-42b2-7c6a-bbc0-4cc7de165721">
+					<@Name :: "Chef Knife">
+					<@Price :: "89">
+					<@Description :: "20 cm stainless steel chef knife with an ergonomic handle.">
+				<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product>
+					<@BusinessID :: "urn:m0:product:01a19436-4456-7cfb-b903-85e26958d529">
+					<@Name :: "Scented Candle">
+					<@Price :: "49">
+					<@Description :: "Soy wax candle with a vanilla scent and 40 hours of burn time.">
+				<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product>
+					<@BusinessID :: "urn:m0:product:01a19436-45fb-7466-a055-ab9838c4c8e7">
+					<@Name :: "Throw Blanket">
+					<@Price :: "99">
+					<@Description :: "Soft knitted blanket for the sofa, 130 x 170 cm.">
+				<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product>
+					<@BusinessID :: "urn:m0:product:01a19436-47a0-756e-9548-98e84679d546">
+					<@Name :: "Desk Lamp">
+					<@Price :: "109">
+					<@Description :: "LED desk lamp with adjustable brightness and a flexible arm.">
+				<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product>
+					<@BusinessID :: "urn:m0:product:01a19436-4943-7d66-8b8e-1ce367b4c615">
+					<@Name :: "Storage Basket">
+					<@Price :: "39">
+					<@Description :: "Woven storage basket for blankets, toys or laundry.">
+			<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Category :: "">
+				<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Category>
+				<@BusinessID :: "urn:m0:category:01a19436-2d55-7ce5-ba0c-bfb1130607bb">
+				<@Name :: "Stationery">
+				<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product>
+					<@BusinessID :: "urn:m0:product:01a19436-4ae8-73e9-9bd7-1b658823b76a">
+					<@Name :: "A5 Notebook">
+					<@Price :: "19">
+					<@Description :: "Hardcover A5 notebook with 200 dotted pages.">
+				<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product>
+					<@BusinessID :: "urn:m0:product:01a19436-4c8c-7296-981b-5e02c70c95ac">
+					<@Name :: "Ballpoint Pen Set">
+					<@Price :: "15">
+					<@Description :: "Set of 10 smooth-writing ballpoint pens in blue and black.">
+				<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product>
+					<@BusinessID :: "urn:m0:product:01a19436-4e30-77c2-b704-9cf1301c8fec">
+					<@Name :: "Sticky Notes Pack">
+					<@Price :: "9">
+					<@Description :: "Pack of 12 colorful sticky note pads.">
+				<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product>
+					<@BusinessID :: "urn:m0:product:01a19436-4fd4-7f3e-a08c-46981b05a28f">
+					<@Name :: "Desk Organizer">
+					<@Price :: "55">
+					<@Description :: "Wooden desk organizer with compartments for pens, notes and cards.">
+				<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product>
+					<@BusinessID :: "urn:m0:product:01a19436-5179-7ea3-9dbf-bd79cbb35df8">
+					<@Name :: "Highlighter Set">
+					<@Price :: "18">
+					<@Description :: "Set of 6 pastel highlighters with chisel tips.">
+				<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product>
+					<@BusinessID :: "urn:m0:product:01a19436-531e-7948-a25d-895d83e92138">
+					<@Name :: "Pencil Case">
+					<@Price :: "22">
+					<@Description :: "Zippered fabric pencil case with plenty of room for supplies.">
+				<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product>
+					<@BusinessID :: "urn:m0:product:01a19436-54c3-739d-82e1-b2000fc1e709">
+					<@Name :: "Wall Calendar">
+					<@Price :: "25">
+					<@Description :: "Large monthly wall calendar with space for notes.">
+				<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product>
+					<@BusinessID :: "urn:m0:product:01a19436-5668-7885-aacf-1828df35eaa1">
+					<@Name :: "Weekly Planner">
+					<@Price :: "45">
+					<@Description :: "Undated weekly planner with goal tracking and a ribbon bookmark.">
 		<@Model :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel>

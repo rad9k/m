@@ -5,9 +5,7 @@ using m0.ZeroCode.Helpers;
 using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -28,68 +26,6 @@ namespace m0.ZeroCode
         int shortestLinkLength;
 
         FormalTextLanguageDictinaries dict;
-
-        static bool IsLinkTraceValue(object value)
-        {
-            if (value == null)
-                return false;
-
-            string text = value.ToString();
-            return text.IndexOf("OnlineRetailModel", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                text.IndexOf("BackendService", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                text.IndexOf("Decorator", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                text.IndexOf("Service", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                text.IndexOf("Item", StringComparison.OrdinalIgnoreCase) >= 0;
-        }
-
-        static bool IsLinkTraceVertex(IVertex vertex)
-        {
-            return vertex != null &&
-                (IsLinkTraceValue(vertex.Value) ||
-                    IsLinkTraceValue(vertex.Store?.Identifier));
-        }
-
-        static string DescribeLinkTraceEdges(List<IEdge> edges)
-        {
-            if (edges == null || edges.Count == 0)
-                return "<empty>";
-
-            return string.Join(
-                " | ",
-                edges.Select(
-                    edge =>
-                        (edge.From?.Value?.ToString() ?? "<null>") +
-                        "-[" +
-                        (edge.Meta?.Value?.ToString() ?? "<null>") +
-                        "]->" +
-                        (edge.To?.Value?.ToString() ?? "<null>") +
-                        "#" +
-                        (edge.To == null
-                            ? "<null>"
-                            : RuntimeHelpers.GetHashCode(edge.To).ToString())));
-        }
-
-        void LogLinkTrace(
-            string phase,
-            string details,
-            IVertex vertex = null)
-        {
-            if (vertex != null && !IsLinkTraceVertex(vertex) &&
-                !IsLinkTraceValue(details))
-                return;
-
-            MinusZero.Instance.Log(
-                0,
-                "Graph2TextLinkTrace",
-                "phase='" + phase +
-                "' target='" +
-                (Vertex?.Value?.ToString() ?? "<null>") +
-                "' targetObjectId='" +
-                (Vertex == null
-                    ? "<null>"
-                    : RuntimeHelpers.GetHashCode(Vertex).ToString()) +
-                "' details='" + (details ?? "<null>") + "'");
-        }
 
         static bool TryGetParentIsContextualShortcut(
             IVertex vertex,
@@ -180,21 +116,7 @@ namespace m0.ZeroCode
             if (zcg2sp.VerticesDictionary.TryGetValue(
                 v,
                 out VertexData cachedVertex))
-            {
-                LogLinkTrace(
-                    "cache-hit",
-                    "vertex='" +
-                    (v?.Value?.ToString() ?? "<null>") +
-                    "' link='" + cachedVertex.LinkString + "'",
-                    v);
                 return cachedVertex.LinkString;
-            }
-
-            LogLinkTrace(
-                "cache-miss",
-                "vertex='" +
-                (v?.Value?.ToString() ?? "<null>") + "'",
-                v);
 
             linkBeenList = new HashSet<IVertex>();
             shortestPathToVertex = new Dictionary<IVertex, int>();
@@ -213,14 +135,6 @@ namespace m0.ZeroCode
             {
                 zcg2sp.VerticesDictionary.Add(v, new VertexData(shortestLink, shortestLinkLength));
             }
-
-            LogLinkTrace(
-                "final-link",
-                "vertex='" +
-                (v?.Value?.ToString() ?? "<null>") +
-                "' link='" + shortestLink +
-                "' length='" + shortestLinkLength + "'",
-                v);
 
             if (shortestLinkLength == 99999 &&
                 zcg2sp.SubGraphVerticesDictionary.TryGetValue(
@@ -409,17 +323,6 @@ namespace m0.ZeroCode
                 v,
                 out IList<IVertex> importMetas))
             {
-                LogLinkTrace(
-                    "import-metas",
-                    "vertex='" +
-                    (v?.Value?.ToString() ?? "<null>") +
-                    "' metas='" +
-                    string.Join(
-                        ";",
-                        importMetas.Select(
-                            meta => meta?.Value?.ToString() ?? "<null>")) + "'",
-                    v);
-
                 foreach (IVertex ikv in importMetas)
                         if (GeneralUtil.CompareStrings(ikv.Value, "$ImportDirect"))
                         {
@@ -428,14 +331,6 @@ namespace m0.ZeroCode
                                 isMetaDirect = false;
 
                                 string s = GetStringFromEdgesList(dict, zcg2sp, edgesList, false, true);
-
-                                LogLinkTrace(
-                                    "candidate-direct",
-                                    "candidate='" + s +
-                                    "' length='" + edgesList.Count +
-                                    "' path='" +
-                                    DescribeLinkTraceEdges(edgesList) + "'",
-                                    v);
 
                                 checkIfNewBest(edgesList.Count, false, s);
 
@@ -449,14 +344,6 @@ namespace m0.ZeroCode
                                 isMetaDirect = true;
 
                                 string s = GetStringFromEdgesList(dict, zcg2sp, edgesList, true, true);
-
-                                LogLinkTrace(
-                                    "candidate-direct-meta",
-                                    "candidate='" + s +
-                                    "' length='" + edgesList.Count +
-                                    "' path='" +
-                                    DescribeLinkTraceEdges(edgesList) + "'",
-                                    v);
 
                                 checkIfNewBest(edgesList.Count, true, s);
 
@@ -551,47 +438,14 @@ namespace m0.ZeroCode
                         canUse = true;
                 }
 
-                LogLinkTrace(
-                    "candidate-constraint",
-                    "vertex='" + (Vertex?.Value?.ToString() ?? "<null>") +
-                    "' vertexId='" +
-                    (Vertex == null
-                        ? "<null>"
-                        : RuntimeHelpers.GetHashCode(Vertex).ToString()) +
-                    "' candidate='" + returnedLink +
-                    "' properVertexLink='" + properVertexLink +
-                    "' toTestLink='" + toTestLink +
-                    "' isMetaDirect='" + _isMetaDirect +
-                    "' candidateLength='" + candidateLength +
-                    "' subGraphContainsVertex='" + subGraphContainsVertex +
-                    "' canUse='" + canUse +
-                    "' shortestLink='" + shortestLink +
-                    "' shortestLinkLength='" + shortestLinkLength + "'");
-
                 //if (r.Length < shortestLinkLength)
                 bool isBestCandidate = candidateLength < shortestLinkLength && canUse;
-
-                LogLinkTrace(
-                    "candidate-evaluated",
-                    "candidate='" + returnedLink +
-                    "' length='" + candidateLength +
-                    "' isMetaDirect='" + _isMetaDirect +
-                    "' canUse='" + canUse +
-                    "' selected='" + isBestCandidate +
-                    "' currentBest='" + shortestLink +
-                    "' currentBestLength='" + shortestLinkLength + "'");
 
                 if (isBestCandidate)
                 {
                     shortestLink = returnedLink;
                     //shortestLinkLength = shortestLink.Length;
                     shortestLinkLength = candidateLength; // worse approach
-
-                    LogLinkTrace(
-                        "candidate-selected",
-                        "candidate='" + returnedLink +
-                        "' length='" + candidateLength +
-                        "' isMetaDirect='" + _isMetaDirect + "'");
                 }
             }
         }

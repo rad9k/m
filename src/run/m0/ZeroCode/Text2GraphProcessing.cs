@@ -7,7 +7,6 @@ using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -652,152 +651,30 @@ namespace m0.ZeroCode
             return false;
         }
 
-        static string DescribeDeferredLinkEdge(IEdge edge)
-        {
-            if (edge == null)
-                return "<null>";
-
-            return
-                "edgeId='" +
-                RuntimeHelpers.GetHashCode(edge) +
-                "' meta='" +
-                (edge.Meta?.Value?.ToString() ?? "<null>") +
-                "' metaId='" +
-                (edge.Meta == null
-                    ? "<null>"
-                    : RuntimeHelpers.GetHashCode(edge.Meta).ToString()) +
-                "' to='" +
-                (edge.To?.Value?.ToString() ?? "<null>") +
-                "' toId='" +
-                (edge.To == null
-                    ? "<null>"
-                    : RuntimeHelpers.GetHashCode(edge.To).ToString()) +
-                "'";
-        }
-
-        static string DescribeDeferredLinkMatchingEdges(
-            IVertex parent,
-            IEdge referenceEdge)
-        {
-            if (parent == null || referenceEdge == null)
-                return "<unavailable>";
-
-            return string.Join(
-                "; ",
-                parent.OutEdgesRaw.Select(
-                    edge =>
-                        DescribeDeferredLinkEdge(edge) +
-                        " semanticMatch='" +
-                        (GeneralUtil.CompareStrings(
-                            edge.Meta,
-                            referenceEdge.Meta) &&
-                        GeneralUtil.CompareStrings(
-                            edge.To,
-                            referenceEdge.To)) +
-                        "' referenceMatch='" +
-                        object.ReferenceEquals(
-                            edge,
-                            referenceEdge) +
-                        "'"));
-        }
-
-        void LogDeferredLinkRegistration(
-            string phase,
-            IEdge placeholderEdge,
-            string link,
-            bool isMeta,
-            int occurrence,
-            string details = null)
-        {
-            IVertex parent = placeholderEdge?.From;
-
-            MinusZero.Instance.Log(
-                0,
-                "DeferredLinkRegistrationTrace",
-                "phase='" + phase +
-                "' link='" + (link ?? "<null>") +
-                "' isMeta='" + isMeta +
-                "' occurrence='" + occurrence +
-                "' parentId='" +
-                (parent == null
-                    ? "<null>"
-                    : RuntimeHelpers.GetHashCode(parent).ToString()) +
-                "' parentValue='" +
-                (parent?.Value?.ToString() ?? "<null>") +
-                "' parentHasUnresolvedType='" +
-                HasUnresolvedParentType(parent) +
-                "' placeholder={" +
-                DescribeDeferredLinkEdge(placeholderEdge) +
-                "} parentEdges={" +
-                DescribeDeferredLinkMatchingEdges(
-                    parent,
-                    placeholderEdge) +
-                "} details='" + (details ?? "<null>") + "'");
-        }
-
         void AddDeferredVertexLinkResolution(
             IEdge placeholderEdge,
             string link,
             bool isMeta)
         {
             if (placeholderEdge == null)
-            {
-                LogDeferredLinkRegistration(
-                    "skipped-null-placeholder",
-                    null,
-                    link,
-                    isMeta,
-                    -1);
                 return;
-            }
 
             if (string.IsNullOrEmpty(link))
-            {
-                LogDeferredLinkRegistration(
-                    "skipped-empty-link",
-                    placeholderEdge,
-                    link,
-                    isMeta,
-                    -1);
                 return;
-            }
 
             bool isStoreQualifiedLink = IsStoreQualifiedLink(link);
             bool parentHasUnresolvedType =
                 HasUnresolvedParentType(placeholderEdge.From);
 
             if (!isStoreQualifiedLink && !parentHasUnresolvedType)
-            {
-                LogDeferredLinkRegistration(
-                    "skipped-resolved-parent-type",
-                    placeholderEdge,
-                    link,
-                    isMeta,
-                    -1);
                 return;
-            }
 
             int occurrence = GetMatchingEdgeOccurrence(
                 placeholderEdge.From,
                 placeholderEdge);
 
             if (occurrence < 0)
-            {
-                LogDeferredLinkRegistration(
-                    "skipped-occurrence-not-found",
-                    placeholderEdge,
-                    link,
-                    isMeta,
-                    occurrence);
                 return;
-            }
-
-            LogDeferredLinkRegistration(
-                "attempt",
-                placeholderEdge,
-                link,
-                isMeta,
-                occurrence);
 
             lock (deferredVertexLinkResolutions)
             {
@@ -808,18 +685,7 @@ namespace m0.ZeroCode
                             pending.PlaceholderEdge,
                             placeholderEdge) &&
                         pending.IsMeta == isMeta)
-                    {
-                        LogDeferredLinkRegistration(
-                            "skipped-duplicate-placeholder",
-                            placeholderEdge,
-                            link,
-                            isMeta,
-                            occurrence,
-                            "pendingPlaceholder={" +
-                            DescribeDeferredLinkEdge(
-                                pending.PlaceholderEdge) + "}");
                         return;
-                    }
                 }
 
                 deferredVertexLinkResolutions.Add(
@@ -837,19 +703,6 @@ namespace m0.ZeroCode
                         IsMeta = isMeta
                     });
             }
-
-            LogDeferredLinkRegistration(
-                "added",
-                placeholderEdge,
-                link,
-                isMeta,
-                occurrence);
-
-            LogTokenResolutionDiagnostic(
-                "deferred-added",
-                placeholderEdge.From,
-                placeholderEdge,
-                link);
         }
 
         IEdge FindDeferredVertexLinkEdge(
@@ -911,12 +764,6 @@ namespace m0.ZeroCode
                 IEdge placeholderEdge =
                     FindDeferredVertexLinkEdge(pending);
 
-                LogTokenResolutionDiagnostic(
-                    "deferred-lookup",
-                    pending.From,
-                    placeholderEdge ?? pending.PlaceholderEdge,
-                    pending.Link);
-
                 if (placeholderEdge == null)
                 {
                     lock (deferredVertexLinkResolutions)
@@ -939,13 +786,6 @@ namespace m0.ZeroCode
                         new ToVertexMock(
                             pending.Link,
                             pending.From));
-
-                LogTokenResolutionDiagnostic(
-                    "deferred-resolved-target",
-                    pending.From,
-                    placeholderEdge,
-                    pending.Link,
-                    target);
 
                 if (IsUnresolvedImportTarget(target))
                     continue;
@@ -1044,36 +884,15 @@ namespace m0.ZeroCode
                             out recreatedEdge))
                         continue;
 
-                    int recreatedOccurrence =
-                        GetMatchingEdgeOccurrence(
-                            parent,
-                            recreatedEdge);
-
-                    LogDeferredLinkRegistration(
-                        "recreated-placeholder",
-                        recreatedEdge,
-                        pending.Link,
-                        pending.IsMeta,
-                        recreatedOccurrence,
-                        "originalPlaceholder={" +
-                        DescribeDeferredLinkEdge(
-                            pending.PlaceholderEdge) +
-                        "} previousOccurrence='" +
-                        pending.PlaceholderOccurrence +
-                        "'");
-
-                    LogTokenResolutionDiagnostic(
-                        "restore-deferred-edge-update",
-                        parent,
-                        pending.PlaceholderEdge,
-                        pending.Link);
-
                     pending.PlaceholderEdge = recreatedEdge;
                     pending.Meta = recreatedEdge.Meta;
                     pending.OtherEndpoint = pending.IsMeta
                         ? recreatedEdge.To
                         : recreatedEdge.Meta;
-                    pending.PlaceholderOccurrence = recreatedOccurrence;
+                    pending.PlaceholderOccurrence =
+                        GetMatchingEdgeOccurrence(
+                            parent,
+                            recreatedEdge);
                 }
             }
         }
@@ -1123,8 +942,7 @@ namespace m0.ZeroCode
                 try
                 {
                     foreach (Text2GraphProcessing owner in owners)
-                        owner.RestoreOutgoingEdgesToTextualOrder(
-                            "retry-after-resolution");
+                        owner.RestoreOutgoingEdgesToTextualOrder();
                 }
                 finally
                 {
@@ -1385,94 +1203,6 @@ namespace m0.ZeroCode
             edges.Add(edge);
         }
 
-        static bool IsTokenResolutionDiagnosticValue(object value)
-        {
-            if (value == null)
-                return false;
-
-            string text = value.ToString();
-            return string.Equals(text, "User", StringComparison.Ordinal) ||
-                string.Equals(text, "Token", StringComparison.Ordinal);
-        }
-
-        static bool IsTokenResolutionDiagnosticEdge(IEdge edge)
-        {
-            return edge != null &&
-                (IsTokenResolutionDiagnosticValue(edge.Meta?.Value) ||
-                    IsTokenResolutionDiagnosticValue(edge.To?.Value));
-        }
-
-        void LogTokenResolutionDiagnostic(
-            string phase,
-            IVertex parent,
-            IEdge edge,
-            string link = null,
-            IVertex resolved = null)
-        {
-            if (parent == null ||
-                (!IsTokenResolutionDiagnosticValue(parent.Value) &&
-                    !IsTokenResolutionDiagnosticEdge(edge) &&
-                    !IsTokenResolutionDiagnosticValue(link)))
-                return;
-
-            string parentIs = string.Join(
-                ";",
-                GraphUtil.GetQueryOut(parent, "$Is", null)
-                    .Select(
-                        isEdge =>
-                            (isEdge.To?.Value?.ToString() ?? "<null>") +
-                            "#" +
-                            RuntimeHelpers.GetHashCode(isEdge.To)));
-
-            MinusZero.Instance.Log(
-                0,
-                "TokenResolutionTrace",
-                "phase='" + phase +
-                "' parentValue='" + (parent.Value?.ToString() ?? "<null>") +
-                "' parentObjectId='" + RuntimeHelpers.GetHashCode(parent) +
-                "' edgeObjectId='" +
-                (edge == null
-                    ? "<null>"
-                    : RuntimeHelpers.GetHashCode(edge).ToString()) +
-                "' meta='" + (edge?.Meta?.Value?.ToString() ?? "<null>") +
-                "' metaObjectId='" +
-                (edge?.Meta == null
-                    ? "<null>"
-                    : RuntimeHelpers.GetHashCode(edge.Meta).ToString()) +
-                "' to='" + (edge?.To?.Value?.ToString() ?? "<null>") +
-                "' toObjectId='" +
-                (edge?.To == null
-                    ? "<null>"
-                    : RuntimeHelpers.GetHashCode(edge.To).ToString()) +
-                "' metaIsMock='" + (edge?.Meta is ToVertexMock) +
-                "' toIsMock='" + (edge?.To is ToVertexMock) +
-                "' link='" + (link ?? "<null>") +
-                "' resolved='" + (resolved?.Value?.ToString() ?? "<null>") +
-                "' resolvedObjectId='" +
-                (resolved == null
-                    ? "<null>"
-                    : RuntimeHelpers.GetHashCode(resolved).ToString()) +
-                "' resolvedIsEmpty='" +
-                (resolved == MinusZero.Instance.Empty) +
-                "' parentIs='" + parentIs + "'");
-        }
-
-        void LogTokenResolutionDiagnosticChildren(
-            string phase,
-            IVertex parent)
-        {
-            if (parent == null ||
-                !IsTokenResolutionDiagnosticValue(parent.Value))
-                return;
-
-            IList<IEdge> edges = parent.OutEdgesRaw;
-            for (int index = 0; index < edges.Count; index++)
-                LogTokenResolutionDiagnostic(
-                    phase + "-child-" + index,
-                    parent,
-                    edges[index]);
-        }
-
         void ReplaceRememberedTextualChildEdge(IVertex parent, IEdge oldEdge, IEdge newEdge)
         {
             if (parent == null || oldEdge == null || newEdge == null || textualChildrenOrderByParent == null)
@@ -1480,123 +1210,16 @@ namespace m0.ZeroCode
 
             List<IEdge> edges;
             if (!textualChildrenOrderByParent.TryGetValue(parent, out edges) || edges == null)
-            {
-                LogMissingRememberedTextualEdge(
-                    parent,
-                    oldEdge,
-                    newEdge,
-                    "parent-not-tracked");
                 return;
-            }
 
             for (int i = 0; i < edges.Count; i++)
                 if (object.ReferenceEquals(edges[i], oldEdge))
                 {
                     edges[i] = newEdge;
-                    LogTokenResolutionDiagnostic(
-                        "remembered-edge-replaced",
-                        parent,
-                        newEdge);
                     return;
                 }
-
-            LogMissingRememberedTextualEdge(
-                parent,
-                oldEdge,
-                newEdge,
-                "edge-not-in-textual-order");
         }
 
-        static bool ShouldLogRestoredTextualOrder(IVertex parent, IList<IEdge> edges)
-        {
-            if (IsTokenResolutionDiagnosticValue(parent?.Value))
-                return true;
-
-            if (edges == null)
-                return false;
-
-            foreach (IEdge edge in edges)
-                if (IsTokenResolutionDiagnosticEdge(edge))
-                    return true;
-
-            return false;
-        }
-
-        static string DescribeTextualEdgeOrder(IList<IEdge> edges)
-        {
-            if (edges == null)
-                return "<null>";
-
-            const int maximumLoggedEdges = 32;
-            List<string> parts = new List<string>();
-            int loggedEdgeCount = Math.Min(edges.Count, maximumLoggedEdges);
-
-            for (int index = 0; index < loggedEdgeCount; index++)
-            {
-                IEdge edge = edges[index];
-                parts.Add(
-                    index + ":" +
-                    (edge?.Meta?.Value?.ToString() ?? "<null>") +
-                    "=>" +
-                    (edge?.To?.Value?.ToString() ?? "<null>") +
-                    "#" +
-                    (edge == null
-                        ? "<null>"
-                        : RuntimeHelpers.GetHashCode(edge).ToString()));
-            }
-
-            if (edges.Count > maximumLoggedEdges)
-                parts.Add("...+" + (edges.Count - maximumLoggedEdges));
-
-            return string.Join(" | ", parts);
-        }
-
-        void LogTextualEdgeOrder(
-            string source,
-            string phase,
-            IVertex parent,
-            IList<IEdge> edges,
-            string details = null)
-        {
-            if (parent != null &&
-                !ShouldLogRestoredTextualOrder(parent, edges))
-                return;
-
-            MinusZero.Instance.Log(
-                0,
-                "TextualEdgeOrderTrace",
-                "source='" + (source ?? "<null>") +
-                "' phase='" + phase +
-                "' parentValue='" + (parent?.Value?.ToString() ?? "<null>") +
-                "' parentId='" +
-                (parent == null
-                    ? "<null>"
-                    : RuntimeHelpers.GetHashCode(parent).ToString()) +
-                "' edgeCount='" + (edges?.Count.ToString() ?? "<null>") +
-                "' order='" + DescribeTextualEdgeOrder(edges) +
-                "' details='" + (details ?? "<null>") + "'");
-        }
-
-        void LogMissingRememberedTextualEdge(
-            IVertex parent,
-            IEdge oldEdge,
-            IEdge newEdge,
-            string reason)
-        {
-            if (!ShouldLogRestoredTextualOrder(parent, null) &&
-                !IsTokenResolutionDiagnosticEdge(oldEdge) &&
-                !IsTokenResolutionDiagnosticEdge(newEdge))
-                return;
-
-            LogTextualEdgeOrder(
-                "remember",
-                "remembered-edge-missing",
-                parent,
-                parent?.OutEdgesRaw?.ToList(),
-                "reason='" + reason +
-                "' old={" + DescribeDeferredLinkEdge(oldEdge) +
-                "} new={" + DescribeDeferredLinkEdge(newEdge) + "}");
-        }
 
         bool TryTakeEdgeByReference(List<IEdge> edges, IEdge edge, out IEdge matched)
         {
@@ -1624,22 +1247,11 @@ namespace m0.ZeroCode
             return true;
         }
 
-        int RestoreOutgoingEdgesToTextualOrder(
-            string source,
-            IVertex onlyParent = null)
+        void RestoreOutgoingEdgesToTextualOrder(IVertex onlyParent = null)
         {
             if (textualChildrenOrderByParent == null || textualChildrenOrderByParent.Count == 0)
-            {
-                LogTextualEdgeOrder(
-                    source,
-                    "finished",
-                    null,
-                    null,
-                    "parentsRebuilt='0'");
-                return 0;
-            }
+                return;
 
-            int rebuiltParentCount = 0;
             List<KeyValuePair<IVertex, List<IEdge>>> parentsInTextualOrder =
                 textualChildrenOrderByParent.ToList();
 
@@ -1648,6 +1260,9 @@ namespace m0.ZeroCode
                 IVertex parent = pair.Key;
 
                 if (onlyParent != null && !object.ReferenceEquals(parent, onlyParent))
+                    continue;
+
+                if (pair.Value == null)
                     continue;
 
                 List<IEdge> currentEdges = parent.OutEdgesRaw.ToList();
@@ -1671,22 +1286,15 @@ namespace m0.ZeroCode
                 if (HasSameEdgeReferencesInTheSameOrder(currentEdges, reorderedEdges))
                     continue;
 
+                if (reorderedEdges.Count != currentEdges.Count)
+                    continue;
+
                 int firstMismatchIndex = 0;
                 while (firstMismatchIndex < currentEdges.Count &&
                     object.ReferenceEquals(
                         currentEdges[firstMismatchIndex],
                         reorderedEdges[firstMismatchIndex]))
                     firstMismatchIndex++;
-
-                LogTokenResolutionDiagnosticChildren(
-                    "restore-before",
-                    parent);
-                LogTextualEdgeOrder(
-                    source,
-                    "before",
-                    parent,
-                    currentEdges,
-                    "firstMismatchIndex='" + firstMismatchIndex + "'");
 
                 List<IEdge> preservedPrefix = currentEdges.GetRange(
                     0,
@@ -1718,26 +1326,7 @@ namespace m0.ZeroCode
                 List<IEdge> restoredEdges = preservedPrefix;
                 restoredEdges.AddRange(recreatedSuffix);
                 textualChildrenOrderByParent[parent] = restoredEdges;
-                rebuiltParentCount++;
-
-                LogTokenResolutionDiagnosticChildren(
-                    "restore-after",
-                    parent);
-                LogTextualEdgeOrder(
-                    source,
-                    "restored",
-                    parent,
-                    parent.OutEdgesRaw.ToList());
             }
-
-            LogTextualEdgeOrder(
-                source,
-                "finished",
-                null,
-                null,
-                "parentsRebuilt='" + rebuiltParentCount + "'");
-
-            return rebuiltParentCount;
         }
 
         private static int GetMatchingEdgeOccurrence(IVertex parent, IEdge referenceEdge)
@@ -4159,10 +3748,6 @@ namespace m0.ZeroCode
 
             IEdge newEdge = baseVertex.AddVertexAndReturnEdge(meta, val);
             RememberTextualChildEdge(baseVertex, newEdge);
-            LogTokenResolutionDiagnostic(
-                "text-edge-created",
-                baseVertex,
-                newEdge);
 
             s.lastAddedVertex = newEdge.To;
 
@@ -4179,10 +3764,6 @@ namespace m0.ZeroCode
 
             IEdge newEdge = baseVertex.AddEdge(meta, to);
             RememberTextualChildEdge(baseVertex, newEdge);
-            LogTokenResolutionDiagnostic(
-                "text-edge-created",
-                baseVertex,
-                newEdge);
 
             return newEdge;
         }        
@@ -4342,33 +3923,11 @@ namespace m0.ZeroCode
                 string toLink =
                     (toVertex as ToVertexMock)?.mockData?.ToString();
 
-                LogTokenResolutionDiagnostic(
-                    "mock-before",
-                    edge.From,
-                    edge,
-                    metaLink ?? toLink);
-
                 if (metaVertex is ToVertexMock)
-                {
                     metaVertex = ToVertexMock2VertexByLinkString((ToVertexMock)metaVertex);
-                    LogTokenResolutionDiagnostic(
-                        "mock-meta-resolved",
-                        edge.From,
-                        edge,
-                        metaLink,
-                        metaVertex);
-                }
 
                 if (toVertex is ToVertexMock)
-                {
                     toVertex = ToVertexMock2VertexByLinkString((ToVertexMock)toVertex);
-                    LogTokenResolutionDiagnostic(
-                        "mock-to-resolved",
-                        edge.From,
-                        edge,
-                        toLink,
-                        toVertex);
-                }
 
                 IEdge newEdge = edge.From.AddEdge(metaVertex, toVertex);
 
@@ -4394,10 +3953,6 @@ namespace m0.ZeroCode
 
                 ReplaceRememberedTextualChildEdge(edge.From, edge, newEdge);
                 edge.From.DeleteEdge(edge);
-
-                LogTokenResolutionDiagnosticChildren(
-                    "mock-after-parent",
-                    newEdge.From);
 
                 return true;
             }
@@ -4752,28 +4307,18 @@ namespace m0.ZeroCode
 
             ProcessTextPart(parseRoot, 0, lineInfoList.Count - 1, out stack);
 
-            LogTokenResolutionDiagnosticChildren(
-                "after-text-parse",
-                GraphUtil.GetQueryOutFirst(parseRoot, "User", null));
-
             if (errorList.Count() == 0)
             {
                 if (stack.lineNo > 0)
                     CodeViewProcess();
 
-                RestoreOutgoingEdgesToTextualOrder(
-                    "parse-before-resolution");
+                RestoreOutgoingEdgesToTextualOrder();
 
                 ResolvePendingImportsAfterParse();
 
                 ProcessToVertexMocksToLinks();
                 ResolveDeferredVertexLinks();
-                RestoreOutgoingEdgesToTextualOrder(
-                    "parse-after-resolution");
-
-                LogTokenResolutionDiagnosticChildren(
-                    "before-final-move",
-                    GraphUtil.GetQueryOutFirst(parseRoot, "User", null));
+                RestoreOutgoingEdgesToTextualOrder();
 
                 MoveInEdgesComingFromOutsideOfSubGraphToParseRoot();
 
