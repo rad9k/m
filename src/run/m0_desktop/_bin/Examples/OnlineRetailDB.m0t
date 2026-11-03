@@ -493,4 +493,72 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Minute :: "55">
 						<@Second :: "50">
 						<@Millisecond :: "412">
+				<@Token :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Token>
+					<@TokenString :: "token_l8dw7mO1R3uTwWTem59XSCb5PSU0uW_YPb7Q8KtFddk">
+					<@Expiry :: "">
+						<@$Is :: @DateTime>
+						<@Year :: "2026">
+						<@Month :: "11">
+						<@Day :: "3">
+						<@Hour :: "22">
+						<@Minute :: "3">
+						<@Second :: "39">
+						<@Millisecond :: "224">
+				<@Order :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Order>
+					<@Payment :: "">
+					<@BusinessID :: "urn:m0:order:01a1a302-9a64-7564-a3b4-5edaa9e832d6">
+					state "CollectingOrder"
+						transition @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\OrderState\OrderCollected
+				<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product :: "">
+				<@Token :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Token>
+					<@TokenString :: "token_KQ-J8gi668zvIdI0TlBkHEdkiJr-UVnX9oI4w0WftQ8">
+					<@Expiry :: "">
+						<@$Is :: @DateTime>
+						<@Year :: "2026">
+						<@Month :: "11">
+						<@Day :: "3">
+						<@Hour :: "22">
+						<@Minute :: "4">
+						<@Second :: "37">
+						<@Millisecond :: "791">
+				<@Order :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Order>
+					<@Payment :: "">
+					<@BusinessID :: "urn:m0:order:01a1a303-7f20-7d64-b635-a85935cdef22">
+					state "CollectingOrder"
+						transition @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\OrderState\OrderCollected
+					<@Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Product :: "">
+				<@Token :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Token>
+					<@TokenString :: "token_XDgpJPW64kdLr4DHhHUURfwiYRsxga4dN7RJtmRalAI">
+					<@Expiry :: "">
+						<@$Is :: @DateTime>
+						<@Year :: "2026">
+						<@Month :: "11">
+						<@Day :: "3">
+						<@Hour :: "22">
+						<@Minute :: "7">
+						<@Second :: "8">
+						<@Millisecond :: "988">
+				<@Order :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Order>
+					<@Payment :: "">
+					<@BusinessID :: "urn:m0:order:01a1a305-cdbc-768f-a0c1-6a995e513c82">
+					state "CollectingOrder"
+						transition @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\OrderState\OrderCollected
+				<@Token :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Token>
+					<@TokenString :: "token_3JIRR-Otg_AMl7jJEsLLqgstt76sU_l4jijOVfhztO4">
+					<@Expiry :: "">
+						<@$Is :: @DateTime>
+						<@Year :: "2026">
+						<@Month :: "11">
+						<@Day :: "3">
+						<@Hour :: "22">
+						<@Minute :: "11">
+						<@Second :: "20">
+						<@Millisecond :: "869">
 		<@Model :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel>

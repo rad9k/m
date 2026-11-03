@@ -1293,6 +1293,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				import @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel direct meta
 				import @Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB direct meta
 
+				variable "t" @Vertex
 				variable "x" @Vertex
 
 				function "CreateUser" @String(@String "name", @String "surname", @String "email", @String "password")
@@ -1410,7 +1411,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 
 					return "ERROR"
 
-				function "DeleteAddress" (@String "tokenString", @String "addressBusinessID")
+				function "DeleteAddress" @String(@String "tokenString", @String "addressBusinessID")
 					variable "user" @OnlineRetail\OnlineRetailModel\User
 					variable "address" @OnlineRetail\OnlineRetailModel\Address
 
@@ -1420,6 +1421,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						address = user\Address{BusinessID:'(addressBusinessID)'}
 						if address<> == "1"
 							user ~< address
+							return "OK"
+
+					return "ERROR"
 
 				function "AddPayPalPaymentMethod" @String(@String "tokenString", @String "email", @String "payerId")
 					variable "user" @OnlineRetail\OnlineRetailModel\User
@@ -1462,7 +1466,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 
 					return "ERROR"
 
-				function "DeletePaymentMethod" (@String "tokenString", @String "paymentMethodBusinessID")
+				function "DeletePaymentMethod" @String(@String "tokenString", @String "paymentMethodBusinessID")
 					variable "user" @OnlineRetail\OnlineRetailModel\User
 					variable "paymentMethod" @OnlineRetail\OnlineRetailModel\PaymentMethod
 
@@ -1472,10 +1476,49 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						paymentMethod = user\PaymentMethod{BusinessID:'(paymentMethodBusinessID)'}
 						if paymentMethod<> == "1"
 							user ~< paymentMethod
+							return "OK"
+
+					return "ERROR"
+
+				function "AddProductToOrder" @String(@String "tokenString", @String "orderBusinessID", @String "productBusinessID")
+					variable "user" @OnlineRetail\OnlineRetailModel\User
+					variable "order" @OnlineRetail\OnlineRetailModel\Order
+					variable "product" @OnlineRetail\OnlineRetailModel\Product
+					variable "myShop" @Vertex
+					myShop = @@Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB\MyShop
+
+					user = @@OnlineRetail\BackendService\Service\GetUser[tokenString]
+
+					if user<> == "1"
+						order = user\Order{BusinessID:'(orderBusinessID)'}
+						product = myShop\Category\Product{BusinessID:'(productBusinessID)'}
+						if product<> == "1" & order<> == "1"
+							order +< @@OnlineRetail\OnlineRetailModel\Product ::> product
+							return "OK"
+
+					return "ERROR"
+
+				function "DeleteProductFromOrder" @String(@String "tokenString", @String "orderBusinessID", @String "productBusinessID")
+					variable "user" @OnlineRetail\OnlineRetailModel\User
+					variable "order" @OnlineRetail\OnlineRetailModel\Order
+					variable "product" @OnlineRetail\OnlineRetailModel\Product
+					variable "myShop" @Vertex
+					myShop = @@Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB\MyShop
+
+					user = @@OnlineRetail\BackendService\Service\GetUser[tokenString]
+
+					if user<> == "1"
+						order = user\Order{BusinessID:'(orderBusinessID)'}
+						product = order\Product{BusinessID:'(productBusinessID)'}
+						if product<> == "1"
+							order ~< product
+							return "OK"
+
+					return "ERROR"
 
 				@@OnlineRetail\BackendService\Service\CreateUser["n", "s", "e", "pwd"]
-				x = @@OnlineRetail\BackendService\Service\Login["e", "pwd"]
-				@@OnlineRetail\BackendService\Service\DeletePaymentMethod[x, "urn:m0:pay_method:01a19927-b13e-7a04-80d7-fa79ae9213cd"]
+				t = @@OnlineRetail\BackendService\Service\Login["e", "pwd"]
+				x = @@OnlineRetail\BackendService\Service\DeleteProductFromOrder[t, "urn:m0:order:01a1a305-cdbc-768f-a0c1-6a995e513c82", "urn:m0:product:01a19436-33ea-7c15-b677-679aa51f0677"]
 		<@UX\UXContainer :: "OnlineRetail">
 			<@$Is :: @UX\UXContainer>
 			<@IsExpanded :: "True">
