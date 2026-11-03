@@ -376,12 +376,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@City :: "ci">
 					<@Country :: "ca">
 				<@PaymentMethod :: "">
-					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\PayPalPayment>
-					<@BusinessID :: "urn:m0:pay_method:01a19927-b13e-7a04-80d7-fa79ae9213cd">
-					<@Email :: "e">
-					<@PayerId :: "p">
-				<@PaymentMethod :: "">
-					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\CardPayment>
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\CardPaymentMethod>
 					<@BusinessID :: "urn:m0:pay_method:01a19927-b13e-7d4f-9d38-6c95ae0e820e">
 					<@Owner :: "o">
 					<@NumberLast4 :: "n">
@@ -462,4 +457,40 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Minute :: "40">
 						<@Second :: "45">
 						<@Millisecond :: "102">
+				<@Token :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Token>
+					<@TokenString :: "token_NhMw6YagFCopdpiKFuYttCjB6DHG2IM6IqMwTk9tyNY">
+					<@Expiry :: "">
+						<@$Is :: @DateTime>
+						<@Year :: "2026">
+						<@Month :: "11">
+						<@Day :: "3">
+						<@Hour :: "20">
+						<@Minute :: "54">
+						<@Second :: "11">
+						<@Millisecond :: "859">
+				<@Token :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Token>
+					<@TokenString :: "token_iVkmBJRcaQx8FkVGw7L1QJznx9kraVNsgENqB-miGc4">
+					<@Expiry :: "">
+						<@$Is :: @DateTime>
+						<@Year :: "2026">
+						<@Month :: "11">
+						<@Day :: "3">
+						<@Hour :: "20">
+						<@Minute :: "55">
+						<@Second :: "4">
+						<@Millisecond :: "489">
+				<@Token :: "">
+					<@$Is :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel\Token>
+					<@TokenString :: "token_TjGsugnGrMW7Kedq-b4T9V110GGRvWxEyFqm1qVLHUQ">
+					<@Expiry :: "">
+						<@$Is :: @DateTime>
+						<@Year :: "2026">
+						<@Month :: "11">
+						<@Day :: "3">
+						<@Hour :: "20">
+						<@Minute :: "55">
+						<@Second :: "50">
+						<@Millisecond :: "412">
 		<@Model :: @Start:\Examples\'OnlineRetail.m0t'\$Store:\OnlineRetail\OnlineRetailModel>

@@ -143,6 +143,48 @@ namespace m0.ZeroTypes.UX
         {
             RequestDiagramLineGeometryUpdateForLayoutChange(
                 "item-sizechanged");
+
+            if (!IsSelected)
+                return;
+
+            UpdateSelectedAnchorsToCurrentBounds(e.NewSize);
+        }
+
+        void UpdateSelectedAnchorsToCurrentBounds(System.Windows.Size newSize)
+        {
+            if (Anchors == null || Anchors.Count == 0)
+                return;
+
+            if (newSize.Width <= 0 || newSize.Height <= 0)
+                return;
+
+            Point canvasPoint;
+            if (!TryGetVisualiserCanvasPoint(out canvasPoint))
+                return;
+
+            UpdateAnchors(
+                canvasPoint.X,
+                canvasPoint.Y,
+                newSize.Width,
+                newSize.Height);
+        }
+
+        bool TryGetVisualiserCanvasPoint(out Point canvasPoint)
+        {
+            canvasPoint = new Point();
+
+            if (OwningVisualiser == null || OwningVisualiser.Canvas == null)
+                return false;
+
+            try
+            {
+                canvasPoint = TranslatePoint(new Point(0, 0), OwningVisualiser.Canvas);
+                return true;
+            }
+            catch (InvalidOperationException)
+            {
+                return false;
+            }
         }
 
         protected void AttachInnerCanvasDiagramLineRefresh(Canvas innerCanvas)
