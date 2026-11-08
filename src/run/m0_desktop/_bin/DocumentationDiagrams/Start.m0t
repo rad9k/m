@@ -1,7 +1,7 @@
 System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 ""
 	"Start"
-		"Use cases scope"
+		package "Use cases scope"
 			<@UX\UXContainer :: "Use cases scope">
 				<@$Is :: @UX\UXContainer>
 				<@IsExpanded :: "True">
@@ -11,7 +11,6 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@$Is :: @Edge>
 					<@From :: @Start>
 					<@Meta :: @$Empty>
-					<@To :: @Start\'Use cases scope'>
 				<@SelectedEdges :: "">
 				<@ShowSelectedEdgesBaseEdge :: "False">
 				<@Size :: "">
@@ -331,7 +330,6 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@ShowMeta :: "False">
 					<@BaseEdge :: "">
 						<@$Is :: @Edge>
-						<@From :: @Start\'Use cases scope'>
 						<@Meta :: @Package>
 						<@To :: @Start\'Use cases scope'\'Analysis / Architecture '>
 					<@Size :: "">
@@ -358,7 +356,6 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@ShowMeta :: "False">
 					<@BaseEdge :: "">
 						<@$Is :: @Edge>
-						<@From :: @Start\'Use cases scope'>
 						<@Meta :: @Package>
 						<@To :: @Start\'Use cases scope'\'Domain Specyfic Laguage'>
 					<@Size :: "">
@@ -385,7 +382,6 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@ShowMeta :: "False">
 					<@BaseEdge :: "">
 						<@$Is :: @Edge>
-						<@From :: @Start\'Use cases scope'>
 						<@Meta :: @Package>
 						<@To :: @Start\'Use cases scope'\'CODE development and execution'>
 					<@Size :: "">
@@ -412,7 +408,6 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@ShowMeta :: "False">
 					<@BaseEdge :: "">
 						<@$Is :: @Edge>
-						<@From :: @Start\'Use cases scope'>
 						<@Meta :: @Package>
 						<@To :: @Start\'Use cases scope'\'Platform for platforms'>
 					<@Size :: "">
@@ -653,9 +648,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			"Use case analysis"
 			"Requirements analysis"
 			"Domain model creation"
-			"Business rules definition"
 			"Business process definition"
 			"Solution architecture defintion"
+			"Business rules definition"
 			package "minus zero"
 				"Meta model creation"
 				"CUSTOM diagram type definition"
