@@ -12,3 +12,386 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 		"Wierzchołek"
 		"Wierzchołek"
 		"Wierzchołek"
+		"Wierzchołek"
+			<@'Fractal Graph'\Wierzchołek<<"8">> :: "Wierzchołek">
+		<@'Fractal Graph'\Wierzchołek<<"12">>\Wierzchołek>
+		"Wierzchołek"
+		"Wierzchołek"
+		<@UX\UXContainer :: "">
+			<@$Is :: @UX\UXContainer>
+			<@IsExpanded :: "True">
+			<@HasMiniatures :: "True">
+			<@Scale :: "100">
+			<@BaseEdge :: "">
+				<@$Is :: @Edge>
+				<@From :: @Start:\DocumentationDiagrams\'Simple PL.m0t'\$Store:>
+				<@Meta :: @Package>
+				<@To :: @'Fractal Graph'>
+			<@SelectedEdges :: "">
+				<@Edge :: "">
+					<@$Is :: @Edge>
+					<@From :: @'Fractal Graph'\UXContainer:>
+					<@Meta :: @UX\Item\Item>
+					<@To :: @'Fractal Graph'\UXContainer:\Item:<<"11">>>
+			<@ShowSelectedEdgesBaseEdge :: "False">
+			<@Size :: "">
+				<@$Is :: @UX\Size>
+				<@Width :: "5000">
+				<@Height :: "5000">
+			<@NewItemUXTemplate :: @System\Data\UX\Templates\ZeroUML>
+			<@Item :: "">
+				<@$Is :: @UX\RectangleVisualiserItem>
+				<@Scale :: "100">
+				<@ShowIcons :: "False">
+				<@FontSize :: "14">
+				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+				<@Position :: "">
+					<@$Is :: @UX\Position>
+					<@X :: "310.00000000000006">
+					<@Y :: "94.44000000000003">
+				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
+				<@ShowMeta :: "False">
+				<@BackgroundColor :: "VeryVeryVeryLightRed">
+					<@$Is :: @UX\Color>
+					<@Red :: "255">
+					<@Green :: "237">
+					<@Blue :: "237">
+					<@Opacity :: "255">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @'Fractal Graph'>
+					<@Meta :: @$Empty>
+					<@To :: @'Fractal Graph'\Wierzchołek<<"1">>>
+			<@Item :: "">
+				<@$Is :: @UX\RectangleVisualiserItem>
+				<@Scale :: "100">
+				<@ShowIcons :: "False">
+				<@FontSize :: "14">
+				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+				<@Position :: "">
+					<@$Is :: @UX\Position>
+					<@X :: "439.90999999999997">
+					<@Y :: "125.62">
+				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
+				<@ShowMeta :: "False">
+				<@BackgroundColor :: "VeryVeryVeryLightRed">
+					<@$Is :: @UX\Color>
+					<@Red :: "255">
+					<@Green :: "237">
+					<@Blue :: "237">
+					<@Opacity :: "255">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @'Fractal Graph'>
+					<@Meta :: @$Empty>
+					<@To :: @'Fractal Graph'\Wierzchołek<<"2">>>
+			<@Item :: "">
+				<@$Is :: @UX\RectangleVisualiserItem>
+				<@Scale :: "100">
+				<@ShowIcons :: "False">
+				<@FontSize :: "14">
+				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+				<@Position :: "">
+					<@$Is :: @UX\Position>
+					<@X :: "564.8">
+					<@Y :: "49.23999999999996">
+				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
+				<@ShowMeta :: "False">
+				<@BackgroundColor :: "VeryVeryVeryLightRed">
+					<@$Is :: @UX\Color>
+					<@Red :: "255">
+					<@Green :: "237">
+					<@Blue :: "237">
+					<@Opacity :: "255">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @'Fractal Graph'>
+					<@Meta :: @$Empty>
+					<@To :: @'Fractal Graph'\Wierzchołek<<"3">>>
+			<@Item :: "">
+				<@$Is :: @UX\RectangleVisualiserItem>
+				<@Scale :: "100">
+				<@ShowIcons :: "False">
+				<@FontSize :: "14">
+				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+				<@Position :: "">
+					<@$Is :: @UX\Position>
+					<@X :: "593.31">
+					<@Y :: "136.04">
+				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
+				<@ShowMeta :: "False">
+				<@BackgroundColor :: "VeryVeryVeryLightRed">
+					<@$Is :: @UX\Color>
+					<@Red :: "255">
+					<@Green :: "237">
+					<@Blue :: "237">
+					<@Opacity :: "255">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @'Fractal Graph'>
+					<@Meta :: @$Empty>
+					<@To :: @'Fractal Graph'\Wierzchołek<<"4">>>
+			<@Item :: "">
+				<@$Is :: @UX\RectangleVisualiserItem>
+				<@Scale :: "100">
+				<@ShowIcons :: "False">
+				<@FontSize :: "14">
+				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+				<@Position :: "">
+					<@$Is :: @UX\Position>
+					<@X :: "719.6">
+					<@Y :: "88.03999999999999">
+				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
+				<@ShowMeta :: "False">
+				<@BackgroundColor :: "VeryVeryVeryLightRed">
+					<@$Is :: @UX\Color>
+					<@Red :: "255">
+					<@Green :: "237">
+					<@Blue :: "237">
+					<@Opacity :: "255">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @'Fractal Graph'>
+					<@Meta :: @$Empty>
+					<@To :: @'Fractal Graph'\Wierzchołek<<"5">>>
+			<@Item :: "">
+				<@$Is :: @UX\RectangleVisualiserItem>
+				<@Scale :: "100">
+				<@ShowIcons :: "False">
+				<@FontSize :: "14">
+				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+				<@Position :: "">
+					<@$Is :: @UX\Position>
+					<@X :: "590.2">
+					<@Y :: "217.83999999999995">
+				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
+				<@ShowMeta :: "False">
+				<@BackgroundColor :: "VeryVeryVeryLightRed">
+					<@$Is :: @UX\Color>
+					<@Red :: "255">
+					<@Green :: "237">
+					<@Blue :: "237">
+					<@Opacity :: "255">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @'Fractal Graph'>
+					<@Meta :: @$Empty>
+					<@To :: @'Fractal Graph'\Wierzchołek<<"6">>>
+			<@Item :: "">
+				<@$Is :: @UX\RectangleVisualiserItem>
+				<@Scale :: "100">
+				<@ShowIcons :: "False">
+				<@FontSize :: "14">
+				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+				<@Position :: "">
+					<@$Is :: @UX\Position>
+					<@X :: "538.42">
+					<@Y :: "330.84000000000003">
+				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
+				<@ShowMeta :: "False">
+				<@BackgroundColor :: "VeryVeryVeryLightRed">
+					<@$Is :: @UX\Color>
+					<@Red :: "255">
+					<@Green :: "237">
+					<@Blue :: "237">
+					<@Opacity :: "255">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @'Fractal Graph'>
+					<@Meta :: @$Empty>
+					<@To :: @'Fractal Graph'\Wierzchołek<<"7">>>
+			<@Item :: "">
+				<@$Is :: @UX\RectangleVisualiserItem>
+				<@Scale :: "100">
+				<@ShowIcons :: "False">
+				<@FontSize :: "14">
+				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+				<@Position :: "">
+					<@$Is :: @UX\Position>
+					<@X :: "610.6">
+					<@Y :: "272.64000000000004">
+				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
+				<@ShowMeta :: "False">
+				<@BackgroundColor :: "VeryVeryVeryLightRed">
+					<@$Is :: @UX\Color>
+					<@Red :: "255">
+					<@Green :: "237">
+					<@Blue :: "237">
+					<@Opacity :: "255">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @'Fractal Graph'>
+					<@Meta :: @$Empty>
+					<@To :: @'Fractal Graph'\Wierzchołek<<"8">>>
+			<@Item :: "">
+				<@$Is :: @UX\RectangleVisualiserItem>
+				<@Scale :: "100">
+				<@ShowIcons :: "False">
+				<@FontSize :: "14">
+				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+				<@Position :: "">
+					<@$Is :: @UX\Position>
+					<@X :: "825.2900000000001">
+					<@Y :: "272.64000000000004">
+				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
+				<@ShowMeta :: "False">
+				<@BackgroundColor :: "VeryVeryVeryLightRed">
+					<@$Is :: @UX\Color>
+					<@Red :: "255">
+					<@Green :: "237">
+					<@Blue :: "237">
+					<@Opacity :: "255">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @'Fractal Graph'>
+					<@Meta :: @$Empty>
+					<@To :: @'Fractal Graph'\Wierzchołek<<"9">>>
+			<@Item :: "">
+				<@$Is :: @UX\RectangleVisualiserItem>
+				<@Scale :: "100">
+				<@ShowIcons :: "False">
+				<@FontSize :: "14">
+				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+				<@Position :: "">
+					<@$Is :: @UX\Position>
+					<@X :: "370.99999999999994">
+					<@Y :: "263.42">
+				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
+				<@ShowMeta :: "False">
+				<@BackgroundColor :: "VeryVeryVeryLightRed">
+					<@$Is :: @UX\Color>
+					<@Red :: "255">
+					<@Green :: "237">
+					<@Blue :: "237">
+					<@Opacity :: "255">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @'Fractal Graph'>
+					<@Meta :: @$Empty>
+					<@To :: @'Fractal Graph'\Wierzchołek<<"10">>>
+			<@Item :: "">
+				<@$Is :: @UX\RectangleVisualiserItem>
+				<@Scale :: "100">
+				<@ShowIcons :: "False">
+				<@FontSize :: "14">
+				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+				<@Position :: "">
+					<@$Is :: @UX\Position>
+					<@X :: "347.19999999999993">
+					<@Y :: "427.64">
+				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
+				<@ShowMeta :: "False">
+				<@BackgroundColor :: "VeryVeryVeryLightRed">
+					<@$Is :: @UX\Color>
+					<@Red :: "255">
+					<@Green :: "237">
+					<@Blue :: "237">
+					<@Opacity :: "255">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @'Fractal Graph'>
+					<@Meta :: @$Empty>
+					<@To :: @'Fractal Graph'\Wierzchołek<<"11">>>
+				<@ForegroundColor :: "$Empty">
+			<@Item :: "">
+				<@$Is :: @UX\RectangleVisualiserItem>
+				<@Scale :: "100">
+				<@ShowIcons :: "False">
+				<@FontSize :: "14">
+				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+				<@Position :: "">
+					<@$Is :: @UX\Position>
+					<@X :: "559.4">
+					<@Y :: "394.24000000000007">
+				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
+				<@ShowMeta :: "False">
+				<@BackgroundColor :: "VeryVeryVeryLightRed">
+					<@$Is :: @UX\Color>
+					<@Red :: "255">
+					<@Green :: "237">
+					<@Blue :: "237">
+					<@Opacity :: "255">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @'Fractal Graph'>
+					<@Meta :: @$Empty>
+					<@To :: @'Fractal Graph'\Wierzchołek<<"12">>>
+				<@Decorator :: "">
+					<@$Is :: @UX\MetaExtendedLineDecorator>
+					<@Scale :: "100">
+					<@BaseEdge :: "">
+						<@Edge\From :: @'Fractal Graph'\Wierzchołek<<"12">>>
+						<@Edge\Meta :: @'Fractal Graph'\Wierzchołek<<"8">>>
+						<@Edge\To :: @Start:\DocumentationDiagrams\'Simple PL.m0t'\$Store:\'Fractal Graph'\Wierzchołek<<"13">>>
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
+					<@EndAnchor :: @UX\LineEndEnum\Arrow>
+					<@ToItem :: @'Fractal Graph'\UXContainer:\Item:<<"13">>>
+			<@Item :: "">
+				<@$Is :: @UX\RectangleVisualiserItem>
+				<@Scale :: "100">
+				<@ShowIcons :: "False">
+				<@FontSize :: "14">
+				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+				<@Position :: "">
+					<@$Is :: @UX\Position>
+					<@X :: "497.71000000000004">
+					<@Y :: "468.04000000000013">
+				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
+				<@ShowMeta :: "False">
+				<@BackgroundColor :: "VeryVeryVeryLightRed">
+					<@$Is :: @UX\Color>
+					<@Red :: "255">
+					<@Green :: "237">
+					<@Blue :: "237">
+					<@Opacity :: "255">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @'Fractal Graph'>
+					<@Meta :: @$Empty>
+					<@To :: @Start:\DocumentationDiagrams\'Simple PL.m0t'\$Store:\'Fractal Graph'\Wierzchołek<<"13">>>
+			<@Item :: "">
+				<@$Is :: @UX\RectangleVisualiserItem>
+				<@Scale :: "100">
+				<@ShowIcons :: "False">
+				<@FontSize :: "14">
+				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+				<@Position :: "">
+					<@$Is :: @UX\Position>
+					<@X :: "624.11">
+					<@Y :: "520.64">
+				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
+				<@ShowMeta :: "False">
+				<@BackgroundColor :: "VeryVeryVeryLightRed">
+					<@$Is :: @UX\Color>
+					<@Red :: "255">
+					<@Green :: "237">
+					<@Blue :: "237">
+					<@Opacity :: "255">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @'Fractal Graph'>
+					<@Meta :: @$Empty>
+					<@To :: @'Fractal Graph'\Wierzchołek<<"14">>>
+			<@Item :: "">
+				<@$Is :: @UX\RectangleVisualiserItem>
+				<@Scale :: "100">
+				<@ShowIcons :: "False">
+				<@FontSize :: "14">
+				<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+				<@Position :: "">
+					<@$Is :: @UX\Position>
+					<@X :: "630.8900000000001">
+					<@Y :: "468.04000000000013">
+				<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
+				<@ShowMeta :: "False">
+				<@BackgroundColor :: "VeryVeryVeryLightRed">
+					<@$Is :: @UX\Color>
+					<@Red :: "255">
+					<@Green :: "237">
+					<@Blue :: "237">
+					<@Opacity :: "255">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @'Fractal Graph'>
+					<@Meta :: @$Empty>
+					<@To :: @'Fractal Graph'\Wierzchołek<<"15">>>
