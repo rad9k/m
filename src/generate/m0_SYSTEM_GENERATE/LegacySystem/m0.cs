@@ -7283,6 +7283,8 @@ namespace m0
             quick.AddEdge(Root.Get(false, @"System\Meta\ZeroUML\Package"), Root.Get(false, @"System\Meta\ZeroUML\Package:Structure"));
             quick.AddEdge(Root.Get(false, @"System\Meta\ZeroUML\Package"), Root.Get(false, @"System\Meta\ZeroUML\Package:UseCase"));
 
+            quick.AddEdge(null, Root.Get(false, @"System\Meta\Base\$Empty"));
+
             quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Variable"));
             quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Enum"));
             quick.AddEdge(null, Root.Get(false, @"System\Meta\ZeroUML\Automata"));

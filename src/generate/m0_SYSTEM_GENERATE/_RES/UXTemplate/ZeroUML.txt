@@ -684,7 +684,26 @@
 				<@ToDiagramItemTestQuery :: "">
 				<@DecoratorClass :: @MetaExtendedLineDecorator>
 				<@DecoratorVertex :: "">
-					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>					
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
+		
+		<@UXTemplate :: "Vertex NO ICON">
+			<@$Is :: @UXTemplate>
+			<@DirectVertexTestQuery :: "">
+			<@ItemClass :: @RectangleVisualiserItem>
+			<@InstanceCreation :: @InstanceCreationEnum\Direct>
+			<@ItemVertex :: "">
+				<@$Inherits :: @ZeroUML\GenericItemVertex>
+				<@LabeledItem\ShowMeta :: "False">
+				<@LabeledItem\ShowIcons :: "False">
+			<@UXDecoratorTemplate :: "Edge">
+				<@$Is :: @UXDecoratorTemplate>
+				<@EdgeTestQuery :: "$Is:\">				
+				<@SupportAnyMetaEdge :: "True">
+				<@SupportEmptyMetaEdge :: "True">
+				<@ToDiagramItemTestQuery :: "">
+				<@DecoratorClass :: @MetaExtendedLineDecorator>
+				<@DecoratorVertex :: "">
+					<@LineDecorator\EndAnchor :: @LineEndEnum\Arrow>
 					
 		<@UXTemplate :: "Edge">
 			<@$Is :: @UXTemplate>
