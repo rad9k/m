@@ -6923,6 +6923,30 @@ namespace m0.UIWpf.UX
 
             ILineDecoratorBase newLine = (LineDecoratorBase)fromItem.AddDecorator(diagramLineDefinition.DecoratorClass);
 
+            IVertex decoratorClass = diagramLineDefinition == null
+                ? null
+                : diagramLineDefinition.DecoratorClass;
+            string expectedClass = decoratorClass == null || decoratorClass.Value == null
+                ? "null"
+                : decoratorClass.Value.ToString();
+            string actualClass = newLine == null
+                ? "null"
+                : newLine.GetType().Name;
+            string metaText = edge == null || edge.Meta == null || edge.Meta.Value == null
+                ? "null"
+                : edge.Meta.Value.ToString();
+            string toText = toItem == null || toItem.BaseEdgeTo == null || toItem.BaseEdgeTo.Value == null
+                ? "null"
+                : toItem.BaseEdgeTo.Value.ToString();
+
+            MinusZero.Instance.Log(
+                1,
+                "UXVisualiser.AddDiagramLineVertex",
+                "expected " + expectedClass
+                    + " actual " + actualClass
+                    + " meta \"" + metaText + "\""
+                    + " to \"" + toText + "\"");
+
             newLine.ToItem = toItem;
 
             newLine.UXTemplate = diagramLineDefinition;

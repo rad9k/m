@@ -66,7 +66,7 @@ namespace m0.ZeroTypes.UX
             iconImage.Source = iconSource;
             iconImage.Width = WpfUtil.IconSize;
             iconImage.Height = WpfUtil.IconSize;
-            iconImage.Margin = new Thickness(0, 0, 3, 0);
+            iconImage.Margin = new Thickness(0, 2, 3, -2);
             iconImage.VerticalAlignment = VerticalAlignment.Center;
             iconImage.Stretch = Stretch.Uniform;
             iconImage.SnapsToDevicePixels = true;

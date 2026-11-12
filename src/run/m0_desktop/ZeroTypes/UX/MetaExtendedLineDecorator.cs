@@ -51,13 +51,40 @@ namespace m0.ZeroTypes.UX
 
         void UpdateMetaLinePosition()
         {
-            if (MetaDiagramItem == null ||
-                CurrentRoute == null ||
-                CurrentRoute.Segments.Count == 0 ||
-                OwningVisualiser == null ||
+            if (MetaDiagramItem == null)
+            {
+                MetaLine.Points = new PointCollection();
+                LogMetaLine(
+                    "MetaExtendedLineDecorator.UpdateMetaLinePosition",
+                    "MetaDiagramItem == null");
+                return;
+            }
+
+            if (CurrentRoute == null)
+            {
+                MetaLine.Points = new PointCollection();
+                LogMetaLine(
+                    "MetaExtendedLineDecorator.UpdateMetaLinePosition",
+                    "CurrentRoute == null");
+                return;
+            }
+
+            if (CurrentRoute.Segments.Count == 0)
+            {
+                MetaLine.Points = new PointCollection();
+                LogMetaLine(
+                    "MetaExtendedLineDecorator.UpdateMetaLinePosition",
+                    "CurrentRoute.Segments.Count == 0");
+                return;
+            }
+
+            if (OwningVisualiser == null ||
                 OwningVisualiser.Canvas == null)
             {
                 MetaLine.Points = new PointCollection();
+                LogMetaLine(
+                    "MetaExtendedLineDecorator.UpdateMetaLinePosition",
+                    "OwningVisualiser or Canvas == null");
                 return;
             }
 
@@ -70,6 +97,7 @@ namespace m0.ZeroTypes.UX
 
             Rect metaBounds;
             Point metaAnchor = routeMiddle;
+            string clearReason = null;
 
             if (DiagramLineRouter.TryGetVisibleBounds(
                     MetaDiagramItem,
@@ -120,6 +148,10 @@ namespace m0.ZeroTypes.UX
                         MetaLine.Points =
                             new PointCollection();
                         UpdateLabelVisibility();
+                        LogMetaLine(
+                            "MetaExtendedLineDecorator.UpdateMetaLinePosition",
+                            "foundOutsidePoint == false bounds="
+                                + FormatRect(metaBounds));
                         return;
                     }
                 }
@@ -135,6 +167,11 @@ namespace m0.ZeroTypes.UX
                             routeMiddle,
                             direction);
             }
+            else
+            {
+                clearReason = "TryGetVisibleBounds == false "
+                    + DescribeMetaItemLayout(MetaDiagramItem);
+            }
 
             if ((metaAnchor - routeMiddle).Length > 0.001)
             {
@@ -143,11 +180,29 @@ namespace m0.ZeroTypes.UX
                     routeMiddle,
                     metaAnchor
                 };
+                UpdateLabelVisibility();
+                LogMetaLine(
+                    "MetaExtendedLineDecorator.UpdateMetaLinePosition",
+                    "points set "
+                        + FormatPoint(routeMiddle)
+                        + " -> "
+                        + FormatPoint(metaAnchor));
+                return;
             }
-            else
-                MetaLine.Points = new PointCollection();
 
+            MetaLine.Points = new PointCollection();
             UpdateLabelVisibility();
+            if (clearReason == null)
+            {
+                clearReason = "metaAnchor distance <= 0.001 routeMiddle="
+                    + FormatPoint(routeMiddle)
+                    + " metaAnchor="
+                    + FormatPoint(metaAnchor);
+            }
+
+            LogMetaLine(
+                "MetaExtendedLineDecorator.UpdateMetaLinePosition",
+                clearReason);
         }
         
         public override void AddToCanvas()
@@ -161,6 +216,8 @@ namespace m0.ZeroTypes.UX
             OwningVisualiser.Canvas.Children.Add(
                 CardinalityLabel);
 
+            string lookupDetail;
+
             if (baseEdge.Meta != MinusZero.Instance.Empty)
             {
                 Dictionary<IVertex, List<IUXItem>> itemsByBaseEdgeTo =
@@ -170,8 +227,28 @@ namespace m0.ZeroTypes.UX
                     out List<IUXItem> matchingItems))
                 {
                     MetaDiagramItem = matchingItems.FirstOrDefault();
+                    IVertex chosenBaseEdgeTo = MetaDiagramItem == null
+                        ? null
+                        : MetaDiagramItem.BaseEdgeTo;
+                    lookupDetail = "hit count=" + matchingItems.Count
+                        + " chosen=" + (MetaDiagramItem == null
+                            ? "null"
+                            : MetaDiagramItem.GetType().Name)
+                        + " chosenBaseEdgeTo=" + DescribeVertex(chosenBaseEdgeTo)
+                        + " refEq=" + object.ReferenceEquals(
+                            chosenBaseEdgeTo,
+                            baseEdge.Meta);
+                }
+                else
+                {
+                    lookupDetail = "miss "
+                        + DescribeSameValueDictionaryKeys(
+                            itemsByBaseEdgeTo,
+                            baseEdge.Meta);
                 }
             }
+            else
+                lookupDetail = "meta is Empty, lookup skipped";
 
             if (previousMetaDiagramItem != MetaDiagramItem
                 && previousMetaDiagramItem is UXItem previousMetaItem)
@@ -179,20 +256,37 @@ namespace m0.ZeroTypes.UX
                 previousMetaItem.RemoveAsToMetaLine(this);
             }
 
+            int pointsAtDecision = MetaLine.Points == null
+                ? 0
+                : MetaLine.Points.Count;
+            string metaDiagramItemState = MetaDiagramItem == null
+                ? "null"
+                : "set";
+            string branch;
+
             if (MetaDiagramItem != null &&
                 MetaLine.Points != null &&
                 MetaLine.Points.Count >= 2)
             {
                 OwningVisualiser.Canvas.Children.Add(MetaLine);
                 MetaDiagramItem.AddAsToMetaLine(this);
+                branch = "added MetaLine pointsAtDecision="
+                    + pointsAtDecision;
             }
             else
             {
                 if (!HideLabel)
                     OwningVisualiser.Canvas.Children.Add(Label);
+
+                branch = (!HideLabel ? "added Label" : "label hidden")
+                    + " pointsAtDecision=" + pointsAtDecision
+                    + " metaDiagramItem=" + metaDiagramItemState;
             }
             
             VertexSetedUp();
+            LogMetaLine(
+                "MetaExtendedLineDecorator.AddToCanvas",
+                lookupDetail + " " + branch);
         }
 
         protected override void UpdateLabelVisibility()
@@ -324,6 +418,143 @@ namespace m0.ZeroTypes.UX
             MetaLine.Stroke = foregroundBrush;
 
             Panel.SetZIndex(MetaLine, 0);
+        }
+
+        void LogMetaLine(string where, string what)
+        {
+            MinusZero.Instance.Log(
+                1,
+                where,
+                DescribeBaseEdge()
+                    + " "
+                    + what
+                    + " "
+                    + DescribeMetaLineCanvasState());
+        }
+
+        string DescribeBaseEdge()
+        {
+            Edge baseEdge = BaseEdge;
+            if (baseEdge == null)
+                return "baseEdge=null";
+
+            return "meta " + DescribeVertex(baseEdge.Meta)
+                + " from " + DescribeVertex(baseEdge.From)
+                + " to " + DescribeVertex(baseEdge.To);
+        }
+
+        static string DescribeVertex(IVertex vertex)
+        {
+            if (vertex == null)
+                return "null";
+
+            string value = vertex.Value == null
+                ? "null"
+                : vertex.Value.ToString();
+            string identifier = vertex.Identifier == null
+                ? "null"
+                : vertex.Identifier.ToString();
+
+            return "\"" + value + "\" id=" + identifier;
+        }
+
+        string DescribeMetaLineCanvasState()
+        {
+            int pointCount = MetaLine.Points == null
+                ? 0
+                : MetaLine.Points.Count;
+            bool onCanvas = false;
+
+            if (OwningVisualiser != null &&
+                OwningVisualiser.Canvas != null)
+            {
+                onCanvas = OwningVisualiser.Canvas.Children.Contains(
+                    MetaLine);
+            }
+
+            string stroke = MetaLine.Stroke == null
+                ? "null"
+                : MetaLine.Stroke.ToString();
+
+            return "points=" + pointCount
+                + " onCanvas=" + onCanvas
+                + " thickness=" + MetaLine.StrokeThickness.ToString("0.##")
+                + " stroke=" + stroke
+                + " z=" + Panel.GetZIndex(MetaLine);
+        }
+
+        static string DescribeSameValueDictionaryKeys(
+            Dictionary<IVertex, List<IUXItem>> itemsByBaseEdgeTo,
+            IVertex metaVertex)
+        {
+            string metaValue = metaVertex == null || metaVertex.Value == null
+                ? null
+                : metaVertex.Value.ToString();
+            int sameValueCount = 0;
+            StringBuilder sameValueKeys = new StringBuilder();
+
+            foreach (IVertex key in itemsByBaseEdgeTo.Keys)
+            {
+                string keyValue = key == null || key.Value == null
+                    ? null
+                    : key.Value.ToString();
+
+                if (!string.Equals(
+                    metaValue,
+                    keyValue,
+                    StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                sameValueCount++;
+                if (sameValueCount > 8)
+                    continue;
+
+                if (sameValueKeys.Length > 0)
+                    sameValueKeys.Append("; ");
+
+                sameValueKeys.Append(DescribeVertex(key));
+                sameValueKeys.Append(" refEq=");
+                sameValueKeys.Append(
+                    object.ReferenceEquals(key, metaVertex));
+            }
+
+            return "dictCount=" + itemsByBaseEdgeTo.Count
+                + " sameValueKeys=" + sameValueCount
+                + " [" + sameValueKeys + "]";
+        }
+
+        static string DescribeMetaItemLayout(IUXItem item)
+        {
+            FrameworkElement element = item as FrameworkElement;
+            if (element == null)
+            {
+                return "not FrameworkElement type="
+                    + (item == null ? "null" : item.GetType().Name);
+            }
+
+            return "type=" + element.GetType().Name
+                + " ActualWidth=" + element.ActualWidth.ToString("0.##")
+                + " ActualHeight=" + element.ActualHeight.ToString("0.##")
+                + " IsVisible=" + element.IsVisible
+                + " Visibility=" + element.Visibility;
+        }
+
+        static string FormatPoint(Point point)
+        {
+            return point.X.ToString("0.##")
+                + ","
+                + point.Y.ToString("0.##");
+        }
+
+        static string FormatRect(Rect rect)
+        {
+            return FormatPoint(rect.TopLeft)
+                + " "
+                + rect.Width.ToString("0.##")
+                + "x"
+                + rect.Height.ToString("0.##");
         }
     }
 }
