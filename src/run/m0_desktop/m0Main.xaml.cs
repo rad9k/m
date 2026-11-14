@@ -23,6 +23,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Shell;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
@@ -75,10 +76,51 @@ namespace m0
 
             InitializeComponent();
 
+            UiScaleCaption.Loaded += UiScaleCaption_Loaded;
+            StateChanged += MainWindow_StateChanged;
             root.IsVisibleChanged += Root_IsVisibleChanged;
             this.Loaded += new RoutedEventHandler(m0Main_Loaded);            
 
             this_static = this;            
+        }
+
+        void UiScaleCaption_Loaded(object sender, RoutedEventArgs e)
+        {
+            MarkChromeHitTestVisible(UiScaleCaption);
+        }
+
+        void CaptionMinimize_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+
+        void CaptionMaximize_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+        }
+
+        void CaptionClose_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        void MainWindow_StateChanged(object sender, EventArgs e)
+        {
+            bool isMaximized = WindowState == WindowState.Maximized;
+            MaximizeGlyph.Visibility = isMaximized ? Visibility.Collapsed : Visibility.Visible;
+            RestoreGlyph.Visibility = isMaximized ? Visibility.Visible : Visibility.Collapsed;
+            CaptionMaximizeButton.ToolTip = isMaximized ? "Przywróć" : "Maksymalizuj";
+        }
+
+        static void MarkChromeHitTestVisible(DependencyObject node)
+        {
+            IInputElement inputElement = node as IInputElement;
+            if (inputElement != null)
+                WindowChrome.SetIsHitTestVisibleInChrome(inputElement, true);
+
+            int childCount = VisualTreeHelper.GetChildrenCount(node);
+            for (int childIndex = 0; childIndex < childCount; childIndex++)
+                MarkChromeHitTestVisible(VisualTreeHelper.GetChild(node, childIndex));
         }
 
         public void Init()
@@ -133,6 +175,17 @@ namespace m0
         [DllImport("user32.dll")]
         private static extern bool InsertMenu(IntPtr hMenu, Int32 wPosition, Int32 wFlags, Int32 wIDNewItem, string lpNewItem);
 
+        [DllImport("user32.dll")]
+        private static extern int TrackPopupMenuEx(IntPtr menu, uint flags, int x, int y, IntPtr window, IntPtr parameters);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr window, int message, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        private static extern bool SetForegroundWindow(IntPtr window);
+
+        const uint TrackPopupMenuReturnCommand = 0x0100;
+
         /// Define our Constants we will use
         public const Int32 WM_SYSCOMMAND = 0x112;
         public const Int32 MF_SEPARATOR = 0x800;
@@ -154,6 +207,28 @@ namespace m0
             {
                 return new WindowInteropHelper(this).Handle;
             }
+        }
+
+        void CaptionIcon_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            FrameworkElement icon = (FrameworkElement)sender;
+            Point popupPoint = icon.PointToScreen(new Point(0, icon.ActualHeight));
+            IntPtr windowHandle = Handle;
+
+            SetForegroundWindow(windowHandle);
+            IntPtr systemMenu = GetSystemMenu(windowHandle, false);
+            int command = TrackPopupMenuEx(
+                systemMenu,
+                TrackPopupMenuReturnCommand,
+                (int)Math.Round(popupPoint.X),
+                (int)Math.Round(popupPoint.Y),
+                windowHandle,
+                IntPtr.Zero);
+
+            if (command != 0)
+                SendMessage(windowHandle, WM_SYSCOMMAND, new IntPtr(command), IntPtr.Zero);
+
+            e.Handled = true;
         }
 
         private void m0Main_Loaded(object sender, RoutedEventArgs e)
