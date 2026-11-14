@@ -1350,246 +1350,6 @@ namespace m0.ZeroCode
             return -1;
         }
 
-        static int classLinkResolutionLogDepth;
-
-        static IVertex loggedZeroUmlClass;
-
-        static bool loggedZeroUmlClassLookupStarted;
-
-        static bool IsClassLinkResolution(string link)
-        {
-            return GeneralUtil.CompareStrings(link, "Class");
-        }
-
-        static string VertexValueForLog(IVertex vertex)
-        {
-            if (vertex == null || vertex.Value == null)
-                return "<null>";
-
-            return vertex.Value.ToString();
-        }
-
-        IVertex LoggedZeroUmlClass()
-        {
-            if (loggedZeroUmlClass != null ||
-                loggedZeroUmlClassLookupStarted)
-                return loggedZeroUmlClass;
-
-            loggedZeroUmlClassLookupStarted = true;
-            loggedZeroUmlClass = r.Get(
-                false,
-                @"System\Meta\ZeroUML\Class");
-            return loggedZeroUmlClass;
-        }
-
-        void LogClassLinkResolutionCandidate(
-            string stage,
-            string link,
-            IVertex candidate)
-        {
-            IVertex zeroUmlClass = LoggedZeroUmlClass();
-            bool isZeroUmlClass =
-                candidate != null &&
-                object.ReferenceEquals(candidate, zeroUmlClass);
-
-            MinusZero.Instance.Log(
-                2,
-                "ToVertexMock2VertexByLinkString",
-                "stage=" + stage +
-                " link=" + link +
-                " value=" + VertexValueForLog(candidate) +
-                " type=" + (candidate == null ? "<null>" : candidate.GetType().Name) +
-                " toVertexMock=" + (candidate is ToVertexMock) +
-                " zeroUmlClass=" + isZeroUmlClass);
-        }
-
-        IVertex QueryImportListForLog(
-            IVertex importVertexList,
-            bool metaMode,
-            string link)
-        {
-            if (importVertexList == null)
-                return null;
-
-            string importQuery = @"\" + link;
-
-            if (metaMode)
-                return query(importVertexList, importQuery);
-
-            return queryMetaImport(importVertexList, importQuery);
-        }
-
-        void LogClassLinkResolutionCandidates(
-            ToVertexMock mock,
-            string link)
-        {
-            // A probe query is parsed with this same processor. Skip nested probes.
-            if (classLinkResolutionLogDepth > 0)
-                return;
-
-            classLinkResolutionLogDepth++;
-
-            try
-            {
-                MinusZero.Instance.Log(
-                    2,
-                    "ToVertexMock2VertexByLinkString",
-                    "begin link=" + link +
-                    " parentValue=" + VertexValueForLog(mock.parentVertex) +
-                    " parentIsParseRoot=" +
-                    object.ReferenceEquals(mock.parentVertex, parseRoot));
-
-                if (mock.parentVertex == null)
-                {
-                    LogClassLinkResolutionCandidate(
-                        "parent-child",
-                        link,
-                        null);
-                    LogClassLinkResolutionCandidate("$Is", link, null);
-                    LogClassLinkResolutionCandidate(
-                        "parent-in-edge",
-                        link,
-                        null);
-                }
-                else
-                {
-                    IList<IEdge> localEdges = GraphUtil.GetQueryOut(
-                        mock.parentVertex,
-                        null,
-                        link);
-
-                    if (localEdges.Count == 0)
-                        LogClassLinkResolutionCandidate(
-                            "parent-child",
-                            link,
-                            null);
-                    else
-                        foreach (IEdge localEdge in localEdges)
-                            LogClassLinkResolutionCandidate(
-                                "parent-child",
-                                link,
-                                localEdge.To);
-
-                    IList<IEdge> isEdges = GraphUtil.GetQueryOut(
-                        mock.parentVertex,
-                        "$Is",
-                        null);
-
-                    if (isEdges.Count == 0)
-                        LogClassLinkResolutionCandidate("$Is", link, null);
-                    else
-                        foreach (IEdge isEdge in isEdges)
-                            LogClassLinkResolutionCandidate(
-                                "$Is",
-                                link,
-                                SearchForParentLink_Is(link, isEdge));
-
-                    bool loggedIncomingEdge = false;
-
-                    foreach (IEdge inEdge in mock.parentVertex.InEdgesRaw)
-                    {
-                        loggedIncomingEdge = true;
-                        LogClassLinkResolutionCandidate(
-                            "parent-in-edge",
-                            link,
-                            SearchForParentLink(link, inEdge));
-                    }
-
-                    if (!loggedIncomingEdge)
-                        LogClassLinkResolutionCandidate(
-                            "parent-in-edge",
-                            link,
-                            null);
-                }
-
-                LogClassLinkResolutionCandidate(
-                    "import-direct",
-                    link,
-                    QueryImportListForLog(
-                        importDirectList,
-                        true,
-                        link));
-                LogClassLinkResolutionCandidate(
-                    "dict-import-direct",
-                    link,
-                    QueryImportListForLog(
-                        dict == null ? null : dict.importDirectList,
-                        true,
-                        link));
-                LogClassLinkResolutionCandidate(
-                    "import-direct-meta",
-                    link,
-                    QueryImportListForLog(
-                        importDirectMetaList,
-                        false,
-                        link));
-                LogClassLinkResolutionCandidate(
-                    "dict-import-direct-meta",
-                    link,
-                    QueryImportListForLog(
-                        dict == null ? null : dict.importDirectMetaList,
-                        false,
-                        link));
-
-                IVertex parseRootCandidate = null;
-
-                if (baseVertex != null && dict != null)
-                {
-                    string parseRootQuery =
-                        @"$ParseRoot" + dict.MetaSeparator + @"\\" + link;
-                    parseRootCandidate = queryMetaImport(
-                        baseVertex,
-                        parseRootQuery);
-                }
-
-                LogClassLinkResolutionCandidate(
-                    "parse-root",
-                    link,
-                    parseRootCandidate);
-            }
-            finally
-            {
-                classLinkResolutionLogDepth--;
-            }
-        }
-
-        IVertex ReturnLinkResolution(
-            string stage,
-            string link,
-            IVertex candidate)
-        {
-            if (IsClassLinkResolution(link))
-                LogClassLinkResolutionCandidate(
-                    "decide:" + stage,
-                    link,
-                    candidate);
-
-            return candidate;
-        }
-
-        void LogAttachedClassMeta(
-            IVertex fromVertex,
-            string metaLink,
-            IVertex metaVertex)
-        {
-            if (!IsClassLinkResolution(metaLink))
-                return;
-
-            IVertex zeroUmlClass = LoggedZeroUmlClass();
-            bool isZeroUmlClass =
-                metaVertex != null &&
-                object.ReferenceEquals(metaVertex, zeroUmlClass);
-
-            MinusZero.Instance.Log(
-                2,
-                "ProcessToVertexMocksToLinks",
-                "from=" + VertexValueForLog(fromVertex) +
-                " metaLink=" + metaLink +
-                " metaValue=" + VertexValueForLog(metaVertex) +
-                " type=" + (metaVertex == null ? "<null>" : metaVertex.GetType().Name) +
-                " zeroUmlClass=" + isZeroUmlClass);
-        }
-
         IVertex ToVertexMock2VertexByLinkString(ToVertexMock mock)
         {
             string link = "";
@@ -1601,25 +1361,16 @@ namespace m0.ZeroCode
                 return MinusZero.Instance.Root;
             }
 
-            if (IsClassLinkResolution(link))
-                LogClassLinkResolutionCandidates(mock, link);
-
             if (GeneralUtil.CompareStrings(link, "$CodeRoot"))
             {
-                return ReturnLinkResolution(
-                    "$CodeRoot",
-                    link,
-                    processBaseEdgeTo);
+                return processBaseEdgeTo;
             }
 
             if (TryGetResolvedPendingImport(
                 link,
                 out IVertex resolvedImport))
             {
-                return ReturnLinkResolution(
-                    "pending-import",
-                    link,
-                    resolvedImport);
+                return resolvedImport;
             }
 
             // $Is
@@ -1632,7 +1383,7 @@ namespace m0.ZeroCode
 
                     if (value != null)
                     {
-                        return ReturnLinkResolution("$Is", link, value);
+                        return value;
                     }
                 }
 
@@ -1642,11 +1393,26 @@ namespace m0.ZeroCode
 
                     if (value != null)
                     {
-                        return ReturnLinkResolution(
-                            "parent-in-edge",
-                            link,
-                            value);
+                        return value;
                     }
+                }
+            }
+
+            // A vertex defined on this vertex wins over an imported vertex of the same value.
+            if (mock.parentVertex != null)
+            {
+                foreach (IEdge localEdge in GraphUtil.GetQueryOut(
+                    mock.parentVertex,
+                    null,
+                    link))
+                {
+                    if (localEdge.To is ToVertexMock)
+                        continue;
+
+                    if (IsUnresolvedImportTarget(localEdge.To))
+                        continue;
+
+                    return localEdge.To;
                 }
             }
 
@@ -1673,10 +1439,7 @@ namespace m0.ZeroCode
 
                     if (tryIf != null)
                     {
-                        return ReturnLinkResolution(
-                            "import",
-                            link,
-                            tryIf);
+                        return tryIf;
                     }
                 }
 
@@ -1689,10 +1452,7 @@ namespace m0.ZeroCode
 
                     if (tryIf != null)
                     {
-                        return ReturnLinkResolution(
-                            "dict-import",
-                            link,
-                            tryIf);
+                        return tryIf;
                     }
                 }
 
@@ -1705,10 +1465,7 @@ namespace m0.ZeroCode
 
                     if (tryIf != null)
                     {
-                        return ReturnLinkResolution(
-                            "import-meta",
-                            link,
-                            tryIf);
+                        return tryIf;
                     }
                 }
 
@@ -1721,10 +1478,7 @@ namespace m0.ZeroCode
 
                     if (tryIf != null)
                     {
-                        return ReturnLinkResolution(
-                            "dict-import-meta",
-                            link,
-                            tryIf);
+                        return tryIf;
                     }
                 }
             }            
@@ -1735,10 +1489,7 @@ namespace m0.ZeroCode
 
             if (tryIf != null)
             {
-                return ReturnLinkResolution(
-                    "import-direct",
-                    link,
-                    tryIf);
+                return tryIf;
             }
 
             // dict direct link
@@ -1747,10 +1498,7 @@ namespace m0.ZeroCode
 
             if (tryIf != null)
             {
-                return ReturnLinkResolution(
-                    "dict-import-direct",
-                    link,
-                    tryIf);
+                return tryIf;
             }
 
             // normal direct link meta
@@ -1759,10 +1507,7 @@ namespace m0.ZeroCode
 
             if (tryIf != null)
             {
-                return ReturnLinkResolution(
-                    "import-direct-meta",
-                    link,
-                    tryIf);
+                return tryIf;
             }
 
             // dict direct link meta
@@ -1771,10 +1516,7 @@ namespace m0.ZeroCode
             
             if (tryIf != null)
             {
-                return ReturnLinkResolution(
-                    "dict-import-direct-meta",
-                    link,
-                    tryIf);
+                return tryIf;
             }
 
             // try from local root
@@ -1785,16 +1527,10 @@ namespace m0.ZeroCode
 
             if (tryIf != null && !(tryIf is ToVertexMock))
             {
-                return ReturnLinkResolution(
-                    "parse-root",
-                    link,
-                    tryIf);
+                return tryIf;
             }
 
-            return ReturnLinkResolution(
-                "empty",
-                link,
-                MinusZero.Instance.Empty);
+            return MinusZero.Instance.Empty;
         }
 
         private static IVertex SearchForParentLink(string link, IEdge inEdge)
@@ -4210,8 +3946,6 @@ namespace m0.ZeroCode
 
                 if (toVertex is ToVertexMock)
                     toVertex = ToVertexMock2VertexByLinkString((ToVertexMock)toVertex);
-
-                LogAttachedClassMeta(edge.From, metaLink, metaVertex);
 
                 IEdge newEdge = edge.From.AddEdge(metaVertex, toVertex);
 
