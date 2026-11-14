@@ -64,6 +64,7 @@ namespace m0
         private double treePaneAnimationTargetWidth;
         private bool treePaneAnimationExpanding;
         private bool treePaneAnimationInProgress;
+        private bool useWindows10Frame;
 
         public PlatformTypeEnum GetPlatformType()
         {
@@ -75,6 +76,7 @@ namespace m0
             Instance = this;
 
             InitializeComponent();
+            ApplyWindows10WindowFrame();
 
             UiScaleCaption.Loaded += UiScaleCaption_Loaded;
             StateChanged += MainWindow_StateChanged;
@@ -82,6 +84,21 @@ namespace m0
             this.Loaded += new RoutedEventHandler(m0Main_Loaded);            
 
             this_static = this;            
+        }
+
+        void ApplyWindows10WindowFrame()
+        {
+            // Windows 11 draws its own border and shadow around WindowChrome.
+            // Windows 10 drops both when GlassFrameThickness is zero.
+            if (Environment.OSVersion.Version.Build >= 22000)
+                return;
+
+            useWindows10Frame = true;
+            WindowOutline.BorderThickness = new Thickness(1);
+
+            WindowChrome chrome = WindowChrome.GetWindowChrome(this);
+            if (chrome != null)
+                chrome.GlassFrameThickness = new Thickness(0, 0, 0, 1);
         }
 
         void UiScaleCaption_Loaded(object sender, RoutedEventArgs e)
@@ -110,6 +127,9 @@ namespace m0
             MaximizeGlyph.Visibility = isMaximized ? Visibility.Collapsed : Visibility.Visible;
             RestoreGlyph.Visibility = isMaximized ? Visibility.Visible : Visibility.Collapsed;
             CaptionMaximizeButton.ToolTip = isMaximized ? "Przywróć" : "Maksymalizuj";
+
+            if (useWindows10Frame)
+                WindowOutline.BorderThickness = new Thickness(isMaximized ? 0 : 1);
         }
 
         static void MarkChromeHitTestVisible(DependencyObject node)

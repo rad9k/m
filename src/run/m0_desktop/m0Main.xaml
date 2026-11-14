@@ -16,6 +16,9 @@
     <Window.Style>
         <Style TargetType="Window"/>
     </Window.Style>
+    <Border x:Name="WindowOutline"
+            BorderBrush="#FF8E8E8E"
+            BorderThickness="0">
     <Grid>
         <Grid.Style>
             <Style TargetType="Grid">
@@ -272,4 +275,5 @@
                       Template="{StaticResource TreePaneArrowToggleTemplate}"/>
         </Grid>
     </Grid>
+    </Border>
 </Window>
