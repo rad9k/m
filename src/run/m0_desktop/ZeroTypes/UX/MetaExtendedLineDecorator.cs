@@ -44,6 +44,11 @@ namespace m0.ZeroTypes.UX
 
         public override void UpdateMetaPosition()
         {
+            MinusZero.Instance.Log(
+                1,
+                "MetaExtendedLineDecorator.UpdateMetaPosition",
+                DescribeBaseEdge());
+
             base.UpdateMetaPosition();
 
             UpdateMetaLinePosition();
@@ -161,6 +166,8 @@ namespace m0.ZeroTypes.UX
             OwningVisualiser.Canvas.Children.Add(
                 CardinalityLabel);
 
+            string lookupDetail;
+
             if (baseEdge.Meta != MinusZero.Instance.Empty)
             {
                 Dictionary<IVertex, List<IUXItem>> itemsByBaseEdgeTo =
@@ -170,8 +177,21 @@ namespace m0.ZeroTypes.UX
                     out List<IUXItem> matchingItems))
                 {
                     MetaDiagramItem = matchingItems.FirstOrDefault();
+                    IVertex chosenBaseEdgeTo = MetaDiagramItem == null
+                        ? null
+                        : MetaDiagramItem.BaseEdgeTo;
+                    lookupDetail = "hit refEq="
+                        + object.ReferenceEquals(
+                            chosenBaseEdgeTo,
+                            baseEdge.Meta)
+                        + " chosen "
+                        + DescribeVertex(chosenBaseEdgeTo);
                 }
+                else
+                    lookupDetail = "miss";
             }
+            else
+                lookupDetail = "meta is Empty, lookup skipped";
 
             if (previousMetaDiagramItem != MetaDiagramItem
                 && previousMetaDiagramItem is UXItem previousMetaItem)
@@ -179,10 +199,13 @@ namespace m0.ZeroTypes.UX
                 previousMetaItem.RemoveAsToMetaLine(this);
             }
 
+            bool addedMetaLine = false;
+
             if (MetaDiagramItem != null)
             {
                 OwningVisualiser.Canvas.Children.Add(MetaLine);
                 MetaDiagramItem.AddAsToMetaLine(this);
+                addedMetaLine = true;
             }
             else if (!HideLabel)
             {
@@ -190,6 +213,26 @@ namespace m0.ZeroTypes.UX
             }
             
             VertexSetedUp();
+
+            bool onCanvas = OwningVisualiser != null
+                && OwningVisualiser.Canvas != null
+                && OwningVisualiser.Canvas.Children.Contains(MetaLine);
+            int pointCount = MetaLine.Points == null
+                ? 0
+                : MetaLine.Points.Count;
+
+            MinusZero.Instance.Log(
+                1,
+                "MetaExtendedLineDecorator.AddToCanvas",
+                DescribeBaseEdge()
+                    + " "
+                    + lookupDetail
+                    + " addedMetaLine="
+                    + addedMetaLine
+                    + " onCanvas="
+                    + onCanvas
+                    + " points="
+                    + pointCount);
         }
 
         protected override void UpdateLabelVisibility()
@@ -276,6 +319,11 @@ namespace m0.ZeroTypes.UX
         
         public override void RemoveFromCanvas()
         {
+            MinusZero.Instance.Log(
+                1,
+                "MetaExtendedLineDecorator.RemoveFromCanvas",
+                DescribeBaseEdge());
+
             if (OwningVisualiser == null || OwningVisualiser.Canvas == null)
                 return;
 
@@ -321,6 +369,32 @@ namespace m0.ZeroTypes.UX
             MetaLine.Stroke = foregroundBrush;
 
             Panel.SetZIndex(MetaLine, 0);
+        }
+
+        string DescribeBaseEdge()
+        {
+            Edge baseEdge = BaseEdge;
+            if (baseEdge == null)
+                return "baseEdge=null";
+
+            return "meta " + DescribeVertex(baseEdge.Meta)
+                + " from " + DescribeVertex(baseEdge.From)
+                + " to " + DescribeVertex(baseEdge.To);
+        }
+
+        static string DescribeVertex(IVertex vertex)
+        {
+            if (vertex == null)
+                return "null";
+
+            string value = vertex.Value == null
+                ? "null"
+                : vertex.Value.ToString();
+            string identifier = vertex.Identifier == null
+                ? "null"
+                : vertex.Identifier.ToString();
+
+            return "\"" + value + "\" id=" + identifier;
         }
     }
 }
