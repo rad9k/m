@@ -34,11 +34,11 @@ namespace m0_SYSTEM_GENERATE
             IVertex lib_std = r.AddVertex(null, "System\\Lib");
             lib_std.AddVertex(null, "lib.m0j");
 
-            IVertex examples = r.AddVertex(null, "Examples");
-            examples.AddVertex(null, "_examples.m0x");
+            //IVertex examples = r.AddVertex(null, "Examples");
+            //examples.AddVertex(null, "_examples.m0x");
 
-            IVertex documentation_diagrams = r.AddVertex(null, "DocumentationDiagrams");
-            documentation_diagrams.AddVertex(null, "_documentation_diagrams.m0x");            
+            //IVertex documentation_diagrams = r.AddVertex(null, "DocumentationDiagrams");
+            //documentation_diagrams.AddVertex(null, "_documentation_diagrams.m0x");            
 
 
             /*IVertex lib_std = r.AddVertex(null, "System\\Lib\\Std");
