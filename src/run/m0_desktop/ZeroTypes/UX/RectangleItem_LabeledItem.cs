@@ -61,6 +61,12 @@ namespace m0.ZeroTypes.UX
             GeneralUtil.SetPropertyIfPresent(LabelControl, "Foreground", foregroundBrush);
 
             GeneralUtil.SetPropertyIfPresent(LabelControl, "Background", null);
+
+            if (textBox_forBaseEdge != null)
+            {
+                textBox_forBaseEdge.Background = null;
+                textBox_forBaseEdge.Foreground = foregroundBrush;
+            }
         }
 
         public override void Select()

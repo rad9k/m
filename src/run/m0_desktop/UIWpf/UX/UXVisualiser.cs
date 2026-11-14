@@ -4701,7 +4701,7 @@ namespace m0.UIWpf.UX
                 }
             }
 
-            LogDragSettleMetaLines(movedClosure, linesToUpdate);
+            AddMetaLinesOfMovedItems(movedClosure, linesToUpdate);
 
             BeginDiagramLineGeometryPass();
             try
@@ -4718,87 +4718,24 @@ namespace m0.UIWpf.UX
             }
         }
 
-        void LogDragSettleMetaLines(
+        static void AddMetaLinesOfMovedItems(
             IEnumerable<IUXItem> movedItems,
             HashSet<ILineDecoratorBase> linesToUpdate)
         {
-            int movedCount = 0;
+            if (movedItems == null || linesToUpdate == null)
+                return;
 
-            if (movedItems != null)
+            foreach (IUXItem item in movedItems)
             {
-                foreach (IUXItem item in movedItems)
+                if (item == null || item.DiagramToAsMetaLines == null)
+                    continue;
+
+                foreach (ILineDecoratorBase metaLine in item.DiagramToAsMetaLines)
                 {
-                    if (item == null)
-                        continue;
-
-                    movedCount++;
-                    int metaLineCount = item.DiagramToAsMetaLines == null
-                        ? 0
-                        : item.DiagramToAsMetaLines.Count;
-                    string metaLineDetails = "";
-
-                    if (item.DiagramToAsMetaLines != null)
-                    {
-                        foreach (ILineDecoratorBase metaLine in item.DiagramToAsMetaLines)
-                        {
-                            if (metaLineDetails.Length > 0)
-                                metaLineDetails += " | ";
-
-                            metaLineDetails += DescribeLineForMetaLog(metaLine)
-                                + " inUpdate="
-                                + (linesToUpdate != null
-                                    && linesToUpdate.Contains(metaLine));
-                        }
-                    }
-
-                    MinusZero.Instance.Log(
-                        1,
-                        "UXVisualiser.DragSettle",
-                        "item " + item.GetType().Name
-                            + " baseEdgeTo "
-                            + DescribeVertexForMetaLineLog(item.BaseEdgeTo)
-                            + " metaLines=" + metaLineCount
-                            + " "
-                            + metaLineDetails);
+                    if (metaLine != null)
+                        linesToUpdate.Add(metaLine);
                 }
             }
-
-            MinusZero.Instance.Log(
-                1,
-                "UXVisualiser.DragSettle",
-                "moved=" + movedCount
-                    + " linesToUpdate="
-                    + (linesToUpdate == null ? 0 : linesToUpdate.Count));
-        }
-
-        static string DescribeLineForMetaLog(ILineDecoratorBase line)
-        {
-            if (line == null)
-                return "line=null";
-
-            Edge baseEdge = line.BaseEdge;
-            if (baseEdge == null)
-                return line.GetType().Name + " baseEdge=null";
-
-            return line.GetType().Name
-                + " meta " + DescribeVertexForMetaLineLog(baseEdge.Meta)
-                + " from " + DescribeVertexForMetaLineLog(baseEdge.From)
-                + " to " + DescribeVertexForMetaLineLog(baseEdge.To);
-        }
-
-        static string DescribeVertexForMetaLineLog(IVertex vertex)
-        {
-            if (vertex == null)
-                return "null";
-
-            string value = vertex.Value == null
-                ? "null"
-                : vertex.Value.ToString();
-            string identifier = vertex.Identifier == null
-                ? "null"
-                : vertex.Identifier.ToString();
-
-            return "\"" + value + "\" id=" + identifier;
         }
 
         Rect BuildDragSweptBounds(IEnumerable<IUXItem> movedItems)
@@ -6167,32 +6104,11 @@ namespace m0.UIWpf.UX
 
         private void DoMoveLineProcess(IUXItem fromItem, IUXItem toItem, ILineDecoratorBase line)
         {
-            bool canMove = CheckIfCanMove(fromItem, toItem, line);
-
-            MinusZero.Instance.Log(
-                1,
-                "UXVisualiser.DoMoveLineProcess",
-                "canMove=" + canMove
-                    + " "
-                    + DescribeLineForMetaLog(line)
-                    + " newTo "
-                    + DescribeVertexForMetaLineLog(
-                        toItem == null ? null : toItem.BaseEdgeTo));
-
-            if (canMove)
+            if (CheckIfCanMove(fromItem, toItem, line))
                 MoveLine(fromItem, toItem, line, false);
             else
-            {
-                bool created = DoCreateDiagramLine(fromItem, toItem);
-
-                MinusZero.Instance.Log(
-                    1,
-                    "UXVisualiser.DoMoveLineProcess",
-                    "DoCreateDiagramLine=" + created);
-
-                if (created)
+                if (DoCreateDiagramLine(fromItem, toItem))
                     MoveLine(fromItem, toItem, line, true);
-            }
         }
 
         private bool CheckIfCanMove(IUXItem fromItem, IUXItem toItem, ILineDecoratorBase line)
@@ -6215,6 +6131,9 @@ namespace m0.UIWpf.UX
                 return targetMatches && validationError == null;
             }
 
+            if (CanReattachCurrentLineMeta(fromItem, toItem, line, tem))
+                return true;
+
             IVertex edgesToTest = fromItem.BaseEdgeTo;
 
             if (tem.EdgeTestQuery != null)
@@ -6225,6 +6144,71 @@ namespace m0.UIWpf.UX
                     canAdd = true;
 
             return canAdd;
+        }
+
+        static bool CanReattachCurrentLineMeta(
+            IUXItem fromItem,
+            IUXItem toItem,
+            ILineDecoratorBase line,
+            UXDecoratorTemplate template)
+        {
+            if (fromItem == null
+                || toItem == null
+                || line == null
+                || line.BaseEdge == null
+                || line.BaseEdge.Meta == null
+                || fromItem.BaseEdgeTo == null
+                || toItem.BaseEdgeTo == null)
+            {
+                return false;
+            }
+
+            bool targetMatches = template == null
+                || string.IsNullOrEmpty(template.ToDiagramItemTestQuery)
+                || toItem.Vertex.Get(false, template.ToDiagramItemTestQuery) != null;
+
+            if (!targetMatches)
+                return false;
+
+            return VertexOperations.TestIfNewEdgeValid(
+                fromItem.BaseEdgeTo,
+                line.BaseEdge.Meta,
+                toItem.BaseEdgeTo) == null;
+        }
+
+        static bool TryRetargetAssociationEdgeTarget(
+            IVertex meta,
+            IVertex associationVertex,
+            IUXItem toItem)
+        {
+            if (meta == null
+                || associationVertex == null
+                || toItem == null
+                || toItem.BaseEdgeTo == null
+                || meta.DisposedState != DisposeStateEnum.Live
+                || associationVertex.DisposedState != DisposeStateEnum.Live
+                || !GraphUtil.ExistQueryOut(meta, "$VertexTarget", null))
+            {
+                return false;
+            }
+
+            IEdge edgeTargetEdge = GraphUtil.GetQueryOutFirstEdge(
+                associationVertex,
+                "$EdgeTarget",
+                null);
+
+            if (edgeTargetEdge == null || edgeTargetEdge.Meta == null)
+                return false;
+
+            IVertex newTarget = toItem.BaseEdgeTo;
+
+            if (object.ReferenceEquals(edgeTargetEdge.To, newTarget))
+                return true;
+
+            IVertex edgeTargetMeta = edgeTargetEdge.Meta;
+            associationVertex.DeleteEdge(edgeTargetEdge);
+            associationVertex.AddEdge(edgeTargetMeta, newTarget);
+            return true;
         }
 
         private void MoveLine(IUXItem fromItem, IUXItem toItem, ILineDecoratorBase line, bool onlyDelete)
@@ -6244,35 +6228,28 @@ namespace m0.UIWpf.UX
                 if (e.Meta == meta && e.To == to)
                     toMoveEdge = e;
 
-            MinusZero.Instance.Log(
-                1,
-                "UXVisualiser.MoveLine",
-                "onlyDelete=" + onlyDelete
-                    + " toMoveEdgeFound=" + (toMoveEdge != null)
-                    + " oldMeta " + DescribeVertexForMetaLineLog(meta)
-                    + " oldTo " + DescribeVertexForMetaLineLog(to));
-
             if (toMoveEdge != null)
             {
-                fromItemBaseEdgeTo.DeleteEdge(toMoveEdge);
-
-                fromItem.RemoveDiagramLine(line);
-
-                if (!onlyDelete)
+                if (!onlyDelete
+                    && TryRetargetAssociationEdgeTarget(meta, to, toItem))
                 {
-                    IEdge newEdge = fromItemBaseEdgeTo.AddEdge(meta, toItem.BaseEdgeTo);
+                    if (line.OwningVisualiser != null)
+                        line.RemoveFromCanvas();
 
-                    MinusZero.Instance.Log(
-                        1,
-                        "UXVisualiser.MoveLine",
-                        "newMeta " + DescribeVertexForMetaLineLog(
-                            newEdge == null ? null : newEdge.Meta)
-                            + " refEq=" + (newEdge != null
-                                && object.ReferenceEquals(newEdge.Meta, meta))
-                            + " newTo " + DescribeVertexForMetaLineLog(
-                                newEdge == null ? null : newEdge.To));
+                    fromItem.AddDiagramLineObject(toItem, line, false);
+                }
+                else
+                {
+                    fromItemBaseEdgeTo.DeleteEdge(toMoveEdge);
 
-                    AddDiagramLineVertex(fromItem, newEdge, (UXDecoratorTemplate)line.UXTemplate, toItem);
+                    fromItem.RemoveDiagramLine(line);
+
+                    if (!onlyDelete)
+                    {
+                        IEdge newEdge = fromItemBaseEdgeTo.AddEdge(meta, toItem.BaseEdgeTo);
+
+                        AddDiagramLineVertex(fromItem, newEdge, (UXDecoratorTemplate)line.UXTemplate, toItem);
+                    }
                 }
             }
 
