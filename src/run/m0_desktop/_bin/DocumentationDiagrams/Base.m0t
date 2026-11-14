@@ -1206,7 +1206,197 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@ToItem :: @Base\'Graph Text Diagram'\'Graph Text Diagram - Basic'\Item:<<"2">>>
 			"Graph"
+				"Text A%r%n(in text language representation A)"
+				"Diagram A %r%n(in diagram representation A)"
+				"Text B%r%n (in text language representation B)"
+				"Diagram B %r%n(in diagram representation B)"
 			"Text"
 			"Diagram"
 				<@Base\'Graph Text Diagram'\Text>
 				<@Base\'Graph Text Diagram'\Graph>
+			<@UX\UXContainer :: "Graph Text Diagram - Multiple Views">
+				<@$Is :: @UX\UXContainer>
+				<@IsExpanded :: "True">
+				<@HasMiniatures :: "True">
+				<@Scale :: "110">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @Base>
+					<@Meta :: @Package>
+					<@To :: @Base\'Graph Text Diagram'>
+				<@SelectedEdges :: "">
+				<@ShowSelectedEdgesBaseEdge :: "False">
+				<@Size :: "">
+					<@$Is :: @UX\Size>
+					<@Width :: "5000">
+					<@Height :: "5000">
+				<@NewItemUXTemplate :: @System\Data\UX\Templates\ZeroUML>
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "615.6000000000001">
+						<@Y :: "219.23999999999992">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
+					<@ShowMeta :: "False">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Base\'Graph Text Diagram'>
+						<@Meta :: @$Empty>
+						<@To :: @Base\'Graph Text Diagram'\Graph>
+					<@Decorator :: "">
+						<@$Is :: @UX\MetaExtendedLineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@Edge\From :: @Base\'Graph Text Diagram'\Graph>
+							<@Edge\Meta :: @$Empty>
+							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Graph Text Diagram'\'Text A%r%n(in text language representation A)'>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
+						<@EndAnchor :: @UX\LineEndEnum\Arrow>
+						<@ToItem :: @Base\'Graph Text Diagram'\'Graph Text Diagram - Multiple Views'\Item:<<"3">>>
+					<@Decorator :: "">
+						<@$Is :: @UX\MetaExtendedLineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@Edge\From :: @Base\'Graph Text Diagram'\Graph>
+							<@Edge\Meta :: @$Empty>
+							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Graph Text Diagram'\'Diagram A %r%n(in diagram representation A)'>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
+						<@EndAnchor :: @UX\LineEndEnum\Arrow>
+						<@ToItem :: @Base\'Graph Text Diagram'\'Graph Text Diagram - Multiple Views'\Item:<<"5">>>
+					<@Decorator :: "">
+						<@$Is :: @UX\MetaExtendedLineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@Edge\From :: @Base\'Graph Text Diagram'\Graph>
+							<@Edge\Meta :: @$Empty>
+							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Graph Text Diagram'\'Text B%r%n (in text language representation B)'>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
+						<@EndAnchor :: @UX\LineEndEnum\Arrow>
+						<@ToItem :: @Base\'Graph Text Diagram'\'Graph Text Diagram - Multiple Views'\Item:<<"2">>>
+					<@Decorator :: "">
+						<@$Is :: @UX\MetaExtendedLineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@Edge\From :: @Base\'Graph Text Diagram'\Graph>
+							<@Edge\Meta :: @$Empty>
+							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Graph Text Diagram'\'Diagram B %r%n(in diagram representation B)'>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
+						<@EndAnchor :: @UX\LineEndEnum\Arrow>
+						<@ToItem :: @Base\'Graph Text Diagram'\'Graph Text Diagram - Multiple Views'\Item:<<"4">>>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "71.74666666666667">
+						<@Height :: "45.62000000000003">
+					<@BackgroundColor :: "VeryLightGreen">
+						<@$Is :: @UX\Color>
+						<@Red :: "165">
+						<@Green :: "255">
+						<@Blue :: "165">
+						<@Opacity :: "255">
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "417.8000000000001">
+						<@Y :: "291.82000000000005">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
+					<@ShowMeta :: "False">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Base\'Graph Text Diagram'>
+						<@Meta :: @$Empty>
+						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Graph Text Diagram'\'Text B%r%n (in text language representation B)'>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "124.56000000000006">
+						<@Height :: "64.23999999999998">
+					<@BackgroundColor :: "VeryLightRed">
+						<@$Is :: @UX\Color>
+						<@Red :: "255">
+						<@Green :: "165">
+						<@Blue :: "165">
+						<@Opacity :: "255">
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "417.8000000000001">
+						<@Y :: "124.62000000000006">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
+					<@ShowMeta :: "False">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Base\'Graph Text Diagram'>
+						<@Meta :: @$Empty>
+						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Graph Text Diagram'\'Text A%r%n(in text language representation A)'>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "124.56000000000006">
+						<@Height :: "64.23999999999998">
+					<@BackgroundColor :: @Base\'Graph Text Diagram'\'Graph Text Diagram - Multiple Views'\Item:<<"2">>\VeryLightRed>
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "752.1999999999998">
+						<@Y :: "291.8200000000001">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
+					<@ShowMeta :: "False">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Base\'Graph Text Diagram'>
+						<@Meta :: @$Empty>
+						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Graph Text Diagram'\'Diagram B %r%n(in diagram representation B)'>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "124.56000000000006">
+						<@Height :: "64.23999999999998">
+					<@BackgroundColor :: "VeryLightBlue">
+						<@$Is :: @UX\Color>
+						<@Red :: "165">
+						<@Green :: "165">
+						<@Blue :: "255">
+						<@Opacity :: "255">
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "752.1999999999998">
+						<@Y :: "124.62000000000006">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
+					<@ShowMeta :: "False">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Base\'Graph Text Diagram'>
+						<@Meta :: @$Empty>
+						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Graph Text Diagram'\'Diagram A %r%n(in diagram representation A)'>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "124.56000000000006">
+						<@Height :: "64.23999999999998">
+					<@BackgroundColor :: @Base\'Graph Text Diagram'\'Graph Text Diagram - Multiple Views'\Item:<<"4">>\VeryLightBlue>
+			<@Base\'Graph Text Diagram'\Graph\'Text B%r%n (in text language representation B)'>
+			<@Base\'Graph Text Diagram'\Graph\'Text A%r%n(in text language representation A)'>
+			<@Base\'Graph Text Diagram'\Graph\'Diagram B %r%n(in diagram representation B)'>
+			<@Base\'Graph Text Diagram'\Graph\'Diagram A %r%n(in diagram representation A)'>
