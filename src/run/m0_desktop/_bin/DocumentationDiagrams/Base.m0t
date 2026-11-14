@@ -1811,3 +1811,26 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 			"Text language definition B [graph]"
 			"Diagram type definition A [graph]"
 			"Diagram type definition B [graph]"
+		package "Example Meta Meta Model"
+		package "MinusZero Platform"
+			<@UX\UXContainer :: "MinusZero Platform">
+				<@$Is :: @UX\UXContainer>
+				<@IsExpanded :: "True">
+				<@HasMiniatures :: "True">
+				<@Scale :: "100">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @Base>
+					<@Meta :: @Package>
+					<@To :: @Base\'MinusZero Platform'>
+				<@SelectedEdges :: "">
+				<@ShowSelectedEdgesBaseEdge :: "False">
+				<@Size :: "">
+					<@$Is :: @UX\Size>
+					<@Width :: "5000">
+					<@Height :: "5000">
+				<@NewItemUXTemplate :: @System\Data\UX\Templates\ZeroUML>
+			"Graph Data Base"
+				"Graph Virtual Machine"
+				"Graph Query Engine"
+				"Autoindexing Engine"
