@@ -1090,6 +1090,120 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Meta :: @$Empty>
 						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexC5>
 					<@BackgroundColor :: @Base\'Fractal Graph'\'Fractal Graph'\Item:<<"9">>\Green>
+			"Source Vertex"
+				<@Base\'Fractal Graph'\'Meta Vertex' :: "Target Vertex">
+			<@Base\'Fractal Graph'\'Source Vertex'\'Target Vertex'>
+			"Meta Vertex"
+			<@UX\UXContainer :: "Source Meta Target">
+				<@$Is :: @UX\UXContainer>
+				<@IsExpanded :: "True">
+				<@HasMiniatures :: "True">
+				<@Scale :: "130">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @Base>
+					<@Meta :: @Package>
+					<@To :: @Base\'Fractal Graph'>
+				<@SelectedEdges :: "">
+				<@ShowSelectedEdgesBaseEdge :: "False">
+				<@Size :: "">
+					<@$Is :: @UX\Size>
+					<@Width :: "5000">
+					<@Height :: "5000">
+				<@NewItemUXTemplate :: @System\Data\UX\Templates\ZeroUML>
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "488.4000000000001">
+						<@Y :: "270.44">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
+					<@ShowMeta :: "False">
+					<@BackgroundColor :: "VeryVeryVeryLightRed">
+						<@$Is :: @UX\Color>
+						<@Red :: "255">
+						<@Green :: "237">
+						<@Blue :: "237">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Base\'Fractal Graph'>
+						<@Meta :: @$Empty>
+						<@To :: @Base\'Fractal Graph'\'Source Vertex'>
+					<@Decorator :: "">
+						<@$Is :: @UX\MetaExtendedLineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@Edge\From :: @Base\'Fractal Graph'\'Source Vertex'>
+							<@Edge\Meta :: @Base\'Fractal Graph'\'Meta Vertex'>
+							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\'Target Vertex'>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
+						<@EndAnchor :: @UX\LineEndEnum\Arrow>
+						<@ToItem :: @Base\'Fractal Graph'\'Source Meta Target'\Item:<<"3">>>
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "586.9333333333333">
+						<@Y :: "189.83999999999995">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
+					<@ShowMeta :: "False">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Base\'Fractal Graph'>
+						<@Meta :: @$Empty>
+						<@To :: @Base\'Fractal Graph'\'Meta Vertex'>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "94.5333333333333">
+						<@Height :: "21.62">
+					<@ForegroundColor :: "White">
+						<@$Is :: @UX\Color>
+						<@Red :: "255">
+						<@Green :: "255">
+						<@Blue :: "255">
+						<@Opacity :: "255">
+					<@BackgroundColor :: "Blue">
+						<@$Is :: @UX\Color>
+						<@Red :: "0">
+						<@Green :: "0">
+						<@Blue :: "255">
+						<@Opacity :: "255">
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "688.4000000000002">
+						<@Y :: "270.44">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
+					<@ShowMeta :: "False">
+					<@BackgroundColor :: "VeryVeryVeryLightRed">
+						<@$Is :: @UX\Color>
+						<@Red :: "255">
+						<@Green :: "237">
+						<@Blue :: "237">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Base\'Fractal Graph'>
+						<@Meta :: @$Empty>
+						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\'Target Vertex'>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "94.5333333333333">
+						<@Height :: "21.62">
 		package "Graph Text Diagram"
 			<@UX\UXContainer :: "Graph Text Diagram - Basic">
 				<@$Is :: @UX\UXContainer>
