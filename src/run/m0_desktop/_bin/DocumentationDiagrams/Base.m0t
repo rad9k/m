@@ -1090,3 +1090,123 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Meta :: @$Empty>
 						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexC5>
 					<@BackgroundColor :: @Base\'Fractal Graph'\'Fractal Graph'\Item:<<"9">>\Green>
+		package "Graph Text Diagram"
+			<@UX\UXContainer :: "Graph Text Diagram - Basic">
+				<@$Is :: @UX\UXContainer>
+				<@IsExpanded :: "True">
+				<@HasMiniatures :: "True">
+				<@Scale :: "100">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @Base>
+					<@Meta :: @Package>
+					<@To :: @Base\'Graph Text Diagram'>
+				<@SelectedEdges :: "">
+				<@ShowSelectedEdgesBaseEdge :: "False">
+				<@Size :: "">
+					<@$Is :: @UX\Size>
+					<@Width :: "5000">
+					<@Height :: "5000">
+				<@NewItemUXTemplate :: @System\Data\UX\Templates\ZeroUML>
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "554.6233333333334">
+						<@Y :: "309.66">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
+					<@ShowMeta :: "False">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Base\'Graph Text Diagram'>
+						<@Meta :: @$Empty>
+						<@To :: @Base\'Graph Text Diagram'\Text>
+					<@BackgroundColor :: "VeryLightRed">
+						<@$Is :: @UX\Color>
+						<@Red :: "255">
+						<@Green :: "165">
+						<@Blue :: "165">
+						<@Opacity :: "255">
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "62.623333333333335">
+						<@Height :: "21.62">
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "429.3766666666667">
+						<@Y :: "309.66">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
+					<@ShowMeta :: "False">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Base\'Graph Text Diagram'>
+						<@Meta :: @$Empty>
+						<@To :: @Base\'Graph Text Diagram'\Graph>
+					<@BackgroundColor :: "VeryLightBlue">
+						<@$Is :: @UX\Color>
+						<@Red :: "165">
+						<@Green :: "165">
+						<@Blue :: "255">
+						<@Opacity :: "255">
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "62.623333333333335">
+						<@Height :: "21.62">
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "492.00000000000006">
+						<@Y :: "246.64">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
+					<@ShowMeta :: "False">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Base\'Graph Text Diagram'>
+						<@Meta :: @$Empty>
+						<@To :: @Base\'Graph Text Diagram'\Diagram>
+					<@BackgroundColor :: "VeryLightGreen">
+						<@$Is :: @UX\Color>
+						<@Red :: "165">
+						<@Green :: "255">
+						<@Blue :: "165">
+						<@Opacity :: "255">
+					<@Decorator :: "">
+						<@$Is :: @UX\MetaExtendedLineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@Edge\From :: @Base\'Graph Text Diagram'\Diagram>
+							<@Edge\Meta :: @$Empty>
+							<@Edge\To :: @Base\'Graph Text Diagram'\Text>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
+						<@EndAnchor :: @UX\LineEndEnum\Arrow>
+						<@ToItem :: @Base\'Graph Text Diagram'\'Graph Text Diagram - Basic'\Item:<<"1">>>
+					<@Decorator :: "">
+						<@$Is :: @UX\MetaExtendedLineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@Edge\From :: @Base\'Graph Text Diagram'\Diagram>
+							<@Edge\Meta :: @$Empty>
+							<@Edge\To :: @Base\'Graph Text Diagram'\Graph>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
+						<@EndAnchor :: @UX\LineEndEnum\Arrow>
+						<@ToItem :: @Base\'Graph Text Diagram'\'Graph Text Diagram - Basic'\Item:<<"2">>>
+			"Graph"
+			"Text"
+			"Diagram"
+				<@Base\'Graph Text Diagram'\Text>
+				<@Base\'Graph Text Diagram'\Graph>
