@@ -2303,7 +2303,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 							<@Edge\To :: @Base\'Example Meta Meta Model'\Class\Attribute>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
-						<@ToItem :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"1">>\Item:<<"2">>>
+						<@ToItem :: @Base\'Example Meta Meta Model'\'Simple Meta Meta Model'\Item:<<"2">>>
 					<@ForegroundColor :: "White">
 						<@$Is :: @UX\Color>
 						<@Red :: "255">
@@ -2342,9 +2342,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 							<@Edge\To :: @Type>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
-						<@ToItem :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"1">>\Item:<<"3">>>
-					<@BackgroundColor :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"1">>\Item:<<"1">>\Blue>
-					<@ForegroundColor :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"1">>\Item:<<"1">>\White>
+						<@ToItem :: @Base\'Example Meta Meta Model'\'Simple Meta Meta Model'\Item:<<"3">>>
+					<@BackgroundColor :: @Base\'Example Meta Meta Model'\'Simple Meta Meta Model'\Item:<<"1">>\Blue>
+					<@ForegroundColor :: @Base\'Example Meta Meta Model'\'Simple Meta Meta Model'\Item:<<"1">>\White>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -2362,8 +2362,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@From :: @Base\'Example Meta Meta Model'\Class\Attribute>
 						<@Meta :: @$VertexTarget>
 						<@To :: @Type>
-					<@ForegroundColor :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"1">>\Item:<<"1">>\White>
-					<@BackgroundColor :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"1">>\Item:<<"1">>\Blue>
+					<@ForegroundColor :: @Base\'Example Meta Meta Model'\'Simple Meta Meta Model'\Item:<<"1">>\White>
+					<@BackgroundColor :: @Base\'Example Meta Meta Model'\'Simple Meta Meta Model'\Item:<<"1">>\Blue>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -2390,7 +2390,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 							<@Edge\To :: @Base\'Example Meta Meta Model'\Person\Name>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
-						<@ToItem :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"1">>\Item:<<"5">>>
+						<@ToItem :: @Base\'Example Meta Meta Model'\'Simple Meta Meta Model'\Item:<<"5">>>
 					<@Decorator :: "">
 						<@$Is :: @UX\MetaExtendedLineDecorator>
 						<@Scale :: "100">
@@ -2400,8 +2400,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 							<@Edge\To :: @Base\'Example Meta Meta Model'\Person\Surname>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
-						<@ToItem :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"1">>\Item:<<"9">>>
-					<@ForegroundColor :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"1">>\Item:<<"1">>\White>
+						<@ToItem :: @Base\'Example Meta Meta Model'\'Simple Meta Meta Model'\Item:<<"9">>>
+					<@ForegroundColor :: @Base\'Example Meta Meta Model'\'Simple Meta Meta Model'\Item:<<"1">>\White>
 					<@BackgroundColor :: "Red">
 						<@$Is :: @UX\Color>
 						<@Red :: "255">
@@ -2425,8 +2425,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@From :: @Base\'Example Meta Meta Model'\Person>
 						<@Meta :: @Base\'Example Meta Meta Model'\Class\Attribute>
 						<@To :: @Base\'Example Meta Meta Model'\Person\Name>
-					<@ForegroundColor :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"1">>\Item:<<"1">>\White>
-					<@BackgroundColor :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"1">>\Item:<<"4">>\Red>
+					<@ForegroundColor :: @Base\'Example Meta Meta Model'\'Simple Meta Meta Model'\Item:<<"1">>\White>
+					<@BackgroundColor :: @Base\'Example Meta Meta Model'\'Simple Meta Meta Model'\Item:<<"4">>\Red>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -2453,7 +2453,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 							<@Edge\To :: @Base\'Example Meta Meta Model'\Person:<<"1">>\Radek>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
-						<@ToItem :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"1">>\Item:<<"7">>>
+						<@ToItem :: @Base\'Example Meta Meta Model'\'Simple Meta Meta Model'\Item:<<"7">>>
 					<@Decorator :: "">
 						<@$Is :: @UX\MetaExtendedLineDecorator>
 						<@Scale :: "100">
@@ -2463,7 +2463,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 							<@Edge\To :: @Base\'Example Meta Meta Model'\Person:<<"1">>\Tereszczuk>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
-						<@ToItem :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"1">>\Item:<<"8">>>
+						<@ToItem :: @Base\'Example Meta Meta Model'\'Simple Meta Meta Model'\Item:<<"8">>>
 					<@BackgroundColor :: "Green">
 						<@$Is :: @UX\Color>
 						<@Red :: "0">
@@ -2491,7 +2491,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@From :: @Base\'Example Meta Meta Model'\Person:<<"1">>>
 						<@Meta :: @Base\'Example Meta Meta Model'\Person\Name>
 						<@To :: @Base\'Example Meta Meta Model'\Person:<<"1">>\Radek>
-					<@BackgroundColor :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"1">>\Item:<<"6">>\Green>
+					<@BackgroundColor :: @Base\'Example Meta Meta Model'\'Simple Meta Meta Model'\Item:<<"6">>\Green>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -2509,7 +2509,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@From :: @Base\'Example Meta Meta Model'\Person:<<"1">>>
 						<@Meta :: @Base\'Example Meta Meta Model'\Person\Surname>
 						<@To :: @Base\'Example Meta Meta Model'\Person:<<"1">>\Tereszczuk>
-					<@BackgroundColor :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"1">>\Item:<<"6">>\Green>
+					<@BackgroundColor :: @Base\'Example Meta Meta Model'\'Simple Meta Meta Model'\Item:<<"6">>\Green>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -2527,9 +2527,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@From :: @Base\'Example Meta Meta Model'\Person>
 						<@Meta :: @Base\'Example Meta Meta Model'\Class\Attribute>
 						<@To :: @Base\'Example Meta Meta Model'\Person\Surname>
-					<@ForegroundColor :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"1">>\Item:<<"1">>\White>
-					<@BackgroundColor :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"1">>\Item:<<"4">>\Red>
-			<@UX\UXContainer :: "Simple Meta Meta Model">
+					<@ForegroundColor :: @Base\'Example Meta Meta Model'\'Simple Meta Meta Model'\Item:<<"1">>\White>
+					<@BackgroundColor :: @Base\'Example Meta Meta Model'\'Simple Meta Meta Model'\Item:<<"4">>\Red>
+			<@UX\UXContainer :: "Simple Meta Model">
 				<@$Is :: @UX\UXContainer>
 				<@IsExpanded :: "True">
 				<@HasMiniatures :: "True">
@@ -2554,93 +2554,6 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 					<@Position :: "">
 						<@$Is :: @UX\Position>
-						<@X :: "316.9878787878788">
-						<@Y :: "139.56727272727275">
-					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
-					<@ShowMeta :: "False">
-					<@BaseEdge :: "">
-						<@$Is :: @Edge>
-						<@From :: @Base\'Example Meta Meta Model'>
-						<@Meta :: @$Empty>
-						<@To :: @Base\'Example Meta Meta Model'\Class>
-					<@Decorator :: "">
-						<@$Is :: @UX\MetaExtendedLineDecorator>
-						<@Scale :: "100">
-						<@BaseEdge :: "">
-							<@Edge\From :: @Base\'Example Meta Meta Model'\Class>
-							<@Edge\Meta :: @$Empty>
-							<@Edge\To :: @Base\'Example Meta Meta Model'\Class\Attribute>
-						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
-						<@EndAnchor :: @UX\LineEndEnum\Arrow>
-						<@ToItem :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"2">>\Item:<<"2">>>
-					<@ForegroundColor :: "White">
-						<@$Is :: @UX\Color>
-						<@Red :: "255">
-						<@Green :: "255">
-						<@Blue :: "255">
-						<@Opacity :: "255">
-					<@BackgroundColor :: "Blue">
-						<@$Is :: @UX\Color>
-						<@Red :: "0">
-						<@Green :: "0">
-						<@Blue :: "255">
-						<@Opacity :: "255">
-				<@Item :: "">
-					<@$Is :: @UX\RectangleVisualiserItem>
-					<@Scale :: "100">
-					<@ShowIcons :: "False">
-					<@FontSize :: "14">
-					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
-					<@Position :: "">
-						<@$Is :: @UX\Position>
-						<@X :: "420.05454545454546">
-						<@Y :: "139.56727272727275">
-					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
-					<@ShowMeta :: "False">
-					<@BaseEdge :: "">
-						<@$Is :: @Edge>
-						<@From :: @Base\'Example Meta Meta Model'\Class>
-						<@Meta :: @$Empty>
-						<@To :: @Base\'Example Meta Meta Model'\Class\Attribute>
-					<@Decorator :: "">
-						<@$Is :: @UX\MetaExtendedLineDecorator>
-						<@Scale :: "100">
-						<@BaseEdge :: "">
-							<@Edge\From :: @Base\'Example Meta Meta Model'\Class\Attribute>
-							<@Edge\Meta :: @$VertexTarget>
-							<@Edge\To :: @Type>
-						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
-						<@EndAnchor :: @UX\LineEndEnum\Arrow>
-						<@ToItem :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"2">>\Item:<<"3">>>
-					<@BackgroundColor :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"2">>\Item:<<"1">>\Blue>
-					<@ForegroundColor :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"2">>\Item:<<"1">>\White>
-				<@Item :: "">
-					<@$Is :: @UX\RectangleVisualiserItem>
-					<@Scale :: "100">
-					<@ShowIcons :: "False">
-					<@FontSize :: "14">
-					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
-					<@Position :: "">
-						<@$Is :: @UX\Position>
-						<@X :: "569.8045454545454">
-						<@Y :: "139.56727272727275">
-					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
-					<@ShowMeta :: "False">
-					<@BaseEdge :: "">
-						<@$Is :: @Edge>
-						<@From :: @Base\'Example Meta Meta Model'\Class\Attribute>
-						<@Meta :: @$VertexTarget>
-						<@To :: @Type>
-					<@ForegroundColor :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"2">>\Item:<<"1">>\White>
-					<@BackgroundColor :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"2">>\Item:<<"1">>\Blue>
-				<@Item :: "">
-					<@$Is :: @UX\RectangleVisualiserItem>
-					<@Scale :: "100">
-					<@ShowIcons :: "False">
-					<@FontSize :: "14">
-					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
-					<@Position :: "">
-						<@$Is :: @UX\Position>
 						<@X :: "353.02000000000004">
 						<@Y :: "233.24">
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
@@ -2650,6 +2563,18 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@From :: @Base\'Example Meta Meta Model'>
 						<@Meta :: @Base\'Example Meta Meta Model'\Class>
 						<@To :: @Base\'Example Meta Meta Model'\Person>
+					<@ForegroundColor :: "White">
+						<@$Is :: @UX\Color>
+						<@Red :: "255">
+						<@Green :: "255">
+						<@Blue :: "255">
+						<@Opacity :: "255">
+					<@BackgroundColor :: "Red">
+						<@$Is :: @UX\Color>
+						<@Red :: "255">
+						<@Green :: "0">
+						<@Blue :: "0">
+						<@Opacity :: "255">
 					<@Decorator :: "">
 						<@$Is :: @UX\MetaExtendedLineDecorator>
 						<@Scale :: "100">
@@ -2659,7 +2584,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 							<@Edge\To :: @Base\'Example Meta Meta Model'\Person\Name>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
-						<@ToItem :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"2">>\Item:<<"5">>>
+						<@ToItem :: @Base\'Example Meta Meta Model'\'Simple Meta Model'\Item:<<"2">>>
 					<@Decorator :: "">
 						<@$Is :: @UX\MetaExtendedLineDecorator>
 						<@Scale :: "100">
@@ -2669,14 +2594,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 							<@Edge\To :: @Base\'Example Meta Meta Model'\Person\Surname>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
-						<@ToItem :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"2">>\Item:<<"9">>>
-					<@ForegroundColor :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"2">>\Item:<<"1">>\White>
-					<@BackgroundColor :: "Red">
-						<@$Is :: @UX\Color>
-						<@Red :: "255">
-						<@Green :: "0">
-						<@Blue :: "0">
-						<@Opacity :: "255">
+						<@ToItem :: @Base\'Example Meta Meta Model'\'Simple Meta Model'\Item:<<"6">>>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -2694,8 +2612,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@From :: @Base\'Example Meta Meta Model'\Person>
 						<@Meta :: @Base\'Example Meta Meta Model'\Class\Attribute>
 						<@To :: @Base\'Example Meta Meta Model'\Person\Name>
-					<@ForegroundColor :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"2">>\Item:<<"1">>\White>
-					<@BackgroundColor :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"2">>\Item:<<"4">>\Red>
+					<@ForegroundColor :: @Base\'Example Meta Meta Model'\'Simple Meta Model'\Item:<<"1">>\White>
+					<@BackgroundColor :: @Base\'Example Meta Meta Model'\'Simple Meta Model'\Item:<<"1">>\Red>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -2722,7 +2640,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 							<@Edge\To :: @Base\'Example Meta Meta Model'\Person:<<"1">>\Radek>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
-						<@ToItem :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"2">>\Item:<<"7">>>
+						<@ToItem :: @Base\'Example Meta Meta Model'\'Simple Meta Model'\Item:<<"4">>>
 					<@Decorator :: "">
 						<@$Is :: @UX\MetaExtendedLineDecorator>
 						<@Scale :: "100">
@@ -2732,7 +2650,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 							<@Edge\To :: @Base\'Example Meta Meta Model'\Person:<<"1">>\Tereszczuk>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
-						<@ToItem :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"2">>\Item:<<"8">>>
+						<@ToItem :: @Base\'Example Meta Meta Model'\'Simple Meta Model'\Item:<<"5">>>
 					<@BackgroundColor :: "Green">
 						<@$Is :: @UX\Color>
 						<@Red :: "0">
@@ -2760,7 +2678,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@From :: @Base\'Example Meta Meta Model'\Person:<<"1">>>
 						<@Meta :: @Base\'Example Meta Meta Model'\Person\Name>
 						<@To :: @Base\'Example Meta Meta Model'\Person:<<"1">>\Radek>
-					<@BackgroundColor :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"2">>\Item:<<"6">>\Green>
+					<@BackgroundColor :: @Base\'Example Meta Meta Model'\'Simple Meta Model'\Item:<<"3">>\Green>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -2769,7 +2687,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 					<@Position :: "">
 						<@$Is :: @UX\Position>
-						<@X :: "412.64363636363635">
+						<@X :: "412.6436363636363">
 						<@Y :: "445.69636363636346">
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
 					<@ShowMeta :: "False">
@@ -2778,7 +2696,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@From :: @Base\'Example Meta Meta Model'\Person:<<"1">>>
 						<@Meta :: @Base\'Example Meta Meta Model'\Person\Surname>
 						<@To :: @Base\'Example Meta Meta Model'\Person:<<"1">>\Tereszczuk>
-					<@BackgroundColor :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"2">>\Item:<<"6">>\Green>
+					<@BackgroundColor :: @Base\'Example Meta Meta Model'\'Simple Meta Model'\Item:<<"3">>\Green>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
 					<@Scale :: "100">
@@ -2796,8 +2714,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@From :: @Base\'Example Meta Meta Model'\Person>
 						<@Meta :: @Base\'Example Meta Meta Model'\Class\Attribute>
 						<@To :: @Base\'Example Meta Meta Model'\Person\Surname>
-					<@ForegroundColor :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"2">>\Item:<<"1">>\White>
-					<@BackgroundColor :: @Base\'Example Meta Meta Model'\UXContainer:'Simple Meta Meta Model'<<"2">>\Item:<<"4">>\Red>
+					<@ForegroundColor :: @Base\'Example Meta Meta Model'\'Simple Meta Model'\Item:<<"1">>\White>
+					<@BackgroundColor :: @Base\'Example Meta Meta Model'\'Simple Meta Model'\Item:<<"1">>\Red>
 		package "MinusZero Platform"
 			<@UX\UXContainer :: "MinusZero Platform">
 				<@$Is :: @UX\UXContainer>
