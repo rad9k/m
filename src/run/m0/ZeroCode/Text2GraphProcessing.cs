@@ -449,7 +449,19 @@ namespace m0.ZeroCode
                 .TrimEnd('\\')
                 .Replace("'", "");
 
-            if (baseVertex?.Store == null)
+            if (!StoreFileIdentifiersMatch(fileLink))
+                return false;
+
+            relativeLink = link.Substring(
+                storeSegmentPosition +
+                storeSegment.Length);
+            return true;
+        }
+
+        bool StoreFileIdentifiersMatch(string fileLink)
+        {
+            if (baseVertex?.Store == null ||
+                string.IsNullOrEmpty(fileLink))
                 return false;
 
             string normalizedImportedFileIdentifier =
@@ -467,37 +479,72 @@ namespace m0.ZeroCode
                 normalizedImportedFileIdentifier,
                 normalizedCurrentStoreIdentifier,
                 fileIdentifierComparison))
-            {
-                relativeLink = link.Substring(
-                    storeSegmentPosition +
-                    storeSegment.Length);
                 return true;
-            }
-
-            string importedFileIdentifier;
 
             try
             {
-                importedFileIdentifier =
+                string importedFileIdentifier =
                     FileSystemUtil.GetCanonicalFileIdentifier(
                         fileLink);
+
+                return GeneralUtil.CompareStrings(
+                    importedFileIdentifier,
+                    baseVertex.Store.Identifier);
             }
             catch
             {
                 return false;
             }
+        }
 
-            if (!GeneralUtil.CompareStrings(
-                importedFileIdentifier,
-                baseVertex.Store.Identifier))
-            {
+        bool TryGetCurrentStoreStartQuery(
+            string link,
+            out string inStoreQuery)
+        {
+            inStoreQuery = null;
+
+            if (string.IsNullOrEmpty(link) ||
+                !link.StartsWith(
+                    "Start:",
+                    StringComparison.OrdinalIgnoreCase))
                 return false;
-            }
 
-            relativeLink = link.Substring(
-                storeSegmentPosition +
-                storeSegment.Length);
+            int storeBoundary = link.IndexOf(
+                @"\\",
+                StringComparison.Ordinal);
+
+            if (storeBoundary < 0)
+                return false;
+
+            string fileLink = link
+                .Substring(0, storeBoundary)
+                .TrimEnd('\\')
+                .Replace("'", "");
+            string query = link.Substring(storeBoundary + 2);
+
+            if (string.IsNullOrEmpty(query))
+                return false;
+
+            if (!StoreFileIdentifiersMatch(fileLink))
+                return false;
+
+            inStoreQuery = query;
             return true;
+        }
+
+        bool IsCurrentStoreStartLink(string link)
+        {
+            string inStoreQuery;
+
+            return TryGetCurrentStoreStartQuery(
+                link,
+                out inStoreQuery);
+        }
+
+        bool IsRetryableStoreLink(string link)
+        {
+            return IsStoreQualifiedLink(link) ||
+                IsCurrentStoreStartLink(link);
         }
 
         void ResolvePendingImportsAfterParse()
@@ -557,7 +604,10 @@ namespace m0.ZeroCode
                 }
 
                 if (IsUnresolvedImportTarget(target))
+                {
+                    LogUnresolvedPendingImport(pendingImport, target);
                     continue;
+                }
 
                 pendingImport.ImportListEdge =
                     GraphUtil.ReplaceEdge(
@@ -651,30 +701,30 @@ namespace m0.ZeroCode
             return false;
         }
 
-        void AddDeferredVertexLinkResolution(
+        bool AddDeferredVertexLinkResolution(
             IEdge placeholderEdge,
             string link,
             bool isMeta)
         {
             if (placeholderEdge == null)
-                return;
+                return false;
 
             if (string.IsNullOrEmpty(link))
-                return;
+                return false;
 
-            bool isStoreQualifiedLink = IsStoreQualifiedLink(link);
+            bool isStoreQualifiedLink = IsRetryableStoreLink(link);
             bool parentHasUnresolvedType =
                 HasUnresolvedParentType(placeholderEdge.From);
 
             if (!isStoreQualifiedLink && !parentHasUnresolvedType)
-                return;
+                return false;
 
             int occurrence = GetMatchingEdgeOccurrence(
                 placeholderEdge.From,
                 placeholderEdge);
 
             if (occurrence < 0)
-                return;
+                return false;
 
             lock (deferredVertexLinkResolutions)
             {
@@ -685,7 +735,7 @@ namespace m0.ZeroCode
                             pending.PlaceholderEdge,
                             placeholderEdge) &&
                         pending.IsMeta == isMeta)
-                        return;
+                        return true;
                 }
 
                 deferredVertexLinkResolutions.Add(
@@ -703,6 +753,8 @@ namespace m0.ZeroCode
                         IsMeta = isMeta
                     });
             }
+
+            return true;
         }
 
         IEdge FindDeferredVertexLinkEdge(
@@ -766,6 +818,11 @@ namespace m0.ZeroCode
 
                 if (placeholderEdge == null)
                 {
+                    LogDeferredExit(
+                        "placeholder-missing counted-as-resolved",
+                        pending,
+                        null);
+
                     lock (deferredVertexLinkResolutions)
                         deferredVertexLinkResolutions.Remove(pending);
 
@@ -775,9 +832,13 @@ namespace m0.ZeroCode
 
                 ResolvePendingImportsAfterParse();
 
-                if (!IsStoreQualifiedLink(pending.Link) &&
+                if (!IsRetryableStoreLink(pending.Link) &&
                     HasUnresolvedParentType(pending.From))
                 {
+                    LogDeferredExit(
+                        "skipped-unresolved-parent-type",
+                        pending,
+                        null);
                     continue;
                 }
 
@@ -788,7 +849,13 @@ namespace m0.ZeroCode
                             pending.From));
 
                 if (IsUnresolvedImportTarget(target))
+                {
+                    LogDeferredExit(
+                        "still-unresolved",
+                        pending,
+                        target);
                     continue;
+                }
 
                 IEdge resolvedEdge;
 
@@ -1350,28 +1417,290 @@ namespace m0.ZeroCode
             return -1;
         }
 
+        // Diagnostic only. The vertex returned to the caller is unchanged.
+        static bool IsBaseEdgeEndpointLinkName(string link)
+        {
+            return GeneralUtil.CompareStrings(link, "Meta")
+                || GeneralUtil.CompareStrings(link, "To")
+                || GeneralUtil.CompareStrings(link, "From");
+        }
+
+        static string QuoteLog(object value)
+        {
+            if (value == null)
+                return "null";
+
+            string text = value.ToString();
+
+            if (text == null)
+                return "null";
+
+            text = text.Replace("\r", " ").Replace("\n", " ");
+
+            return "\"" + text + "\"";
+        }
+
+        static string DescribeResolveVertex(IVertex vertex)
+        {
+            if (vertex == null)
+                return "null";
+
+            return "value=" + QuoteLog(vertex.Value)
+                + " mock=" + (vertex is ToVertexMock)
+                + " state=" + vertex.DisposedState;
+        }
+
+        static bool IsDollarIsMeta(IVertex meta)
+        {
+            if (meta == null)
+                return false;
+
+            ToVertexMock mock = meta as ToVertexMock;
+
+            if (mock != null)
+                return GeneralUtil.CompareStrings(mock.mockData, "$Is");
+
+            return GeneralUtil.CompareStrings(meta.Value, "$Is");
+        }
+
+        static string DescribeResolveIsTargets(IVertex parent)
+        {
+            if (parent == null)
+                return "none";
+
+            IList<IEdge> edges = parent.OutEdgesRaw;
+
+            if (edges == null || edges.Count == 0)
+                return "none";
+
+            List<string> parts = new List<string>();
+
+            foreach (IEdge edge in edges)
+            {
+                if (edge == null || !IsDollarIsMeta(edge.Meta))
+                    continue;
+
+                parts.Add(DescribeResolveVertex(edge.To));
+            }
+
+            if (parts.Count == 0)
+                return "none";
+
+            return string.Join("; ", parts);
+        }
+
+        static string DescribeResolveParent(IVertex parent)
+        {
+            if (parent == null)
+                return "null";
+
+            return "value=" + QuoteLog(parent.Value)
+                + " mock=" + (parent is ToVertexMock)
+                + " state=" + parent.DisposedState
+                + " $Is=[" + DescribeResolveIsTargets(parent) + "]";
+        }
+
+        IVertex ReturnResolvedLink(
+            string link,
+            IVertex parent,
+            IVertex resolved,
+            string stage)
+        {
+            try
+            {
+                bool valueMatches = resolved != null
+                    && GeneralUtil.CompareStrings(resolved.Value, link);
+
+                if (IsBaseEdgeEndpointLinkName(link) && !valueMatches)
+                {
+                    MinusZero.Instance.Log(
+                        1,
+                        "T2G.Resolve",
+                        "wrong-target link=" + QuoteLog(link)
+                        + " stage=" + stage
+                        + " resolved=" + DescribeResolveVertex(resolved)
+                        + " parent=" + DescribeResolveParent(parent));
+                }
+            }
+            catch
+            {
+            }
+
+            return resolved;
+        }
+
+        void LogResolveMiss(
+            string link,
+            IVertex parent,
+            IList<string> missedStages)
+        {
+            try
+            {
+                string missed = missedStages == null
+                    ? ""
+                    : string.Join(",", missedStages);
+
+                MinusZero.Instance.Log(
+                    1,
+                    "T2G.Resolve",
+                    "miss link=" + QuoteLog(link)
+                    + " parent=" + DescribeResolveParent(parent)
+                    + " missed=" + missed);
+            }
+            catch
+            {
+            }
+        }
+
+        static bool IsUnresolvedLoggedEndpoint(string link, IVertex resolved)
+        {
+            if (string.IsNullOrEmpty(link))
+                return false;
+
+            if (resolved == null || resolved is ToVertexMock)
+                return true;
+
+            if (resolved == MinusZero.Instance.Empty)
+                return true;
+
+            return GeneralUtil.CompareStrings(resolved.Value, "$Empty");
+        }
+
+        void LogUnresolvedMockEdge(
+            IVertex parent,
+            string metaLink,
+            IVertex metaVertex,
+            bool metaDeferred,
+            string toLink,
+            IVertex toVertex,
+            bool toDeferred)
+        {
+            try
+            {
+                bool metaUnresolved = IsUnresolvedLoggedEndpoint(metaLink, metaVertex);
+                bool toUnresolved = IsUnresolvedLoggedEndpoint(toLink, toVertex);
+
+                if (!metaUnresolved && !toUnresolved)
+                    return;
+
+                MinusZero.Instance.Log(
+                    2,
+                    "T2G.MockEdge",
+                    "metaLink=" + QuoteLog(metaLink)
+                    + " meta=" + DescribeResolveVertex(metaVertex)
+                    + " metaDeferred=" + metaDeferred
+                    + " toLink=" + QuoteLog(toLink)
+                    + " to=" + DescribeResolveVertex(toVertex)
+                    + " toDeferred=" + toDeferred
+                    + " parent=" + DescribeResolveParent(parent));
+            }
+            catch
+            {
+            }
+        }
+
+        void LogDeferredExit(
+            string reason,
+            DeferredVertexLinkResolution pending,
+            IVertex target)
+        {
+            try
+            {
+                string targetText = target == null
+                    ? ""
+                    : " target=" + DescribeResolveVertex(target);
+
+                MinusZero.Instance.Log(
+                    1,
+                    "T2G.Deferred",
+                    reason
+                    + " link=" + QuoteLog(pending == null ? null : pending.Link)
+                    + " isMeta=" + (pending != null && pending.IsMeta)
+                    + " occurrence=" + (pending == null ? -1 : pending.PlaceholderOccurrence)
+                    + targetText
+                    + " parent=" + DescribeResolveParent(pending == null ? null : pending.From));
+            }
+            catch
+            {
+            }
+        }
+
+        void LogUnresolvedPendingImport(
+            PendingImportResolution pendingImport,
+            IVertex target)
+        {
+            try
+            {
+                MinusZero.Instance.Log(
+                    1,
+                    "T2G.PendingImport",
+                    "unresolved link=" + QuoteLog(pendingImport == null ? null : pendingImport.Link)
+                    + " importType=" + (pendingImport == null ? "" : pendingImport.ImportType)
+                    + " target=" + DescribeResolveVertex(target));
+            }
+            catch
+            {
+            }
+        }
+
         IVertex ToVertexMock2VertexByLinkString(ToVertexMock mock)
         {
             string link = "";
             if (mock.mockData != null)
                 link = mock.mockData.ToString();
 
+            List<string> missedStages = new List<string>();
+
+            if (TryGetCurrentStoreStartQuery(link, out string inStoreQuery))
+            {
+                IVertex inStoreTarget =
+                    ToVertexMock2VertexByLinkString(
+                        new ToVertexMock(
+                            inStoreQuery,
+                            mock.parentVertex));
+
+                if (!IsUnresolvedImportTarget(inStoreTarget))
+                {
+                    return ReturnResolvedLink(
+                        link,
+                        mock.parentVertex,
+                        inStoreTarget,
+                        "current-store");
+                }
+
+                return MinusZero.Instance.Empty;
+            }
+
             if (link.Length == 0)
             {
-                return MinusZero.Instance.Root;
+                return ReturnResolvedLink(
+                    link,
+                    mock.parentVertex,
+                    MinusZero.Instance.Root,
+                    "empty-link");
             }
 
             if (GeneralUtil.CompareStrings(link, "$CodeRoot"))
             {
-                return processBaseEdgeTo;
+                return ReturnResolvedLink(
+                    link,
+                    mock.parentVertex,
+                    processBaseEdgeTo,
+                    "$CodeRoot");
             }
 
             if (TryGetResolvedPendingImport(
                 link,
                 out IVertex resolvedImport))
             {
-                return resolvedImport;
+                return ReturnResolvedLink(
+                    link,
+                    mock.parentVertex,
+                    resolvedImport,
+                    "pending-import");
             }
+
+            missedStages.Add("pending-import");
 
             // $Is
 
@@ -1383,9 +1712,15 @@ namespace m0.ZeroCode
 
                     if (value != null)
                     {
-                        return value;
+                        return ReturnResolvedLink(
+                            link,
+                            mock.parentVertex,
+                            value,
+                            "$Is");
                     }
                 }
+
+                missedStages.Add("$Is");
 
                 foreach (IEdge inEdge in mock.parentVertex.InEdgesRaw)
                 {
@@ -1393,28 +1728,67 @@ namespace m0.ZeroCode
 
                     if (value != null)
                     {
-                        return value;
+                        return ReturnResolvedLink(
+                            link,
+                            mock.parentVertex,
+                            value,
+                            "in-edge");
                     }
                 }
+
+                missedStages.Add("in-edge");
+            }
+            else
+            {
+                missedStages.Add("parent-null");
+                missedStages.Add("$Is");
+                missedStages.Add("in-edge");
             }
 
             // A vertex defined on this vertex wins over an imported vertex of the same value.
             if (mock.parentVertex != null)
             {
+                bool sawLocalEdge = false;
+                bool sawLocalMock = false;
+                bool sawLocalUnresolved = false;
+
                 foreach (IEdge localEdge in GraphUtil.GetQueryOut(
                     mock.parentVertex,
                     null,
                     link))
                 {
+                    sawLocalEdge = true;
+
                     if (localEdge.To is ToVertexMock)
+                    {
+                        sawLocalMock = true;
                         continue;
+                    }
 
                     if (IsUnresolvedImportTarget(localEdge.To))
+                    {
+                        sawLocalUnresolved = true;
                         continue;
+                    }
 
-                    return localEdge.To;
+                    return ReturnResolvedLink(
+                        link,
+                        mock.parentVertex,
+                        localEdge.To,
+                        "local");
                 }
+
+                if (!sawLocalEdge)
+                    missedStages.Add("local:none");
+                else if (sawLocalMock && sawLocalUnresolved)
+                    missedStages.Add("local:mock-and-unresolved");
+                else if (sawLocalMock)
+                    missedStages.Add("local:mock");
+                else
+                    missedStages.Add("local:unresolved");
             }
+            else
+                missedStages.Add("local");
 
             // try named link
 
@@ -1439,7 +1813,11 @@ namespace m0.ZeroCode
 
                     if (tryIf != null)
                     {
-                        return tryIf;
+                        return ReturnResolvedLink(
+                            link,
+                            mock.parentVertex,
+                            tryIf,
+                            "named-import");
                     }
                 }
 
@@ -1452,7 +1830,11 @@ namespace m0.ZeroCode
 
                     if (tryIf != null)
                     {
-                        return tryIf;
+                        return ReturnResolvedLink(
+                            link,
+                            mock.parentVertex,
+                            tryIf,
+                            "dict-named-import");
                     }
                 }
 
@@ -1465,7 +1847,11 @@ namespace m0.ZeroCode
 
                     if (tryIf != null)
                     {
-                        return tryIf;
+                        return ReturnResolvedLink(
+                            link,
+                            mock.parentVertex,
+                            tryIf,
+                            "named-meta-import");
                     }
                 }
 
@@ -1478,10 +1864,18 @@ namespace m0.ZeroCode
 
                     if (tryIf != null)
                     {
-                        return tryIf;
+                        return ReturnResolvedLink(
+                            link,
+                            mock.parentVertex,
+                            tryIf,
+                            "dict-named-meta-import");
                     }
                 }
-            }            
+
+                missedStages.Add("named-import");
+            }
+            else
+                missedStages.Add("named-import:no-second-part");
 
             // normal direct link
 
@@ -1489,7 +1883,11 @@ namespace m0.ZeroCode
 
             if (tryIf != null)
             {
-                return tryIf;
+                return ReturnResolvedLink(
+                    link,
+                    mock.parentVertex,
+                    tryIf,
+                    "direct-import");
             }
 
             // dict direct link
@@ -1498,7 +1896,11 @@ namespace m0.ZeroCode
 
             if (tryIf != null)
             {
-                return tryIf;
+                return ReturnResolvedLink(
+                    link,
+                    mock.parentVertex,
+                    tryIf,
+                    "dict-direct-import");
             }
 
             // normal direct link meta
@@ -1507,7 +1909,11 @@ namespace m0.ZeroCode
 
             if (tryIf != null)
             {
-                return tryIf;
+                return ReturnResolvedLink(
+                    link,
+                    mock.parentVertex,
+                    tryIf,
+                    "direct-meta-import");
             }
 
             // dict direct link meta
@@ -1516,8 +1922,14 @@ namespace m0.ZeroCode
             
             if (tryIf != null)
             {
-                return tryIf;
+                return ReturnResolvedLink(
+                    link,
+                    mock.parentVertex,
+                    tryIf,
+                    "dict-direct-meta-import");
             }
+
+            missedStages.Add("direct-import");
 
             // try from local root
 
@@ -1527,8 +1939,19 @@ namespace m0.ZeroCode
 
             if (tryIf != null && !(tryIf is ToVertexMock))
             {
-                return tryIf;
+                return ReturnResolvedLink(
+                    link,
+                    mock.parentVertex,
+                    tryIf,
+                    "$ParseRoot");
             }
+
+            if (tryIf is ToVertexMock)
+                missedStages.Add("$ParseRoot:mock");
+            else
+                missedStages.Add("$ParseRoot");
+
+            LogResolveMiss(link, mock.parentVertex, missedStages);
 
             return MinusZero.Instance.Empty;
         }
@@ -3949,11 +4372,19 @@ namespace m0.ZeroCode
 
                 IEdge newEdge = edge.From.AddEdge(metaVertex, toVertex);
 
+                bool toDeferred = false;
+                bool metaDeferred = false;
+
+                bool toIsRetryableStoreLink =
+                    IsRetryableStoreLink(toLink);
+                bool metaIsRetryableStoreLink =
+                    IsRetryableStoreLink(metaLink);
+
                 if (toVertex == MinusZero.Instance.Empty &&
                     !string.IsNullOrEmpty(toLink) &&
-                    (IsStoreQualifiedLink(toLink) ||
+                    (toIsRetryableStoreLink ||
                         HasUnresolvedParentType(edge.From)))
-                    AddDeferredVertexLinkResolution(
+                    toDeferred = AddDeferredVertexLinkResolution(
                         newEdge,
                         toLink,
                         false);
@@ -3961,13 +4392,22 @@ namespace m0.ZeroCode
                 if (metaVertex != null &&
                     !string.IsNullOrEmpty(metaLink) &&
                     ((metaVertex == MinusZero.Instance.Empty &&
-                        IsStoreQualifiedLink(metaLink)) ||
-                        (!IsStoreQualifiedLink(metaLink) &&
+                        metaIsRetryableStoreLink) ||
+                        (!metaIsRetryableStoreLink &&
                             HasUnresolvedParentType(edge.From))))
-                    AddDeferredVertexLinkResolution(
+                    metaDeferred = AddDeferredVertexLinkResolution(
                         newEdge,
                         metaLink,
                         true);
+
+                LogUnresolvedMockEdge(
+                    edge.From,
+                    metaLink,
+                    metaVertex,
+                    metaDeferred,
+                    toLink,
+                    toVertex,
+                    toDeferred);
 
                 ReplaceRememberedTextualChildEdge(edge.From, edge, newEdge);
                 edge.From.DeleteEdge(edge);

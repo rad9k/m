@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -3051,6 +3052,7 @@ namespace m0.UIWpf.UX
 
             if (!HasLiveBaseEdgeTo(item))
             {
+                LogRejectedUXItem(item, "HostItem");
                 RemoveUXItem(item);
                 return;
             }
@@ -3077,6 +3079,7 @@ namespace m0.UIWpf.UX
 
                         if (!HasLiveBaseEdgeTo(i))
                         {
+                            LogRejectedUXItem(i, "HostItem.MultiContainerSubItem");
                             RemoveUXItem(i);
                             continue;
                         }
@@ -3140,6 +3143,7 @@ namespace m0.UIWpf.UX
 
                     if (!HasLiveBaseEdgeTo(i))
                     {
+                        LogRejectedUXItem(i, "HostItem.Container");
                         RemoveUXItem(i);
                         continue;
                     }
@@ -4458,7 +4462,10 @@ namespace m0.UIWpf.UX
                             IUXItem i = UXItem.GetUXItem(this, _i);
 
                             if (i == null)
+                            {
+                                LogUXItemNotCreated(_i);
                                 continue;
+                            }
 
                             if (CheckIfItemIsValidAndRemoveIfInvalid(i))
                                 HostItem(this, i, false);
@@ -4889,10 +4896,167 @@ namespace m0.UIWpf.UX
             return secondHash + ":" + firstHash;
         }
 
+        // Diagnostic only. Called when an item is dropped or never created.
+        static string QuoteUXLog(object value)
+        {
+            if (value == null)
+                return "null";
+
+            string text = value.ToString();
+
+            if (text == null)
+                return "null";
+
+            text = text.Replace("\r", " ").Replace("\n", " ");
+
+            return "\"" + text + "\"";
+        }
+
+        static string DescribeUXLogVertex(IVertex vertex)
+        {
+            if (vertex == null)
+                return "null";
+
+            return "value=" + QuoteUXLog(vertex.Value)
+                + " mock=" + (vertex is ToVertexMock)
+                + " state=" + vertex.DisposedState;
+        }
+
+        static bool IsDollarIsMeta(IVertex meta)
+        {
+            if (meta == null)
+                return false;
+
+            ToVertexMock mock = meta as ToVertexMock;
+
+            if (mock != null)
+                return GeneralUtil.CompareStrings(mock.mockData, "$Is");
+
+            return GeneralUtil.CompareStrings(meta.Value, "$Is");
+        }
+
+        static string DescribeUXIsTargets(IVertex vertex)
+        {
+            if (vertex == null)
+                return "none";
+
+            IList<IEdge> edges = vertex.OutEdgesRaw;
+
+            if (edges == null || edges.Count == 0)
+                return "none";
+
+            List<string> parts = new List<string>();
+
+            foreach (IEdge edge in edges)
+            {
+                if (edge == null || !IsDollarIsMeta(edge.Meta))
+                    continue;
+
+                parts.Add(DescribeUXLogVertex(edge.To));
+            }
+
+            if (parts.Count == 0)
+                return "none";
+
+            return string.Join("; ", parts);
+        }
+
+        static string DescribeBaseEdgeForLog(IUXItem item)
+        {
+            if (item == null)
+                return "BaseEdge=null";
+
+            Edge baseEdge = item.BaseEdge;
+
+            if (baseEdge == null || baseEdge.Vertex == null)
+                return "BaseEdge=null";
+
+            IVertex baseEdgeVertex = baseEdge.Vertex;
+            StringBuilder rawEdges = new StringBuilder();
+            IList<IEdge> edges = baseEdgeVertex.OutEdgesRaw;
+
+            if (edges != null)
+            {
+                foreach (IEdge edge in edges)
+                {
+                    if (edge == null)
+                        continue;
+
+                    if (rawEdges.Length > 0)
+                        rawEdges.Append("; ");
+
+                    rawEdges.Append("meta=");
+                    rawEdges.Append(DescribeUXLogVertex(edge.Meta));
+                    rawEdges.Append(" to=");
+                    rawEdges.Append(DescribeUXLogVertex(edge.To));
+                }
+            }
+
+            if (rawEdges.Length == 0)
+                rawEdges.Append("none");
+
+            return "BaseEdgeVertex=" + QuoteUXLog(baseEdgeVertex.Value)
+                + " raw=[" + rawEdges + "]"
+                + " queryFrom=" + DescribeUXLogVertex(
+                    GraphUtil.GetQueryOutFirst(baseEdgeVertex, "From", null))
+                + " queryMeta=" + DescribeUXLogVertex(
+                    GraphUtil.GetQueryOutFirst(baseEdgeVertex, "Meta", null))
+                + " queryTo=" + DescribeUXLogVertex(
+                    GraphUtil.GetQueryOutFirst(baseEdgeVertex, "To", null));
+        }
+
+        static string DescribeRejectedUXItemText(IUXItem item)
+        {
+            if (item == null)
+                return "item=null";
+
+            IVertex itemVertex = item.Vertex;
+
+            return "item=" + DescribeUXLogVertex(itemVertex)
+                + " $Is=[" + DescribeUXIsTargets(itemVertex) + "] "
+                + DescribeBaseEdgeForLog(item);
+        }
+
+        private void LogRejectedUXItem(IUXItem item, string where)
+        {
+            try
+            {
+                MinusZero.Instance.Log(
+                    2,
+                    "UXVisualiser.BaseEdge",
+                    where + " " + DescribeRejectedUXItemText(item));
+            }
+            catch
+            {
+            }
+        }
+
+        private void LogUXItemNotCreated(ITypedEdge typedEdge)
+        {
+            try
+            {
+                IEdge edge = typedEdge == null ? null : typedEdge.Edge;
+                IVertex vertex = typedEdge == null ? null : typedEdge.Vertex;
+
+                MinusZero.Instance.Log(
+                    2,
+                    "UXVisualiser.BaseEdge",
+                    "GetUXItem null"
+                    + " vertex=" + DescribeUXLogVertex(vertex)
+                    + " edgeMeta=" + DescribeUXLogVertex(edge == null ? null : edge.Meta)
+                    + " edgeTo=" + DescribeUXLogVertex(edge == null ? null : edge.To)
+                    + " $Is=[" + DescribeUXIsTargets(vertex) + "]");
+            }
+            catch
+            {
+            }
+        }
+
         private bool CheckIfItemIsValidAndRemoveIfInvalid(IUXItem item)
         {
             if (!HasLiveBaseEdgeTo(item))
             {
+                LogRejectedUXItem(item, "CheckIfItemIsValidAndRemoveIfInvalid");
                 RemoveUXItem(item);
                 return false;
             }
