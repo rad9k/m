@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Concurrent;
+using System.Diagnostics;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
@@ -135,6 +138,31 @@ namespace m0.Graph
         private static long linkIncoming16To255;
         private static long linkIncoming256To4095;
         private static long linkIncoming4096OrMore;
+        private static long coalesceOutTicks;
+        private static long coalesceInTicks;
+        private static long coalesceMetaTicks;
+        private static long outIndexTicks;
+        private static long inIndexTicks;
+        private static long triggerFromCalls;
+        private static long triggerFromTicks;
+        private static long triggerFromMaxIn;
+        private static long triggerValueCalls;
+        private static long triggerValueTicks;
+        private static long triggerValueMaxIn;
+        private static long triggerMetaRebuilds;
+        private static long triggerMetaRebuildTicks;
+        private static long otherMetaRebuilds;
+        private static long otherMetaRebuildTicks;
+        private static long largeInRebuildCount;
+        private static int repeatedTargetInCount;
+        private static string repeatedTargetValue;
+        private static string repeatedTargetMetaValue;
+        private static string dominantInRebuildCaller;
+
+        private static readonly ConcurrentDictionary<string, long>
+            inRebuildCallers =
+                new ConcurrentDictionary<string, long>(
+                    StringComparer.Ordinal);
 
         [ThreadStatic]
         private static IVertex previousLinkTarget;
@@ -174,6 +202,27 @@ namespace m0.Graph
             Interlocked.Exchange(ref linkIncoming16To255, 0);
             Interlocked.Exchange(ref linkIncoming256To4095, 0);
             Interlocked.Exchange(ref linkIncoming4096OrMore, 0);
+            Interlocked.Exchange(ref coalesceOutTicks, 0);
+            Interlocked.Exchange(ref coalesceInTicks, 0);
+            Interlocked.Exchange(ref coalesceMetaTicks, 0);
+            Interlocked.Exchange(ref outIndexTicks, 0);
+            Interlocked.Exchange(ref inIndexTicks, 0);
+            Interlocked.Exchange(ref triggerFromCalls, 0);
+            Interlocked.Exchange(ref triggerFromTicks, 0);
+            Interlocked.Exchange(ref triggerFromMaxIn, 0);
+            Interlocked.Exchange(ref triggerValueCalls, 0);
+            Interlocked.Exchange(ref triggerValueTicks, 0);
+            Interlocked.Exchange(ref triggerValueMaxIn, 0);
+            Interlocked.Exchange(ref triggerMetaRebuilds, 0);
+            Interlocked.Exchange(ref triggerMetaRebuildTicks, 0);
+            Interlocked.Exchange(ref otherMetaRebuilds, 0);
+            Interlocked.Exchange(ref otherMetaRebuildTicks, 0);
+            Interlocked.Exchange(ref largeInRebuildCount, 0);
+            repeatedTargetInCount = 0;
+            repeatedTargetValue = null;
+            repeatedTargetMetaValue = null;
+            dominantInRebuildCaller = null;
+            inRebuildCallers.Clear();
             previousLinkTarget = null;
         }
 
@@ -265,8 +314,142 @@ namespace m0.Graph
                 .Append(" 256-4095=")
                 .Append(snapshot.LinkIncoming256To4095)
                 .Append(" 4096+=")
-                .Append(snapshot.LinkIncoming4096OrMore);
+                .AppendLine(snapshot.LinkIncoming4096OrMore.ToString());
+            report.Append("timeMs coalesceOut=")
+                .Append(TicksToMilliseconds(coalesceOutTicks).ToString("F1"))
+                .Append(" coalesceIn=")
+                .Append(TicksToMilliseconds(coalesceInTicks).ToString("F1"))
+                .Append(" coalesceMeta=")
+                .Append(TicksToMilliseconds(coalesceMetaTicks).ToString("F1"))
+                .Append(" outIndex=")
+                .Append(TicksToMilliseconds(outIndexTicks).ToString("F1"))
+                .Append(" inIndex=")
+                .AppendLine(TicksToMilliseconds(inIndexTicks).ToString("F1"));
+            report.Append("repeatedLinkTarget value=")
+                .Append(repeatedTargetValue ?? "<none>")
+                .Append(" meta=")
+                .Append(repeatedTargetMetaValue ?? "<none>")
+                .Append(" inEdges=")
+                .AppendLine(repeatedTargetInCount.ToString());
+            report.Append("triggerQuery fromCalls=")
+                .Append(triggerFromCalls)
+                .Append(" fromMs=")
+                .Append(TicksToMilliseconds(triggerFromTicks).ToString("F1"))
+                .Append(" fromMaxIn=")
+                .Append(triggerFromMaxIn)
+                .Append(" valueCalls=")
+                .Append(triggerValueCalls)
+                .Append(" valueMs=")
+                .Append(TicksToMilliseconds(triggerValueTicks).ToString("F1"))
+                .Append(" valueMaxIn=")
+                .AppendLine(triggerValueMaxIn.ToString());
+            report.Append("metaInRebuild triggerCount=")
+                .Append(triggerMetaRebuilds)
+                .Append(" triggerMs=")
+                .Append(TicksToMilliseconds(triggerMetaRebuildTicks).ToString("F1"))
+                .Append(" otherCount=")
+                .Append(otherMetaRebuilds)
+                .Append(" otherMs=")
+                .AppendLine(TicksToMilliseconds(otherMetaRebuildTicks).ToString("F1"));
+            report.Append("inIndexCallers");
+            if (inRebuildCallers.IsEmpty)
+                report.Append(" <none>");
+            foreach (System.Collections.Generic.KeyValuePair<string, long> caller
+                in inRebuildCallers)
+            {
+                report.Append(' ')
+                    .Append(caller.Key)
+                    .Append('=')
+                    .Append(caller.Value);
+            }
             return report.ToString();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static IndexScope BeginOutIndex()
+        {
+            if (Volatile.Read(ref enabled) == 0)
+                return default;
+
+            return new IndexScope(Stopwatch.GetTimestamp(), 0);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static IndexScope BeginInIndex()
+        {
+            if (Volatile.Read(ref enabled) == 0)
+                return default;
+
+            return new IndexScope(Stopwatch.GetTimestamp(), 1);
+        }
+
+        internal static void RecordTriggerInQuery(
+            bool queriedEdgeFrom,
+            int incomingEdgeCount,
+            long elapsedTicks)
+        {
+            if (Volatile.Read(ref enabled) == 0)
+                return;
+
+            if (queriedEdgeFrom)
+            {
+                Interlocked.Increment(ref triggerFromCalls);
+                Interlocked.Add(ref triggerFromTicks, elapsedTicks);
+                UpdateMaximum(ref triggerFromMaxIn, incomingEdgeCount);
+                return;
+            }
+
+            Interlocked.Increment(ref triggerValueCalls);
+            Interlocked.Add(ref triggerValueTicks, elapsedTicks);
+            UpdateMaximum(ref triggerValueMaxIn, incomingEdgeCount);
+        }
+
+        internal static void RecordMetaOnlyInRebuild(
+            bool graphChangeTrigger,
+            long elapsedTicks)
+        {
+            if (Volatile.Read(ref enabled) == 0)
+                return;
+
+            if (graphChangeTrigger)
+            {
+                Interlocked.Increment(ref triggerMetaRebuilds);
+                Interlocked.Add(ref triggerMetaRebuildTicks, elapsedTicks);
+                return;
+            }
+
+            Interlocked.Increment(ref otherMetaRebuilds);
+            Interlocked.Add(ref otherMetaRebuildTicks, elapsedTicks);
+        }
+
+        internal static bool TryReadTimestamp(out long timestamp)
+        {
+            if (Volatile.Read(ref enabled) == 0)
+            {
+                timestamp = 0;
+                return false;
+            }
+
+            timestamp = Stopwatch.GetTimestamp();
+            return true;
+        }
+
+        internal static void AddCoalesceTicks(
+            GraphScaleListenerChannel channel,
+            long elapsedTicks)
+        {
+            switch (channel)
+            {
+                case GraphScaleListenerChannel.Out:
+                    Interlocked.Add(ref coalesceOutTicks, elapsedTicks);
+                    break;
+                case GraphScaleListenerChannel.In:
+                    Interlocked.Add(ref coalesceInTicks, elapsedTicks);
+                    break;
+                default:
+                    Interlocked.Add(ref coalesceMetaTicks, elapsedTicks);
+                    break;
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -323,6 +506,8 @@ namespace m0.Graph
 
             Interlocked.Increment(ref inIndexRebuilds);
             Interlocked.Add(ref inIndexRebuildEdges, edgeCount);
+            if (edgeCount > 100)
+                RecordLargeInRebuildCaller();
         }
 
         internal static void RecordPlusLessFanout(
@@ -363,7 +548,9 @@ namespace m0.Graph
                 Interlocked.Increment(ref newVertexOperations);
         }
 
-        internal static void RecordLinkTarget(IVertex target)
+        internal static void RecordLinkTarget(
+            IVertex meta,
+            IVertex target)
         {
             if (Volatile.Read(ref enabled) == 0)
                 return;
@@ -387,9 +574,90 @@ namespace m0.Graph
                 Interlocked.Increment(ref linkIncoming4096OrMore);
 
             if (ReferenceEquals(target, previousLinkTarget))
+            {
                 Interlocked.Increment(ref linkSameTargetCount);
+                repeatedTargetInCount = incoming;
+                if (repeatedTargetValue == null)
+                {
+                    repeatedTargetValue =
+                        target?.Value?.ToString() ?? "<null>";
+                    repeatedTargetMetaValue =
+                        meta?.Value?.ToString() ?? "<null>";
+                }
+            }
 
             previousLinkTarget = target;
+        }
+
+        private static void RecordLargeInRebuildCaller()
+        {
+            long seen = Interlocked.Increment(ref largeInRebuildCount);
+            string caller;
+            if (seen <= 32 || (seen & 1023) == 0)
+                caller = ReadInRebuildCaller();
+            else
+                caller = dominantInRebuildCaller ?? "<unsampled>";
+
+            if (seen <= 32)
+                dominantInRebuildCaller = caller;
+
+            inRebuildCallers.AddOrUpdate(
+                caller,
+                1,
+                (_, count) => count + 1);
+        }
+
+        private static string ReadInRebuildCaller()
+        {
+            StackTrace trace = new StackTrace(false);
+            for (int frameIndex = 2;
+                frameIndex < trace.FrameCount && frameIndex < 16;
+                frameIndex++)
+            {
+                MethodBase method = trace.GetFrame(frameIndex)?.GetMethod();
+                Type declaringType = method?.DeclaringType;
+                if (declaringType == null ||
+                    declaringType == typeof(EasyVertex) ||
+                    declaringType == typeof(GraphScaleDiagnostics))
+                {
+                    continue;
+                }
+
+                return declaringType.Name + "." + method.Name;
+            }
+
+            return "<unknown>";
+        }
+
+        private static double TicksToMilliseconds(long ticks)
+        {
+            return ticks * 1000.0 / Stopwatch.Frequency;
+        }
+
+        internal readonly struct IndexScope : IDisposable
+        {
+            private readonly long start;
+            private readonly byte kind;
+            private readonly bool active;
+
+            internal IndexScope(long start, byte kind)
+            {
+                this.start = start;
+                this.kind = kind;
+                active = true;
+            }
+
+            public void Dispose()
+            {
+                if (!active)
+                    return;
+
+                long elapsed = Stopwatch.GetTimestamp() - start;
+                if (kind == 0)
+                    Interlocked.Add(ref outIndexTicks, elapsed);
+                else
+                    Interlocked.Add(ref inIndexTicks, elapsed);
+            }
         }
 
         private static void UpdateMaximum(ref long target, long value)

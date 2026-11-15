@@ -5,6 +5,7 @@ using m0.ZeroCode;
 using m0.ZeroCode.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -785,18 +786,48 @@ namespace m0.Graph.ExecutionFlow
                     return true;
                 }
 
-                return GraphUtil.ExistQueryIn(
+                return QueryGraphChangeTriggerIn(
                     graphChangeAtom.Edge.From,
-                    "$GraphChangeTrigger",
-                    null);
+                    true);
             }
 
             return graphChangeAtom.Type ==
                     AtomGraphChangeTypeEnum.ValueChange &&
-                GraphUtil.ExistQueryIn(
+                QueryGraphChangeTriggerIn(
                     graphChangeAtom.ChangedVertex,
+                    false);
+        }
+
+        private static bool QueryGraphChangeTriggerIn(
+            IVertex vertex,
+            bool queriedEdgeFrom)
+        {
+            if (vertex == null)
+            {
+                return GraphUtil.ExistQueryIn(
+                    vertex,
                     "$GraphChangeTrigger",
                     null);
+            }
+
+            bool measure = GraphScaleDiagnostics.TryReadTimestamp(
+                out long started);
+            int incomingEdgeCount = measure
+                ? vertex.InEdgesRaw.Count
+                : 0;
+            bool found = GraphUtil.ExistQueryIn(
+                vertex,
+                "$GraphChangeTrigger",
+                null);
+            if (measure)
+            {
+                GraphScaleDiagnostics.RecordTriggerInQuery(
+                    queriedEdgeFrom,
+                    incomingEdgeCount,
+                    Stopwatch.GetTimestamp() - started);
+            }
+
+            return found;
         }
 
         private static void AddOrCoalesceListenerAtom(
@@ -825,6 +856,9 @@ namespace m0.Graph.ExecutionFlow
             bool measure = GraphScaleDiagnostics.Enabled;
             int listLength = listenerAtoms.Count;
             int scannedSteps = 0;
+            long started = measure
+                ? Stopwatch.GetTimestamp()
+                : 0;
 
             try
             {
@@ -874,10 +908,15 @@ namespace m0.Graph.ExecutionFlow
             finally
             {
                 if (measure)
+                {
                     GraphScaleDiagnostics.RecordCoalesce(
                         channel,
                         listLength,
                         scannedSteps);
+                    GraphScaleDiagnostics.AddCoalesceTicks(
+                        channel,
+                        Stopwatch.GetTimestamp() - started);
+                }
             }
         }
 

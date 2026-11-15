@@ -3612,3 +3612,349 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@$Is :: @Structure\Component>
 				<@ReadWrite :: @Base\'MinusZero Platform'\'Minus Zero'\'REST Server / Cllient Engine'>
 				<@ReadWrite :: @Base\'MinusZero Platform'\'Minus Zero'\'HTTP Server'>
+		package "Base Use Cases"
+			<@UX\UXContainer :: "Simple Desktop">
+				<@$Is :: @UX\UXContainer>
+				<@IsExpanded :: "True">
+				<@HasMiniatures :: "True">
+				<@Scale :: "100">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @Base>
+					<@Meta :: @Package>
+					<@To :: @Base\'Base Use Cases'>
+				<@SelectedEdges :: "">
+				<@ShowSelectedEdgesBaseEdge :: "False">
+				<@Size :: "">
+					<@$Is :: @UX\Size>
+					<@Width :: "5000">
+					<@Height :: "5000">
+				<@NewItemUXTemplate :: @System\Data\UX\Templates\ZeroUML>
+				<@Item :: "">
+					<@$Is :: @UX\ContainerItem>
+					<@IsExpanded :: "True">
+					<@HasMiniatures :: "True">
+					<@Scale :: "100">
+					<@SelectedEdges :: "">
+					<@ShowSelectedEdgesBaseEdge :: "False">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "197.60000000000002">
+						<@Y :: "80.44000000000003">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Machine CONTAINER'>
+					<@ShowMeta :: "True">
+					<@BackgroundColor :: "VeryVeryVeryVeryLightCyan">
+						<@$Is :: @UX\Color>
+						<@Red :: "248">
+						<@Green :: "255">
+						<@Blue :: "255">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Base\'Base Use Cases'>
+						<@Meta :: @Structure\Machine>
+						<@To :: @Base\'Base Use Cases'\'Desktop Workstation'>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "176.53000000000014">
+						<@Height :: "207.42">
+					<@Item :: "">
+						<@$Is :: @UX\IconItem>
+						<@Scale :: "100">
+						<@ShowIcons :: "True">
+						<@FontSize :: "14">
+						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+						<@Position :: "">
+							<@$Is :: @UX\Position>
+							<@X :: "17.399999999999977">
+							<@Y :: "12.779999999999973">
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Component>
+						<@BackgroundColor :: "VeryVeryVeryLightCyan">
+							<@$Is :: @UX\Color>
+							<@Red :: "237">
+							<@Green :: "255">
+							<@Blue :: "255">
+							<@Opacity :: "255">
+						<@BaseEdge :: "">
+							<@$Is :: @Edge>
+							<@From :: @Base\'Base Use Cases'\'Desktop Workstation'>
+							<@Meta :: @Structure\DeploymentTarget\Contain>
+							<@To :: @Base\'Base Use Cases'\'Desktop Workstation'\MinusZero>
+				<@Item :: "">
+					<@$Is :: @UX\ImageItem>
+					<@Filename :: "ZeroUML\UseCase\actor.png">
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "464.8">
+						<@Y :: "154.04">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Actor>
+					<@UX\Size :: "">
+						<@Width :: "47">
+						<@Height :: "90">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Base\'Base Use Cases'>
+						<@Meta :: @UseCase\Actor>
+						<@To :: @Base\'Base Use Cases'\User>
+					<@Decorator :: "">
+						<@$Is :: @UX\LineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@Edge\From :: @Base\'Base Use Cases'\User>
+							<@Edge\Meta :: @UseCase\Actor\Use<<"2">>>
+							<@Edge\To :: @Base\'Base Use Cases'\'Desktop Workstation'\MinusZero>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Actor\Relation>
+						<@HideLabel :: "True">
+
+						<@ToItem :: @Base\'Base Use Cases'\'Simple Desktop'\Item:<<"1">>\Item:>
+			<@Structure\Machine :: "Desktop Workstation">
+				<@$Is :: @Structure\Machine>
+				<@Contain :: "MinusZero">
+					<@$Is :: @Structure\Component>
+					<@Use :: @Base\'Base Use Cases'\Machine:'Remote Server'<<"1">>\'REST Service'>
+					<@Use :: @Base\'Base Use Cases'\Machine:'Remote Server'<<"2">>\'REST Service'>
+			<@UseCase\Actor :: "User">
+				<@$Is :: @UseCase\Actor>
+				<@Use :: @Base\'Base Use Cases'\'Desktop Workstation'\MinusZero>
+			<@UX\UXContainer :: "Simple Desktop using REST Servers">
+				<@$Is :: @UX\UXContainer>
+				<@IsExpanded :: "True">
+				<@HasMiniatures :: "True">
+				<@Scale :: "90">
+				<@BaseEdge :: "">
+					<@$Is :: @Edge>
+					<@From :: @Base>
+					<@Meta :: @Package>
+					<@To :: @Base\'Base Use Cases'>
+				<@SelectedEdges :: "">
+				<@ShowSelectedEdgesBaseEdge :: "False">
+				<@Size :: "">
+					<@$Is :: @UX\Size>
+					<@Width :: "5000">
+					<@Height :: "5000">
+				<@NewItemUXTemplate :: @System\Data\UX\Templates\ZeroUML>
+				<@Item :: "">
+					<@$Is :: @UX\ContainerItem>
+					<@IsExpanded :: "True">
+					<@HasMiniatures :: "True">
+					<@Scale :: "100">
+					<@SelectedEdges :: "">
+					<@ShowSelectedEdgesBaseEdge :: "False">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "500">
+						<@Y :: "172.44000000000003">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Machine CONTAINER'>
+					<@ShowMeta :: "True">
+					<@BackgroundColor :: "VeryVeryVeryVeryLightCyan">
+						<@$Is :: @UX\Color>
+						<@Red :: "248">
+						<@Green :: "255">
+						<@Blue :: "255">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Base\'Base Use Cases'>
+						<@Meta :: @Structure\Machine>
+						<@To :: @Base\'Base Use Cases'\'Desktop Workstation'>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "176.53000000000014">
+						<@Height :: "207.42">
+					<@Item :: "">
+						<@$Is :: @UX\IconItem>
+						<@Scale :: "100">
+						<@ShowIcons :: "True">
+						<@FontSize :: "14">
+						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+						<@Position :: "">
+							<@$Is :: @UX\Position>
+							<@X :: "17.399999999999977">
+							<@Y :: "12.779999999999973">
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Component>
+						<@BackgroundColor :: "VeryVeryVeryLightCyan">
+							<@$Is :: @UX\Color>
+							<@Red :: "237">
+							<@Green :: "255">
+							<@Blue :: "255">
+							<@Opacity :: "255">
+						<@BaseEdge :: "">
+							<@$Is :: @Edge>
+							<@From :: @Base\'Base Use Cases'\'Desktop Workstation'>
+							<@Meta :: @Structure\DeploymentTarget\Contain>
+							<@To :: @Base\'Base Use Cases'\'Desktop Workstation'\MinusZero>
+						<@Decorator :: "">
+							<@$Is :: @UX\LineDecorator>
+							<@Scale :: "100">
+							<@BaseEdge :: "">
+								<@Edge\From :: @Base\'Base Use Cases'\'Desktop Workstation'\MinusZero>
+								<@Edge\Meta :: @Structure\Component\Use>
+								<@Edge\To :: @Base\'Base Use Cases'\Machine:'Remote Server'<<"1">>\'REST Service'>
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToArrow'>
+							<@EndAnchor :: @UX\LineEndEnum\Arrow>
+							<@ToItem :: @Base\'Base Use Cases'\'Simple Desktop using REST Servers'\Item:<<"3">>\Item:>
+						<@Decorator :: "">
+							<@$Is :: @UX\LineDecorator>
+							<@Scale :: "100">
+							<@BaseEdge :: "">
+								<@Edge\From :: @Base\'Base Use Cases'\'Desktop Workstation'\MinusZero>
+								<@Edge\Meta :: @Structure\Component\Use>
+								<@Edge\To :: @Base\'Base Use Cases'\Machine:'Remote Server'<<"2">>\'REST Service'>
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToArrow'>
+							<@EndAnchor :: @UX\LineEndEnum\Arrow>
+							<@ToItem :: @Base\'Base Use Cases'\'Simple Desktop using REST Servers'\Item:<<"4">>\Item:>
+				<@Item :: "">
+					<@$Is :: @UX\ImageItem>
+					<@Filename :: "ZeroUML\UseCase\actor.png">
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "293.2000000000001">
+						<@Y :: "243.03999999999996">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Actor>
+					<@UX\Size :: "">
+						<@Width :: "47">
+						<@Height :: "90">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Base\'Base Use Cases'>
+						<@Meta :: @UseCase\Actor>
+						<@To :: @Base\'Base Use Cases'\User>
+					<@Decorator :: "">
+						<@$Is :: @UX\LineDecorator>
+						<@Scale :: "100">
+						<@BaseEdge :: "">
+							<@Edge\From :: @Base\'Base Use Cases'\User>
+							<@Edge\Meta :: @UseCase\Actor\Use<<"2">>>
+							<@Edge\To :: @Base\'Base Use Cases'\'Desktop Workstation'\MinusZero>
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Actor\Relation>
+						<@HideLabel :: "True">
+
+						<@ToItem :: @Base\'Base Use Cases'\'Simple Desktop using REST Servers'\Item:<<"1">>\Item:>
+				<@Item :: "">
+					<@$Is :: @UX\ContainerItem>
+					<@IsExpanded :: "True">
+					<@HasMiniatures :: "True">
+					<@Scale :: "100">
+					<@SelectedEdges :: "">
+					<@ShowSelectedEdgesBaseEdge :: "False">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "776.2500000000003">
+						<@Y :: "96.82000000000009">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Machine CONTAINER'>
+					<@ShowMeta :: "True">
+					<@BackgroundColor :: "VeryVeryVeryVeryLightCyan">
+						<@$Is :: @UX\Color>
+						<@Red :: "248">
+						<@Green :: "255">
+						<@Blue :: "255">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Base\'Base Use Cases'>
+						<@Meta :: @Structure\Machine>
+						<@To :: @Base\'Base Use Cases'\Machine:'Remote Server'<<"1">>>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "182.8166666666665">
+						<@Height :: "205.62">
+					<@Item :: "">
+						<@$Is :: @UX\IconItem>
+						<@Scale :: "100">
+						<@ShowIcons :: "True">
+						<@FontSize :: "14">
+						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+						<@Position :: "">
+							<@$Is :: @UX\Position>
+							<@X :: "27">
+							<@Y :: "8.199999999999633">
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Component>
+						<@BackgroundColor :: "VeryVeryVeryLightCyan">
+							<@$Is :: @UX\Color>
+							<@Red :: "237">
+							<@Green :: "255">
+							<@Blue :: "255">
+							<@Opacity :: "255">
+						<@BaseEdge :: "">
+							<@$Is :: @Edge>
+							<@From :: @Base\'Base Use Cases'\Machine:'Remote Server'<<"1">>>
+							<@Meta :: @Structure\DeploymentTarget\Contain>
+							<@To :: @Base\'Base Use Cases'\Machine:'Remote Server'<<"1">>\'REST Service'>
+				<@Item :: "">
+					<@$Is :: @UX\ContainerItem>
+					<@IsExpanded :: "True">
+					<@HasMiniatures :: "True">
+					<@Scale :: "100">
+					<@SelectedEdges :: "">
+					<@ShowSelectedEdgesBaseEdge :: "False">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "776.2500000000003">
+						<@Y :: "347.4133333333333">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Machine CONTAINER'>
+					<@ShowMeta :: "True">
+					<@BackgroundColor :: "VeryVeryVeryVeryLightCyan">
+						<@$Is :: @UX\Color>
+						<@Red :: "248">
+						<@Green :: "255">
+						<@Blue :: "255">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Base\'Base Use Cases'>
+						<@Meta :: @Structure\Machine>
+						<@To :: @Base\'Base Use Cases'\Machine:'Remote Server'<<"2">>>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "182.8166666666665">
+						<@Height :: "229.61999999999995">
+					<@Item :: "">
+						<@$Is :: @UX\IconItem>
+						<@Scale :: "100">
+						<@ShowIcons :: "True">
+						<@FontSize :: "14">
+						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+						<@Position :: "">
+							<@$Is :: @UX\Position>
+							<@X :: "27.000000000000057">
+							<@Y :: "14.759999999999764">
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Component>
+						<@BackgroundColor :: "VeryVeryVeryLightCyan">
+							<@$Is :: @UX\Color>
+							<@Red :: "237">
+							<@Green :: "255">
+							<@Blue :: "255">
+							<@Opacity :: "255">
+						<@BaseEdge :: "">
+							<@$Is :: @Edge>
+							<@From :: @Base\'Base Use Cases'\Machine:'Remote Server'<<"2">>>
+							<@Meta :: @Structure\DeploymentTarget\Contain>
+							<@To :: @Base\'Base Use Cases'\Machine:'Remote Server'<<"2">>\'REST Service'>
+			<@Structure\Machine :: "Remote Server">
+				<@$Is :: @Structure\Machine>
+				<@Contain :: "REST Service">
+					<@$Is :: @Structure\Component>
+			<@Structure\Machine :: "Remote Server">
+				<@$Is :: @Structure\Machine>
+				<@Contain :: "REST Service">
+					<@$Is :: @Structure\Component>

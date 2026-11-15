@@ -62,6 +62,9 @@ internal static class TempEdgeScaleTimingRunner
                     + " executeMs=" + sample.ExecuteMilliseconds
                     + " commitMs=" + sample.CommitMilliseconds
                     + " totalMs=" + sample.TotalMilliseconds
+                    + " allocatedMB="
+                    + (sample.AllocatedBytes / 1048576.0)
+                        .ToString("F1", CultureInfo.InvariantCulture)
                     + " coalesceSteps=" + sample.Counters.CoalesceSteps);
                 WriteLine(
                     GraphScaleDiagnostics.FormatReport(
@@ -115,7 +118,10 @@ internal static class TempEdgeScaleTimingRunner
         ExecutionFlowHelper.StartTransaction();
         long executeMilliseconds;
         long commitMilliseconds;
+        long allocatedBytes;
         IVertex result;
+        long allocatedBytesBefore =
+            GC.GetTotalAllocatedBytes(true);
 
         try
         {
@@ -136,6 +142,9 @@ internal static class TempEdgeScaleTimingRunner
             ExecutionFlowHelper.CommitTransaction();
             commitWatch.Stop();
             commitMilliseconds = commitWatch.ElapsedMilliseconds;
+            allocatedBytes =
+                GC.GetTotalAllocatedBytes(true) -
+                allocatedBytesBefore;
         }
         catch
         {
@@ -178,6 +187,7 @@ internal static class TempEdgeScaleTimingRunner
             edgeCount,
             executeMilliseconds,
             commitMilliseconds,
+            allocatedBytes,
             counters);
     }
 
@@ -714,12 +724,14 @@ internal static class TempEdgeScaleTimingRunner
             int edgeCount,
             long executeMilliseconds,
             long commitMilliseconds,
+            long allocatedBytes,
             GraphScaleSnapshot counters)
         {
             SeriesName = seriesName;
             EdgeCount = edgeCount;
             ExecuteMilliseconds = executeMilliseconds;
             CommitMilliseconds = commitMilliseconds;
+            AllocatedBytes = allocatedBytes;
             Counters = counters;
         }
 
@@ -730,6 +742,8 @@ internal static class TempEdgeScaleTimingRunner
         internal long ExecuteMilliseconds { get; }
 
         internal long CommitMilliseconds { get; }
+
+        internal long AllocatedBytes { get; }
 
         internal GraphScaleSnapshot Counters { get; }
 

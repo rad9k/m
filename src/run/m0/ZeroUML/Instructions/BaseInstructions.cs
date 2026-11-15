@@ -4480,7 +4480,7 @@ namespace m0.ZeroUML.Instructions
 
                 foreach (IEdge e in rightExecuteResult)
                 {
-                    GraphScaleDiagnostics.RecordLinkTarget(e.To);
+                    GraphScaleDiagnostics.RecordLinkTarget(meta, e.To);
                     IEdge newEdge = creationTarget.AddEdge(meta, e.To);
 
                     toReturn = NextExpressionHandle(exe, newEdge.To, instructionVertex);
