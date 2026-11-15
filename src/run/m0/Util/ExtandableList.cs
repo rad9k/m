@@ -61,6 +61,47 @@ namespace m0.Util
             OnRemove(removedItem);
         }
 
+        // Drops the given instances in one pass and keeps every other item in its
+        // original order. OnRemove runs after the item is already gone from this list.
+        public void RemoveReferencedItems(HashSet<T> itemsToRemove)
+        {
+            if (itemsToRemove == null || itemsToRemove.Count == 0 || list.Count == 0)
+                return;
+
+            List<T> removedItems = null;
+            int writeIndex = 0;
+
+            for (int readIndex = 0; readIndex < list.Count; readIndex++)
+            {
+                T item = list[readIndex];
+
+                if (itemsToRemove.Contains(item))
+                {
+                    if (removedItems == null)
+                        removedItems = new List<T>();
+
+                    removedItems.Add(item);
+                    continue;
+                }
+
+                if (writeIndex != readIndex)
+                    list[writeIndex] = item;
+
+                writeIndex++;
+            }
+
+            if (writeIndex == list.Count)
+                return;
+
+            list.RemoveRange(writeIndex, list.Count - writeIndex);
+
+            if (removedItems == null)
+                return;
+
+            for (int index = 0; index < removedItems.Count; index++)
+                OnRemove(removedItems[index]);
+        }
+
         public void Add(T item)
         {
             ((IList<T>)list).Add(item);
