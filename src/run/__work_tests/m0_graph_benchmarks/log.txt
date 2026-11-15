@@ -1,0 +1,25 @@
+8:00:38 PM:525[0]: InitializeLog: START
+20:00:42:627[1]: VertexOperations.CopySubGraphIntoVertex: collectMs=1 holdersMs=1 recreateMs=0 dropHoldersMs=1 scopeVertices=101 copiedEdges=100
+20:00:42:627[1]: VertexOperations.CopyVertex: roots=1 scopeVertices=101
+20:00:42:733[1]: VertexOperations.CopySubGraphIntoVertex: collectMs=0 holdersMs=3 recreateMs=5 dropHoldersMs=1 scopeVertices=401 copiedEdges=400
+20:00:42:733[1]: VertexOperations.CopyVertex: roots=1 scopeVertices=401
+20:00:42:891[1]: VertexOperations.CopySubGraphIntoVertex: collectMs=2 holdersMs=7 recreateMs=6 dropHoldersMs=2 scopeVertices=1001 copiedEdges=1000
+20:00:42:891[1]: VertexOperations.CopyVertex: roots=1 scopeVertices=1001
+20:00:43:304[1]: VertexOperations.CopySubGraphIntoVertex: collectMs=20 holdersMs=43 recreateMs=148 dropHoldersMs=9 scopeVertices=4001 copiedEdges=4000
+20:00:43:304[1]: VertexOperations.CopyVertex: roots=1 scopeVertices=4001
+20:00:44:53[1]: VertexOperations.CopySubGraphIntoVertex: collectMs=9 holdersMs=184 recreateMs=151 dropHoldersMs=101 scopeVertices=5001 copiedEdges=5000
+20:00:44:53[1]: VertexOperations.CopyVertex: roots=1 scopeVertices=5001
+20:00:46:625[1]: VertexOperations.CopySubGraphIntoVertex: collectMs=46 holdersMs=449 recreateMs=324 dropHoldersMs=77 scopeVertices=20001 copiedEdges=20000
+20:00:46:625[1]: VertexOperations.CopyVertex: roots=1 scopeVertices=20001
+20:00:47:429[1]: VertexOperations.CopySubGraphIntoVertex: collectMs=15 holdersMs=87 recreateMs=116 dropHoldersMs=20 scopeVertices=10001 copiedEdges=10000
+20:00:47:429[1]: VertexOperations.CopyVertex: roots=1 scopeVertices=10001
+20:00:49:392[1]: VertexOperations.CopySubGraphIntoVertex: collectMs=36 holdersMs=311 recreateMs=282 dropHoldersMs=23 scopeVertices=40001 copiedEdges=40000
+20:00:49:392[1]: VertexOperations.CopyVertex: roots=1 scopeVertices=40001
+20:00:50:802[1]: VertexOperations.CopySubGraphIntoVertex: collectMs=9 holdersMs=255 recreateMs=134 dropHoldersMs=12 scopeVertices=30001 copiedEdges=30000
+20:00:50:802[1]: VertexOperations.CopyVertex: roots=1 scopeVertices=30001
+20:00:56:69[1]: VertexOperations.CopySubGraphIntoVertex: collectMs=54 holdersMs=834 recreateMs=830 dropHoldersMs=46 scopeVertices=120001 copiedEdges=120000
+20:00:56:69[1]: VertexOperations.CopyVertex: roots=1 scopeVertices=120001
+20:00:58:720[1]: VertexOperations.CopySubGraphIntoVertex: collectMs=14 holdersMs=293 recreateMs=202 dropHoldersMs=14 scopeVertices=50001 copiedEdges=50000
+20:00:58:720[1]: VertexOperations.CopyVertex: roots=1 scopeVertices=50001
+20:01:05:309[1]: VertexOperations.CopySubGraphIntoVertex: collectMs=145 holdersMs=1024 recreateMs=1539 dropHoldersMs=186 scopeVertices=200001 copiedEdges=200000
+20:01:05:309[1]: VertexOperations.CopyVertex: roots=1 scopeVertices=200001

@@ -1,0 +1,11 @@
+shape,topEdges,totalEdges,copyMs,commitMs,totalMs
+star,1000,1000,19,2,21
+three-children,1000,4000,221,5,226
+star,5000,5000,447,174,621
+three-children,5000,20000,899,30,929
+star,10000,10000,240,14,254
+three-children,10000,40000,654,71,725
+star,30000,30000,411,44,455
+three-children,30000,120000,1766,115,1881
+star,50000,50000,525,42,567
+three-children,50000,200000,2896,196,3092

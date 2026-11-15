@@ -2151,9 +2151,22 @@ namespace m0.ZeroUML.Instructions
             IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
             IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 
+            bool measureScale = GraphScaleDiagnostics.Enabled;
+            if (measureScale)
+                GraphScaleDiagnostics.RecordPlusLessFanout(
+                    leftExecuteResult.Count,
+                    rightExecuteResult.Count);
+
             foreach (IEdge leftEdge in leftExecuteResult)
                 foreach (IEdge rightEdge in rightExecuteResult)
+                {
+                    if (measureScale)
+                        GraphScaleDiagnostics.RecordPlusLessTarget(
+                            leftEdge.To,
+                            rightEdge.Meta);
+
                     leftEdge.To.AddEdge(rightEdge.Meta, rightEdge.To);
+                }
 
             return exe.Stack;
         }
@@ -4406,6 +4419,7 @@ namespace m0.ZeroUML.Instructions
 
                 foreach (IEdge e in rightExecuteResult)
                 {
+                    GraphScaleDiagnostics.RecordNewVertex();
                     IVertex newVertex = creationTarget.AddVertex(meta, e.To.Value);
 
                     if (additionalCreationStack != null)
@@ -4466,6 +4480,7 @@ namespace m0.ZeroUML.Instructions
 
                 foreach (IEdge e in rightExecuteResult)
                 {
+                    GraphScaleDiagnostics.RecordLinkTarget(e.To);
                     IEdge newEdge = creationTarget.AddEdge(meta, e.To);
 
                     toReturn = NextExpressionHandle(exe, newEdge.To, instructionVertex);

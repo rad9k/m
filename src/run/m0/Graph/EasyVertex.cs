@@ -1104,6 +1104,8 @@ namespace m0.Graph
 
         protected virtual void OutEdgesDictionariesRebuild_Edges()
         {
+            GraphScaleDiagnostics.RecordOutIndexRebuild(
+                OutEdgesRaw.Count);
             HashSet<IVertex> parents = null;
 
             if (HasInheritance && AllowInheritance)
@@ -1182,6 +1184,9 @@ namespace m0.Graph
             if (!CanShareOutEdgesRebuild())
                 return false;
 
+            GraphScaleDiagnostics.RecordOutIndexRebuild(
+                OutEdgesRaw.Count);
+
             HashSet<IVertex> parents =
                 GetSharedRebuildParents(out int capacity);
             List<IEdge> fullEdges =
@@ -1245,6 +1250,9 @@ namespace m0.Graph
         {
             if (!CanShareOutEdgesRebuild())
                 return false;
+
+            GraphScaleDiagnostics.RecordOutIndexRebuild(
+                OutEdgesRaw.Count);
 
             HashSet<IVertex> parents =
                 GetSharedRebuildParents(out int capacity);
@@ -1342,6 +1350,9 @@ namespace m0.Graph
             if (!CanShareOutEdgesRebuild())
                 return false;
 
+            GraphScaleDiagnostics.RecordOutIndexRebuild(
+                OutEdgesRaw.Count);
+
             HashSet<IVertex> parents =
                 GetSharedRebuildParents(out int capacity);
             List<IEdge> fullEdges =
@@ -1423,6 +1434,9 @@ namespace m0.Graph
         {
             if (!CanShareOutEdgesRebuild())
                 return false;
+
+            GraphScaleDiagnostics.RecordOutIndexRebuild(
+                OutEdgesRaw.Count);
 
             HashSet<IVertex> parents =
                 GetSharedRebuildParents(out int capacity);
@@ -1513,6 +1527,8 @@ namespace m0.Graph
         private void InEdgesDictionariesRebuild_Meta()
         {
             IList<IEdge> inEdges = InEdgesRaw;
+            GraphScaleDiagnostics.RecordInIndexRebuild(
+                inEdges.Count);
             Dictionary<string, object> edgesByMeta =
                 new Dictionary<string, object>(inEdges.Count);
 
@@ -1533,6 +1549,8 @@ namespace m0.Graph
                 return;
 
             IList<IEdge> outEdges = OutEdges;
+            GraphScaleDiagnostics.RecordOutIndexRebuild(
+                outEdges.Count);
             Dictionary<object, object> directEdgesByMeta =
                 new Dictionary<object, object>(outEdges.Count);
 
@@ -1555,6 +1573,8 @@ namespace m0.Graph
                 return;
 
             IList<IEdge> outEdges = OutEdges;
+            GraphScaleDiagnostics.RecordOutIndexRebuild(
+                outEdges.Count);
             Dictionary<string, EdgeBucket>
                 queryEdgesByMeta =
                     new Dictionary<
@@ -1575,6 +1595,8 @@ namespace m0.Graph
         private void InEdgesDictionariesRebuild_Value()
         {
             IList<IEdge> inEdges = InEdgesRaw;
+            GraphScaleDiagnostics.RecordInIndexRebuild(
+                inEdges.Count);
             Dictionary<string, object> edgesByValue =
                 new Dictionary<string, object>(inEdges.Count);
             bool hasExplicitQueryValueSources =
@@ -1608,6 +1630,8 @@ namespace m0.Graph
                 return;
 
             IList<IEdge> outEdges = OutEdges;
+            GraphScaleDiagnostics.RecordOutIndexRebuild(
+                outEdges.Count);
             Dictionary<string, object> edgesByValue =
                 new Dictionary<string, object>(outEdges.Count);
             bool hasExplicitQueryValueTargets =
@@ -1640,6 +1664,8 @@ namespace m0.Graph
         private void InEdgesDictionariesRebuild_MetaAndValue()
         {
             IList<IEdge> inEdges = InEdgesRaw;
+            GraphScaleDiagnostics.RecordInIndexRebuild(
+                inEdges.Count);
             Dictionary<GraphUtil.MetaAndValueKey, object> edgesByMetaAndValue =
                 new Dictionary<GraphUtil.MetaAndValueKey, object>(inEdges.Count);
             bool hasExplicitQueryValueSources =
@@ -1674,6 +1700,8 @@ namespace m0.Graph
                 return;
 
             IList<IEdge> outEdges = OutEdges;
+            GraphScaleDiagnostics.RecordOutIndexRebuild(
+                outEdges.Count);
             Dictionary<GraphUtil.MetaAndValueKey, object> queryEdgesByMetaAndValue =
                 new Dictionary<GraphUtil.MetaAndValueKey, object>(outEdges.Count);
             bool hasExplicitQueryValueTargets =
@@ -2372,6 +2400,7 @@ namespace m0.Graph
                     destVertex);
             }
 
+            GraphScaleDiagnostics.RecordAddEdge();
             EdgeBase ne = CreateEdge(
                 metaVertex,
                 destVertex);

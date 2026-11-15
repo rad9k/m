@@ -62,7 +62,7 @@ internal static class ZeroCodeDiagnosticsRunner
             ZeroCodePerformanceCounters.Enabled = false;
         }
 
-        TimeSpan elapsed = Stopwatch.GetElapsedTime(started);
+        System.TimeSpan elapsed = Stopwatch.GetElapsedTime(started);
         long allocatedBytes =
             GC.GetAllocatedBytesForCurrentThread() -
             allocatedBytesBefore;

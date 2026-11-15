@@ -1,6 +1,18 @@
 ﻿using BenchmarkDotNet.Running;
 using m0_graph_benchmarks;
 
+if (args.Contains("--paste-deep-timing"))
+{
+    PasteDeepCopyTimingRunner.Run();
+    return;
+}
+
+if (args.Contains("--temp-edge-scale"))
+{
+    TempEdgeScaleTimingRunner.Run();
+    return;
+}
+
 if (args.Contains("--zerocode-diagnostics"))
 {
     string[] requestedPrograms = args

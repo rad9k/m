@@ -614,7 +614,10 @@ namespace m0.ZeroTypes
             // Create one copy per scope vertex. New vertices must live in copyTo's store, so they
             // are created via copyTo and kept alive by a temporary holder edge until the real edges
             // are wired. The holder churn is hidden from graph change watchers.
+            // Holders are a contiguous tail at this moment. Later root edges are appended after them,
+            // so deleting holders from the last index downward only shifts those few root edges.
             List<IEdge> tempEdges = new List<IEdge>();
+            int firstHolderIndex = copyTo.OutEdgesRaw.Count;
 
             TurnGraphChangeWatchOff();
             try
@@ -661,12 +664,92 @@ namespace m0.ZeroTypes
             TurnGraphChangeWatchOff();
             try
             {
-                foreach (IEdge holder in tempEdges)
-                    holder.From.DeleteEdge(holder);
+                DeleteHolderEdges(copyTo, tempEdges, firstHolderIndex);
             }
             finally
             {
                 RestoreGraphChangeWatch();
+            }
+        }
+
+        static void DeleteHolderEdges(
+            IVertex copyTo,
+            List<IEdge> holders,
+            int firstHolderIndex)
+        {
+            // Holders share the Empty meta, so a normal DeleteEdge scans that meta-in
+            // list once per holder. They were appended as its tail and as a contiguous
+            // span on copyTo, ahead of the few root edges added later.
+            for (int offset = holders.Count - 1; offset >= 0; offset--)
+                UnlinkHolderFromMetaAndTarget(holders[offset]);
+
+            IList<IEdge> outEdges = copyTo.OutEdgesRaw;
+
+            for (int offset = holders.Count - 1; offset >= 0; offset--)
+            {
+                IEdge holder = holders[offset];
+                int index = firstHolderIndex + offset;
+
+                holder.EdgeRemovalExecuting = true;
+
+                try
+                {
+                    if (index >= 0 &&
+                        index < outEdges.Count &&
+                        ReferenceEquals(outEdges[index], holder))
+                    {
+                        outEdges.RemoveAt(index);
+                    }
+                    else
+                        RemoveEdgeFromList(outEdges, holder);
+                }
+                finally
+                {
+                    holder.EdgeRemovalExecuting = false;
+                }
+            }
+        }
+
+        static void UnlinkHolderFromMetaAndTarget(IEdge holder)
+        {
+            holder.EdgeRemovalExecuting = true;
+
+            try
+            {
+                if (holder.Meta != null)
+                    RemoveTailOrScan(holder.Meta.MetaInEdgesRaw, holder);
+
+                if (holder.To != null)
+                    RemoveEdgeFromList(holder.To.InEdgesRaw, holder);
+            }
+            finally
+            {
+                holder.EdgeRemovalExecuting = false;
+            }
+        }
+
+        static void RemoveTailOrScan(IList<IEdge> edges, IEdge edge)
+        {
+            int lastIndex = edges.Count - 1;
+
+            if (lastIndex >= 0 && ReferenceEquals(edges[lastIndex], edge))
+            {
+                edges.RemoveAt(lastIndex);
+                return;
+            }
+
+            RemoveEdgeFromList(edges, edge);
+        }
+
+        static void RemoveEdgeFromList(IList<IEdge> edges, IEdge edge)
+        {
+            for (int index = edges.Count - 1; index >= 0; index--)
+            {
+                if (!ReferenceEquals(edges[index], edge))
+                    continue;
+
+                edges.RemoveAt(index);
+                return;
             }
         }
 
