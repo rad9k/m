@@ -42,7 +42,10 @@ namespace m0.Graph.Internal
 
         public override void OnAdd(IEdge item)
         {
-            edgeDictionaries.Vertex.InEdgesDictionariesNeedsRebuild = true;
+            if (edgeDictionaries.Vertex is EasyVertex easyVertex)
+                easyVertex.HandleLocalInEdgeMutation(item, true);
+            else
+                edgeDictionaries.Vertex.InEdgesDictionariesNeedsRebuild = true;
         }
 
         public override void OnRemove(IEdge item)
@@ -68,11 +71,10 @@ namespace m0.Graph.Internal
                 }
             }
 
-            //
-
-            edgeDictionaries.Vertex.InEdgesDictionariesNeedsRebuild = true;
-
-            //
+            if (edgeDictionaries.Vertex is EasyVertex easyVertex)
+                easyVertex.HandleLocalInEdgeMutation(item, false);
+            else
+                edgeDictionaries.Vertex.InEdgesDictionariesNeedsRebuild = true;
 
             if (shouldCascadeRemoval)
             {

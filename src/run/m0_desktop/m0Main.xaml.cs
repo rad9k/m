@@ -532,7 +532,13 @@ namespace m0
 
                 string title = null;
 
-                if (pc.Vertex.Get(false, @"BaseEdge:\To:")!=null&&pc.Vertex.Get(false, @"BaseEdge:\To:").Value != null&&(!GeneralUtil.CompareStrings(pc.Vertex.Get(false, @"BaseEdge:\To:").Value,"")))
+                if (pc is IUXVisualiser)
+                {
+                    if (pc.Vertex.Value != null &&
+                        !GeneralUtil.CompareStrings(pc.Vertex.Value, ""))
+                        title = pc.Vertex.Value.ToString();
+                }
+                else if (pc.Vertex.Get(false, @"BaseEdge:\To:")!=null&&pc.Vertex.Get(false, @"BaseEdge:\To:").Value != null&&(!GeneralUtil.CompareStrings(pc.Vertex.Get(false, @"BaseEdge:\To:").Value,"")))
                     title = pc.Vertex.Get(false, @"BaseEdge:\To:").Value.ToString();
                 else if (pc.Vertex.Value != null)
                     title = pc.Vertex.Value.ToString();

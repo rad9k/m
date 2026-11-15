@@ -61,14 +61,7 @@ internal static class TempEdgeScaleTimingRunner
                     + " edges=" + sample.EdgeCount
                     + " executeMs=" + sample.ExecuteMilliseconds
                     + " commitMs=" + sample.CommitMilliseconds
-                    + " totalMs=" + sample.TotalMilliseconds
-                    + " allocatedMB="
-                    + (sample.AllocatedBytes / 1048576.0)
-                        .ToString("F1", CultureInfo.InvariantCulture)
-                    + " coalesceSteps=" + sample.Counters.CoalesceSteps);
-                WriteLine(
-                    GraphScaleDiagnostics.FormatReport(
-                        sample.Counters));
+                    + " totalMs=" + sample.TotalMilliseconds);
             }
         }
 
@@ -113,15 +106,10 @@ internal static class TempEdgeScaleTimingRunner
         GC.WaitForPendingFinalizers();
         GC.Collect();
 
-        GraphScaleDiagnostics.Reset();
-        GraphScaleDiagnostics.Enabled = true;
         ExecutionFlowHelper.StartTransaction();
         long executeMilliseconds;
         long commitMilliseconds;
-        long allocatedBytes;
         IVertex result;
-        long allocatedBytesBefore =
-            GC.GetTotalAllocatedBytes(true);
 
         try
         {
@@ -142,53 +130,20 @@ internal static class TempEdgeScaleTimingRunner
             ExecutionFlowHelper.CommitTransaction();
             commitWatch.Stop();
             commitMilliseconds = commitWatch.ElapsedMilliseconds;
-            allocatedBytes =
-                GC.GetTotalAllocatedBytes(true) -
-                allocatedBytesBefore;
         }
         catch
         {
-            GraphScaleDiagnostics.Enabled = false;
-
             if (MinusZero.Instance.GetTopTransaction() != null)
                 ExecutionFlowHelper.RollbackTransaction();
 
             throw;
-        }
-        finally
-        {
-            GraphScaleDiagnostics.Enabled = false;
-        }
-
-        GraphScaleSnapshot counters =
-            GraphScaleDiagnostics.GetSnapshot();
-
-        if (series.LinkInside &&
-            counters.LinkOperations == 0)
-        {
-            throw new InvalidOperationException(
-                "The link program did not execute ::>. Program: "
-                + DescribeDirectEdges(program));
-        }
-
-        if (!series.LinkInside &&
-            counters.NewVertexOperations < edgeCount)
-        {
-            throw new InvalidOperationException(
-                "The new-vertex program executed :: "
-                + counters.NewVertexOperations
-                + " times, expected at least "
-                + edgeCount
-                + ".");
         }
 
         return new TimingSample(
             series.Name,
             edgeCount,
             executeMilliseconds,
-            commitMilliseconds,
-            allocatedBytes,
-            counters);
+            commitMilliseconds);
     }
 
     private static IVertex ParseProgram(Series series, int edgeCount)
@@ -359,15 +314,10 @@ internal static class TempEdgeScaleTimingRunner
     {
         StringBuilder csv = new StringBuilder();
         csv.AppendLine(
-            "series,edges,executeMs,commitMs,totalMs,"
-            + "coalesceOutSteps,coalesceInSteps,coalesceMetaSteps,"
-            + "coalesceOutMax,coalesceInMax,coalesceMetaMax,"
-            + "outEdgesScanned,inEdgesScanned,addEdge,"
-            + "newVertex,link,linkSameTarget");
+            "series,edges,executeMs,commitMs,totalMs");
 
         foreach (TimingSample sample in samples)
         {
-            GraphScaleSnapshot counters = sample.Counters;
             csv.Append(sample.SeriesName);
             csv.Append(',');
             csv.Append(sample.EdgeCount.ToString(
@@ -379,43 +329,7 @@ internal static class TempEdgeScaleTimingRunner
             csv.Append(sample.CommitMilliseconds.ToString(
                 CultureInfo.InvariantCulture));
             csv.Append(',');
-            csv.Append(sample.TotalMilliseconds.ToString(
-                CultureInfo.InvariantCulture));
-            csv.Append(',');
-            csv.Append(counters.CoalesceOutSteps.ToString(
-                CultureInfo.InvariantCulture));
-            csv.Append(',');
-            csv.Append(counters.CoalesceInSteps.ToString(
-                CultureInfo.InvariantCulture));
-            csv.Append(',');
-            csv.Append(counters.CoalesceMetaSteps.ToString(
-                CultureInfo.InvariantCulture));
-            csv.Append(',');
-            csv.Append(counters.CoalesceOutMaxList.ToString(
-                CultureInfo.InvariantCulture));
-            csv.Append(',');
-            csv.Append(counters.CoalesceInMaxList.ToString(
-                CultureInfo.InvariantCulture));
-            csv.Append(',');
-            csv.Append(counters.CoalesceMetaMaxList.ToString(
-                CultureInfo.InvariantCulture));
-            csv.Append(',');
-            csv.Append(counters.OutIndexRebuildEdges.ToString(
-                CultureInfo.InvariantCulture));
-            csv.Append(',');
-            csv.Append(counters.InIndexRebuildEdges.ToString(
-                CultureInfo.InvariantCulture));
-            csv.Append(',');
-            csv.Append(counters.AddEdgeCalls.ToString(
-                CultureInfo.InvariantCulture));
-            csv.Append(',');
-            csv.Append(counters.NewVertexOperations.ToString(
-                CultureInfo.InvariantCulture));
-            csv.Append(',');
-            csv.Append(counters.LinkOperations.ToString(
-                CultureInfo.InvariantCulture));
-            csv.Append(',');
-            csv.AppendLine(counters.LinkSameTargetCount.ToString(
+            csv.AppendLine(sample.TotalMilliseconds.ToString(
                 CultureInfo.InvariantCulture));
         }
 
@@ -531,7 +445,7 @@ internal static class TempEdgeScaleTimingRunner
             " From 10000 to 50000 edges, linear growth is about 5 and quadratic growth is about 25. Time is execute plus commit.</p>");
         html.Append(svg);
         html.Append(
-            "<table><tr><th>edges</th><th>newVertexMs</th><th>linkMs</th><th>linkOverNew</th><th>newExecuteMs</th><th>newCommitMs</th><th>linkExecuteMs</th><th>linkCommitMs</th><th>newCoalesceSteps</th><th>linkCoalesceSteps</th></tr>");
+            "<table><tr><th>edges</th><th>newVertexMs</th><th>linkMs</th><th>linkOverNew</th><th>newExecuteMs</th><th>newCommitMs</th><th>linkExecuteMs</th><th>linkCommitMs</th></tr>");
 
         foreach (int edgeCount in EdgeCounts)
         {
@@ -566,12 +480,6 @@ internal static class TempEdgeScaleTimingRunner
                     CultureInfo.InvariantCulture))
                 .Append("</td><td>")
                 .Append(link.CommitMilliseconds.ToString(
-                    CultureInfo.InvariantCulture))
-                .Append("</td><td>")
-                .Append(newVertex.Counters.CoalesceSteps.ToString(
-                    CultureInfo.InvariantCulture))
-                .Append("</td><td>")
-                .Append(link.Counters.CoalesceSteps.ToString(
                     CultureInfo.InvariantCulture))
                 .Append("</td></tr>");
         }
@@ -723,16 +631,12 @@ internal static class TempEdgeScaleTimingRunner
             string seriesName,
             int edgeCount,
             long executeMilliseconds,
-            long commitMilliseconds,
-            long allocatedBytes,
-            GraphScaleSnapshot counters)
+            long commitMilliseconds)
         {
             SeriesName = seriesName;
             EdgeCount = edgeCount;
             ExecuteMilliseconds = executeMilliseconds;
             CommitMilliseconds = commitMilliseconds;
-            AllocatedBytes = allocatedBytes;
-            Counters = counters;
         }
 
         internal string SeriesName { get; }
@@ -742,10 +646,6 @@ internal static class TempEdgeScaleTimingRunner
         internal long ExecuteMilliseconds { get; }
 
         internal long CommitMilliseconds { get; }
-
-        internal long AllocatedBytes { get; }
-
-        internal GraphScaleSnapshot Counters { get; }
 
         internal long TotalMilliseconds =>
             ExecuteMilliseconds + CommitMilliseconds;

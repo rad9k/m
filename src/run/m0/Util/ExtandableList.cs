@@ -65,10 +65,19 @@ namespace m0.Util
         // original order. OnRemove runs after the item is already gone from this list.
         public void RemoveReferencedItems(HashSet<T> itemsToRemove)
         {
-            if (itemsToRemove == null || itemsToRemove.Count == 0 || list.Count == 0)
-                return;
+            List<T> removedItems = RemoveReferencedItemsWithoutCallbacks(itemsToRemove);
 
-            List<T> removedItems = null;
+            for (int index = 0; index < removedItems.Count; index++)
+                OnRemove(removedItems[index]);
+        }
+
+        public List<T> RemoveReferencedItemsWithoutCallbacks(HashSet<T> itemsToRemove)
+        {
+            List<T> removedItems = new List<T>();
+
+            if (itemsToRemove == null || itemsToRemove.Count == 0 || list.Count == 0)
+                return removedItems;
+
             int writeIndex = 0;
 
             for (int readIndex = 0; readIndex < list.Count; readIndex++)
@@ -77,9 +86,6 @@ namespace m0.Util
 
                 if (itemsToRemove.Contains(item))
                 {
-                    if (removedItems == null)
-                        removedItems = new List<T>();
-
                     removedItems.Add(item);
                     continue;
                 }
@@ -90,16 +96,10 @@ namespace m0.Util
                 writeIndex++;
             }
 
-            if (writeIndex == list.Count)
-                return;
+            if (writeIndex < list.Count)
+                list.RemoveRange(writeIndex, list.Count - writeIndex);
 
-            list.RemoveRange(writeIndex, list.Count - writeIndex);
-
-            if (removedItems == null)
-                return;
-
-            for (int index = 0; index < removedItems.Count; index++)
-                OnRemove(removedItems[index]);
+            return removedItems;
         }
 
         public void Add(T item)

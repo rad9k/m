@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -462,24 +461,14 @@ namespace m0.Graph
 
         protected void ValueChanged()
         {
-            int inEdgeCount =
-                StoredInEdgeCount;
-            if (inEdgeCount == 1)
+            if (outValueIndexDependents != null &&
+                outValueIndexDependents.Count > 0)
             {
-                IVertex sourceVertex = InEdgesRaw[0].From;
+                EasyVertex[] dependents =
+                    new EasyVertex[outValueIndexDependents.Count];
+                outValueIndexDependents.CopyTo(dependents);
 
-                if (sourceVertex != null)
-                    InvalidateOutValueIndexes(sourceVertex);
-            }
-            else if (inEdgeCount > 1)
-            {
-                HashSet<IVertex> affectedSourceVertices = new HashSet<IVertex>();
-
-                foreach (IEdge e in InEdgesRaw)
-                    if (e.From != null) // there could be artificial edge, with From==null
-                        affectedSourceVertices.Add(e.From);
-
-                foreach (IVertex sourceVertex in affectedSourceVertices)
+                foreach (EasyVertex sourceVertex in dependents)
                     InvalidateOutValueIndexes(sourceVertex);
             }
 
@@ -618,10 +607,81 @@ namespace m0.Graph
             IncrementInheritanceDependencyEpoch();
         }
 
+        private HashSet<EasyVertex> outValueIndexDependents;
+
+        private byte outValueIndexLiveBits;
+
+        protected override void OnOutIndexesMarkedDirty()
+        {
+            DropOutValueIndexDependencies();
+        }
+
+        private void OnOutValueIndexBuilt(bool metaAndValue)
+        {
+            byte bit = metaAndValue ? (byte)2 : (byte)1;
+            if ((outValueIndexLiveBits & bit) != 0)
+                return;
+
+            bool wasRegistered = outValueIndexLiveBits != 0;
+            outValueIndexLiveBits |= bit;
+            if (!wasRegistered)
+                RegisterWithOutValueTargets();
+        }
+
+        private void DropOutValueIndex(bool metaAndValue)
+        {
+            byte bit = metaAndValue ? (byte)2 : (byte)1;
+            if ((outValueIndexLiveBits & bit) == 0)
+                return;
+
+            outValueIndexLiveBits &= (byte)~bit;
+            if (outValueIndexLiveBits == 0)
+                UnregisterFromOutValueTargets();
+        }
+
+        private void DropOutValueIndexDependencies()
+        {
+            if (outValueIndexLiveBits == 0)
+                return;
+
+            outValueIndexLiveBits = 0;
+            UnregisterFromOutValueTargets();
+        }
+
+        private void RegisterWithOutValueTargets()
+        {
+            foreach (IEdge edge in OutEdgesRaw)
+                AddOutValueDependent(edge.To);
+        }
+
+        private void UnregisterFromOutValueTargets()
+        {
+            foreach (IEdge edge in OutEdgesRaw)
+                RemoveOutValueDependent(edge.To);
+        }
+
+        private void AddOutValueDependent(IVertex targetVertex)
+        {
+            if (targetVertex is EasyVertex target)
+            {
+                target.outValueIndexDependents ??=
+                    new HashSet<EasyVertex>(
+                        ReferenceEqualityComparer.Instance);
+                target.outValueIndexDependents.Add(this);
+            }
+        }
+
+        private void RemoveOutValueDependent(IVertex targetVertex)
+        {
+            if (targetVertex is EasyVertex target)
+                target.outValueIndexDependents?.Remove(this);
+        }
+
         private static void MarkOutValueIndexesNeedRebuild(IVertex vertex)
         {
             if (vertex is EasyVertex easyVertex)
             {
+                easyVertex.DropOutValueIndexDependencies();
                 easyVertex.OutEdgesDictionariesNeedsRebuild_Value = true;
                 easyVertex.OutEdgesDictionariesNeedsRebuild_MetaAndValue = true;
                 return;
@@ -1054,10 +1114,12 @@ namespace m0.Graph
                         true;
                     break;
                 case InheritedOutIndexKind.Value:
+                    DropOutValueIndex(false);
                     OutEdgesDictionariesNeedsRebuild_Value =
                         true;
                     break;
                 case InheritedOutIndexKind.QueryMetaAndValue:
+                    DropOutValueIndex(true);
                     OutEdgesDictionariesNeedsRebuild_MetaAndValue =
                         true;
                     break;
@@ -1105,10 +1167,6 @@ namespace m0.Graph
 
         protected virtual void OutEdgesDictionariesRebuild_Edges()
         {
-            using var outIndexScope =
-                GraphScaleDiagnostics.BeginOutIndex();
-            GraphScaleDiagnostics.RecordOutIndexRebuild(
-                OutEdgesRaw.Count);
             HashSet<IVertex> parents = null;
 
             if (HasInheritance && AllowInheritance)
@@ -1187,11 +1245,6 @@ namespace m0.Graph
             if (!CanShareOutEdgesRebuild())
                 return false;
 
-            using var outIndexScope =
-                GraphScaleDiagnostics.BeginOutIndex();
-            GraphScaleDiagnostics.RecordOutIndexRebuild(
-                OutEdgesRaw.Count);
-
             HashSet<IVertex> parents =
                 GetSharedRebuildParents(out int capacity);
             List<IEdge> fullEdges =
@@ -1255,11 +1308,6 @@ namespace m0.Graph
         {
             if (!CanShareOutEdgesRebuild())
                 return false;
-
-            using var outIndexScope =
-                GraphScaleDiagnostics.BeginOutIndex();
-            GraphScaleDiagnostics.RecordOutIndexRebuild(
-                OutEdgesRaw.Count);
 
             HashSet<IVertex> parents =
                 GetSharedRebuildParents(out int capacity);
@@ -1357,11 +1405,6 @@ namespace m0.Graph
             if (!CanShareOutEdgesRebuild())
                 return false;
 
-            using var outIndexScope =
-                GraphScaleDiagnostics.BeginOutIndex();
-            GraphScaleDiagnostics.RecordOutIndexRebuild(
-                OutEdgesRaw.Count);
-
             HashSet<IVertex> parents =
                 GetSharedRebuildParents(out int capacity);
             List<IEdge> fullEdges =
@@ -1432,6 +1475,7 @@ namespace m0.Graph
             outEdgesHaveExplicitQueryValueTargets =
                 hasExplicitQueryValueTargets;
             OutEdgesDictionariesNeedsRebuild_Value = false;
+            OnOutValueIndexBuilt(false);
             CompleteSharedOutEdgesRebuild(
                 fullEdges,
                 parents,
@@ -1443,11 +1487,6 @@ namespace m0.Graph
         {
             if (!CanShareOutEdgesRebuild())
                 return false;
-
-            using var outIndexScope =
-                GraphScaleDiagnostics.BeginOutIndex();
-            GraphScaleDiagnostics.RecordOutIndexRebuild(
-                OutEdgesRaw.Count);
 
             HashSet<IVertex> parents =
                 GetSharedRebuildParents(out int capacity);
@@ -1528,6 +1567,7 @@ namespace m0.Graph
             outEdgesHaveExplicitQueryValueTargets =
                 hasExplicitQueryValueTargets;
             OutEdgesDictionariesNeedsRebuild_MetaAndValue = false;
+            OnOutValueIndexBuilt(true);
             CompleteSharedOutEdgesRebuild(
                 fullEdges,
                 parents,
@@ -1538,10 +1578,6 @@ namespace m0.Graph
         private void InEdgesDictionariesRebuild_Meta()
         {
             IList<IEdge> inEdges = InEdgesRaw;
-            using var inIndexScope =
-                GraphScaleDiagnostics.BeginInIndex();
-            GraphScaleDiagnostics.RecordInIndexRebuild(
-                inEdges.Count);
             Dictionary<string, object> edgesByMeta =
                 new Dictionary<string, object>(inEdges.Count);
 
@@ -1562,10 +1598,6 @@ namespace m0.Graph
                 return;
 
             IList<IEdge> outEdges = OutEdges;
-            using var outIndexScope =
-                GraphScaleDiagnostics.BeginOutIndex();
-            GraphScaleDiagnostics.RecordOutIndexRebuild(
-                outEdges.Count);
             Dictionary<object, object> directEdgesByMeta =
                 new Dictionary<object, object>(outEdges.Count);
 
@@ -1588,10 +1620,6 @@ namespace m0.Graph
                 return;
 
             IList<IEdge> outEdges = OutEdges;
-            using var outIndexScope =
-                GraphScaleDiagnostics.BeginOutIndex();
-            GraphScaleDiagnostics.RecordOutIndexRebuild(
-                outEdges.Count);
             Dictionary<string, EdgeBucket>
                 queryEdgesByMeta =
                     new Dictionary<
@@ -1612,10 +1640,6 @@ namespace m0.Graph
         private void InEdgesDictionariesRebuild_Value()
         {
             IList<IEdge> inEdges = InEdgesRaw;
-            using var inIndexScope =
-                GraphScaleDiagnostics.BeginInIndex();
-            GraphScaleDiagnostics.RecordInIndexRebuild(
-                inEdges.Count);
             Dictionary<string, object> edgesByValue =
                 new Dictionary<string, object>(inEdges.Count);
             bool hasExplicitQueryValueSources =
@@ -1649,10 +1673,6 @@ namespace m0.Graph
                 return;
 
             IList<IEdge> outEdges = OutEdges;
-            using var outIndexScope =
-                GraphScaleDiagnostics.BeginOutIndex();
-            GraphScaleDiagnostics.RecordOutIndexRebuild(
-                outEdges.Count);
             Dictionary<string, object> edgesByValue =
                 new Dictionary<string, object>(outEdges.Count);
             bool hasExplicitQueryValueTargets =
@@ -1678,6 +1698,7 @@ namespace m0.Graph
             outEdgesHaveExplicitQueryValueTargets =
                 hasExplicitQueryValueTargets;
             OutEdgesDictionariesNeedsRebuild_Value = false;
+            OnOutValueIndexBuilt(false);
             CompleteInheritedOutIndexRebuild(
                 InheritedOutIndexKind.Value);
         }
@@ -1685,10 +1706,6 @@ namespace m0.Graph
         private void InEdgesDictionariesRebuild_MetaAndValue()
         {
             IList<IEdge> inEdges = InEdgesRaw;
-            using var inIndexScope =
-                GraphScaleDiagnostics.BeginInIndex();
-            GraphScaleDiagnostics.RecordInIndexRebuild(
-                inEdges.Count);
             Dictionary<GraphUtil.MetaAndValueKey, object> edgesByMetaAndValue =
                 new Dictionary<GraphUtil.MetaAndValueKey, object>(inEdges.Count);
             bool hasExplicitQueryValueSources =
@@ -1723,10 +1740,6 @@ namespace m0.Graph
                 return;
 
             IList<IEdge> outEdges = OutEdges;
-            using var outIndexScope =
-                GraphScaleDiagnostics.BeginOutIndex();
-            GraphScaleDiagnostics.RecordOutIndexRebuild(
-                outEdges.Count);
             Dictionary<GraphUtil.MetaAndValueKey, object> queryEdgesByMetaAndValue =
                 new Dictionary<GraphUtil.MetaAndValueKey, object>(outEdges.Count);
             bool hasExplicitQueryValueTargets =
@@ -1755,8 +1768,83 @@ namespace m0.Graph
             outEdgesHaveExplicitQueryValueTargets =
                 hasExplicitQueryValueTargets;
             OutEdgesDictionariesNeedsRebuild_MetaAndValue = false;
+            OnOutValueIndexBuilt(true);
             CompleteInheritedOutIndexRebuild(
                 InheritedOutIndexKind.QueryMetaAndValue);
+        }
+
+        internal void HandleLocalInEdgeMutation(
+            IEdge edge,
+            bool added)
+        {
+            PatchInMetaIndex(edge, added);
+            PatchInValueIndexes(edge, added);
+        }
+
+        private void PatchInMetaIndex(IEdge edge, bool added)
+        {
+            if (InEdgesDictionariesNeedsRebuild_Meta)
+                return;
+
+            if (_InEdgesByMeta == null ||
+                !ApplyIncrementalDictionaryMutation(
+                    _InEdgesByMeta,
+                    GetQueryDictionaryKey(edge?.Meta?.Value),
+                    edge,
+                    added))
+                InEdgesDictionariesNeedsRebuild_Meta = true;
+        }
+
+        private void PatchInValueIndexes(IEdge edge, bool added)
+        {
+            bool valueIndexIsCurrent =
+                !InEdgesDictionariesNeedsRebuild_Value &&
+                _InEdgesByValue != null;
+            bool metaAndValueIndexIsCurrent =
+                !InEdgesDictionariesNeedsRebuild_MetaAndValue &&
+                _InEdgesByMetaAndValue != null;
+
+            if (!valueIndexIsCurrent &&
+                !metaAndValueIndexIsCurrent)
+            {
+                if (!InEdgesDictionariesNeedsRebuild_Value &&
+                    _InEdgesByValue == null)
+                    InEdgesDictionariesNeedsRebuild_Value = true;
+
+                if (!InEdgesDictionariesNeedsRebuild_MetaAndValue &&
+                    _InEdgesByMetaAndValue == null)
+                    InEdgesDictionariesNeedsRebuild_MetaAndValue = true;
+
+                return;
+            }
+
+            if (!TryGetIndexableQueryValue(
+                    edge?.From,
+                    out object fromValue))
+            {
+                if (added)
+                    inEdgesHaveExplicitQueryValueSources = true;
+
+                return;
+            }
+
+            if (valueIndexIsCurrent &&
+                !ApplyIncrementalDictionaryMutation(
+                    _InEdgesByValue,
+                    GetQueryDictionaryKey(fromValue),
+                    edge,
+                    added))
+                InEdgesDictionariesNeedsRebuild_Value = true;
+
+            if (metaAndValueIndexIsCurrent &&
+                !ApplyIncrementalDictionaryMutation(
+                    _InEdgesByMetaAndValue,
+                    new GraphUtil.MetaAndValueKey(
+                        edge?.Meta?.Value,
+                        fromValue),
+                    edge,
+                    added))
+                InEdgesDictionariesNeedsRebuild_MetaAndValue = true;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1904,6 +1992,8 @@ namespace m0.Graph
                             true;
 
                     patchedAny = true;
+                    if (added)
+                        AddOutValueDependent(edge.To);
                 }
                 else
                     patchSucceeded = false;
@@ -1938,6 +2028,8 @@ namespace m0.Graph
                             true;
 
                     patchedAny = true;
+                    if (added)
+                        AddOutValueDependent(edge.To);
                 }
                 else
                     patchSucceeded = false;
@@ -2347,6 +2439,7 @@ namespace m0.Graph
         private void MarkMetaQueryIndexesNeedRebuild(bool directMeta)
         {
             OutEdgesDictionariesNeedsRebuild_QueryMeta = true;
+            DropOutValueIndex(true);
             OutEdgesDictionariesNeedsRebuild_MetaAndValue = true;
 
             if (directMeta)
@@ -2425,7 +2518,6 @@ namespace m0.Graph
                     destVertex);
             }
 
-            GraphScaleDiagnostics.RecordAddEdge();
             EdgeBase ne = CreateEdge(
                 metaVertex,
                 destVertex);
@@ -2679,9 +2771,14 @@ namespace m0.Graph
 
             GraphUtil.Debug(this, DebugOperationEnum.Dispose);
 
-            DeleteAllInEdges();
-            DeleteAllMetaInEdges();
-            DeleteAllEdges();
+            if (SecondStageEdgeRemovalBatch.IsActive)
+                ScheduleDisposeEdgesForSecondStageBatch();
+            else
+            {
+                DeleteAllInEdges();
+                DeleteAllMetaInEdges();
+                DeleteAllEdges();
+            }
 
             Store.RemoveVertexIdentifier(this);
 
@@ -2693,6 +2790,28 @@ namespace m0.Graph
                 StoredInEdgeCount,
                 StoredMetaInEdgeCount,
                 StoredOutEdgeCount);
+        }
+
+        void ScheduleDisposeEdgesForSecondStageBatch()
+        {
+            foreach (IEdge edge in InEdgesRaw)
+            {
+                SecondStageEdgeRemovalBatch.Add(edge);
+
+                if (CanEmitGraphChangeEvents)
+                    ExecutionFlowHelper.AddTransactionAtom(new GraphChangeTransactionAtom(
+                        edge.From,
+                        AtomGraphChangeTypeEnum.OutputEdgeDisposed,
+                        null,
+                        null,
+                        edge));
+            }
+
+            foreach (IEdge edge in MetaInEdgesRaw)
+                SecondStageEdgeRemovalBatch.Add(edge);
+
+            foreach (IEdge edge in OutEdgesRaw)
+                SecondStageEdgeRemovalBatch.Add(edge);
         }
 
         public void DeleteAllInEdges()
@@ -3120,22 +3239,7 @@ namespace m0.Graph
             if (meta != null && from == null)
             {
                 if (InEdgesDictionariesNeedsRebuild_Meta)
-                {
-                    bool graphChangeTrigger = string.Equals(
-                        meta as string ?? meta?.ToString(),
-                        "$GraphChangeTrigger",
-                        StringComparison.Ordinal);
-                    bool measure =
-                        GraphScaleDiagnostics.TryReadTimestamp(
-                            out long started);
                     InEdgesDictionariesRebuild_Meta();
-                    if (measure)
-                    {
-                        GraphScaleDiagnostics.RecordMetaOnlyInRebuild(
-                            graphChangeTrigger,
-                            Stopwatch.GetTimestamp() - started);
-                    }
-                }
 
                 string metaKey = GetQueryDictionaryKey(meta);
                 object val;

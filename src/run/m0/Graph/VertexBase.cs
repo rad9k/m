@@ -237,6 +237,7 @@ namespace m0.Graph
                     OutEdgesDictionariesNeedsRebuild_QueryMeta = true;
                     OutEdgesDictionariesNeedsRebuild_Value = true;
                     OutEdgesDictionariesNeedsRebuild_MetaAndValue = true;
+                    OnOutIndexesMarkedDirty();
                 }
                 else
                 {
@@ -260,6 +261,10 @@ namespace m0.Graph
         protected bool OutEdgesDictionariesNeedsRebuild_Value { get; set; }
 
         protected bool OutEdgesDictionariesNeedsRebuild_MetaAndValue { get; set; }
+
+        protected virtual void OnOutIndexesMarkedDirty()
+        {
+        }
 
         public IEdge this[string meta] // XXX serveral optimisations needed!
         {

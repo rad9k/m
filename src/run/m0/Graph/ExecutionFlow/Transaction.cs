@@ -5,7 +5,6 @@ using m0.ZeroCode;
 using m0.ZeroCode.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -572,8 +571,11 @@ namespace m0.Graph.ExecutionFlow
                     wave,
                     secondStageCommitActionList_copy.Count);
 
-                foreach (ISecondStageCommitAction a in secondStageCommitActionList_copy)
-                    a.ExecuteSecondStageCommitAction();
+                using (SecondStageEdgeRemovalBatch.Begin())
+                {
+                    foreach (ISecondStageCommitAction a in secondStageCommitActionList_copy)
+                        a.ExecuteSecondStageCommitAction();
+                }
 
                 GraphLifecycleLog.SecondStageWave(
                     this,
@@ -714,8 +716,7 @@ namespace m0.Graph.ExecutionFlow
                     graphChangeTransactionAtoms_OutEdgeValueChange,
                     listenerEdgeAtomsOut,
                     graphChangeAtom.ChangedVertex,
-                    graphChangeAtom,
-                    GraphScaleListenerChannel.Out);
+                    graphChangeAtom);
             }
 
             if (graphChangeAtom.Type !=
@@ -744,8 +745,7 @@ namespace m0.Graph.ExecutionFlow
                     graphChangeTransactionAtoms_InEdge,
                     listenerEdgeAtomsIn,
                     inEdgeAtom.ChangedVertex,
-                    inEdgeAtom,
-                    GraphScaleListenerChannel.In);
+                    inEdgeAtom);
             }
 
             GraphChangeTransactionAtom metaEdgeAtom =
@@ -766,8 +766,7 @@ namespace m0.Graph.ExecutionFlow
                     graphChangeTransactionAtoms_MetaEdge,
                     listenerEdgeAtomsMeta,
                     metaEdgeAtom.ChangedVertex,
-                    metaEdgeAtom,
-                    GraphScaleListenerChannel.Meta);
+                    metaEdgeAtom);
             }
         }
 
@@ -786,48 +785,18 @@ namespace m0.Graph.ExecutionFlow
                     return true;
                 }
 
-                return QueryGraphChangeTriggerIn(
-                    graphChangeAtom.Edge.From,
-                    true);
-            }
-
-            return graphChangeAtom.Type ==
-                    AtomGraphChangeTypeEnum.ValueChange &&
-                QueryGraphChangeTriggerIn(
-                    graphChangeAtom.ChangedVertex,
-                    false);
-        }
-
-        private static bool QueryGraphChangeTriggerIn(
-            IVertex vertex,
-            bool queriedEdgeFrom)
-        {
-            if (vertex == null)
-            {
                 return GraphUtil.ExistQueryIn(
-                    vertex,
+                    graphChangeAtom.Edge.From,
                     "$GraphChangeTrigger",
                     null);
             }
 
-            bool measure = GraphScaleDiagnostics.TryReadTimestamp(
-                out long started);
-            int incomingEdgeCount = measure
-                ? vertex.InEdgesRaw.Count
-                : 0;
-            bool found = GraphUtil.ExistQueryIn(
-                vertex,
-                "$GraphChangeTrigger",
-                null);
-            if (measure)
-            {
-                GraphScaleDiagnostics.RecordTriggerInQuery(
-                    queriedEdgeFrom,
-                    incomingEdgeCount,
-                    Stopwatch.GetTimestamp() - started);
-            }
-
-            return found;
+            return graphChangeAtom.Type ==
+                    AtomGraphChangeTypeEnum.ValueChange &&
+                GraphUtil.ExistQueryIn(
+                    graphChangeAtom.ChangedVertex,
+                    "$GraphChangeTrigger",
+                    null);
         }
 
         private static void AddOrCoalesceListenerAtom(
@@ -838,8 +807,7 @@ namespace m0.Graph.ExecutionFlow
                 Dictionary<IEdge, GraphChangeTransactionAtom>>
                 listenerEdgeAtomsByVertex,
             IVertex changedVertex,
-            GraphChangeTransactionAtom graphChangeAtom,
-            GraphScaleListenerChannel channel)
+            GraphChangeTransactionAtom graphChangeAtom)
         {
             if (!listenerAtomsByVertex.TryGetValue(
                 changedVertex,
@@ -853,71 +821,43 @@ namespace m0.Graph.ExecutionFlow
                     listenerAtoms);
             }
 
-            bool measure = GraphScaleDiagnostics.Enabled;
-            int listLength = listenerAtoms.Count;
-            int scannedSteps = 0;
-            long started = measure
-                ? Stopwatch.GetTimestamp()
-                : 0;
-
-            try
+            if (graphChangeAtom.Type ==
+                AtomGraphChangeTypeEnum.ValueChange)
             {
-                if (graphChangeAtom.Type ==
-                    AtomGraphChangeTypeEnum.ValueChange)
+                foreach (GraphChangeTransactionAtom
+                    existingAtom in listenerAtoms)
                 {
-                    foreach (GraphChangeTransactionAtom
-                        existingAtom in listenerAtoms)
+                    if (existingAtom.Type !=
+                        AtomGraphChangeTypeEnum.ValueChange)
                     {
-                        if (measure)
-                            scannedSteps++;
-
-                        if (existingAtom.Type !=
-                            AtomGraphChangeTypeEnum.ValueChange)
-                        {
-                            continue;
-                        }
-
-                        existingAtom.NewValue =
-                            graphChangeAtom.NewValue;
-                        return;
+                        continue;
                     }
-                }
-                else if ((graphChangeAtom.Type ==
-                            AtomGraphChangeTypeEnum.EdgeAdded ||
-                        graphChangeAtom.Type ==
-                            AtomGraphChangeTypeEnum.EdgeRemoved) &&
-                    graphChangeAtom.Edge != null &&
-                    TryCancelOppositeEdgeAtom(
-                        listenerAtomsByVertex,
-                        listenerEdgeAtomsByVertex,
-                        listenerAtoms,
-                        changedVertex,
-                        graphChangeAtom,
-                        measure,
-                        ref scannedSteps))
-                {
+
+                    existingAtom.NewValue =
+                        graphChangeAtom.NewValue;
                     return;
                 }
-
-                listenerAtoms.Add(graphChangeAtom);
-                RememberLatestEdgeAtom(
+            }
+            else if ((graphChangeAtom.Type ==
+                        AtomGraphChangeTypeEnum.EdgeAdded ||
+                    graphChangeAtom.Type ==
+                        AtomGraphChangeTypeEnum.EdgeRemoved) &&
+                graphChangeAtom.Edge != null &&
+                TryCancelOppositeEdgeAtom(
+                    listenerAtomsByVertex,
                     listenerEdgeAtomsByVertex,
+                    listenerAtoms,
                     changedVertex,
-                    graphChangeAtom);
-            }
-            finally
+                    graphChangeAtom))
             {
-                if (measure)
-                {
-                    GraphScaleDiagnostics.RecordCoalesce(
-                        channel,
-                        listLength,
-                        scannedSteps);
-                    GraphScaleDiagnostics.AddCoalesceTicks(
-                        channel,
-                        Stopwatch.GetTimestamp() - started);
-                }
+                return;
             }
+
+            listenerAtoms.Add(graphChangeAtom);
+            RememberLatestEdgeAtom(
+                listenerEdgeAtomsByVertex,
+                changedVertex,
+                graphChangeAtom);
         }
 
         static bool TryCancelOppositeEdgeAtom(
@@ -927,9 +867,7 @@ namespace m0.Graph.ExecutionFlow
                 listenerEdgeAtomsByVertex,
             List<GraphChangeTransactionAtom> listenerAtoms,
             IVertex changedVertex,
-            GraphChangeTransactionAtom graphChangeAtom,
-            bool measure,
-            ref int scannedSteps)
+            GraphChangeTransactionAtom graphChangeAtom)
         {
             if (!listenerEdgeAtomsByVertex.TryGetValue(
                     changedVertex,
@@ -941,9 +879,6 @@ namespace m0.Graph.ExecutionFlow
             {
                 return false;
             }
-
-            if (measure)
-                scannedSteps++;
 
             if (!IsOppositeEdgeChange(existingAtom, graphChangeAtom))
                 return false;
