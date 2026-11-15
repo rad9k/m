@@ -2721,20 +2721,709 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@$Is :: @UX\UXContainer>
 				<@IsExpanded :: "True">
 				<@HasMiniatures :: "True">
-				<@Scale :: "100">
+				<@Scale :: "70">
 				<@BaseEdge :: "">
 					<@$Is :: @Edge>
 					<@From :: @Base>
 					<@Meta :: @Package>
 					<@To :: @Base\'MinusZero Platform'>
 				<@SelectedEdges :: "">
+					<@Edge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Base\'MinusZero Platform'\'MinusZero Platform'\Item:<<"2">>\Item:<<"7">>>
+						<@Meta :: @UX\Item\Item>
+						<@To :: @Base\'MinusZero Platform'\'MinusZero Platform'\Item:<<"2">>\Item:<<"7">>\Item:<<"1">>>
 				<@ShowSelectedEdgesBaseEdge :: "False">
 				<@Size :: "">
 					<@$Is :: @UX\Size>
 					<@Width :: "5000">
 					<@Height :: "5000">
 				<@NewItemUXTemplate :: @System\Data\UX\Templates\ZeroUML>
-			"Graph Data Base"
-				"Graph Virtual Machine"
-				"Graph Query Engine"
-				"Autoindexing Engine"
+				<@Item :: "">
+					<@$Is :: @UX\IconItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "574.1338095238098">
+						<@Y :: "677.1542857142855">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Component>
+					<@BackgroundColor :: "VeryVeryVeryLightCyan">
+						<@$Is :: @UX\Color>
+						<@Red :: "237">
+						<@Green :: "255">
+						<@Blue :: "255">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Base\'MinusZero Platform'>
+						<@Meta :: @Structure\Component>
+						<@To :: @Base\'MinusZero Platform'\Filesystem>
+				<@Item :: "">
+					<@$Is :: @UX\ContainerItem>
+					<@IsExpanded :: "True">
+					<@HasMiniatures :: "True">
+					<@Scale :: "100">
+					<@SelectedEdges :: "">
+					<@ShowSelectedEdgesBaseEdge :: "False">
+					<@ShowIcons :: "True">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "1288.0857142857144">
+						<@Y :: "209.98000000000002">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'System CONTAINER'>
+					<@ShowMeta :: "True">
+					<@BackgroundColor :: "VeryVeryVeryVeryLightCyan">
+						<@$Is :: @UX\Color>
+						<@Red :: "248">
+						<@Green :: "255">
+						<@Blue :: "255">
+						<@Opacity :: "255">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Base\'MinusZero Platform'>
+						<@Meta :: @Structure\System>
+						<@To :: @Base\'MinusZero Platform'\'Minus Zero'>
+					<@Size :: "">
+						<@$Is :: @UX\Size>
+						<@Width :: "816.9852380952368">
+						<@Height :: "663.9914285714283">
+					<@Item :: "">
+						<@$Is :: @UX\ContainerItem>
+						<@IsExpanded :: "True">
+						<@HasMiniatures :: "True">
+						<@Scale :: "100">
+						<@SelectedEdges :: "">
+						<@ShowSelectedEdgesBaseEdge :: "False">
+						<@ShowIcons :: "True">
+						<@FontSize :: "14">
+						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+						<@Position :: "">
+							<@$Is :: @UX\Position>
+							<@X :: "11.066666666666663">
+							<@Y :: "11.399999999999892">
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Component CONTAINER'>
+						<@ShowMeta :: "True">
+						<@BackgroundColor :: "VeryVeryVeryVeryLightCyan">
+							<@$Is :: @UX\Color>
+							<@Red :: "248">
+							<@Green :: "255">
+							<@Blue :: "255">
+							<@Opacity :: "255">
+						<@BaseEdge :: "">
+							<@$Is :: @Edge>
+							<@From :: @Base\'MinusZero Platform'>
+							<@Meta :: @Structure\Component>
+							<@To :: @Base\'MinusZero Platform'\'Graph Data Base Engine'>
+						<@Size :: "">
+							<@$Is :: @UX\Size>
+							<@Width :: "326.04333333333324">
+							<@Height :: "228.2199999999998">
+						<@Item :: "">
+							<@$Is :: @UX\IconItem>
+							<@Scale :: "100">
+							<@ShowIcons :: "True">
+							<@FontSize :: "14">
+							<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+							<@Position :: "">
+								<@$Is :: @UX\Position>
+								<@X :: "11.800000000000068">
+								<@Y :: "10.379999999999995">
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Component>
+							<@BackgroundColor :: "VeryVeryVeryLightCyan">
+								<@$Is :: @UX\Color>
+								<@Red :: "237">
+								<@Green :: "255">
+								<@Blue :: "255">
+								<@Opacity :: "255">
+							<@BaseEdge :: "">
+								<@$Is :: @Edge>
+								<@From :: @Base\'MinusZero Platform'\'Graph Data Base Engine'>
+								<@Meta :: @Structure\StaticComponent\Contain>
+								<@To :: @Base\'MinusZero Platform'\'Graph Data Base Engine'\'Query Engine'>
+							<@Size :: "">
+								<@$Is :: @UX\Size>
+								<@Width :: "72">
+								<@Height :: "85.01999999999995">
+						<@Item :: "">
+							<@$Is :: @UX\IconItem>
+							<@Scale :: "100">
+							<@ShowIcons :: "True">
+							<@FontSize :: "14">
+							<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+							<@Position :: "">
+								<@$Is :: @UX\Position>
+								<@X :: "102.99999999999994">
+								<@Y :: "10.379999999999995">
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Component>
+							<@BackgroundColor :: "VeryVeryVeryLightCyan">
+								<@$Is :: @UX\Color>
+								<@Red :: "237">
+								<@Green :: "255">
+								<@Blue :: "255">
+								<@Opacity :: "255">
+							<@BaseEdge :: "">
+								<@$Is :: @Edge>
+								<@From :: @Base\'MinusZero Platform'\'Graph Data Base Engine'>
+								<@Meta :: @Structure\StaticComponent\Contain>
+								<@To :: @Base\'MinusZero Platform'\'Graph Data Base Engine'\'Graph Virtual Machine'>
+							<@Size :: "">
+								<@$Is :: @UX\Size>
+								<@Width :: "89.86333333333334">
+								<@Height :: "85.01999999999995">
+						<@Item :: "">
+							<@$Is :: @UX\IconItem>
+							<@Scale :: "100">
+							<@ShowIcons :: "True">
+							<@FontSize :: "14">
+							<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+							<@Position :: "">
+								<@$Is :: @UX\Position>
+								<@X :: "211.00000000000006">
+								<@Y :: "10.379999999999995">
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Component>
+							<@BackgroundColor :: "VeryVeryVeryLightCyan">
+								<@$Is :: @UX\Color>
+								<@Red :: "237">
+								<@Green :: "255">
+								<@Blue :: "255">
+								<@Opacity :: "255">
+							<@BaseEdge :: "">
+								<@$Is :: @Edge>
+								<@From :: @Base\'MinusZero Platform'\'Graph Data Base Engine'>
+								<@Meta :: @Structure\StaticComponent\Contain>
+								<@To :: @Base\'MinusZero Platform'\'Graph Data Base Engine'\'Autoindexing Engine'>
+							<@Size :: "">
+								<@$Is :: @UX\Size>
+								<@Width :: "96.87666666666678">
+								<@Height :: "85.01999999999995">
+						<@Item :: "">
+							<@$Is :: @UX\IconItem>
+							<@Scale :: "100">
+							<@ShowIcons :: "True">
+							<@FontSize :: "14">
+							<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+							<@Position :: "">
+								<@$Is :: @UX\Position>
+								<@X :: "43.799999999999955">
+								<@Y :: "116.78">
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Component>
+							<@BackgroundColor :: "VeryVeryVeryLightCyan">
+								<@$Is :: @UX\Color>
+								<@Red :: "237">
+								<@Green :: "255">
+								<@Blue :: "255">
+								<@Opacity :: "255">
+							<@BaseEdge :: "">
+								<@$Is :: @Edge>
+								<@From :: @Base\'MinusZero Platform'\'Graph Data Base Engine'>
+								<@Meta :: @Structure\StaticComponent\Contain>
+								<@To :: @Base\'MinusZero Platform'\'Graph Data Base Engine'\'Event Trigger Engine'>
+							<@Size :: "">
+								<@$Is :: @UX\Size>
+								<@Width :: "102.69333333333338">
+								<@Height :: "70.62000000000003">
+						<@Item :: "">
+							<@$Is :: @UX\IconItem>
+							<@Scale :: "100">
+							<@ShowIcons :: "True">
+							<@FontSize :: "14">
+							<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+							<@Position :: "">
+								<@$Is :: @UX\Position>
+								<@X :: "175.8">
+								<@Y :: "116.78">
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Component>
+							<@BackgroundColor :: "VeryVeryVeryLightCyan">
+								<@$Is :: @UX\Color>
+								<@Red :: "237">
+								<@Green :: "255">
+								<@Blue :: "255">
+								<@Opacity :: "255">
+							<@BaseEdge :: "">
+								<@$Is :: @Edge>
+								<@From :: @Base\'MinusZero Platform'\'Graph Data Base Engine'>
+								<@Meta :: @Structure\StaticComponent\Contain>
+								<@To :: @Base\'MinusZero Platform'\'Graph Data Base Engine'\'Updatable View Engine'>
+							<@Size :: "">
+								<@$Is :: @UX\Size>
+								<@Width :: "102.69333333333338">
+								<@Height :: "70.62000000000003">
+					<@Item :: "">
+						<@$Is :: @UX\ContainerItem>
+						<@IsExpanded :: "True">
+						<@HasMiniatures :: "True">
+						<@Scale :: "100">
+						<@SelectedEdges :: "">
+						<@ShowSelectedEdgesBaseEdge :: "False">
+						<@ShowIcons :: "True">
+						<@FontSize :: "14">
+						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+						<@Position :: "">
+							<@$Is :: @UX\Position>
+							<@X :: "404.45000000000016">
+							<@Y :: "11.399999999999892">
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Component CONTAINER'>
+						<@ShowMeta :: "True">
+						<@BackgroundColor :: "VeryVeryVeryVeryLightCyan">
+							<@$Is :: @UX\Color>
+							<@Red :: "248">
+							<@Green :: "255">
+							<@Blue :: "255">
+							<@Opacity :: "255">
+						<@BaseEdge :: "">
+							<@$Is :: @Edge>
+							<@From :: @Base\'MinusZero Platform'>
+							<@Meta :: @Structure\Component>
+							<@To :: @Base\'MinusZero Platform'\'MinuZero System Graph'>
+						<@Size :: "">
+							<@$Is :: @UX\Size>
+							<@Width :: "319.960909090909">
+							<@Height :: "228.2199999999998">
+						<@Item :: "">
+							<@$Is :: @UX\IconItem>
+							<@Scale :: "100">
+							<@ShowIcons :: "True">
+							<@FontSize :: "14">
+							<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+							<@Position :: "">
+								<@$Is :: @UX\Position>
+								<@X :: "11.000000000000114">
+								<@Y :: "10.439999999999912">
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Component>
+							<@BackgroundColor :: "VeryVeryVeryLightCyan">
+								<@$Is :: @UX\Color>
+								<@Red :: "237">
+								<@Green :: "255">
+								<@Blue :: "255">
+								<@Opacity :: "255">
+							<@BaseEdge :: "">
+								<@$Is :: @Edge>
+								<@From :: @Base\'MinusZero Platform'\'MinuZero System Graph'>
+								<@Meta :: @Structure\StaticComponent\Contain>
+								<@To :: @Base\'MinusZero Platform'\'MinuZero System Graph'\'Meta Models'>
+							<@Size :: "">
+								<@$Is :: @UX\Size>
+								<@Width :: "92">
+								<@Height :: "83.43999999999994">
+						<@Item :: "">
+							<@$Is :: @UX\IconItem>
+							<@Scale :: "100">
+							<@ShowIcons :: "True">
+							<@FontSize :: "14">
+							<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+							<@Position :: "">
+								<@$Is :: @UX\Position>
+								<@X :: "113.99999999999989">
+								<@Y :: "10.43999999999997">
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Component>
+							<@BackgroundColor :: "VeryVeryVeryLightCyan">
+								<@$Is :: @UX\Color>
+								<@Red :: "237">
+								<@Green :: "255">
+								<@Blue :: "255">
+								<@Opacity :: "255">
+							<@BaseEdge :: "">
+								<@$Is :: @Edge>
+								<@From :: @Base\'MinusZero Platform'\'MinuZero System Graph'>
+								<@Meta :: @Structure\StaticComponent\Contain>
+								<@To :: @Base\'MinusZero Platform'\'MinuZero System Graph'\Models>
+							<@Size :: "">
+								<@$Is :: @UX\Size>
+								<@Width :: "92">
+								<@Height :: "83.43999999999987">
+						<@Item :: "">
+							<@$Is :: @UX\IconItem>
+							<@Scale :: "100">
+							<@ShowIcons :: "True">
+							<@FontSize :: "14">
+							<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+							<@Position :: "">
+								<@$Is :: @UX\Position>
+								<@X :: "11.000000000000114">
+								<@Y :: "105.89454545454532">
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Component>
+							<@BackgroundColor :: "VeryVeryVeryLightCyan">
+								<@$Is :: @UX\Color>
+								<@Red :: "237">
+								<@Green :: "255">
+								<@Blue :: "255">
+								<@Opacity :: "255">
+							<@BaseEdge :: "">
+								<@$Is :: @Edge>
+								<@From :: @Base\'MinusZero Platform'\'MinuZero System Graph'>
+								<@Meta :: @Structure\StaticComponent\Contain>
+								<@To :: @Base\'MinusZero Platform'\'MinuZero System Graph'\Libraries>
+							<@Size :: "">
+								<@$Is :: @UX\Size>
+								<@Width :: "91.99999999999966">
+								<@Height :: "81.81999999999988">
+						<@Item :: "">
+							<@$Is :: @UX\IconItem>
+							<@Scale :: "100">
+							<@ShowIcons :: "True">
+							<@FontSize :: "14">
+							<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+							<@Position :: "">
+								<@$Is :: @UX\Position>
+								<@X :: "216.63636363636408">
+								<@Y :: "105.89454545454538">
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Component>
+							<@BackgroundColor :: "VeryVeryVeryLightCyan">
+								<@$Is :: @UX\Color>
+								<@Red :: "237">
+								<@Green :: "255">
+								<@Blue :: "255">
+								<@Opacity :: "255">
+							<@BaseEdge :: "">
+								<@$Is :: @Edge>
+								<@From :: @Base\'MinusZero Platform'\'MinuZero System Graph'>
+								<@Meta :: @Structure\StaticComponent\Contain>
+								<@To :: @Base\'MinusZero Platform'\'MinuZero System Graph'\'Text Language Definitions'>
+							<@Size :: "">
+								<@$Is :: @UX\Size>
+								<@Width :: "92">
+								<@Height :: "83.43999999999994">
+						<@Item :: "">
+							<@$Is :: @UX\IconItem>
+							<@Scale :: "100">
+							<@ShowIcons :: "True">
+							<@FontSize :: "14">
+							<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+							<@Position :: "">
+								<@$Is :: @UX\Position>
+								<@X :: "216.63636363636408">
+								<@Y :: "10.439999999999912">
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Component>
+							<@BackgroundColor :: "VeryVeryVeryLightCyan">
+								<@$Is :: @UX\Color>
+								<@Red :: "237">
+								<@Green :: "255">
+								<@Blue :: "255">
+								<@Opacity :: "255">
+							<@BaseEdge :: "">
+								<@$Is :: @Edge>
+								<@From :: @Base\'MinusZero Platform'\'MinuZero System Graph'>
+								<@Meta :: @Structure\StaticComponent\Contain>
+								<@To :: @Base\'MinusZero Platform'\'MinuZero System Graph'\'Views Definitions'>
+							<@Size :: "">
+								<@$Is :: @UX\Size>
+								<@Width :: "92">
+								<@Height :: "83.43999999999994">
+						<@Item :: "">
+							<@$Is :: @UX\IconItem>
+							<@Scale :: "100">
+							<@ShowIcons :: "True">
+							<@FontSize :: "14">
+							<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+							<@Position :: "">
+								<@$Is :: @UX\Position>
+								<@X :: "113.99999999999989">
+								<@Y :: "104.27454545454532">
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Component>
+							<@BackgroundColor :: "VeryVeryVeryLightCyan">
+								<@$Is :: @UX\Color>
+								<@Red :: "237">
+								<@Green :: "255">
+								<@Blue :: "255">
+								<@Opacity :: "255">
+							<@BaseEdge :: "">
+								<@$Is :: @Edge>
+								<@From :: @Base\'MinusZero Platform'\'MinuZero System Graph'>
+								<@Meta :: @Structure\StaticComponent\Contain>
+								<@To :: @Base\'MinusZero Platform'\'MinuZero System Graph'\'Diagram Types Definitions'>
+							<@Size :: "">
+								<@$Is :: @UX\Size>
+								<@Width :: "92">
+								<@Height :: "83.43999999999994">
+					<@Item :: "">
+						<@$Is :: @UX\IconItem>
+						<@Scale :: "100">
+						<@ShowIcons :: "True">
+						<@FontSize :: "14">
+						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+						<@Position :: "">
+							<@$Is :: @UX\Position>
+							<@X :: "319.94333333333327">
+							<@Y :: "328.98285714285663">
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Component>
+						<@BackgroundColor :: "VeryVeryVeryLightCyan">
+							<@$Is :: @UX\Color>
+							<@Red :: "237">
+							<@Green :: "255">
+							<@Blue :: "255">
+							<@Opacity :: "255">
+						<@BaseEdge :: "">
+							<@$Is :: @Edge>
+							<@From :: @Base\'MinusZero Platform'>
+							<@Meta :: @Structure\Component>
+							<@To :: @Base\'MinusZero Platform'\'Text Language Engine'>
+						<@Size :: "">
+							<@$Is :: @UX\Size>
+							<@Width :: "97.14285714285552">
+							<@Height :: "86.39142857142849">
+						<@Decorator :: "">
+							<@$Is :: @UX\LineDecorator>
+							<@Scale :: "100">
+							<@BaseEdge :: "">
+								<@Edge\From :: @Base\'MinusZero Platform'\'Text Language Engine'>
+								<@Edge\Meta :: @Structure\Component\Use>
+								<@Edge\To :: @Base\'MinusZero Platform'\'MinuZero System Graph'>
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToArrow'>
+							<@EndAnchor :: @UX\LineEndEnum\Arrow>
+							<@ToItem :: @Base\'MinusZero Platform'\'MinusZero Platform'\Item:<<"2">>\Item:<<"2">>>
+					<@Item :: "">
+						<@$Is :: @UX\IconItem>
+						<@Scale :: "100">
+						<@ShowIcons :: "True">
+						<@FontSize :: "14">
+						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+						<@Position :: "">
+							<@$Is :: @UX\Position>
+							<@X :: "439.87857142857285">
+							<@Y :: "333.5542857142852">
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Component>
+						<@BackgroundColor :: "VeryVeryVeryLightCyan">
+							<@$Is :: @UX\Color>
+							<@Red :: "237">
+							<@Green :: "255">
+							<@Blue :: "255">
+							<@Opacity :: "255">
+						<@BaseEdge :: "">
+							<@$Is :: @Edge>
+							<@From :: @Base\'MinusZero Platform'>
+							<@Meta :: @Structure\Component>
+							<@To :: @Base\'MinusZero Platform'\'Diagram Engine'>
+						<@Size :: "">
+							<@$Is :: @UX\Size>
+							<@Width :: "97.14285714285552">
+							<@Height :: "86.39142857142849">
+						<@Decorator :: "">
+							<@$Is :: @UX\LineDecorator>
+							<@Scale :: "100">
+							<@BaseEdge :: "">
+								<@Edge\From :: @Base\'MinusZero Platform'\'Diagram Engine'>
+								<@Edge\Meta :: @Structure\Component\Use>
+								<@Edge\To :: @Base\'MinusZero Platform'\'MinuZero System Graph'>
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToArrow'>
+							<@EndAnchor :: @UX\LineEndEnum\Arrow>
+							<@ToItem :: @Base\'MinusZero Platform'\'MinusZero Platform'\Item:<<"2">>\Item:<<"2">>>
+					<@Item :: "">
+						<@$Is :: @UX\IconItem>
+						<@Scale :: "100">
+						<@ShowIcons :: "True">
+						<@FontSize :: "14">
+						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+						<@Position :: "">
+							<@$Is :: @UX\Position>
+							<@X :: "627.2680519480542">
+							<@Y :: "266.8285714285712">
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Component>
+						<@BackgroundColor :: "VeryVeryVeryLightCyan">
+							<@$Is :: @UX\Color>
+							<@Red :: "237">
+							<@Green :: "255">
+							<@Blue :: "255">
+							<@Opacity :: "255">
+						<@BaseEdge :: "">
+							<@$Is :: @Edge>
+							<@From :: @Base\'MinusZero Platform'>
+							<@Meta :: @Structure\Component>
+							<@To :: @Base\'MinusZero Platform'\'HTTP Server'>
+						<@Size :: "">
+							<@$Is :: @UX\Size>
+							<@Width :: "97.14285714285506">
+							<@Height :: "86.39142857142849">
+					<@Item :: "">
+						<@$Is :: @UX\IconItem>
+						<@Scale :: "100">
+						<@ShowIcons :: "True">
+						<@FontSize :: "14">
+						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+						<@Position :: "">
+							<@$Is :: @UX\Position>
+							<@X :: "627.2680519480538">
+							<@Y :: "383.40000000000003">
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Component>
+						<@BackgroundColor :: "VeryVeryVeryLightCyan">
+							<@$Is :: @UX\Color>
+							<@Red :: "237">
+							<@Green :: "255">
+							<@Blue :: "255">
+							<@Opacity :: "255">
+						<@BaseEdge :: "">
+							<@$Is :: @Edge>
+							<@From :: @Base\'MinusZero Platform'>
+							<@Meta :: @Structure\Component>
+							<@To :: @Base\'MinusZero Platform'\'REST Server / Cllient Engine'>
+						<@Size :: "">
+							<@$Is :: @UX\Size>
+							<@Width :: "97.14285714285529">
+							<@Height :: "86.39142857142849">
+					<@Item :: "">
+						<@$Is :: @UX\ContainerItem>
+						<@IsExpanded :: "True">
+						<@HasMiniatures :: "True">
+						<@Scale :: "100">
+						<@SelectedEdges :: "">
+						<@ShowSelectedEdgesBaseEdge :: "False">
+						<@ShowIcons :: "True">
+						<@FontSize :: "14">
+						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+						<@Position :: "">
+							<@$Is :: @UX\Position>
+							<@X :: "11.066666666665697">
+							<@Y :: "251.74285714285713">
+						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Component CONTAINER'>
+						<@ShowMeta :: "True">
+						<@BackgroundColor :: "VeryVeryVeryVeryLightCyan">
+							<@$Is :: @UX\Color>
+							<@Red :: "248">
+							<@Green :: "255">
+							<@Blue :: "255">
+							<@Opacity :: "255">
+						<@BaseEdge :: "">
+							<@$Is :: @Edge>
+							<@From :: @Base\'MinusZero Platform'\'Minus Zero'>
+							<@Meta :: @Structure\StaticComponent\Contain>
+							<@To :: @Base\'MinusZero Platform'\'Minus Zero'\'User Graph'>
+						<@Size :: "">
+							<@$Is :: @UX\Size>
+							<@Width :: "438.8690476190501">
+							<@Height :: "308.3342857142856">
+						<@Item :: "">
+							<@$Is :: @UX\IconItem>
+							<@Scale :: "100">
+							<@ShowIcons :: "True">
+							<@FontSize :: "14">
+							<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+							<@Position :: "">
+								<@$Is :: @UX\Position>
+								<@X :: "11.800000000001148">
+								<@Y :: "10.001760461759659">
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Component>
+							<@BackgroundColor :: "VeryVeryVeryLightCyan">
+								<@$Is :: @UX\Color>
+								<@Red :: "237">
+								<@Green :: "255">
+								<@Blue :: "255">
+								<@Opacity :: "255">
+							<@BaseEdge :: "">
+								<@$Is :: @Edge>
+								<@From :: @Base\'MinusZero Platform'\'Minus Zero'\'User Graph'>
+								<@Meta :: @Structure\StaticComponent\Contain>
+								<@To :: @Base\'MinusZero Platform'\'Minus Zero'\'User Graph'\'Meta Models'>
+							<@Size :: "">
+								<@$Is :: @UX\Size>
+								<@Width :: "72.00000000000011">
+								<@Height :: "82.96285714285705">
+						<@Item :: "">
+							<@$Is :: @UX\IconItem>
+							<@Scale :: "100">
+							<@ShowIcons :: "True">
+							<@FontSize :: "14">
+							<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+							<@Position :: "">
+								<@$Is :: @UX\Position>
+								<@X :: "103.80000000000132">
+								<@Y :: "27.074285714285907">
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Component>
+							<@BackgroundColor :: "VeryVeryVeryLightCyan">
+								<@$Is :: @UX\Color>
+								<@Red :: "237">
+								<@Green :: "255">
+								<@Blue :: "255">
+								<@Opacity :: "255">
+							<@BaseEdge :: "">
+								<@$Is :: @Edge>
+								<@From :: @Base\'MinusZero Platform'\'Minus Zero'\'User Graph'>
+								<@Meta :: @Structure\StaticComponent\Contain>
+								<@To :: @Base\'MinusZero Platform'\'Minus Zero'\'User Graph'\Models>
+							<@Size :: "">
+								<@$Is :: @UX\Size>
+								<@Width :: "72.00000000000011">
+								<@Height :: "82.96285714285705">
+						<@Item :: "">
+							<@$Is :: @UX\IconItem>
+							<@Scale :: "100">
+							<@ShowIcons :: "True">
+							<@FontSize :: "14">
+							<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+							<@Position :: "">
+								<@$Is :: @UX\Position>
+								<@X :: "224.77575757575846">
+								<@Y :: "18.00176046175966">
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Component>
+							<@BackgroundColor :: "VeryVeryVeryLightCyan">
+								<@$Is :: @UX\Color>
+								<@Red :: "237">
+								<@Green :: "255">
+								<@Blue :: "255">
+								<@Opacity :: "255">
+							<@BaseEdge :: "">
+								<@$Is :: @Edge>
+								<@From :: @Base\'MinusZero Platform'\'Minus Zero'\'User Graph'>
+								<@Meta :: @Structure\StaticComponent\Contain>
+								<@To :: @Base\'MinusZero Platform'\'Minus Zero'\'User Graph'\Data>
+							<@Size :: "">
+								<@$Is :: @UX\Size>
+								<@Width :: "128">
+								<@Height :: "82.96285714285705">
+			<@Structure\Component :: "Graph Data Base Engine">
+				<@$Is :: @Structure\Component>
+				<@Contain :: "Query Engine">
+					<@$Is :: @Structure\Component>
+				<@Contain :: "Graph Virtual Machine">
+					<@$Is :: @Structure\Component>
+				<@Contain :: "Autoindexing Engine">
+					<@$Is :: @Structure\Component>
+				<@Contain :: "Event Trigger Engine">
+					<@$Is :: @Structure\Component>
+				<@Contain :: "Updatable View Engine">
+					<@$Is :: @Structure\Component>
+			<@Structure\Component :: "Filesystem">
+				<@$Is :: @Structure\Component>
+			<@Structure\Component :: "MinuZero System Graph">
+				<@$Is :: @Structure\Component>
+				<@Contain :: "Meta Models">
+					<@$Is :: @Structure\Component>
+				<@Contain :: "Models">
+					<@$Is :: @Structure\Component>
+				<@Contain :: "Libraries">
+					<@$Is :: @Structure\Component>
+				<@Contain :: "Text Language Definitions">
+					<@$Is :: @Structure\Component>
+				<@Contain :: "Diagram Types Definitions">
+					<@$Is :: @Structure\Component>
+				<@Contain :: "Views Definitions">
+					<@$Is :: @Structure\Component>
+			<@Structure\Component :: "Text Language Engine">
+				<@$Is :: @Structure\Component>
+				<@Use :: @Base\'MinusZero Platform'\'MinuZero System Graph'>
+			<@Structure\Component :: "Diagram Engine">
+				<@$Is :: @Structure\Component>
+				<@Use :: @Base\'MinusZero Platform'\'MinuZero System Graph'>
+			<@Structure\Component :: "REST Server / Cllient Engine">
+				<@$Is :: @Structure\Component>
+			<@Structure\Component :: "HTTP Server">
+				<@$Is :: @Structure\Component>
+			<@Structure\System :: "Minus Zero">
+				<@$Is :: @Structure\System>
+				<@Contain :: @Base\'MinusZero Platform'\'Graph Data Base Engine'>
+				<@Contain :: @Base\'MinusZero Platform'\'MinuZero System Graph'>
+				<@Contain :: @Base\'MinusZero Platform'\'Text Language Engine'>
+				<@Contain :: @Base\'MinusZero Platform'\'Diagram Engine'>
+				<@Contain :: @Base\'MinusZero Platform'\'HTTP Server'>
+				<@Contain :: @Base\'MinusZero Platform'\'REST Server / Cllient Engine'>
+				<@Contain :: "User Graph">
+					<@$Is :: @Structure\Component>
+					<@Contain :: "Meta Models">
+						<@$Is :: @Structure\Component>
+					<@Contain :: "Models">
+						<@$Is :: @Structure\Component>
+					<@Contain :: "Data">
+						<@$Is :: @Structure\Component>
