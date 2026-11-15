@@ -2777,8 +2777,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 						<@Position :: "">
 							<@$Is :: @UX\Position>
-							<@X :: "11.066666666666663">
-							<@Y :: "11.399999999999892">
+							<@X :: "11.066666666666634">
+							<@Y :: "11.39999999999992">
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Component CONTAINER'>
 						<@ShowMeta :: "True">
 						<@BackgroundColor :: "VeryVeryVeryVeryLightCyan">
@@ -2791,10 +2791,10 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 							<@$Is :: @Edge>
 							<@From :: @Base\'MinusZero Platform'>
 							<@Meta :: @Structure\Component>
-							<@To :: @Base\'MinusZero Platform'\'Graph Data Base Engine'>
+							<@To :: @Base\'MinusZero Platform'\'Minus Zero'\'Graph Data Base Engine'>
 						<@Size :: "">
 							<@$Is :: @UX\Size>
-							<@Width :: "326.04333333333324">
+							<@Width :: "319.0976190476199">
 							<@Height :: "228.2199999999998">
 						<@Item :: "">
 							<@$Is :: @UX\IconItem>
@@ -2815,9 +2815,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 								<@Opacity :: "255">
 							<@BaseEdge :: "">
 								<@$Is :: @Edge>
-								<@From :: @Base\'MinusZero Platform'\'Graph Data Base Engine'>
+								<@From :: @Base\'MinusZero Platform'\'Minus Zero'\'Graph Data Base Engine'>
 								<@Meta :: @Structure\StaticComponent\Contain>
-								<@To :: @Base\'MinusZero Platform'\'Graph Data Base Engine'\'Query Engine'>
+								<@To :: @Base\'MinusZero Platform'\'Minus Zero'\'Graph Data Base Engine'\'Query Engine'>
 							<@Size :: "">
 								<@$Is :: @UX\Size>
 								<@Width :: "72">
@@ -2841,9 +2841,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 								<@Opacity :: "255">
 							<@BaseEdge :: "">
 								<@$Is :: @Edge>
-								<@From :: @Base\'MinusZero Platform'\'Graph Data Base Engine'>
+								<@From :: @Base\'MinusZero Platform'\'Minus Zero'\'Graph Data Base Engine'>
 								<@Meta :: @Structure\StaticComponent\Contain>
-								<@To :: @Base\'MinusZero Platform'\'Graph Data Base Engine'\'Graph Virtual Machine'>
+								<@To :: @Base\'MinusZero Platform'\'Minus Zero'\'Graph Data Base Engine'\'Graph Virtual Machine'>
 							<@Size :: "">
 								<@$Is :: @UX\Size>
 								<@Width :: "89.86333333333334">
@@ -2867,9 +2867,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 								<@Opacity :: "255">
 							<@BaseEdge :: "">
 								<@$Is :: @Edge>
-								<@From :: @Base\'MinusZero Platform'\'Graph Data Base Engine'>
+								<@From :: @Base\'MinusZero Platform'\'Minus Zero'\'Graph Data Base Engine'>
 								<@Meta :: @Structure\StaticComponent\Contain>
-								<@To :: @Base\'MinusZero Platform'\'Graph Data Base Engine'\'Autoindexing Engine'>
+								<@To :: @Base\'MinusZero Platform'\'Minus Zero'\'Graph Data Base Engine'\'Autoindexing Engine'>
 							<@Size :: "">
 								<@$Is :: @UX\Size>
 								<@Width :: "96.87666666666678">
@@ -2893,9 +2893,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 								<@Opacity :: "255">
 							<@BaseEdge :: "">
 								<@$Is :: @Edge>
-								<@From :: @Base\'MinusZero Platform'\'Graph Data Base Engine'>
+								<@From :: @Base\'MinusZero Platform'\'Minus Zero'\'Graph Data Base Engine'>
 								<@Meta :: @Structure\StaticComponent\Contain>
-								<@To :: @Base\'MinusZero Platform'\'Graph Data Base Engine'\'Event Trigger Engine'>
+								<@To :: @Base\'MinusZero Platform'\'Minus Zero'\'Graph Data Base Engine'\'Event Trigger Engine'>
 							<@Size :: "">
 								<@$Is :: @UX\Size>
 								<@Width :: "102.69333333333338">
@@ -2919,9 +2919,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 								<@Opacity :: "255">
 							<@BaseEdge :: "">
 								<@$Is :: @Edge>
-								<@From :: @Base\'MinusZero Platform'\'Graph Data Base Engine'>
+								<@From :: @Base\'MinusZero Platform'\'Minus Zero'\'Graph Data Base Engine'>
 								<@Meta :: @Structure\StaticComponent\Contain>
-								<@To :: @Base\'MinusZero Platform'\'Graph Data Base Engine'\'Updatable View Engine'>
+								<@To :: @Base\'MinusZero Platform'\'Minus Zero'\'Graph Data Base Engine'\'Updatable View Engine'>
 							<@Size :: "">
 								<@$Is :: @UX\Size>
 								<@Width :: "102.69333333333338">
@@ -2952,7 +2952,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 							<@$Is :: @Edge>
 							<@From :: @Base\'MinusZero Platform'>
 							<@Meta :: @Structure\Component>
-							<@To :: @Base\'MinusZero Platform'\'MinuZero System Graph'>
+							<@To :: @Base\'MinusZero Platform'\'Minus Zero'\'MinuZero System Graph'>
 						<@Size :: "">
 							<@$Is :: @UX\Size>
 							<@Width :: "319.960909090909">
@@ -2976,9 +2976,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 								<@Opacity :: "255">
 							<@BaseEdge :: "">
 								<@$Is :: @Edge>
-								<@From :: @Base\'MinusZero Platform'\'MinuZero System Graph'>
+								<@From :: @Base\'MinusZero Platform'\'Minus Zero'\'MinuZero System Graph'>
 								<@Meta :: @Structure\StaticComponent\Contain>
-								<@To :: @Base\'MinusZero Platform'\'MinuZero System Graph'\'Meta Models'>
+								<@To :: @Base\'MinusZero Platform'\'Minus Zero'\'MinuZero System Graph'\'Meta Models'>
 							<@Size :: "">
 								<@$Is :: @UX\Size>
 								<@Width :: "92">
@@ -3002,9 +3002,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 								<@Opacity :: "255">
 							<@BaseEdge :: "">
 								<@$Is :: @Edge>
-								<@From :: @Base\'MinusZero Platform'\'MinuZero System Graph'>
+								<@From :: @Base\'MinusZero Platform'\'Minus Zero'\'MinuZero System Graph'>
 								<@Meta :: @Structure\StaticComponent\Contain>
-								<@To :: @Base\'MinusZero Platform'\'MinuZero System Graph'\Models>
+								<@To :: @Base\'MinusZero Platform'\'Minus Zero'\'MinuZero System Graph'\Models>
 							<@Size :: "">
 								<@$Is :: @UX\Size>
 								<@Width :: "92">
@@ -3028,9 +3028,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 								<@Opacity :: "255">
 							<@BaseEdge :: "">
 								<@$Is :: @Edge>
-								<@From :: @Base\'MinusZero Platform'\'MinuZero System Graph'>
+								<@From :: @Base\'MinusZero Platform'\'Minus Zero'\'MinuZero System Graph'>
 								<@Meta :: @Structure\StaticComponent\Contain>
-								<@To :: @Base\'MinusZero Platform'\'MinuZero System Graph'\Libraries>
+								<@To :: @Base\'MinusZero Platform'\'Minus Zero'\'MinuZero System Graph'\Libraries>
 							<@Size :: "">
 								<@$Is :: @UX\Size>
 								<@Width :: "91.99999999999966">
@@ -3054,9 +3054,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 								<@Opacity :: "255">
 							<@BaseEdge :: "">
 								<@$Is :: @Edge>
-								<@From :: @Base\'MinusZero Platform'\'MinuZero System Graph'>
+								<@From :: @Base\'MinusZero Platform'\'Minus Zero'\'MinuZero System Graph'>
 								<@Meta :: @Structure\StaticComponent\Contain>
-								<@To :: @Base\'MinusZero Platform'\'MinuZero System Graph'\'Text Language Definitions'>
+								<@To :: @Base\'MinusZero Platform'\'Minus Zero'\'MinuZero System Graph'\'Text Language Definitions'>
 							<@Size :: "">
 								<@$Is :: @UX\Size>
 								<@Width :: "92">
@@ -3080,9 +3080,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 								<@Opacity :: "255">
 							<@BaseEdge :: "">
 								<@$Is :: @Edge>
-								<@From :: @Base\'MinusZero Platform'\'MinuZero System Graph'>
+								<@From :: @Base\'MinusZero Platform'\'Minus Zero'\'MinuZero System Graph'>
 								<@Meta :: @Structure\StaticComponent\Contain>
-								<@To :: @Base\'MinusZero Platform'\'MinuZero System Graph'\'Views Definitions'>
+								<@To :: @Base\'MinusZero Platform'\'Minus Zero'\'MinuZero System Graph'\'Views Definitions'>
 							<@Size :: "">
 								<@$Is :: @UX\Size>
 								<@Width :: "92">
@@ -3106,9 +3106,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 								<@Opacity :: "255">
 							<@BaseEdge :: "">
 								<@$Is :: @Edge>
-								<@From :: @Base\'MinusZero Platform'\'MinuZero System Graph'>
+								<@From :: @Base\'MinusZero Platform'\'Minus Zero'\'MinuZero System Graph'>
 								<@Meta :: @Structure\StaticComponent\Contain>
-								<@To :: @Base\'MinusZero Platform'\'MinuZero System Graph'\'Diagram Types Definitions'>
+								<@To :: @Base\'MinusZero Platform'\'Minus Zero'\'MinuZero System Graph'\'Diagram Types Definitions'>
 							<@Size :: "">
 								<@$Is :: @UX\Size>
 								<@Width :: "92">
@@ -3117,9 +3117,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 							<@$Is :: @UX\LineDecorator>
 							<@Scale :: "100">
 							<@BaseEdge :: "">
-								<@Edge\From :: @Base\'MinusZero Platform'\'MinuZero System Graph'>
+								<@Edge\From :: @Base\'MinusZero Platform'\'Minus Zero'\'MinuZero System Graph'>
 								<@Edge\Meta :: @Structure\Component\Use>
-								<@Edge\To :: @Base\'MinusZero Platform'\'Graph Data Base Engine'>
+								<@Edge\To :: @Base\'MinusZero Platform'\'Minus Zero'\'Graph Data Base Engine'>
 							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToArrow'>
 							<@EndAnchor :: @UX\LineEndEnum\Arrow>
 							<@ToItem :: @Base\'MinusZero Platform'\'MinusZero Platform'\Item:<<"1">>\Item:<<"1">>>
@@ -3144,7 +3144,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 							<@$Is :: @Edge>
 							<@From :: @Base\'MinusZero Platform'>
 							<@Meta :: @Structure\Component>
-							<@To :: @Base\'MinusZero Platform'\'Text Language Engine'>
+							<@To :: @Base\'MinusZero Platform'\'Minus Zero'\'Text Language Engine'>
 						<@Size :: "">
 							<@$Is :: @UX\Size>
 							<@Width :: "97.14285714285552">
@@ -3153,9 +3153,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 							<@$Is :: @UX\LineDecorator>
 							<@Scale :: "100">
 							<@BaseEdge :: "">
-								<@Edge\From :: @Base\'MinusZero Platform'\'Text Language Engine'>
+								<@Edge\From :: @Base\'MinusZero Platform'\'Minus Zero'\'Text Language Engine'>
 								<@Edge\Meta :: @Structure\StaticComponent\Read>
-								<@Edge\To :: @Base\'MinusZero Platform'\'MinuZero System Graph'>
+								<@Edge\To :: @Base\'MinusZero Platform'\'Minus Zero'\'MinuZero System Graph'>
 							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - FromFilledTriangle'>
 							<@StartAnchor :: @UX\LineEndEnum\FilledTriangle>
 							<@ToItem :: @Base\'MinusZero Platform'\'MinusZero Platform'\Item:<<"1">>\Item:<<"2">>>
@@ -3180,7 +3180,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 							<@$Is :: @Edge>
 							<@From :: @Base\'MinusZero Platform'>
 							<@Meta :: @Structure\Component>
-							<@To :: @Base\'MinusZero Platform'\'Diagram Engine'>
+							<@To :: @Base\'MinusZero Platform'\'Minus Zero'\'Diagram Engine'>
 						<@Size :: "">
 							<@$Is :: @UX\Size>
 							<@Width :: "97.14285714285552">
@@ -3189,9 +3189,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 							<@$Is :: @UX\LineDecorator>
 							<@Scale :: "100">
 							<@BaseEdge :: "">
-								<@Edge\From :: @Base\'MinusZero Platform'\'Diagram Engine'>
+								<@Edge\From :: @Base\'MinusZero Platform'\'Minus Zero'\'Diagram Engine'>
 								<@Edge\Meta :: @Structure\StaticComponent\Read>
-								<@Edge\To :: @Base\'MinusZero Platform'\'MinuZero System Graph'>
+								<@Edge\To :: @Base\'MinusZero Platform'\'Minus Zero'\'MinuZero System Graph'>
 							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - FromFilledTriangle'>
 							<@StartAnchor :: @UX\LineEndEnum\FilledTriangle>
 							<@ToItem :: @Base\'MinusZero Platform'\'MinusZero Platform'\Item:<<"1">>\Item:<<"2">>>
@@ -3216,7 +3216,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 							<@$Is :: @Edge>
 							<@From :: @Base\'MinusZero Platform'>
 							<@Meta :: @Structure\Component>
-							<@To :: @Base\'MinusZero Platform'\'HTTP Server'>
+							<@To :: @Base\'MinusZero Platform'\'Minus Zero'\'HTTP Server'>
 						<@Size :: "">
 							<@$Is :: @UX\Size>
 							<@Width :: "97.14285714285506">
@@ -3242,7 +3242,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 							<@$Is :: @Edge>
 							<@From :: @Base\'MinusZero Platform'>
 							<@Meta :: @Structure\Component>
-							<@To :: @Base\'MinusZero Platform'\'REST Server / Cllient Engine'>
+							<@To :: @Base\'MinusZero Platform'\'Minus Zero'\'REST Server / Cllient Engine'>
 						<@Size :: "">
 							<@$Is :: @UX\Size>
 							<@Width :: "97.14285714285529">
@@ -3259,8 +3259,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 						<@Position :: "">
 							<@$Is :: @UX\Position>
-							<@X :: "49.9238095238083">
-							<@Y :: "303.39999999999986">
+							<@X :: "49.92380952380833">
+							<@Y :: "303.3999999999998">
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Component CONTAINER'>
 						<@ShowMeta :: "True">
 						<@BackgroundColor :: "VeryVeryVeryVeryLightCyan">
@@ -3362,20 +3362,10 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 							<@BaseEdge :: "">
 								<@Edge\From :: @Base\'MinusZero Platform'\'Minus Zero'\'User Graph'>
 								<@Edge\Meta :: @Structure\Component\Use>
-								<@Edge\To :: @Base\'MinusZero Platform'\'Graph Data Base Engine'>
+								<@Edge\To :: @Base\'MinusZero Platform'\'Minus Zero'\'Graph Data Base Engine'>
 							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToArrow'>
 							<@EndAnchor :: @UX\LineEndEnum\Arrow>
 							<@ToItem :: @Base\'MinusZero Platform'\'MinusZero Platform'\Item:<<"1">>\Item:<<"1">>>
-						<@Decorator :: "">
-							<@$Is :: @UX\LineDecorator>
-							<@Scale :: "100">
-							<@BaseEdge :: "">
-								<@Edge\From :: @Base\'MinusZero Platform'\'Minus Zero'\'User Graph'>
-								<@Edge\Meta :: @Structure\StaticComponent\Read>
-								<@Edge\To :: @Base\'MinusZero Platform'\'MinuZero System Graph'>
-							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - FromFilledTriangle'>
-							<@StartAnchor :: @UX\LineEndEnum\FilledTriangle>
-							<@ToItem :: @Base\'MinusZero Platform'\'MinusZero Platform'\Item:<<"1">>\Item:<<"2">>>
 						<@Item :: "">
 							<@$Is :: @UX\IconItem>
 							<@Scale :: "100">
@@ -3408,7 +3398,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 							<@BaseEdge :: "">
 								<@Edge\From :: @Base\'MinusZero Platform'\'Minus Zero'\'User Graph'>
 								<@Edge\Meta :: @Structure\StaticComponent\Write>
-								<@Edge\To :: @Base\'MinusZero Platform'\'HTTP Server'>
+								<@Edge\To :: @Base\'MinusZero Platform'\'Minus Zero'\'HTTP Server'>
 							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToFilledTriangle'>
 							<@EndAnchor :: @UX\LineEndEnum\FilledTriangle>
 							<@ToItem :: @Base\'MinusZero Platform'\'MinusZero Platform'\Item:<<"1">>\Item:<<"5">>>
@@ -3418,11 +3408,21 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 							<@BaseEdge :: "">
 								<@Edge\From :: @Base\'MinusZero Platform'\'Minus Zero'\'User Graph'>
 								<@Edge\Meta :: @Structure\StaticComponent\ReadWrite>
-								<@Edge\To :: @Base\'MinusZero Platform'\'REST Server / Cllient Engine'>
+								<@Edge\To :: @Base\'MinusZero Platform'\'Minus Zero'\'REST Server / Cllient Engine'>
 							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - FromToFilledTriangle'>
 							<@StartAnchor :: @UX\LineEndEnum\FilledTriangle>
 							<@EndAnchor :: @UX\LineEndEnum\FilledTriangle>
 							<@ToItem :: @Base\'MinusZero Platform'\'MinusZero Platform'\Item:<<"1">>\Item:<<"6">>>
+						<@Decorator :: "">
+							<@$Is :: @UX\LineDecorator>
+							<@Scale :: "100">
+							<@BaseEdge :: "">
+								<@Edge\From :: @Base\'MinusZero Platform'\'Minus Zero'\'User Graph'>
+								<@Edge\Meta :: @Structure\Component\Use>
+								<@Edge\To :: @Base\'MinusZero Platform'\'Minus Zero'\'MinuZero System Graph'>
+							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - ToArrow'>
+							<@EndAnchor :: @UX\LineEndEnum\Arrow>
+							<@ToItem :: @Base\'MinusZero Platform'\'MinusZero Platform'\Item:<<"1">>\Item:<<"2">>>
 					<@Item :: "">
 						<@$Is :: @UX\IconItem>
 						<@Scale :: "100">
@@ -3466,7 +3466,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 							<@BaseEdge :: "">
 								<@Edge\From :: @Base\'MinusZero Platform'\'Minus Zero'\'File System Store'>
 								<@Edge\Meta :: @Structure\StaticComponent\ReadWrite>
-								<@Edge\To :: @Base\'MinusZero Platform'\'MinuZero System Graph'>
+								<@Edge\To :: @Base\'MinusZero Platform'\'Minus Zero'\'MinuZero System Graph'>
 							<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - FromToFilledTriangle'>
 							<@StartAnchor :: @UX\LineEndEnum\FilledTriangle>
 							<@EndAnchor :: @UX\LineEndEnum\FilledTriangle>
@@ -3512,7 +3512,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 					<@Position :: "">
 						<@$Is :: @UX\Position>
-						<@X :: "2088.1666666666665">
+						<@X :: "2088.166666666666">
 						<@Y :: "474.95238095238085">
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Component>
 					<@BackgroundColor :: "VeryVeryVeryLightCyan">
@@ -3532,7 +3532,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@BaseEdge :: "">
 							<@Edge\From :: @Base\'MinusZero Platform'\Network>
 							<@Edge\Meta :: @Structure\StaticComponent\ReadWrite>
-							<@Edge\To :: @Base\'MinusZero Platform'\'REST Server / Cllient Engine'>
+							<@Edge\To :: @Base\'MinusZero Platform'\'Minus Zero'\'REST Server / Cllient Engine'>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - FromToFilledTriangle'>
 						<@StartAnchor :: @UX\LineEndEnum\FilledTriangle>
 						<@EndAnchor :: @UX\LineEndEnum\FilledTriangle>
@@ -3543,56 +3543,50 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@BaseEdge :: "">
 							<@Edge\From :: @Base\'MinusZero Platform'\Network>
 							<@Edge\Meta :: @Structure\StaticComponent\ReadWrite>
-							<@Edge\To :: @Base\'MinusZero Platform'\'HTTP Server'>
+							<@Edge\To :: @Base\'MinusZero Platform'\'Minus Zero'\'HTTP Server'>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\UniversalDecorators\'Edge - FromToFilledTriangle'>
 						<@StartAnchor :: @UX\LineEndEnum\FilledTriangle>
 						<@EndAnchor :: @UX\LineEndEnum\FilledTriangle>
 						<@ToItem :: @Base\'MinusZero Platform'\'MinusZero Platform'\Item:<<"1">>\Item:<<"5">>>
-			<@Structure\Component :: "Graph Data Base Engine">
-				<@$Is :: @Structure\Component>
-				<@Contain :: "Query Engine">
-					<@$Is :: @Structure\Component>
-				<@Contain :: "Graph Virtual Machine">
-					<@$Is :: @Structure\Component>
-				<@Contain :: "Autoindexing Engine">
-					<@$Is :: @Structure\Component>
-				<@Contain :: "Event Trigger Engine">
-					<@$Is :: @Structure\Component>
-				<@Contain :: "Updatable View Engine">
-					<@$Is :: @Structure\Component>
-			<@Structure\Component :: "MinuZero System Graph">
-				<@$Is :: @Structure\Component>
-				<@Contain :: "Meta Models">
-					<@$Is :: @Structure\Component>
-				<@Contain :: "Models">
-					<@$Is :: @Structure\Component>
-				<@Contain :: "Libraries">
-					<@$Is :: @Structure\Component>
-				<@Contain :: "Text Language Definitions">
-					<@$Is :: @Structure\Component>
-				<@Contain :: "Diagram Types Definitions">
-					<@$Is :: @Structure\Component>
-				<@Contain :: "Views Definitions">
-					<@$Is :: @Structure\Component>
-				<@Use :: @Base\'MinusZero Platform'\'Graph Data Base Engine'>
-			<@Structure\Component :: "Text Language Engine">
-				<@$Is :: @Structure\Component>
-				<@Read :: @Base\'MinusZero Platform'\'MinuZero System Graph'>
-			<@Structure\Component :: "Diagram Engine">
-				<@$Is :: @Structure\Component>
-				<@Read :: @Base\'MinusZero Platform'\'MinuZero System Graph'>
-			<@Structure\Component :: "REST Server / Cllient Engine">
-				<@$Is :: @Structure\Component>
-			<@Structure\Component :: "HTTP Server">
-				<@$Is :: @Structure\Component>
 			<@Structure\System :: "Minus Zero">
 				<@$Is :: @Structure\System>
-				<@Contain :: @Base\'MinusZero Platform'\'Graph Data Base Engine'>
-				<@Contain :: @Base\'MinusZero Platform'\'MinuZero System Graph'>
-				<@Contain :: @Base\'MinusZero Platform'\'Text Language Engine'>
-				<@Contain :: @Base\'MinusZero Platform'\'Diagram Engine'>
-				<@Contain :: @Base\'MinusZero Platform'\'HTTP Server'>
-				<@Contain :: @Base\'MinusZero Platform'\'REST Server / Cllient Engine'>
+				<@Contain :: "Graph Data Base Engine">
+					<@$Is :: @Structure\Component>
+					<@Contain :: "Query Engine">
+						<@$Is :: @Structure\Component>
+					<@Contain :: "Graph Virtual Machine">
+						<@$Is :: @Structure\Component>
+					<@Contain :: "Autoindexing Engine">
+						<@$Is :: @Structure\Component>
+					<@Contain :: "Event Trigger Engine">
+						<@$Is :: @Structure\Component>
+					<@Contain :: "Updatable View Engine">
+						<@$Is :: @Structure\Component>
+				<@Contain :: "MinuZero System Graph">
+					<@$Is :: @Structure\Component>
+					<@Contain :: "Meta Models">
+						<@$Is :: @Structure\Component>
+					<@Contain :: "Models">
+						<@$Is :: @Structure\Component>
+					<@Contain :: "Libraries">
+						<@$Is :: @Structure\Component>
+					<@Contain :: "Text Language Definitions">
+						<@$Is :: @Structure\Component>
+					<@Contain :: "Diagram Types Definitions">
+						<@$Is :: @Structure\Component>
+					<@Contain :: "Views Definitions">
+						<@$Is :: @Structure\Component>
+					<@Use :: @Base\'MinusZero Platform'\'Minus Zero'\'Graph Data Base Engine'>
+				<@Contain :: "Text Language Engine">
+					<@$Is :: @Structure\Component>
+					<@Read :: @Base\'MinusZero Platform'\'Minus Zero'\'MinuZero System Graph'>
+				<@Contain :: "Diagram Engine">
+					<@$Is :: @Structure\Component>
+					<@Read :: @Base\'MinusZero Platform'\'Minus Zero'\'MinuZero System Graph'>
+				<@Contain :: "HTTP Server">
+					<@$Is :: @Structure\Component>
+				<@Contain :: "REST Server / Cllient Engine">
+					<@$Is :: @Structure\Component>
 				<@Contain :: "User Graph">
 					<@$Is :: @Structure\Component>
 					<@Contain :: "Meta Models">
@@ -3601,20 +3595,20 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @Structure\Component>
 					<@Contain :: "Data">
 						<@$Is :: @Structure\Component>
-					<@Use :: @Base\'MinusZero Platform'\'Graph Data Base Engine'>
-					<@Read :: @Base\'MinusZero Platform'\'MinuZero System Graph'>
+					<@Use :: @Base\'MinusZero Platform'\'Minus Zero'\'Graph Data Base Engine'>
 					<@Contain :: "Code">
 						<@$Is :: @Structure\Component>
-					<@Write :: @Base\'MinusZero Platform'\'HTTP Server'>
-					<@ReadWrite :: @Base\'MinusZero Platform'\'REST Server / Cllient Engine'>
+					<@Write :: @Base\'MinusZero Platform'\'Minus Zero'\'HTTP Server'>
+					<@ReadWrite :: @Base\'MinusZero Platform'\'Minus Zero'\'REST Server / Cllient Engine'>
+					<@Use :: @Base\'MinusZero Platform'\'Minus Zero'\'MinuZero System Graph'>
 				<@Contain :: "File System Store">
 					<@$Is :: @Structure\Component>
 					<@ReadWrite :: @Base\'MinusZero Platform'\'Minus Zero'\'User Graph'>
-					<@ReadWrite :: @Base\'MinusZero Platform'\'MinuZero System Graph'>
+					<@ReadWrite :: @Base\'MinusZero Platform'\'Minus Zero'\'MinuZero System Graph'>
 					<@ReadWrite :: @Base\'MinusZero Platform'\Filesystem>
 			<@Structure\Component :: "Filesystem">
 				<@$Is :: @Structure\Component>
 			<@Structure\Component :: "Network">
 				<@$Is :: @Structure\Component>
-				<@ReadWrite :: @Base\'MinusZero Platform'\'REST Server / Cllient Engine'>
-				<@ReadWrite :: @Base\'MinusZero Platform'\'HTTP Server'>
+				<@ReadWrite :: @Base\'MinusZero Platform'\'Minus Zero'\'REST Server / Cllient Engine'>
+				<@ReadWrite :: @Base\'MinusZero Platform'\'Minus Zero'\'HTTP Server'>
