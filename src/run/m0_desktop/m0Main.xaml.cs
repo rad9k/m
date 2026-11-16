@@ -65,6 +65,7 @@ namespace m0
         private bool treePaneAnimationExpanding;
         private bool treePaneAnimationInProgress;
         private bool useWindows10Frame;
+        private bool useWindows11Frame;
 
         public PlatformTypeEnum GetPlatformType()
         {
@@ -76,7 +77,8 @@ namespace m0
             Instance = this;
 
             InitializeComponent();
-            ApplyWindows10WindowFrame();
+            ApplyWindowFrame();
+            SourceInitialized += MainWindow_SourceInitialized;
 
             UiScaleCaption.Loaded += UiScaleCaption_Loaded;
             StateChanged += MainWindow_StateChanged;
@@ -86,19 +88,49 @@ namespace m0
             this_static = this;            
         }
 
-        void ApplyWindows10WindowFrame()
+        const int DwmWindowCornerPreference = 33;
+        const int DwmBorderColor = 34;
+        const int DwmCornerRound = 2;
+        const int WindowOutlineColorRef = 0x008E8E8E;
+
+        [DllImport("dwmapi.dll")]
+        static extern int DwmSetWindowAttribute(IntPtr hwnd, int attribute, ref int attributeValue, int attributeSize);
+
+        void ApplyWindowFrame()
         {
-            // Windows 11 draws its own border and shadow around WindowChrome.
-            // Windows 10 drops both when GlassFrameThickness is zero.
-            if (Environment.OSVersion.Version.Build >= 22000)
-                return;
-
-            useWindows10Frame = true;
-            WindowOutline.BorderThickness = new Thickness(1);
-
+            // A one-pixel glass edge keeps the DWM shadow when the caption is custom.
             WindowChrome chrome = WindowChrome.GetWindowChrome(this);
             if (chrome != null)
                 chrome.GlassFrameThickness = new Thickness(0, 0, 0, 1);
+
+            if (Environment.OSVersion.Version.Build >= 22000)
+            {
+                useWindows11Frame = true;
+                return;
+            }
+
+            useWindows10Frame = true;
+            WindowOutline.BorderThickness = new Thickness(1);
+        }
+
+        void MainWindow_SourceInitialized(object sender, EventArgs e)
+        {
+            ApplyWindows11Border();
+        }
+
+        void ApplyWindows11Border()
+        {
+            if (!useWindows11Frame)
+                return;
+
+            IntPtr hwnd = new WindowInteropHelper(this).Handle;
+            if (hwnd == IntPtr.Zero)
+                return;
+
+            int corner = DwmCornerRound;
+            int borderColor = WindowOutlineColorRef;
+            DwmSetWindowAttribute(hwnd, DwmWindowCornerPreference, ref corner, sizeof(int));
+            DwmSetWindowAttribute(hwnd, DwmBorderColor, ref borderColor, sizeof(int));
         }
 
         void UiScaleCaption_Loaded(object sender, RoutedEventArgs e)
@@ -130,6 +162,9 @@ namespace m0
 
             if (useWindows10Frame)
                 WindowOutline.BorderThickness = new Thickness(isMaximized ? 0 : 1);
+
+            if (useWindows11Frame && !isMaximized)
+                ApplyWindows11Border();
         }
 
         static void MarkChromeHitTestVisible(DependencyObject node)
