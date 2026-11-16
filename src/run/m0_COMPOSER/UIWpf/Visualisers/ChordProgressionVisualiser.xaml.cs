@@ -118,8 +118,22 @@ namespace m0_COMPOSER.UIWpf.Visualisers
 
         bool needToVisualiserDraw = false;
 
+        protected override void EdgeRemoved(IEdge edge)
+        {
+            string meta = edge == null || edge.Meta == null ? "null" : edge.Meta.ToString();
+
+            if (meta == "Chord" &&
+                edge.To != null &&
+                GraphUtil.GetQueryInFirst(edge.To, "Chord", null) == VisualizedVertex)
+                return;
+
+            base.EdgeRemoved(edge);
+        }
+
         protected override INoInEdgeInOutVertexVertex CheckBaseEdgeChange(IExecution exe)
         {
+            needToVisualiserDraw = false;
+
             IVertex baseEdgeTo = VisualiserHelper.Vertex.Get(false, @"BaseEdge:\To:");
 
             ExecutionFlowHelper.DoAddRemoveDisposeAddEdgeByMetaOrValueChangeHandlers(exe.Stack, new List<EventHandlers>()
@@ -128,7 +142,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers
                 EdgeAdded,
                 EdgeRemoved,
                 EdgeDisposed,
-                new string[] { },
+                new string[] { "Pitch" },
                 new string[] {"Note", "Octave"},
                 new string[] {"Chord", "Pitch" },
                 AddEdgeByMetaOrValueChangeHandler

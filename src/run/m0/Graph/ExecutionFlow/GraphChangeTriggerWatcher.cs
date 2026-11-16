@@ -431,6 +431,27 @@ namespace m0.Graph.ExecutionFlow
                 {
                     sourcesToRefresh.Add(edge.From);
                 }
+
+                AddSourcesWatchingVertex(edge.From, sourcesToRefresh);
+            }
+        }
+
+        private static void AddSourcesWatchingVertex(
+            IVertex vertex,
+            HashSet<IVertex> sourcesToRefresh)
+        {
+            if (cachedWatchedVertexDictionary == null ||
+                !cachedWatchedVertexDictionary.TryGetValue(
+                    vertex,
+                    out List<WatcherEntry> parentWatchers))
+            {
+                return;
+            }
+
+            foreach (WatcherEntry watcher in parentWatchers)
+            {
+                if (watcher.sourceVertex != null)
+                    sourcesToRefresh.Add(watcher.sourceVertex);
             }
         }
 

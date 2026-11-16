@@ -313,13 +313,20 @@ namespace m0_COMPOSER.Lib
                     IVertex chordVertex = e.To;
                     
                     if(GraphUtil.ExistQueryOut(chordVertex, "Pitch", null))
+                    {
                         baseVertex.AddEdge(stepMeta, chordVertex);
-
-                    numberOfSteps++;
+                        numberOfSteps++;
+                    }
                 }
 
                 foreach (IEdge e in edges)
                     baseVertex.DeleteEdge(e);
+
+                if (numberOfSteps == 0)
+                {
+                    AddStepAtEnd();
+                    numberOfSteps = 1;
+                }
             }
             //            
 

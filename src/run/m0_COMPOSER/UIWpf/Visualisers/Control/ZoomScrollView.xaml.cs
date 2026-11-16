@@ -1,10 +1,13 @@
 ﻿using m0.UIWpf;
 using m0.UIWpf.Controls;
+using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace m0_COMPOSER.UIWpf.Visualisers.Control
 {
@@ -60,6 +63,11 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             {
                 Grid.RowDefinitions[5].Height = new GridLength(5, GridUnitType.Pixel);
                 Grid.RowDefinitions[6].Height = new GridLength(0, GridUnitType.Auto);
+
+                downAreaExpanderButtonNotReadyPassCount = 0;
+
+                if (DownMain != null)
+                    RequestDownAreaAlignment();
             }
             else
             {
@@ -78,10 +86,189 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             ScrollViewer.Content = control;
         }
 
+        ToggleButton downAreaExpanderButton;
+        bool downMainScrollChangedHooked;
+        bool isSynchronizingDownHorizontalOffset;
+        bool downAreaAlignmentQueued;
+        int downAreaExpanderButtonNotReadyPassCount;
+
+        static bool AreClose(double first, double second)
+        {
+            return Math.Abs(first - second) < 0.5;
+        }
+
+        static T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+        {
+            if (parent == null)
+                return null;
+
+            int childCount = VisualTreeHelper.GetChildrenCount(parent);
+
+            for (int childIndex = 0; childIndex < childCount; childIndex++)
+            {
+                DependencyObject child = VisualTreeHelper.GetChild(parent, childIndex);
+
+                T typedChild = child as T;
+
+                if (typedChild != null)
+                    return typedChild;
+
+                T nestedChild = FindVisualChild<T>(child);
+
+                if (nestedChild != null)
+                    return nestedChild;
+            }
+
+            return null;
+        }
+
+        void RestoreDownAreaExpanderButton()
+        {
+            if (DownHideArea == null)
+                return;
+
+            if (downAreaExpanderButton == null)
+            {
+                Expander expander = FindVisualChild<Expander>(DownHideArea);
+
+                if (expander != null)
+                    expander.ApplyTemplate();
+
+                if (expander == null || expander.Template == null)
+                {
+                    RequestDownAreaAlignmentAfterExpanderButtonNotReady();
+                    return;
+                }
+
+                downAreaExpanderButton = expander.Template.FindName("ExpanderButton", expander) as ToggleButton;
+
+                if (downAreaExpanderButton == null)
+                {
+                    RequestDownAreaAlignmentAfterExpanderButtonNotReady();
+                    return;
+                }
+            }
+
+            if (!double.IsNaN(downAreaExpanderButton.Width))
+                downAreaExpanderButton.ClearValue(FrameworkElement.WidthProperty);
+
+            downAreaExpanderButton.ClearValue(FrameworkElement.MinWidthProperty);
+            downAreaExpanderButton.Visibility = Visibility.Visible;
+
+            if (downAreaExpanderButton.ActualWidth <= 0)
+            {
+                RequestDownAreaAlignmentAfterExpanderButtonNotReady();
+                return;
+            }
+
+            downAreaExpanderButtonNotReadyPassCount = 0;
+        }
+
+        void RequestDownAreaAlignmentAfterExpanderButtonNotReady()
+        {
+            if (downAreaAlignmentQueued || downAreaExpanderButtonNotReadyPassCount >= 8)
+                return;
+
+            downAreaExpanderButtonNotReadyPassCount++;
+
+            RequestDownAreaAlignment();
+        }
+
+        void RequestDownAreaAlignment()
+        {
+            if (downAreaAlignmentQueued)
+                return;
+
+            downAreaAlignmentQueued = true;
+
+            Dispatcher.BeginInvoke(new Action(RunQueuedDownAreaAlignment), DispatcherPriority.Loaded);
+        }
+
+        void RunQueuedDownAreaAlignment()
+        {
+            downAreaAlignmentQueued = false;
+
+            DownWidthUpdate();
+        }
+
         void DownWidthUpdate()
         {
-            if(DownMain != null && VerticalAxisDecorator != null)
-                DownMain.Width = DownHideArea.ActualWidth - VerticalAxisDecorator.Size.Width;
+            RestoreDownAreaExpanderButton();
+
+            if (DownMain == null || ContentPresenter == null || DownDecorator == null)
+                return;
+
+            double mainViewportWidth = ContentPresenter.ActualWidth;
+
+            if (mainViewportWidth <= 0 || double.IsNaN(mainViewportWidth))
+                return;
+
+            double buttonWidth = downAreaExpanderButton == null ? 0 : downAreaExpanderButton.ActualWidth;
+            double pianoWidth = VerticalAxisDecorator == null ? DownDecorator.Width : VerticalAxisDecorator.Size.Width;
+            double decoratorWidth = pianoWidth - buttonWidth;
+
+            if (decoratorWidth < 0)
+                decoratorWidth = 0;
+
+            if (!AreClose(DownDecorator.Width, decoratorWidth))
+                DownDecorator.Width = decoratorWidth;
+
+            if (!AreClose(DownMain.Width, mainViewportWidth))
+                DownMain.Width = mainViewportWidth;
+        }
+
+        void HookDownMainScroll()
+        {
+            if (DownMain == null || downMainScrollChangedHooked)
+                return;
+
+            DownMain.BorderThickness = new Thickness(0);
+            DownMain.Padding = new Thickness(0);
+
+            DownMain.ScrollChanged += DownMain_ScrollChanged;
+            DownMain.PreviewMouseWheel += DownMain_PreviewMouseWheel;
+
+            downMainScrollChangedHooked = true;
+        }
+
+        void DownMain_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if ((Keyboard.Modifiers & ModifierKeys.Shift) != ModifierKeys.Shift)
+                return;
+
+            e.Handled = true;
+
+            MouseWheelEventArgs forwardedWheel = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
+            forwardedWheel.RoutedEvent = UIElement.MouseWheelEvent;
+            forwardedWheel.Source = ScrollViewer;
+
+            ScrollViewer.RaiseEvent(forwardedWheel);
+        }
+
+        void DownMain_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            if (isSynchronizingDownHorizontalOffset || e.HorizontalChange == 0)
+                return;
+
+            SynchronizeDownMainHorizontalOffset();
+        }
+
+        void SynchronizeDownMainHorizontalOffset()
+        {
+            if (DownMain == null || isSynchronizingDownHorizontalOffset)
+                return;
+
+            double mainHorizontalOffset = ScrollViewer.HorizontalOffset;
+            double downHorizontalOffset = DownMain.HorizontalOffset;
+
+            if (AreClose(downHorizontalOffset, mainHorizontalOffset))
+                return;
+
+            isSynchronizingDownHorizontalOffset = true;
+
+            DownMain.ScrollToHorizontalOffset(mainHorizontalOffset);
+
+            isSynchronizingDownHorizontalOffset = false;
         }
 
         public void SetDownContent(FrameworkElement downDecoratorContent, FrameworkElement downMainContent)
@@ -202,6 +389,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             DownDecorator = (Border)((StackPanel)DownHideArea.Content).Children[0];
             DownMain = (ScrollViewer)((StackPanel)DownHideArea.Content).Children[1];
 
+            HookDownMainScroll();
+
             LeftDownCorner = (Border)ScrollViewer.Template.FindName("LeftDownCorner", ScrollViewer);
 
             HorizontalZoomSlider_public = HorizontalZoomSlider;
@@ -213,6 +402,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
             DownHideArea.IsExpanded = downAreaIsExpanded;
 
             UpdateDownHideAreaVisibility();
+
+            DownWidthUpdate();
         }
 
         private void ScrollViewer_Loaded(object sender, RoutedEventArgs e)
@@ -255,7 +446,7 @@ namespace m0_COMPOSER.UIWpf.Visualisers.Control
 
                 HorizontalAxisDecoratorScrollViewer.ScrollToHorizontalOffset(HorizontalOffset);
 
-                DownMain.ScrollToHorizontalOffset(HorizontalOffset);
+                SynchronizeDownMainHorizontalOffset();
             }
 
             if (VerticalOffset != this.ScrollViewer.VerticalOffset)
