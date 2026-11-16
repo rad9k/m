@@ -745,7 +745,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@BaseEdge :: "">
 							<@Edge\From :: @Base\'Fractal Graph'\VertrexA1>
 							<@Edge\Meta :: @$Empty>
-							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\VertrexA3>
+							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexA3>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@ToItem :: @Base\'Fractal Graph'\'Fractal Graph'\Item:<<"3">>>
@@ -755,7 +755,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@BaseEdge :: "">
 							<@Edge\From :: @Base\'Fractal Graph'\VertrexA1>
 							<@Edge\Meta :: @$Empty>
-							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\VertrexA2>
+							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexA2>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@ToItem :: @Base\'Fractal Graph'\'Fractal Graph'\Item:<<"2">>>
@@ -765,7 +765,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@BaseEdge :: "">
 							<@Edge\From :: @Base\'Fractal Graph'\VertrexA1>
 							<@Edge\Meta :: @$Empty>
-							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\VertrexA4>
+							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexA4>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@ToItem :: @Base\'Fractal Graph'\'Fractal Graph'\Item:<<"4">>>
@@ -797,7 +797,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @Edge>
 						<@From :: @Base\'Fractal Graph'>
 						<@Meta :: @$Empty>
-						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\VertrexA2>
+						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexA2>
 					<@ForegroundColor :: @Base\'Fractal Graph'\'Fractal Graph'\Item:<<"1">>\White>
 					<@BackgroundColor :: @Base\'Fractal Graph'\'Fractal Graph'\Item:<<"1">>\Blue>
 				<@Item :: "">
@@ -816,7 +816,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @Edge>
 						<@From :: @Base\'Fractal Graph'>
 						<@Meta :: @$Empty>
-						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\VertrexA3>
+						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexA3>
 					<@ForegroundColor :: @Base\'Fractal Graph'\'Fractal Graph'\Item:<<"1">>\White>
 					<@BackgroundColor :: @Base\'Fractal Graph'\'Fractal Graph'\Item:<<"1">>\Blue>
 				<@Item :: "">
@@ -835,7 +835,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @Edge>
 						<@From :: @Base\'Fractal Graph'>
 						<@Meta :: @$Empty>
-						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\VertrexA4>
+						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexA4>
 					<@ForegroundColor :: @Base\'Fractal Graph'\'Fractal Graph'\Item:<<"1">>\White>
 					<@BackgroundColor :: @Base\'Fractal Graph'\'Fractal Graph'\Item:<<"1">>\Blue>
 				<@Item :: "">
@@ -861,7 +861,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@BaseEdge :: "">
 							<@Edge\From :: @Base\'Fractal Graph'\VertrexB1>
 							<@Edge\Meta :: @Base\'Fractal Graph'\VertrexA1>
-							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\VertrexB2>
+							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexB2>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@ToItem :: @Base\'Fractal Graph'\'Fractal Graph'\Item:<<"6">>>
@@ -871,7 +871,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@BaseEdge :: "">
 							<@Edge\From :: @Base\'Fractal Graph'\VertrexB1>
 							<@Edge\Meta :: @Base\'Fractal Graph'\VertrexA1>
-							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\VertrexB3>
+							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexB3>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@ToItem :: @Base\'Fractal Graph'\'Fractal Graph'\Item:<<"7">>>
@@ -898,7 +898,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @Edge>
 						<@From :: @Base\'Fractal Graph'>
 						<@Meta :: @$Empty>
-						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\VertrexB2>
+						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexB2>
 					<@BackgroundColor :: @Base\'Fractal Graph'\'Fractal Graph'\Item:<<"5">>\Red>
 					<@ForegroundColor :: @Base\'Fractal Graph'\'Fractal Graph'\Item:<<"1">>\White>
 				<@Item :: "">
@@ -917,14 +917,14 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @Edge>
 						<@From :: @Base\'Fractal Graph'>
 						<@Meta :: @$Empty>
-						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\VertrexB3>
+						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexB3>
 					<@Decorator :: "">
 						<@$Is :: @UX\MetaExtendedLineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@Edge\From :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\VertrexB3>
-							<@Edge\Meta :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\VertrexA3>
-							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\VertrexB4>
+							<@Edge\From :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexB3>
+							<@Edge\Meta :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexA3>
+							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexB4>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@ToItem :: @Base\'Fractal Graph'\'Fractal Graph'\Item:<<"8">>>
@@ -946,7 +946,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @Edge>
 						<@From :: @Base\'Fractal Graph'>
 						<@Meta :: @$Empty>
-						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\VertrexB4>
+						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexB4>
 					<@ForegroundColor :: @Base\'Fractal Graph'\'Fractal Graph'\Item:<<"1">>\White>
 					<@BackgroundColor :: @Base\'Fractal Graph'\'Fractal Graph'\Item:<<"5">>\Red>
 				<@Item :: "">
@@ -972,7 +972,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@BaseEdge :: "">
 							<@Edge\From :: @Base\'Fractal Graph'\VertrexC1>
 							<@Edge\Meta :: @Base\'Fractal Graph'\VertrexB1>
-							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\VertrexC2>
+							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexC2>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@ToItem :: @Base\'Fractal Graph'\'Fractal Graph'\Item:<<"10">>>
@@ -1004,14 +1004,14 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @Edge>
 						<@From :: @Base\'Fractal Graph'>
 						<@Meta :: @$Empty>
-						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\VertrexC2>
+						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexC2>
 					<@Decorator :: "">
 						<@$Is :: @UX\MetaExtendedLineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@Edge\From :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\VertrexC2>
-							<@Edge\Meta :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\VertrexB3>
-							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\VertrexC3>
+							<@Edge\From :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexC2>
+							<@Edge\Meta :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexB3>
+							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexC3>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@ToItem :: @Base\'Fractal Graph'\'Fractal Graph'\Item:<<"11">>>
@@ -1019,9 +1019,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @UX\MetaExtendedLineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@Edge\From :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\VertrexC2>
-							<@Edge\Meta :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\VertrexB2>
-							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\VertrexC4>
+							<@Edge\From :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexC2>
+							<@Edge\Meta :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexB2>
+							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexC4>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@ToItem :: @Base\'Fractal Graph'\'Fractal Graph'\Item:<<"12">>>
@@ -1029,9 +1029,9 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @UX\MetaExtendedLineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@Edge\From :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\VertrexC2>
-							<@Edge\Meta :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\VertrexB4>
-							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\VertrexC5>
+							<@Edge\From :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexC2>
+							<@Edge\Meta :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexB4>
+							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexC5>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@ToItem :: @Base\'Fractal Graph'\'Fractal Graph'\Item:<<"13">>>
@@ -1052,7 +1052,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @Edge>
 						<@From :: @Base\'Fractal Graph'>
 						<@Meta :: @$Empty>
-						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\VertrexC3>
+						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexC3>
 					<@BackgroundColor :: @Base\'Fractal Graph'\'Fractal Graph'\Item:<<"9">>\Green>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
@@ -1070,7 +1070,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @Edge>
 						<@From :: @Base\'Fractal Graph'>
 						<@Meta :: @$Empty>
-						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\VertrexC4>
+						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexC4>
 					<@BackgroundColor :: @Base\'Fractal Graph'\'Fractal Graph'\Item:<<"9">>\Green>
 				<@Item :: "">
 					<@$Is :: @UX\RectangleVisualiserItem>
@@ -1088,7 +1088,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @Edge>
 						<@From :: @Base\'Fractal Graph'>
 						<@Meta :: @$Empty>
-						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\VertrexC5>
+						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\VertrexC5>
 					<@BackgroundColor :: @Base\'Fractal Graph'\'Fractal Graph'\Item:<<"9">>\Green>
 			"Source Vertex"
 				<@Base\'Fractal Graph'\'Meta Vertex' :: "Target Vertex">
@@ -1140,7 +1140,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@BaseEdge :: "">
 							<@Edge\From :: @Base\'Fractal Graph'\'Source Vertex'>
 							<@Edge\Meta :: @Base\'Fractal Graph'\'Meta Vertex'>
-							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\'Target Vertex'>
+							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\'Target Vertex'>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@ToItem :: @Base\'Fractal Graph'\'Source Meta Target'\Item:<<"3">>>
@@ -1199,7 +1199,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @Edge>
 						<@From :: @Base\'Fractal Graph'>
 						<@Meta :: @$Empty>
-						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Fractal Graph'\'Target Vertex'>
+						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Fractal Graph'\'Target Vertex'>
 					<@Size :: "">
 						<@$Is :: @UX\Size>
 						<@Width :: "94.5333333333333">
@@ -1257,8 +1257,8 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
 					<@Position :: "">
 						<@$Is :: @UX\Position>
-						<@X :: "429.3766666666667">
-						<@Y :: "309.66">
+						<@X :: "492.00000000000006">
+						<@Y :: "255.25999999999982">
 					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
 					<@ShowMeta :: "False">
 					<@BaseEdge :: "">
@@ -1266,33 +1266,10 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@From :: @Base\'Graph Text Diagram'>
 						<@Meta :: @$Empty>
 						<@To :: @Base\'Graph Text Diagram'\Graph>
-					<@BackgroundColor :: "VeryLightBlue">
-						<@$Is :: @UX\Color>
-						<@Red :: "165">
-						<@Green :: "165">
-						<@Blue :: "255">
-						<@Opacity :: "255">
 					<@Size :: "">
 						<@$Is :: @UX\Size>
 						<@Width :: "62.623333333333335">
 						<@Height :: "21.62">
-				<@Item :: "">
-					<@$Is :: @UX\RectangleVisualiserItem>
-					<@Scale :: "100">
-					<@ShowIcons :: "False">
-					<@FontSize :: "14">
-					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
-					<@Position :: "">
-						<@$Is :: @UX\Position>
-						<@X :: "492.00000000000006">
-						<@Y :: "246.64">
-					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
-					<@ShowMeta :: "False">
-					<@BaseEdge :: "">
-						<@$Is :: @Edge>
-						<@From :: @Base\'Graph Text Diagram'>
-						<@Meta :: @$Empty>
-						<@To :: @Base\'Graph Text Diagram'\Diagram>
 					<@BackgroundColor :: "VeryLightGreen">
 						<@$Is :: @UX\Color>
 						<@Red :: "165">
@@ -1303,7 +1280,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @UX\MetaExtendedLineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@Edge\From :: @Base\'Graph Text Diagram'\Diagram>
+							<@Edge\From :: @Base\'Graph Text Diagram'\Graph>
 							<@Edge\Meta :: @$Empty>
 							<@Edge\To :: @Base\'Graph Text Diagram'\Text>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
@@ -1313,12 +1290,35 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @UX\MetaExtendedLineDecorator>
 						<@Scale :: "100">
 						<@BaseEdge :: "">
-							<@Edge\From :: @Base\'Graph Text Diagram'\Diagram>
+							<@Edge\From :: @Base\'Graph Text Diagram'\Graph>
 							<@Edge\Meta :: @$Empty>
-							<@Edge\To :: @Base\'Graph Text Diagram'\Graph>
+							<@Edge\To :: @Base\'Graph Text Diagram'\Diagram>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
-						<@ToItem :: @Base\'Graph Text Diagram'\'Graph Text Diagram - Basic'\Item:<<"2">>>
+						<@ToItem :: @Base\'Graph Text Diagram'\'Graph Text Diagram - Basic'\Item:<<"3">>>
+				<@Item :: "">
+					<@$Is :: @UX\RectangleVisualiserItem>
+					<@Scale :: "100">
+					<@ShowIcons :: "False">
+					<@FontSize :: "14">
+					<@FormalTextLanguageProcessing :: @FormalTextLanguageProcessing:ZeroCode_VertexAndManyLines>
+					<@Position :: "">
+						<@$Is :: @UX\Position>
+						<@X :: "429.3766666666667">
+						<@Y :: "309.66">
+					<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'>
+					<@ShowMeta :: "False">
+					<@BaseEdge :: "">
+						<@$Is :: @Edge>
+						<@From :: @Base\'Graph Text Diagram'>
+						<@Meta :: @$Empty>
+						<@To :: @Base\'Graph Text Diagram'\Diagram>
+					<@BackgroundColor :: "VeryLightBlue">
+						<@$Is :: @UX\Color>
+						<@Red :: "165">
+						<@Green :: "165">
+						<@Blue :: "255">
+						<@Opacity :: "255">
 			"Graph"
 				"Text A%r%n(in text language representation A)"
 				"Diagram A %r%n(in diagram representation A)"
@@ -1328,10 +1328,10 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@Base\'Graph Text Diagram'\'Text language definition B [graph]' :: "Text B">
 				<@Base\'Graph Text Diagram'\'Diagram type definition A [graph]' :: "Diagram A">
 				<@Base\'Graph Text Diagram'\'Diagram type definition B [graph]' :: "Diagram B">
-			"Text"
-			"Diagram"
-				<@Base\'Graph Text Diagram'\Text>
-				<@Base\'Graph Text Diagram'\Graph>
+				"Text"
+				"Diagram"
+			<@Base\'Graph Text Diagram'\Graph\Text>
+			<@Base\'Graph Text Diagram'\Graph\Diagram>
 			<@UX\UXContainer :: "Graph Text Diagram - Multiple Views">
 				<@$Is :: @UX\UXContainer>
 				<@IsExpanded :: "True">
@@ -1372,7 +1372,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@BaseEdge :: "">
 							<@Edge\From :: @Base\'Graph Text Diagram'\Graph>
 							<@Edge\Meta :: @$Empty>
-							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Graph Text Diagram'\'Text A%r%n(in text language representation A)'>
+							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Graph Text Diagram'\'Text A%r%n(in text language representation A)'>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@ToItem :: @Base\'Graph Text Diagram'\'Graph Text Diagram - Multiple Views'\Item:<<"3">>>
@@ -1382,7 +1382,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@BaseEdge :: "">
 							<@Edge\From :: @Base\'Graph Text Diagram'\Graph>
 							<@Edge\Meta :: @$Empty>
-							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Graph Text Diagram'\'Diagram A %r%n(in diagram representation A)'>
+							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Graph Text Diagram'\'Diagram A %r%n(in diagram representation A)'>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@ToItem :: @Base\'Graph Text Diagram'\'Graph Text Diagram - Multiple Views'\Item:<<"5">>>
@@ -1392,7 +1392,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@BaseEdge :: "">
 							<@Edge\From :: @Base\'Graph Text Diagram'\Graph>
 							<@Edge\Meta :: @$Empty>
-							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Graph Text Diagram'\'Text B%r%n (in text language representation B)'>
+							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Graph Text Diagram'\'Text B%r%n (in text language representation B)'>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@ToItem :: @Base\'Graph Text Diagram'\'Graph Text Diagram - Multiple Views'\Item:<<"2">>>
@@ -1402,7 +1402,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@BaseEdge :: "">
 							<@Edge\From :: @Base\'Graph Text Diagram'\Graph>
 							<@Edge\Meta :: @$Empty>
-							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Graph Text Diagram'\'Diagram B %r%nin diagram representation B)'>
+							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Graph Text Diagram'\'Diagram B %r%nin diagram representation B)'>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@ToItem :: @Base\'Graph Text Diagram'\'Graph Text Diagram - Multiple Views'\Item:<<"4">>>
@@ -1432,7 +1432,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @Edge>
 						<@From :: @Base\'Graph Text Diagram'>
 						<@Meta :: @$Empty>
-						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Graph Text Diagram'\'Text B%r%n (in text language representation B)'>
+						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Graph Text Diagram'\'Text B%r%n (in text language representation B)'>
 					<@Size :: "">
 						<@$Is :: @UX\Size>
 						<@Width :: "124.56000000000006">
@@ -1459,7 +1459,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @Edge>
 						<@From :: @Base\'Graph Text Diagram'>
 						<@Meta :: @$Empty>
-						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Graph Text Diagram'\'Text A%r%n(in text language representation A)'>
+						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Graph Text Diagram'\'Text A%r%n(in text language representation A)'>
 					<@Size :: "">
 						<@$Is :: @UX\Size>
 						<@Width :: "124.56000000000006">
@@ -1481,7 +1481,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @Edge>
 						<@From :: @Base\'Graph Text Diagram'>
 						<@Meta :: @$Empty>
-						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Graph Text Diagram'\'Diagram B %r%nin diagram representation B)'>
+						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Graph Text Diagram'\'Diagram B %r%nin diagram representation B)'>
 					<@Size :: "">
 						<@$Is :: @UX\Size>
 						<@Width :: "124.56000000000006">
@@ -1508,7 +1508,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @Edge>
 						<@From :: @Base\'Graph Text Diagram'>
 						<@Meta :: @$Empty>
-						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Graph Text Diagram'\'Diagram A %r%n(in diagram representation A)'>
+						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Graph Text Diagram'\'Diagram A %r%n(in diagram representation A)'>
 					<@Size :: "">
 						<@$Is :: @UX\Size>
 						<@Width :: "124.56000000000006">
@@ -1568,7 +1568,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@BaseEdge :: "">
 							<@Edge\From :: @Base\'Graph Text Diagram'\Graph>
 							<@Edge\Meta :: @Base\'Graph Text Diagram'\'Text language definition A [graph]'>
-							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Graph Text Diagram'\'Text A'>
+							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Graph Text Diagram'\'Text A'>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@ToItem :: @Base\'Graph Text Diagram'\'Graph Text Diagram - Multiple Views (with definitions)'\Item:<<"2">>>
@@ -1578,7 +1578,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@BaseEdge :: "">
 							<@Edge\From :: @Base\'Graph Text Diagram'\Graph>
 							<@Edge\Meta :: @Base\'Graph Text Diagram'\'Text language definition B [graph]'>
-							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Graph Text Diagram'\'Text B'>
+							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Graph Text Diagram'\'Text B'>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@ToItem :: @Base\'Graph Text Diagram'\'Graph Text Diagram - Multiple Views (with definitions)'\Item:<<"3">>>
@@ -1588,7 +1588,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@BaseEdge :: "">
 							<@Edge\From :: @Base\'Graph Text Diagram'\Graph>
 							<@Edge\Meta :: @Base\'Graph Text Diagram'\'Diagram type definition A [graph]'>
-							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Graph Text Diagram'\'Diagram A'>
+							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Graph Text Diagram'\'Diagram A'>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@ToItem :: @Base\'Graph Text Diagram'\'Graph Text Diagram - Multiple Views (with definitions)'\Item:<<"4">>>
@@ -1598,7 +1598,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@BaseEdge :: "">
 							<@Edge\From :: @Base\'Graph Text Diagram'\Graph>
 							<@Edge\Meta :: @Base\'Graph Text Diagram'\'Diagram type definition B [graph]'>
-							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Graph Text Diagram'\'Diagram B'>
+							<@Edge\To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Graph Text Diagram'\'Diagram B'>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\'Vertex NO ICON'\Edge>
 						<@EndAnchor :: @UX\LineEndEnum\Arrow>
 						<@ToItem :: @Base\'Graph Text Diagram'\'Graph Text Diagram - Multiple Views (with definitions)'\Item:<<"5">>>
@@ -1618,7 +1618,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @Edge>
 						<@From :: @Base\'Graph Text Diagram'>
 						<@Meta :: @$Empty>
-						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Graph Text Diagram'\'Text A'>
+						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Graph Text Diagram'\'Text A'>
 					<@Size :: "">
 						<@$Is :: @UX\Size>
 						<@Width :: "75.48666666666668">
@@ -1645,7 +1645,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @Edge>
 						<@From :: @Base\'Graph Text Diagram'>
 						<@Meta :: @$Empty>
-						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Graph Text Diagram'\'Text B'>
+						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Graph Text Diagram'\'Text B'>
 					<@Size :: "">
 						<@$Is :: @UX\Size>
 						<@Width :: "75.48666666666668">
@@ -1667,7 +1667,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @Edge>
 						<@From :: @Base\'Graph Text Diagram'>
 						<@Meta :: @$Empty>
-						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Graph Text Diagram'\'Diagram A'>
+						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Graph Text Diagram'\'Diagram A'>
 					<@Size :: "">
 						<@$Is :: @UX\Size>
 						<@Width :: "75.48666666666666">
@@ -1694,7 +1694,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@$Is :: @Edge>
 						<@From :: @Base\'Graph Text Diagram'>
 						<@Meta :: @$Empty>
-						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\\Base\'Graph Text Diagram'\'Diagram B'>
+						<@To :: @Start:\DocumentationDiagrams\'Base.m0t'\$Store:\Base\'Graph Text Diagram'\'Diagram B'>
 					<@Size :: "">
 						<@$Is :: @UX\Size>
 						<@Width :: "75.48666666666666">
@@ -3708,7 +3708,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Scale :: "100">
 						<@BaseEdge :: "">
 							<@Edge\From :: @Base\'Base Use Cases'\User>
-							<@Edge\Meta :: @UseCase\Actor\Use<<"2">>>
+							<@Edge\Meta :: @UseCase\Actor\Use<<"1">>>
 							<@Edge\To :: @Base\'Base Use Cases'\'Desktop Workstation'\MinusZero>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Actor\Relation>
 						<@HideLabel :: "True">
@@ -3838,7 +3838,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 						<@Scale :: "100">
 						<@BaseEdge :: "">
 							<@Edge\From :: @Base\'Base Use Cases'\User>
-							<@Edge\Meta :: @UseCase\Actor\Use<<"2">>>
+							<@Edge\Meta :: @UseCase\Actor\Use<<"1">>>
 							<@Edge\To :: @Base\'Base Use Cases'\'Desktop Workstation'\MinusZero>
 						<@UXTemplate :: @System\Data\UX\Templates\ZeroUML\Actor\Relation>
 						<@HideLabel :: "True">
