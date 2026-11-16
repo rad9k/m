@@ -34,8 +34,8 @@ namespace m0_COMPOSER.UserCommands
 
             if (storeName != null && storeName != "")
             {
-                if (!storeName.EndsWith(".m0j"))
-                    storeName += ".m0j";                
+                if (!storeName.EndsWith(".m0t"))
+                    storeName += ".m0t";                
 
                 ////////////////////////////////////////
                 Interaction.BeginInteractionWithGraph();

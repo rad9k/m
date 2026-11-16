@@ -328,26 +328,32 @@ namespace m0.ZeroCode
                         {
                             if (edgesList.Count > 0)
                             {
-                                isMetaDirect = false;
-
                                 string s = GetStringFromEdgesList(dict, zcg2sp, edgesList, false, true);
 
-                                checkIfNewBest(edgesList.Count, false, s);
+                                if (ImportLinkResolvesToTarget(s, true, false))
+                                {
+                                    isMetaDirect = false;
 
-                                return;
+                                    checkIfNewBest(edgesList.Count, false, s);
+
+                                    return;
+                                }
                             }
                         }
                         else if (GeneralUtil.CompareStrings(ikv.Value, "$ImportDirectMeta"))
                         {
                             if (edgesList.Count > 0)
                             {
-                                isMetaDirect = true;
-
                                 string s = GetStringFromEdgesList(dict, zcg2sp, edgesList, true, true);
 
-                                checkIfNewBest(edgesList.Count, true, s);
+                                if (ImportLinkResolvesToTarget(s, true, true))
+                                {
+                                    isMetaDirect = true;
 
-                                return;
+                                    checkIfNewBest(edgesList.Count, true, s);
+
+                                    return;
+                                }
                             }
                         }
                         else
@@ -364,11 +370,14 @@ namespace m0.ZeroCode
                             int candidateLength = edgesList.Count;
                             edgesList.RemoveAt(edgesList.Count - 1);
 
-                            isMetaDirect = isMeta;
+                            if (ImportLinkResolvesToTarget(s, false, isMeta))
+                            {
+                                isMetaDirect = isMeta;
 
-                            checkIfNewBest(candidateLength, isMeta, s);
+                                checkIfNewBest(candidateLength, isMeta, s);
 
-                            return;
+                                return;
+                            }
                         }
 
                 }
@@ -395,6 +404,54 @@ namespace m0.ZeroCode
             }
 
             linkBeenList.Remove(v);
+        }
+
+        bool ImportLinkResolvesToTarget(
+            string candidate,
+            bool isDirect,
+            bool isMeta)
+        {
+            if (string.IsNullOrEmpty(candidate) || dict == null)
+                return false;
+
+            IVertex resolved = isDirect
+                ? ResolveDirectImport(candidate, isMeta)
+                : ResolveNamedImport(candidate, isMeta);
+
+            return ReferenceEquals(resolved, Vertex);
+        }
+
+        IVertex ResolveDirectImport(string candidate, bool isMeta)
+        {
+            string query = "\\" + candidate;
+
+            if (isMeta)
+                return dict.importDirectMetaList.Get(false, query);
+
+            return dict.importDirectList.Get(true, query);
+        }
+
+        IVertex ResolveNamedImport(string candidate, bool isMeta)
+        {
+            ZeroCodeUtil.GetQueryFirstAndSecondPart(
+                dict,
+                candidate,
+                out string firstPart,
+                out string secondPart);
+
+            if (secondPart == null || firstPart == null)
+                return null;
+
+            IVertex importRoot = isMeta
+                ? dict.importMetaList.Get(false, firstPart + ":")
+                : dict.importList.Get(false, firstPart + ":");
+
+            if (importRoot == null)
+                return null;
+
+            return isMeta
+                ? importRoot.Get(false, secondPart)
+                : importRoot.Get(true, secondPart);
         }
 
         private void checkIfNewBest(int candidateLength, bool _isMetaDirect, string returnedLink)
