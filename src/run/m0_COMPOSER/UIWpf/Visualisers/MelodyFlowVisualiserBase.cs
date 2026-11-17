@@ -326,7 +326,8 @@ namespace m0_COMPOSER.UIWpf.Visualisers
             if (HorizontalAD == null)
                 return 0;
 
-            int musicTime = (int)(position / HorizontalAD.BaseUnitSize);
+            // A snapped grid line can divide back to n - epsilon. Floor that to n, not n - 1.
+            int musicTime = (int)Math.Floor(position / HorizontalAD.BaseUnitSize + 1e-6);
 
             return musicTime;
         }

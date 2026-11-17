@@ -98,10 +98,15 @@ namespace m0.Store.Text
 
         public override void CommitTransaction()
         {
-            CommitTransaction(
-                FileSystemUtil.GetPhysicalFileName(Identifier));
+            string fileName = FileSystemUtil.GetPhysicalFileName(Identifier);
 
-            //System.IO.File.Copy(Identifier, Identifier + ".backup", true);
+            if (properlyLoaded
+                && !ReadOnly
+                && (MinusZero.Instance.CommandLineParameters == null || !MinusZero.Instance.CommandLineParameters.NoBackup)
+                && System.IO.File.Exists(fileName))
+                System.IO.File.Copy(fileName, fileName + ".backup", true);
+
+            CommitTransaction(fileName);
         }
 
         public void CommitTransaction(string fileName)
@@ -132,11 +137,6 @@ namespace m0.Store.Text
 
             if (formalTextLanguageProcessing_Vertex == null)
                 formalTextLanguageProcessing_Vertex = MinusZero.Instance.Root.Get(false, formalTextLanguageProcessing_Query);
-
-            //
-
-            if (MinusZero.Instance.CommandLineParameters == null || !MinusZero.Instance.CommandLineParameters.NoBackup)
-                System.IO.File.Copy(fileName, fileName + ".backup", true);
 
             //
 
