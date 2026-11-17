@@ -16,9 +16,15 @@ namespace m0.BuildVariants
 
             IVertex directory_Vertex = r.Get(false, @"System\Meta\Store\FileSystem\Directory");
 
-            IVertex onNewMusicSpaceStore_Vertex = r.Get(false, @"System\Lib\Music\UserCommands\OnNewMusicSpaceStore");
+            IVertex onNewMusicSpaceStore_m0t_Vertex = r.Get(false, @"System\Lib\Music\UserCommands\OnNewMusicSpaceStore_m0t");
 
-            directory_Vertex.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\UserCommand"), onNewMusicSpaceStore_Vertex);
+            directory_Vertex.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\UserCommand"), onNewMusicSpaceStore_m0t_Vertex);
+
+            IVertex onNewMusicSpaceStore_m0j_Vertex = r.Get(false, @"System\Lib\Music\UserCommands\OnNewMusicSpaceStore_m0j");
+
+            directory_Vertex.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\UserCommand"), onNewMusicSpaceStore_m0j_Vertex);
         }
+
+
     }
 }

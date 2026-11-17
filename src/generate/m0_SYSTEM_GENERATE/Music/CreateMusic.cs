@@ -783,7 +783,7 @@ namespace m0_SYSTEM_GENERATE.Music
         }
 
         public static void AddUserCommands()
-        {
+        {            
             IVertex commands = Music.AddVertex(r.Get(false, @"System\Meta\ZeroUML\Package"), "UserCommands");
 
             string type = "m0_COMPOSER.UserCommands.ComposerUserCommands, m0_COMPOSER, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
@@ -794,9 +794,9 @@ namespace m0_SYSTEM_GENERATE.Music
 
             onNewMusicSpaceStore_m0t_Vertex.AddVertex(r.Get(false, @"System\Meta\Base\Vertex\$Name"), "New music space store (text)");
 
-            IVertex directory_Vertex = r.Get(false, @"System\Meta\Store\FileSystem\Directory");
+            //IVertex directory_Vertex = r.Get(false, @"System\Meta\Store\FileSystem\Directory");
 
-            directory_Vertex.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\UserCommand"), onNewMusicSpaceStore_m0t_Vertex);
+            //directory_Vertex.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\UserCommand"), onNewMusicSpaceStore_m0t_Vertex);
 
             //
 
@@ -804,7 +804,9 @@ namespace m0_SYSTEM_GENERATE.Music
 
             onNewMusicSpaceStore_m0j_Vertex.AddVertex(r.Get(false, @"System\Meta\Base\Vertex\$Name"), "New music space store (json)");            
 
-            directory_Vertex.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\UserCommand"), onNewMusicSpaceStore_m0j_Vertex);
+            //IVertex directory_Vertex = r.Get(false, @"System\Meta\Store\FileSystem\Directory");
+
+            //directory_Vertex.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\UserCommand"), onNewMusicSpaceStore_m0j_Vertex);            
         }
     }
 }
