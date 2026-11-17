@@ -20,7 +20,7 @@ namespace m0_COMPOSER.UserCommands
 
         static IVertex file_meta = r.Get(false, @"System\Meta\Store\FileSystem\Directory\File");
 
-        public static INoInEdgeInOutVertexVertex OnNewMusicSpaceStore(IExecution exe)
+        public static INoInEdgeInOutVertexVertex OnNewMusicSpaceStore_m0t(IExecution exe)
         {
             INoInEdgeInOutVertexVertex stack = exe.Stack;
 
@@ -36,6 +36,41 @@ namespace m0_COMPOSER.UserCommands
             {
                 if (!storeName.EndsWith(".m0t"))
                     storeName += ".m0t";                
+
+                ////////////////////////////////////////
+                Interaction.BeginInteractionWithGraph();
+                ////////////////////////////////////////
+
+                IVertex fileVertex = baseVertex.AddVertex(file_meta, storeName);
+
+                IVertex store = fileVertex.Get(false, "$Store:");
+
+                NewMusicSpaceStore(store);
+
+                ////////////////////////////////////////
+                Interaction.EndInteractionWithGraph();
+                ////////////////////////////////////////
+            }
+
+            return exe.Stack;
+        }
+
+        public static INoInEdgeInOutVertexVertex OnNewMusicSpaceStore_m0j(IExecution exe)
+        {
+            INoInEdgeInOutVertexVertex stack = exe.Stack;
+
+            IVertex baseVertexEdge = GraphUtil.GetQueryOutFirst(stack, "baseVertex", null);
+            IVertex baseVertex = GraphUtil.GetQueryOutFirst(baseVertexEdge, "To", null);
+
+            if (baseVertex == null)
+                return exe.Stack;
+
+            string storeName = UserInteractionUtil.Ask("please enter new music space store name");
+
+            if (storeName != null && storeName != "")
+            {
+                if (!storeName.EndsWith(".m0j"))
+                    storeName += ".m0j";
 
                 ////////////////////////////////////////
                 Interaction.BeginInteractionWithGraph();

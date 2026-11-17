@@ -788,13 +788,23 @@ namespace m0_SYSTEM_GENERATE.Music
 
             string type = "m0_COMPOSER.UserCommands.ComposerUserCommands, m0_COMPOSER, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
 
-            IVertex onNewMusicSpaceStore_Vertex = AddFunction(commands, "OnNewMusicSpaceStore", type, "OnNewMusicSpaceStore", null, new TypeName[] { new TypeName("baseVertex", "VertexType", 1, 1) });
+            //
 
-            onNewMusicSpaceStore_Vertex.AddVertex(r.Get(false, @"System\Meta\Base\Vertex\$Name"), "New music space store");
+            IVertex onNewMusicSpaceStore_m0t_Vertex = AddFunction(commands, "OnNewMusicSpaceStore_m0t", type, "OnNewMusicSpaceStore_m0t", null, new TypeName[] { new TypeName("baseVertex", "VertexType", 1, 1) });
+
+            onNewMusicSpaceStore_m0t_Vertex.AddVertex(r.Get(false, @"System\Meta\Base\Vertex\$Name"), "New music space store (text)");
 
             IVertex directory_Vertex = r.Get(false, @"System\Meta\Store\FileSystem\Directory");
 
-            directory_Vertex.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\UserCommand"), onNewMusicSpaceStore_Vertex);
+            directory_Vertex.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\UserCommand"), onNewMusicSpaceStore_m0t_Vertex);
+
+            //
+
+            IVertex onNewMusicSpaceStore_m0j_Vertex = AddFunction(commands, "OnNewMusicSpaceStore_m0j", type, "OnNewMusicSpaceStore_m0j", null, new TypeName[] { new TypeName("baseVertex", "VertexType", 1, 1) });
+
+            onNewMusicSpaceStore_m0j_Vertex.AddVertex(r.Get(false, @"System\Meta\Base\Vertex\$Name"), "New music space store (json)");            
+
+            directory_Vertex.AddEdge(r.Get(false, @"System\Meta\Base\Vertex\UserCommand"), onNewMusicSpaceStore_m0j_Vertex);
         }
     }
 }
