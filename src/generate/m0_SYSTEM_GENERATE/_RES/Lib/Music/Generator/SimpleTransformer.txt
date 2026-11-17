@@ -54,6 +54,7 @@
 			if Input\IsDrum<> == "1"
 				Output\IsDrum = %Input\IsDrum
 		method "DoNoteShift" (@Integer "note")
+			<@System\Meta\Presentation\$Hide :: @$Empty>
 			variable "nNote" @Integer
 			this\'AdditionalOctaveShift' = "0"
 			nNote = note + this\'NoteShift'
@@ -65,6 +66,7 @@
 				this\'AdditionalOctaveShift' = "-1"
 			return nNote
 		method "DoOctaveShift" (@Integer "octave")
+			<@System\Meta\Presentation\$Hide :: @$Empty>
 			variable "nOctave" @Integer
 			nOctave = octave + this\'OctaveShift' + this\'AdditionalOctaveShift'
 			if nOctave > "9"
@@ -73,6 +75,7 @@
 				nOctave = "-1"
 			return nOctave
 		method "DoVelocityShift" (@Integer "velocity")
+			<@System\Meta\Presentation\$Hide :: @$Empty>
 			variable "nVelocity" @Integer
 			nVelocity = velocity + this\'VelocityShift'
 			if nVelocity > this\VelocityMax
@@ -81,6 +84,7 @@
 				nVelocity = this\VelocityMin
 			return nVelocity
 		method "DoLengthShift" (@Integer "length")
+			<@System\Meta\Presentation\$Hide :: @$Empty>
 			variable "nLength" @Integer
 			nLength = length + this\'LengthShift'
 			nLength = nLength * this\LengthMultiply
@@ -90,6 +94,7 @@
 				nLength = this\LengthMin
 			return nLength
 		method "DoControlChangeShift" (@Integer "CCValue")
+			<@System\Meta\Presentation\$Hide :: @$Empty>
 			variable "nCCValue" @Integer
 			nCCValue = CCValue + this\'ControlChangeShift'
 			if nCCValue > this\ControlChangeMax
@@ -129,7 +134,7 @@
 			<@System\Meta\Presentation\$Hide :: @$Empty>
 			variable "parentVertex" @Vertex
 			parentVertex = Output#Sequence:
-			parentVertex <+< @@Sequence ::> Output
+			parentVertex <<copy<< @@Sequence ::> Output
 			parentVertex -< @@Sequence ::> this\Output
 		method "Dispose" ()
 			<@System\Meta\Presentation\$Hide :: @$Empty>
