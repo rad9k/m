@@ -655,7 +655,12 @@ namespace m0.UIWpf.Visualisers
             if (ParentVisualiser.VisualiserHelper.IsDisposed)
                 return exe.Stack;
 
-            if (GetEdge().To.DisposedState != DisposeStateEnum.Live)
+            IEdge edge = GetEdge();
+
+            if (edge == null || edge.To == null)
+                return exe.Stack;
+
+            if (edge.To.DisposedState != DisposeStateEnum.Live)
                 return exe.Stack;
 
             if (Node != null && ParentVisualiser.UseDataVirtualization)

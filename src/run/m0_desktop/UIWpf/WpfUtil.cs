@@ -571,6 +571,7 @@ namespace m0.UIWpf
 
             if (correctedX != positionedWindowRectangle.Left ||
                 correctedY != positionedWindowRectangle.Top)
+            {
                 SetWindowPos(
                     windowHandle,
                     IntPtr.Zero,
@@ -579,6 +580,30 @@ namespace m0.UIWpf
                     0,
                     0,
                     flags);
+            }
+
+            // Width changes afterwards reposition from Left/Top.
+            // Those stay unset when only the HWND is moved, and Windows
+            // then puts the window at the default spot on the side of the screen.
+            RememberWindowOriginInDips(window);
+        }
+
+        static void RememberWindowOriginInDips(Window window)
+        {
+            IntPtr windowHandle = new WindowInteropHelper(window).Handle;
+            if (windowHandle == IntPtr.Zero)
+                return;
+            if (!GetWindowRect(windowHandle, out NativeWindowRectangle rectangle))
+                return;
+
+            PresentationSource source = PresentationSource.FromVisual(window);
+            if (source == null || source.CompositionTarget == null)
+                return;
+
+            Point origin = source.CompositionTarget.TransformFromDevice.Transform(
+                new Point(rectangle.Left, rectangle.Top));
+            window.Left = origin.X;
+            window.Top = origin.Y;
         }
     }
 }

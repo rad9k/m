@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -3619,6 +3618,9 @@ namespace m0.Graph
         bool ShouldDispose()
         {
             if (DisposedState != DisposeStateEnum.Live)
+                return false;
+
+            if (Store.AlwaysPresent)
                 return false;
 
             int cumulativeEdgesCount = 0;
