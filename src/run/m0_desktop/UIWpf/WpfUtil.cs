@@ -395,6 +395,15 @@ namespace m0.UIWpf
             return p;
         }
 
+        public static Point GetMousePositionPhysicalPixels()
+        {
+            if (m0Main.Instance == null)
+                return new Point();
+
+            Point positionRelativeToMainWindow = Mouse.GetPosition(m0Main.Instance);
+            return m0Main.Instance.PointToScreen(positionRelativeToMainWindow);
+        }
+
         public static Point GetMousePositionDndPhysicalPixels(
             System.Windows.DragEventArgs e)
         {

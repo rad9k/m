@@ -243,6 +243,9 @@
                                 ScaleY="{Binding Scale, Source={x:Static ui:UiScale.Instance}}"/>
             </Grid.LayoutTransform>
 
+        <!-- Adorners (AvalonDock splitters) must live inside the scale, or their
+             position stays in unscaled window coordinates. -->
+        <AdornerDecorator>
         <avalonDock:DockingManager x:Name="dockingManager" >
             <avalonDock:DockingManager.Theme>
                 <avalonDock:MetroTheme/>
@@ -257,6 +260,7 @@
                 </avalonDock:LayoutPanel>
             </avalonDock:LayoutRoot>
         </avalonDock:DockingManager>
+        </AdornerDecorator>
 
         <!-- This control is deliberately outside AvalonDock's layout. It remains
              available when the tree anchorable is hidden and consumes no layout

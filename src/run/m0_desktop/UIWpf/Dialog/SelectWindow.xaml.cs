@@ -23,10 +23,9 @@ namespace m0.UIWpf.Dialog
 
         Point _mousePosition;
 
-        void PositionWindowBeforeShow()
+        void PositionWindowNearMouse()
         {
-            WindowStartupLocation = WindowStartupLocation.Manual;
-            WpfUtil.SetWindowPosition(this, _mousePosition);
+            WpfUtil.SetWindowPositionNearPhysicalPoint(this, _mousePosition);
         }
 
         public SelectWindow(IVertex info, IList<IEdge> options, bool firstSelected, Point? position)
@@ -38,7 +37,10 @@ namespace m0.UIWpf.Dialog
                 if (position != null)
                 {
                     _mousePosition = (Point)position;
-                    PositionWindowBeforeShow();
+                    WindowStartupLocation = WindowStartupLocation.Manual;
+                    SourceInitialized += (sender, eventArgs) => PositionWindowNearMouse();
+                    Loaded += (sender, eventArgs) => PositionWindowNearMouse();
+                    ContentRendered += (sender, eventArgs) => PositionWindowNearMouse();
                 }
                 else
                     Owner = m0Main.Instance;

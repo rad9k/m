@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace m0.UIWpf
 {
@@ -162,8 +163,26 @@ namespace m0.UIWpf
         static void ApplyPopupScale(Popup popup)
         {
             FrameworkElement child = popup.Child as FrameworkElement;
-            if (child != null)
-                EnsureScaleTransform(child);
+            if (child == null)
+                return;
+
+            bool alreadyScaled = child.ReadLocalValue(ManagedScaleTransformProperty) != DependencyProperty.UnsetValue;
+            EnsureScaleTransform(child);
+
+            if (!alreadyScaled && popup.IsOpen)
+                popup.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() => RepositionOpenPopup(popup)));
+        }
+
+        static void RepositionOpenPopup(Popup popup)
+        {
+            if (!popup.IsOpen)
+                return;
+
+            // Placement was calculated before the scale transform existed.
+            // Touching the offset forces Popup to measure the scaled child and move.
+            double horizontalOffset = popup.HorizontalOffset;
+            popup.HorizontalOffset = horizontalOffset + 0.01;
+            popup.HorizontalOffset = horizontalOffset;
         }
 
         static void EnsureScaleTransform(FrameworkElement element)
