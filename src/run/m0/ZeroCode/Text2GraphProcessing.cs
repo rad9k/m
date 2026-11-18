@@ -4457,14 +4457,59 @@ namespace m0.ZeroCode
             SubGraphPreProcessing = GraphUtil.GetSubGraphWithoutLinksAsList(baseVertex);
         }
 
+        // $Empty, bootstrap and always-present vertices are shared. A same-valued
+        // copy created while parsing must not inherit their external edges.
+        HashSet<IVertex> SharedVerticesLeftInPlace()
+        {
+            HashSet<IVertex> sharedVertices = new HashSet<IVertex>();
+            IVertex empty = MinusZero.Instance.Empty;
+
+            if (empty != null)
+                sharedVertices.Add(empty);
+
+            IEnumerable<IVertex> bootstrapVertexes =
+                MinusZero.Instance.BootstrapVertexes;
+
+            if (bootstrapVertexes == null)
+                return sharedVertices;
+
+            foreach (IVertex bootstrapVertex in bootstrapVertexes)
+                if (bootstrapVertex != null)
+                    sharedVertices.Add(bootstrapVertex);
+
+            return sharedVertices;
+        }
+
+        static bool IsSharedVertexLeftInPlace(
+            IVertex vertex,
+            HashSet<IVertex> sharedVertices)
+        {
+            if (vertex == null)
+                return false;
+
+            if (sharedVertices != null && sharedVertices.Contains(vertex))
+                return true;
+
+            return vertex.Store != null && vertex.Store.AlwaysPresent;
+        }
+
         void MoveInEdgesComingFromOutsideOfSubGraphToParseRoot()
         {
             List<IVertex> visited = new List<IVertex>();
+            HashSet<IVertex> sharedVertices = SharedVerticesLeftInPlace();
 
-            MoveInEdgesComingFromOutsideOfSubGraphToParseRoot_Reccurent(baseVertex, parseRoot.FirstOrDefault().To, visited);
+            MoveInEdgesComingFromOutsideOfSubGraphToParseRoot_Reccurent(
+                baseVertex,
+                parseRoot.FirstOrDefault().To,
+                visited,
+                sharedVertices);
         }
 
-        void MoveInEdgesComingFromOutsideOfSubGraphToParseRoot_Reccurent(IVertex iterationRoot, IVertex parsedVertex, List<IVertex> visited)
+        void MoveInEdgesComingFromOutsideOfSubGraphToParseRoot_Reccurent(
+            IVertex iterationRoot,
+            IVertex parsedVertex,
+            List<IVertex> visited,
+            HashSet<IVertex> sharedVertices)
         {
             IList<IEdge> OutEdgesRaw = iterationRoot.OutEdgesRaw.ToList();
 
@@ -4476,11 +4521,18 @@ namespace m0.ZeroCode
                     IEdge foundInParsed = FindSimilarEdge(parsedVertex, e);
 
                     if (foundInParsed != null && foundInParsed.To != e.To)
-                        {
-                            MoveInEdgesComingFromOutsideOfSubGraphToParseVertex_forOneVertex(e.To, foundInParsed.To);
+                    {
+                        if (IsSharedVertexLeftInPlace(e.To, sharedVertices))
+                            continue;
 
-                            MoveInEdgesComingFromOutsideOfSubGraphToParseRoot_Reccurent(e.To, foundInParsed.To, visited);
-                        }
+                        MoveInEdgesComingFromOutsideOfSubGraphToParseVertex_forOneVertex(e.To, foundInParsed.To);
+
+                        MoveInEdgesComingFromOutsideOfSubGraphToParseRoot_Reccurent(
+                            e.To,
+                            foundInParsed.To,
+                            visited,
+                            sharedVertices);
+                    }
                 }
         }
 
@@ -4514,28 +4566,72 @@ namespace m0.ZeroCode
             return found;
         }
 
+        static int OutgoingEdgeIndex(IVertex from, IEdge edge)
+        {
+            if (from == null || edge == null || from.OutEdgesRaw == null)
+                return -1;
+
+            IList<IEdge> edges = from.OutEdgesRaw;
+
+            for (int index = 0; index < edges.Count; index++)
+                if (object.ReferenceEquals(edges[index], edge))
+                    return index;
+
+            return -1;
+        }
+
+        // Delete then Add appends the edge. Move it back so siblings keep their order.
+        static void RetargetOutgoingEdgePreservingIndex(
+            IEdge edge,
+            IVertex meta,
+            IVertex to)
+        {
+            if (edge == null || edge.From == null)
+                return;
+
+            IVertex from = edge.From;
+            IList<IEdge> outEdges = from.OutEdgesRaw;
+
+            if (outEdges == null)
+                return;
+
+            int index = OutgoingEdgeIndex(from, edge);
+            int countBeforeDelete = outEdges.Count;
+
+            from.DeleteEdge(edge);
+
+            if (outEdges.Count == countBeforeDelete)
+                return;
+
+            from.AddEdge(meta, to);
+
+            int lastIndex = outEdges.Count - 1;
+
+            if (index >= 0 &&
+                index < lastIndex &&
+                outEdges is ExtandableList<IEdge> extensibleOutEdges)
+                extensibleOutEdges.MoveItemWithoutCallbacks(lastIndex, index);
+        }
+
         void MoveInEdgesComingFromOutsideOfSubGraphToParseVertex_forOneVertex(IVertex existing, IVertex parsedVertex)
         {
             IList<IEdge> InEdgesRaw = existing.InEdgesRaw.ToList();
 
             foreach (IEdge e in InEdgesRaw)
                 if (!SubGraphPreProcessing.Contains(e.From))
-                {
-                    e.From.AddEdge(e.Meta, parsedVertex);
-                    e.From.DeleteEdge(e);
-                }
+                    RetargetOutgoingEdgePreservingIndex(e, e.Meta, parsedVertex);
 
             IList<IEdge> MetaInEdgesRaw = existing.MetaInEdgesRaw.ToList();
 
             foreach (IEdge e in MetaInEdgesRaw)
                 if (!SubGraphPreProcessing.Contains(e.From))
                 {
-                    foreach (IEdge ee in e.From.ToList())
-                        if (ee.Meta == e.Meta && ee.To == e.To) // no to create non exising edge XXX
-                        {
-                            e.From.AddEdge(parsedVertex, e.To);
-                            e.From.DeleteEdge(e);
-                        }
+                    foreach (IEdge outgoingEdge in e.From.ToList())
+                        if (outgoingEdge.Meta == e.Meta && outgoingEdge.To == e.To) // no to create non exising edge XXX
+                            RetargetOutgoingEdgePreservingIndex(
+                                outgoingEdge,
+                                parsedVertex,
+                                outgoingEdge.To);
                 }
         }
 
@@ -4780,11 +4876,11 @@ namespace m0.ZeroCode
 
                 MoveInEdgesComingFromOutsideOfSubGraphToParseRoot();
 
-                MoveTriggersToParseRoot();                
+                MoveTriggersToParseRoot();
 
                 DeleteAllEdgesFromBaseVertex();
 
-                MoveAllParseRootEdgesToBaseVertex();                
+                MoveAllParseRootEdgesToBaseVertex();
             }
             else
             {
