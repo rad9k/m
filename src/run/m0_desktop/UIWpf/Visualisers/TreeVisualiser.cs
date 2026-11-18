@@ -1743,7 +1743,7 @@ namespace m0.UIWpf.Visualisers
             if (UseDataVirtualization)
             {
                 TreeEdgeNode node = virtualRootNodes.FirstOrDefault(
-                    currentNode => EdgeHelper.CompareIEdges(currentNode.Edge, edge));
+                    currentNode => SameRootEdgeForRemoval(currentNode.Edge, edge));
 
                 if (node != null)
                     virtualRootNodes.Remove(node);
@@ -1754,8 +1754,38 @@ namespace m0.UIWpf.Visualisers
             IList l = GeneralUtil.CreateAndCopyList(Items);
 
             foreach (TreeVisualiserViewItem i in l)
-                if (EdgeHelper.CompareIEdges((IEdge)i.Tag, edge))
+                if (SameRootEdgeForRemoval((IEdge)i.Tag, edge))
+                {
                     Items.Remove(i);
+                    return;
+                }
+        }
+
+        static bool SameRootEdgeForRemoval(IEdge shownEdge, IEdge removedEdge)
+        {
+            if (shownEdge == null || removedEdge == null)
+                return false;
+
+            if (shownEdge.From != removedEdge.From || shownEdge.To != removedEdge.To)
+                return false;
+
+            return SameRootMeta(shownEdge.Meta, removedEdge.Meta);
+        }
+
+        static bool SameRootMeta(IVertex shownMeta, IVertex removedMeta)
+        {
+            if (shownMeta == removedMeta)
+                return true;
+
+            return IsEmptyMeta(shownMeta) && IsEmptyMeta(removedMeta);
+        }
+
+        static bool IsEmptyMeta(IVertex meta)
+        {
+            if (meta == null)
+                return true;
+
+            return GeneralUtil.CompareStrings(meta.Value, "$Empty");
         }
 
         private void EdgeAdded(IEdge edge)
