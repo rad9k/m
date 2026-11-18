@@ -89,9 +89,7 @@ namespace m0
         }
 
         const int DwmWindowCornerPreference = 33;
-        const int DwmBorderColor = 34;
         const int DwmCornerRound = 2;
-        const int WindowOutlineColorRef = 0x008E8E8E;
 
         [DllImport("dwmapi.dll")]
         static extern int DwmSetWindowAttribute(IntPtr hwnd, int attribute, ref int attributeValue, int attributeSize);
@@ -99,9 +97,14 @@ namespace m0
         void ApplyWindowFrame()
         {
             // A one-pixel glass edge keeps the DWM shadow when the caption is custom.
+            // The gray outline stays on WindowOutline. DWMWA_BORDER_COLOR on that glass
+            // edge makes Windows 11 drag this window as a black rectangle and then
+            // leave every other window in the same drag mode.
             WindowChrome chrome = WindowChrome.GetWindowChrome(this);
             if (chrome != null)
                 chrome.GlassFrameThickness = new Thickness(0, 0, 0, 1);
+
+            WindowOutline.BorderThickness = new Thickness(1);
 
             if (Environment.OSVersion.Version.Build >= 22000)
             {
@@ -110,15 +113,14 @@ namespace m0
             }
 
             useWindows10Frame = true;
-            WindowOutline.BorderThickness = new Thickness(1);
         }
 
         void MainWindow_SourceInitialized(object sender, EventArgs e)
         {
-            ApplyWindows11Border();
+            ApplyWindows11Corners();
         }
 
-        void ApplyWindows11Border()
+        void ApplyWindows11Corners()
         {
             if (!useWindows11Frame)
                 return;
@@ -128,9 +130,7 @@ namespace m0
                 return;
 
             int corner = DwmCornerRound;
-            int borderColor = WindowOutlineColorRef;
             DwmSetWindowAttribute(hwnd, DwmWindowCornerPreference, ref corner, sizeof(int));
-            DwmSetWindowAttribute(hwnd, DwmBorderColor, ref borderColor, sizeof(int));
         }
 
         void UiScaleCaption_Loaded(object sender, RoutedEventArgs e)
@@ -160,11 +160,11 @@ namespace m0
             RestoreGlyph.Visibility = isMaximized ? Visibility.Visible : Visibility.Collapsed;
             CaptionMaximizeButton.ToolTip = isMaximized ? "Przywróć" : "Maksymalizuj";
 
-            if (useWindows10Frame)
+            if (useWindows10Frame || useWindows11Frame)
                 WindowOutline.BorderThickness = new Thickness(isMaximized ? 0 : 1);
 
             if (useWindows11Frame && !isMaximized)
-                ApplyWindows11Border();
+                ApplyWindows11Corners();
         }
 
         static void MarkChromeHitTestVisible(DependencyObject node)
