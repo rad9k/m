@@ -134,8 +134,8 @@
 			<@System\Meta\Presentation\$Hide :: @$Empty>
 			variable "parentVertex" @Vertex
 			parentVertex = Output#Sequence:
-			parentVertex <<copy<< @@Sequence ::> Output
-			parentVertex -< @@Sequence ::> this\Output
+			parentVertex <<copy<< @@SequenceEvent\Sequence ::> Output
+			parentVertex -< @@SequenceEvent\Sequence ::> this\Output
 		method "Dispose" ()
 			<@System\Meta\Presentation\$Hide :: @$Empty>
 			this\'AdditionalOctaveShift' = "0"
