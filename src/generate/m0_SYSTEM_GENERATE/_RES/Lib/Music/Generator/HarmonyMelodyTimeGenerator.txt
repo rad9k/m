@@ -2,7 +2,7 @@
 	import @System\Lib\Music direct meta
 	import @System\Lib\Std direct meta
 	class "HarmonyMelodyTimeGenerator"
-		attribute "BaseOctave" @Integer
+		attribute "BaseOctave" @Integer  <<"-1":"9">>
 			default "3"
 			<@$Section :: "Generator">
 		association "MelodyFlow" @Generator\MelodyFlow "0":"1"

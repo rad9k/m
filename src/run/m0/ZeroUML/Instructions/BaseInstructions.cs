@@ -3181,28 +3181,37 @@ namespace m0.ZeroUML.Instructions
                 IList<IEdge> leftExecuteResult = _leftExecuteResult.OutEdges;
                 IList<IEdge> rightExecuteResult = _rightExecuteResult.OutEdges;
 
-                int toBeProcessedCount;
+                int leftCount = leftExecuteResult.Count;
+                int rightCount = rightExecuteResult.Count;
 
                 INoInEdgeInOutVertexVertex localStack = CreateStack();
 
                 if (operationType == LogicDoubleOpertorEnum.ExactEqual &&
-                    leftExecuteResult.Count != rightExecuteResult.Count)
+                    leftCount != rightCount)
                 {
                     localStack.AddVertex(null, "False");
                     return localStack;
                 }
 
-                if (leftExecuteResult.Count > rightExecuteResult.Count)
-                    toBeProcessedCount = rightExecuteResult.Count;
-                else
-                    toBeProcessedCount = leftExecuteResult.Count;
-
-                if (toBeProcessedCount == 0) // left and right empty
+                if (leftCount == 0 && rightCount == 0)
                 {
                     localStack.AddVertex(null, leftAndRightResultsEmptyOperatorResult);
                 }
+                else if (leftCount == 0 || rightCount == 0)
+                {
+                    string oneSideEmptyResult =
+                        operationType == LogicDoubleOpertorEnum.NotEqual
+                            ? "True"
+                            : "False";
+
+                    localStack.AddVertex(null, oneSideEmptyResult);
+                }
                 else
                 {
+                    int toBeProcessedCount = leftCount < rightCount
+                        ? leftCount
+                        : rightCount;
+
                     for (int x = 0; x < toBeProcessedCount; x++)
                     {
                         bool logicalResult = false;
@@ -3431,13 +3440,19 @@ namespace m0.ZeroUML.Instructions
                     leftEdges.Count,
                     rightEdges.Count);
 
-                result = true;
-                for (int index = 0; index < count; index++)
-                    if (!LogicDoubleOperator_VertexLevel(
-                        leftEdges[index].To,
-                        rightEdges[index].To,
-                        LogicDoubleOpertorEnum.LessOrEqualThan))
-                        result = false;
+                if (count == 0)
+                    result = leftEdges.Count == 0 &&
+                        rightEdges.Count == 0;
+                else
+                {
+                    result = true;
+                    for (int index = 0; index < count; index++)
+                        if (!LogicDoubleOperator_VertexLevel(
+                            leftEdges[index].To,
+                            rightEdges[index].To,
+                            LogicDoubleOpertorEnum.LessOrEqualThan))
+                            result = false;
+                }
 
                 return true;
             }
