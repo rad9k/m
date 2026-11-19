@@ -832,246 +832,6 @@ namespace m0.ZeroCode
             return e.Meta.Value.ToString();
         }
 
-        static string VertexValueForLog(IVertex vertex)
-        {
-            if (vertex == null)
-                return "(null vertex)";
-
-            if (vertex.Value == null)
-                return "(null)";
-
-            string value = vertex.Value.ToString();
-
-            if (value.Length == 0)
-                return "(empty)";
-
-            return value;
-        }
-
-        static string PathForLog(string path)
-        {
-            if (path == null)
-                return "(null)";
-
-            return path;
-        }
-
-        string EdgeForLog(IEdge edge)
-        {
-            if (edge == null)
-                return "(null edge)";
-
-            bool isLink = false;
-
-            if (edge.Meta != null && edge.Meta.Value != null)
-                isLink = VertexOperations.IsLink_OldVersion(edge);
-
-            return EdgeMetaForLog(edge) + " :: " + VertexValueForLog(edge.To) + " link=" + isLink;
-        }
-
-        bool IsAssignmentProbeEdge(IEdge edge)
-        {
-            if (edge == null)
-                return false;
-
-            string meta = EdgeMetaForLog(edge);
-
-            if (meta == "LeftExpression" || meta == "RightExpression" || meta == "Query")
-                return true;
-
-            if (edge.To == null || edge.To.Value == null)
-                return false;
-
-            string toValue = edge.To.Value.ToString();
-
-            return toValue.Length == 0 || toValue == "a" || toValue == "kot";
-        }
-
-        static bool KeywordSentenceContainsAssignment(KeywordMatch keywordMatch)
-        {
-            if (keywordMatch == null || keywordMatch.KeywordDefinition == null || keywordMatch.KeywordDefinition.Value == null)
-                return false;
-
-            return keywordMatch.KeywordDefinition.Value.ToString().Contains("=");
-        }
-
-        bool IsAssignmentProbeKeyword(KeywordMatch keywordMatch)
-        {
-            if (KeywordSentenceContainsAssignment(keywordMatch))
-                return true;
-
-            if (keywordMatch == null)
-                return false;
-
-            foreach (IEdge matchedEdge in keywordMatch.MatchedEdges)
-            {
-                string meta = EdgeMetaForLog(matchedEdge);
-
-                if (meta == "LeftExpression" || meta == "RightExpression")
-                    return true;
-            }
-
-            return false;
-        }
-
-        static bool VertexHasOutgoingMeta(IVertex vertex, string meta)
-        {
-            if (vertex == null)
-                return false;
-
-            foreach (IEdge edge in vertex.OutEdgesRaw)
-                if (edge.Meta != null && edge.Meta.Value != null && edge.Meta.Value.ToString() == meta)
-                    return true;
-
-            return false;
-        }
-
-        void NoteAssignmentProbe(IEdge edge, ref bool foundLeftExpression, ref bool foundRightExpression)
-        {
-            string meta = EdgeMetaForLog(edge);
-
-            if (meta == "LeftExpression")
-                foundLeftExpression = true;
-
-            if (meta == "RightExpression")
-                foundRightExpression = true;
-        }
-
-        void LogAssignmentProbeDescendants(
-            IVertex vertex,
-            int depth,
-            int maxDepth,
-            string where,
-            HashSet<IVertex> visited,
-            ref int remainingVertices,
-            ref bool foundLeftExpression,
-            ref bool foundRightExpression)
-        {
-            if (vertex == null || depth >= maxDepth || remainingVertices <= 0 || !visited.Add(vertex))
-                return;
-
-            remainingVertices--;
-
-            foreach (IEdge edge in vertex.OutEdgesRaw)
-            {
-                if (remainingVertices <= 0)
-                    return;
-
-                string meta = EdgeMetaForLog(edge);
-
-                NoteAssignmentProbe(edge, ref foundLeftExpression, ref foundRightExpression);
-
-                if (depth > 0 && (meta == "LeftExpression" || meta == "RightExpression" || meta == "Query"))
-                    MinusZero.Instance.Log(1, "G2T", where + " nested depth=" + (depth + 1) + " " + EdgeForLog(edge));
-
-                if (edge.To != null && edge.Meta != null && edge.Meta.Value != null && !VertexOperations.IsLink_OldVersion(edge))
-                    LogAssignmentProbeDescendants(
-                        edge.To,
-                        depth + 1,
-                        maxDepth,
-                        where,
-                        visited,
-                        ref remainingVertices,
-                        ref foundLeftExpression,
-                        ref foundRightExpression);
-            }
-        }
-
-        void LogLinearizedChildren(string where)
-        {
-            if (BaseEdge == null || BaseEdge.To == null)
-            {
-                MinusZero.Instance.Log(1, "G2T", where + " BaseEdge.To is null");
-                return;
-            }
-
-            MinusZero.Instance.Log(1, "G2T", where + " BaseEdge.To=" + VertexValueForLog(BaseEdge.To));
-
-            bool foundLeftExpression = false;
-            bool foundRightExpression = false;
-            int directChildCount = 0;
-            const int directChildLogLimit = 80;
-
-            foreach (IEdge child in BaseEdge.To.OutEdgesRaw)
-            {
-                directChildCount++;
-                NoteAssignmentProbe(child, ref foundLeftExpression, ref foundRightExpression);
-
-                if (directChildCount <= directChildLogLimit)
-                    MinusZero.Instance.Log(1, "G2T", where + " child " + EdgeForLog(child));
-                else if (directChildCount == directChildLogLimit + 1)
-                    MinusZero.Instance.Log(1, "G2T", where + " direct children truncated");
-
-                if (child.To != null && VertexHasOutgoingMeta(child.To, "LeftExpression"))
-                    foreach (IEdge grandChild in child.To.OutEdgesRaw)
-                    {
-                        MinusZero.Instance.Log(1, "G2T", where + " grand " + EdgeForLog(grandChild));
-                        NoteAssignmentProbe(grandChild, ref foundLeftExpression, ref foundRightExpression);
-                    }
-            }
-
-            int remainingVertices = 200;
-
-            LogAssignmentProbeDescendants(
-                BaseEdge.To,
-                0,
-                6,
-                where,
-                new HashSet<IVertex>(),
-                ref remainingVertices,
-                ref foundLeftExpression,
-                ref foundRightExpression);
-
-            MinusZero.Instance.Log(
-                1,
-                "G2T",
-                where
-                + " directChildCount=" + directChildCount
-                + " foundLeftExpression=" + foundLeftExpression
-                + " foundRightExpression=" + foundRightExpression
-                + " nestedWalkTruncated=" + (remainingVertices <= 0));
-        }
-
-        void LogAssignmentKeywordMatches()
-        {
-            int count = 0;
-            HashSet<KeywordMatch> seen = new HashSet<KeywordMatch>();
-
-            foreach (KeyValuePair<IEdge, KeywordMatch> pair in KeywordMatchedSubGraphEdges)
-            {
-                KeywordMatch keywordMatch = pair.Value;
-
-                if (keywordMatch == null || !seen.Add(keywordMatch) || !IsAssignmentProbeKeyword(keywordMatch))
-                    continue;
-
-                count++;
-
-                string sentence = "(null)";
-
-                if (keywordMatch.KeywordDefinition != null && keywordMatch.KeywordDefinition.Value != null)
-                {
-                    sentence = keywordMatch.KeywordDefinition.Value.ToString().Replace("\r", "\\r").Replace("\n", "\\n");
-
-                    if (sentence.Length > 400)
-                        sentence = sentence.Substring(0, 400) + "...";
-                }
-
-                MinusZero.Instance.Log(
-                    1,
-                    "G2T",
-                    "keywordMatch sentence=[" + sentence + "]"
-                    + " base=" + EdgeForLog(keywordMatch.BaseEdge)
-                    + " path=[" + PathForLog(keywordMatch.BaseEdgePath) + "]"
-                    + " newValue=[" + (keywordMatch.newValue ?? "(null)") + "]");
-
-                foreach (IEdge matchedEdge in keywordMatch.MatchedEdges)
-                    MinusZero.Instance.Log(1, "G2T", "keywordMatch edge " + EdgeForLog(matchedEdge));
-            }
-
-            if (count == 0)
-                MinusZero.Instance.Log(1, "G2T", "keywordMatch none for assignment (= / LeftExpression / RightExpression)");
-        }
-
         bool AppendNewLines_onlyRemember(IEdge e)
         {
             string meta = EdgeMetaForLog(e);
@@ -1860,54 +1620,16 @@ namespace m0.ZeroCode
             if (!ZeroCodeUtil.FilterEdgeForGraph2TextProcessing(e))
                 return false;
 
-            bool probeAssignment = IsAssignmentProbeEdge(e);
-
             if (KeywordMatchedSubGraphEdges.ContainsKey(e))
             {
-                KeywordMatch matchedKeyword = KeywordMatchedSubGraphEdges[e];
-                bool shouldAppendKeywordHere = ShouldAppendKeywordHere(e, path);
-
-                if (shouldAppendKeywordHere || e.Meta.Value.ToString() == "NextExpression")
-                {
-                    if (probeAssignment)
-                        MinusZero.Instance.Log(
-                            1,
-                            "G2T",
-                            "AppendEdge branch=AppendKeyword path=[" + PathForLog(path) + "]"
-                            + " basePath=[" + PathForLog(matchedKeyword.BaseEdgePath) + "]"
-                            + " shouldAppendKeywordHere=" + shouldAppendKeywordHere
-                            + " edge=" + EdgeForLog(e));
-
+                if (ShouldAppendKeywordHere(e, path) || e.Meta.Value.ToString() == "NextExpression")
                     return AppendKeyword(e, false, ParentKmHasTabAddingOmmit);
-                }
                 else
-                    if (matchedKeyword.BaseEdge.To != e.To) // :O)
+                    if (KeywordMatchedSubGraphEdges[e].BaseEdge.To != e.To) // :O)
                     {
-                        if (probeAssignment)
-                            MinusZero.Instance.Log(
-                                1,
-                                "G2T",
-                                "AppendEdge branch=silentReturn path=[" + PathForLog(path) + "]"
-                                + " basePath=[" + PathForLog(matchedKeyword.BaseEdgePath) + "]"
-                                + " shouldAppendKeywordHere=False"
-                                + " edge=" + EdgeForLog(e));
-
                         return true; // ?????????????????????? or true?
                     }
-                    else if (probeAssignment)
-                        MinusZero.Instance.Log(
-                            1,
-                            "G2T",
-                            "AppendEdge branch=rawPathMismatch path=[" + PathForLog(path) + "]"
-                            + " basePath=[" + PathForLog(matchedKeyword.BaseEdgePath) + "]"
-                            + " shouldAppendKeywordHere=False"
-                            + " edge=" + EdgeForLog(e));
             }
-            else if (probeAssignment)
-                MinusZero.Instance.Log(
-                    1,
-                    "G2T",
-                    "AppendEdge branch=rawNoMatch path=[" + PathForLog(path) + "] edge=" + EdgeForLog(e));
 
             if (AppendNewLines_onlyRemember(e))
                 return false;
@@ -1947,29 +1669,8 @@ namespace m0.ZeroCode
             if (keywordSubVertex != null && GraphUtil.ExistQueryOut(keywordSubVertex, "$$ForceNewVertex", null))
                 forceNewVertex = true;
 
-            bool emptyToValue = e.To != null && e.To.Value != null && e.To.Value.ToString().Length == 0;
-            string linkStringBefore = "(absent)";
-            string alreadyAppendedAsNew = "(absent)";
-
-            if (emptyToValue && SubGraphVerticesDictionary != null && SubGraphVerticesDictionary.ContainsKey(e.To))
-            {
-                VertexData vertexDataBefore = SubGraphVerticesDictionary[e.To];
-                linkStringBefore = vertexDataBefore.LinkString ?? "(null)";
-                alreadyAppendedAsNew = vertexDataBefore.VertexHasBeenAppendedAsNew.ToString();
-            }
-
             if (VertexOperations.IsLink_OldVersion(e) && !forceNewVertex)
             {
-                if (emptyToValue)
-                    MinusZero.Instance.Log(
-                        1,
-                        "G2T",
-                        "AppendVertex emptyValue branch=link path=[" + PathForLog(path) + "]"
-                        + " isLink=True forceNewVertex=False vertexIsNew=(not called)"
-                        + " linkString=[" + linkStringBefore + "]"
-                        + " alreadyAppendedAsNew=" + alreadyAppendedAsNew
-                        + " edge=" + EdgeForLog(e));
-
                 AppendAsLink(e.To, null, hideLinkPrefix);
 
                 if (appendSuffix)
@@ -1980,18 +1681,6 @@ namespace m0.ZeroCode
             else
             {
                 bool vertexIsNew = isVertexNew(e, path);
-
-                if (emptyToValue)
-                    MinusZero.Instance.Log(
-                        1,
-                        "G2T",
-                        "AppendVertex emptyValue branch=" + (vertexIsNew || forceNewVertex ? "new" : "existingLink")
-                        + " path=[" + PathForLog(path) + "]"
-                        + " isLink=False forceNewVertex=" + forceNewVertex
-                        + " vertexIsNew=" + vertexIsNew
-                        + " linkString=[" + linkStringBefore + "]"
-                        + " alreadyAppendedAsNew=" + alreadyAppendedAsNew
-                        + " edge=" + EdgeForLog(e));
 
                 if (vertexIsNew || forceNewVertex)
                 {
@@ -2473,14 +2162,6 @@ namespace m0.ZeroCode
 
             if (inBeen /*&& baseEdge.Meta.Value.ToString() != "NextExpression"*/)
             {
-                if (IsAssignmentProbeEdge(baseEdge))
-                    MinusZero.Instance.Log(
-                        1,
-                        "G2T",
-                        "Reccurent skip BeenList level=" + level
-                        + " path=[" + PathForLog(path) + "]"
-                        + " edge=" + EdgeForLog(baseEdge));
-
                 // Matched keyword edges are added to BeenList before their To children are walked.
                 // $NewLine hung under a matched leaf (e.g. Expression:OK) would otherwise be skipped.
                 if (baseEdge.To != null && !VertexOperations.IsLink_OldVersion(baseEdge))
@@ -2781,8 +2462,6 @@ namespace m0.ZeroCode
 
             prepareBaseEdge(_graphBaseEdge);
 
-            LogLinearizedChildren("afterPrepareBaseEdge");
-
             BeenList = new HashSet<IEdge>();
             BeenList_Keyword = new HashSet<IEdge>();
             newLinesBeenList = new HashSet<IEdge>();
@@ -2805,8 +2484,6 @@ namespace m0.ZeroCode
             BeenList.Clear();
 
             MatchKeywords(BaseEdge, null, false);
-
-            LogAssignmentKeywordMatches();
 
             BeenList.Clear();
 
@@ -2846,8 +2523,6 @@ namespace m0.ZeroCode
         {
             try
             {
-                MinusZero.Instance.Log(1, "G2T", "Process representation=" + codeRepresentation.ToString());
-
                 switch (codeRepresentation)
                 {
                     case CodeRepresentationEnum.EdgeOneLine: return Process_EdgeOneLine(_graphBaseEdge);
