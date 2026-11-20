@@ -405,16 +405,6 @@ namespace m0.UIWpf.Visualisers
             return GraphUtil.GetBooleanValueOrFalse(showBaseLabelVertex);
         }
 
-        private string DescribeShowBaseLabelValue()
-        {
-            IVertex showBaseLabelVertex = Vertex.Get(false, @"ShowBaseLabel:");
-
-            if (showBaseLabelVertex == null || showBaseLabelVertex.Value == null)
-                return "<missing>";
-
-            return showBaseLabelVertex.Value.ToString();
-        }
-
         private bool HasBaseEdgeDefinitionChanged(IVertex baseEdge)
         {
             if (!isBaseEdgeToInitialized)
@@ -1784,12 +1774,6 @@ namespace m0.UIWpf.Visualisers
                 DisplayBaseVertex = ReadShowBaseLabel();
                 IVertex metaForForm = getMetaForForm();
                 BaseVertexEdge = metaForForm;
-
-                MinusZero.Instance.Log(
-                    1,
-                    "FormVisualiser.BaseEdgeToUpdated",
-                    "ShowBaseLabel=" + DescribeShowBaseLabelValue()
-                        + " DisplayBaseVertex=" + DisplayBaseVertex);
 
                 int? _columnNumber = GraphUtil.GetIntegerValue(Vertex.Get(false, @"ColumnNumber:"));
 

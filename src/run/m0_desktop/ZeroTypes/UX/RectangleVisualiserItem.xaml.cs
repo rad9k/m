@@ -65,6 +65,12 @@ namespace m0.ZeroTypes.UX
                 ((SQLVisualiser)ContentVisualiser).BaseEdgeToUpdated();
                 ((SQLVisualiser)ContentVisualiser).ScaleChange();
             }
+
+            if (ContentVisualiser is FormVisualiser)
+            {
+                ((FormVisualiser)ContentVisualiser).BaseEdgeToUpdated();
+                ((FormVisualiser)ContentVisualiser).ScaleChange();
+            }
         }
 
         public override void VertexSetedUp()
