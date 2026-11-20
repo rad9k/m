@@ -8,8 +8,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Xceed.Wpf.AvalonDock;
 using Xceed.Wpf.AvalonDock.Controls;
 using Xceed.Wpf.AvalonDock.Layout;
 
@@ -28,6 +30,13 @@ namespace m0.UIWpf
         public const double MinimumScale = 0.75;
         public const double MaximumScale = 1.75;
         public const double ScaleStep = 0.05;
+
+        // Screen pixels for the AvalonDock splitter column. Layout units are this
+        // value divided by the interface scale.
+        const double DockSplitterScreenHitThickness = 8;
+
+        static readonly List<LayoutGridResizerControl> LiveSplitters = new List<LayoutGridResizerControl>();
+        static bool RefreshingSplitters;
 
         static readonly DependencyProperty ManagedScaleTransformProperty = DependencyProperty.RegisterAttached(
             "ManagedScaleTransform",
@@ -71,6 +80,10 @@ namespace m0.UIWpf
                 new RoutedEventHandler(OnWindowLoaded));
             EventManager.RegisterClassHandler(
                 typeof(LayoutGridResizerControl),
+                FrameworkElement.LoadedEvent,
+                new RoutedEventHandler(OnSplitterLoaded));
+            EventManager.RegisterClassHandler(
+                typeof(LayoutGridResizerControl),
                 Thumb.DragStartedEvent,
                 new DragStartedEventHandler(OnSplitterDragStarted));
         }
@@ -95,6 +108,7 @@ namespace m0.UIWpf
 
                 scale = clampedScale;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Scale)));
+                UpdateLiveSplitterHitMargins();
             }
         }
 
@@ -473,6 +487,192 @@ namespace m0.UIWpf
                         window.Height += extraHeight;
                 }
             }
+        }
+
+        public static void WidenDockSplitters(DependencyObject root)
+        {
+            if (RefreshingSplitters || root == null)
+                return;
+
+            RefreshingSplitters = true;
+            try
+            {
+                foreach (LayoutGridResizerControl splitter in FindVisualChildren<LayoutGridResizerControl>(root))
+                {
+                    AttachSplitter(splitter);
+                    PaintSplitterGrip(splitter);
+                    ApplySplitterHitThickness(splitter);
+                }
+            }
+            finally
+            {
+                RefreshingSplitters = false;
+            }
+        }
+
+        static void AttachSplitter(LayoutGridResizerControl splitter)
+        {
+            if (splitter == null || LiveSplitters.Contains(splitter))
+                return;
+
+            LiveSplitters.Add(splitter);
+            splitter.Unloaded += OnSplitterUnloaded;
+            Panel.SetZIndex(splitter, 100);
+            PaintSplitterGrip(splitter);
+        }
+
+        static void PaintSplitterGrip(LayoutGridResizerControl splitter)
+        {
+            Brush gripBrush = splitter.TryFindResource("0GripBrush") as Brush;
+            if (gripBrush == null)
+                return;
+
+            if (!ReferenceEquals(splitter.Background, gripBrush))
+                splitter.SetResourceReference(Control.BackgroundProperty, "0GripBrush");
+            if (!ReferenceEquals(splitter.BackgroundWhileDragging, gripBrush))
+                splitter.SetResourceReference(LayoutGridResizerControl.BackgroundWhileDraggingProperty, "0GripBrush");
+            if (Math.Abs(splitter.OpacityWhileDragging - 1) > 0.001)
+                splitter.OpacityWhileDragging = 1;
+        }
+
+        static IEnumerable<T> FindVisualChildren<T>(DependencyObject parent) where T : DependencyObject
+        {
+            int childCount = VisualTreeHelper.GetChildrenCount(parent);
+            for (int childIndex = 0; childIndex < childCount; childIndex++)
+            {
+                DependencyObject child = VisualTreeHelper.GetChild(parent, childIndex);
+                T match = child as T;
+                if (match != null)
+                    yield return match;
+
+                foreach (T descendant in FindVisualChildren<T>(child))
+                    yield return descendant;
+            }
+        }
+
+        static void OnSplitterLoaded(object sender, RoutedEventArgs e)
+        {
+            LayoutGridResizerControl splitter = sender as LayoutGridResizerControl;
+            if (splitter == null || LiveSplitters.Contains(splitter))
+                return;
+
+            AttachSplitter(splitter);
+
+            if (!ApplySplitterHitThickness(splitter))
+            {
+                splitter.Dispatcher.BeginInvoke(
+                    new Action(() => ApplySplitterHitThickness(splitter)),
+                    DispatcherPriority.Loaded);
+            }
+        }
+
+        static void OnSplitterUnloaded(object sender, RoutedEventArgs e)
+        {
+            LayoutGridResizerControl splitter = sender as LayoutGridResizerControl;
+            if (splitter == null)
+                return;
+
+            splitter.Unloaded -= OnSplitterUnloaded;
+            LiveSplitters.Remove(splitter);
+        }
+
+        static void UpdateLiveSplitterHitMargins()
+        {
+            LayoutGridResizerControl[] splitters = LiveSplitters.ToArray();
+            for (int index = 0; index < splitters.Length; index++)
+                ApplySplitterHitThickness(splitters[index]);
+        }
+
+        static bool ApplySplitterHitThickness(LayoutGridResizerControl splitter)
+        {
+            if (splitter == null)
+                return false;
+
+            bool? resizesWidth = SplitterResizesWidth(splitter);
+            if (resizesWidth == null)
+                return false;
+
+            double currentScale = Instance.Scale;
+            if (currentScale <= 0)
+                currentScale = 1;
+
+            double layoutHitThickness = DockSplitterScreenHitThickness / currentScale;
+            DockingManager manager = FindVisualParent<DockingManager>(splitter);
+            if (manager != null)
+            {
+                if (resizesWidth.Value)
+                {
+                    if (Math.Abs(manager.GridSplitterWidth - layoutHitThickness) > 0.1)
+                        manager.GridSplitterWidth = layoutHitThickness;
+                }
+                else if (Math.Abs(manager.GridSplitterHeight - layoutHitThickness) > 0.1)
+                    manager.GridSplitterHeight = layoutHitThickness;
+            }
+
+            // The grip's grid slot is the hit target. AvalonDock does not rebuild
+            // that slot when GridSplitterWidth changes, so write the row or column directly.
+            Grid grid = splitter.Parent as Grid;
+            if (grid == null)
+                return false;
+
+            if (resizesWidth.Value)
+            {
+                int column = Grid.GetColumn(splitter);
+                if (column < 0 || column >= grid.ColumnDefinitions.Count)
+                    return false;
+
+                ColumnDefinition columnDefinition = grid.ColumnDefinitions[column];
+                if (!columnDefinition.Width.IsAbsolute || Math.Abs(columnDefinition.Width.Value - layoutHitThickness) > 0.1)
+                    columnDefinition.Width = new GridLength(layoutHitThickness);
+            }
+            else
+            {
+                int row = Grid.GetRow(splitter);
+                if (row < 0 || row >= grid.RowDefinitions.Count)
+                    return false;
+
+                RowDefinition rowDefinition = grid.RowDefinitions[row];
+                if (!rowDefinition.Height.IsAbsolute || Math.Abs(rowDefinition.Height.Value - layoutHitThickness) > 0.1)
+                    rowDefinition.Height = new GridLength(layoutHitThickness);
+            }
+
+            if (splitter.Margin != new Thickness(0))
+                splitter.Margin = new Thickness(0);
+            return true;
+        }
+
+        static bool? SplitterResizesWidth(LayoutGridResizerControl splitter)
+        {
+            if (splitter.Cursor == Cursors.SizeWE)
+                return true;
+            if (splitter.Cursor == Cursors.SizeNS)
+                return false;
+
+            object parent = splitter.Parent;
+            if (parent == null)
+                return null;
+
+            PropertyInfo orientationProperty = parent.GetType().GetProperty("Orientation");
+            if (orientationProperty == null || orientationProperty.PropertyType != typeof(Orientation))
+                return null;
+
+            Orientation orientation = (Orientation)orientationProperty.GetValue(parent);
+            return orientation == Orientation.Horizontal;
+        }
+
+        static T FindVisualParent<T>(DependencyObject child) where T : DependencyObject
+        {
+            DependencyObject current = child;
+            while (current != null)
+            {
+                T match = current as T;
+                if (match != null)
+                    return match;
+
+                current = VisualTreeHelper.GetParent(current);
+            }
+
+            return null;
         }
 
         static void OnSplitterDragStarted(object sender, DragStartedEventArgs e)

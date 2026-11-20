@@ -301,6 +301,14 @@ namespace m0
 
             RestoreTreePaneState();
             HasBeenShown = true;
+            dockingManager.LayoutUpdated += DockingManager_LayoutUpdated;
+            UiScale.WidenDockSplitters(dockingManager);
+        }
+
+        private void DockingManager_LayoutUpdated(object sender, EventArgs e)
+        {
+            // New document splits replace the grips. AvalonDock builds them gray.
+            UiScale.WidenDockSplitters(dockingManager);
         }
 
         private void TreePaneToggle_Click(object sender, RoutedEventArgs e)

@@ -246,7 +246,9 @@
         <!-- Adorners (AvalonDock splitters) must live inside the scale, or their
              position stays in unscaled window coordinates. -->
         <AdornerDecorator>
-        <avalonDock:DockingManager x:Name="dockingManager" >
+        <avalonDock:DockingManager x:Name="dockingManager"
+                                   GridSplitterWidth="8"
+                                   GridSplitterHeight="8">
             <avalonDock:DockingManager.Theme>
                 <avalonDock:MetroTheme/>
             </avalonDock:DockingManager.Theme>
