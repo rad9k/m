@@ -117,6 +117,8 @@
 				<@LabeledItem\ShowMeta :: "True">
 				<@LabeledItem\ConstantLabel :: "object">
 				<@RectangleVisualiserItem\VisualiserClass :: @System\Meta\Visualiser\Form>
+				<@RectangleVisualiserItem\VisualiserVertex :: "">
+					<@System\Meta\Visualiser\Form\ShowBaseLabel :: "False">
 			<@UXDecoratorTemplate :: "Association">
 				<@$Is :: @UXDecoratorTemplate>
 				<@EdgeTestQuery :: "$Is:{$Is:Class}\Association:">

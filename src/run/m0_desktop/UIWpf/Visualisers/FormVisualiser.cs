@@ -63,7 +63,7 @@ namespace m0.UIWpf.Visualisers
 
         public bool SelectionProhibited { get; set; }
 
-        bool DisplayBaseVertex = true; /////////////////////////////////////////
+        bool DisplayBaseVertex;
 
         bool SectionsAsTabs;
         bool MetaOnLeft;
@@ -108,7 +108,7 @@ namespace m0.UIWpf.Visualisers
 
         TabItem TabControlSelectedItem;
 
-        static string[] _MetaTriggeringUpdateVertex = new string[] { "ExpertMode", "ColumnNumber", "MetaOnLeft", "MetaAlignRight", "SectionsAsTabs" };
+        static string[] _MetaTriggeringUpdateVertex = new string[] { "ExpertMode", "ShowBaseLabel", "ColumnNumber", "MetaOnLeft", "MetaAlignRight", "SectionsAsTabs" };
         
         public string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
@@ -234,6 +234,7 @@ namespace m0.UIWpf.Visualisers
                     @"Scale:",
                     @"SelectedEdges:",
                     @"ExpertMode:",
+                    @"ShowBaseLabel:",
                     @"ColumnNumber:",
                     @"MetaOnLeft:",
                     @"MetaAlignRight:",
@@ -376,6 +377,10 @@ namespace m0.UIWpf.Visualisers
                     != ExpertMode)
                     return true;
 
+                if (meta == "ShowBaseLabel"
+                    && ReadShowBaseLabel() != DisplayBaseVertex)
+                    return true;
+
                 if (meta == "ColumnNumber")
                 {
                     int? columnNumber = GraphUtil.GetIntegerValue(
@@ -388,6 +393,26 @@ namespace m0.UIWpf.Visualisers
             }
 
             return false;
+        }
+
+        private bool ReadShowBaseLabel()
+        {
+            IVertex showBaseLabelVertex = Vertex.Get(false, @"ShowBaseLabel:");
+
+            if (showBaseLabelVertex == null || showBaseLabelVertex.Value == null)
+                return true;
+
+            return GraphUtil.GetBooleanValueOrFalse(showBaseLabelVertex);
+        }
+
+        private string DescribeShowBaseLabelValue()
+        {
+            IVertex showBaseLabelVertex = Vertex.Get(false, @"ShowBaseLabel:");
+
+            if (showBaseLabelVertex == null || showBaseLabelVertex.Value == null)
+                return "<missing>";
+
+            return showBaseLabelVertex.Value.ToString();
         }
 
         private bool HasBaseEdgeDefinitionChanged(IVertex baseEdge)
@@ -1565,7 +1590,6 @@ namespace m0.UIWpf.Visualisers
         {
             if (DisplayBaseVertex && BaseVertexEdgeAdded_PreFill == false)
             {
-                BaseVertexEdge = getMetaForForm();
                 BaseVertexEdgeAdded_PreFill = true;
                 PreFillFormAnalyseEdge(BaseVertexEdge, false);
             }
@@ -1738,6 +1762,7 @@ namespace m0.UIWpf.Visualisers
 
             BaseVertexEdgeAdded_PreFill = false;
             BaseVertexEdgeAdded = false;
+            BaseVertexEdge = null;
             lastCorrectedWidth = 0;
             widthCorrectionScheduled = false;
             widthCorrectionInProgress = false;
@@ -1756,13 +1781,21 @@ namespace m0.UIWpf.Visualisers
                     Vertex.Get(false, @"MetaAlignRight:"));
                 ExpertMode = GraphUtil.GetBooleanValueOrFalse(
                     Vertex.Get(false, @"ExpertMode:"));
+                DisplayBaseVertex = ReadShowBaseLabel();
+                IVertex metaForForm = getMetaForForm();
+                BaseVertexEdge = metaForForm;
+
+                MinusZero.Instance.Log(
+                    1,
+                    "FormVisualiser.BaseEdgeToUpdated",
+                    "ShowBaseLabel=" + DescribeShowBaseLabelValue()
+                        + " DisplayBaseVertex=" + DisplayBaseVertex);
 
                 int? _columnNumber = GraphUtil.GetIntegerValue(Vertex.Get(false, @"ColumnNumber:"));
 
                 if (_columnNumber != null)
                     ColumnNumber = (int)_columnNumber;
 
-                IVertex metaForForm = getMetaForForm();
                 bool isTypedForm =
                     metaForForm != null && metaForForm.Count() != 0;
                 IList<IEdge> childEdges = isTypedForm
@@ -2176,7 +2209,6 @@ namespace m0.UIWpf.Visualisers
         protected void AddEdge(IVertex meta, bool isSet)
         {
             if (DisplayBaseVertex && BaseVertexEdgeAdded == false) { 
-                BaseVertexEdge = getMetaForForm();
                 BaseVertexEdgeAdded = true;
                 AddEdge(BaseVertexEdge, false);
             }

@@ -4680,7 +4680,7 @@ namespace m0
                 "Enum:TransitionStyle3DEnum{EnumValue:Cut,EnumValue:OrbitTransition,EnumValue:FlyToAndSwap,EnumValue:GravityMorph,EnumValue:HyperspaceJump}," +
                 "Class:ShowesInEdges{Attribute:ShowFromToSourceChangedVertex{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False}}," +
                 "Class:ShowesOutEdges," +
-                "Class:Form{Attribute:ExpertMode{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ColumnNumber{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:1},Attribute:MetaOnLeft{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:MetaAlignRight{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:SectionsAsTabs{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False}}," +
+                "Class:Form{Attribute:ShowBaseLabel{$MinCardinality:0,$MaxCardinality:1,$DefaultValue:True},Attribute:ExpertMode{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ColumnNumber{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:1},Attribute:MetaOnLeft{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:MetaAlignRight{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:SectionsAsTabs{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False}}," +
                 "Class:Code{Attribute:ShowWhiteSpace{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowLineNumbers{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:HighlightedLine{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Attribute:ShowFolding{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:TextMemoryCurrent{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:0},Attribute:TextMemoryMax{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:0}}," +
                 "Class:Table{Attribute:ToShowEdgesMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:ExpertMode{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:IsAllVisualisersEdit{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowHeader{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Association:GridStyle{$MinCardinality:1,$MaxCardinality:1},Attribute:AlternatingRows{$MinCardinality:1,$MaxCardinality:1}}," +
                 "Class:TableFast{Attribute:ToShowEdgesMeta{$MinCardinality:0,$MaxCardinality:1},Attribute:IsAllVisualisersEdit{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:False},Attribute:ShowHeader{$MinCardinality:1,$MaxCardinality:1,$DefaultValue:True},Association:GridStyle{$MinCardinality:1,$MaxCardinality:1},Attribute:AlternatingRows{$MinCardinality:1,$MaxCardinality:1}}," +
@@ -4722,6 +4722,7 @@ namespace m0
             sm.Get(false, @"Visualiser\Form").AddEdge(sm.Get(false, "?$Inherits"), sm.Get(false, @"ZeroTypes\HasSelectedEdges"));
             sm.Get(false, @"Visualiser\Form").AddVertex(sm.Get(false, "?$PlatformClassName"), @"m0.UIWpf.Visualisers.FormVisualiser, m0_desktop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             sm.Get(false, @"Visualiser\Form").AddEdge(sm.Get(false, @"?$Is"), sm.Get(false, @"ZeroUML\Class"));
+            sm.Get(false, @"Visualiser\Form\ShowBaseLabel").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             sm.Get(false, @"Visualiser\Form\ExpertMode").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Boolean"));
             sm.Get(false, @"Visualiser\Form\ColumnNumber").AddEdge(sm.Get(false, @"?$EdgeTarget"), sm.Get(false, @"ZeroTypes\Integer"));
             sm.Get(false, @"Visualiser\Form\ColumnNumber").AddVertex(sm.Get(false, @"?MinValue"), 1);
@@ -5031,6 +5032,7 @@ namespace m0
 
             sm.Get(false, @"Visualiser\Form\ExpertMode").AddVertex(sm.Get(false, @"?$Section"), "General");
             IVertex Form_layout_section = sm.Get(false, @"Visualiser\Form\ColumnNumber").AddVertex(sm.Get(false, @"?$Section"), "Layout");
+            sm.Get(false, @"Visualiser\Form\ShowBaseLabel").AddEdge(sm.Get(false, @"?$Section"), Form_layout_section);
             sm.Get(false, @"Visualiser\Form\MetaOnLeft").AddEdge(sm.Get(false, @"?$Section"), Form_layout_section);
             sm.Get(false, @"Visualiser\Form\MetaAlignRight").AddEdge(sm.Get(false, @"?$Section"), Form_layout_section);
             sm.Get(false, @"Visualiser\Form\SectionsAsTabs").AddEdge(sm.Get(false, @"?$Section"), Form_layout_section);
