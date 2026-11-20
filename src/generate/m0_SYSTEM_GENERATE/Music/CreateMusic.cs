@@ -750,6 +750,7 @@ namespace m0_SYSTEM_GENERATE.Music
             
             GraphUtil.LoadTXTParseAndMove(@"_RES\Lib\Music\Generator\HarmonyMelodyTimeGenerator.txt", MusicGenerator, "'HarmonyMelodyTimeGenerator'");
             GraphUtil.LoadTXTParseAndMove(@"_RES\Lib\Music\Generator\SimpleTransformer.txt", MusicGenerator, "'SimpleTransformer'");
+            GraphUtil.LoadTXTParseAndMove(@"_RES\Lib\Music\Generator\ChordProgressionGenerator.txt", MusicGenerator, "'ChordProgressionGenerator'");
 
             // Instrument
 

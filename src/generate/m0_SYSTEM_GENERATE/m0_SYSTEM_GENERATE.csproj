@@ -94,6 +94,9 @@
     <Content Include="_RES\Lib\Music\Chord\BasicChords.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="_RES\Lib\Music\Generator\ChordProgressionGenerator.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="_RES\Lib\Music\Generator\HarmonyMelodyTimeGenerator.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -35,9 +35,6 @@ namespace m0.ZeroTypes
             Dictionary<IVertex, IVertex> oldToNew = new Dictionary<IVertex, IVertex>();
 
             CopySubGraphIntoVertex(roots, copyTo, oldToNew);
-
-            MinusZero.Instance.Log(1, "VertexOperations.CopyVertex",
-                "roots=" + roots.Count + " scopeVertices=" + oldToNew.Count);
         }
 
         // MoveSet: same copy as CopyVertex (subgraph ending at links, meta remapped when inside the

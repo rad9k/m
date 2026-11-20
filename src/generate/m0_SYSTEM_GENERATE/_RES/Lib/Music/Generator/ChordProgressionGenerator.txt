@@ -1,0 +1,18 @@
+"STORE"
+	import @System\Lib\Music direct meta
+	import @System\Lib\Music\Generator direct meta
+	class "ChordProgressionGenerator"
+		association "Input" @PitchSet "0":"-1"
+		association "Output" @ChordProgression "0":"1"
+		method "run" ()
+			Output -< Output\Chord
+			for vertex ps in Input
+				Output +< @@ChordProgression\Chord :: ps{
+					@@$Is :: @@PitchSet
+					for vertex p in ps\{$Is:Pitch}
+						@@Pitch :: p{
+							@@$Is :: @@Pitch
+							@@Pitch\Octave :: %"1"
+							@@Pitch\Note :: %p\Note
+						}
+				}

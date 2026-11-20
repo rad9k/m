@@ -291,8 +291,6 @@ namespace m0
             {
                 logFile = new System.IO.StreamWriter("log.txt");
                 logFile.AutoFlush = true;
-
-                Log(0, "InitializeLog", "START");
             }
         }
 

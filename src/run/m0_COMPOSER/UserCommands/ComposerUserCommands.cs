@@ -130,6 +130,7 @@ namespace m0_COMPOSER.UserCommands
             IVertex zm = ms.AddVertex(null, "ZeroMachines");
             zm.AddEdge(linkMeta, m0.MinusZero.Instance.root.Get(false, @"System\Lib\Music\Generator\'HarmonyMelodyTimeGenerator'"));
             zm.AddEdge(linkMeta, m0.MinusZero.Instance.root.Get(false, @"System\Lib\Music\Generator\'SimpleTransformer'"));
+            zm.AddEdge(linkMeta, m0.MinusZero.Instance.root.Get(false, @"System\Lib\Music\Generator\'ChordProgressionGenerator'"));
 
             ms.AddEdge(linkMeta, MinusZero.Instance.root.Get(false, @"System\Lib\Music\Instrument"));
 

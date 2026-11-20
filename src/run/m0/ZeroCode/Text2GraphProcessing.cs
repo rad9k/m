@@ -63,7 +63,6 @@ namespace m0.ZeroCode
 
             public Dictionary<object, TextRange> subTextRanges;            
 
-
             public ParsingStack(Text2GraphProcessing _parent, ParsingStack _parentStack, int _begLine, int _endLine)
             {
                 processing = _parent;
@@ -306,8 +305,6 @@ namespace m0.ZeroCode
             }
 
         }
-
-
 
         FormalTextLanguageDictinaries dict;        
 
@@ -1093,7 +1090,6 @@ namespace m0.ZeroCode
                 false);
         }
 
-        
         void prepareImportList_FromString()
         {
             // "import (?<name>) (?<link>)"
@@ -1152,11 +1148,9 @@ namespace m0.ZeroCode
 
                 string link = match.Groups["link"].Value;
 
-
                 IVertex namev = MinusZero.Instance.CreateTempVertex();
 
                 namev.Value = name;
-
 
                 IVertex target = r.Get(false, link); // YYY huston..... we assume that this get will not go into infinite reccursion as link variable is simple run time query
 
@@ -1286,7 +1280,6 @@ namespace m0.ZeroCode
                     return;
                 }
         }
-
 
         bool TryTakeEdgeByReference(List<IEdge> edges, IEdge edge, out IEdge matched)
         {
@@ -2781,7 +2774,6 @@ namespace m0.ZeroCode
                 new Dictionary<TryIsKeywordMemoKey,
                     tryIsKeyword_Parameters_OUT>();
 
-
         void _tryIsKeyword(ParsingStack s, 
             string LOGPREFIX, 
             int startPos, 
@@ -2931,7 +2923,6 @@ namespace m0.ZeroCode
 
             //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX+"BEG startPos:" + startPos + " prevSpos:"+prev_startPos+" same:"+isPrevStartPosSameAsStartPos+" endPos:" + endPos);
 
-
             int sPos = startPos;
 
             if (sPos == endPos)
@@ -2945,7 +2936,6 @@ namespace m0.ZeroCode
                 return;
             }
 
-            
             bool shallProceed = true;
 
             int tryNewPos = 0;
@@ -2967,7 +2957,6 @@ namespace m0.ZeroCode
             int sPos_copy;
 
             bool _isLink = ZeroCodeCommon.isLinkString(dict, text, sPos);
-
 
             if (!ZeroCodeCommon.testIfIsKeywordSubstring(sPos, text, dict.allKeywordsSubstringsDictionary, null) || _isLink)
             {
@@ -3085,7 +3074,6 @@ namespace m0.ZeroCode
                 }
 
                 // !!!!!!!!!!!!!!!!!!!!!!! A or B ! YOU DECIDE. I do not know :)
-
 
                 if (dict.emptyKeywordByGroups.ContainsKey(keywordsFilter))
                     possible_emptyKeyworsByKeywordsFilter = dict.emptyKeywordByGroups[keywordsFilter];                
@@ -3379,7 +3367,6 @@ namespace m0.ZeroCode
 
                               //  MinusZero.Instance.Log(1, LOGPREFIX+"_tryIsKeyword", "will run _tryIs for:"+ ktd.currentlyProcessedParameterName);
 
-                              
                                 // NEW STACK
 
                                 ParsingStack newStack = new ParsingStack(s);
@@ -3412,7 +3399,6 @@ namespace m0.ZeroCode
 
                                 //
                               
-
                                 if (foundLink != null)
                                 {
                                     ktd.waitingUntilPositionInText = _newPos;
@@ -3457,12 +3443,10 @@ namespace m0.ZeroCode
                             //if (foundParameter is keywordTryingData)
                               //  MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + ((keywordTryingData)foundParameter).keyword);
 
-
                             newExaminedKeywords.Add(ktd);
                         }
                         else
                             sPos = sPox_memory_if_parameterNotFound;
-
 
                         ktd.state = keywordTryingState.waiting;
                     }
@@ -3646,7 +3630,6 @@ namespace m0.ZeroCode
             if (examinedKeywords.Count == 0)
             {
                 link = tryLink;
-
 
                 newPos = tryNewPos;
 
@@ -4086,7 +4069,6 @@ namespace m0.ZeroCode
                         else                            
                             nv = AddKeywordVertex_AddEdge(s, parent, e, meta, e.To).To;
                             
-                            
                         }
                     else
                     {
@@ -4343,7 +4325,6 @@ namespace m0.ZeroCode
             
             s.LocalRoot = null;
 
-    
             List<keywordTryingData> examinedKeywords = TryIfIsKeywordLine(s);
 
             if (examinedKeywords != null)
@@ -4577,11 +4558,157 @@ namespace m0.ZeroCode
 
         IEnumerable<IVertex> SubGraphPreProcessing;
 
+        // Association vertices reached by one link hop from the pre-parse subgraph.
+        // Input and Output sit on an Association edge, which IsLink treats as a link.
+        HashSet<IVertex> oldLinkTargetVertices;
+
+        HashSet<IVertex> newParsedGraphVertices;
+
+        bool newParsedGraphVerticesReady;
+
         IVertex parseRoot;
 
         void GestSubGraphPreProcessing()
         {
             SubGraphPreProcessing = GraphUtil.GetSubGraphWithoutLinksAsList(baseVertex);
+            oldLinkTargetVertices = CollectOneHopLinkTargets(SubGraphPreProcessing);
+            newParsedGraphVertices = null;
+            newParsedGraphVerticesReady = false;
+        }
+
+        // One hop only. Walking onward through $EdgeTarget or $Is would pull in the library.
+        static HashSet<IVertex> CollectOneHopLinkTargets(IEnumerable<IVertex> subgraphVertices)
+        {
+            HashSet<IVertex> linkTargets = new HashSet<IVertex>();
+
+            if (subgraphVertices == null)
+                return linkTargets;
+
+            foreach (IVertex vertex in subgraphVertices)
+            {
+                if (vertex == null || vertex.OutEdgesRaw == null)
+                    continue;
+
+                foreach (IEdge edge in vertex.OutEdgesRaw)
+                {
+                    if (edge == null || edge.To == null)
+                        continue;
+
+                    if (!VertexOperations.IsLink(edge))
+                        continue;
+
+                    linkTargets.Add(edge.To);
+                }
+            }
+
+            return linkTargets;
+        }
+
+        HashSet<IVertex> CollectParsedGraphVertices(IVertex parsedContent)
+        {
+            HashSet<IVertex> vertices = new HashSet<IVertex>();
+
+            if (parsedContent == null)
+                return vertices;
+
+            IEnumerable<IVertex> withoutLinks =
+                GraphUtil.GetSubGraphWithoutLinksAsList(parsedContent);
+
+            if (withoutLinks != null)
+            {
+                foreach (IVertex vertex in withoutLinks)
+                    if (vertex != null)
+                        vertices.Add(vertex);
+            }
+
+            List<IVertex> subgraphVertices = vertices.ToList();
+
+            foreach (IVertex vertex in subgraphVertices)
+            {
+                if (vertex.OutEdgesRaw == null)
+                    continue;
+
+                foreach (IEdge edge in vertex.OutEdgesRaw)
+                {
+                    if (edge == null || edge.To == null)
+                        continue;
+
+                    if (!VertexOperations.IsLink(edge))
+                        continue;
+
+                    vertices.Add(edge.To);
+                }
+            }
+
+            return vertices;
+        }
+
+        void RememberNewParsedGraphVertices()
+        {
+            IVertex parsedContent = null;
+
+            if (parseRoot != null)
+            {
+                IEdge firstParsedEdge = parseRoot.FirstOrDefault();
+
+                if (firstParsedEdge != null)
+                    parsedContent = firstParsedEdge.To;
+            }
+
+            newParsedGraphVertices = CollectParsedGraphVertices(parsedContent);
+            newParsedGraphVerticesReady = true;
+        }
+
+        bool IsVertexInNewParsedGraph(IVertex vertex)
+        {
+            if (!newParsedGraphVerticesReady || vertex == null || newParsedGraphVertices == null)
+                return false;
+
+            return newParsedGraphVertices.Contains(vertex);
+        }
+
+        // Local association copy. Shared library vertices are in the new graph too.
+        bool IsLocalOldLinkTarget(IVertex vertex)
+        {
+            if (vertex == null || oldLinkTargetVertices == null)
+                return false;
+
+            if (!oldLinkTargetVertices.Contains(vertex))
+                return false;
+
+            return !IsVertexInNewParsedGraph(vertex);
+        }
+
+        int CountSimilarEdges(IVertex findHere, IEdge toFind)
+        {
+            if (findHere == null || toFind == null || findHere.OutEdgesRaw == null)
+                return 0;
+
+            int count = 0;
+
+            foreach (IEdge edge in findHere.OutEdgesRaw)
+            {
+                if (edge != null
+                    && GeneralUtil.CompareStrings(edge.Meta, toFind.Meta)
+                    && GeneralUtil.CompareStrings(edge.To, toFind.To))
+                    count++;
+            }
+
+            return count;
+        }
+
+        static bool OutgoingEdgeMatchesMetaAndTo(IEnumerable<IEdge> edges, IEdge reference)
+        {
+            if (edges == null || reference == null)
+                return false;
+
+            foreach (IEdge edge in edges)
+                if (edge != null
+                    && edge.Meta == reference.Meta
+                    && edge.To == reference.To)
+                    return true;
+
+            return false;
         }
 
         // $Empty, bootstrap and always-present vertices are shared. A same-valued
@@ -4622,6 +4749,8 @@ namespace m0.ZeroCode
 
         void MoveInEdgesComingFromOutsideOfSubGraphToParseRoot()
         {
+            RememberNewParsedGraphVertices();
+
             List<IVertex> visited = new List<IVertex>();
             HashSet<IVertex> sharedVertices = SharedVerticesLeftInPlace();
 
@@ -4641,26 +4770,161 @@ namespace m0.ZeroCode
             IList<IEdge> OutEdgesRaw = iterationRoot.OutEdgesRaw.ToList();
 
             foreach (IEdge e in OutEdgesRaw)
-                if (e.To != parseRoot && !visited.Contains(e.To) && !VertexOperations.IsLink(e))
+            {
+                if (e.To == parseRoot || visited.Contains(e.To))
+                    continue;
+
+                if (VertexOperations.IsLink(e))
                 {
-                    visited.Add(e.To);
+                    if (IsLocalOldLinkTarget(e.To))
+                        RetargetUniqueLinkInstanceMetas(e, parsedVertex);
 
-                    IEdge foundInParsed = FindSimilarEdge(parsedVertex, e);
-
-                    if (foundInParsed != null && foundInParsed.To != e.To)
-                    {
-                        if (IsSharedVertexLeftInPlace(e.To, sharedVertices))
-                            continue;
-
-                        MoveInEdgesComingFromOutsideOfSubGraphToParseVertex_forOneVertex(e.To, foundInParsed.To);
-
-                        MoveInEdgesComingFromOutsideOfSubGraphToParseRoot_Reccurent(
-                            e.To,
-                            foundInParsed.To,
-                            visited,
-                            sharedVertices);
-                    }
+                    continue;
                 }
+
+                visited.Add(e.To);
+
+                IEdge foundInParsed = FindSimilarEdge(parsedVertex, e);
+
+                if (foundInParsed == null || foundInParsed.To == e.To)
+                    continue;
+
+                if (IsSharedVertexLeftInPlace(e.To, sharedVertices))
+                    continue;
+
+                MoveInEdgesComingFromOutsideOfSubGraphToParseVertex_forOneVertex(e.To, foundInParsed.To);
+
+                MoveInEdgesComingFromOutsideOfSubGraphToParseRoot_Reccurent(
+                    e.To,
+                    foundInParsed.To,
+                    visited,
+                    sharedVertices);
+            }
+        }
+
+        static IVertex EdgeVertexSlot(IVertex edgeVertex, IVertex slotMeta)
+        {
+            if (edgeVertex == null || slotMeta == null || edgeVertex.OutEdgesRaw == null)
+                return null;
+
+            foreach (IEdge slotEdge in edgeVertex.OutEdgesRaw)
+                if (slotEdge != null && object.ReferenceEquals(slotEdge.Meta, slotMeta))
+                    return slotEdge.To;
+
+            return null;
+        }
+
+        void RetargetEdgeVertexMetaSlot(
+            IVertex oldAssociation,
+            IVertex newAssociation,
+            IVertex instanceFrom,
+            IVertex instanceTo)
+        {
+            IVertex fromSlot = m0.ZeroTypes.Edge.From_meta;
+            IVertex metaSlot = m0.ZeroTypes.Edge.Meta_meta;
+            IVertex toSlot = m0.ZeroTypes.Edge.To_meta;
+
+            if (fromSlot == null
+                || metaSlot == null
+                || toSlot == null
+                || oldAssociation == null
+                || oldAssociation.InEdgesRaw == null)
+                return;
+
+            foreach (IEdge metaSlotEdge in oldAssociation.InEdgesRaw.ToList())
+            {
+                if (metaSlotEdge == null || metaSlotEdge.From == null)
+                    continue;
+
+                if (!object.ReferenceEquals(metaSlotEdge.Meta, metaSlot))
+                    continue;
+
+                if (!object.ReferenceEquals(EdgeVertexSlot(metaSlotEdge.From, fromSlot), instanceFrom))
+                    continue;
+
+                if (!object.ReferenceEquals(EdgeVertexSlot(metaSlotEdge.From, toSlot), instanceTo))
+                    continue;
+
+                RetargetOutgoingEdgePreservingIndex(
+                    metaSlotEdge,
+                    metaSlot,
+                    newAssociation);
+            }
+        }
+
+        // Unique link pair only. Does not walk children and does not move other in-edges.
+        void RetargetUniqueLinkInstanceMetas(IEdge linkEdge, IVertex parsedParent)
+        {
+            try
+            {
+                if (linkEdge == null || linkEdge.To == null || parsedParent == null)
+                    return;
+
+                if (CountSimilarEdges(parsedParent, linkEdge) != 1)
+                    return;
+
+                IEdge found = FindSimilarEdge(parsedParent, linkEdge);
+
+                if (found == null
+                    || found.To == null
+                    || object.ReferenceEquals(found.To, linkEdge.To))
+                    return;
+
+                IVertex oldAssociation = linkEdge.To;
+                IVertex newAssociation = found.To;
+
+                if (oldAssociation.MetaInEdgesRaw == null || SubGraphPreProcessing == null)
+                    return;
+
+                foreach (IEdge metaInEdge in oldAssociation.MetaInEdgesRaw.ToList())
+                {
+                    if (metaInEdge == null || metaInEdge.From == null)
+                        continue;
+
+                    if (SubGraphPreProcessing.Contains(metaInEdge.From))
+                        continue;
+
+                    bool matchedOutEdges = false;
+
+                    try
+                    {
+                        matchedOutEdges = OutgoingEdgeMatchesMetaAndTo(
+                            metaInEdge.From.ToList(),
+                            metaInEdge);
+                    }
+                    catch
+                    {
+                    }
+
+                    if (!matchedOutEdges)
+                        continue;
+
+                    bool retargeted = false;
+
+                    foreach (IEdge outgoingEdge in metaInEdge.From.ToList())
+                        if (outgoingEdge.Meta == metaInEdge.Meta && outgoingEdge.To == metaInEdge.To)
+                        {
+                            OutgoingEdgeRetargetResult result =
+                                RetargetOutgoingEdgePreservingIndex(
+                                    outgoingEdge,
+                                    newAssociation,
+                                    outgoingEdge.To);
+
+                            if (result == OutgoingEdgeRetargetResult.Retargeted)
+                                retargeted = true;
+                        }
+
+                    if (retargeted)
+                        RetargetEdgeVertexMetaSlot(
+                            oldAssociation,
+                            newAssociation,
+                            metaInEdge.From,
+                            metaInEdge.To);
+                }
+            }
+            catch
+            {
+            }
         }
 
         IEdge FindSimilarEdge(IVertex findHere, IEdge toFind)
@@ -4707,20 +4971,27 @@ namespace m0.ZeroCode
             return -1;
         }
 
+        enum OutgoingEdgeRetargetResult
+        {
+            Skipped,
+            Retargeted,
+            DeleteDidNotRemoveEdge
+        }
+
         // Delete then Add appends the edge. Move it back so siblings keep their order.
-        static void RetargetOutgoingEdgePreservingIndex(
+        static OutgoingEdgeRetargetResult RetargetOutgoingEdgePreservingIndex(
             IEdge edge,
             IVertex meta,
             IVertex to)
         {
             if (edge == null || edge.From == null)
-                return;
+                return OutgoingEdgeRetargetResult.Skipped;
 
             IVertex from = edge.From;
             IList<IEdge> outEdges = from.OutEdgesRaw;
 
             if (outEdges == null)
-                return;
+                return OutgoingEdgeRetargetResult.Skipped;
 
             int index = OutgoingEdgeIndex(from, edge);
             int countBeforeDelete = outEdges.Count;
@@ -4728,7 +4999,7 @@ namespace m0.ZeroCode
             from.DeleteEdge(edge);
 
             if (outEdges.Count == countBeforeDelete)
-                return;
+                return OutgoingEdgeRetargetResult.DeleteDidNotRemoveEdge;
 
             from.AddEdge(meta, to);
 
@@ -4738,6 +5009,8 @@ namespace m0.ZeroCode
                 index < lastIndex &&
                 outEdges is ExtandableList<IEdge> extensibleOutEdges)
                 extensibleOutEdges.MoveItemWithoutCallbacks(lastIndex, index);
+
+            return OutgoingEdgeRetargetResult.Retargeted;
         }
 
         void MoveInEdgesComingFromOutsideOfSubGraphToParseVertex_forOneVertex(IVertex existing, IVertex parsedVertex)
@@ -5038,7 +5311,6 @@ namespace m0.ZeroCode
                 _baseEdge,
                 CodeRepresentationEnum.EdgeOneLine);
 
-
             MultiLineString mls = new MultiLineString(_text);
 
             mls.AddLeftTab(1);
@@ -5112,3 +5384,4 @@ namespace m0.ZeroCode
         }
     }
 }
+

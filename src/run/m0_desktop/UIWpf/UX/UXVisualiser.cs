@@ -14,7 +14,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -1463,10 +1462,6 @@ namespace m0.UIWpf.UX
                     GetItemsDictionaryByBaseEdgeTo(),
                     GetItemsDictionaryByVertex());
 
-            LogDiagramLineTrace(
-                "UXVisualiserVertexChange onlyHostedValueChanges="
-                + onlyHostedValueChanges);
-
             if (onlyHostedValueChanges)
                 return exe.Stack;
 
@@ -1820,13 +1815,7 @@ namespace m0.UIWpf.UX
                 occupiedBounds.Top + occupiedBounds.Height / 2);
 
             if (currentLogicalViewport.Contains(occupiedCenter))
-            {
-                MinusZero.Instance.Log(
-                    1,
-                    "UXVisualiser.ScrollToOccupiedContent",
-                    "occupied center already inside viewport");
                 return true;
-            }
 
             double targetLogicalLeft =
                 occupiedCenter.X - logicalViewportWidth / 2;
@@ -1841,17 +1830,6 @@ namespace m0.UIWpf.UX
                 targetLogicalTop,
                 0,
                 Math.Max(0, virtualHeight - logicalViewportHeight));
-
-            MinusZero.Instance.Log(
-                1,
-                "UXVisualiser.ScrollToOccupiedContent",
-                "extent " + scrollViewer.ExtentWidth.ToString("0.#")
-                    + "x" + scrollViewer.ExtentHeight.ToString("0.#")
-                    + " virtual " + virtualWidth.ToString("0.#")
-                    + "x" + virtualHeight.ToString("0.#")
-                    + " logicalOffset "
-                    + targetLogicalLeft.ToString("0.#")
-                    + "," + targetLogicalTop.ToString("0.#"));
 
             scrollViewer.ScrollToHorizontalOffset(
                 targetLogicalLeft * extentScaleX);
@@ -3058,7 +3036,6 @@ namespace m0.UIWpf.UX
 
             if (!HasLiveBaseEdgeTo(item))
             {
-                LogRejectedUXItem(item, "HostItem");
                 RemoveUXItem(item);
                 return;
             }
@@ -3085,7 +3062,6 @@ namespace m0.UIWpf.UX
 
                         if (!HasLiveBaseEdgeTo(i))
                         {
-                            LogRejectedUXItem(i, "HostItem.MultiContainerSubItem");
                             RemoveUXItem(i);
                             continue;
                         }
@@ -3149,7 +3125,6 @@ namespace m0.UIWpf.UX
 
                     if (!HasLiveBaseEdgeTo(i))
                     {
-                        LogRejectedUXItem(i, "HostItem.Container");
                         RemoveUXItem(i);
                         continue;
                     }
@@ -3283,10 +3258,7 @@ namespace m0.UIWpf.UX
                         lineDecoratorsToAdd.Add((lineDecorator, hostedToItem));
                     }
                     else
-                    {
-                        LogDiagramLineDecoratorEdgeDelete(item, decoratorBaseEdge);
                         item.Vertex.DeleteEdge(decorator.Edge);
-                    }
                 }
 
                 foreach ((LineDecorator lineDecorator, IUXItem hostedToItem) in lineDecoratorsToAdd)
@@ -4227,11 +4199,6 @@ namespace m0.UIWpf.UX
                     keyboardNudgeGuideItems.Add(item);
 
                 alignmentGuideReferenceIndexReady = false;
-
-                MinusZero.Instance.Log(
-                    1,
-                    "UXVisualiser.RequestKeyboardNudgeAlignmentGuides",
-                    "items " + keyboardNudgeGuideItems.Count);
             }
 
             RequestAlignmentGuideUpdate();
@@ -4433,10 +4400,6 @@ namespace m0.UIWpf.UX
 
         public void Paint()
         {
-            LogDiagramLineTrace(
-                "Paint enter height=" + ActualHeight
-                + " firstPainted=" + IsFirstPainted);
-
             if (ActualHeight != 0 || IsFirstPainted)
             {
                     ClearAlignmentGuides();
@@ -4473,10 +4436,7 @@ namespace m0.UIWpf.UX
                             IUXItem i = UXItem.GetUXItem(this, _i);
 
                             if (i == null)
-                            {
-                                LogUXItemNotCreated(_i);
                                 continue;
-                            }
 
                             if (CheckIfItemIsValidAndRemoveIfInvalid(i))
                                 HostItem(this, i, false);
@@ -4907,167 +4867,10 @@ namespace m0.UIWpf.UX
             return secondHash + ":" + firstHash;
         }
 
-        // Diagnostic only. Called when an item is dropped or never created.
-        static string QuoteUXLog(object value)
-        {
-            if (value == null)
-                return "null";
-
-            string text = value.ToString();
-
-            if (text == null)
-                return "null";
-
-            text = text.Replace("\r", " ").Replace("\n", " ");
-
-            return "\"" + text + "\"";
-        }
-
-        static string DescribeUXLogVertex(IVertex vertex)
-        {
-            if (vertex == null)
-                return "null";
-
-            return "value=" + QuoteUXLog(vertex.Value)
-                + " mock=" + (vertex is ToVertexMock)
-                + " state=" + vertex.DisposedState;
-        }
-
-        static bool IsDollarIsMeta(IVertex meta)
-        {
-            if (meta == null)
-                return false;
-
-            ToVertexMock mock = meta as ToVertexMock;
-
-            if (mock != null)
-                return GeneralUtil.CompareStrings(mock.mockData, "$Is");
-
-            return GeneralUtil.CompareStrings(meta.Value, "$Is");
-        }
-
-        static string DescribeUXIsTargets(IVertex vertex)
-        {
-            if (vertex == null)
-                return "none";
-
-            IList<IEdge> edges = vertex.OutEdgesRaw;
-
-            if (edges == null || edges.Count == 0)
-                return "none";
-
-            List<string> parts = new List<string>();
-
-            foreach (IEdge edge in edges)
-            {
-                if (edge == null || !IsDollarIsMeta(edge.Meta))
-                    continue;
-
-                parts.Add(DescribeUXLogVertex(edge.To));
-            }
-
-            if (parts.Count == 0)
-                return "none";
-
-            return string.Join("; ", parts);
-        }
-
-        static string DescribeBaseEdgeForLog(IUXItem item)
-        {
-            if (item == null)
-                return "BaseEdge=null";
-
-            Edge baseEdge = item.BaseEdge;
-
-            if (baseEdge == null || baseEdge.Vertex == null)
-                return "BaseEdge=null";
-
-            IVertex baseEdgeVertex = baseEdge.Vertex;
-            StringBuilder rawEdges = new StringBuilder();
-            IList<IEdge> edges = baseEdgeVertex.OutEdgesRaw;
-
-            if (edges != null)
-            {
-                foreach (IEdge edge in edges)
-                {
-                    if (edge == null)
-                        continue;
-
-                    if (rawEdges.Length > 0)
-                        rawEdges.Append("; ");
-
-                    rawEdges.Append("meta=");
-                    rawEdges.Append(DescribeUXLogVertex(edge.Meta));
-                    rawEdges.Append(" to=");
-                    rawEdges.Append(DescribeUXLogVertex(edge.To));
-                }
-            }
-
-            if (rawEdges.Length == 0)
-                rawEdges.Append("none");
-
-            return "BaseEdgeVertex=" + QuoteUXLog(baseEdgeVertex.Value)
-                + " raw=[" + rawEdges + "]"
-                + " queryFrom=" + DescribeUXLogVertex(
-                    GraphUtil.GetQueryOutFirst(baseEdgeVertex, "From", null))
-                + " queryMeta=" + DescribeUXLogVertex(
-                    GraphUtil.GetQueryOutFirst(baseEdgeVertex, "Meta", null))
-                + " queryTo=" + DescribeUXLogVertex(
-                    GraphUtil.GetQueryOutFirst(baseEdgeVertex, "To", null));
-        }
-
-        static string DescribeRejectedUXItemText(IUXItem item)
-        {
-            if (item == null)
-                return "item=null";
-
-            IVertex itemVertex = item.Vertex;
-
-            return "item=" + DescribeUXLogVertex(itemVertex)
-                + " $Is=[" + DescribeUXIsTargets(itemVertex) + "] "
-                + DescribeBaseEdgeForLog(item);
-        }
-
-        private void LogRejectedUXItem(IUXItem item, string where)
-        {
-            try
-            {
-                MinusZero.Instance.Log(
-                    2,
-                    "UXVisualiser.BaseEdge",
-                    where + " " + DescribeRejectedUXItemText(item));
-            }
-            catch
-            {
-            }
-        }
-
-        private void LogUXItemNotCreated(ITypedEdge typedEdge)
-        {
-            try
-            {
-                IEdge edge = typedEdge == null ? null : typedEdge.Edge;
-                IVertex vertex = typedEdge == null ? null : typedEdge.Vertex;
-
-                MinusZero.Instance.Log(
-                    2,
-                    "UXVisualiser.BaseEdge",
-                    "GetUXItem null"
-                    + " vertex=" + DescribeUXLogVertex(vertex)
-                    + " edgeMeta=" + DescribeUXLogVertex(edge == null ? null : edge.Meta)
-                    + " edgeTo=" + DescribeUXLogVertex(edge == null ? null : edge.To)
-                    + " $Is=[" + DescribeUXIsTargets(vertex) + "]");
-            }
-            catch
-            {
-            }
-        }
-
         private bool CheckIfItemIsValidAndRemoveIfInvalid(IUXItem item)
         {
             if (!HasLiveBaseEdgeTo(item))
             {
-                LogRejectedUXItem(item, "CheckIfItemIsValidAndRemoveIfInvalid");
                 RemoveUXItem(item);
                 return false;
             }
@@ -5206,10 +5009,6 @@ namespace m0.UIWpf.UX
 
             if (!TryGetDiagramCanvasSize(out canvasWidth, out canvasHeight))
             {
-                MinusZero.Instance.Log(
-                    1,
-                    "UXVisualiser.NudgeSelectedItemsByArrowKey",
-                    "diagram canvas size unavailable");
                 RequestKeyboardNudgeAlignmentGuides(itemsMovedDirectly);
                 return;
             }
@@ -5266,15 +5065,6 @@ namespace m0.UIWpf.UX
                 RequestKeyboardNudgeAlignmentGuides(itemsMovedDirectly);
                 return;
             }
-
-            MinusZero.Instance.Log(
-                1,
-                "UXVisualiser.NudgeSelectedItemsByArrowKey",
-                "dx " + deltaX.ToString("0.###")
-                    + " dy " + deltaY.ToString("0.###")
-                    + " items " + absolutePositions.Count
-                    + " canvas " + canvasWidth.ToString("0.#")
-                    + "x" + canvasHeight.ToString("0.#"));
 
             ////////////////////////////////////////
             Interaction.BeginInteractionWithGraph();
@@ -6566,20 +6356,12 @@ namespace m0.UIWpf.UX
             IVertex diagramVertex = this.Vertex;
 
             if (diagramVertex == null)
-            {
-                MinusZero.Instance.Log(1, "UXVisualiser.SaveDiagram",
-                    "Diagram vertex is null. Diagram not saved.");
                 return;
-            }
 
             string diagramId = Lib.StdView.Html.DiagramVertexToDiagramId(diagramVertex);
 
             if (diagramId == null)
-            {
-                MinusZero.Instance.Log(1, "UXVisualiser.SaveDiagram",
-                    "No in-edge path from diagram to root. Diagram not saved.");
                 return;
-            }
 
             string[] pathParts = diagramId.Split('/');
 
@@ -6587,11 +6369,7 @@ namespace m0.UIWpf.UX
                 MinusZero.Instance.Root.Get(false, @"Start:\FullFilename:"));
 
             if (string.IsNullOrWhiteSpace(startFullFilename))
-            {
-                MinusZero.Instance.Log(1, "UXVisualiser.SaveDiagram",
-                    "Start directory FullFilename is unavailable. Diagram not saved.");
                 return;
-            }
 
             string startDirectoryPath =
                 m0.Store.FileSystem.FileSystemUtil.GetPhysicalFileName(
@@ -6609,16 +6387,11 @@ namespace m0.UIWpf.UX
 
             try
             {
-                MinusZero.Instance.Log(1, "UXVisualiser.SaveDiagram",
-                    "Saving diagram to " + diagramFilePath);
-
                 System.IO.Directory.CreateDirectory(diagramDirectoryPath);
                 CanvasToPng.SaveCanvasToPng(Canvas, diagramFilePath);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MinusZero.Instance.Log(1, "UXVisualiser.SaveDiagram",
-                    "Failed to save diagram to " + diagramFilePath + ". " + ex);
             }
         }
 
@@ -7518,10 +7291,6 @@ namespace m0.UIWpf.UX
                 unmatchedEdges
                     .GroupBy(e => (e.Meta, e.To))
                     .ToDictionary(g => g.Key, g => g.Count());
-            bool traceItem = IsSimpleTransformerItem(item);
-            string liveInputOutputKeys = traceItem
-                ? DescribeInputOutputEdgeKeys(unmatchedEdges)
-                : null;
 
             foreach (IUXItem decorator in item.Decorators.ToList())
             {
@@ -7549,20 +7318,7 @@ namespace m0.UIWpf.UX
                     // still keeps the decorator so AddLineObjects can retarget it.
                 }
                 else
-                {
-                    if (traceItem && IsInputOrOutputMeta(decoratorBaseEdge.Meta))
-                    {
-                        LogDiagramLineTrace(
-                            "RemoveDiagramLineDecoratorsWithoutMatchingEdges no pair"
-                            + " item=" + DescribeDiagramLineTraceItem(item)
-                            + " decorator=" + DescribeDiagramLineTraceEdgeKey(
-                                decoratorBaseEdge.Meta,
-                                decoratorBaseEdge.To)
-                            + " liveInputOutput=[" + liveInputOutputKeys + "]");
-                    }
-
                     item.RemoveDiagramLine(lineDecorator);
-                }
             }
         }
 
@@ -7603,8 +7359,6 @@ namespace m0.UIWpf.UX
                 edges,
                 containerEdges);
 
-            bool traceItem = IsSimpleTransformerItem(item);
-
             Dictionary<IVertex, List<ILineDecoratorBase>> diagramLinesByBaseEdgeTo =
                 item.GetDiagramLinesBaseEdgeToDictionary();
             HashSet<ILineDecoratorBase> pairedLineDecorators =
@@ -7613,25 +7367,9 @@ namespace m0.UIWpf.UX
             foreach (IEdge e in edges)
             {
                 bool isContainerEdge = containerEdges.Contains(e);
-                bool traceEdge = traceItem
-                    && e != null
-                    && IsInputOrOutputMeta(e.Meta);
 
                 if (isContainerEdge)
-                {
-                    if (traceEdge)
-                    {
-                        LogDiagramLineEdgeSyncDecision(
-                            item,
-                            e,
-                            true,
-                            false,
-                            false,
-                            false);
-                    }
-
                     continue;
-                }
 
                 bool needAdding = true;
                 ILineDecoratorBase pairedLineDecorator = null;
@@ -7689,17 +7427,6 @@ namespace m0.UIWpf.UX
                 if (needAdding)
                     canAddLine = CanAddLine(item, e);
 
-                if (traceEdge)
-                {
-                    LogDiagramLineEdgeSyncDecision(
-                        item,
-                        e,
-                        false,
-                        pairedLineDecorator != null,
-                        needAdding,
-                        canAddLine);
-                }
-
                 if (needAdding && canAddLine)
                 {
                     HashSet<ILineDecoratorBase> lineDecoratorsBeforeAdd =
@@ -7721,239 +7448,6 @@ namespace m0.UIWpf.UX
                     }
                 }
             }
-        }
-
-        const string DiagramLineTraceWhere = "UX.DiagramLineTrace";
-
-        void LogDiagramLineDecoratorEdgeDelete(IUXItem item, Edge decoratorBaseEdge)
-        {
-            LogDiagramLineTrace(
-                "AddLineObjects delete decorator edge"
-                + " item=" + DescribeDiagramLineTraceItem(item)
-                + " meta=" + DescribeDiagramLineTraceVertex(
-                    decoratorBaseEdge == null ? null : decoratorBaseEdge.Meta)
-                + " edgeTo=" + DescribeDiagramLineTraceVertex(
-                    decoratorBaseEdge == null ? null : decoratorBaseEdge.To));
-        }
-
-        void LogDiagramLineEdgeSyncDecision(
-            IUXItem item,
-            IEdge edge,
-            bool isContainerEdge,
-            bool pairedLineDecoratorFound,
-            bool canAddLineEvaluated,
-            bool canAddLine)
-        {
-            try
-            {
-                if (!canAddLineEvaluated)
-                {
-                    canAddLine = CanAddLine(item, edge);
-                    canAddLineEvaluated = true;
-                }
-
-                List<IUXItem> directTargets = GetItemsByBaseEdgeTo_ForLines(edge);
-                List<IUXItem> edgeTargets =
-                    GetItemsByBaseEdgeTo_ForLines_EdgeTargetInEdgePointingToTargetItemBaseEdgeTo(edge);
-                bool lineDefinitionFound =
-                    HasLineDefinitionForAnyTarget(item, edge, directTargets)
-                    || HasLineDefinitionForAnyTarget(item, edge, edgeTargets);
-
-                LogDiagramLineTrace(
-                    "CheckAndUpdateDiagramLinesForItemCore"
-                    + " item=" + DescribeDiagramLineTraceItem(item)
-                    + " meta=" + DescribeDiagramLineTraceVertex(edge == null ? null : edge.Meta)
-                    + " edgeTo=" + DescribeDiagramLineTraceVertex(edge == null ? null : edge.To)
-                    + " isContainerEdge=" + isContainerEdge
-                    + " paired=" + pairedLineDecoratorFound
-                    + " canAddLine=" + (canAddLineEvaluated ? canAddLine.ToString() : "skipped")
-                    + " directTargets=" + DescribeDiagramLineTraceTargetList(directTargets)
-                    + " edgeTargets=" + DescribeDiagramLineTraceTargetList(edgeTargets)
-                    + " lineDefinition=" + lineDefinitionFound);
-            }
-            catch
-            {
-            }
-        }
-
-        bool HasLineDefinitionForAnyTarget(
-            IUXItem item,
-            IEdge edge,
-            IList<IUXItem> targets)
-        {
-            if (item == null
-                || item.UXTemplate == null
-                || edge == null
-                || edge.Meta == null
-                || edge.Meta.Value == null
-                || targets == null)
-                return false;
-
-            foreach (IUXItem target in targets)
-            {
-                if (target == null || target.Vertex == null)
-                    continue;
-
-                try
-                {
-                    if (GetLineDefinition(edge, item, target) != null)
-                        return true;
-                }
-                catch
-                {
-                }
-            }
-
-            return false;
-        }
-
-        void LogDiagramLineTrace(string message)
-        {
-            try
-            {
-                MinusZero.Instance.Log(1, DiagramLineTraceWhere, message);
-            }
-            catch
-            {
-            }
-        }
-
-        static bool IsInputOrOutputMeta(IVertex meta)
-        {
-            if (meta == null || meta.Value == null)
-                return false;
-
-            string metaValue = meta.Value.ToString();
-            return metaValue == "Input" || metaValue == "Output";
-        }
-
-        static bool IsSimpleTransformerItem(IUXItem item)
-        {
-            try
-            {
-                if (item == null)
-                    return false;
-
-                IVertex baseEdgeTo = item.BaseEdgeTo;
-
-                if (IsSimpleTransformerVertex(baseEdgeTo))
-                    return true;
-
-                if (baseEdgeTo == null)
-                    return false;
-
-                foreach (IEdge isEdge in GraphUtil.GetQueryOut(baseEdgeTo, "$Is", null))
-                {
-                    if (IsSimpleTransformerVertex(isEdge.To))
-                        return true;
-                }
-            }
-            catch
-            {
-            }
-
-            return false;
-        }
-
-        static bool IsSimpleTransformerVertex(IVertex vertex)
-        {
-            if (vertex == null || vertex.Value == null)
-                return false;
-
-            string value = vertex.Value.ToString();
-            return value == "SimpleTransformer"
-                || value.EndsWith("\\SimpleTransformer");
-        }
-
-        static string DescribeDiagramLineTraceItem(IUXItem item)
-        {
-            try
-            {
-                return DescribeDiagramLineTraceVertex(item == null ? null : item.BaseEdgeTo);
-            }
-            catch
-            {
-                return "null";
-            }
-        }
-
-        static string DescribeDiagramLineTraceVertex(IVertex vertex)
-        {
-            if (vertex == null)
-                return "null";
-
-            string valueText;
-
-            try
-            {
-                valueText = vertex.Value == null
-                    ? "null"
-                    : vertex.Value.ToString();
-            }
-            catch (Exception exception)
-            {
-                valueText = "<error:" + exception.GetType().Name + ">";
-            }
-
-            valueText = valueText.Replace("\r", " ").Replace("\n", " ");
-
-            return "value=\"" + valueText + "\""
-                + " object=" + RuntimeHelpers.GetHashCode(vertex)
-                + " mock=" + (vertex is ToVertexMock)
-                + " state=" + vertex.DisposedState;
-        }
-
-        static string DescribeDiagramLineTraceEdgeKey(IVertex meta, IVertex to)
-        {
-            return "meta=" + DescribeDiagramLineTraceVertex(meta)
-                + " to=" + DescribeDiagramLineTraceVertex(to);
-        }
-
-        static string DescribeInputOutputEdgeKeys(IEnumerable<IEdge> edges)
-        {
-            if (edges == null)
-                return "none";
-
-            StringBuilder text = new StringBuilder();
-            int count = 0;
-
-            foreach (IEdge edge in edges)
-            {
-                if (edge == null || !IsInputOrOutputMeta(edge.Meta))
-                    continue;
-
-                if (count > 0)
-                    text.Append("; ");
-
-                text.Append(DescribeDiagramLineTraceEdgeKey(edge.Meta, edge.To));
-                count++;
-            }
-
-            if (count == 0)
-                return "none";
-
-            return text.ToString();
-        }
-
-        static string DescribeDiagramLineTraceTargetList(IList<IUXItem> targets)
-        {
-            if (targets == null || targets.Count == 0)
-                return "0 []";
-
-            StringBuilder text = new StringBuilder();
-            text.Append(targets.Count);
-            text.Append(" [");
-
-            for (int index = 0; index < targets.Count; index++)
-            {
-                if (index > 0)
-                    text.Append("; ");
-
-                text.Append(DescribeDiagramLineTraceItem(targets[index]));
-            }
-
-            text.Append("]");
-            return text.ToString();
         }
 
         static HashSet<ILineDecoratorBase> GetLineDecorators(IUXItem item)
