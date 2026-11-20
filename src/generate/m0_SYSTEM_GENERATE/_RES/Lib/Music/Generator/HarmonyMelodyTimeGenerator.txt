@@ -47,7 +47,26 @@
 					counter = counter + "1"
 				}
 		method "CreateEventsNoDrum" ()
-			Output +< :: "Cho"
+			<@System\Meta\Presentation\$Hide :: @CopyAtomAttributes\$Empty>
+			variable "note" @Integer
+			variable "counter" @Integer
+			variable "melody" @Integer
+			variable "sortedChordProgressionChord1" @Vertex
+			sortedChordProgressionChord1 = @@System\Lib\Std\NumericSortByQuery[ChordProgression\Chord<<"1">>\Pitch, "Note:"]
+			Output -< Output\Event:
+			counter = "1"
+			for vertex t in TriggerSet\Trigger:
+				melody = MelodyFlow\Step<<counter>>\Quant\Note
+				for vertex p in ChordProgression\Chord<<melody>>\Pitch
+					Output +< @@System\Lib\Music\History\Event :: t{
+						@@$Is ::> @@System\Lib\Music\NoteEvent
+						@@System\Lib\Music\Event\TriggerTime :: %t\TriggerTime
+						@@System\Lib\Music\HasLength\Length :: %t\Length
+						@@System\Lib\Music\Pitch\Octave :: %BaseOctave
+						@@System\Lib\Music\Pitch\Note :: p
+						@@System\Lib\Music\Note\Velocity :: %t\Velocity
+						counter = counter + "1"
+					}
 		method "CreateEventsDrum" ()
 			<@System\Meta\Presentation\$Hide :: @$Empty>
 			variable "counter" @Integer
