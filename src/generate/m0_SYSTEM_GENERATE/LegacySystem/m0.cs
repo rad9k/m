@@ -3232,9 +3232,9 @@ namespace m0
 
             di.AddEdge(DirectMeta, LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroTypes\ExecutionFlow\GraphChangeFilterEnum"));
 
-            di.AddEdge(DirectMeta, LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroUML"));
-
             di.AddEdge(DirectMeta, LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base"));
+
+            di.AddEdge(DirectMeta, LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\ZeroUML"));
 
             di.AddEdge(DirectMeta, LegacySystem.Graph.EasyVertex.Get(Root, false, @"System\Meta\Base\Vertex"));
 

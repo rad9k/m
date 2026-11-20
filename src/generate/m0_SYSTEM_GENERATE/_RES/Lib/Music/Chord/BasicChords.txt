@@ -79,7 +79,7 @@
 			<@$Is :: @VisualisedPitch>
 			<@Name :: "M7">
 			<@Octave :: "3">
-			<@Note\Note :: 11">
+			<@Note\Note :: "11">
 			<@PitchColor :: @White>
 		<@VisualisedPitch :: "3">
 			<@$Is :: @VisualisedPitch>

@@ -1440,6 +1440,34 @@ namespace m0.ZeroCode
             return "\"" + text + "\"";
         }
 
+        static bool CrlfOperatorIsEscapedAt(string lineText, int at)
+        {
+            return at > 0 && lineText[at - 1] == '\\';
+        }
+
+        static bool LineContainsUnescapedCrlfOperator(string lineText, string crlfOperator)
+        {
+            if (string.IsNullOrEmpty(lineText) || string.IsNullOrEmpty(crlfOperator))
+                return false;
+
+            int from = 0;
+
+            while (from <= lineText.Length - crlfOperator.Length)
+            {
+                int at = lineText.IndexOf(crlfOperator, from, StringComparison.Ordinal);
+
+                if (at < 0)
+                    return false;
+
+                if (!CrlfOperatorIsEscapedAt(lineText, at))
+                    return true;
+
+                from = at + crlfOperator.Length;
+            }
+
+            return false;
+        }
+
         int LineIndexAtOrBefore(int textPos)
         {
             if (lineInfoList == null || lineInfoList.Count == 0)
@@ -3539,8 +3567,6 @@ namespace m0.ZeroCode
 
                             examinedKeywords = newExaminedKeywords;
 
-                            LineInfo prevLine = s.currentLineInfo;
-
                             shallProceed = s.parseNextLine();
 
                             if (shallProceed)
@@ -3749,7 +3775,14 @@ namespace m0.ZeroCode
             if (parentKeyword == null || !dict.keywordInfoDict[parentKeyword].hasCRLF)
                 return sPos;
 
-            if (ZeroCodeUtil.DoTextRangeContainString(ztext, lineInfoList[s.lineNo].lineBeg, lineInfoList[s.lineNo].lineEnd, dict.zCRLFoperator))
+            int lineBeg = lineInfoList[s.lineNo].lineBeg;
+            int lineEnd = lineInfoList[s.lineNo].lineEnd;
+            string lineText = "";
+
+            if (lineBeg >= 0 && lineEnd >= lineBeg && lineEnd < text.Length)
+                lineText = text.Substring(lineBeg, lineEnd - lineBeg + 1);
+
+            if (LineContainsUnescapedCrlfOperator(lineText, dict.CRLFoperator))
                 return sPos; // XXX bit hacky but no better idea
 
             if (examinedKeywords == null)

@@ -5,6 +5,9 @@
 		attribute "BaseOctave" @Integer  <<"-1":"9">>
 			default "3"
 			<@$Section :: "Generator">
+		attribute "Chord" @Boolean
+			default "False"
+			<@$Section :: "Generator">
 		association "MelodyFlow" @Generator\MelodyFlow "0":"1"
 			<@$Section :: "Input">
 		association "TriggerSet" @Generator\TriggerSet "0":"1"
@@ -43,6 +46,8 @@
 					@@Note\Velocity :: %t\Velocity
 					counter = counter + "1"
 				}
+		method "CreateEventsNoDrum" ()
+			Output +< :: "Cho"
 		method "CreateEventsDrum" ()
 			<@System\Meta\Presentation\$Hide :: @$Empty>
 			variable "counter" @Integer
@@ -73,8 +78,11 @@
 			if TriggerSet\IsDrum == "True"
 				IsDrum = "True"
 			if !IsDrum
-				this.CreateEventsNoDrum[]
-			if IsDrum == "True"
+				if !Chord
+					this.CreateEventsNoDrum[]
+				if Chord
+					this.CreateEventsChord[]
+			if IsDrum
 				this.CreateEventsDrum[]
 			this.PutIntoStore[]
 			this.Dispose[]
