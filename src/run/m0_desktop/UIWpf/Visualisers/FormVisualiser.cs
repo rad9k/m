@@ -7,6 +7,7 @@ using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -259,13 +260,25 @@ namespace m0.UIWpf.Visualisers
 
             if (isBaseEdgeToUpdateInProgress ||
                 AtomVisualiserHelper.SuppressVertexChangeDuringDiagramCommit)
+            {
+                LogDiagramLineTrace(
+                    "FormVertexChange skipped"
+                    + " baseEdgeToUpdate=" + isBaseEdgeToUpdateInProgress
+                    + " suppressDiagramCommit="
+                    + AtomVisualiserHelper.SuppressVertexChangeDuringDiagramCommit);
                 return exe.Stack;
+            }
 
             IVertex baseEdge = Vertex.Get(false, @"BaseEdge:");
             IVertex baseEdgeTo = Vertex.Get(false, @"BaseEdge:\To:");
 
             if (baseEdgeTo != null && ContainsOnlyValueChangesOfVertex(exe.Stack, baseEdgeTo))
+            {
+                LogDiagramLineTrace(
+                    "FormVertexChange skipped valueChangesOnly"
+                    + " baseEdgeTo=" + DescribeDiagramLineTraceVertex(baseEdgeTo));
                 return exe.Stack;
+            }
 
             ListVisualiserHelper helper = (ListVisualiserHelper)VisualiserHelper;
             bool baseEdgeMatch = ExecutionFlowHelper.IsVertexChageOrEdgeAddedRemovedDisposedFromTo(exe.Stack, baseEdge);
@@ -286,6 +299,14 @@ namespace m0.UIWpf.Visualisers
                     && (baseEdgeDefinitionChanged
                         || (baseEdgeToMatch
                             && !suppressTypedBaseEdgeToRebuild)));
+
+            LogDiagramLineTrace(
+                "FormVertexChange"
+                + " willRebuild=" + willRebuild
+                + " baseEdgeToMatch=" + baseEdgeToMatch
+                + " suppressTypedBaseEdgeToRebuild=" + suppressTypedBaseEdgeToRebuild
+                + " triggeringMetas=" + DescribeDiagramLineTraceMetas(triggeringMetas)
+                + " baseEdgeTo=" + DescribeDiagramLineTraceVertex(baseEdgeTo));
 
             if (willRebuild)
             {
@@ -1679,6 +1700,17 @@ namespace m0.UIWpf.Visualisers
 
         public void BaseEdgeToUpdated()
         {
+            try
+            {
+                LogDiagramLineTrace(
+                    "BaseEdgeToUpdated enter inProgress=" + isBaseEdgeToUpdateInProgress
+                    + " baseEdgeTo=" + DescribeDiagramLineTraceVertex(
+                        Vertex == null ? null : Vertex.Get(false, @"BaseEdge:\To:")));
+            }
+            catch
+            {
+            }
+
             if (isBaseEdgeToUpdateInProgress)
                 return;
 
@@ -2458,6 +2490,53 @@ namespace m0.UIWpf.Visualisers
 
             TabList.Clear();
             TabList = null;
+        }
+
+        const string DiagramLineTraceWhere = "UX.DiagramLineTrace";
+
+        void LogDiagramLineTrace(string message)
+        {
+            try
+            {
+                MinusZero.Instance.Log(1, DiagramLineTraceWhere, message);
+            }
+            catch
+            {
+            }
+        }
+
+        static string DescribeDiagramLineTraceMetas(IList<string> metas)
+        {
+            if (metas == null || metas.Count == 0)
+                return "none";
+
+            return string.Join(",", metas);
+        }
+
+        static string DescribeDiagramLineTraceVertex(IVertex vertex)
+        {
+            if (vertex == null)
+                return "null";
+
+            string valueText;
+
+            try
+            {
+                valueText = vertex.Value == null
+                    ? "null"
+                    : vertex.Value.ToString();
+            }
+            catch (Exception exception)
+            {
+                valueText = "<error:" + exception.GetType().Name + ">";
+            }
+
+            valueText = valueText.Replace("\r", " ").Replace("\n", " ");
+
+            return "value=\"" + valueText + "\""
+                + " object=" + RuntimeHelpers.GetHashCode(vertex)
+                + " mock=" + (vertex is ToVertexMock)
+                + " state=" + vertex.DisposedState;
         }
     }
 }

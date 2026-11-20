@@ -53,7 +53,7 @@
 					Output +< @@History\Event :: t{
 						@@$Is ::> @@NoteEvent
 						@@Event\TriggerTime :: %t\TriggerTime
-						@@HasLength\Length :: - "0"
+						@@HasLength\Length :: %"0"
 						@@Pitch\Octave :: %quant\Octave
 						@@Pitch\Note :: %quant\Note
 						@@Note\Velocity :: %t\Velocity
@@ -63,8 +63,7 @@
 			<@System\Meta\Presentation\$Hide :: @$Empty>
 			variable "parentVertex" @Vertex
 			parentVertex = Output#Sequence:
-			parentVertex <<copy<< @@SequenceEvent\Sequence ::> Output
-			parentVertex -< @@SequenceEvent\Sequence ::> this\Output
+			parentVertex <<copy&replace<< @@SequenceEvent\Sequence ::> Output
 		method "Dispose" ()
 			<@System\Meta\Presentation\$Hide :: @$Empty>
 		method "Process" ()

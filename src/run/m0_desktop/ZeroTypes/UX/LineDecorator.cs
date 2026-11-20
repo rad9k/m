@@ -244,7 +244,14 @@ namespace m0.ZeroTypes.UX
                 IVertex edgeTo = edge.Get(false, "To:");
 
                 if (edgeFrom == edgeStub && GraphUtil.GetValueAndCompareStrings(edgeMeta, "To"))
+                {
+                    // CopyAndReplace repins BaseEdge:\To: onto a new live vertex in the
+                    // same transaction. The removed To link is the old pointer.
+                    if (baseEdgeTo != null && baseEdgeTo.DisposedState == DisposeStateEnum.Live)
+                        continue;
+
                     return true;
+                }
 
                 if (baseEdgeFrom != null
                     && baseEdgeMeta != null
@@ -252,6 +259,36 @@ namespace m0.ZeroTypes.UX
                     && edgeFrom == baseEdgeFrom
                     && edgeMeta == baseEdgeMeta
                     && edgeTo == baseEdgeTo)
+                {
+                    // RewriteFrom rebuilds every out-edge of the referrer so the
+                    // repinned edge keeps its order. Unchanged edges, such as Input
+                    // while only Output is retargeted, are removed and added back
+                    // with the same endpoints.
+                    if (HasLiveDirectOutEdge(baseEdgeFrom, baseEdgeMeta, baseEdgeTo))
+                        continue;
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        static bool HasLiveDirectOutEdge(IVertex from, IVertex meta, IVertex to)
+        {
+            if (from == null || meta == null || to == null)
+                return false;
+
+            if (from.DisposedState != DisposeStateEnum.Live
+                || to.DisposedState != DisposeStateEnum.Live)
+                return false;
+
+            foreach (IEdge edge in from.OutEdgesRaw)
+            {
+                if (edge == null)
+                    continue;
+
+                if (ReferenceEquals(edge.Meta, meta) && ReferenceEquals(edge.To, to))
                     return true;
             }
 

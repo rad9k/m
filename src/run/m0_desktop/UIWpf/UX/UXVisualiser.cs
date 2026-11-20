@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -1456,13 +1457,18 @@ namespace m0.UIWpf.UX
         private INoInEdgeInOutVertexVertex
             UXVisualiserVertexChange(IExecution exe)
         {
-            if (ContainsOnlyValueChangesForHostedItems(
-                exe.Stack,
-                GetItemsDictionaryByBaseEdgeTo(),
-                GetItemsDictionaryByVertex()))
-            {
+            bool onlyHostedValueChanges =
+                ContainsOnlyValueChangesForHostedItems(
+                    exe.Stack,
+                    GetItemsDictionaryByBaseEdgeTo(),
+                    GetItemsDictionaryByVertex());
+
+            LogDiagramLineTrace(
+                "UXVisualiserVertexChange onlyHostedValueChanges="
+                + onlyHostedValueChanges);
+
+            if (onlyHostedValueChanges)
                 return exe.Stack;
-            }
 
             return ((ListVisualiserHelper)VisualiserHelper)
                 .VertexChangeLogic(exe);
@@ -3278,6 +3284,7 @@ namespace m0.UIWpf.UX
                     }
                     else
                     {
+                        LogDiagramLineDecoratorEdgeDelete(item, decoratorBaseEdge);
                         item.Vertex.DeleteEdge(decorator.Edge);
                     }
                 }
@@ -4426,6 +4433,10 @@ namespace m0.UIWpf.UX
 
         public void Paint()
         {
+            LogDiagramLineTrace(
+                "Paint enter height=" + ActualHeight
+                + " firstPainted=" + IsFirstPainted);
+
             if (ActualHeight != 0 || IsFirstPainted)
             {
                     ClearAlignmentGuides();
@@ -7507,6 +7518,10 @@ namespace m0.UIWpf.UX
                 unmatchedEdges
                     .GroupBy(e => (e.Meta, e.To))
                     .ToDictionary(g => g.Key, g => g.Count());
+            bool traceItem = IsSimpleTransformerItem(item);
+            string liveInputOutputKeys = traceItem
+                ? DescribeInputOutputEdgeKeys(unmatchedEdges)
+                : null;
 
             foreach (IUXItem decorator in item.Decorators.ToList())
             {
@@ -7535,6 +7550,17 @@ namespace m0.UIWpf.UX
                 }
                 else
                 {
+                    if (traceItem && IsInputOrOutputMeta(decoratorBaseEdge.Meta))
+                    {
+                        LogDiagramLineTrace(
+                            "RemoveDiagramLineDecoratorsWithoutMatchingEdges no pair"
+                            + " item=" + DescribeDiagramLineTraceItem(item)
+                            + " decorator=" + DescribeDiagramLineTraceEdgeKey(
+                                decoratorBaseEdge.Meta,
+                                decoratorBaseEdge.To)
+                            + " liveInputOutput=[" + liveInputOutputKeys + "]");
+                    }
+
                     item.RemoveDiagramLine(lineDecorator);
                 }
             }
@@ -7577,6 +7603,8 @@ namespace m0.UIWpf.UX
                 edges,
                 containerEdges);
 
+            bool traceItem = IsSimpleTransformerItem(item);
+
             Dictionary<IVertex, List<ILineDecoratorBase>> diagramLinesByBaseEdgeTo =
                 item.GetDiagramLinesBaseEdgeToDictionary();
             HashSet<ILineDecoratorBase> pairedLineDecorators =
@@ -7585,9 +7613,25 @@ namespace m0.UIWpf.UX
             foreach (IEdge e in edges)
             {
                 bool isContainerEdge = containerEdges.Contains(e);
+                bool traceEdge = traceItem
+                    && e != null
+                    && IsInputOrOutputMeta(e.Meta);
 
                 if (isContainerEdge)
+                {
+                    if (traceEdge)
+                    {
+                        LogDiagramLineEdgeSyncDecision(
+                            item,
+                            e,
+                            true,
+                            false,
+                            false,
+                            false);
+                    }
+
                     continue;
+                }
 
                 bool needAdding = true;
                 ILineDecoratorBase pairedLineDecorator = null;
@@ -7645,6 +7689,17 @@ namespace m0.UIWpf.UX
                 if (needAdding)
                     canAddLine = CanAddLine(item, e);
 
+                if (traceEdge)
+                {
+                    LogDiagramLineEdgeSyncDecision(
+                        item,
+                        e,
+                        false,
+                        pairedLineDecorator != null,
+                        needAdding,
+                        canAddLine);
+                }
+
                 if (needAdding && canAddLine)
                 {
                     HashSet<ILineDecoratorBase> lineDecoratorsBeforeAdd =
@@ -7666,6 +7721,239 @@ namespace m0.UIWpf.UX
                     }
                 }
             }
+        }
+
+        const string DiagramLineTraceWhere = "UX.DiagramLineTrace";
+
+        void LogDiagramLineDecoratorEdgeDelete(IUXItem item, Edge decoratorBaseEdge)
+        {
+            LogDiagramLineTrace(
+                "AddLineObjects delete decorator edge"
+                + " item=" + DescribeDiagramLineTraceItem(item)
+                + " meta=" + DescribeDiagramLineTraceVertex(
+                    decoratorBaseEdge == null ? null : decoratorBaseEdge.Meta)
+                + " edgeTo=" + DescribeDiagramLineTraceVertex(
+                    decoratorBaseEdge == null ? null : decoratorBaseEdge.To));
+        }
+
+        void LogDiagramLineEdgeSyncDecision(
+            IUXItem item,
+            IEdge edge,
+            bool isContainerEdge,
+            bool pairedLineDecoratorFound,
+            bool canAddLineEvaluated,
+            bool canAddLine)
+        {
+            try
+            {
+                if (!canAddLineEvaluated)
+                {
+                    canAddLine = CanAddLine(item, edge);
+                    canAddLineEvaluated = true;
+                }
+
+                List<IUXItem> directTargets = GetItemsByBaseEdgeTo_ForLines(edge);
+                List<IUXItem> edgeTargets =
+                    GetItemsByBaseEdgeTo_ForLines_EdgeTargetInEdgePointingToTargetItemBaseEdgeTo(edge);
+                bool lineDefinitionFound =
+                    HasLineDefinitionForAnyTarget(item, edge, directTargets)
+                    || HasLineDefinitionForAnyTarget(item, edge, edgeTargets);
+
+                LogDiagramLineTrace(
+                    "CheckAndUpdateDiagramLinesForItemCore"
+                    + " item=" + DescribeDiagramLineTraceItem(item)
+                    + " meta=" + DescribeDiagramLineTraceVertex(edge == null ? null : edge.Meta)
+                    + " edgeTo=" + DescribeDiagramLineTraceVertex(edge == null ? null : edge.To)
+                    + " isContainerEdge=" + isContainerEdge
+                    + " paired=" + pairedLineDecoratorFound
+                    + " canAddLine=" + (canAddLineEvaluated ? canAddLine.ToString() : "skipped")
+                    + " directTargets=" + DescribeDiagramLineTraceTargetList(directTargets)
+                    + " edgeTargets=" + DescribeDiagramLineTraceTargetList(edgeTargets)
+                    + " lineDefinition=" + lineDefinitionFound);
+            }
+            catch
+            {
+            }
+        }
+
+        bool HasLineDefinitionForAnyTarget(
+            IUXItem item,
+            IEdge edge,
+            IList<IUXItem> targets)
+        {
+            if (item == null
+                || item.UXTemplate == null
+                || edge == null
+                || edge.Meta == null
+                || edge.Meta.Value == null
+                || targets == null)
+                return false;
+
+            foreach (IUXItem target in targets)
+            {
+                if (target == null || target.Vertex == null)
+                    continue;
+
+                try
+                {
+                    if (GetLineDefinition(edge, item, target) != null)
+                        return true;
+                }
+                catch
+                {
+                }
+            }
+
+            return false;
+        }
+
+        void LogDiagramLineTrace(string message)
+        {
+            try
+            {
+                MinusZero.Instance.Log(1, DiagramLineTraceWhere, message);
+            }
+            catch
+            {
+            }
+        }
+
+        static bool IsInputOrOutputMeta(IVertex meta)
+        {
+            if (meta == null || meta.Value == null)
+                return false;
+
+            string metaValue = meta.Value.ToString();
+            return metaValue == "Input" || metaValue == "Output";
+        }
+
+        static bool IsSimpleTransformerItem(IUXItem item)
+        {
+            try
+            {
+                if (item == null)
+                    return false;
+
+                IVertex baseEdgeTo = item.BaseEdgeTo;
+
+                if (IsSimpleTransformerVertex(baseEdgeTo))
+                    return true;
+
+                if (baseEdgeTo == null)
+                    return false;
+
+                foreach (IEdge isEdge in GraphUtil.GetQueryOut(baseEdgeTo, "$Is", null))
+                {
+                    if (IsSimpleTransformerVertex(isEdge.To))
+                        return true;
+                }
+            }
+            catch
+            {
+            }
+
+            return false;
+        }
+
+        static bool IsSimpleTransformerVertex(IVertex vertex)
+        {
+            if (vertex == null || vertex.Value == null)
+                return false;
+
+            string value = vertex.Value.ToString();
+            return value == "SimpleTransformer"
+                || value.EndsWith("\\SimpleTransformer");
+        }
+
+        static string DescribeDiagramLineTraceItem(IUXItem item)
+        {
+            try
+            {
+                return DescribeDiagramLineTraceVertex(item == null ? null : item.BaseEdgeTo);
+            }
+            catch
+            {
+                return "null";
+            }
+        }
+
+        static string DescribeDiagramLineTraceVertex(IVertex vertex)
+        {
+            if (vertex == null)
+                return "null";
+
+            string valueText;
+
+            try
+            {
+                valueText = vertex.Value == null
+                    ? "null"
+                    : vertex.Value.ToString();
+            }
+            catch (Exception exception)
+            {
+                valueText = "<error:" + exception.GetType().Name + ">";
+            }
+
+            valueText = valueText.Replace("\r", " ").Replace("\n", " ");
+
+            return "value=\"" + valueText + "\""
+                + " object=" + RuntimeHelpers.GetHashCode(vertex)
+                + " mock=" + (vertex is ToVertexMock)
+                + " state=" + vertex.DisposedState;
+        }
+
+        static string DescribeDiagramLineTraceEdgeKey(IVertex meta, IVertex to)
+        {
+            return "meta=" + DescribeDiagramLineTraceVertex(meta)
+                + " to=" + DescribeDiagramLineTraceVertex(to);
+        }
+
+        static string DescribeInputOutputEdgeKeys(IEnumerable<IEdge> edges)
+        {
+            if (edges == null)
+                return "none";
+
+            StringBuilder text = new StringBuilder();
+            int count = 0;
+
+            foreach (IEdge edge in edges)
+            {
+                if (edge == null || !IsInputOrOutputMeta(edge.Meta))
+                    continue;
+
+                if (count > 0)
+                    text.Append("; ");
+
+                text.Append(DescribeDiagramLineTraceEdgeKey(edge.Meta, edge.To));
+                count++;
+            }
+
+            if (count == 0)
+                return "none";
+
+            return text.ToString();
+        }
+
+        static string DescribeDiagramLineTraceTargetList(IList<IUXItem> targets)
+        {
+            if (targets == null || targets.Count == 0)
+                return "0 []";
+
+            StringBuilder text = new StringBuilder();
+            text.Append(targets.Count);
+            text.Append(" [");
+
+            for (int index = 0; index < targets.Count; index++)
+            {
+                if (index > 0)
+                    text.Append("; ");
+
+                text.Append(DescribeDiagramLineTraceItem(targets[index]));
+            }
+
+            text.Append("]");
+            return text.ToString();
         }
 
         static HashSet<ILineDecoratorBase> GetLineDecorators(IUXItem item)

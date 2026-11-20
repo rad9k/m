@@ -7,7 +7,11 @@ using m0.User.Process.UX;
 using m0.Util;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -469,6 +473,8 @@ namespace m0.ZeroTypes.UX
 
         public void RemoveDiagramLine(ILineDecoratorBase line)
         {
+            LogDiagramLineRemoval(line, new StackTrace());
+
             needRebuildDiagramLinesDictionary = true;
 
             IUXItem previousToItem = line.ToItem;
@@ -822,19 +828,45 @@ namespace m0.ZeroTypes.UX
                 BaseEdgeToUpdated();
 
             bool edgeWasRemovedFromBaseEdgeTo = false;
+            bool edgeAddedToBaseEdgeTo = IsEdgeAddedTo(exe.Stack, baseEdgeTo);
+            List<IVertex> removedEdges = GetEdgesRemovedFrom(exe.Stack, baseEdgeTo);
 
-            foreach (IVertex edgeVertex in GetEdgesRemovedFrom(exe.Stack, baseEdgeTo))
-            {
+            if (removedEdges.Count > 0)
                 edgeWasRemovedFromBaseEdgeTo = true;
 
+            bool willSyncDiagramLines =
+                (edgeWasRemovedFromBaseEdgeTo || edgeAddedToBaseEdgeTo)
+                && CanAutomaticallyAddEdges;
+
+            foreach (IVertex edgeVertex in removedEdges)
+            {
                 IVertex removedEdgeMeta =
                     edgeVertex.Get(false, "Meta:");
                 IVertex removedEdgeTo =
                     edgeVertex.Get(false, "To:");
 
-                if (!HasExcessDiagramLineForRemovedEdge(
-                        removedEdgeMeta,
-                        removedEdgeTo))
+                int matchingDecoratorCount;
+                int matchingEdgeCount;
+                bool hasExcess = HasExcessDiagramLineForRemovedEdge(
+                    removedEdgeMeta,
+                    removedEdgeTo,
+                    out matchingDecoratorCount,
+                    out matchingEdgeCount);
+
+                if (IsInputOrOutputMeta(removedEdgeMeta))
+                {
+                    LogDiagramLineTrace(
+                        "VertexChange removed"
+                        + " item=" + DescribeDiagramLineTraceVertex(baseEdgeTo)
+                        + " meta=" + DescribeDiagramLineTraceVertex(removedEdgeMeta)
+                        + " edgeTo=" + DescribeDiagramLineTraceVertex(removedEdgeTo)
+                        + " hasExcess=" + hasExcess
+                        + " matchingDecoratorCount=" + matchingDecoratorCount
+                        + " matchingEdgeCount=" + matchingEdgeCount
+                        + " willSync=" + willSyncDiagramLines);
+                }
+
+                if (!hasExcess)
                     continue;
 
                 ILineDecoratorBase toRemove = null;
@@ -853,8 +885,25 @@ namespace m0.ZeroTypes.UX
                     RemoveDiagramLine(toRemove);
             }
 
-            if ((edgeWasRemovedFromBaseEdgeTo || IsEdgeAddedTo(exe.Stack, baseEdgeTo))
-                && CanAutomaticallyAddEdges)
+            if (edgeAddedToBaseEdgeTo)
+            {
+                foreach (IVertex addedEdge in GetEdgesAddedTo(exe.Stack, baseEdgeTo))
+                {
+                    IVertex addedEdgeMeta = addedEdge.Get(false, "Meta:");
+
+                    if (!IsInputOrOutputMeta(addedEdgeMeta))
+                        continue;
+
+                    LogDiagramLineTrace(
+                        "VertexChange added"
+                        + " item=" + DescribeDiagramLineTraceVertex(baseEdgeTo)
+                        + " meta=" + DescribeDiagramLineTraceVertex(addedEdgeMeta)
+                        + " edgeTo=" + DescribeDiagramLineTraceVertex(addedEdge.Get(false, "To:"))
+                        + " willSync=" + willSyncDiagramLines);
+                }
+            }
+
+            if (willSyncDiagramLines)
                 OwningVisualiser.CheckAndUpdateDiagramLinesForItem(this);
 
             if (IsVertexChangeOrEdgeAddedRemovedDisposedByMetaAndFrom(exe.Stack, Vertex, "BackgroundColor")
@@ -877,14 +926,17 @@ namespace m0.ZeroTypes.UX
 
         bool HasExcessDiagramLineForRemovedEdge(
             IVertex removedEdgeMeta,
-            IVertex removedEdgeTo)
+            IVertex removedEdgeTo,
+            out int matchingDecoratorCount,
+            out int matchingEdgeCount)
         {
+            matchingDecoratorCount = 0;
+            matchingEdgeCount = 0;
+
             if (removedEdgeMeta == null ||
                 removedEdgeTo == null ||
                 BaseEdgeTo == null)
                 return true;
-
-            int matchingDecoratorCount = 0;
 
             foreach (ILineDecoratorBase line in DiagramFromLines)
             {
@@ -896,12 +948,133 @@ namespace m0.ZeroTypes.UX
                     matchingDecoratorCount++;
             }
 
-            int matchingEdgeCount = GraphUtil.GetQueryOutCount(
+            matchingEdgeCount = GraphUtil.GetQueryOutCount(
                 BaseEdgeTo,
                 removedEdgeMeta,
                 removedEdgeTo);
 
             return matchingDecoratorCount > matchingEdgeCount;
+        }
+
+        const string DiagramLineTraceWhere = "UX.DiagramLineTrace";
+
+        void LogDiagramLineRemoval(ILineDecoratorBase line, StackTrace stackTrace)
+        {
+            try
+            {
+                IEdge lineBaseEdge = null;
+
+                try
+                {
+                    lineBaseEdge = line == null ? null : line.BaseEdge;
+                }
+                catch
+                {
+                }
+
+                IVertex toItemBaseEdgeTo = null;
+
+                try
+                {
+                    IUXItem toItem = line == null ? null : line.ToItem;
+                    toItemBaseEdgeTo = toItem == null ? null : toItem.BaseEdgeTo;
+                }
+                catch
+                {
+                }
+
+                LogDiagramLineTrace(
+                    "RemoveDiagramLine"
+                    + " from=" + DescribeDiagramLineTraceVertex(BaseEdgeTo)
+                    + " toItem=" + DescribeDiagramLineTraceVertex(toItemBaseEdgeTo)
+                    + " meta=" + DescribeDiagramLineTraceVertex(
+                        lineBaseEdge == null ? null : lineBaseEdge.Meta)
+                    + " edgeTo=" + DescribeDiagramLineTraceVertex(
+                        lineBaseEdge == null ? null : lineBaseEdge.To)
+                    + " callers=" + DescribeDiagramLineTraceCallers(stackTrace));
+            }
+            catch
+            {
+            }
+        }
+
+        void LogDiagramLineTrace(string message)
+        {
+            try
+            {
+                MinusZero.Instance.Log(1, DiagramLineTraceWhere, message);
+            }
+            catch
+            {
+            }
+        }
+
+        static bool IsInputOrOutputMeta(IVertex meta)
+        {
+            if (meta == null || meta.Value == null)
+                return false;
+
+            string metaValue = meta.Value.ToString();
+            return metaValue == "Input" || metaValue == "Output";
+        }
+
+        static string DescribeDiagramLineTraceVertex(IVertex vertex)
+        {
+            if (vertex == null)
+                return "null";
+
+            string valueText;
+
+            try
+            {
+                valueText = vertex.Value == null
+                    ? "null"
+                    : vertex.Value.ToString();
+            }
+            catch (Exception exception)
+            {
+                valueText = "<error:" + exception.GetType().Name + ">";
+            }
+
+            valueText = valueText.Replace("\r", " ").Replace("\n", " ");
+
+            return "value=\"" + valueText + "\""
+                + " object=" + RuntimeHelpers.GetHashCode(vertex)
+                + " mock=" + (vertex is ToVertexMock)
+                + " state=" + vertex.DisposedState;
+        }
+
+        static string DescribeDiagramLineTraceCallers(StackTrace stackTrace)
+        {
+            if (stackTrace == null)
+                return "";
+
+            StringBuilder callers = new StringBuilder();
+            int callerCount = 0;
+
+            for (int frameIndex = 1;
+                frameIndex < stackTrace.FrameCount && callerCount < 4;
+                frameIndex++)
+            {
+                MethodBase method = stackTrace.GetFrame(frameIndex).GetMethod();
+
+                if (method == null)
+                    continue;
+
+                if (callers.Length > 0)
+                    callers.Append(" <- ");
+
+                if (method.DeclaringType != null)
+                {
+                    callers.Append(method.DeclaringType.Name);
+                    callers.Append(".");
+                }
+
+                callers.Append(method.Name);
+                callerCount++;
+            }
+
+            return callers.ToString();
         }
 
         private bool ShouldRemoveItemAfterBaseEdgeTargetDisposed(IVertex stack, IVertex baseEdgeTo)
