@@ -1440,6 +1440,50 @@ namespace m0.ZeroCode
             return "\"" + text + "\"";
         }
 
+        int LineIndexAtOrBefore(int textPos)
+        {
+            if (lineInfoList == null || lineInfoList.Count == 0)
+                return -1;
+
+            int found = -1;
+
+            for (int i = 0; i < lineInfoList.Count; i++)
+            {
+                LineInfo info = lineInfoList[i];
+
+                if (info.lineBeg_NoTrim > textPos)
+                    break;
+
+                found = i;
+
+                if (textPos <= info.lineEnd_NoTrim)
+                    break;
+            }
+
+            return found;
+        }
+
+        void MoveParsingStackForwardToConsumedPosition(ParsingStack s, int consumedEndPos)
+        {
+            if (s == null || consumedEndPos <= 0)
+                return;
+
+            int target = consumedEndPos - 1;
+
+            if (text != null && target >= text.Length)
+                target = text.Length - 1;
+
+            if (target < 0)
+                return;
+
+            int lineIndex = LineIndexAtOrBefore(target);
+
+            if (lineIndex <= s.lineNo)
+                return;
+
+            s.goToLine(lineIndex);
+        }
+
         static string DescribeResolveVertex(IVertex vertex)
         {
             if (vertex == null)
@@ -2345,6 +2389,35 @@ namespace m0.ZeroCode
                 return false;
             }
 
+            public bool NextPatternCharacterIsNewline()
+            {
+                if (state != keywordTryingState.keywordCharacter)
+                    return false;
+
+                char next;
+
+                if (isInMultiParameter())
+                {
+                    if (multiParamPlusSeparatorString == null
+                        || currentPositionInMultiParamPlusSeparatorString < 0
+                        || currentPositionInMultiParamPlusSeparatorString >= multiParamPlusSeparatorString.Length)
+                        return false;
+
+                    next = multiParamPlusSeparatorString[currentPositionInMultiParamPlusSeparatorString];
+                }
+                else
+                {
+                    if (keyword == null
+                        || currentPositionInKeyword < 0
+                        || currentPositionInKeyword >= keyword.Length)
+                        return false;
+
+                    next = keyword[currentPositionInKeyword];
+                }
+
+                return next == '\r' || next == '\n';
+            }
+
             public void currentPositionInKeyword_Increase(int curSpos)
             {
                 if (isSubPlus1(curSpos))
@@ -2747,6 +2820,9 @@ namespace m0.ZeroCode
                 examinedKeywords = parameters_OUT.examinedKeywords;
                 link = parameters_OUT.link;
                 newPos = parameters_OUT.newPos;
+
+                if (examinedKeywords != null && examinedKeywords.Count > 0)
+                    MoveParsingStackForwardToConsumedPosition(s, newPos);
 
                 return;
             }
@@ -3406,12 +3482,25 @@ namespace m0.ZeroCode
                     {
                         sPos = s.currentLineInfo.lineEnd_NoTrim + 1;
 
+                        bool anyKeywordMatched = false;
+                        bool anyKeywordContinuesOnNextLine = false;
+
                         foreach (keywordTryingData ktd in examinedKeywords)
+                        {
                             if (ktd.state == keywordTryingState.matched)
-                            {
-                                shallProceed = false; // end of line and one of keywords matched
-                                //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "SHALPROCEED FALSE end of line and one of keywords matched");
-                            }
+                                anyKeywordMatched = true;
+
+                            if (ktd.NextPatternCharacterIsNewline())
+                                anyKeywordContinuesOnNextLine = true;
+                        }
+
+                        // A finished single-line keyword must not abandon a block that still owes \r\n}.
+                        // Only local-root walks (the block itself) keep going; a top-level line stays the keyword that already matched.
+                        if (anyKeywordMatched && !(lookForLocalRootOnly && anyKeywordContinuesOnNextLine))
+                        {
+                            shallProceed = false; // end of line and one of keywords matched
+                            //MinusZero.Instance.Log(1, "_tryIsKeyword", LOGPREFIX + "SHALPROCEED FALSE end of line and one of keywords matched");
+                        }
 
                         if (shallProceed) // jump to next line
                         {
@@ -3429,6 +3518,12 @@ namespace m0.ZeroCode
 
                             foreach (keywordTryingData ktd in examinedKeywords)
                             {
+                                if (ktd.state == keywordTryingState.matched)
+                                {
+                                    newExaminedKeywords.Add(ktd);
+                                    continue;
+                                }
+
                                 if (ktd.state == keywordTryingState.keywordCharacter &&
                                     ktd.currentPositionCharacter_isCharacterMatch(s, sPos))
                                 {
@@ -4227,7 +4322,6 @@ namespace m0.ZeroCode
 
                 keywordTryingData chosenKeyword = examinedKeywords[0];
 
-        
                 return AddKeywordVertex(s, _baseVertex, chosenKeyword);
             }
             else
@@ -4241,7 +4335,7 @@ namespace m0.ZeroCode
                     AddError(s.lineNo, "SYNTAX ERROR");
 
                     return AddVertex(s, _baseVertex, null, "SYNTAX ERROR");
-                }                
+                }
 
                 string currentLineInner = s.currentLineNoTabs.Substring(dict.CodeGraphVertexPrefix.Length,
                     s.currentLineNoTabs.Length - dict.CodeGraphVertexPrefix.Length - dict.CodeGraphVertexSuffix.Length);

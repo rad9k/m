@@ -9,11 +9,9 @@ using m0.ZeroTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Threading;
 using m0.User.Process.UX;
 
 namespace m0.UIWpf.Visualisers.Method
@@ -179,47 +177,36 @@ namespace m0.UIWpf.Visualisers.Method
             parametersPanel.Children.Clear();
         }
 
-        void ButtonVisualChange(bool isActive)
-        {
-            Thread thread = new Thread(new ThreadStart(delegate ()
-            {
-                Thread.Sleep(200);
-                try
-                {
-                    this.Dispatcher.BeginInvoke(DispatcherPriority.Send,
-                        new Action(delegate ()
-                        {
-                            runButton.IsEnabled = isActive;
-                        }));
-                }
-                catch { }
-            }));
-            thread.Name = "ThreadName";
-            thread.Start();
-        }
-
         private void RunButton_Click(object sender, RoutedEventArgs e)
         {
             IVertex baseVertex = Vertex.Get(false, @"BaseEdge:\To:");
             IVertex methodVertex = Vertex.Get(false, @"ExecutableVertex:");
 
-            ButtonVisualChange(false);
+            if (baseVertex == null || methodVertex == null || parametersStack == null)
+                return;
 
-            if (baseVertex != null && methodVertex != null && parametersStack != null)
+            MethodRunSignal.ShowStarted(runButton);
+
+            try
             {
                 ////////////////////////////////////////
                 Interaction.BeginInteractionWithGraph();
                 ////////////////////////////////////////
-                
+
                 IExecution exe = new ZeroCodeExecution();
                 ZeroCodeExecutonUtil.MethodCall(exe, methodVertex, baseVertex, parametersStack);
 
                 //////////////////////////////////////
                 Interaction.EndInteractionWithGraph();
                 //////////////////////////////////////
-            }
 
-            ButtonVisualChange(true);
+                MethodRunSignal.ShowReturned(runButton);
+            }
+            catch (Exception)
+            {
+                MethodRunSignal.ShowFailed(runButton);
+                throw;
+            }
         }
 
         private IVertex _Vertex;
