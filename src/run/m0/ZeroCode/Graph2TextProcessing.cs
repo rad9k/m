@@ -330,7 +330,7 @@ namespace m0.ZeroCode
                             {
                                 string s = GetStringFromEdgesList(dict, zcg2sp, edgesList, false, true);
 
-                                if (ImportLinkResolvesToTarget(s, true, false))
+                                if (ImportLinkResolvesToTarget(s, true, false, v))
                                 {
                                     isMetaDirect = false;
 
@@ -346,7 +346,7 @@ namespace m0.ZeroCode
                             {
                                 string s = GetStringFromEdgesList(dict, zcg2sp, edgesList, true, true);
 
-                                if (ImportLinkResolvesToTarget(s, true, true))
+                                if (ImportLinkResolvesToTarget(s, true, true, v))
                                 {
                                     isMetaDirect = true;
 
@@ -370,7 +370,7 @@ namespace m0.ZeroCode
                             int candidateLength = edgesList.Count;
                             edgesList.RemoveAt(edgesList.Count - 1);
 
-                            if (ImportLinkResolvesToTarget(s, false, isMeta))
+                            if (ImportLinkResolvesToTarget(s, false, isMeta, null))
                             {
                                 isMetaDirect = isMeta;
 
@@ -409,26 +409,31 @@ namespace m0.ZeroCode
         bool ImportLinkResolvesToTarget(
             string candidate,
             bool isDirect,
-            bool isMeta)
+            bool isMeta,
+            IVertex directImportRoot)
         {
             if (string.IsNullOrEmpty(candidate) || dict == null)
                 return false;
 
             IVertex resolved = isDirect
-                ? ResolveDirectImport(candidate, isMeta)
+                ? ResolveDirectImport(directImportRoot, candidate, isMeta)
                 : ResolveNamedImport(candidate, isMeta);
 
             return ReferenceEquals(resolved, Vertex);
         }
 
-        IVertex ResolveDirectImport(string candidate, bool isMeta)
+        IVertex ResolveDirectImport(
+            IVertex importRoot,
+            string candidate,
+            bool isMeta)
         {
-            string query = "\\" + candidate;
+            if (importRoot == null)
+                return null;
 
             if (isMeta)
-                return dict.importDirectMetaList.Get(false, query);
+                return importRoot.Get(false, candidate);
 
-            return dict.importDirectList.Get(true, query);
+            return importRoot.Get(true, candidate);
         }
 
         IVertex ResolveNamedImport(string candidate, bool isMeta)
@@ -512,10 +517,13 @@ namespace m0.ZeroCode
     {
         public string Process(FormalTextLanguageDictinaries _dict, Graph2TextProcessing _zcg2sp, IVertex v)
         {
+            IVertex root = MinusZero.Instance.Root;
             List<IEdge> shortestPath =
-                GraphUtil.GetEdgesBetweenVertexes_byInEdges(
-                    v,
-                    MinusZero.Instance.Root);
+                GetEdgesBetweenVertexesSkippingLinks(v, root);
+
+            if (shortestPath == null)
+                shortestPath =
+                    GraphUtil.GetEdgesBetweenVertexes_byInEdges(v, root);
 
             if (shortestPath == null)
                 return "### LINK NOT FOUND ###";
@@ -527,6 +535,64 @@ namespace m0.ZeroCode
                 _zcg2sp,
                 shortestPath,
                 true);
+        }
+
+        static List<IEdge> GetEdgesBetweenVertexesSkippingLinks(
+            IVertex from,
+            IVertex to)
+        {
+            if (from == null || to == null)
+                return null;
+
+            if (from == to)
+                return new List<IEdge>();
+
+            HashSet<IVertex> visited = new HashSet<IVertex>();
+            Dictionary<IVertex, IEdge> parentEdge =
+                new Dictionary<IVertex, IEdge>();
+            Queue<IVertex> queue = new Queue<IVertex>();
+
+            visited.Add(from);
+            parentEdge[from] = null;
+            queue.Enqueue(from);
+
+            while (queue.Count > 0)
+            {
+                IVertex current = queue.Dequeue();
+
+                if (current == to)
+                    break;
+
+                foreach (IEdge edge in current.InEdgesRaw)
+                {
+                    if (edge == null ||
+                        edge.From == null ||
+                        (edge.Meta != null &&
+                            VertexOperations.IsLink_OldVersion(edge)))
+                        continue;
+
+                    IVertex edgeFrom = edge.From;
+
+                    if (visited.Contains(edgeFrom))
+                        continue;
+
+                    visited.Add(edgeFrom);
+                    parentEdge[edgeFrom] = edge;
+                    queue.Enqueue(edgeFrom);
+                }
+            }
+
+            if (!parentEdge.ContainsKey(to))
+                return null;
+
+            List<IEdge> pathFromRootTowardVertex = new List<IEdge>();
+
+            for (IEdge edge = parentEdge[to];
+                edge != null;
+                edge = parentEdge[edge.To])
+                pathFromRootTowardVertex.Add(edge);
+
+            return pathFromRootTowardVertex;
         }
     }
 
