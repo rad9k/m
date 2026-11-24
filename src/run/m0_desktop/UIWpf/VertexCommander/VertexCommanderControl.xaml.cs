@@ -53,6 +53,7 @@ namespace m0.UIWpf.VertexCommander
         private System.DateTime rightQueryHistoryPopupClosed;
         private bool initialKeyboardHighlightSet;
         private bool viewportSizedVisualiserLayoutRefreshScheduled;
+        private bool sectionVisualisersReleased;
 
         private KeyboardHighlightPane? liveSyncMasterPane;
         private bool isLiveSyncing;
@@ -137,6 +138,7 @@ namespace m0.UIWpf.VertexCommander
 
             SetCodeControlQueryText();
             Loaded += VertexCommanderControl_Loaded;
+            Unloaded += VertexCommanderControl_Unloaded;
             AddCodeControlEventHandlers();
             SetupQueryHistoryControls();
             SetDefaultVisualiserClasses();
@@ -1762,7 +1764,7 @@ namespace m0.UIWpf.VertexCommander
                 ref rightOutEdgesVisuliserInstance);
         }
 
-        private static void RecreateVisualiser(
+        private void RecreateVisualiser(
             IVertex visualiserClass,
             IVertex baseVertex,
             ContentControl visualiserHost,
@@ -1776,23 +1778,23 @@ namespace m0.UIWpf.VertexCommander
             ref IKeyboardHighlight keyboardHighlight,
             ref IVertex visualiserInstance)
         {
-            DisposeVisualiser(
-                visualiserHost,
-                wrapVisualiserHost,
-                goneBeforeFirstPositionHandler,
-                goneAfterLastPositionHandler,
-                keyboardHighlightActivatedHandler,
-                keyboardHighlightEnterPressedHandler,
-                ref keyboardHighlight,
-                ref visualiserInstance);
-
-            if (visualiserClass == null)
-                return;
-
             Interaction.BeginInteractionWithGraph();
 
             try
             {
+                DisposeVisualiser(
+                    visualiserHost,
+                    wrapVisualiserHost,
+                    goneBeforeFirstPositionHandler,
+                    goneAfterLastPositionHandler,
+                    keyboardHighlightActivatedHandler,
+                    keyboardHighlightEnterPressedHandler,
+                    ref keyboardHighlight,
+                    ref visualiserInstance);
+
+                if (visualiserClass == null)
+                    return;
+
                 IPlatformClass visualiser = PlatformClass.CreatePlatformObject(visualiserClass, null as IVertex);
                 IVisualiser visualiserAsVisualiser = visualiser as IVisualiser;
 
@@ -1828,7 +1830,7 @@ namespace m0.UIWpf.VertexCommander
             }
         }
 
-        private static void SetWrapVisualiser(ContentControl wrapVisualiserHost, IVertex visualiserInstance)
+        private void SetWrapVisualiser(ContentControl wrapVisualiserHost, IVertex visualiserInstance)
         {
             DisposeContent(wrapVisualiserHost);
 
@@ -1890,7 +1892,7 @@ namespace m0.UIWpf.VertexCommander
             keyboardHighlight.KeyboardHighlightEnterPressed += keyboardHighlightEnterPressedHandler;
         }
 
-        private static void DisposeVisualiser(
+        private void DisposeVisualiser(
             ContentControl visualiserHost,
             ContentControl wrapVisualiserHost,
             EventHandler goneBeforeFirstPositionHandler,
@@ -2047,6 +2049,64 @@ namespace m0.UIWpf.VertexCommander
         private static bool IsUsableLayoutMetric(double value)
         {
             return !double.IsNaN(value) && !double.IsInfinity(value) && value > 0;
+        }
+
+        private void VertexCommanderControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            if (sectionVisualisersReleased)
+                return;
+
+            sectionVisualisersReleased = true;
+            Interaction.BeginInteractionWithGraph();
+
+            try
+            {
+                DisposeAllSectionVisualisers();
+            }
+            finally
+            {
+                Interaction.EndInteractionWithGraph();
+            }
+        }
+
+        private void DisposeAllSectionVisualisers()
+        {
+            DisposeVisualiser(
+                LeftInEdgesVisualiserHost,
+                LeftInEdgesWrapVisualiserHost,
+                LeftInEdgesKeyboardHighlight_GoneBeforeFirstPosition,
+                LeftInEdgesKeyboardHighlight_GoneAfterLastPosition,
+                LeftInEdgesKeyboardHighlight_KeyboardHighlightActivated,
+                LeftInEdgesKeyboardHighlight_KeyboardHighlightEnterPressed,
+                ref leftInEdgesKeyboardHighlight,
+                ref leftInEdgesVisuliserInstance);
+            DisposeVisualiser(
+                RightInEdgesVisualiserHost,
+                RightInEdgesWrapVisualiserHost,
+                RightInEdgesKeyboardHighlight_GoneBeforeFirstPosition,
+                RightInEdgesKeyboardHighlight_GoneAfterLastPosition,
+                RightInEdgesKeyboardHighlight_KeyboardHighlightActivated,
+                RightInEdgesKeyboardHighlight_KeyboardHighlightEnterPressed,
+                ref rightInEdgesKeyboardHighlight,
+                ref rightInEdgesVisuliserInstance);
+            DisposeVisualiser(
+                LeftOutEdgesVisualiserHost,
+                LeftOutEdgesWrapVisualiserHost,
+                LeftOutEdgesKeyboardHighlight_GoneBeforeFirstPosition,
+                LeftOutEdgesKeyboardHighlight_GoneAfterLastPosition,
+                LeftOutEdgesKeyboardHighlight_KeyboardHighlightActivated,
+                LeftOutEdgesKeyboardHighlight_KeyboardHighlightEnterPressed,
+                ref leftOutEdgesKeyboardHighlight,
+                ref leftOutEdgesVisuliserInstance);
+            DisposeVisualiser(
+                RightOutEdgesVisualiserHost,
+                RightOutEdgesWrapVisualiserHost,
+                RightOutEdgesKeyboardHighlight_GoneBeforeFirstPosition,
+                RightOutEdgesKeyboardHighlight_GoneAfterLastPosition,
+                RightOutEdgesKeyboardHighlight_KeyboardHighlightActivated,
+                RightOutEdgesKeyboardHighlight_KeyboardHighlightEnterPressed,
+                ref rightOutEdgesKeyboardHighlight,
+                ref rightOutEdgesVisuliserInstance);
         }
 
         private static double GetGraphCircleWorldSize(object visualiser)

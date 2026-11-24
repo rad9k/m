@@ -3,6 +3,9 @@ using m0.Graph;
 using m0.Graph.ExecutionFlow;
 using m0.UIWpf.Commands;
 using m0.UIWpf.Controls.Fast;
+using IHasScrollViewer = m0.UIWpf.Controls.IHasScrollViewer;
+using IMouseWheelHandler = m0.UIWpf.Controls.IMouseWheelHandler;
+using SelectionArea = m0.UIWpf.Controls.SelectionArea;
 using m0.UIWpf.Foundation;
 using m0.UIWpf.Visualisers.Helper;
 using m0.User.Process.UX;
@@ -17,10 +20,12 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace m0.UIWpf.Visualisers
 {
@@ -316,7 +321,7 @@ namespace m0.UIWpf.Visualisers
         }        
     }
 
-    public class GraphVisualiser: Canvas, IListVisualiser, IHasSelectableEdges, ITypedEdge, IKeyboardHighlight
+    public class GraphVisualiser: Canvas, IListVisualiser, IHasSelectableEdges, ITypedEdge, IKeyboardHighlight, IMouseWheelHandler
     {
         public event Notify SelectedEdgesChange;
 
@@ -331,14 +336,67 @@ namespace m0.UIWpf.Visualisers
 
         public bool IsPaiting=false;
 
+        SelectionArea selectionArea;
+        bool isSelectionAreaGesture;
+        ScrollViewer selectionScrollViewer;
+        bool isVertexMoveActive;
+        bool vertexDragAndDropStarted;
+        List<SimpleVisualiserWrapper> vertexMoveWrappers;
+        Dictionary<SimpleVisualiserWrapper, Point> vertexMoveOriginalPositions;
+
+        IHasScrollViewer ScrollViewerParent;
+
+        const double MiniaturesOuterMargin = 10;
+        const double MiniaturesContentPaddingRatio = 0.07;
+        const double MiniaturesMinimumLogicalPadding = 20;
+        const double MiniaturesMinimumItemSize = 1.5;
+        const double MiniaturesHighlightLineThickness = 4;
+        const double MiniaturesSelfRelationLoopRadius = 8;
+
+        const double MinimumDiagramScale = 1;
+        const double MaximumDiagramScale = 1600;
+        const double CanvasPanStartThreshold = 3;
+
+        MiniaturesAdorner miniaturesAdorner;
+        AdornerLayer miniaturesAdornerLayer;
+        ScrollViewer miniaturesScrollViewer;
+        bool miniaturesItemsDirty;
+        bool miniaturesHighlightDirty;
+        bool miniaturesUpdateReschedulePending;
+        bool miniaturesUpdateRescheduleRebuildItems;
+        DispatcherOperation miniaturesUpdateOperation;
+        bool scrollToOccupiedContentPending;
+        bool initialOccupiedContentScrollCompleted;
+        bool occupiedContentScrollInProgress;
+        bool miniaturesAttachFailureLogged;
+        bool missingScrollViewerLogged;
+
+        bool hasCursorZoomAnchor;
+        Point cursorZoomContentPoint;
+        Point cursorZoomViewportPoint;
+        double prev_Scale = -1;
+
+        bool isCanvasPanPending;
+        bool isCanvasPanActive;
+        bool canvasPanOwnsOverrideCursor;
+        bool suppressContextMenuAfterCanvasPan;
+        Point canvasPanStartViewportPoint;
+        double canvasPanStartHorizontalOffset;
+        double canvasPanStartVerticalOffset;
+
+        readonly HashSet<FrameworkElement> miniatureItemEventSubscriptions =
+            new HashSet<FrameworkElement>();
 
         static string[] _MetaTriggeringUpdateVertex = new string[] { "VisualiserCircleSize", "NumberOfCircles", "ShowOutEdges", "ShowInEdges", "ShowFromToChangedVertex", "FastMode", "MetaLabels", "AnimateEdges", "ShowIcons" };
         public string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
-        static string[] _MetaTriggeringUpdateView = new string[] { };
+        static string[] _MetaTriggeringUpdateView = new string[] { "HasMiniatures" };
         public string[] MetaTriggeringUpdateView { get { return _MetaTriggeringUpdateView; } }
 
-        public void ViewAttributesUpdated() { }
+        public void ViewAttributesUpdated()
+        {
+            RequestMiniaturesUpdate(true);
+        }
 
         public int CurrentHighlightPosition
         {
@@ -442,6 +500,15 @@ namespace m0.UIWpf.Visualisers
             this.PreviewMouseLeftButtonDown += dndPreviewMouseLeftButtonDown;
             this.PreviewMouseMove += dndPreviewMouseMove;
             this.PreviewMouseRightButtonDown += OnGraphPreviewMouseRightButtonDown;
+            this.PreviewMouseRightButtonDown += OnCanvasPanPreviewMouseRightButtonDown;
+            this.PreviewMouseMove += OnCanvasPanPreviewMouseMove;
+            this.PreviewMouseRightButtonUp += OnCanvasPanPreviewMouseRightButtonUp;
+            this.LostMouseCapture += OnCanvasPanLostMouseCapture;
+            this.LostMouseCapture += OnSelectionAreaLostMouseCapture;
+            this.LostMouseCapture += OnVertexMoveLostMouseCapture;
+            this.ContextMenuOpening += OnCanvasPanContextMenuOpening;
+            this.MouseLeave += OnCanvasPanMouseLeave;
+            this.MouseLeave += OnVertexDragMouseLeave;
             this.Drop += dndDrop;
             this.AllowDrop = true;
 
@@ -453,6 +520,9 @@ namespace m0.UIWpf.Visualisers
         public void OnLoad(object sender, RoutedEventArgs e)
         {
             VisualiserHelper.AddContextMenu();
+
+            ScrollViewerParent = GetScrollViewerParent(this);
+            HookSelectionScrollViewer();
 
             PaintGraph();
 
@@ -542,6 +612,7 @@ namespace m0.UIWpf.Visualisers
 
             Panel.SetZIndex(l, 0);            
 
+            l.IsHitTestVisible = false;
             Children.Add(l);
 
             ArrowLine animatedOverlay = new ArrowLine();
@@ -557,6 +628,7 @@ namespace m0.UIWpf.Visualisers
             animatedOverlay.EndEnding = m0.UIWpf.Controls.Fast.LineEndEnum.Straight;
             FromWrapper.Lines.Add(animatedOverlay);
             ToWrapper.Lines.Add(animatedOverlay);
+            animatedOverlay.IsHitTestVisible = false;
             ApplyEdgeStyle(animatedOverlay, false);
             Panel.SetZIndex(animatedOverlay, 0);
             Children.Add(animatedOverlay);
@@ -571,6 +643,7 @@ namespace m0.UIWpf.Visualisers
 
                 b.Foreground = (Brush)FindResource("0LightGrayBrush");
 
+                b.IsHitTestVisible = false;
                 Panel.SetZIndex(b, 2);
                 Children.Add(b);
 
@@ -687,6 +760,14 @@ namespace m0.UIWpf.Visualisers
             else
                 ShowIcons = false;
 
+            bool resumeSelectionArea = isSelectionAreaGesture && selectionArea != null;
+            Point selectionAreaStart = resumeSelectionArea
+                ? selectionArea.StartPosition
+                : new Point();
+            Point selectionAreaCurrent = resumeSelectionArea
+                ? selectionArea.CurrentPosition
+                : selectionAreaStart;
+
             this.Children.Clear();
 
             foreach (UIElement e in DisplayedVerticesUIElements.Values)
@@ -715,12 +796,22 @@ namespace m0.UIWpf.Visualisers
             AddCircle(0,null);
             UpdateLayout();
             ExpandCanvasToContentBounds();
+            EnsureCanvasCoversViewport();
 
             SelectWrappersForSelectedVertices();
 
             IsFirstPainted = true;
 
             IsPaiting = false;
+
+            EnsureSelectionArea();
+            if (resumeSelectionArea && selectionArea != null)
+            {
+                selectionArea.StartSelection(selectionAreaStart);
+                selectionArea.MoveSelectionArea(selectionAreaCurrent);
+            }
+            RequestInitialScrollToOccupiedContent();
+            RequestMiniaturesUpdate(true);
         }
 
         internal void ApplyEdgeStyle(Shape edge, bool highlighted)
@@ -949,20 +1040,86 @@ namespace m0.UIWpf.Visualisers
 
         public void ScaleChange()
         {
-            double scale = ((double)GraphUtil.GetIntegerValue(Vertex.Get(false, "Scale:"))) / 100;
+            if (prev_Scale == -1)
+                prev_Scale = 1;
 
-            this.LayoutTransform = null;
+            double scale = ReadScalePercent() / 100.0;
+
+            bool useCursorAnchor = hasCursorZoomAnchor;
+            Point contentPoint = cursorZoomContentPoint;
+            Point viewportPoint = cursorZoomViewportPoint;
+            hasCursorZoomAnchor = false;
+
+            this.RenderTransform = null;
 
             if (scale != 1.0)
             {
                 if (ActualHeight != 0)
                 {
-                    this.RenderTransformOrigin = new Point(0.5, 0.5);
-                    this.RenderTransform = new ScaleTransform(scale, scale);
+                    this.LayoutTransform = new ScaleTransform(
+                        scale,
+                        scale,
+                        ActualWidth / 2,
+                        ActualHeight / 2);
                 }
             }
             else
-                this.RenderTransform = null;
+                this.LayoutTransform = null;
+
+            ScrollViewer scrollViewer = GetGraphScrollViewer();
+
+            if (scrollViewer != null)
+            {
+                try
+                {
+                    if (useCursorAnchor)
+                        UpdateLayout();
+
+                    double offsetX;
+                    double offsetY;
+                    double unscaledWidth = GetCanvasWidth();
+                    double unscaledHeight = GetCanvasHeight();
+
+                    if (useCursorAnchor && ActualWidth > 0 && ActualHeight > 0)
+                    {
+                        offsetX = contentPoint.X * scale - viewportPoint.X;
+                        offsetY = contentPoint.Y * scale - viewportPoint.Y;
+                    }
+                    else
+                    {
+                        double halfHorizontal = scrollViewer.ActualWidth / 2;
+                        double halfVertical = scrollViewer.ActualHeight / 2;
+                        double previousContentWidth = unscaledWidth * prev_Scale;
+                        double previousContentHeight = unscaledHeight * prev_Scale;
+
+                        double abstractHorizontal = previousContentWidth > 0
+                            ? (scrollViewer.HorizontalOffset + halfHorizontal) / previousContentWidth
+                            : 0;
+                        double abstractVertical = previousContentHeight > 0
+                            ? (scrollViewer.VerticalOffset + halfVertical) / previousContentHeight
+                            : 0;
+
+                        offsetX = abstractHorizontal * unscaledWidth * scale - halfHorizontal;
+                        offsetY = abstractVertical * unscaledHeight * scale - halfVertical;
+                    }
+
+                    double contentWidth = useCursorAnchor
+                        ? scrollViewer.ExtentWidth
+                        : unscaledWidth * scale;
+                    double contentHeight = useCursorAnchor
+                        ? scrollViewer.ExtentHeight
+                        : unscaledHeight * scale;
+
+                    scrollViewer.ScrollToHorizontalOffset(
+                        ClampScrollOffset(offsetX, contentWidth, scrollViewer.ViewportWidth));
+                    scrollViewer.ScrollToVerticalOffset(
+                        ClampScrollOffset(offsetY, contentHeight, scrollViewer.ViewportHeight));
+                }
+                catch (Exception) { }
+            }
+
+            prev_Scale = scale;
+            RequestMiniaturesUpdate(false);
         }
 
         protected KeyValuePair<IVertex, SimpleVisualiserWrapper> GetVertexWrapperByEventSource(object eventSource)
@@ -998,6 +1155,13 @@ namespace m0.UIWpf.Visualisers
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
+            if (isSelectionAreaGesture &&
+                selectionArea != null &&
+                e.LeftButton == MouseButtonState.Pressed)
+            {
+                selectionArea.MoveSelectionArea(e.GetPosition(this));
+            }
+
             if (keyboardHighlightedVertex != null)
                 ClearKeyboardHighlight();
 
@@ -1012,6 +1176,7 @@ namespace m0.UIWpf.Visualisers
                 kvp.Value.HighlightThisAndDescendants();
 
                 Highlighted = kvp.Value;
+                NotifyMiniaturesHighlightChanged();
             }
             else if (kvp.Value == null && Highlighted != null)
             {
@@ -1027,6 +1192,7 @@ namespace m0.UIWpf.Visualisers
             {
                 Highlighted.UnhighlightThisAndDescendants();
                 Highlighted = null;
+                NotifyMiniaturesHighlightChanged();
             }
         }
         
@@ -1088,6 +1254,12 @@ namespace m0.UIWpf.Visualisers
 
         protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
         {
+            if (isSelectionAreaGesture)
+                FinishSelectionArea();
+
+            if (isVertexMoveActive)
+                EndVertexMove(true);
+
             if (!suppressNextMouseUpSelection && pendingMouseDownSelectionVertex != null)
             {
                 KeyValuePair<IVertex, SimpleVisualiserWrapper> kvp =
@@ -1117,6 +1289,281 @@ namespace m0.UIWpf.Visualisers
             };
 
             SelectedEdgesInteractionHelper.ApplyForClickByToVertex(Vertex, pendingGesture);
+            SelectedVerticesUpdated();
+        }
+
+        void EnsureSelectionArea()
+        {
+            if (selectionArea != null &&
+                selectionArea.Shape != null &&
+                Children.Contains(selectionArea.Shape))
+            {
+                return;
+            }
+
+            selectionArea = new SelectionArea(this);
+            selectionArea.Shape.IsHitTestVisible = false;
+        }
+
+        void HookSelectionScrollViewer()
+        {
+            ScrollViewer scrollViewer = GetGraphScrollViewer();
+
+            if (scrollViewer == null || selectionScrollViewer == scrollViewer)
+                return;
+
+            if (selectionScrollViewer != null)
+            {
+                selectionScrollViewer.PreviewMouseLeftButtonDown -=
+                    SelectionScrollViewer_PreviewMouseLeftButtonDown;
+                selectionScrollViewer.SizeChanged -=
+                    SelectionScrollViewer_SizeChanged;
+            }
+
+            selectionScrollViewer = scrollViewer;
+            selectionScrollViewer.PreviewMouseLeftButtonDown +=
+                SelectionScrollViewer_PreviewMouseLeftButtonDown;
+            selectionScrollViewer.SizeChanged +=
+                SelectionScrollViewer_SizeChanged;
+        }
+
+        void UnhookSelectionScrollViewer()
+        {
+            if (selectionScrollViewer == null)
+                return;
+
+            selectionScrollViewer.PreviewMouseLeftButtonDown -=
+                SelectionScrollViewer_PreviewMouseLeftButtonDown;
+            selectionScrollViewer.SizeChanged -=
+                SelectionScrollViewer_SizeChanged;
+            selectionScrollViewer = null;
+        }
+
+        void SelectionScrollViewer_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            EnsureCanvasCoversViewport();
+        }
+
+        void SelectionScrollViewer_PreviewMouseLeftButtonDown(
+            object sender,
+            MouseButtonEventArgs e)
+        {
+            if (TryBeginSelectionArea(e))
+                e.Handled = true;
+        }
+
+        void EnsureCanvasCoversViewport()
+        {
+            ScrollViewer scrollViewer = GetGraphScrollViewer();
+
+            if (scrollViewer == null)
+                return;
+
+            double scale = 1;
+            ScaleTransform layoutScale = LayoutTransform as ScaleTransform;
+
+            if (layoutScale != null && layoutScale.ScaleX > 0)
+                scale = layoutScale.ScaleX;
+
+            double neededWidth = scrollViewer.ViewportWidth / scale;
+            double neededHeight = scrollViewer.ViewportHeight / scale;
+
+            if (!IsUsableKeptSize(neededWidth))
+                neededWidth = 0;
+
+            if (!IsUsableKeptSize(neededHeight))
+                neededHeight = 0;
+
+            if (neededWidth > 0 && (!IsUsableKeptSize(Width) || Width < neededWidth))
+                Width = neededWidth;
+
+            if (neededHeight > 0 && (!IsUsableKeptSize(Height) || Height < neededHeight))
+                Height = neededHeight;
+        }
+
+        bool TryBeginSelectionArea(MouseButtonEventArgs e)
+        {
+            Point position = e.GetPosition(this);
+            string sourceName = "null";
+            DependencyObject source = e.OriginalSource as DependencyObject;
+
+            if (source != null)
+                sourceName = source.GetType().Name;
+
+            KeyValuePair<IVertex, SimpleVisualiserWrapper> match =
+                GetVertexWrapperByEventSource(source);
+            bool vertexHit = match.Value != null;
+            bool scrollbar = WpfUtil.IsMouseOverScrollbar(
+                selectionScrollViewer != null ? selectionScrollViewer : (object)this,
+                e.GetPosition(selectionScrollViewer != null ? selectionScrollViewer : (IInputElement)this));
+            string decision = "start";
+
+            if (isSelectionAreaGesture)
+                decision = "already-selecting";
+            else if (e.ClickCount != 1)
+                decision = "click-count-" + e.ClickCount;
+            else if (SelectionProhibited)
+                decision = "selection-prohibited";
+            else if (scrollbar)
+                decision = "scrollbar";
+            else if (IsMiniaturesAdornerSource(source))
+                decision = "miniatures";
+            else if (vertexHit)
+                decision = "vertex";
+
+            MinusZero.Instance.Log(
+                1,
+                "GraphVisualiser.SelectionArea",
+                "down source=" + sourceName
+                + " decision=" + decision
+                + " point=" + position.X.ToString("0") + "," + position.Y.ToString("0")
+                + " canvas=" + Width.ToString("0") + "x" + Height.ToString("0")
+                + " actual=" + ActualWidth.ToString("0") + "x" + ActualHeight.ToString("0"));
+
+            if (decision != "start")
+                return false;
+
+            StartSelectionArea(position);
+            return true;
+        }
+
+        bool IsMiniaturesAdornerSource(DependencyObject source)
+        {
+            DependencyObject current = source;
+
+            while (current != null && current != this)
+            {
+                if (current == miniaturesAdorner)
+                    return true;
+
+                DependencyObject parent = null;
+
+                if (current is Visual || current is System.Windows.Media.Media3D.Visual3D)
+                    parent = VisualTreeHelper.GetParent(current);
+
+                if (parent == null)
+                    parent = LogicalTreeHelper.GetParent(current);
+
+                current = parent;
+            }
+
+            return false;
+        }
+
+        void StartSelectionArea(Point position)
+        {
+            UnselectAllSelectedEdges();
+            EnsureCanvasCoversViewport();
+            EnsureSelectionArea();
+
+            if (selectionArea == null)
+            {
+                MinusZero.Instance.Log(
+                    1,
+                    "GraphVisualiser.SelectionArea",
+                    "shape missing at " + position.X.ToString("0") + "," + position.Y.ToString("0"));
+                return;
+            }
+
+            isSelectionAreaGesture = true;
+            hasButtonBeenDown = false;
+            selectionArea.StartSelection(position);
+
+            if (!CaptureMouse())
+            {
+                MinusZero.Instance.Log(
+                    1,
+                    "GraphVisualiser.SelectionArea",
+                    "mouse capture failed");
+            }
+        }
+
+        void FinishSelectionArea()
+        {
+            if (!isSelectionAreaGesture)
+                return;
+
+            isSelectionAreaGesture = false;
+            hasButtonBeenDown = false;
+
+            if (selectionArea != null && selectionArea.IsSelecting)
+                SelectVerticesBySelectionArea();
+
+            if (selectionArea != null)
+                selectionArea.HideSelectionArea();
+
+            if (IsMouseCaptured)
+                ReleaseMouseCapture();
+        }
+
+        void OnSelectionAreaLostMouseCapture(object sender, MouseEventArgs e)
+        {
+            if (!isSelectionAreaGesture)
+                return;
+
+            FinishSelectionArea();
+        }
+
+        void SelectVerticesBySelectionArea()
+        {
+            if (selectionArea == null || SelectionProhibited || Vertex == null)
+                return;
+
+            double left = selectionArea.Left;
+            double top = selectionArea.Top;
+            double right = selectionArea.Right;
+            double bottom = selectionArea.Bottom;
+
+            Interaction.BeginInteractionWithGraph();
+
+            try
+            {
+                IVertex selectedEdges = Vertex.Get(false, "SelectedEdges:");
+
+                if (selectedEdges == null)
+                    return;
+
+                GraphUtil.RemoveAllEdges_WhereEdgeIsEdge(selectedEdges);
+
+                if (DisplayedVerticesUIElements != null)
+                {
+                    foreach (KeyValuePair<IVertex, SimpleVisualiserWrapper> item in
+                        DisplayedVerticesUIElements)
+                    {
+                        SimpleVisualiserWrapper wrapper = item.Value;
+
+                        if (item.Key == null || wrapper == null)
+                            continue;
+
+                        double itemLeft = Canvas.GetLeft(wrapper);
+                        double itemTop = Canvas.GetTop(wrapper);
+
+                        if (double.IsNaN(itemLeft))
+                            itemLeft = 0;
+
+                        if (double.IsNaN(itemTop))
+                            itemTop = 0;
+
+                        double itemRight = itemLeft + wrapper.ActualWidth;
+                        double itemBottom = itemTop + wrapper.ActualHeight;
+
+                        if (left <= itemLeft &&
+                            right >= itemRight &&
+                            top <= itemTop &&
+                            bottom >= itemBottom)
+                        {
+                            EdgeHelper.AddEdgeVertexByToVertex(
+                                selectedEdges,
+                                item.Key);
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                Interaction.EndInteractionWithGraph();
+            }
+
             SelectedVerticesUpdated();
         }
 
@@ -1413,7 +1860,11 @@ namespace m0.UIWpf.Visualisers
             {
                 isDisposed = true;
 
-                VisualiserHelper.Dispose();
+                DetachMiniatures();
+                UnhookSelectionScrollViewer();
+
+                if (VisualiserHelper != null)
+                    VisualiserHelper.Dispose();
             }
         }
 
@@ -1464,6 +1915,9 @@ namespace m0.UIWpf.Visualisers
             hasButtonBeenDown = true;
 
             MinusZero.Instance.IsGUIDragging = false;
+
+            if (selectionScrollViewer == null && TryBeginSelectionArea(e))
+                e.Handled = true;
         }
 
         private IVertex TryPrepareDragAndBuildDndVertex()
@@ -1502,35 +1956,289 @@ namespace m0.UIWpf.Visualisers
 
         private void dndPreviewMouseMove(object sender, MouseEventArgs e)
         {
+            if (isSelectionAreaGesture)
+            {
+                hasButtonBeenDown = false;
+                return;
+            }
+
+            if (isVertexMoveActive && e.LeftButton != MouseButtonState.Pressed)
+            {
+                EndVertexMove(true);
+                return;
+            }
+
             Point mousePos = e.GetPosition(this);
             Vector diff = dndStartPoint - mousePos;
 
-            if (hasButtonBeenDown &&
+            bool dragPastThreshold =
+                hasButtonBeenDown &&
                 !WpfUtil.IsMouseOverScrollbar(sender, dndStartPoint) &&
-                (e.LeftButton == MouseButtonState.Pressed) & (
-                (Math.Abs(diff.X) > Dnd.MinimumHorizontalDragDistance) ||
-                (Math.Abs(diff.Y) > Dnd.MinimumVerticalDragDistance)))
-            {
-                suppressNextMouseUpSelection = true;
+                e.LeftButton == MouseButtonState.Pressed &&
+                (Math.Abs(diff.X) > Dnd.MinimumHorizontalDragDistance ||
+                    Math.Abs(diff.Y) > Dnd.MinimumVerticalDragDistance);
 
+            if (isVertexMoveActive ||
+                (dragPastThreshold && pendingMouseDownSelectionVertex != null))
+            {
+                if (IsPointerOutsideVisualiserWindow(e))
+                {
+                    BeginDragAndDropInsteadOfVertexMove(e);
+                    return;
+                }
+
+                if (!isVertexMoveActive)
+                    BeginVertexMove();
+
+                if (isVertexMoveActive)
+                {
+                    UpdateVertexMove(mousePos);
+                    e.Handled = true;
+                }
+
+                return;
+            }
+
+            if (!dragPastThreshold)
+                return;
+
+            suppressNextMouseUpSelection = true;
+
+            IVertex dndVertex = TryPrepareDragAndBuildDndVertex();
+
+            pendingMouseDownSelectionVertex = null;
+            pendingWasInSelectionAtMouseDown = false;
+
+            if (dndVertex != null && dndVertex.Count() > 0)
+            {
+                dndVertex.AddExternalReference();
+
+                DataObject dragData = new DataObject("Vertex", dndVertex);
+                dragData.SetData("DragSource", this);
+
+                Dnd.DoDragDrop(this, dragData);
+
+                e.Handled = true;
+            }
+
+            hasButtonBeenDown = false;
+        }
+
+        bool IsPointerOutsideVisualiserWindow(MouseEventArgs e)
+        {
+            ScrollViewer scrollViewer = GetGraphScrollViewer();
+
+            if (scrollViewer != null &&
+                scrollViewer.ActualWidth > 0 &&
+                scrollViewer.ActualHeight > 0)
+            {
+                Point point = e.GetPosition(scrollViewer);
+
+                return point.X < 0 ||
+                    point.Y < 0 ||
+                    point.X > scrollViewer.ActualWidth ||
+                    point.Y > scrollViewer.ActualHeight;
+            }
+
+            Point localPoint = e.GetPosition(this);
+
+            return localPoint.X < 0 ||
+                localPoint.Y < 0 ||
+                localPoint.X > ActualWidth ||
+                localPoint.Y > ActualHeight;
+        }
+
+        void BeginVertexMove()
+        {
+            vertexMoveWrappers = new List<SimpleVisualiserWrapper>();
+            vertexMoveOriginalPositions =
+                new Dictionary<SimpleVisualiserWrapper, Point>();
+
+            SimpleVisualiserWrapper clickedWrapper = null;
+
+            if (pendingMouseDownSelectionVertex != null &&
+                DisplayedVerticesUIElements != null)
+            {
+                DisplayedVerticesUIElements.TryGetValue(
+                    pendingMouseDownSelectionVertex,
+                    out clickedWrapper);
+            }
+
+            if (pendingWasInSelectionAtMouseDown &&
+                DisplayedVerticesUIElements != null)
+            {
+                foreach (KeyValuePair<IVertex, SimpleVisualiserWrapper> item in
+                    DisplayedVerticesUIElements)
+                {
+                    if (item.Value == null)
+                        continue;
+
+                    if (item.Value.IsSelected ||
+                        SelectedEdgesInteractionHelper.WasToVertexInSelectedEdges(
+                            Vertex,
+                            item.Key))
+                    {
+                        AddVertexMoveWrapper(item.Value);
+                    }
+                }
+            }
+
+            if (vertexMoveWrappers.Count == 0 && clickedWrapper != null)
+                AddVertexMoveWrapper(clickedWrapper);
+
+            if (vertexMoveWrappers.Count == 0)
+                return;
+
+            isVertexMoveActive = true;
+            suppressNextMouseUpSelection = true;
+            CaptureMouse();
+        }
+
+        void AddVertexMoveWrapper(SimpleVisualiserWrapper wrapper)
+        {
+            if (wrapper == null ||
+                vertexMoveOriginalPositions.ContainsKey(wrapper))
+            {
+                return;
+            }
+
+            double left = Canvas.GetLeft(wrapper);
+            double top = Canvas.GetTop(wrapper);
+
+            if (double.IsNaN(left))
+                left = 0;
+
+            if (double.IsNaN(top))
+                top = 0;
+
+            vertexMoveOriginalPositions[wrapper] = new Point(left, top);
+            vertexMoveWrappers.Add(wrapper);
+        }
+
+        void UpdateVertexMove(Point currentPosition)
+        {
+            if (!isVertexMoveActive || vertexMoveWrappers == null)
+                return;
+
+            Vector delta = currentPosition - dndStartPoint;
+
+            foreach (SimpleVisualiserWrapper wrapper in vertexMoveWrappers)
+            {
+                Point startPosition;
+
+                if (!vertexMoveOriginalPositions.TryGetValue(
+                    wrapper,
+                    out startPosition))
+                {
+                    continue;
+                }
+
+                Canvas.SetLeft(wrapper, startPosition.X + delta.X);
+                Canvas.SetTop(wrapper, startPosition.Y + delta.Y);
+            }
+
+            UpdateAllLines();
+            RequestMiniaturesUpdate(true);
+        }
+
+        void EndVertexMove(bool releaseCapture)
+        {
+            if (!isVertexMoveActive)
+                return;
+
+            isVertexMoveActive = false;
+            hasButtonBeenDown = false;
+            vertexMoveWrappers = null;
+            vertexMoveOriginalPositions = null;
+
+            if (releaseCapture && IsMouseCaptured)
+                ReleaseMouseCapture();
+
+            RequestMiniaturesUpdate(true);
+        }
+
+        void OnVertexMoveLostMouseCapture(object sender, MouseEventArgs e)
+        {
+            if (!isVertexMoveActive || vertexDragAndDropStarted)
+                return;
+
+            EndVertexMove(false);
+        }
+
+        void OnVertexDragMouseLeave(object sender, MouseEventArgs e)
+        {
+            if (isSelectionAreaGesture ||
+                pendingMouseDownSelectionVertex == null ||
+                !hasButtonBeenDown ||
+                e.LeftButton != MouseButtonState.Pressed ||
+                !IsPointerOutsideVisualiserWindow(e))
+            {
+                return;
+            }
+
+            BeginDragAndDropInsteadOfVertexMove(e);
+        }
+
+        void BeginDragAndDropInsteadOfVertexMove(MouseEventArgs e)
+        {
+            RestoreVertexMovePositions();
+            EndVertexMove(true);
+            StartVertexDragAndDrop(e);
+        }
+
+        void RestoreVertexMovePositions()
+        {
+            if (!isVertexMoveActive || vertexMoveOriginalPositions == null)
+                return;
+
+            foreach (KeyValuePair<SimpleVisualiserWrapper, Point> item in
+                vertexMoveOriginalPositions)
+            {
+                if (item.Key == null)
+                    continue;
+
+                Canvas.SetLeft(item.Key, item.Value.X);
+                Canvas.SetTop(item.Key, item.Value.Y);
+            }
+
+            UpdateAllLines();
+            RequestMiniaturesUpdate(true);
+            MinusZero.Instance.Log(
+                1,
+                "GraphVisualiser.VertexMove",
+                "restored " + vertexMoveOriginalPositions.Count + " rectangles before dnd");
+        }
+
+        void StartVertexDragAndDrop(MouseEventArgs e)
+        {
+            if (vertexDragAndDropStarted || pendingMouseDownSelectionVertex == null)
+                return;
+
+            vertexDragAndDropStarted = true;
+            suppressNextMouseUpSelection = true;
+            hasButtonBeenDown = false;
+
+            try
+            {
                 IVertex dndVertex = TryPrepareDragAndBuildDndVertex();
 
                 pendingMouseDownSelectionVertex = null;
                 pendingWasInSelectionAtMouseDown = false;
 
-                if (dndVertex != null && dndVertex.Count() > 0)
-                {
-                    dndVertex.AddExternalReference();
+                if (dndVertex == null || dndVertex.Count() == 0)
+                    return;
 
-                    DataObject dragData = new DataObject("Vertex", dndVertex);
-                    dragData.SetData("DragSource", this);
+                dndVertex.AddExternalReference();
 
-                    Dnd.DoDragDrop(this, dragData);
+                DataObject dragData = new DataObject("Vertex", dndVertex);
+                dragData.SetData("DragSource", this);
 
-                    e.Handled = true;
-                }
-
-                hasButtonBeenDown = false;
+                Dnd.DoDragDrop(this, dragData);
+                e.Handled = true;
+            }
+            finally
+            {
+                vertexDragAndDropStarted = false;
             }
         }
 
@@ -1547,6 +2255,9 @@ namespace m0.UIWpf.Visualisers
 
         private void dndMouseEnter(object sender, MouseEventArgs e)
         {
+            if (isVertexMoveActive || isSelectionAreaGesture)
+                return;
+
             hasButtonBeenDown = false;
         }
 
@@ -1602,6 +2313,7 @@ namespace m0.UIWpf.Visualisers
             ApplyOverlapRemoval(wrappers);
 
             UpdateAllLines();
+            RequestMiniaturesUpdate(true);
         }
 
         // HELPERS ============================================================
@@ -2437,6 +3149,1570 @@ namespace m0.UIWpf.Visualisers
                 double ny = margin + maxHalfH + (p.Y - minY) * scale;
                 positions[w] = new Point(nx, ny);
             }
+        }
+
+        struct MiniatureHighlightLineSnapshot
+        {
+            public Point From;
+            public Point To;
+            public bool IsSelfRelation;
+        }
+
+        sealed class MiniaturesAdorner : Adorner
+        {
+            const double InactiveOpacity = 0.5;
+            const double ActiveOpacity = 1;
+            static readonly System.TimeSpan OpacityTransitionDuration =
+                System.TimeSpan.FromSeconds(0.3);
+
+            readonly GraphVisualiser owner;
+            readonly ScrollViewer scrollViewer;
+            IList<Rect> itemSnapshots = new List<Rect>();
+            IList<Rect> highlightItemSnapshots = new List<Rect>();
+            IList<MiniatureHighlightLineSnapshot> highlightLineSnapshots =
+                new List<MiniatureHighlightLineSnapshot>();
+            Rect worldBounds = Rect.Empty;
+            Rect mapBounds = Rect.Empty;
+            DrawingGroup itemDrawing = new DrawingGroup();
+            DrawingGroup highlightDrawing = new DrawingGroup();
+            Rect displayedViewportBounds = Rect.Empty;
+            Rect projectedViewportBounds = Rect.Empty;
+            Point dragPointerOffset;
+            bool isDraggingViewport;
+            bool dragStartedFromOutsideWorld;
+
+            public MiniaturesAdorner(
+                GraphVisualiser owner,
+                ScrollViewer scrollViewer)
+                : base(scrollViewer)
+            {
+                this.owner = owner;
+                this.scrollViewer = scrollViewer;
+                IsHitTestVisible = true;
+                Opacity = InactiveOpacity;
+            }
+
+            public void SetItems(
+                IList<Rect> snapshots,
+                Rect effectiveWorldBounds)
+            {
+                itemSnapshots = snapshots ?? new List<Rect>();
+                worldBounds = effectiveWorldBounds;
+                RebuildItemDrawing();
+                InvalidateVisual();
+            }
+
+            public void SetHighlight(
+                IList<Rect> highlightedItems,
+                IList<MiniatureHighlightLineSnapshot> highlightedLines)
+            {
+                highlightItemSnapshots = highlightedItems ?? new List<Rect>();
+                highlightLineSnapshots = highlightedLines ??
+                    new List<MiniatureHighlightLineSnapshot>();
+                RebuildHighlightDrawing();
+                InvalidateVisual();
+            }
+
+            public void InvalidateViewport()
+            {
+                InvalidateVisual();
+            }
+
+            protected override void OnRender(DrawingContext drawingContext)
+            {
+                base.OnRender(drawingContext);
+
+                if (mapBounds.IsEmpty ||
+                    mapBounds.Width <= 0 ||
+                    mapBounds.Height <= 0)
+                {
+                    displayedViewportBounds = Rect.Empty;
+                    projectedViewportBounds = Rect.Empty;
+                    return;
+                }
+
+                Brush backgroundBrush =
+                    (Brush)owner.FindResource("0BackgroundBrush");
+                Brush foregroundBrush =
+                    (Brush)owner.FindResource("0ForegroundBrush");
+                Brush viewportBrush =
+                    (Brush)owner.FindResource("0VeryLightHighlightBrush");
+
+                drawingContext.DrawRectangle(
+                    backgroundBrush,
+                    null,
+                    mapBounds);
+                drawingContext.DrawDrawing(itemDrawing);
+                drawingContext.DrawDrawing(highlightDrawing);
+                drawingContext.DrawRectangle(
+                    null,
+                    new Pen(foregroundBrush, 1),
+                    mapBounds);
+
+                UpdateViewportBounds();
+
+                if (!displayedViewportBounds.IsEmpty)
+                {
+                    drawingContext.DrawRectangle(
+                        null,
+                        new Pen(viewportBrush, 2),
+                        displayedViewportBounds);
+                }
+            }
+
+            protected override HitTestResult HitTestCore(
+                PointHitTestParameters hitTestParameters)
+            {
+                if (!mapBounds.IsEmpty &&
+                    mapBounds.Contains(hitTestParameters.HitPoint))
+                {
+                    return new PointHitTestResult(
+                        this,
+                        hitTestParameters.HitPoint);
+                }
+
+                return null;
+            }
+
+            protected override void OnMouseEnter(MouseEventArgs e)
+            {
+                base.OnMouseEnter(e);
+                AnimateOpacity(ActiveOpacity);
+            }
+
+            protected override void OnMouseLeave(MouseEventArgs e)
+            {
+                base.OnMouseLeave(e);
+                AnimateOpacity(InactiveOpacity);
+            }
+
+            void AnimateOpacity(double targetOpacity)
+            {
+                DoubleAnimation animation = new DoubleAnimation
+                {
+                    From = Opacity,
+                    To = targetOpacity,
+                    Duration = OpacityTransitionDuration,
+                    FillBehavior = FillBehavior.HoldEnd
+                };
+
+                BeginAnimation(
+                    OpacityProperty,
+                    animation,
+                    HandoffBehavior.SnapshotAndReplace);
+            }
+
+            protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+            {
+                Point position = e.GetPosition(this);
+                UpdateViewportBounds();
+
+                if (displayedViewportBounds.IsEmpty ||
+                    !displayedViewportBounds.Contains(position))
+                {
+                    return;
+                }
+
+                isDraggingViewport = true;
+                dragStartedFromOutsideWorld =
+                    !projectedViewportBounds.IntersectsWith(mapBounds);
+
+                if (dragStartedFromOutsideWorld)
+                {
+                    dragPointerOffset = new Point(
+                        displayedViewportBounds.Width / 2,
+                        displayedViewportBounds.Height / 2);
+                }
+                else
+                {
+                    dragPointerOffset = new Point(
+                        position.X - projectedViewportBounds.Left,
+                        position.Y - projectedViewportBounds.Top);
+                }
+
+                CaptureMouse();
+                e.Handled = true;
+            }
+
+            protected override void OnMouseMove(MouseEventArgs e)
+            {
+                if (!isDraggingViewport ||
+                    e.LeftButton != MouseButtonState.Pressed)
+                {
+                    return;
+                }
+
+                MoveViewport(e.GetPosition(this));
+                e.Handled = true;
+            }
+
+            protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
+            {
+                if (!isDraggingViewport)
+                    return;
+
+                isDraggingViewport = false;
+                dragStartedFromOutsideWorld = false;
+                ReleaseMouseCapture();
+                e.Handled = true;
+            }
+
+            protected override void OnLostMouseCapture(MouseEventArgs e)
+            {
+                isDraggingViewport = false;
+                dragStartedFromOutsideWorld = false;
+                base.OnLostMouseCapture(e);
+            }
+
+            void RebuildItemDrawing()
+            {
+                mapBounds = CalculateMapBounds();
+                DrawingGroup drawing = new DrawingGroup();
+
+                if (mapBounds.IsEmpty ||
+                    worldBounds.IsEmpty ||
+                    worldBounds.Width <= 0 ||
+                    worldBounds.Height <= 0)
+                {
+                    itemDrawing = drawing;
+                    return;
+                }
+
+                Brush foregroundBrush =
+                    (Brush)owner.FindResource("0ForegroundBrush");
+
+                using (DrawingContext drawingContext = drawing.Open())
+                {
+                    drawingContext.PushClip(new RectangleGeometry(mapBounds));
+
+                    foreach (Rect snapshot in itemSnapshots)
+                        DrawMiniatureRectangle(
+                            drawingContext,
+                            snapshot,
+                            foregroundBrush);
+
+                    drawingContext.Pop();
+                }
+
+                itemDrawing = drawing;
+            }
+
+            void DrawMiniatureRectangle(
+                DrawingContext drawingContext,
+                Rect worldItemBounds,
+                Brush fillBrush)
+            {
+                Rect itemBounds = ProjectWorldRect(worldItemBounds);
+                itemBounds = EnsureMinimumItemSize(itemBounds);
+
+                if (!itemBounds.IntersectsWith(mapBounds))
+                    return;
+
+                drawingContext.DrawRectangle(fillBrush, null, itemBounds);
+            }
+
+            void RebuildHighlightDrawing()
+            {
+                DrawingGroup drawing = new DrawingGroup();
+
+                if (mapBounds.IsEmpty ||
+                    worldBounds.IsEmpty ||
+                    worldBounds.Width <= 0 ||
+                    worldBounds.Height <= 0)
+                {
+                    highlightDrawing = drawing;
+                    return;
+                }
+
+                Brush highlightBrush =
+                    (Brush)owner.FindResource("0HighlightBrush");
+                Pen highlightPen = new Pen(
+                    highlightBrush,
+                    MiniaturesHighlightLineThickness)
+                {
+                    StartLineCap = PenLineCap.Round,
+                    EndLineCap = PenLineCap.Round,
+                    LineJoin = PenLineJoin.Round
+                };
+
+                if (highlightPen.CanFreeze)
+                    highlightPen.Freeze();
+
+                using (DrawingContext drawingContext = drawing.Open())
+                {
+                    drawingContext.PushClip(new RectangleGeometry(mapBounds));
+
+                    foreach (MiniatureHighlightLineSnapshot line in highlightLineSnapshots)
+                    {
+                        if (line.IsSelfRelation)
+                        {
+                            DrawSelfRelationLoop(
+                                drawingContext,
+                                highlightPen,
+                                line.From);
+                            continue;
+                        }
+
+                        drawingContext.DrawLine(
+                            highlightPen,
+                            ProjectWorldPoint(line.From),
+                            ProjectWorldPoint(line.To));
+                    }
+
+                    foreach (Rect snapshot in highlightItemSnapshots)
+                    {
+                        DrawMiniatureRectangle(
+                            drawingContext,
+                            snapshot,
+                            highlightBrush);
+                    }
+
+                    drawingContext.Pop();
+                }
+
+                highlightDrawing = drawing;
+            }
+
+            void DrawSelfRelationLoop(
+                DrawingContext drawingContext,
+                Pen pen,
+                Point worldCenter)
+            {
+                Point center = ProjectWorldPoint(worldCenter);
+                double radius = MiniaturesSelfRelationLoopRadius;
+
+                drawingContext.DrawEllipse(
+                    null,
+                    pen,
+                    new Point(center.X, center.Y - radius),
+                    radius,
+                    radius * 0.65);
+            }
+
+            Point ProjectWorldPoint(Point sourcePoint)
+            {
+                double horizontalScale = mapBounds.Width / worldBounds.Width;
+                double verticalScale = mapBounds.Height / worldBounds.Height;
+
+                return new Point(
+                    mapBounds.Left +
+                        (sourcePoint.X - worldBounds.Left) * horizontalScale,
+                    mapBounds.Top +
+                        (sourcePoint.Y - worldBounds.Top) * verticalScale);
+            }
+
+            Rect CalculateMapBounds()
+            {
+                if (worldBounds.IsEmpty ||
+                    worldBounds.Width <= 0 ||
+                    worldBounds.Height <= 0)
+                {
+                    return Rect.Empty;
+                }
+
+                double viewportWidth = scrollViewer.ViewportWidth;
+                double viewportHeight = scrollViewer.ViewportHeight;
+
+                if (double.IsNaN(viewportWidth) || viewportWidth <= 0)
+                    viewportWidth = scrollViewer.ActualWidth;
+
+                if (double.IsNaN(viewportHeight) || viewportHeight <= 0)
+                    viewportHeight = scrollViewer.ActualHeight;
+
+                double availableWidth = Math.Max(
+                    0,
+                    viewportWidth - MiniaturesOuterMargin * 2);
+                double availableHeight = Math.Max(
+                    0,
+                    viewportHeight - MiniaturesOuterMargin * 2);
+
+                if (availableWidth <= 0 || availableHeight <= 0)
+                    return Rect.Empty;
+
+                double maximumWidth = Math.Min(
+                    availableWidth,
+                    Math.Min(280, Math.Max(140, viewportWidth * 0.24)));
+                double maximumHeight = Math.Min(
+                    availableHeight,
+                    Math.Min(200, Math.Max(90, viewportHeight * 0.24)));
+
+                double mapScale = Math.Min(
+                    maximumWidth / worldBounds.Width,
+                    maximumHeight / worldBounds.Height);
+
+                if (double.IsNaN(mapScale) ||
+                    double.IsInfinity(mapScale) ||
+                    mapScale <= 0)
+                {
+                    return Rect.Empty;
+                }
+
+                double width = worldBounds.Width * mapScale;
+                double height = worldBounds.Height * mapScale;
+
+                return new Rect(
+                    viewportWidth - MiniaturesOuterMargin - width,
+                    viewportHeight - MiniaturesOuterMargin - height,
+                    width,
+                    height);
+            }
+
+            Rect ProjectWorldRect(Rect sourceBounds)
+            {
+                double horizontalScale = mapBounds.Width / worldBounds.Width;
+                double verticalScale = mapBounds.Height / worldBounds.Height;
+
+                return new Rect(
+                    mapBounds.Left +
+                        (sourceBounds.Left - worldBounds.Left) * horizontalScale,
+                    mapBounds.Top +
+                        (sourceBounds.Top - worldBounds.Top) * verticalScale,
+                    Math.Max(0, sourceBounds.Width * horizontalScale),
+                    Math.Max(0, sourceBounds.Height * verticalScale));
+            }
+
+            Rect EnsureMinimumItemSize(Rect itemBounds)
+            {
+                double width = Math.Max(
+                    MiniaturesMinimumItemSize,
+                    itemBounds.Width);
+                double height = Math.Max(
+                    MiniaturesMinimumItemSize,
+                    itemBounds.Height);
+
+                return new Rect(
+                    itemBounds.Left - (width - itemBounds.Width) / 2,
+                    itemBounds.Top - (height - itemBounds.Height) / 2,
+                    width,
+                    height);
+            }
+
+            void UpdateViewportBounds()
+            {
+                projectedViewportBounds = CalculateProjectedViewportBounds();
+
+                if (projectedViewportBounds.IsEmpty || mapBounds.IsEmpty)
+                {
+                    displayedViewportBounds = Rect.Empty;
+                    return;
+                }
+
+                Rect intersection = Rect.Intersect(
+                    projectedViewportBounds,
+                    mapBounds);
+
+                if (!intersection.IsEmpty &&
+                    intersection.Width > 0 &&
+                    intersection.Height > 0)
+                {
+                    displayedViewportBounds = intersection;
+                    return;
+                }
+
+                const double outsideMarkerSize = 7;
+                double markerCenterX = Clamp(
+                    projectedViewportBounds.Left + projectedViewportBounds.Width / 2,
+                    mapBounds.Left + outsideMarkerSize / 2,
+                    mapBounds.Right - outsideMarkerSize / 2);
+                double markerCenterY = Clamp(
+                    projectedViewportBounds.Top + projectedViewportBounds.Height / 2,
+                    mapBounds.Top + outsideMarkerSize / 2,
+                    mapBounds.Bottom - outsideMarkerSize / 2);
+
+                displayedViewportBounds = new Rect(
+                    markerCenterX - outsideMarkerSize / 2,
+                    markerCenterY - outsideMarkerSize / 2,
+                    outsideMarkerSize,
+                    outsideMarkerSize);
+            }
+
+            Rect CalculateProjectedViewportBounds()
+            {
+                if (mapBounds.IsEmpty || worldBounds.IsEmpty)
+                    return Rect.Empty;
+
+                double virtualWidth;
+                double virtualHeight;
+                owner.GetMiniaturesVirtualSize(out virtualWidth, out virtualHeight);
+
+                if (virtualWidth <= 0 || virtualHeight <= 0)
+                    return Rect.Empty;
+
+                double extentScaleX = scrollViewer.ExtentWidth > 0
+                    ? scrollViewer.ExtentWidth / virtualWidth
+                    : owner.GetEffectiveMiniaturesScale();
+                double extentScaleY = scrollViewer.ExtentHeight > 0
+                    ? scrollViewer.ExtentHeight / virtualHeight
+                    : owner.GetEffectiveMiniaturesScale();
+
+                if (extentScaleX <= 0 || extentScaleY <= 0)
+                    return Rect.Empty;
+
+                Rect logicalViewport = new Rect(
+                    scrollViewer.HorizontalOffset / extentScaleX,
+                    scrollViewer.VerticalOffset / extentScaleY,
+                    scrollViewer.ViewportWidth / extentScaleX,
+                    scrollViewer.ViewportHeight / extentScaleY);
+
+                return ProjectWorldRect(logicalViewport);
+            }
+
+            void MoveViewport(Point pointerPosition)
+            {
+                if (mapBounds.IsEmpty ||
+                    worldBounds.IsEmpty ||
+                    projectedViewportBounds.IsEmpty)
+                {
+                    return;
+                }
+
+                double projectedWidth = Math.Min(
+                    mapBounds.Width,
+                    projectedViewportBounds.Width);
+                double projectedHeight = Math.Min(
+                    mapBounds.Height,
+                    projectedViewportBounds.Height);
+
+                double desiredLeft;
+                double desiredTop;
+
+                if (dragStartedFromOutsideWorld)
+                {
+                    desiredLeft = pointerPosition.X - projectedWidth / 2;
+                    desiredTop = pointerPosition.Y - projectedHeight / 2;
+                }
+                else
+                {
+                    desiredLeft = pointerPosition.X - dragPointerOffset.X;
+                    desiredTop = pointerPosition.Y - dragPointerOffset.Y;
+                }
+
+                desiredLeft = Clamp(
+                    desiredLeft,
+                    mapBounds.Left,
+                    mapBounds.Right - projectedWidth);
+                desiredTop = Clamp(
+                    desiredTop,
+                    mapBounds.Top,
+                    mapBounds.Bottom - projectedHeight);
+
+                double logicalLeft = worldBounds.Left;
+                double logicalTop = worldBounds.Top;
+
+                if (mapBounds.Width > projectedWidth)
+                {
+                    logicalLeft +=
+                        (desiredLeft - mapBounds.Left) /
+                        (mapBounds.Width - projectedWidth) *
+                        Math.Max(0, worldBounds.Width - GetLogicalViewportWidth());
+                }
+
+                if (mapBounds.Height > projectedHeight)
+                {
+                    logicalTop +=
+                        (desiredTop - mapBounds.Top) /
+                        (mapBounds.Height - projectedHeight) *
+                        Math.Max(0, worldBounds.Height - GetLogicalViewportHeight());
+                }
+
+                double virtualWidth;
+                double virtualHeight;
+                owner.GetMiniaturesVirtualSize(out virtualWidth, out virtualHeight);
+
+                double extentScaleX =
+                    virtualWidth > 0 && scrollViewer.ExtentWidth > 0
+                        ? scrollViewer.ExtentWidth / virtualWidth
+                        : owner.GetEffectiveMiniaturesScale();
+                double extentScaleY =
+                    virtualHeight > 0 && scrollViewer.ExtentHeight > 0
+                        ? scrollViewer.ExtentHeight / virtualHeight
+                        : owner.GetEffectiveMiniaturesScale();
+
+                scrollViewer.ScrollToHorizontalOffset(
+                    Clamp(
+                        logicalLeft * extentScaleX,
+                        0,
+                        scrollViewer.ScrollableWidth));
+                scrollViewer.ScrollToVerticalOffset(
+                    Clamp(
+                        logicalTop * extentScaleY,
+                        0,
+                        scrollViewer.ScrollableHeight));
+            }
+
+            double GetLogicalViewportWidth()
+            {
+                double virtualWidth;
+                double virtualHeight;
+                owner.GetMiniaturesVirtualSize(out virtualWidth, out virtualHeight);
+
+                double extentScale =
+                    virtualWidth > 0 && scrollViewer.ExtentWidth > 0
+                        ? scrollViewer.ExtentWidth / virtualWidth
+                        : owner.GetEffectiveMiniaturesScale();
+
+                return extentScale > 0
+                    ? scrollViewer.ViewportWidth / extentScale
+                    : 0;
+            }
+
+            double GetLogicalViewportHeight()
+            {
+                double virtualWidth;
+                double virtualHeight;
+                owner.GetMiniaturesVirtualSize(out virtualWidth, out virtualHeight);
+
+                double extentScale =
+                    virtualHeight > 0 && scrollViewer.ExtentHeight > 0
+                        ? scrollViewer.ExtentHeight / virtualHeight
+                        : owner.GetEffectiveMiniaturesScale();
+
+                return extentScale > 0
+                    ? scrollViewer.ViewportHeight / extentScale
+                    : 0;
+            }
+
+            static double Clamp(double value, double minimum, double maximum)
+            {
+                if (maximum < minimum)
+                    return minimum;
+
+                return Math.Max(minimum, Math.Min(maximum, value));
+            }
+        }
+
+        public void MouseWheelAction(MouseWheelEventArgs e)
+        {
+            if (Vertex == null)
+                return;
+
+            double scale = ReadScalePercent();
+            double toBeScale = GetNextDiagramScale(scale, e.Delta);
+
+            if (toBeScale == scale)
+            {
+                hasCursorZoomAnchor = false;
+                return;
+            }
+
+            ScrollViewer scrollViewer = GetGraphScrollViewer();
+
+            if (scrollViewer != null && ActualWidth > 0 && ActualHeight > 0)
+            {
+                hasCursorZoomAnchor = true;
+                cursorZoomContentPoint = e.GetPosition(this);
+                cursorZoomViewportPoint = e.GetPosition(scrollViewer);
+                missingScrollViewerLogged = false;
+            }
+            else
+            {
+                hasCursorZoomAnchor = false;
+
+                if (scrollViewer == null && IsLoaded && !missingScrollViewerLogged)
+                {
+                    missingScrollViewerLogged = true;
+                    MinusZero.Instance.Log(
+                        1,
+                        "GraphVisualiser.MouseWheelAction",
+                        "scroll viewer missing");
+                }
+            }
+
+            Interaction.BeginInteractionWithGraph();
+
+            IVertex scaleVertex = Vertex.Get(false, "Scale:");
+
+            if (scaleVertex != null)
+                scaleVertex.Value = (int)toBeScale;
+
+            Interaction.EndInteractionWithGraph();
+        }
+
+        static double GetNextDiagramScale(double scale, int wheelDelta)
+        {
+            double band = Math.Abs(scale);
+            double step;
+
+            if (band < 10)
+                step = 1;
+            else if (band < 20)
+                step = 2;
+            else if (band < 40)
+                step = 5;
+            else
+                step = 10;
+
+            if (wheelDelta > 0)
+            {
+                if (scale >= MaximumDiagramScale)
+                    return scale;
+
+                return Math.Min(scale + step, MaximumDiagramScale);
+            }
+
+            if (scale <= MinimumDiagramScale)
+                return scale;
+
+            return Math.Max(scale - step, MinimumDiagramScale);
+        }
+
+        double ReadScalePercent()
+        {
+            if (Vertex == null)
+                return 100;
+
+            int scalePercent = GraphUtil.GetIntegerValueOr0(
+                Vertex.Get(false, "Scale:"));
+
+            if (scalePercent <= 0)
+                return 100;
+
+            return scalePercent;
+        }
+
+        static double ClampScrollOffset(
+            double offset,
+            double contentExtent,
+            double viewport)
+        {
+            if (double.IsNaN(offset) || double.IsInfinity(offset))
+                return 0;
+
+            double maxOffset = contentExtent - viewport;
+
+            if (double.IsNaN(maxOffset) ||
+                double.IsInfinity(maxOffset) ||
+                maxOffset < 0)
+            {
+                maxOffset = 0;
+            }
+
+            if (offset < 0)
+                return 0;
+
+            if (offset > maxOffset)
+                return maxOffset;
+
+            return offset;
+        }
+
+        ScrollViewer GetGraphScrollViewer()
+        {
+            if (ScrollViewerParent == null)
+                ScrollViewerParent = GetScrollViewerParent(this);
+
+            if (ScrollViewerParent == null)
+                return null;
+
+            return ScrollViewerParent.GetScrollViewer();
+        }
+
+        IHasScrollViewer GetScrollViewerParent(DependencyObject element)
+        {
+            if (element == null || !(element is FrameworkElement))
+                return null;
+
+            if (element is IHasScrollViewer)
+                return (IHasScrollViewer)element;
+
+            return GetScrollViewerParent(((FrameworkElement)element).Parent);
+        }
+
+        bool IsPointerOverGraphNode(DependencyObject source)
+        {
+            KeyValuePair<IVertex, SimpleVisualiserWrapper> match =
+                GetVertexWrapperByEventSource(source);
+
+            return match.Value != null;
+        }
+
+        void OnCanvasPanPreviewMouseRightButtonDown(
+            object sender,
+            MouseButtonEventArgs e)
+        {
+            suppressContextMenuAfterCanvasPan = false;
+
+            if (e.LeftButton == MouseButtonState.Pressed)
+                return;
+
+            if (IsPointerOverGraphNode(e.OriginalSource as DependencyObject))
+                return;
+
+            ScrollViewer scrollViewer = GetGraphScrollViewer();
+
+            if (scrollViewer == null)
+                return;
+
+            isCanvasPanPending = true;
+            isCanvasPanActive = false;
+            canvasPanStartViewportPoint = e.GetPosition(scrollViewer);
+            canvasPanStartHorizontalOffset = scrollViewer.HorizontalOffset;
+            canvasPanStartVerticalOffset = scrollViewer.VerticalOffset;
+        }
+
+        void OnCanvasPanPreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            if (!isCanvasPanPending && !isCanvasPanActive)
+                return;
+
+            if (e.RightButton != MouseButtonState.Pressed)
+            {
+                EndCanvasPan(false);
+                return;
+            }
+
+            ScrollViewer scrollViewer = GetGraphScrollViewer();
+
+            if (scrollViewer == null)
+            {
+                EndCanvasPan(false);
+                return;
+            }
+
+            Point currentViewportPoint = e.GetPosition(scrollViewer);
+            Vector delta = currentViewportPoint - canvasPanStartViewportPoint;
+
+            if (!isCanvasPanActive)
+            {
+                if (Math.Abs(delta.X) < CanvasPanStartThreshold &&
+                    Math.Abs(delta.Y) < CanvasPanStartThreshold)
+                {
+                    return;
+                }
+
+                isCanvasPanActive = true;
+                Mouse.OverrideCursor = Cursors.ScrollAll;
+                canvasPanOwnsOverrideCursor = true;
+                CaptureMouse();
+            }
+
+            scrollViewer.ScrollToHorizontalOffset(
+                ClampScrollOffset(
+                    canvasPanStartHorizontalOffset - delta.X,
+                    scrollViewer.ExtentWidth,
+                    scrollViewer.ViewportWidth));
+            scrollViewer.ScrollToVerticalOffset(
+                ClampScrollOffset(
+                    canvasPanStartVerticalOffset - delta.Y,
+                    scrollViewer.ExtentHeight,
+                    scrollViewer.ViewportHeight));
+
+            RequestMiniaturesUpdate(false);
+            e.Handled = true;
+        }
+
+        void OnCanvasPanPreviewMouseRightButtonUp(
+            object sender,
+            MouseButtonEventArgs e)
+        {
+            if (!isCanvasPanPending && !isCanvasPanActive)
+                return;
+
+            bool wasPanning = isCanvasPanActive;
+            EndCanvasPan(wasPanning);
+
+            if (wasPanning)
+                e.Handled = true;
+        }
+
+        void OnCanvasPanLostMouseCapture(object sender, MouseEventArgs e)
+        {
+            if (!isCanvasPanPending && !isCanvasPanActive)
+                return;
+
+            EndCanvasPan(isCanvasPanActive, false);
+        }
+
+        void OnCanvasPanContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            if (!suppressContextMenuAfterCanvasPan)
+                return;
+
+            suppressContextMenuAfterCanvasPan = false;
+            e.Handled = true;
+        }
+
+        void OnCanvasPanMouseLeave(object sender, MouseEventArgs e)
+        {
+            if (isCanvasPanPending && !isCanvasPanActive)
+                EndCanvasPan(false);
+        }
+
+        void EndCanvasPan(bool suppressContextMenu, bool releaseCapture = true)
+        {
+            bool wasPanning = isCanvasPanActive;
+
+            isCanvasPanPending = false;
+            isCanvasPanActive = false;
+
+            if (wasPanning && suppressContextMenu)
+                suppressContextMenuAfterCanvasPan = true;
+
+            if (canvasPanOwnsOverrideCursor)
+            {
+                canvasPanOwnsOverrideCursor = false;
+
+                if (Mouse.OverrideCursor == Cursors.ScrollAll)
+                    Mouse.OverrideCursor = null;
+            }
+
+            if (releaseCapture && IsMouseCaptured)
+                ReleaseMouseCapture();
+        }
+
+        bool HasMiniaturesEnabled
+        {
+            get
+            {
+                if (Vertex == null)
+                    return false;
+
+                return GraphUtil.GetBooleanValueOrFalse(
+                    GraphUtil.GetQueryOutFirst(Vertex, "HasMiniatures", null));
+            }
+        }
+
+        void NotifyMiniaturesHighlightChanged()
+        {
+            if (isDisposed || miniaturesAdorner == null)
+                return;
+
+            miniaturesHighlightDirty = true;
+            RequestMiniaturesUpdate(false);
+        }
+
+        void RequestMiniaturesUpdate(bool rebuildItems)
+        {
+            if (isDisposed)
+                return;
+
+            if (rebuildItems)
+                miniaturesItemsDirty = true;
+
+            if (miniaturesUpdateOperation != null)
+            {
+                miniaturesUpdateReschedulePending = true;
+
+                if (rebuildItems)
+                    miniaturesUpdateRescheduleRebuildItems = true;
+
+                return;
+            }
+
+            miniaturesUpdateOperation = Dispatcher.BeginInvoke(
+                new Action(ProcessMiniaturesUpdate),
+                DispatcherPriority.Render);
+        }
+
+        void ProcessMiniaturesUpdate()
+        {
+            miniaturesUpdateOperation = null;
+
+            if (isDisposed)
+                return;
+
+            if (!HasMiniaturesEnabled)
+            {
+                DetachMiniatures();
+                return;
+            }
+
+            EnsureMiniaturesAttached();
+
+            if (miniaturesAdorner == null)
+                return;
+
+            bool itemsRebuilt = false;
+
+            if (miniaturesItemsDirty)
+            {
+                miniaturesItemsDirty = false;
+                RebuildMiniaturesItems();
+                itemsRebuilt = true;
+            }
+
+            if (miniaturesHighlightDirty || itemsRebuilt)
+            {
+                miniaturesHighlightDirty = false;
+                RebuildMiniaturesHighlight();
+            }
+            else
+                miniaturesAdorner.InvalidateViewport();
+
+            SettleOccupiedContentScroll();
+
+            if (miniaturesUpdateReschedulePending)
+            {
+                bool rescheduleRebuildItems =
+                    miniaturesUpdateRescheduleRebuildItems;
+                miniaturesUpdateReschedulePending = false;
+                miniaturesUpdateRescheduleRebuildItems = false;
+                RequestMiniaturesUpdate(rescheduleRebuildItems);
+            }
+        }
+
+        static double ClampMiniaturesScrollValue(
+            double value,
+            double minimum,
+            double maximum)
+        {
+            if (maximum < minimum)
+                return minimum;
+
+            return Math.Max(minimum, Math.Min(maximum, value));
+        }
+
+        bool TryComputeOccupiedBounds(out Rect occupiedBounds)
+        {
+            occupiedBounds = Rect.Empty;
+
+            double virtualWidth;
+            double virtualHeight;
+            GetMiniaturesVirtualSize(out virtualWidth, out virtualHeight);
+
+            if (virtualWidth <= 0 || virtualHeight <= 0)
+                return false;
+
+            if (DisplayedVerticesUIElements == null)
+                return false;
+
+            Rect virtualBounds = new Rect(0, 0, virtualWidth, virtualHeight);
+
+            foreach (SimpleVisualiserWrapper wrapper in DisplayedVerticesUIElements.Values)
+            {
+                Rect itemBounds;
+
+                if (!TryGetMiniatureItemBounds(wrapper, virtualBounds, out itemBounds))
+                    continue;
+
+                if (occupiedBounds.IsEmpty)
+                    occupiedBounds = itemBounds;
+                else
+                    occupiedBounds.Union(itemBounds);
+            }
+
+            return !occupiedBounds.IsEmpty;
+        }
+
+        void RequestInitialScrollToOccupiedContent()
+        {
+            if (initialOccupiedContentScrollCompleted)
+                return;
+
+            scrollToOccupiedContentPending = true;
+            SettleOccupiedContentScroll();
+
+            if (!scrollToOccupiedContentPending)
+                return;
+
+            Dispatcher.BeginInvoke(
+                new Action(SettleOccupiedContentScroll),
+                DispatcherPriority.Render);
+        }
+
+        void SettleOccupiedContentScroll()
+        {
+            if (isDisposed ||
+                !scrollToOccupiedContentPending ||
+                occupiedContentScrollInProgress)
+            {
+                return;
+            }
+
+            occupiedContentScrollInProgress = true;
+
+            try
+            {
+                if (!TryApplyOccupiedContentScroll())
+                    return;
+
+                scrollToOccupiedContentPending = false;
+                initialOccupiedContentScrollCompleted = true;
+            }
+            finally
+            {
+                occupiedContentScrollInProgress = false;
+            }
+        }
+
+        bool TryApplyOccupiedContentScroll()
+        {
+            Rect occupiedBounds;
+
+            if (!TryComputeOccupiedBounds(out occupiedBounds))
+                return false;
+
+            ScrollViewer scrollViewer = miniaturesScrollViewer;
+
+            if (scrollViewer == null)
+                scrollViewer = GetGraphScrollViewer();
+
+            if (scrollViewer == null)
+                return false;
+
+            double virtualWidth;
+            double virtualHeight;
+            GetMiniaturesVirtualSize(out virtualWidth, out virtualHeight);
+
+            if (virtualWidth <= 0 || virtualHeight <= 0)
+                return false;
+
+            if (scrollViewer.ViewportWidth <= 0 || scrollViewer.ViewportHeight <= 0)
+                return false;
+
+            double effectiveScale = GetEffectiveMiniaturesScale();
+            bool extentReady =
+                scrollViewer.ExtentWidth + 1 >= virtualWidth * effectiveScale * 0.85 &&
+                scrollViewer.ExtentHeight + 1 >= virtualHeight * effectiveScale * 0.85;
+
+            if (!extentReady)
+                return false;
+
+            double extentScaleX = scrollViewer.ExtentWidth / virtualWidth;
+            double extentScaleY = scrollViewer.ExtentHeight / virtualHeight;
+
+            if (extentScaleX <= 0 || extentScaleY <= 0)
+                return false;
+
+            double logicalViewportWidth = scrollViewer.ViewportWidth / extentScaleX;
+            double logicalViewportHeight = scrollViewer.ViewportHeight / extentScaleY;
+
+            Rect currentLogicalViewport = new Rect(
+                scrollViewer.HorizontalOffset / extentScaleX,
+                scrollViewer.VerticalOffset / extentScaleY,
+                logicalViewportWidth,
+                logicalViewportHeight);
+
+            Point occupiedCenter = new Point(
+                occupiedBounds.Left + occupiedBounds.Width / 2,
+                occupiedBounds.Top + occupiedBounds.Height / 2);
+
+            if (currentLogicalViewport.Contains(occupiedCenter))
+                return true;
+
+            double targetLogicalLeft = occupiedCenter.X - logicalViewportWidth / 2;
+            double targetLogicalTop = occupiedCenter.Y - logicalViewportHeight / 2;
+
+            targetLogicalLeft = ClampMiniaturesScrollValue(
+                targetLogicalLeft,
+                0,
+                Math.Max(0, virtualWidth - logicalViewportWidth));
+            targetLogicalTop = ClampMiniaturesScrollValue(
+                targetLogicalTop,
+                0,
+                Math.Max(0, virtualHeight - logicalViewportHeight));
+
+            scrollViewer.ScrollToHorizontalOffset(targetLogicalLeft * extentScaleX);
+            scrollViewer.ScrollToVerticalOffset(targetLogicalTop * extentScaleY);
+            return true;
+        }
+
+        void EnsureMiniaturesAttached()
+        {
+            if (ScrollViewerParent == null)
+                ScrollViewerParent = GetScrollViewerParent(this);
+
+            if (ScrollViewerParent == null)
+            {
+                LogMiniaturesAttachFailureOnce("scroll viewer parent missing");
+                return;
+            }
+
+            ScrollViewer scrollViewer = ScrollViewerParent.GetScrollViewer();
+
+            if (scrollViewer == null)
+            {
+                LogMiniaturesAttachFailureOnce("scroll viewer missing");
+                return;
+            }
+
+            if (miniaturesAdorner != null && miniaturesScrollViewer == scrollViewer)
+                return;
+
+            DetachMiniatures();
+
+            AdornerLayer adornerLayer = AdornerLayer.GetAdornerLayer(scrollViewer);
+
+            if (adornerLayer == null)
+            {
+                LogMiniaturesAttachFailureOnce("adorner layer missing");
+                return;
+            }
+
+            miniaturesAttachFailureLogged = false;
+            miniaturesScrollViewer = scrollViewer;
+            miniaturesAdornerLayer = adornerLayer;
+            miniaturesAdorner = new MiniaturesAdorner(this, scrollViewer);
+            miniaturesScrollViewer.ScrollChanged += MiniaturesScrollViewer_ScrollChanged;
+            miniaturesScrollViewer.SizeChanged += MiniaturesScrollViewer_SizeChanged;
+            miniaturesAdornerLayer.Add(miniaturesAdorner);
+            miniaturesItemsDirty = true;
+        }
+
+        void LogMiniaturesAttachFailureOnce(string reason)
+        {
+            if (!IsLoaded || miniaturesAttachFailureLogged)
+                return;
+
+            miniaturesAttachFailureLogged = true;
+            MinusZero.Instance.Log(
+                1,
+                "GraphVisualiser.EnsureMiniaturesAttached",
+                reason);
+        }
+
+        void DetachMiniatures()
+        {
+            UnsubscribeFromMiniatureItemEvents();
+
+            if (miniaturesScrollViewer != null)
+            {
+                miniaturesScrollViewer.ScrollChanged -= MiniaturesScrollViewer_ScrollChanged;
+                miniaturesScrollViewer.SizeChanged -= MiniaturesScrollViewer_SizeChanged;
+            }
+
+            if (miniaturesAdornerLayer != null && miniaturesAdorner != null)
+                miniaturesAdornerLayer.Remove(miniaturesAdorner);
+
+            miniaturesAdorner = null;
+            miniaturesAdornerLayer = null;
+            miniaturesScrollViewer = null;
+        }
+
+        void MiniaturesScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            if (scrollToOccupiedContentPending &&
+                (e.ExtentWidthChange != 0 ||
+                    e.ExtentHeightChange != 0 ||
+                    e.ViewportWidthChange != 0 ||
+                    e.ViewportHeightChange != 0))
+            {
+                SettleOccupiedContentScroll();
+            }
+
+            RequestMiniaturesUpdate(
+                e.ViewportWidthChange != 0 || e.ViewportHeightChange != 0);
+        }
+
+        void MiniaturesScrollViewer_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            RequestMiniaturesUpdate(true);
+        }
+
+        void MiniatureItem_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            RequestMiniaturesUpdate(true);
+        }
+
+        void MiniatureItem_IsVisibleChanged(
+            object sender,
+            DependencyPropertyChangedEventArgs e)
+        {
+            RequestMiniaturesUpdate(true);
+        }
+
+        void UpdateMiniatureItemEventSubscriptions()
+        {
+            HashSet<FrameworkElement> currentElements = new HashSet<FrameworkElement>();
+
+            if (DisplayedVerticesUIElements != null)
+            {
+                foreach (SimpleVisualiserWrapper wrapper in DisplayedVerticesUIElements.Values)
+                {
+                    if (wrapper != null)
+                        currentElements.Add(wrapper);
+                }
+            }
+
+            foreach (FrameworkElement subscribedElement in miniatureItemEventSubscriptions.ToArray())
+            {
+                if (currentElements.Contains(subscribedElement))
+                    continue;
+
+                subscribedElement.SizeChanged -= MiniatureItem_SizeChanged;
+                subscribedElement.IsVisibleChanged -= MiniatureItem_IsVisibleChanged;
+                miniatureItemEventSubscriptions.Remove(subscribedElement);
+            }
+
+            foreach (FrameworkElement element in currentElements)
+            {
+                if (!miniatureItemEventSubscriptions.Add(element))
+                    continue;
+
+                element.SizeChanged += MiniatureItem_SizeChanged;
+                element.IsVisibleChanged += MiniatureItem_IsVisibleChanged;
+            }
+        }
+
+        void UnsubscribeFromMiniatureItemEvents()
+        {
+            foreach (FrameworkElement element in miniatureItemEventSubscriptions)
+            {
+                element.SizeChanged -= MiniatureItem_SizeChanged;
+                element.IsVisibleChanged -= MiniatureItem_IsVisibleChanged;
+            }
+
+            miniatureItemEventSubscriptions.Clear();
+        }
+
+        void RebuildMiniaturesItems()
+        {
+            if (miniaturesAdorner == null)
+                return;
+
+            UpdateMiniatureItemEventSubscriptions();
+
+            double virtualWidth;
+            double virtualHeight;
+            GetMiniaturesVirtualSize(out virtualWidth, out virtualHeight);
+
+            if (virtualWidth <= 0 ||
+                virtualHeight <= 0 ||
+                DisplayedVerticesUIElements == null)
+            {
+                miniaturesAdorner.SetItems(new List<Rect>(), Rect.Empty);
+                return;
+            }
+
+            Rect virtualBounds = new Rect(0, 0, virtualWidth, virtualHeight);
+            Rect occupiedBounds = Rect.Empty;
+            List<Rect> snapshots = new List<Rect>();
+
+            foreach (SimpleVisualiserWrapper wrapper in DisplayedVerticesUIElements.Values)
+            {
+                Rect itemBounds;
+
+                if (!TryGetMiniatureItemBounds(wrapper, virtualBounds, out itemBounds))
+                    continue;
+
+                snapshots.Add(itemBounds);
+
+                if (occupiedBounds.IsEmpty)
+                    occupiedBounds = itemBounds;
+                else
+                    occupiedBounds.Union(itemBounds);
+            }
+
+            Rect effectiveWorldBounds = GetEffectiveMiniaturesWorldBounds(
+                occupiedBounds,
+                virtualBounds);
+
+            miniaturesAdorner.SetItems(snapshots, effectiveWorldBounds);
+        }
+
+        void RebuildMiniaturesHighlight()
+        {
+            if (miniaturesAdorner == null)
+                return;
+
+            List<Rect> highlightedItems = new List<Rect>();
+            List<MiniatureHighlightLineSnapshot> highlightedLines =
+                new List<MiniatureHighlightLineSnapshot>();
+
+            double virtualWidth;
+            double virtualHeight;
+            GetMiniaturesVirtualSize(out virtualWidth, out virtualHeight);
+
+            if (virtualWidth <= 0 ||
+                virtualHeight <= 0 ||
+                DisplayedVerticesUIElements == null)
+            {
+                miniaturesAdorner.SetHighlight(highlightedItems, highlightedLines);
+                return;
+            }
+
+            Rect virtualBounds = new Rect(0, 0, virtualWidth, virtualHeight);
+            HashSet<Shape> seenLines = new HashSet<Shape>();
+
+            foreach (SimpleVisualiserWrapper wrapper in DisplayedVerticesUIElements.Values)
+            {
+                if (wrapper == null || !wrapper.IsMouseHover)
+                    continue;
+
+                Rect itemBounds;
+
+                if (TryGetMiniatureItemBounds(wrapper, virtualBounds, out itemBounds))
+                    highlightedItems.Add(itemBounds);
+            }
+
+            if (Highlighted != null)
+            {
+                foreach (Shape line in Highlighted.Lines)
+                {
+                    if (line == null || !seenLines.Add(line))
+                        continue;
+
+                    LineTagStore lineTag = line.Tag as LineTagStore;
+
+                    if (lineTag == null ||
+                        lineTag.IsAnimationOverlay ||
+                        lineTag.FromWrapper == null ||
+                        lineTag.ToWrapper == null)
+                    {
+                        continue;
+                    }
+
+                    MiniatureHighlightLineSnapshot lineSnapshot;
+
+                    if (TryCreateMiniatureHighlightLine(
+                        lineTag,
+                        virtualBounds,
+                        out lineSnapshot))
+                    {
+                        highlightedLines.Add(lineSnapshot);
+                    }
+                }
+            }
+
+            miniaturesAdorner.SetHighlight(highlightedItems, highlightedLines);
+        }
+
+        bool TryGetMiniatureItemBounds(
+            SimpleVisualiserWrapper wrapper,
+            Rect virtualBounds,
+            out Rect itemBounds)
+        {
+            itemBounds = Rect.Empty;
+
+            if (!TryGetWrapperBounds(wrapper, out itemBounds))
+                return false;
+
+            itemBounds = Rect.Intersect(itemBounds, virtualBounds);
+
+            return !itemBounds.IsEmpty &&
+                itemBounds.Width > 0 &&
+                itemBounds.Height > 0;
+        }
+
+        bool TryGetWrapperBounds(
+            SimpleVisualiserWrapper wrapper,
+            out Rect itemBounds)
+        {
+            itemBounds = Rect.Empty;
+
+            if (wrapper == null)
+                return false;
+
+            double left = Canvas.GetLeft(wrapper);
+            double top = Canvas.GetTop(wrapper);
+
+            if (double.IsNaN(left))
+                left = 0;
+
+            if (double.IsNaN(top))
+                top = 0;
+
+            double width = wrapper.ActualWidth;
+            double height = wrapper.ActualHeight;
+
+            if (width <= 0)
+                width = wrapper.DesiredSize.Width;
+
+            if (height <= 0)
+                height = wrapper.DesiredSize.Height;
+
+            if (width <= 0 || height <= 0)
+                return false;
+
+            itemBounds = new Rect(left, top, width, height);
+            return true;
+        }
+
+        bool TryCreateMiniatureHighlightLine(
+            LineTagStore lineTag,
+            Rect virtualBounds,
+            out MiniatureHighlightLineSnapshot snapshot)
+        {
+            snapshot = new MiniatureHighlightLineSnapshot();
+
+            Rect fromBounds;
+            Rect toBounds;
+
+            if (!TryGetMiniatureItemBounds(
+                    lineTag.FromWrapper,
+                    virtualBounds,
+                    out fromBounds) ||
+                !TryGetMiniatureItemBounds(
+                    lineTag.ToWrapper,
+                    virtualBounds,
+                    out toBounds))
+            {
+                return false;
+            }
+
+            snapshot.From = GetBoundsCenter(fromBounds);
+            snapshot.To = GetBoundsCenter(toBounds);
+            snapshot.IsSelfRelation = ReferenceEquals(
+                lineTag.FromWrapper,
+                lineTag.ToWrapper);
+
+            return true;
+        }
+
+        static Point GetBoundsCenter(Rect bounds)
+        {
+            return new Point(
+                bounds.Left + bounds.Width / 2,
+                bounds.Top + bounds.Height / 2);
+        }
+
+        Rect GetEffectiveMiniaturesWorldBounds(
+            Rect occupiedBounds,
+            Rect virtualBounds)
+        {
+            if (occupiedBounds.IsEmpty)
+                return virtualBounds;
+
+            double horizontalPadding = Math.Max(
+                MiniaturesMinimumLogicalPadding,
+                occupiedBounds.Width * MiniaturesContentPaddingRatio);
+            double verticalPadding = Math.Max(
+                MiniaturesMinimumLogicalPadding,
+                occupiedBounds.Height * MiniaturesContentPaddingRatio);
+
+            double left = Math.Max(
+                virtualBounds.Left,
+                occupiedBounds.Left - horizontalPadding);
+            double top = Math.Max(
+                virtualBounds.Top,
+                occupiedBounds.Top - verticalPadding);
+            double right = Math.Min(
+                virtualBounds.Right,
+                occupiedBounds.Right + horizontalPadding);
+            double bottom = Math.Min(
+                virtualBounds.Bottom,
+                occupiedBounds.Bottom + verticalPadding);
+
+            if (right <= left || bottom <= top)
+                return virtualBounds;
+
+            return new Rect(left, top, right - left, bottom - top);
+        }
+
+        void GetMiniaturesVirtualSize(out double width, out double height)
+        {
+            width = Width;
+            height = Height;
+
+            if (double.IsNaN(width) || width <= 0)
+                width = ActualWidth;
+
+            if (double.IsNaN(height) || height <= 0)
+                height = ActualHeight;
+        }
+
+        double GetEffectiveMiniaturesScale()
+        {
+            double effectiveScale = ReadScalePercent() / 100.0;
+
+            if (effectiveScale <= 0 ||
+                double.IsNaN(effectiveScale) ||
+                double.IsInfinity(effectiveScale))
+            {
+                effectiveScale = 1;
+            }
+
+            return effectiveScale;
         }
     }
 }
