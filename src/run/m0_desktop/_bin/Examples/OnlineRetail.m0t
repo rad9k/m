@@ -75,7 +75,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@$Is :: @UX\UXContainer>
 				<@IsExpanded :: "True">
 				<@HasMiniatures :: "True">
-				<@Scale :: "70">
+				<@Scale :: "110">
 				<@BaseEdge :: "">
 					<@$Is :: @Edge>
 					<@From :: @Start:\Examples\'OnlineRetail.m0t'\$Store:>
@@ -856,7 +856,7 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 				<@$Is :: @UX\UXContainer>
 				<@IsExpanded :: "True">
 				<@HasMiniatures :: "True">
-				<@Scale :: "90">
+				<@Scale :: "70">
 				<@BaseEdge :: "">
 					<@$Is :: @Edge>
 					<@From :: @OnlineRetail>
@@ -1378,6 +1378,21 @@ System\FormalTextLanguage\ZeroCode_VertexAndManyLines
 
 					if user<> == "1"
 						return user\Order
+
+					return "ERROR"
+
+				function "GetOrder" @String(@String "tokenString", @String "orderBusinessID")
+					variable "user" @OnlineRetail\OnlineRetailModel\User
+					variable "order" @OnlineRetail\OnlineRetailModel\Order
+					variable "myShop" @Vertex
+					myShop = @@Start:\Examples\'OnlineRetailDB.m0t'\$Store:\OnlineRetailDB\MyShop
+
+					user = @@OnlineRetail\BackendService\ServiceForFrontend\GetUser_internal[tokenString]
+
+					if user<> == "1"
+						order = user\Order{BusinessID:'(orderBusinessID)'}
+						if (order<> == "1")
+							return order
 
 					return "ERROR"
 
