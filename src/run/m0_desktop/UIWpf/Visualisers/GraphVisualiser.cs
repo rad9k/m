@@ -387,6 +387,9 @@ namespace m0.UIWpf.Visualisers
         readonly HashSet<FrameworkElement> miniatureItemEventSubscriptions =
             new HashSet<FrameworkElement>();
 
+        // Last automatic layout. Null keeps the circle placement from AddCircle.
+        RepositionAlgorithmEnum? lastRepositionAlgorithm;
+
         static string[] _MetaTriggeringUpdateVertex = new string[] { "VisualiserCircleSize", "NumberOfCircles", "ShowOutEdges", "ShowInEdges", "ShowFromToChangedVertex", "FastMode", "MetaLabels", "AnimateEdges", "ShowIcons" };
         public string[] MetaTriggeringUpdateVertex { get { return _MetaTriggeringUpdateVertex; } }
 
@@ -795,6 +798,16 @@ namespace m0.UIWpf.Visualisers
                          
             AddCircle(0,null);
             UpdateLayout();
+
+            if (lastRepositionAlgorithm.HasValue)
+            {
+                MinusZero.Instance.Log(1, "GraphVisualiser.PaintGraph",
+                    "reapply " + lastRepositionAlgorithm.Value
+                    + " spacing=" + GetVertexSpacing()
+                    + " spacingScale=" + GetVertexSpacingScale().ToString("F2"));
+                RepositionGraph(lastRepositionAlgorithm.Value);
+            }
+
             ExpandCanvasToContentBounds();
             EnsureCanvasCoversViewport();
 
@@ -2289,6 +2302,8 @@ namespace m0.UIWpf.Visualisers
 
         public void RepositionGraph(RepositionAlgorithmEnum algorithm)
         {
+            lastRepositionAlgorithm = algorithm;
+
             if (DisplayedVerticesUIElements == null || DisplayedVerticesUIElements.Count == 0)
                 return;
 
@@ -2313,6 +2328,8 @@ namespace m0.UIWpf.Visualisers
             ApplyOverlapRemoval(wrappers);
 
             UpdateAllLines();
+            ExpandCanvasToContentBounds();
+            EnsureCanvasCoversViewport();
             RequestMiniaturesUpdate(true);
         }
 
@@ -2403,6 +2420,21 @@ namespace m0.UIWpf.Visualisers
         private double GetCanvasWidth()  { return this.Width  > 0 ? this.Width  : Math.Max(this.ActualWidth,  800); }
         private double GetCanvasHeight() { return this.Height > 0 ? this.Height : Math.Max(this.ActualHeight, 800); }
 
+        const double DefaultVertexSpacing = 200;
+
+        private int GetVertexSpacing()
+        {
+            int spacing = GraphUtil.GetIntegerValueOr0(Vertex.Get(false, "VisualiserCircleSize:"));
+            if (spacing <= 0)
+                spacing = (int)DefaultVertexSpacing;
+            return spacing;
+        }
+
+        private double GetVertexSpacingScale()
+        {
+            return GetVertexSpacing() / DefaultVertexSpacing;
+        }
+
         private static bool IsUsableKeptSize(double value)
         {
             return !double.IsNaN(value) && !double.IsInfinity(value) && value > 0;
@@ -2449,14 +2481,13 @@ namespace m0.UIWpf.Visualisers
         private void ExpandCanvasForRelaxedLayout(double factor)
         {
             int numberOfCircles = GraphUtil.GetIntegerValue(Vertex.Get(false, "NumberOfCircles:")) ?? 2;
-            int circleSize = GraphUtil.GetIntegerValueOr0(Vertex.Get(false, "VisualiserCircleSize:"));
-            if (circleSize <= 0) circleSize = 200;
+            int circleSize = GetVertexSpacing();
 
             double baseSize = Math.Max(800, numberOfCircles * circleSize * 2);
             double relaxedSize = baseSize * factor;
 
-            if (Width < relaxedSize) Width = relaxedSize;
-            if (Height < relaxedSize) Height = relaxedSize;
+            Width = relaxedSize;
+            Height = relaxedSize;
         }
 
         // 1) RADIAL (improved BFS) ==========================================
@@ -2483,8 +2514,7 @@ namespace m0.UIWpf.Visualisers
             foreach (SimpleVisualiserWrapper w in wrappers)
                 if (!level.ContainsKey(w)) level[w] = maxLevel + 1;
 
-            int circleSize = (int)GraphUtil.GetIntegerValueOr0(Vertex.Get(false, "VisualiserCircleSize:"));
-            if (circleSize <= 0) circleSize = 200;
+            int circleSize = GetVertexSpacing();
 
             double cx = GetCanvasWidth() / 2;
             double cy = GetCanvasHeight() / 2;
@@ -2506,8 +2536,9 @@ namespace m0.UIWpf.Visualisers
             double previousRadius = 0;
             double previousHalfHeight = 0;
 
-            const double angularPadding = 15;
-            const double ringPadding = 20;
+            double spacingScale = GetVertexSpacingScale();
+            double angularPadding = 15 * spacingScale;
+            double ringPadding = 20 * spacingScale;
 
             foreach (IGrouping<int, KeyValuePair<SimpleVisualiserWrapper, int>> g in byLevel)
             {
@@ -2552,7 +2583,8 @@ namespace m0.UIWpf.Visualisers
 
             sw.Stop();
             MinusZero.Instance.Log(1, "GraphVisualiser.ApplyRadialLayout",
-                "wrappers=" + wrappers.Count + " rings=" + byLevel.Count + " elapsed_ms=" + sw.ElapsedMilliseconds);
+                "wrappers=" + wrappers.Count + " rings=" + byLevel.Count + " elapsed_ms=" + sw.ElapsedMilliseconds
+                + " spacingScale=" + spacingScale.ToString("F2") + " spacing=" + circleSize);
         }
 
         // 2) FORCE-DIRECTED (Fruchterman-Reingold with rectangle overlap) =====
@@ -2663,6 +2695,10 @@ namespace m0.UIWpf.Visualisers
             NormalizePositions(wrappers, pos);
             foreach (KeyValuePair<SimpleVisualiserWrapper, Point> kv in pos)
                 SetWrapperCenter(kv.Key, kv.Value.X, kv.Value.Y);
+
+            MinusZero.Instance.Log(1, "GraphVisualiser.ApplyForceLayout",
+                "wrappers=" + wrappers.Count + " spacingScale=" + GetVertexSpacingScale().ToString("F2")
+                + " k=" + k.ToString("F1") + " canvas=" + width.ToString("F1"));
         }
 
         // 3) SUGIYAMA (layered) ==============================================
@@ -2759,22 +2795,29 @@ namespace m0.UIWpf.Visualisers
                 }
             }
 
-            // Coordinate assignment - squeeze vertical spacing so the whole stack
-            // fits within the canvas height even for deep layerings.
-            double xPadding = 40;
-            double canvasH = GetCanvasHeight();
+            // Coordinate assignment. Vertical spacing follows VisualiserCircleSize.
+            // The canvas grows so the preferred gap is kept for deep layerings.
+            double spacingScale = GetVertexSpacingScale();
+            double xPadding = 40 * spacingScale;
+            double preferredYPadding = 140 * spacingScale;
 
             double maxLayerHeight = 0;
             foreach (KeyValuePair<int, List<SimpleVisualiserWrapper>> kv in layers)
                 foreach (SimpleVisualiserWrapper w in kv.Value)
                     if (w.ActualHeight > maxLayerHeight) maxLayerHeight = w.ActualHeight;
 
-            double topMargin = Math.Max(40, maxLayerHeight / 2 + 20);
-            double bottomMargin = Math.Max(40, maxLayerHeight / 2 + 20);
+            double topMargin = Math.Max(40 * spacingScale, maxLayerHeight / 2 + 20);
+            double bottomMargin = Math.Max(40 * spacingScale, maxLayerHeight / 2 + 20);
+            double neededHeight = topMargin + bottomMargin;
+            if (maxLayer > 0)
+                neededHeight += preferredYPadding * maxLayer;
+            if (Height < neededHeight)
+                Height = neededHeight;
+
+            double canvasH = GetCanvasHeight();
             double available = Math.Max(100, canvasH - topMargin - bottomMargin);
-            double preferredYPadding = 140;
             double yPadding = maxLayer > 0 ? Math.Min(preferredYPadding, available / maxLayer) : preferredYPadding;
-            if (yPadding < maxLayerHeight + 20) yPadding = maxLayerHeight + 20; // do not collide with ring above
+            if (yPadding < maxLayerHeight + 20) yPadding = maxLayerHeight + 20; // do not collide with the layer above
 
             double cx = GetCanvasWidth() / 2;
             double startY = topMargin;
@@ -2797,7 +2840,8 @@ namespace m0.UIWpf.Visualisers
             sw.Stop();
             MinusZero.Instance.Log(1, "GraphVisualiser.ApplySugiyamaLayout",
                 "wrappers=" + wrappers.Count + " maxLayer=" + maxLayer + " cyclesBroken=" + cyclesBroken +
-                " yPadding=" + yPadding.ToString("F1") + " elapsed_ms=" + sw.ElapsedMilliseconds);
+                " yPadding=" + yPadding.ToString("F1") + " spacingScale=" + spacingScale.ToString("F2") +
+                " elapsed_ms=" + sw.ElapsedMilliseconds);
         }
 
         private double Barycenter(SimpleVisualiserWrapper w,
@@ -2900,6 +2944,10 @@ namespace m0.UIWpf.Visualisers
             NormalizePositions(wrappers, pos);
             foreach (KeyValuePair<SimpleVisualiserWrapper, Point> kv in pos)
                 SetWrapperCenter(kv.Key, kv.Value.X, kv.Value.Y);
+
+            MinusZero.Instance.Log(1, "GraphVisualiser.ApplyKamadaKawaiLayout",
+                "wrappers=" + wrappers.Count + " spacingScale=" + GetVertexSpacingScale().ToString("F2")
+                + " L=" + L.ToString("F1") + " diameter=" + diameter);
         }
 
         // 5) TREE (Reingold-Tilford style - simple subtree-width layout) =====
@@ -2927,14 +2975,19 @@ namespace m0.UIWpf.Visualisers
             foreach (SimpleVisualiserWrapper w in wrappers)
                 if (visited.Add(w)) children[root].Add(w);
 
-            double xGap = 30;
-            double yGap = 140;
+            double spacingScale = GetVertexSpacingScale();
+            double xGap = 30 * spacingScale;
+            double yGap = 140 * spacingScale;
 
             Dictionary<SimpleVisualiserWrapper, double> subtreeWidth = new Dictionary<SimpleVisualiserWrapper, double>();
             ComputeSubtreeWidth(root, children, subtreeWidth, xGap);
 
             double startX = GetCanvasWidth() / 2 - subtreeWidth[root] / 2;
             PlaceTreeNode(root, children, subtreeWidth, startX, 60, yGap);
+
+            MinusZero.Instance.Log(1, "GraphVisualiser.ApplyTreeLayout",
+                "wrappers=" + wrappers.Count + " spacingScale=" + spacingScale.ToString("F2")
+                + " xGap=" + xGap.ToString("F1") + " yGap=" + yGap.ToString("F1"));
         }
 
         private double ComputeSubtreeWidth(SimpleVisualiserWrapper w,
@@ -3127,11 +3180,19 @@ namespace m0.UIWpf.Visualisers
             }
 
             double margin = 60;
+            double spanX = Math.Max(1, maxX - minX);
+            double spanY = Math.Max(1, maxY - minY);
+
+            double neededWidth = spanX + 2 * (margin + maxHalfW);
+            double neededHeight = spanY + 2 * (margin + maxHalfH);
+            if (Width < neededWidth)
+                Width = neededWidth;
+            if (Height < neededHeight)
+                Height = neededHeight;
+
             double canvasW = GetCanvasWidth();
             double canvasH = GetCanvasHeight();
 
-            double spanX = Math.Max(1, maxX - minX);
-            double spanY = Math.Max(1, maxY - minY);
             double availableX = canvasW - 2 * (margin + maxHalfW);
             double availableY = canvasH - 2 * (margin + maxHalfH);
 
